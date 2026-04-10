@@ -27,11 +27,23 @@ Está armado para que puedas:
 
 ```text
 .
+├── alerts
+│   ├── __init__.py
+│   └── telegram_alerts.py
 ├── .env.example
 ├── .gitignore
 ├── README.md
+├── jobs
+│   ├── __init__.py
+│   └── scheduler.py
 ├── main.py
+├── monitors
+│   ├── __init__.py
+│   └── rules.py
 ├── requirements.txt
+├── services
+│   ├── __init__.py
+│   └── sports_api.py
 └── bot
     ├── __init__.py
     ├── application.py
@@ -129,6 +141,10 @@ Si todo está bien, vas a ver logs en consola indicando que el bot arrancó y es
 - `bot/application.py`: construye la aplicación de Telegram y registra handlers
 - `bot/handlers.py`: contiene la lógica de los comandos
 - `bot/error_handler.py`: centraliza el manejo de errores
+- `services/sports_api.py`: base para futuras integraciones con APIs deportivas
+- `monitors/rules.py`: punto de entrada para evaluar condiciones y reglas de alertas
+- `alerts/telegram_alerts.py`: capa para construir y enviar alertas por Telegram
+- `jobs/scheduler.py`: ciclo base para tareas periódicas de monitoreo
 - `.env.example`: ejemplo de variables de entorno
 - `requirements.txt`: dependencias del proyecto
 - `.gitignore`: evita subir archivos sensibles o temporales
@@ -166,6 +182,17 @@ Ejemplo:
 - Los logs salen por consola.
 - El nivel de log se controla con `LOG_LEVEL` en el `.env`.
 - Si ocurre un error inesperado, el bot lo registra en consola e intenta responderle al usuario con un mensaje genérico.
+
+## Arquitectura preparada para crecer
+
+Además del bot básico, el proyecto ya incluye una separación inicial para crecer hacia monitoreo y alertas:
+
+- `services/`: para traer datos desde APIs o scraping
+- `monitors/`: para evaluar reglas de negocio sobre esos datos
+- `alerts/`: para convertir resultados en mensajes y notificaciones
+- `jobs/`: para ejecutar chequeos automáticos cada cierto tiempo
+
+Hoy esos módulos son scaffolding: no están conectados todavía al flujo principal del bot, pero ya marcan la dirección técnica del proyecto.
 
 ## Subirlo a GitHub
 
