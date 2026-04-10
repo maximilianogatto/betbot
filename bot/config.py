@@ -3,6 +3,7 @@ import os
 
 from dotenv import load_dotenv
 
+PATH_TO_ENV = os.path.join(os.path.dirname(__file__), "..", ".env")
 
 @dataclass
 class Settings:
@@ -11,7 +12,11 @@ class Settings:
 
 
 def load_settings() -> Settings:
-    load_dotenv()
+    # load_dotenv()
+    if not load_dotenv(PATH_TO_ENV):
+        raise FileNotFoundError(
+            f"No se pudo cargar el archivo .env desde la ruta: {PATH_TO_ENV}"
+        )
 
     telegram_bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
     log_level = os.getenv("LOG_LEVEL", "INFO").strip().upper() or "INFO"

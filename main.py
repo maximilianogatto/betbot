@@ -21,14 +21,16 @@ def main() -> None:
         print(error)
         sys.exit(1)
 
+    print(f"Settings loaded successfully: {settings}")
+    
     configure_logging(settings.log_level)
     logger = logging.getLogger(__name__)
 
-    logger.info("Iniciando bot de Telegram...")
+    logger.info("Starting Telegram bot...")
 
     application = create_application(settings)
 
-    logger.info("Bot listo. Esperando mensajes por polling.")
+    logger.info("Bot is ready. Waiting for messages via polling.")
     application.run_polling()
 
 
