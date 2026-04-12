@@ -1,0 +1,22 @@
+{
+  "leagueId": "1",
+  "topic": "#AC#B1#C1#D1002#E120794896#G40#",
+  "leagueName": "Spain Segunda",
+  "matches": [
+    {
+      "fixtureId": "191852219",
+      "home": "Valladolid",
+      "away": "Eibar",
+      "oddsFractional": {
+        "1": "7/5",
+        "2": "11/5",
+        "X": "2/1"
+      },
+      "oddsDecimal": {
+        "1": 2.4,
+        "2": 3.2,
+        "X": 3
+      }
+    }
+  ]
+}

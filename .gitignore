@@ -5,4 +5,8 @@ __pycache__/
 .DS_Store
 .idea/
 .vscode/
+data/*.json
 betbot
+sandbox/.env
+sandbox/vendor/*
+!sandbox/vendor/.gitkeep

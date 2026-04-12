@@ -1,232 +1,416 @@
-# Bot de Telegram Base en Python
+# BetBot: Telegram Bot for Tracking Leagues and Building Weekly Watchlists
 
-Proyecto base y ejecutable de un bot de Telegram pensado como punto de partida para un futuro sistema de alertas.
+Base project for learning Python, Telegram bots, and modular monitoring
+architecture.
 
-Está armado para que puedas:
+The project now supports two clear stages:
 
-- aprender la estructura sin complejidad innecesaria
-- probar el bot localmente con polling
-- extenderlo más adelante con consultas a APIs, lógica de monitoreo y alertas automáticas
+1. tracking leagues from Telegram
+2. building a weekly watchlist of imbalanced fixtures from those leagues
 
-## Tecnologías
+At this stage the project still does **not** use scraping, bookmaker logic,
+or real pre-match odds. The current goal is to establish a clean foundation
+before adding those pieces.
+
+## Technologies
 
 - Python 3.11+
 - [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot)
 - [python-dotenv](https://github.com/theskumar/python-dotenv)
 
-## Funcionalidades actuales
+## Current features
 
-- `/start`: mensaje de bienvenida
-- `/help`: lista de comandos
-- `/ping`: responde `pong`
-- `/status`: indica que el bot está online
-- `/echo <texto>`: devuelve el texto recibido
-- comando desconocido: responde con un mensaje amable para usar `/help`
+- `/start`: welcome message
+- `/help`: command list
+- `/ping`: replies with `pong`
+- `/status`: reports that the bot is online
+- `/echo <text>`: echoes back the provided text
+- `/track <type> <value>`: stores a target for the current chat
+- `/list_tracks`: lists saved targets for the current chat
+- `/untrack <type> <value>`: removes a saved target
+- `/build_watchlist`: manually builds the weekly watchlist
+- `/list_watchlist`: lists the currently saved watchlist entries
+- unknown command fallback: points the user to `/help`
 
-## Estructura del proyecto
+## What the new watchlist stage does
+
+The weekly watchlist flow works like this:
+
+1. you track leagues with `/track league <league_code>`
+2. the bot loads upcoming fixtures for the next 7 days
+3. the bot loads league standings for those tracked leagues
+4. the system calculates an `imbalance_score` per fixture
+5. strongly uneven fixtures are stored in a watchlist
+6. that saved watchlist becomes the future input for an odds provider
+
+This separation is intentional:
+
+- watchlist stage: "which matches look one-sided on paper?"
+- odds stage: "is that match listed pre-match and are the odds interesting?"
+
+## Project structure
 
 ```text
 .
 ├── alerts
 │   ├── __init__.py
 │   └── telegram_alerts.py
-├── .env.example
-├── .gitignore
-├── README.md
+├── bot
+│   ├── __init__.py
+│   ├── alerts.py
+│   ├── application.py
+│   ├── config.py
+│   ├── error_handler.py
+│   ├── handlers.py
+│   └── jobs.py
+├── data
+│   └── .gitkeep
 ├── jobs
 │   ├── __init__.py
 │   └── scheduler.py
-├── main.py
 ├── monitors
 │   ├── __init__.py
-│   └── rules.py
-├── requirements.txt
+│   ├── imbalance.py
+│   ├── rules.py
+│   ├── tracker.py
+│   └── watchlist_builder.py
+├── sandbox
+│   ├── .env.example
+│   ├── bet365_probe.py
+│   ├── README.md
+│   └── vendor
+│       └── .gitkeep
 ├── services
 │   ├── __init__.py
+│   ├── football_data_provider.py
+│   ├── odds_provider.py
 │   └── sports_api.py
-└── bot
-    ├── __init__.py
-    ├── application.py
-    ├── config.py
-    ├── error_handler.py
-    └── handlers.py
+├── storage
+│   ├── __init__.py
+│   ├── tracks.py
+│   └── watchlist.py
+├── .env.example
+├── .gitignore
+├── main.py
+├── README.md
+└── requirements.txt
 ```
 
-## Cómo crear el bot con BotFather
+## Environment variables
 
-1. Abrí Telegram y buscá `@BotFather`.
-2. Iniciá el chat y ejecutá `/start`.
-3. Ejecutá `/newbot`.
-4. Elegí un nombre visible para tu bot.
-5. Elegí un username único que termine en `bot`, por ejemplo `mi_alerta_bot`.
-6. BotFather te va a devolver un token.
-7. Guardá ese token porque lo vas a poner en tu archivo `.env`.
+Copy the example file first:
 
-Opcional más adelante:
+```bash
+cp .env.example .env
+```
 
-- `/setdescription` para una descripción
-- `/setuserpic` para una foto
-- `/setcommands` para definir comandos visibles en Telegram
+Current variables:
 
-## Cómo crear y activar un entorno virtual en macOS con zsh
+```env
+TELEGRAM_BOT_TOKEN=123456789:replace_with_your_real_token
+LOG_LEVEL=INFO
+FOOTBALL_DATA_PROVIDER=mock
+FOOTBALL_DATA_API_KEY=
+WATCHLIST_DAYS_AHEAD=7
+WATCHLIST_IMBALANCE_THRESHOLD=60
+```
 
-Desde la carpeta del proyecto:
+### What they mean
+
+- `TELEGRAM_BOT_TOKEN`: required BotFather token
+- `LOG_LEVEL`: console logging verbosity
+- `FOOTBALL_DATA_PROVIDER`: current source of fixtures and standings
+  - today: `mock`
+  - future: a real API-backed provider
+- `FOOTBALL_DATA_API_KEY`: reserved for future API integrations
+- `WATCHLIST_DAYS_AHEAD`: fixture window used by `/build_watchlist`
+- `WATCHLIST_IMBALANCE_THRESHOLD`: minimum score required to save a fixture in
+  the watchlist
+
+## How to create the bot with BotFather
+
+1. Open Telegram and search for `@BotFather`.
+2. Start the chat with `/start`.
+3. Run `/newbot`.
+4. Choose a display name.
+5. Choose a unique username ending in `bot`.
+6. Copy the token returned by BotFather.
+7. Put that token in your local `.env`.
+
+## How to create and activate a virtual environment on macOS/zsh
+
+From the project folder:
 
 ```bash
 python3.11 -m venv .venv
 source .venv/bin/activate
 ```
 
-Si no tenés `python3.11`, probá:
+If `python3.11` is unavailable:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-Cuando el entorno está activo, normalmente vas a ver `(.venv)` al principio de la línea de tu terminal.
+## Install dependencies
 
-## Cómo instalar dependencias
-
-Con el entorno virtual activado:
+With the virtual environment activated:
 
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-## Cómo configurar el archivo .env
-
-1. Copiá el archivo de ejemplo:
-
-```bash
-cp .env.example .env
-```
-
-2. Editá `.env` y reemplazá el valor de `TELEGRAM_BOT_TOKEN` por el token real de BotFather.
-
-Ejemplo:
-
-```env
-TELEGRAM_BOT_TOKEN=123456789:ABCDEF_TU_TOKEN_REAL
-LOG_LEVEL=INFO
-```
-
-## Cómo correr el bot
-
-Con el entorno virtual activado y el `.env` configurado:
+## Run the bot
 
 ```bash
 python main.py
 ```
 
-Si todo está bien, vas a ver logs en consola indicando que el bot arrancó y está esperando mensajes.
+If everything is configured correctly, the bot will start polling Telegram and
+logging to the console.
 
-## Cómo probarlo
+## Track leagues from Telegram
 
-1. Abrí Telegram.
-2. Buscá tu bot por el username que elegiste.
-3. Ejecutá estos comandos:
-   - `/start`
-   - `/help`
-   - `/ping`
-   - `/status`
-   - `/echo hola mundo`
-   - `/comando_que_no_existe`
-
-## Qué hace cada archivo
-
-- `main.py`: punto de entrada; configura logs, carga variables de entorno y levanta el bot
-- `bot/config.py`: lee y valida la configuración desde `.env`
-- `bot/application.py`: construye la aplicación de Telegram y registra handlers
-- `bot/handlers.py`: contiene la lógica de los comandos
-- `bot/error_handler.py`: centraliza el manejo de errores
-- `services/sports_api.py`: base para futuras integraciones con APIs deportivas
-- `monitors/rules.py`: punto de entrada para evaluar condiciones y reglas de alertas
-- `alerts/telegram_alerts.py`: capa para construir y enviar alertas por Telegram
-- `jobs/scheduler.py`: ciclo base para tareas periódicas de monitoreo
-- `.env.example`: ejemplo de variables de entorno
-- `requirements.txt`: dependencias del proyecto
-- `.gitignore`: evita subir archivos sensibles o temporales
-
-## Comandos disponibles
-
-### `/start`
-
-Muestra un mensaje de bienvenida y confirma que el bot está listo.
-
-### `/help`
-
-Muestra la lista de comandos disponibles.
-
-### `/ping`
-
-Sirve para validar rápidamente que el bot responde.
-
-### `/status`
-
-Responde que el bot está online.
-
-### `/echo <texto>`
-
-Devuelve exactamente el texto que le envíes después del comando.
-
-Ejemplo:
+Track one league:
 
 ```text
-/echo Este mensaje vuelve igual
+/track league premier_league
 ```
 
-## Logging y manejo de errores
+Track another one:
 
-- Los logs salen por consola.
-- El nivel de log se controla con `LOG_LEVEL` en el `.env`.
-- Si ocurre un error inesperado, el bot lo registra en consola e intenta responderle al usuario con un mensaje genérico.
+```text
+/track league la_liga
+```
 
-## Arquitectura preparada para crecer
+List tracked targets:
 
-Además del bot básico, el proyecto ya incluye una separación inicial para crecer hacia monitoreo y alertas:
+```text
+/list_tracks
+```
 
-- `services/`: para traer datos desde APIs o scraping
-- `monitors/`: para evaluar reglas de negocio sobre esos datos
-- `alerts/`: para convertir resultados en mensajes y notificaciones
-- `jobs/`: para ejecutar chequeos automáticos cada cierto tiempo
+Remove one:
 
-Hoy esos módulos son scaffolding: no están conectados todavía al flujo principal del bot, pero ya marcan la dirección técnica del proyecto.
+```text
+/untrack league la_liga
+```
 
-## Subirlo a GitHub
+## Build the weekly watchlist manually
 
-Si querés dejarlo versionado desde el inicio:
+Once at least one league is tracked, run:
+
+```text
+/build_watchlist
+```
+
+The bot will:
+
+1. read tracked league codes from local storage
+2. ask the configured football-data provider for fixtures in the next 7 days
+3. ask the same provider for standings
+4. calculate an `imbalance_score`
+5. save the selected fixtures in the local watchlist
+
+## List the saved watchlist
+
+```text
+/list_watchlist
+```
+
+Each saved watchlist entry includes:
+
+- league code and league name
+- home team
+- away team
+- kickoff datetime
+- `imbalance_score`
+- simple reasons that explain why the fixture was selected
+- `odds_seen`
+- `alert_sent`
+
+## How `imbalance_score` works
+
+The current score is a simple composite based on standings only:
+
+- difference in table position
+- difference in points
+- difference in goal difference
+
+That makes the current system intentionally conservative and easy to reason
+about. It is not trying to predict odds; it is only trying to flag fixtures
+that already look uneven from basic league performance data.
+
+## Current provider behavior
+
+The current implementation uses `services/football_data_provider.py` with a
+`MockFootballDataProvider`.
+
+That means:
+
+- no external API is required
+- `/build_watchlist` is fully testable locally
+- the architecture is already prepared for a future real provider
+
+Unknown tracked leagues are simply skipped during watchlist construction and
+reported back in the build summary.
+
+## Local persistence
+
+### Tracked targets
+
+Stored in:
+
+```text
+data/tracks.json
+```
+
+Shape:
+
+```json
+{
+  "chats": [
+    {
+      "chat_id": 123,
+      "targets": [
+        {
+          "type": "league",
+          "key": "premier_league"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Weekly watchlists
+
+Stored in:
+
+```text
+data/watchlists.json
+```
+
+Shape:
+
+```json
+{
+  "chats": [
+    {
+      "chat_id": 123,
+      "generated_at": "2026-04-12T12:00:00+00:00",
+      "matches": [
+        {
+          "fixture_id": "epl-001",
+          "league_code": "premier_league",
+          "league_name": "Premier League",
+          "home_team": "Arsenal",
+          "away_team": "Ipswich",
+          "kickoff_at": "2026-04-14T18:00:00+00:00",
+          "imbalance_score": 82.5,
+          "reasons": [
+            "Arsenal is 17 places above Ipswich in the table."
+          ],
+          "odds_seen": false,
+          "alert_sent": false
+        }
+      ]
+    }
+  ]
+}
+```
+
+## Main architectural responsibilities
+
+- `bot/`: Telegram-specific interface
+- `storage/`: local persistence
+- `services/`: data sources and provider interfaces
+- `monitors/`: analysis logic and watchlist construction
+- `sandbox/`: isolated playground for external Bet365 experiments
+
+## Why the watchlist is separate from odds
+
+This is one of the most important design decisions in the project.
+
+The weekly watchlist is intentionally built **before** checking odds.
+
+Why:
+
+- it keeps the first signal independent from bookmakers
+- it makes the project testable without scraping or betting APIs
+- it lets you validate the analysis stage first
+- it makes later odds integration cleaner and easier to replace
+
+Future odds flow:
+
+1. build watchlist from fixtures + standings
+2. query a separate odds provider for those saved fixtures
+3. mark `odds_seen=True` when a fixture appears pre-match
+4. evaluate odds-specific alert rules
+5. send Telegram alerts and mark `alert_sent=True`
+
+## Sandbox for Bet365 GitHub experiments
+
+The folder `sandbox/` is purposely isolated from the main bot.
+
+Use it to:
+
+- clone external Bet365-related GitHub wrappers under `sandbox/vendor/`
+- run local experiments without polluting the main architecture
+- inspect raw API or wrapper responses
+- design the future `services/odds_provider.py` interface
+
+Basic flow:
+
+1. copy `sandbox/.env.example` to `sandbox/.env`
+2. adjust the base URL, path, and headers
+3. run:
 
 ```bash
-git init
-git add .
-git commit -m "Base de bot de Telegram con polling"
-git branch -M main
+python sandbox/bet365_probe.py
 ```
 
-Después podés crear un repositorio en GitHub y vincularlo:
+This probe is not part of the production bot. It is only a safe playground for
+research and validation.
 
-```bash
-git remote add origin https://github.com/TU_USUARIO/TU_REPOSITORIO.git
-git push -u origin main
-```
+## Placeholder modules already prepared for the next stages
 
-## Próximo paso sugerido
+- `bot/alerts.py`: watchlist-alert interface without odds
+- `bot/jobs.py`: placeholder weekly watchlist job
+- `services/odds_provider.py`: future pre-match odds interface
+- `jobs/scheduler.py`: generic async orchestration pattern for future monitors
 
-Para convertir esta base en un bot de alertas deportivas, el siguiente crecimiento natural sería:
+## Suggested roadmap from here
 
-1. crear una carpeta `services/` para conectarte a una API de eventos deportivos
-2. crear una carpeta `monitors/` para evaluar condiciones definidas por vos
-3. agregar una tarea periódica que consulte la API cada cierto tiempo
-4. separar una función `send_alert()` para centralizar el envío de mensajes por Telegram
-5. guardar configuración de alertas en un archivo o base de datos liviana
+### Stage 1: done now
 
-Una evolución simple podría quedar así:
+- track leagues from Telegram
+- build a weekly watchlist of uneven fixtures
+- persist everything locally
 
-- `services/sports_api.py`: consulta partidos, cuotas o eventos
-- `monitors/rules.py`: evalúa reglas como “si cuota > X” o “si empieza en menos de Y minutos”
-- `bot/alerts.py`: envía alertas al chat correcto
-- `bot/jobs.py`: programa chequeos automáticos cada N minutos
+### Stage 2
 
-Con esa base, el bot ya no solo responde comandos: también observa, decide y te avisa solo.
+- implement a real football-data provider
+- improve league coverage
+- enrich fixture metadata if needed
+
+### Stage 3
+
+- implement `services/odds_provider.py`
+- check whether saved watchlist fixtures appear pre-match
+- update `odds_seen`
+
+### Stage 4
+
+- add rule-based alerting on top of odds availability
+- send Telegram alerts only when your criteria are met
+- update `alert_sent`
+
+### Stage 5
+
+- replace manual `/build_watchlist` with a scheduled weekly job
+- combine weekly watchlist building with periodic odds checks
+
+The important part is that the project is now structured to grow into that
+pipeline without mixing everything in the Telegram handlers.
