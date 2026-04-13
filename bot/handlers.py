@@ -291,7 +291,7 @@ async def matches_select_league(update: Update, context: ContextTypes.DEFAULT_TY
 
     if not active_matches:
         try:
-            refresh_result = await tracking_service.refresh_tracked_league(selected_track.tracked_league.id)
+            await tracking_service.refresh_tracked_league(selected_track.tracked_league.id)
             tracked_subscription, active_matches = tracking_service.get_matches_for_track(
                 update.effective_chat.id,
                 selected_track.tracked_league.id,

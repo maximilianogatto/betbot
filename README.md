@@ -203,10 +203,10 @@ Use:
 The bot shows your tracked leagues with numbers. After selecting one:
 
 - your chat subscription is removed
-- if no enabled subscriptions remain for that league, the global league is disabled
-- the stored active fixtures for that league are also cleaned
+- if no enabled subscriptions remain for that league, its stored active fixtures are cleaned
+- orphaned global league rows are automatically purged by the SQLite sanitation step
 
-This keeps the global state lean without forcing a hard delete of the league row.
+This keeps the global state lean without duplicating or accumulating stale data.
 
 ## Environment variables
 
@@ -236,17 +236,55 @@ BET365_POST_LOAD_WAIT_MS=4000
 - `BET365_PAGE_LOAD_TIMEOUT_MS`: page load and runtime wait timeout
 - `BET365_POST_LOAD_WAIT_MS`: extra wait after runtime readiness before extraction
 
-## Install dependencies
+## Setup from scratch
 
-With the virtual environment activated:
+### Linux and macOS
+
+From the project root:
 
 ```bash
-pip install --upgrade pip
-pip install -r requirements.txt
+chmod +x setup.sh
+./setup.sh
+```
+
+If the script created `.venv`, activate it with:
+
+```bash
+source .venv/bin/activate
+```
+
+### Windows
+
+From PowerShell in the project root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\setup.ps1
+```
+
+If the script created `.venv`, activate it with:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+### What the setup scripts do
+
+- create `.venv` if you are not already inside a virtual environment
+- upgrade `pip`
+- install `requirements.txt`
+- install Playwright Chromium
+
+Note for Linux:
+if Chromium fails because of missing system libraries, run:
+
+```bash
 python -m playwright install chromium
+python -m playwright install --with-deps chromium
 ```
 
 ## Run the bot
+
+After setup and after creating `.env`:
 
 ```bash
 python main.py
@@ -274,7 +312,9 @@ python main.py
 ├── .env.example
 ├── main.py
 ├── README.md
-└── requirements.txt
+├── requirements.txt
+├── setup.ps1
+└── setup.sh
 ```
 
 ## Why this is ready to grow
