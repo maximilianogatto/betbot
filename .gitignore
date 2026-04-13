@@ -6,7 +6,9 @@ __pycache__/
 .idea/
 .vscode/
 data/*.json
+data/*.sqlite3
 betbot
 sandbox/.env
 sandbox/vendor/*
 !sandbox/vendor/.gitkeep
+salida.json
