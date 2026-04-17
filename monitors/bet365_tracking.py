@@ -14,13 +14,14 @@ from __future__ import annotations
 import asyncio
 from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import logging
 
 from telegram import Bot
 from telegram.constants import ParseMode
 
 from bot.alerts import (
+    build_match_reminder_alert_message,
     build_new_event_alert_message,
     build_odds_change_alert_message,
 )
@@ -29,22 +30,37 @@ from storage.bet365_tracking import (
     ActiveMatchRecord,
     ActiveMatchUpsert,
     ConfirmedTrackRequest,
+    LeagueSubscription,
+    LittleChangeRecord,
+    MatchBaseline,
     PendingTrackRequest,
     TrackedLeague,
     TrackedLeagueSubscription,
+    confirm_all_little_changes,
+    confirm_little_change,
     confirm_pending_track_request,
     create_pending_track_request,
+    delete_pending_track_request,
     get_active_matches,
+    get_match_baseline,
+    get_latest_pending_track_request,
+    initialize_match_baselines,
+    list_pending_little_changes,
     get_subscriptions_for_league,
     get_tracked_league,
     get_tracked_league_subscription,
     list_globally_active_leagues,
     list_tracked_leagues,
+    mark_matches_alerted,
     remove_missing_matches,
     remove_past_matches,
     remove_tracked_league_subscription,
+    resolve_little_change_with_current_baseline,
     sanitize_tracking_state,
+    set_change_percent_threshold,
     set_odds_notifications,
+    upsert_little_change,
+    upsert_match_baseline,
     update_tracked_league,
     upsert_active_matches,
 )
@@ -71,6 +87,15 @@ class OddsChange:
 
 
 @dataclass(frozen=True)
+class SubscriptionOddsAlert:
+    """Represent one odds alert decision for a specific chat baseline."""
+
+    match: ActiveMatchRecord
+    baseline: MatchBaseline
+    max_percent_change: float
+
+
+@dataclass(frozen=True)
 class LeagueRefreshResult:
     """Summarize the result of refreshing one tracked Bet365 league."""
 
@@ -78,6 +103,7 @@ class LeagueRefreshResult:
     active_matches: list[ActiveMatchRecord]
     new_matches: list[ActiveMatchRecord]
     odds_changes: list[OddsChange]
+    reminder_matches: list[ActiveMatchRecord]
     removed_missing_count: int
     removed_past_count: int
 
@@ -86,6 +112,7 @@ class LeagueRefreshResult:
 class RefreshSummary:
     """Summarize a refresh pass over one or more tracked Bet365 leagues."""
 
+    tracks_requested: int
     tracks_refreshed: int
     active_matches: int
     new_events: int
@@ -115,6 +142,8 @@ class Bet365TrackingService:
                 chat_id=chat_id,
                 platform=extraction.platform,
                 url=extraction.url,
+                requires_empty_confirmation=extraction.is_empty,
+                needs_name_resolution=extraction.is_provisional_name,
                 extracted_metadata={
                     "topic": extraction.topic,
                     "league_name": extraction.league_name,
@@ -135,10 +164,13 @@ class Bet365TrackingService:
                 ),
             )
 
-        return CommandResult(
-            ok=True,
-            message=self._build_pending_confirmation_message(pending_request),
-        )
+        if extraction.is_empty:
+            return CommandResult(
+                ok=True,
+                message=self._build_empty_pending_confirmation_message(pending_request),
+            )
+
+        return CommandResult(ok=True, message=self._build_pending_confirmation_message(pending_request))
 
     async def confirm_pending_track(self, chat_id: int) -> CommandResult:
         """Confirm the latest pending Bet365 request for one Telegram chat."""
@@ -148,6 +180,16 @@ class Bet365TrackingService:
 
         async with self._refresh_lock:
             sanitize_tracking_state()
+            pending_request = get_latest_pending_track_request(chat_id)
+
+            if pending_request is not None and pending_request.requires_empty_confirmation:
+                return CommandResult(
+                    ok=False,
+                    message=(
+                        "La última liga pendiente está vacía por ahora.\n"
+                        "Usá /confirm_empty_track para guardarla igual o /cancel para cancelar."
+                    ),
+                )
 
             try:
                 confirmed_request = confirm_pending_track_request(chat_id)
@@ -177,6 +219,19 @@ class Bet365TrackingService:
                     )
                     bootstrap_error = str(error)
 
+            try:
+                initialize_match_baselines(
+                    chat_id,
+                    confirmed_request.tracked_league.id,
+                    get_active_matches(confirmed_request.tracked_league.id, only_future=True),
+                )
+            except Exception:
+                logger.exception(
+                    "Failed to initialize per-chat baselines for chat_id=%s tracked_league_id=%s.",
+                    chat_id,
+                    confirmed_request.tracked_league.id,
+                )
+
         return CommandResult(
             ok=True,
             message=self._build_confirmation_message(
@@ -184,6 +239,41 @@ class Bet365TrackingService:
                 bootstrap_count=bootstrap_count,
                 bootstrap_error=bootstrap_error,
             ),
+        )
+
+    async def confirm_empty_pending_track(self, chat_id: int) -> CommandResult:
+        """Confirm the latest empty-league pending request for one Telegram chat."""
+
+        async with self._refresh_lock:
+            sanitize_tracking_state()
+            pending_request = get_latest_pending_track_request(chat_id)
+
+            if pending_request is None:
+                return CommandResult(
+                    ok=False,
+                    message=(
+                        "No hay ninguna liga pendiente para confirmar.\n"
+                        "Primero usá /track_url <url_de_bet365>."
+                    ),
+                )
+
+            if not pending_request.requires_empty_confirmation:
+                return CommandResult(
+                    ok=False,
+                    message=(
+                        "La última liga pendiente ya tiene partidos disponibles.\n"
+                        "Usá /confirm_track para confirmarla."
+                    ),
+                )
+
+            try:
+                confirmed_request = confirm_pending_track_request(chat_id)
+            except ValueError as error:
+                return CommandResult(ok=False, message=str(error))
+
+        return CommandResult(
+            ok=True,
+            message=self._build_empty_confirmation_message(confirmed_request),
         )
 
     def list_confirmed_tracks(self, chat_id: int) -> list[TrackedLeagueSubscription]:
@@ -213,7 +303,8 @@ class Bet365TrackingService:
                 f"{index}. {item.tracked_league.league_name} | "
                 f"{item.tracked_league.platform} | "
                 f"enabled={'on' if item.subscription.enabled else 'off'} | "
-                f"odds={'on' if item.subscription.notify_odds_changes else 'off'}"
+                f"odds={'on' if item.subscription.notify_odds_changes else 'off'} | "
+                f"threshold={item.subscription.change_percent_threshold:.1f}%"
             )
 
         return CommandResult(ok=True, message="\n".join(lines))
@@ -242,6 +333,79 @@ class Bet365TrackingService:
                 f"{'on' if subscription.notify_odds_changes else 'off'}"
             ),
         )
+
+    def set_change_percent(
+        self,
+        chat_id: int,
+        tracked_league_id: int,
+        percent: float,
+    ) -> CommandResult:
+        """Update the odds-alert sensitivity for one chat and tracked league."""
+
+        try:
+            subscription = set_change_percent_threshold(chat_id, tracked_league_id, percent)
+            tracked = get_tracked_league(tracked_league_id)
+        except ValueError as error:
+            return CommandResult(ok=False, message=str(error))
+
+        if tracked is None:
+            return CommandResult(ok=False, message="No encontré esa liga trackeada.")
+
+        return CommandResult(
+            ok=True,
+            message=(
+                f"Umbral de cambio para {tracked.league_name}: "
+                f"{subscription.change_percent_threshold:.1f}%"
+            ),
+        )
+
+    def get_pending_little_changes(self, chat_id: int) -> list[LittleChangeRecord]:
+        """Load pending little changes for one chat."""
+
+        sanitize_tracking_state()
+        return list_pending_little_changes(chat_id)
+
+    def confirm_little_change_by_index(self, chat_id: int, index: int) -> CommandResult:
+        """Confirm one pending little change by its visible list index."""
+
+        pending_changes = self.get_pending_little_changes(chat_id)
+
+        if not pending_changes:
+            return CommandResult(ok=False, message="No tenés little changes pendientes.")
+
+        if index < 0 or index >= len(pending_changes):
+            return CommandResult(ok=False, message="Elegí un número válido de little change.")
+
+        change = confirm_little_change(chat_id, pending_changes[index].id)
+        return CommandResult(
+            ok=True,
+            message=(
+                f"Actualicé la baseline para {change.league_name} | "
+                f"{change.home} vs {change.away}."
+            ),
+        )
+
+    def confirm_all_pending_little_changes(self, chat_id: int) -> CommandResult:
+        """Confirm every pending little change for one chat."""
+
+        confirmed = confirm_all_little_changes(chat_id)
+
+        if not confirmed:
+            return CommandResult(ok=False, message="No tenés little changes pendientes.")
+
+        return CommandResult(
+            ok=True,
+            message=f"Confirmé {len(confirmed)} little changes y actualicé sus baselines.",
+        )
+
+    def cancel_pending_empty_track(self, chat_id: int) -> bool:
+        """Cancel the latest pending empty-league tracking request for one chat."""
+
+        pending_request = get_latest_pending_track_request(chat_id)
+        if pending_request is None or not pending_request.requires_empty_confirmation:
+            return False
+
+        return delete_pending_track_request(chat_id)
 
     def untrack_chat(self, chat_id: int, tracked_league_id: int) -> CommandResult:
         """Remove one chat subscription from a tracked Bet365 league."""
@@ -311,6 +475,12 @@ class Bet365TrackingService:
             return
 
         for subscription in subscriptions:
+            initialize_match_baselines(
+                subscription.telegram_chat_id,
+                result.tracked_league.id,
+                result.active_matches,
+            )
+
             if subscription.notify_new_matches:
                 for match in result.new_matches:
                     await bot.send_message(
@@ -319,17 +489,50 @@ class Bet365TrackingService:
                         parse_mode=ParseMode.HTML,
                     )
 
-            if subscription.notify_odds_changes:
-                for change in result.odds_changes:
+            for change in result.odds_changes:
+                alert = _evaluate_subscription_odds_change(
+                    subscription,
+                    result.tracked_league,
+                    change.after,
+                )
+
+                if alert is not None and subscription.notify_odds_changes:
                     await bot.send_message(
                         chat_id=subscription.telegram_chat_id,
                         text=build_odds_change_alert_message(
                             result.tracked_league,
-                            change.before,
-                            change.after,
+                            alert.baseline,
+                            alert.match,
+                            alert.max_percent_change,
                         ),
                         parse_mode=ParseMode.HTML,
                     )
+                    upsert_match_baseline(
+                        subscription.telegram_chat_id,
+                        result.tracked_league.id,
+                        alert.match.fixture_id,
+                        baseline_home=alert.match.odds_home,
+                        baseline_draw=alert.match.odds_draw,
+                        baseline_away=alert.match.odds_away,
+                    )
+                    resolve_little_change_with_current_baseline(
+                        subscription.telegram_chat_id,
+                        result.tracked_league.id,
+                        alert.match.fixture_id,
+                    )
+
+            for match in result.reminder_matches:
+                await bot.send_message(
+                    chat_id=subscription.telegram_chat_id,
+                    text=build_match_reminder_alert_message(result.tracked_league, match),
+                    parse_mode=ParseMode.HTML,
+                )
+
+        if result.reminder_matches:
+            mark_matches_alerted(
+                result.tracked_league.id,
+                [match.fixture_id for match in result.reminder_matches],
+            )
 
     def get_matches_for_track(
         self,
@@ -350,7 +553,7 @@ class Bet365TrackingService:
     def build_refresh_summary_message(self, summary: RefreshSummary) -> CommandResult:
         """Build the user-facing summary for `/refresh_tracks` or monitor logs."""
 
-        if summary.tracks_refreshed == 0:
+        if summary.tracks_requested == 0:
             return CommandResult(
                 ok=True,
                 message=(
@@ -360,15 +563,18 @@ class Bet365TrackingService:
             )
 
         lines = [
-            "Refresh completado.",
-            f"Ligas revisadas: {summary.tracks_refreshed}",
+            "Refresh completado." if not summary.failed_leagues else "Refresh completado con errores.",
+            f"Ligas intentadas: {summary.tracks_requested}",
+            f"Ligas actualizadas: {summary.tracks_refreshed}",
             f"Partidos activos guardados: {summary.active_matches}",
             f"Nuevos eventos detectados: {summary.new_events}",
             f"Cambios de odds detectados: {summary.odds_changes}",
         ]
 
         if summary.failed_leagues:
-            lines.append(f"Ligas con error: {', '.join(summary.failed_leagues)}")
+            lines.append(
+                f"Ligas con error ({len(summary.failed_leagues)}): {', '.join(summary.failed_leagues)}"
+            )
 
         return CommandResult(ok=True, message="\n".join(lines))
 
@@ -380,6 +586,20 @@ class Bet365TrackingService:
             f"Platform: {pending_request.platform}\n"
             f"Topic: {pending_request.topic}\n"
             "Respondé /confirm_track para agregarla al tracking."
+        )
+
+    def _build_empty_pending_confirmation_message(self, pending_request: PendingTrackRequest) -> str:
+        """Build the Telegram message shown after detecting a valid empty league."""
+
+        return (
+            "⚠️ La liga fue detectada, pero actualmente no tiene partidos o cuotas disponibles.\n\n"
+            f"Liga: {pending_request.league_name}\n"
+            f"Platform: {pending_request.platform}\n"
+            f"URL: {pending_request.url}\n\n"
+            "¿Querés almacenarla igual para empezar a trackearla?\n"
+            "Respondé:\n"
+            "- /confirm_empty_track para guardarla igualmente\n"
+            "- /cancel para cancelar"
         )
 
     def _build_confirmation_message(
@@ -414,6 +634,32 @@ class Bet365TrackingService:
 
         return "\n".join(lines)
 
+    def _build_empty_confirmation_message(
+        self,
+        confirmed_request: ConfirmedTrackRequest,
+    ) -> str:
+        """Build the Telegram message shown after confirming an empty league."""
+
+        tracked_league = confirmed_request.tracked_league
+        subscription = confirmed_request.subscription
+
+        lines = [
+            f"Tracking activado para {tracked_league.league_name}.\n"
+            f"Platform: {tracked_league.platform}\n"
+            f"Topic: {tracked_league.topic}\n"
+            f"Tracked League ID: {tracked_league.id}\n"
+            f"notify_new_matches={'on' if subscription.notify_new_matches else 'off'}\n"
+            f"notify_odds_changes={'on' if subscription.notify_odds_changes else 'off'}",
+            "La liga quedó guardada aunque todavía no tenga partidos activos.",
+        ]
+
+        if tracked_league.needs_name_resolution:
+            lines.append(
+                "Se usó un nombre provisorio y se reemplazará automáticamente cuando Bet365 muestre eventos reales."
+            )
+
+        return "\n".join(lines)
+
     async def _refresh_leagues(self, tracked_league_ids: Sequence[int]) -> RefreshSummary:
         """Refresh a deduplicated set of tracked leagues under one shared lock."""
 
@@ -421,6 +667,7 @@ class Bet365TrackingService:
 
         if not unique_ids:
             return RefreshSummary(
+                tracks_requested=0,
                 tracks_refreshed=0,
                 active_matches=0,
                 new_events=0,
@@ -450,7 +697,7 @@ class Bet365TrackingService:
                     if isinstance(extraction_or_error, Exception):
                         failed_leagues.append(tracked_league.league_name)
                         logger.error(
-                            "Failed to refresh tracked Bet365 league id=%s.",
+                            "Failed to refresh tracked league id=%s, continuing with remaining leagues.",
                             tracked_league.id,
                             exc_info=(
                                 type(extraction_or_error),
@@ -460,23 +707,35 @@ class Bet365TrackingService:
                         )
                         continue
 
-                    result = self._apply_extraction_to_tracked_league(
-                        tracked_league.id,
-                        extraction_or_error,
-                    )
+                    try:
+                        result = self._apply_extraction_to_tracked_league(
+                            tracked_league.id,
+                            extraction_or_error,
+                        )
+                    except Exception as error:
+                        failed_leagues.append(tracked_league.league_name)
+                        logger.error(
+                            "Failed to refresh tracked league id=%s, continuing with remaining leagues.",
+                            tracked_league.id,
+                            exc_info=(type(error), error, error.__traceback__),
+                        )
+                        continue
+
                     logger.info(
-                        "Refreshed Bet365 league id=%s name=%s active=%s new=%s odds_changes=%s removed_missing=%s removed_past=%s",
+                        "Refreshed Bet365 league id=%s name=%s active=%s new=%s odds_changes=%s reminders=%s removed_missing=%s removed_past=%s",
                         result.tracked_league.id,
                         result.tracked_league.league_name,
                         len(result.active_matches),
                         len(result.new_matches),
                         len(result.odds_changes),
+                        len(result.reminder_matches),
                         result.removed_missing_count,
                         result.removed_past_count,
                     )
                     league_results.append(result)
 
         return RefreshSummary(
+            tracks_requested=len(tracked_leagues),
             tracks_refreshed=len(league_results),
             active_matches=sum(len(result.active_matches) for result in league_results),
             new_events=sum(len(result.new_matches) for result in league_results),
@@ -493,12 +752,17 @@ class Bet365TrackingService:
         """Apply one extracted Bet365 league snapshot to global stored state."""
 
         scraped_at = _utc_now_iso()
+        league_name, needs_name_resolution = self._resolve_league_name_for_update(
+            tracked_league_id,
+            extraction,
+        )
 
         tracked_league = update_tracked_league(
             tracked_league_id,
             url=extraction.url,
             topic=extraction.topic,
-            league_name=extraction.league_name,
+            league_name=league_name,
+            needs_name_resolution=needs_name_resolution,
             last_scraped_at=scraped_at,
         )
 
@@ -557,12 +821,14 @@ class Bet365TrackingService:
             for fixture_id in current_fixture_ids
             if fixture_id in changed_fixture_ids and fixture_id in active_by_fixture
         ]
+        reminder_matches = _select_due_reminders(active_matches)
 
         return LeagueRefreshResult(
             tracked_league=tracked_league,
             active_matches=active_matches,
             new_matches=new_matches,
             odds_changes=odds_changes,
+            reminder_matches=reminder_matches,
             removed_missing_count=removed_missing_count,
             removed_past_count=removed_past_count,
         )
@@ -575,12 +841,17 @@ class Bet365TrackingService:
         """Store a baseline snapshot for a league without generating diff events."""
 
         scraped_at = _utc_now_iso()
+        league_name, needs_name_resolution = self._resolve_league_name_for_update(
+            tracked_league_id,
+            extraction,
+        )
 
         update_tracked_league(
             tracked_league_id,
             url=extraction.url,
             topic=extraction.topic,
-            league_name=extraction.league_name,
+            league_name=league_name,
+            needs_name_resolution=needs_name_resolution,
             last_scraped_at=scraped_at,
         )
 
@@ -611,10 +882,32 @@ class Bet365TrackingService:
         logger.info(
             "Seeded initial Bet365 baseline for tracked_league_id=%s league=%s active=%s",
             tracked_league_id,
-            extraction.league_name,
+            league_name,
             active_count,
         )
         return active_count
+
+    def _resolve_league_name_for_update(
+        self,
+        tracked_league_id: int,
+        extraction: Bet365LeagueExtraction,
+    ) -> tuple[str, bool]:
+        """Resolve a safe league name for persistence during refreshes."""
+
+        extracted_name = extraction.league_name.strip() if extraction.league_name else ""
+
+        if extracted_name and extracted_name.lower() != "none":
+            return extracted_name, extraction.is_provisional_name
+
+        tracked_league = get_tracked_league(tracked_league_id)
+        if tracked_league is None:
+            raise ValueError(f"No tracked Bet365 league found with id={tracked_league_id}.")
+
+        logger.info(
+            "Preserving existing league_name for tracked_league_id=%s because extractor returned empty name.",
+            tracked_league_id,
+        )
+        return tracked_league.league_name, tracked_league.needs_name_resolution
 
     def _needs_baseline_seed(self, tracked_league_id: int) -> bool:
         """Return whether a tracked league still lacks a usable initial snapshot."""
@@ -664,6 +957,153 @@ def _odds_tuple_from_record(
     """Extract the comparable 1/X/2 odds tuple from a stored active match."""
 
     return (match.odds_home, match.odds_draw, match.odds_away)
+
+
+def _evaluate_subscription_odds_change(
+    subscription: LeagueSubscription,
+    tracked_league: TrackedLeague,
+    match: ActiveMatchRecord,
+) -> SubscriptionOddsAlert | None:
+    """Evaluate one global odds change against a specific chat baseline."""
+
+    baseline = get_match_baseline(
+        subscription.telegram_chat_id,
+        tracked_league.id,
+        match.fixture_id,
+    )
+
+    if baseline is None:
+        initialize_match_baselines(
+            subscription.telegram_chat_id,
+            tracked_league.id,
+            [match],
+        )
+        return None
+
+    max_percent_change = _compute_max_percent_change(baseline, match)
+
+    if max_percent_change is None:
+        upsert_match_baseline(
+            subscription.telegram_chat_id,
+            tracked_league.id,
+            match.fixture_id,
+            baseline_home=match.odds_home,
+            baseline_draw=match.odds_draw,
+            baseline_away=match.odds_away,
+        )
+        resolve_little_change_with_current_baseline(
+            subscription.telegram_chat_id,
+            tracked_league.id,
+            match.fixture_id,
+        )
+        return None
+
+    should_notify = (
+        subscription.notify_odds_changes
+        and max_percent_change >= subscription.change_percent_threshold
+    )
+
+    if should_notify:
+        return SubscriptionOddsAlert(
+            match=match,
+            baseline=baseline,
+            max_percent_change=max_percent_change,
+        )
+
+    upsert_little_change(
+        subscription.telegram_chat_id,
+        tracked_league.id,
+        match.fixture_id,
+        home=match.home,
+        away=match.away,
+        kickoff_label_date=match.kickoff_label_date,
+        kickoff_label_time=match.kickoff_label_time,
+        baseline_home=baseline.baseline_home,
+        baseline_draw=baseline.baseline_draw,
+        baseline_away=baseline.baseline_away,
+        current_home=match.odds_home,
+        current_draw=match.odds_draw,
+        current_away=match.odds_away,
+        max_percent_change=max_percent_change,
+        status="pending",
+    )
+    return None
+
+
+def _compute_max_percent_change(
+    baseline: MatchBaseline,
+    match: ActiveMatchRecord,
+) -> float | None:
+    """Return the maximum valid percent change between baseline and current odds."""
+
+    changes = [
+        _compute_percent_change(baseline.baseline_home, match.odds_home),
+        _compute_percent_change(baseline.baseline_draw, match.odds_draw),
+        _compute_percent_change(baseline.baseline_away, match.odds_away),
+    ]
+    valid_changes = [change for change in changes if change is not None]
+
+    if not valid_changes:
+        return None
+
+    return max(valid_changes)
+
+
+def _compute_percent_change(
+    baseline_value: float | None,
+    current_value: float | None,
+) -> float | None:
+    """Compute absolute percent change for one odds selection."""
+
+    if baseline_value is None or current_value is None:
+        return None
+
+    if baseline_value <= 0:
+        return None
+
+    return abs(current_value - baseline_value) / baseline_value * 100
+
+
+def _select_due_reminders(matches: Sequence[ActiveMatchRecord]) -> list[ActiveMatchRecord]:
+    """Return matches that should trigger the 5-minute reminder now."""
+
+    now = datetime.now(timezone.utc)
+    due_matches: list[ActiveMatchRecord] = []
+
+    for match in matches:
+        if match.alerted:
+            continue
+
+        time_label = (match.kickoff_label_time or "").strip()
+        if not time_label:
+            continue
+
+        kickoff = _parse_match_kickoff(match)
+        if kickoff is None:
+            continue
+
+        reminder_time = kickoff - timedelta(minutes=5)
+        if reminder_time <= now <= kickoff:
+            due_matches.append(match)
+
+    return due_matches
+
+
+def _parse_match_kickoff(match: ActiveMatchRecord) -> datetime | None:
+    """Parse the stored kickoff timestamp into an aware UTC datetime."""
+
+    if match.kickoff_at is None:
+        return None
+
+    try:
+        kickoff = datetime.fromisoformat(match.kickoff_at)
+    except ValueError:
+        return None
+
+    if kickoff.tzinfo is None:
+        kickoff = kickoff.replace(tzinfo=timezone.utc)
+
+    return kickoff.astimezone(timezone.utc)
 
 
 def _batched(items: Sequence[TrackedLeague], batch_size: int) -> list[list[TrackedLeague]]:

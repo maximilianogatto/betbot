@@ -8,6 +8,7 @@ __pycache__/
 data/*.json
 data/*.sqlite3
 betbot
+monitor.log
 sandbox/.env
 sandbox/vendor/*
 !sandbox/vendor/.gitkeep

@@ -1,258 +1,1303 @@
 {
   "leagueId": "1",
-  "topic": "#AC#B1#C1#D1002#E120757998#G40#",
-  "leagueName": "Spanish Primera",
+  "topic": "#AC#B1#C1#D1002#E92269709#G40#",
+  "leagueName": "Italy Serie A",
   "matches": [
     {
-      "fixtureId": "191744522",
-      "home": "Levante",
-      "away": "Getafe",
-      "dateLabel": "Lun 13 abr",
-      "timeLabel": "21:00",
-      "oddsDecimal": {
-        "1": 2.45,
-        "2": 2.88,
-        "X": 2.8
+      "fixtureId": "192511347",
+      "home": "Sassuolo",
+      "away": "Como",
+      "dateLabel": "Vie 17 abr",
+      "timeLabel": "13:30",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": {
+          "name": "Sassuolo v Como",
+          "startTimeRaw": "Start Time~20260417173000"
+        },
+        "fullTimeResult": [
+          {
+            "id": "999846282",
+            "name": "Sassuolo",
+            "side": "1",
+            "oddsDecimal": 5
+          },
+          {
+            "id": "999846289",
+            "name": "Draw",
+            "side": "X",
+            "oddsDecimal": 4
+          },
+          {
+            "id": "999846291",
+            "name": "Como",
+            "side": "2",
+            "oddsDecimal": 1.667
+          }
+        ],
+        "goalsOverUnder": {
+          "marketId": "981",
+          "marketName": "Goals Over/Under",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 1.8
+          },
+          "under": {
+            "oddsDecimal": 2
+          }
+        },
+        "asianHandicap": {
+          "marketId": "938",
+          "marketName": "Asian Handicap",
+          "selections": [
+            {
+              "team": "Sassuolo",
+              "lineDisplay": "+0.5, +1.0",
+              "lineAverage": "0.75",
+              "oddsDecimal": 2
+            },
+            {
+              "team": "Como",
+              "lineDisplay": "-0.5, -1.0",
+              "lineAverage": "-0.75",
+              "oddsDecimal": 1.85
+            }
+          ]
+        },
+        "goalLine": {
+          "marketId": "10143",
+          "marketName": "Goal Line",
+          "lineDisplay": "2.5, 3.0",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 2
+          },
+          "under": {
+            "oddsDecimal": 1.85
+          }
+        },
+        "error": null
       }
     },
     {
-      "fixtureId": "192511816",
-      "home": "Athletic Club",
-      "away": "Osasuna",
-      "dateLabel": "Mar 21 abr",
-      "timeLabel": "19:00",
-      "oddsDecimal": {
-        "1": 1.8,
-        "2": 4.5,
-        "X": 3.4
+      "fixtureId": "192511354",
+      "home": "Inter Milan",
+      "away": "Cagliari",
+      "dateLabel": "Vie 17 abr",
+      "timeLabel": "15:45",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": {
+          "name": "Inter Milan v Cagliari",
+          "startTimeRaw": "Start Time~20260417194500"
+        },
+        "fullTimeResult": [
+          {
+            "id": "999846806",
+            "name": "Inter Milan",
+            "side": "1",
+            "oddsDecimal": 1.2
+          },
+          {
+            "id": "999846813",
+            "name": "Draw",
+            "side": "X",
+            "oddsDecimal": 6.5
+          },
+          {
+            "id": "999846815",
+            "name": "Cagliari",
+            "side": "2",
+            "oddsDecimal": 13
+          }
+        ],
+        "goalsOverUnder": {
+          "marketId": "981",
+          "marketName": "Goals Over/Under",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 1.571
+          },
+          "under": {
+            "oddsDecimal": 2.375
+          }
+        },
+        "asianHandicap": {
+          "marketId": "938",
+          "marketName": "Asian Handicap",
+          "selections": [
+            {
+              "team": "Inter Milan",
+              "lineDisplay": "-1.5, -2.0",
+              "lineAverage": "-1.75",
+              "oddsDecimal": 1.825
+            },
+            {
+              "team": "Cagliari",
+              "lineDisplay": "+1.5, +2.0",
+              "lineAverage": "1.75",
+              "oddsDecimal": 2.025
+            }
+          ]
+        },
+        "goalLine": {
+          "marketId": "10143",
+          "marketName": "Goal Line",
+          "lineDisplay": "3.0",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 1.925
+          },
+          "under": {
+            "oddsDecimal": 1.925
+          }
+        },
+        "error": null
       }
     },
     {
-      "fixtureId": "192511819",
-      "home": "Mallorca",
-      "away": "Valencia",
-      "dateLabel": "Mar 21 abr",
-      "timeLabel": "19:00",
-      "oddsDecimal": {
-        "1": 2.35,
-        "2": 3,
-        "X": 3.2
+      "fixtureId": "192511360",
+      "home": "Udinese",
+      "away": "Parma",
+      "dateLabel": "Sáb 18 abr",
+      "timeLabel": "10:00",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": {
+          "name": "Udinese v Parma",
+          "startTimeRaw": "Start Time~20260418140000"
+        },
+        "fullTimeResult": [
+          {
+            "id": "999847333",
+            "name": "Udinese",
+            "side": "1",
+            "oddsDecimal": 2.15
+          },
+          {
+            "id": "999847340",
+            "name": "Draw",
+            "side": "X",
+            "oddsDecimal": 3.1
+          },
+          {
+            "id": "999847344",
+            "name": "Parma",
+            "side": "2",
+            "oddsDecimal": 3.8
+          }
+        ],
+        "goalsOverUnder": {
+          "marketId": "981",
+          "marketName": "Goals Over/Under",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 2.3
+          },
+          "under": {
+            "oddsDecimal": 1.615
+          }
+        },
+        "asianHandicap": {
+          "marketId": "938",
+          "marketName": "Asian Handicap",
+          "selections": [
+            {
+              "team": "Udinese",
+              "lineDisplay": "0.0, -0.5",
+              "lineAverage": "-0.25",
+              "oddsDecimal": 1.825
+            },
+            {
+              "team": "Parma",
+              "lineDisplay": "0.0, +0.5",
+              "lineAverage": "0.25",
+              "oddsDecimal": 2.025
+            }
+          ]
+        },
+        "goalLine": {
+          "marketId": "10143",
+          "marketName": "Goal Line",
+          "lineDisplay": "2.0, 2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 2.05
+          },
+          "under": {
+            "oddsDecimal": 1.8
+          }
+        },
+        "error": null
       }
     },
     {
-      "fixtureId": "192511822",
-      "home": "Girona",
-      "away": "Real Betis",
-      "dateLabel": "Mar 21 abr",
-      "timeLabel": "21:30",
-      "oddsDecimal": {
-        "1": 2.45,
-        "2": 2.7,
-        "X": 3.4
+      "fixtureId": "192511364",
+      "home": "Napoli",
+      "away": "Lazio",
+      "dateLabel": "Sáb 18 abr",
+      "timeLabel": "13:00",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": {
+          "name": "Napoli v Lazio",
+          "startTimeRaw": "Start Time~20260418170000"
+        },
+        "fullTimeResult": [
+          {
+            "id": "999847712",
+            "name": "Napoli",
+            "side": "1",
+            "oddsDecimal": 1.571
+          },
+          {
+            "id": "999847715",
+            "name": "Draw",
+            "side": "X",
+            "oddsDecimal": 4
+          },
+          {
+            "id": "999847717",
+            "name": "Lazio",
+            "side": "2",
+            "oddsDecimal": 6.25
+          }
+        ],
+        "goalsOverUnder": {
+          "marketId": "981",
+          "marketName": "Goals Over/Under",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 2.2
+          },
+          "under": {
+            "oddsDecimal": 1.667
+          }
+        },
+        "asianHandicap": null,
+        "goalLine": null,
+        "error": "Page.wait_for_function: Timeout 15000ms exceeded."
       }
     },
     {
-      "fixtureId": "192511831",
-      "home": "Real Madrid",
-      "away": "CD Alaves",
-      "dateLabel": "Mar 21 abr",
-      "timeLabel": "21:30",
-      "oddsDecimal": {
-        "1": 1.27,
-        "2": 10,
-        "X": 5.25
+      "fixtureId": "192511367",
+      "home": "Roma",
+      "away": "Atalanta",
+      "dateLabel": "Sáb 18 abr",
+      "timeLabel": "15:45",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": {
+          "name": "Roma v Atalanta",
+          "startTimeRaw": "Start Time~20260418194500"
+        },
+        "fullTimeResult": [
+          {
+            "id": "999847908",
+            "name": "Roma",
+            "side": "1",
+            "oddsDecimal": 2.375
+          },
+          {
+            "id": "999847911",
+            "name": "Draw",
+            "side": "X",
+            "oddsDecimal": 3.3
+          },
+          {
+            "id": "999847913",
+            "name": "Atalanta",
+            "side": "2",
+            "oddsDecimal": 3
+          }
+        ],
+        "goalsOverUnder": {
+          "marketId": "981",
+          "marketName": "Goals Over/Under",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 2
+          },
+          "under": {
+            "oddsDecimal": 1.8
+          }
+        },
+        "asianHandicap": {
+          "marketId": "938",
+          "marketName": "Asian Handicap",
+          "selections": [
+            {
+              "team": "Roma",
+              "lineDisplay": "0.0, -0.5",
+              "lineAverage": "-0.25",
+              "oddsDecimal": 2.05
+            },
+            {
+              "team": "Atalanta",
+              "lineDisplay": "0.0, +0.5",
+              "lineAverage": "0.25",
+              "oddsDecimal": 1.8
+            }
+          ]
+        },
+        "goalLine": {
+          "marketId": "10143",
+          "marketName": "Goal Line",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 2.025
+          },
+          "under": {
+            "oddsDecimal": 1.825
+          }
+        },
+        "error": null
       }
     },
     {
-      "fixtureId": "192511841",
-      "home": "Elche",
-      "away": "Atletico Madrid",
-      "dateLabel": "Mié 22 abr",
-      "timeLabel": "19:00",
-      "oddsDecimal": {
-        "1": 3.2,
-        "2": 2.1,
-        "X": 3.5
+      "fixtureId": "192511371",
+      "home": "Cremonese",
+      "away": "Torino",
+      "dateLabel": "Dom 19 abr",
+      "timeLabel": "07:30",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": {
+          "name": "Cremonese v Torino",
+          "startTimeRaw": "Start Time~20260419113000"
+        },
+        "fullTimeResult": [
+          {
+            "id": "999848190",
+            "name": "Cremonese",
+            "side": "1",
+            "oddsDecimal": 2.875
+          },
+          {
+            "id": "999848193",
+            "name": "Draw",
+            "side": "X",
+            "oddsDecimal": 3.1
+          },
+          {
+            "id": "999848195",
+            "name": "Torino",
+            "side": "2",
+            "oddsDecimal": 2.6
+          }
+        ],
+        "goalsOverUnder": {
+          "marketId": "981",
+          "marketName": "Goals Over/Under",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 2.2
+          },
+          "under": {
+            "oddsDecimal": 1.667
+          }
+        },
+        "asianHandicap": {
+          "marketId": "938",
+          "marketName": "Asian Handicap",
+          "selections": [
+            {
+              "team": "Cremonese",
+              "lineDisplay": "0.0",
+              "lineAverage": "0.0",
+              "oddsDecimal": 2.05
+            },
+            {
+              "team": "Torino",
+              "lineDisplay": "0.0",
+              "lineAverage": "0.0",
+              "oddsDecimal": 1.8
+            }
+          ]
+        },
+        "goalLine": {
+          "marketId": "10143",
+          "marketName": "Goal Line",
+          "lineDisplay": "2.0, 2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 1.975
+          },
+          "under": {
+            "oddsDecimal": 1.875
+          }
+        },
+        "error": null
       }
     },
     {
-      "fixtureId": "192511844",
-      "home": "Real Sociedad",
-      "away": "Getafe",
-      "dateLabel": "Mié 22 abr",
-      "timeLabel": "20:00",
-      "oddsDecimal": {
-        "1": 1.83,
-        "2": 5,
-        "X": 3.1
+      "fixtureId": "192511375",
+      "home": "Verona",
+      "away": "AC Milan",
+      "dateLabel": "Dom 19 abr",
+      "timeLabel": "10:00",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": {
+          "name": "Verona v AC Milan",
+          "startTimeRaw": "Start Time~20260419140000"
+        },
+        "fullTimeResult": [
+          {
+            "id": "999848424",
+            "name": "Verona",
+            "side": "1",
+            "oddsDecimal": 6
+          },
+          {
+            "id": "999848426",
+            "name": "Draw",
+            "side": "X",
+            "oddsDecimal": 4
+          },
+          {
+            "id": "999848427",
+            "name": "AC Milan",
+            "side": "2",
+            "oddsDecimal": 1.571
+          }
+        ],
+        "goalsOverUnder": {
+          "marketId": "981",
+          "marketName": "Goals Over/Under",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 2
+          },
+          "under": {
+            "oddsDecimal": 1.8
+          }
+        },
+        "asianHandicap": null,
+        "goalLine": null,
+        "error": "Page.wait_for_function: Timeout 15000ms exceeded."
       }
     },
     {
-      "fixtureId": "192511846",
-      "home": "Barcelona",
-      "away": "Celta Vigo",
-      "dateLabel": "Mié 22 abr",
-      "timeLabel": "21:30",
-      "oddsDecimal": {
-        "1": 1.25,
-        "2": 10,
-        "X": 6
+      "fixtureId": "192511378",
+      "home": "Pisa",
+      "away": "Genoa",
+      "dateLabel": "Dom 19 abr",
+      "timeLabel": "13:00",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": null,
+        "fullTimeResult": null,
+        "goalsOverUnder": null,
+        "asianHandicap": null,
+        "goalLine": null,
+        "error": "Page.evaluate: Execution context was destroyed, most likely because of a navigation"
       }
     },
     {
-      "fixtureId": "192511849",
-      "home": "Levante",
-      "away": "Sevilla",
-      "dateLabel": "Jue 23 abr",
-      "timeLabel": "19:00",
-      "oddsDecimal": {
-        "1": 2.8,
-        "2": 2.45,
-        "X": 3.25
+      "fixtureId": "192511382",
+      "home": "Juventus",
+      "away": "Bologna",
+      "dateLabel": "Dom 19 abr",
+      "timeLabel": "15:45",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": null,
+        "fullTimeResult": null,
+        "goalsOverUnder": null,
+        "asianHandicap": null,
+        "goalLine": null,
+        "error": "Page.goto: Navigation to \"https://www.bet365.bet.ar/#/AC/B1/C1/D8/E192511382/F3/I1/\" is interrupted by another navigation to \"https://www.bet365.bet.ar/#/AC/B1/C1/D8/E192511378/F3/I1/\"\nCall log:\n  - navigating to \"https://www.bet365.bet.ar/#/AC/B1/C1/D8/E192511382/F3/I1/\", waiting until \"domcontentloaded\"\n"
       }
     },
     {
-      "fixtureId": "192511852",
-      "home": "Rayo Vallecano",
-      "away": "Espanyol",
-      "dateLabel": "Jue 23 abr",
-      "timeLabel": "20:00",
-      "oddsDecimal": {
-        "1": 1.83,
-        "2": 4.33,
-        "X": 3.3
+      "fixtureId": "192511386",
+      "home": "Lecce",
+      "away": "Fiorentina",
+      "dateLabel": "Lun 20 abr",
+      "timeLabel": "15:45",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": {
+          "name": "Lecce v Fiorentina",
+          "startTimeRaw": "Start Time~20260420194500"
+        },
+        "fullTimeResult": [
+          {
+            "id": "999849046",
+            "name": "Lecce",
+            "side": "1",
+            "oddsDecimal": 3.4
+          },
+          {
+            "id": "999849048",
+            "name": "Draw",
+            "side": "X",
+            "oddsDecimal": 3.4
+          },
+          {
+            "id": "999849049",
+            "name": "Fiorentina",
+            "side": "2",
+            "oddsDecimal": 2.15
+          }
+        ],
+        "goalsOverUnder": {
+          "marketId": "981",
+          "marketName": "Goals Over/Under",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 2.1
+          },
+          "under": {
+            "oddsDecimal": 1.727
+          }
+        },
+        "asianHandicap": {
+          "marketId": "938",
+          "marketName": "Asian Handicap",
+          "selections": [
+            {
+              "team": "Lecce",
+              "lineDisplay": "0.0, +0.5",
+              "lineAverage": "0.25",
+              "oddsDecimal": 1.975
+            },
+            {
+              "team": "Fiorentina",
+              "lineDisplay": "0.0, -0.5",
+              "lineAverage": "-0.25",
+              "oddsDecimal": 1.875
+            }
+          ]
+        },
+        "goalLine": {
+          "marketId": "10143",
+          "marketName": "Goal Line",
+          "lineDisplay": "2.0, 2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 1.9
+          },
+          "under": {
+            "oddsDecimal": 1.95
+          }
+        },
+        "error": null
       }
     },
     {
-      "fixtureId": "192511855",
-      "home": "Real Oviedo",
-      "away": "Villarreal",
-      "dateLabel": "Jue 23 abr",
-      "timeLabel": "21:30",
-      "oddsDecimal": {
-        "1": 4,
-        "2": 1.85,
-        "X": 3.6
-      }
-    },
-    {
-      "fixtureId": "192612567",
-      "home": "Real Betis",
-      "away": "Real Madrid",
+      "fixtureId": "192613378",
+      "home": "Napoli",
+      "away": "Cremonese",
       "dateLabel": "Vie 24 abr",
-      "timeLabel": "21:00",
-      "oddsDecimal": {
-        "1": 3.5,
-        "2": 1.91,
-        "X": 3.75
+      "timeLabel": "15:45",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": {
+          "name": "Napoli v Cremonese",
+          "startTimeRaw": "Start Time~20260424194500"
+        },
+        "fullTimeResult": [
+          {
+            "id": "1014169441",
+            "name": "Napoli",
+            "side": "1",
+            "oddsDecimal": 1.364
+          },
+          {
+            "id": "1014169458",
+            "name": "Draw",
+            "side": "X",
+            "oddsDecimal": 4.333
+          },
+          {
+            "id": "1014169462",
+            "name": "Cremonese",
+            "side": "2",
+            "oddsDecimal": 9.5
+          }
+        ],
+        "goalsOverUnder": {
+          "marketId": "981",
+          "marketName": "Goals Over/Under",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 1.909
+          },
+          "under": {
+            "oddsDecimal": 1.909
+          }
+        },
+        "asianHandicap": {
+          "marketId": "938",
+          "marketName": "Asian Handicap",
+          "selections": [
+            {
+              "team": "Napoli",
+              "lineDisplay": "-1.0, -1.5",
+              "lineAverage": "-1.25",
+              "oddsDecimal": 1.825
+            },
+            {
+              "team": "Cremonese",
+              "lineDisplay": "+1.0, +1.5",
+              "lineAverage": "1.25",
+              "oddsDecimal": 2.025
+            }
+          ]
+        },
+        "goalLine": {
+          "marketId": "10143",
+          "marketName": "Goal Line",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 1.975
+          },
+          "under": {
+            "oddsDecimal": 1.875
+          }
+        },
+        "error": null
       }
     },
     {
-      "fixtureId": "192612571",
-      "home": "CD Alaves",
-      "away": "Mallorca",
+      "fixtureId": "192613392",
+      "home": "Parma",
+      "away": "Pisa",
       "dateLabel": "Sáb 25 abr",
-      "timeLabel": "14:00",
-      "oddsDecimal": {
-        "1": 2.1,
-        "2": 3.5,
-        "X": 3.25
+      "timeLabel": "10:00",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": {
+          "name": "Parma v Pisa",
+          "startTimeRaw": "Start Time~20260425140000"
+        },
+        "fullTimeResult": [
+          {
+            "id": "1014170358",
+            "name": "Parma",
+            "side": "1",
+            "oddsDecimal": 2
+          },
+          {
+            "id": "1014170378",
+            "name": "Draw",
+            "side": "X",
+            "oddsDecimal": 3.2
+          },
+          {
+            "id": "1014170381",
+            "name": "Pisa",
+            "side": "2",
+            "oddsDecimal": 3.9
+          }
+        ],
+        "goalsOverUnder": {
+          "marketId": "981",
+          "marketName": "Goals Over/Under",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 2.3
+          },
+          "under": {
+            "oddsDecimal": 1.615
+          }
+        },
+        "asianHandicap": null,
+        "goalLine": null,
+        "error": "Page.wait_for_function: Timeout 15000ms exceeded."
       }
     },
     {
-      "fixtureId": "192612576",
-      "home": "Getafe",
-      "away": "Barcelona",
+      "fixtureId": "192613407",
+      "home": "Bologna",
+      "away": "Roma",
       "dateLabel": "Sáb 25 abr",
-      "timeLabel": "16:15",
-      "oddsDecimal": {
-        "1": 5.75,
-        "2": 1.62,
-        "X": 3.8
+      "timeLabel": "13:00",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": {
+          "name": "Bologna v Roma",
+          "startTimeRaw": "Start Time~20260425170000"
+        },
+        "fullTimeResult": [
+          {
+            "id": "1014171835",
+            "name": "Bologna",
+            "side": "1",
+            "oddsDecimal": 2.8
+          },
+          {
+            "id": "1014171842",
+            "name": "Draw",
+            "side": "X",
+            "oddsDecimal": 3.1
+          },
+          {
+            "id": "1014171845",
+            "name": "Roma",
+            "side": "2",
+            "oddsDecimal": 2.45
+          }
+        ],
+        "goalsOverUnder": {
+          "marketId": "981",
+          "marketName": "Goals Over/Under",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 2.1
+          },
+          "under": {
+            "oddsDecimal": 1.727
+          }
+        },
+        "asianHandicap": null,
+        "goalLine": null,
+        "error": "Page.evaluate: Execution context was destroyed, most likely because of a navigation"
       }
     },
     {
-      "fixtureId": "192612581",
-      "home": "Valencia",
-      "away": "Girona",
+      "fixtureId": "192613413",
+      "home": "Verona",
+      "away": "Lecce",
       "dateLabel": "Sáb 25 abr",
-      "timeLabel": "18:30",
-      "oddsDecimal": {
-        "1": 2.05,
-        "2": 3.4,
-        "X": 3.4
+      "timeLabel": "15:45",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": null,
+        "fullTimeResult": null,
+        "goalsOverUnder": null,
+        "asianHandicap": null,
+        "goalLine": null,
+        "error": "Page.wait_for_function: Timeout 15000ms exceeded."
       }
     },
     {
-      "fixtureId": "192612585",
-      "home": "Atletico Madrid",
-      "away": "Athletic Club",
-      "dateLabel": "Sáb 25 abr",
-      "timeLabel": "21:00",
-      "oddsDecimal": {
-        "1": 1.8,
-        "2": 4.33,
-        "X": 3.6
-      }
-    },
-    {
-      "fixtureId": "192612589",
-      "home": "Rayo Vallecano",
-      "away": "Real Sociedad",
+      "fixtureId": "192613423",
+      "home": "Fiorentina",
+      "away": "Sassuolo",
       "dateLabel": "Dom 26 abr",
-      "timeLabel": "14:00",
-      "oddsDecimal": {
-        "1": 2.38,
-        "2": 2.75,
-        "X": 3.3
+      "timeLabel": "07:30",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": {
+          "name": "Fiorentina v Sassuolo",
+          "startTimeRaw": "Start Time~20260426113000"
+        },
+        "fullTimeResult": [
+          {
+            "id": "1014173514",
+            "name": "Fiorentina",
+            "side": "1",
+            "oddsDecimal": 1.9
+          },
+          {
+            "id": "1014173527",
+            "name": "Draw",
+            "side": "X",
+            "oddsDecimal": 3.5
+          },
+          {
+            "id": "1014173531",
+            "name": "Sassuolo",
+            "side": "2",
+            "oddsDecimal": 3.75
+          }
+        ],
+        "goalsOverUnder": {
+          "marketId": "981",
+          "marketName": "Goals Over/Under",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 1.909
+          },
+          "under": {
+            "oddsDecimal": 1.909
+          }
+        },
+        "asianHandicap": {
+          "marketId": "938",
+          "marketName": "Asian Handicap",
+          "selections": [
+            {
+              "team": "Fiorentina",
+              "lineDisplay": "-0.5",
+              "lineAverage": "-0.5",
+              "oddsDecimal": 1.95
+            },
+            {
+              "team": "Sassuolo",
+              "lineDisplay": "+0.5",
+              "lineAverage": "0.5",
+              "oddsDecimal": 1.9
+            }
+          ]
+        },
+        "goalLine": {
+          "marketId": "10143",
+          "marketName": "Goal Line",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 1.875
+          },
+          "under": {
+            "oddsDecimal": 1.975
+          }
+        },
+        "error": null
       }
     },
     {
-      "fixtureId": "192612593",
-      "home": "Real Oviedo",
-      "away": "Elche",
+      "fixtureId": "192613446",
+      "home": "Genoa",
+      "away": "Como",
       "dateLabel": "Dom 26 abr",
-      "timeLabel": "16:15",
-      "oddsDecimal": {
-        "1": 2.25,
-        "2": 3.1,
-        "X": 3.2
+      "timeLabel": "10:00",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": {
+          "name": "Genoa v Como",
+          "startTimeRaw": "Start Time~20260426140000"
+        },
+        "fullTimeResult": [
+          {
+            "id": "1014174372",
+            "name": "Genoa",
+            "side": "1",
+            "oddsDecimal": 4.333
+          },
+          {
+            "id": "1014174380",
+            "name": "Draw",
+            "side": "X",
+            "oddsDecimal": 3.4
+          },
+          {
+            "id": "1014174382",
+            "name": "Como",
+            "side": "2",
+            "oddsDecimal": 1.833
+          }
+        ],
+        "goalsOverUnder": {
+          "marketId": "981",
+          "marketName": "Goals Over/Under",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 2.1
+          },
+          "under": {
+            "oddsDecimal": 1.727
+          }
+        },
+        "asianHandicap": {
+          "marketId": "938",
+          "marketName": "Asian Handicap",
+          "selections": [
+            {
+              "team": "Genoa",
+              "lineDisplay": "+0.5",
+              "lineAverage": "0.5",
+              "oddsDecimal": 2
+            },
+            {
+              "team": "Como",
+              "lineDisplay": "-0.5",
+              "lineAverage": "-0.5",
+              "oddsDecimal": 1.85
+            }
+          ]
+        },
+        "goalLine": {
+          "marketId": "10143",
+          "marketName": "Goal Line",
+          "lineDisplay": "2.0, 2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 1.85
+          },
+          "under": {
+            "oddsDecimal": 2
+          }
+        },
+        "error": null
       }
     },
     {
-      "fixtureId": "192612595",
-      "home": "Osasuna",
-      "away": "Sevilla",
+      "fixtureId": "192613451",
+      "home": "Torino",
+      "away": "Inter Milan",
       "dateLabel": "Dom 26 abr",
-      "timeLabel": "18:30",
-      "oddsDecimal": {
-        "1": 2.05,
-        "2": 3.5,
-        "X": 3.25
+      "timeLabel": "13:00",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": {
+          "name": "Torino v Inter Milan",
+          "startTimeRaw": "Start Time~20260426170000"
+        },
+        "fullTimeResult": [
+          {
+            "id": "1014175240",
+            "name": "Torino",
+            "side": "1",
+            "oddsDecimal": 7
+          },
+          {
+            "id": "1014175242",
+            "name": "Draw",
+            "side": "X",
+            "oddsDecimal": 4.5
+          },
+          {
+            "id": "1014175243",
+            "name": "Inter Milan",
+            "side": "2",
+            "oddsDecimal": 1.4
+          }
+        ],
+        "goalsOverUnder": {
+          "marketId": "981",
+          "marketName": "Goals Over/Under",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 1.667
+          },
+          "under": {
+            "oddsDecimal": 2.2
+          }
+        },
+        "asianHandicap": {
+          "marketId": "938",
+          "marketName": "Asian Handicap",
+          "selections": [
+            {
+              "team": "Torino",
+              "lineDisplay": "+1.0, +1.5",
+              "lineAverage": "1.25",
+              "oddsDecimal": 1.925
+            },
+            {
+              "team": "Inter Milan",
+              "lineDisplay": "-1.0, -1.5",
+              "lineAverage": "-1.25",
+              "oddsDecimal": 1.925
+            }
+          ]
+        },
+        "goalLine": {
+          "marketId": "10143",
+          "marketName": "Goal Line",
+          "lineDisplay": "2.5, 3.0",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 1.825
+          },
+          "under": {
+            "oddsDecimal": 2.025
+          }
+        },
+        "error": null
       }
     },
     {
-      "fixtureId": "192612599",
-      "home": "Villarreal",
-      "away": "Celta Vigo",
+      "fixtureId": "192613460",
+      "home": "AC Milan",
+      "away": "Juventus",
       "dateLabel": "Dom 26 abr",
-      "timeLabel": "21:00",
-      "oddsDecimal": {
-        "1": 1.83,
-        "2": 4,
-        "X": 3.6
+      "timeLabel": "15:45",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": {
+          "name": "AC Milan v Juventus",
+          "startTimeRaw": "Start Time~20260426194500"
+        },
+        "fullTimeResult": [
+          {
+            "id": "1014175620",
+            "name": "AC Milan",
+            "side": "1",
+            "oddsDecimal": 2.5
+          },
+          {
+            "id": "1014175626",
+            "name": "Draw",
+            "side": "X",
+            "oddsDecimal": 3.3
+          },
+          {
+            "id": "1014175627",
+            "name": "Juventus",
+            "side": "2",
+            "oddsDecimal": 2.6
+          }
+        ],
+        "goalsOverUnder": {
+          "marketId": "981",
+          "marketName": "Goals Over/Under",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 1.909
+          },
+          "under": {
+            "oddsDecimal": 1.909
+          }
+        },
+        "asianHandicap": null,
+        "goalLine": null,
+        "error": "Page.wait_for_function: Timeout 15000ms exceeded."
       }
     },
     {
-      "fixtureId": "192612603",
-      "home": "Espanyol",
-      "away": "Levante",
+      "fixtureId": "192613466",
+      "home": "Cagliari",
+      "away": "Atalanta",
       "dateLabel": "Lun 27 abr",
-      "timeLabel": "21:00",
-      "oddsDecimal": {
-        "1": 1.85,
-        "2": 4.2,
-        "X": 3.4
+      "timeLabel": "13:30",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": {
+          "name": "Cagliari v Atalanta",
+          "startTimeRaw": "Start Time~20260427173000"
+        },
+        "fullTimeResult": [
+          {
+            "id": "1014176174",
+            "name": "Cagliari",
+            "side": "1",
+            "oddsDecimal": 5.25
+          },
+          {
+            "id": "1014176186",
+            "name": "Draw",
+            "side": "X",
+            "oddsDecimal": 3.6
+          },
+          {
+            "id": "1014176188",
+            "name": "Atalanta",
+            "side": "2",
+            "oddsDecimal": 1.65
+          }
+        ],
+        "goalsOverUnder": {
+          "marketId": "981",
+          "marketName": "Goals Over/Under",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 1.909
+          },
+          "under": {
+            "oddsDecimal": 1.909
+          }
+        },
+        "asianHandicap": {
+          "marketId": "938",
+          "marketName": "Asian Handicap",
+          "selections": [
+            {
+              "team": "Cagliari",
+              "lineDisplay": "+0.5, +1.0",
+              "lineAverage": "0.75",
+              "oddsDecimal": 1.975
+            },
+            {
+              "team": "Atalanta",
+              "lineDisplay": "-0.5, -1.0",
+              "lineAverage": "-0.75",
+              "oddsDecimal": 1.875
+            }
+          ]
+        },
+        "goalLine": {
+          "marketId": "10143",
+          "marketName": "Goal Line",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 1.95
+          },
+          "under": {
+            "oddsDecimal": 1.9
+          }
+        },
+        "error": null
+      }
+    },
+    {
+      "fixtureId": "192613473",
+      "home": "Lazio",
+      "away": "Udinese",
+      "dateLabel": "Lun 27 abr",
+      "timeLabel": "15:45",
+      "leagueOdds1X2": {
+        "1": null,
+        "2": null,
+        "X": null
+      },
+      "details": {
+        "eventInfo": {
+          "name": "Lazio v Udinese",
+          "startTimeRaw": "Start Time~20260427194500"
+        },
+        "fullTimeResult": [
+          {
+            "id": "1014176772",
+            "name": "Lazio",
+            "side": "1",
+            "oddsDecimal": 1.95
+          },
+          {
+            "id": "1014176808",
+            "name": "Draw",
+            "side": "X",
+            "oddsDecimal": 3.3
+          },
+          {
+            "id": "1014176836",
+            "name": "Udinese",
+            "side": "2",
+            "oddsDecimal": 4.1
+          }
+        ],
+        "goalsOverUnder": {
+          "marketId": "981",
+          "marketName": "Goals Over/Under",
+          "lineDisplay": "2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 2.2
+          },
+          "under": {
+            "oddsDecimal": 1.667
+          }
+        },
+        "asianHandicap": {
+          "marketId": "938",
+          "marketName": "Asian Handicap",
+          "selections": [
+            {
+              "team": "Lazio",
+              "lineDisplay": "-0.5",
+              "lineAverage": "-0.5",
+              "oddsDecimal": 1.975
+            },
+            {
+              "team": "Udinese",
+              "lineDisplay": "+0.5",
+              "lineAverage": "0.5",
+              "oddsDecimal": 1.875
+            }
+          ]
+        },
+        "goalLine": {
+          "marketId": "10143",
+          "marketName": "Goal Line",
+          "lineDisplay": "2.0, 2.5",
+          "lineAverage": null,
+          "over": {
+            "oddsDecimal": 1.95
+          },
+          "under": {
+            "oddsDecimal": 1.9
+          }
+        },
+        "error": null
       }
     }
   ]

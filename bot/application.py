@@ -7,7 +7,12 @@ from telegram.ext import Application, ApplicationBuilder
 from bot.config import Settings
 from bot.error_handler import handle_error
 from bot.handlers import register_handlers
-from bot.jobs import start_bet365_monitor, stop_bet365_monitor
+from bot.jobs import (
+    start_bet365_monitor,
+    start_resource_monitor,
+    stop_bet365_monitor,
+    stop_resource_monitor,
+)
 from monitors.bet365_tracking import Bet365TrackingService
 from services.bet365_extractor import Bet365BrowserExtractor, Bet365ExtractorSettings
 
@@ -35,10 +40,18 @@ def create_application(settings: Settings) -> Application:
             application,
             interval_seconds=settings.bet365_refresh_interval_seconds,
         )
+        await start_resource_monitor(
+            application,
+            enabled=settings.enable_monitoring,
+            interval_seconds=settings.monitor_interval_seconds,
+            log_to_file=settings.monitor_log_to_file,
+            chromium_ram_alert_mb=settings.monitor_chromium_ram_alert_mb,
+        )
 
     async def post_shutdown(application: Application) -> None:
         """Stop background monitoring when the bot shuts down."""
 
+        await stop_resource_monitor(application)
         await stop_bet365_monitor(application)
         await extractor.stop()
 

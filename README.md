@@ -18,8 +18,10 @@ The design stays intentionally simple:
 
 - `/start`: welcome message
 - `/help`: command list
+- `/guide`: quick usage guide
 - `/ping`: replies with `pong`
 - `/status`: reports that the bot is online
+- `/stats`: shows simple runtime resource metrics
 - `/echo <text>`: echoes back the provided text
 - `/track_url <url>`: extract a Bet365 league and store it as pending
 - `/confirm_track`: confirm the latest pending league for the current chat
@@ -29,6 +31,10 @@ The design stays intentionally simple:
 - `/untrack`: stop tracking one league by numeric selection
 - `/odds_on`: enable odds-change notifications for one league by numeric selection
 - `/odds_off`: disable odds-change notifications for one league by numeric selection
+- `/set_change_percent <n>`: set the minimum percent change required to trigger an odds alert
+- `/check_little_changes`: list pending small odds changes for the current chat
+- `/confirm_change <n>`: confirm one pending little change and move the baseline forward
+- `/confirm_all_little_changes`: confirm every pending little change
 - `/cancel`: cancel the current interactive selection
 
 ## Main flow
@@ -122,6 +128,7 @@ Stored in `tracked_league_subscriptions`:
 - `enabled`
 - `notify_new_matches`
 - `notify_odds_changes`
+- `change_percent_threshold`
 - `created_at`
 - `updated_at`
 
@@ -143,6 +150,38 @@ Stored in `active_matches`:
 - `created_at`
 - `updated_at`
 
+### Per-chat baselines
+
+Stored in `subscription_match_baselines`:
+
+- `telegram_chat_id`
+- `tracked_league_id`
+- `fixture_id`
+- `baseline_home`
+- `baseline_draw`
+- `baseline_away`
+- `updated_at`
+
+Each chat compares odds changes against its own baseline instead of against the
+previous global scrape. That avoids duplicating the global match state while
+still allowing different sensitivity levels per chat.
+
+### Little changes
+
+Stored in `little_changes`:
+
+- `telegram_chat_id`
+- `tracked_league_id`
+- `fixture_id`
+- `baseline_home`, `baseline_draw`, `baseline_away`
+- `current_home`, `current_draw`, `current_away`
+- `max_percent_change`
+- `status`
+
+If the change stays below the configured threshold, the bot does not send an
+automatic odds alert. Instead, it updates the pending `little_change` for that
+chat so it can be reviewed later with `/check_little_changes`.
+
 ## Notifications
 
 ### New match
@@ -154,11 +193,27 @@ When a new `fixture_id` appears, the bot sends a notification to chats where:
 
 ### Odds change
 
-When `odds_home`, `odds_draw`, or `odds_away` changes, the bot sends a
-notification to chats where:
+When `odds_home`, `odds_draw`, or `odds_away` changes, the bot compares the
+current odds against the per-chat baseline and calculates:
+
+`abs(current - baseline) / baseline * 100`
+
+using the maximum valid variation across `1`, `X`, and `2`.
+
+If the change is large enough, the bot sends a notification to chats where:
 
 - the subscription is enabled
 - `notify_odds_changes = true`
+- `max_percent_change >= change_percent_threshold`
+
+After sending the alert, the chat baseline is updated automatically to the
+current odds so the same move is not reported over and over again.
+
+If the change is smaller than the threshold:
+
+- the global odds still update normally
+- the chat baseline stays unchanged
+- the change is stored as a pending `little_change`
 
 ## Match browsing
 
@@ -191,6 +246,17 @@ Each match message includes:
 - kickoff
 - home vs away
 - odds `1 / X / 2`
+
+## Quick guide
+
+1. `/track_url <url>`
+2. `/confirm_track`
+3. `/list_tracks`
+4. `/matches`
+5. `/odds_on`
+6. `/set_change_percent 20`
+7. `/check_little_changes`
+8. `/confirm_change <n>` or `/confirm_all_little_changes`
 
 ## Untracking
 
@@ -235,22 +301,73 @@ BET365_POST_LOAD_WAIT_MS=4000
 - `BET365_MAX_PARALLEL_PAGES`: max number of Bet365 pages processed in parallel
 - `BET365_PAGE_LOAD_TIMEOUT_MS`: page load and runtime wait timeout
 - `BET365_POST_LOAD_WAIT_MS`: extra wait after runtime readiness before extraction
+- `ENABLE_MONITORING`: enables periodic resource monitoring in background
+- `MONITOR_INTERVAL_SECONDS`: interval of the resource monitor loop
+- `MONITOR_LOG_TO_FILE`: when `true`, also writes monitor blocks to `monitor.log`
+- `MONITOR_CHROMIUM_RAM_ALERT_MB`: warning threshold for total Chromium RAM
 
-## Setup from scratch
+## Resource monitoring
+
+The project can also monitor runtime resources without changing the bot flow.
+
+When enabled, the background monitor logs:
+
+- RAM used by the bot process
+- CPU used by the bot process
+- total system RAM usage
+- number of Chromium processes
+- total RAM used by Chromium
+- SQLite database size
+
+Enable it in `.env`:
+
+```env
+ENABLE_MONITORING=true
+MONITOR_INTERVAL_SECONDS=60
+MONITOR_LOG_TO_FILE=false
+MONITOR_CHROMIUM_RAM_ALERT_MB=800
+```
+
+When active, the bot prints blocks like:
+
+```text
+[MONITOR]
+RAM bot: 180.4 MB
+CPU bot: 6.2 %
+RAM sistema: 54.8 % (8421.3 MB)
+Chromium: 4 procesos (512.6 MB)
+DB: 1.3 MB
+```
+
+If system RAM goes above 90% or Chromium RAM goes above the configured
+threshold, the bot logs a warning.
+
+You can also request the same metrics from Telegram with:
+
+```text
+/stats
+```
+
+## Install and run
+
+Before starting, you need:
+
+- Python 3.11 or newer
+- internet access to download Python packages and Playwright Chromium
 
 ### Linux and macOS
 
 From the project root:
 
 ```bash
-chmod +x setup.sh
-./setup.sh
+chmod +x install.sh run.sh
+./install.sh
 ```
 
-If the script created `.venv`, activate it with:
+Then edit `.env` and run:
 
 ```bash
-source .venv/bin/activate
+./run.sh
 ```
 
 ### Windows
@@ -258,21 +375,22 @@ source .venv/bin/activate
 From PowerShell in the project root:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\setup.ps1
+powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-If the script created `.venv`, activate it with:
+Then edit `.env` and run:
 
 ```powershell
-.\.venv\Scripts\Activate.ps1
+.\run.ps1
 ```
 
-### What the setup scripts do
+### What the install scripts do
 
-- create `.venv` if you are not already inside a virtual environment
+- create `betbot/` if you are not already inside a virtual environment
 - upgrade `pip`
 - install `requirements.txt`
 - install Playwright Chromium
+- create `.env` from `.env.example` if it does not exist
 
 Note for Linux:
 if Chromium fails because of missing system libraries, run:
@@ -282,9 +400,23 @@ python -m playwright install chromium
 python -m playwright install --with-deps chromium
 ```
 
+### What the run scripts do
+
+- activate the virtual environment
+- verify that `.env` exists
+- verify that `TELEGRAM_BOT_TOKEN` is not empty or left as the example value
+- start the bot with `python main.py`
+
+### Compatibility scripts
+
+The older setup entrypoints still exist and now delegate to the new installers:
+
+- `setup.sh` -> `install.sh`
+- `setup.ps1` -> `install.ps1`
+
 ## Run the bot
 
-After setup and after creating `.env`:
+If you prefer to run manually after installation:
 
 ```bash
 python main.py
@@ -310,9 +442,13 @@ python main.py
 ├── storage
 │   └── bet365_tracking.py
 ├── .env.example
+├── install.ps1
+├── install.sh
 ├── main.py
 ├── README.md
 ├── requirements.txt
+├── run.ps1
+├── run.sh
 ├── setup.ps1
 └── setup.sh
 ```

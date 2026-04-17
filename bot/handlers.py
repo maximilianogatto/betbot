@@ -15,7 +15,12 @@ from telegram.ext import (
     filters,
 )
 
-from bot.alerts import build_all_matches_message, build_match_card_message
+from bot.alerts import (
+    build_all_matches_message,
+    build_little_changes_message,
+    build_match_card_message,
+)
+from monitoring import format_system_metrics_message, get_system_metrics
 from monitors.bet365_tracking import Bet365TrackingService, CommandResult
 from storage.bet365_tracking import ActiveMatchRecord, TrackedLeagueSubscription
 
@@ -25,6 +30,7 @@ SELECT_LEAGUE_FOR_MATCHES = 1
 SELECT_MATCH_FOR_MATCHES = 2
 SELECT_LEAGUE_FOR_UNTRACK = 3
 SELECT_LEAGUE_FOR_ODDS = 4
+SELECT_LEAGUE_FOR_CHANGE_PERCENT = 5
 
 MATCHES_TRACKS_CONTEXT_KEY = "bet365_matches_tracks"
 MATCHES_ACTIVE_CONTEXT_KEY = "bet365_matches_active"
@@ -32,29 +38,61 @@ MATCHES_SELECTED_TRACK_CONTEXT_KEY = "bet365_matches_selected_track"
 UNTRACK_TRACKS_CONTEXT_KEY = "bet365_untrack_tracks"
 ODDS_TRACKS_CONTEXT_KEY = "bet365_odds_tracks"
 ODDS_ENABLED_CONTEXT_KEY = "bet365_odds_enabled"
+CHANGE_PERCENT_TRACKS_CONTEXT_KEY = "bet365_change_percent_tracks"
+CHANGE_PERCENT_VALUE_CONTEXT_KEY = "bet365_change_percent_value"
 
 HELP_MESSAGE = (
-    "Comandos disponibles:\n"
+    "Comandos generales\n"
     "/start - Mensaje de bienvenida\n"
     "/help - Lista de comandos\n"
+    "/guide - Guía rápida del flujo\n"
     "/ping - Responde pong\n"
     "/status - Informa si el bot está online\n"
-    "/echo <texto> - Devuelve el texto enviado\n"
+    "/stats - Muestra métricas simples de recursos\n"
+    "/echo <texto> - Devuelve el texto enviado\n\n"
+    "Tracking de ligas\n"
     "/track_url <url> - Extrae una liga Bet365 y la deja pendiente\n"
     "/confirm_track - Confirma la última liga Bet365 pendiente\n"
+    "/confirm_empty_track - Confirma una liga Bet365 válida pero vacía\n"
     "/list_tracks - Lista las ligas Bet365 trackeadas\n"
     "/refresh_tracks - Actualiza partidos y detecta eventos nuevos\n"
-    "/matches - Permite elegir una liga y ver sus partidos\n"
-    "/untrack - Permite dejar de trackear una liga\n"
+    "/untrack - Permite dejar de trackear una liga\n\n"
+    "Consulta de partidos\n"
+    "/matches - Permite elegir una liga y ver sus partidos\n\n"
+    "Configuración de odds\n"
     "/odds_on - Activa notificaciones de cambios de odds para una liga\n"
     "/odds_off - Desactiva notificaciones de cambios de odds para una liga\n"
+    "/set_change_percent <n> - Configura el % mínimo de cambio para alertar\n\n"
+    "Little changes\n"
+    "/check_little_changes - Lista cambios pequeños pendientes\n"
+    "/confirm_change <n> - Confirma un little change por número\n"
+    "/confirm_all_little_changes - Confirma todos los pendientes\n\n"
+    "Flujos interactivos\n"
     "/cancel - Cancela la selección interactiva actual"
+)
+
+GUIDE_MESSAGE = (
+    "Guía rápida\n\n"
+    "1. /track_url <url>\n"
+    "2. /confirm_track\n"
+    "3. /list_tracks\n"
+    "4. /matches\n"
+    "5. /odds_on\n"
+    "6. /set_change_percent 20\n"
+    "7. /check_little_changes\n"
+    "8. /confirm_change <n> o /confirm_all_little_changes"
 )
 
 TRACK_URL_USAGE_MESSAGE = (
     "Usá /track_url <url_de_bet365>.\n"
     "Ejemplo:\n"
     "/track_url https://www.bet365.es/#/AC/B1/C1/D1002/E120757998/G40/"
+)
+
+SET_CHANGE_PERCENT_USAGE_MESSAGE = (
+    "Usá /set_change_percent <porcentaje>.\n"
+    "Ejemplo:\n"
+    "/set_change_percent 20"
 )
 
 
@@ -110,6 +148,17 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     await update.message.reply_text(HELP_MESSAGE)
 
 
+async def guide_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle the `/guide` command."""
+
+    del context
+
+    if update.message is None:
+        return
+
+    await update.message.reply_text(GUIDE_MESSAGE)
+
+
 async def ping_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle the `/ping` command."""
 
@@ -130,6 +179,18 @@ async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         return
 
     await update.message.reply_text("El bot está online y funcionando correctamente.")
+
+
+async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle the `/stats` command with runtime resource metrics."""
+
+    del context
+
+    if update.message is None:
+        return
+
+    metrics = get_system_metrics()
+    await update.message.reply_text(format_system_metrics_message(metrics))
 
 
 async def echo_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -181,6 +242,20 @@ async def confirm_track_command(update: Update, context: ContextTypes.DEFAULT_TY
 
     tracking_service = get_bet365_tracking_service(context)
     result = await tracking_service.confirm_pending_track(update.effective_chat.id)
+
+    await reply_with_result(update, result)
+
+
+async def confirm_empty_track_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle `/confirm_empty_track` for a valid but currently empty Bet365 league."""
+
+    if update.message is None or update.effective_chat is None:
+        return
+
+    logger.info("Comando /confirm_empty_track recibido.")
+
+    tracking_service = get_bet365_tracking_service(context)
+    result = await tracking_service.confirm_empty_pending_track(update.effective_chat.id)
 
     await reply_with_result(update, result)
 
@@ -503,10 +578,172 @@ async def odds_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE)
     return ConversationHandler.END
 
 
+async def set_change_percent_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Start the interactive flow that configures odds-change sensitivity."""
+
+    if update.message is None or update.effective_chat is None:
+        return ConversationHandler.END
+
+    if len(context.args) != 1:
+        await update.message.reply_text(
+            SET_CHANGE_PERCENT_USAGE_MESSAGE,
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        return ConversationHandler.END
+
+    try:
+        percent = float(context.args[0].replace(",", "."))
+    except ValueError:
+        await update.message.reply_text(
+            "El porcentaje debe ser un número válido.\n\n"
+            f"{SET_CHANGE_PERCENT_USAGE_MESSAGE}",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        return ConversationHandler.END
+
+    if percent <= 0:
+        await update.message.reply_text(
+            "El porcentaje debe ser mayor a 0.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        return ConversationHandler.END
+
+    tracking_service = get_bet365_tracking_service(context)
+    tracked_leagues = tracking_service.list_confirmed_tracks(update.effective_chat.id)
+
+    if not tracked_leagues:
+        await update.message.reply_text(
+            "No tenés ligas trackeadas para configurar.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        return ConversationHandler.END
+
+    context.user_data[CHANGE_PERCENT_TRACKS_CONTEXT_KEY] = tracked_leagues
+    context.user_data[CHANGE_PERCENT_VALUE_CONTEXT_KEY] = percent
+
+    await update.message.reply_text(
+        _build_track_selection_message(
+            f"Qué liga querés configurar con umbral {percent:.1f}%?",
+            tracked_leagues,
+        ),
+        reply_markup=_build_numeric_keyboard(len(tracked_leagues), "Elegí el número de la liga"),
+    )
+    return SELECT_LEAGUE_FOR_CHANGE_PERCENT
+
+
+async def set_change_percent_select_league(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE,
+) -> int:
+    """Handle the league selection during `/set_change_percent`."""
+
+    if update.message is None or update.effective_chat is None:
+        return ConversationHandler.END
+
+    tracked_leagues = context.user_data.get(CHANGE_PERCENT_TRACKS_CONTEXT_KEY)
+    percent = context.user_data.get(CHANGE_PERCENT_VALUE_CONTEXT_KEY)
+
+    if not isinstance(tracked_leagues, list) or not tracked_leagues or not isinstance(percent, float):
+        await update.message.reply_text(
+            "No encontré la selección de ligas. Probá de nuevo con /set_change_percent.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        _clear_all_selection_context(context)
+        return ConversationHandler.END
+
+    selected_index = _parse_selection_number(update.message.text, len(tracked_leagues))
+
+    if selected_index is None:
+        await update.message.reply_text(
+            "Elegí un número válido de la lista.",
+            reply_markup=_build_numeric_keyboard(len(tracked_leagues)),
+        )
+        return SELECT_LEAGUE_FOR_CHANGE_PERCENT
+
+    selected_track = tracked_leagues[selected_index]
+    tracking_service = get_bet365_tracking_service(context)
+    result = tracking_service.set_change_percent(
+        update.effective_chat.id,
+        selected_track.tracked_league.id,
+        percent,
+    )
+
+    await update.message.reply_text(
+        result.message,
+        reply_markup=ReplyKeyboardRemove(),
+    )
+    _clear_all_selection_context(context)
+    return ConversationHandler.END
+
+
+async def check_little_changes_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle `/check_little_changes` for the current chat."""
+
+    if update.message is None or update.effective_chat is None:
+        return
+
+    tracking_service = get_bet365_tracking_service(context)
+    changes = tracking_service.get_pending_little_changes(update.effective_chat.id)
+
+    if not changes:
+        await update.message.reply_text("No tenés little changes pendientes.")
+        return
+
+    await update.message.reply_text(
+        build_little_changes_message(changes),
+        parse_mode=ParseMode.HTML,
+    )
+
+
+async def confirm_change_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle `/confirm_change <n>` using the current pending order."""
+
+    if update.message is None or update.effective_chat is None:
+        return
+
+    if len(context.args) != 1 or not context.args[0].isdigit():
+        await update.message.reply_text(
+            "Usá /confirm_change <n>.\n"
+            "Primero podés mirar la lista con /check_little_changes."
+        )
+        return
+
+    index = int(context.args[0]) - 1
+    tracking_service = get_bet365_tracking_service(context)
+    result = tracking_service.confirm_little_change_by_index(update.effective_chat.id, index)
+
+    await reply_with_result(update, result)
+
+
+async def confirm_all_little_changes_command(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE,
+) -> None:
+    """Handle `/confirm_all_little_changes` for the current chat."""
+
+    if update.message is None or update.effective_chat is None:
+        return
+
+    tracking_service = get_bet365_tracking_service(context)
+    result = tracking_service.confirm_all_pending_little_changes(update.effective_chat.id)
+
+    await reply_with_result(update, result)
+
+
 async def cancel_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Cancel any active interactive selection flow."""
 
     _clear_all_selection_context(context)
+
+    if update.effective_chat is not None:
+        tracking_service = get_bet365_tracking_service(context)
+        if tracking_service.cancel_pending_empty_track(update.effective_chat.id):
+            if update.message is not None:
+                await update.message.reply_text(
+                    "Se canceló la liga vacía pendiente.",
+                    reply_markup=ReplyKeyboardRemove(),
+                )
+            return ConversationHandler.END
 
     if update.message is not None:
         await update.message.reply_text(
@@ -535,13 +772,21 @@ def register_handlers(application: Application) -> None:
 
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("help", help_command))
+    application.add_handler(CommandHandler("guide", guide_command))
     application.add_handler(CommandHandler("ping", ping_command))
     application.add_handler(CommandHandler("status", status_command))
+    application.add_handler(CommandHandler("stats", stats_command))
     application.add_handler(CommandHandler("echo", echo_command))
     application.add_handler(CommandHandler("track_url", track_url_command))
     application.add_handler(CommandHandler("confirm_track", confirm_track_command))
+    application.add_handler(CommandHandler("confirm_empty_track", confirm_empty_track_command))
     application.add_handler(CommandHandler("list_tracks", list_tracks_command))
     application.add_handler(CommandHandler("refresh_tracks", refresh_tracks_command))
+    application.add_handler(CommandHandler("check_little_changes", check_little_changes_command))
+    application.add_handler(CommandHandler("confirm_change", confirm_change_command))
+    application.add_handler(
+        CommandHandler("confirm_all_little_changes", confirm_all_little_changes_command)
+    )
 
     matches_conversation = ConversationHandler(
         entry_points=[CommandHandler("matches", matches_command)],
@@ -587,6 +832,19 @@ def register_handlers(application: Application) -> None:
         persistent=False,
     )
     application.add_handler(odds_conversation)
+
+    change_percent_conversation = ConversationHandler(
+        entry_points=[CommandHandler("set_change_percent", set_change_percent_command)],
+        states={
+            SELECT_LEAGUE_FOR_CHANGE_PERCENT: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, set_change_percent_select_league)
+            ],
+        },
+        fallbacks=[CommandHandler("cancel", cancel_command)],
+        name="bet365_change_percent_conversation",
+        persistent=False,
+    )
+    application.add_handler(change_percent_conversation)
 
     application.add_handler(CommandHandler("cancel", cancel_command))
     application.add_handler(MessageHandler(filters.COMMAND, unknown_command))
@@ -697,3 +955,5 @@ def _clear_all_selection_context(context: ContextTypes.DEFAULT_TYPE) -> None:
     context.user_data.pop(UNTRACK_TRACKS_CONTEXT_KEY, None)
     context.user_data.pop(ODDS_TRACKS_CONTEXT_KEY, None)
     context.user_data.pop(ODDS_ENABLED_CONTEXT_KEY, None)
+    context.user_data.pop(CHANGE_PERCENT_TRACKS_CONTEXT_KEY, None)
+    context.user_data.pop(CHANGE_PERCENT_VALUE_CONTEXT_KEY, None)

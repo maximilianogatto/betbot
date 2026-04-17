@@ -15,6 +15,7 @@ import asyncio
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 import logging
+import re
 import unicodedata
 from typing import Any
 from urllib.parse import urlparse
@@ -268,6 +269,8 @@ class Bet365LeagueExtraction:
     league_id: str | None
     topic: str
     league_name: str
+    is_empty: bool
+    is_provisional_name: bool
     matches: list[Bet365Match]
     payload: dict[str, Any]
 
@@ -360,37 +363,32 @@ class Bet365BrowserExtractor:
             if self._context is None:
                 raise RuntimeError("Bet365 browser context is not available.")
 
-            page = await self._context.new_page()
+            data: dict[str, Any] | None = None
 
-            try:
-                await page.goto(
-                    normalized_url,
-                    wait_until="domcontentloaded",
-                    timeout=self.settings.page_load_timeout_ms,
-                )
-                await page.wait_for_function(
-                    """
-                    () =>
-                      typeof NavLib !== 'undefined' &&
-                      typeof DataReactLib !== 'undefined' &&
-                      NavLib?.WebsiteNavigationManager?.CurrentPageData &&
-                      typeof DataReactLib.getStemFromLookup === 'function'
-                    """,
-                    timeout=self.settings.page_load_timeout_ms,
-                )
-                await page.wait_for_timeout(self.settings.post_load_wait_ms)
-                data = await page.evaluate(EXTRACTOR_JS)
+            for attempt in range(1, 3):
+                page = await self._context.new_page()
 
-                if not isinstance(data, dict):
-                    raise RuntimeError("The Bet365 extractor returned an unexpected payload format.")
-            except PlaywrightTimeoutError as error:
-                raise RuntimeError("Timed out while loading Bet365 runtime state.") from error
-            finally:
-                await page.close()
+                try:
+                    data = await self._extract_page_payload(page, normalized_url)
+                    break
+                except PlaywrightTimeoutError as error:
+                    logger.warning(
+                        "Timed out while loading Bet365 runtime state for %s (attempt %s/2).",
+                        normalized_url,
+                        attempt,
+                    )
+                    if attempt == 2:
+                        raise RuntimeError("Timed out while loading Bet365 runtime state.") from error
+                    await page.wait_for_timeout(1_500)
+                finally:
+                    await page.close()
+
+        if data is None:
+            raise RuntimeError("The Bet365 extractor could not load any runtime payload.")
 
         league_id = _optional_text(data.get("leagueId"))
         topic = str(data.get("topic", "")).strip()
-        league_name = str(data.get("leagueName", "")).strip()
+        raw_league_name = str(data.get("leagueName", "")).strip()
         extractor_error = str(data.get("error", "")).strip()
 
         if extractor_error:
@@ -399,14 +397,21 @@ class Bet365BrowserExtractor:
         if not topic:
             raise RuntimeError("The Bet365 page did not expose a usable topic.")
 
-        if not league_name:
-            raise RuntimeError("The Bet365 page did not expose a usable league name.")
-
         raw_matches = data.get("matches", [])
         if not isinstance(raw_matches, list):
             raw_matches = []
 
         matches = [_normalize_match_payload(raw_match) for raw_match in raw_matches]
+        is_empty = len(matches) == 0
+        is_provisional_name = False
+        league_name = raw_league_name
+
+        if not league_name:
+            if not is_empty:
+                raise RuntimeError("The Bet365 page did not expose a usable league name.")
+
+            league_name = _build_provisional_league_name(league_id, topic)
+            is_provisional_name = True
 
         return Bet365LeagueExtraction(
             platform="bet365",
@@ -414,9 +419,37 @@ class Bet365BrowserExtractor:
             league_id=league_id,
             topic=topic,
             league_name=league_name,
+            is_empty=is_empty,
+            is_provisional_name=is_provisional_name,
             matches=matches,
             payload=data,
         )
+
+    async def _extract_page_payload(self, page: Any, normalized_url: str) -> dict[str, Any]:
+        """Load one Bet365 league page and return the raw extracted payload."""
+
+        await page.goto(
+            normalized_url,
+            wait_until="load",
+            timeout=self.settings.page_load_timeout_ms,
+        )
+        await page.wait_for_function(
+            """
+            () =>
+              typeof NavLib !== 'undefined' &&
+              typeof DataReactLib !== 'undefined' &&
+              NavLib?.WebsiteNavigationManager?.CurrentPageData &&
+              typeof DataReactLib.getStemFromLookup === 'function'
+            """,
+            timeout=self.settings.page_load_timeout_ms,
+        )
+        await page.wait_for_timeout(self.settings.post_load_wait_ms)
+        data = await page.evaluate(EXTRACTOR_JS)
+
+        if not isinstance(data, dict):
+            raise RuntimeError("The Bet365 extractor returned an unexpected payload format.")
+
+        return data
 
 
 def validate_bet365_league_url(url: str) -> str:
@@ -595,3 +628,21 @@ def _coerce_optional_float(value: Any) -> float | None:
         return round(float(value), 2)
     except (TypeError, ValueError):
         return None
+
+
+def _build_provisional_league_name(league_id: str | None, topic: str) -> str:
+    """Build a stable placeholder name for a valid but currently empty league."""
+
+    if league_id:
+        normalized_league_id = league_id.strip()
+        if normalized_league_id and not normalized_league_id.upper().startswith("E"):
+            normalized_league_id = f"E{normalized_league_id}"
+
+        if normalized_league_id:
+            return f"Liga vacía {normalized_league_id}"
+
+    topic_match = re.search(r"#E([^#]+)#", topic)
+    if topic_match:
+        return f"Liga vacía E{topic_match.group(1)}"
+
+    return "Liga vacía Bet365"
