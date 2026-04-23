@@ -1,4 +1,4 @@
-"""Telegram command handlers for the simplified Bet365-focused bot flow."""
+"""Telegram command handlers for the current sportsbook tracking bot flow."""
 
 from __future__ import annotations
 
@@ -21,8 +21,8 @@ from bot.alerts import (
     build_match_card_message,
 )
 from monitoring import format_system_metrics_message, get_system_metrics
-from monitors.bet365_tracking import Bet365TrackingService, CommandResult
-from storage.bet365_tracking import ActiveMatchRecord, TrackedLeagueSubscription
+from monitors.tracking import CommandResult, TrackingService
+from storage.tracking_repository import ActiveEventRecord, TrackedCompetitionSubscription
 
 logger = logging.getLogger(__name__)
 
@@ -96,15 +96,19 @@ SET_CHANGE_PERCENT_USAGE_MESSAGE = (
 )
 
 
-def get_bet365_tracking_service(context: ContextTypes.DEFAULT_TYPE) -> Bet365TrackingService:
-    """Retrieve the shared Bet365 tracking service from the application."""
+def get_tracking_service(context: ContextTypes.DEFAULT_TYPE) -> TrackingService:
+    """Retrieve the shared tracking service from the application."""
 
-    tracking_service = context.application.bot_data.get("bet365_tracking_service")
+    tracking_service = context.application.bot_data.get("tracking_service")
 
-    if not isinstance(tracking_service, Bet365TrackingService):
-        raise RuntimeError("Bet365TrackingService no está configurado en la aplicación.")
+    if not isinstance(tracking_service, TrackingService):
+        raise RuntimeError("TrackingService no está configurado en la aplicación.")
 
     return tracking_service
+
+
+# Legacy alias kept while the bot finishes migrating away from Bet365-specific names.
+get_bet365_tracking_service = get_tracking_service
 
 
 async def reply_with_result(update: Update, result: CommandResult) -> None:
@@ -211,7 +215,7 @@ async def echo_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
 
 async def track_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle `/track_url <url>` for Bet365 league discovery."""
+    """Handle `/track_url <url>` for competition discovery."""
 
     if update.message is None or update.effective_chat is None:
         return
@@ -223,7 +227,7 @@ async def track_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         return
 
     url = " ".join(context.args).strip()
-    tracking_service = get_bet365_tracking_service(context)
+    tracking_service = get_tracking_service(context)
     result = await tracking_service.create_pending_track_from_url(
         chat_id=update.effective_chat.id,
         url=url,
@@ -233,42 +237,42 @@ async def track_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
 
 async def confirm_track_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle `/confirm_track` for the latest pending Bet365 request."""
+    """Handle `/confirm_track` for the latest pending tracking request."""
 
     if update.message is None or update.effective_chat is None:
         return
 
     logger.info("Comando /confirm_track recibido.")
 
-    tracking_service = get_bet365_tracking_service(context)
+    tracking_service = get_tracking_service(context)
     result = await tracking_service.confirm_pending_track(update.effective_chat.id)
 
     await reply_with_result(update, result)
 
 
 async def confirm_empty_track_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle `/confirm_empty_track` for a valid but currently empty Bet365 league."""
+    """Handle `/confirm_empty_track` for a valid but currently empty competition."""
 
     if update.message is None or update.effective_chat is None:
         return
 
     logger.info("Comando /confirm_empty_track recibido.")
 
-    tracking_service = get_bet365_tracking_service(context)
+    tracking_service = get_tracking_service(context)
     result = await tracking_service.confirm_empty_pending_track(update.effective_chat.id)
 
     await reply_with_result(update, result)
 
 
 async def list_tracks_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle `/list_tracks` using the Bet365 subscription store."""
+    """Handle `/list_tracks` using the tracked subscription store."""
 
     if update.message is None or update.effective_chat is None:
         return
 
     logger.info("Comando /list_tracks recibido.")
 
-    tracking_service = get_bet365_tracking_service(context)
+    tracking_service = get_tracking_service(context)
     result = tracking_service.build_tracks_list_message(update.effective_chat.id)
 
     await reply_with_result(update, result)
@@ -282,13 +286,13 @@ async def refresh_tracks_command(update: Update, context: ContextTypes.DEFAULT_T
 
     logger.info("Comando /refresh_tracks recibido.")
 
-    tracking_service = get_bet365_tracking_service(context)
+    tracking_service = get_tracking_service(context)
 
     try:
         summary = await tracking_service.refresh_chat_tracks(update.effective_chat.id)
         await tracking_service.dispatch_notifications(context.bot, summary)
     except (RuntimeError, ValueError) as error:
-        logger.exception("Bet365 refresh failed for chat_id=%s.", update.effective_chat.id)
+        logger.exception("Tracking refresh failed for chat_id=%s.", update.effective_chat.id)
         await update.message.reply_text(
             "No pude actualizar las ligas trackeadas.\n"
             f"Detalle: {error}"
@@ -306,7 +310,7 @@ async def matches_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     logger.info("Comando /matches recibido.")
 
-    tracking_service = get_bet365_tracking_service(context)
+    tracking_service = get_tracking_service(context)
     tracked_leagues = tracking_service.list_confirmed_tracks(update.effective_chat.id)
 
     if not tracked_leagues:
@@ -349,7 +353,7 @@ async def matches_select_league(update: Update, context: ContextTypes.DEFAULT_TY
         return SELECT_LEAGUE_FOR_MATCHES
 
     selected_track = tracked_leagues[selected_index]
-    tracking_service = get_bet365_tracking_service(context)
+    tracking_service = get_tracking_service(context)
 
     try:
         tracked_subscription, active_matches = tracking_service.get_matches_for_track(
@@ -424,7 +428,7 @@ async def matches_select_match(update: Update, context: ContextTypes.DEFAULT_TYP
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    if not isinstance(tracked_league, TrackedLeagueSubscription):
+    if not isinstance(tracked_league, TrackedCompetitionSubscription):
         await update.message.reply_text(
             "No encontré la liga seleccionada. Probá de nuevo con /matches.",
             reply_markup=ReplyKeyboardRemove(),
@@ -467,7 +471,7 @@ async def untrack_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     logger.info("Comando /untrack recibido.")
 
-    tracking_service = get_bet365_tracking_service(context)
+    tracking_service = get_tracking_service(context)
     tracked_leagues = tracking_service.list_confirmed_tracks(update.effective_chat.id)
 
     if not tracked_leagues:
@@ -510,7 +514,7 @@ async def untrack_select_league(update: Update, context: ContextTypes.DEFAULT_TY
         return SELECT_LEAGUE_FOR_UNTRACK
 
     selected_track = tracked_leagues[selected_index]
-    tracking_service = get_bet365_tracking_service(context)
+    tracking_service = get_tracking_service(context)
     result = tracking_service.untrack_chat(
         update.effective_chat.id,
         selected_track.tracked_league.id,
@@ -563,7 +567,7 @@ async def odds_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE)
         return SELECT_LEAGUE_FOR_ODDS
 
     selected_track = tracked_leagues[selected_index]
-    tracking_service = get_bet365_tracking_service(context)
+    tracking_service = get_tracking_service(context)
     result = tracking_service.set_odds_change_notifications(
         update.effective_chat.id,
         selected_track.tracked_league.id,
@@ -608,7 +612,7 @@ async def set_change_percent_command(update: Update, context: ContextTypes.DEFAU
         )
         return ConversationHandler.END
 
-    tracking_service = get_bet365_tracking_service(context)
+    tracking_service = get_tracking_service(context)
     tracked_leagues = tracking_service.list_confirmed_tracks(update.effective_chat.id)
 
     if not tracked_leagues:
@@ -661,7 +665,7 @@ async def set_change_percent_select_league(
         return SELECT_LEAGUE_FOR_CHANGE_PERCENT
 
     selected_track = tracked_leagues[selected_index]
-    tracking_service = get_bet365_tracking_service(context)
+    tracking_service = get_tracking_service(context)
     result = tracking_service.set_change_percent(
         update.effective_chat.id,
         selected_track.tracked_league.id,
@@ -682,7 +686,7 @@ async def check_little_changes_command(update: Update, context: ContextTypes.DEF
     if update.message is None or update.effective_chat is None:
         return
 
-    tracking_service = get_bet365_tracking_service(context)
+    tracking_service = get_tracking_service(context)
     changes = tracking_service.get_pending_little_changes(update.effective_chat.id)
 
     if not changes:
@@ -709,7 +713,7 @@ async def confirm_change_command(update: Update, context: ContextTypes.DEFAULT_T
         return
 
     index = int(context.args[0]) - 1
-    tracking_service = get_bet365_tracking_service(context)
+    tracking_service = get_tracking_service(context)
     result = tracking_service.confirm_little_change_by_index(update.effective_chat.id, index)
 
     await reply_with_result(update, result)
@@ -724,7 +728,7 @@ async def confirm_all_little_changes_command(
     if update.message is None or update.effective_chat is None:
         return
 
-    tracking_service = get_bet365_tracking_service(context)
+    tracking_service = get_tracking_service(context)
     result = tracking_service.confirm_all_pending_little_changes(update.effective_chat.id)
 
     await reply_with_result(update, result)
@@ -736,7 +740,7 @@ async def cancel_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     _clear_all_selection_context(context)
 
     if update.effective_chat is not None:
-        tracking_service = get_bet365_tracking_service(context)
+        tracking_service = get_tracking_service(context)
         if tracking_service.cancel_pending_empty_track(update.effective_chat.id):
             if update.message is not None:
                 await update.message.reply_text(
@@ -861,7 +865,7 @@ async def _start_odds_toggle(
     if update.message is None or update.effective_chat is None:
         return ConversationHandler.END
 
-    tracking_service = get_bet365_tracking_service(context)
+    tracking_service = get_tracking_service(context)
     tracked_leagues = tracking_service.list_confirmed_tracks(update.effective_chat.id)
 
     if not tracked_leagues:
@@ -886,7 +890,7 @@ async def _start_odds_toggle(
     return SELECT_LEAGUE_FOR_ODDS
 
 
-def _build_track_selection_message(prompt: str, tracks: list[TrackedLeagueSubscription]) -> str:
+def _build_track_selection_message(prompt: str, tracks: list[TrackedCompetitionSubscription]) -> str:
     """Build a league-selection prompt using numbered tracked leagues."""
 
     lines = [prompt]
@@ -898,8 +902,8 @@ def _build_track_selection_message(prompt: str, tracks: list[TrackedLeagueSubscr
 
 
 def _build_match_selection_message(
-    tracked_league: TrackedLeagueSubscription,
-    matches: list[ActiveMatchRecord],
+    tracked_league: TrackedCompetitionSubscription,
+    matches: list[ActiveEventRecord],
 ) -> str:
     """Build the second prompt used by `/matches`."""
 

@@ -451,7 +451,6 @@ class Bet365BrowserExtractor:
 
         return data
 
-
 def validate_bet365_league_url(url: str) -> str:
     """Validate and normalize a Bet365 league URL before scraping."""
 

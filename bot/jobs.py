@@ -1,4 +1,4 @@
-"""Background monitoring loop for the Bet365 bot.
+"""Background monitoring loops for the bot runtime.
 
 The project intentionally uses a small async loop instead of a heavier
 scheduler so the runtime stays easy to understand and easy to change.
@@ -17,38 +17,42 @@ from monitoring import (
     get_metric_warnings,
     get_system_metrics,
 )
-from monitors.bet365_tracking import Bet365TrackingService
+from monitors.tracking import TrackingService
 
 logger = logging.getLogger(__name__)
 
-MONITOR_TASK_KEY = "bet365_monitor_task"
-RESOURCE_MONITOR_TASK_KEY = "bet365_resource_monitor_task"
+TRACKING_MONITOR_TASK_KEY = "tracking_monitor_task"
+RESOURCE_MONITOR_TASK_KEY = "resource_monitor_task"
+LEGACY_MONITOR_TASK_KEY = "bet365_monitor_task"
+LEGACY_TRACKING_SERVICE_KEY = "bet365_tracking_service"
+TRACKING_SERVICE_KEY = "tracking_service"
 
 
-async def start_bet365_monitor(application: Application, interval_seconds: int) -> None:
-    """Start the background Bet365 monitoring loop once."""
+async def start_tracking_monitor(application: Application, interval_seconds: int) -> None:
+    """Start the background tracking monitor loop once."""
 
-    existing_task = application.bot_data.get(MONITOR_TASK_KEY)
+    existing_task = application.bot_data.get(TRACKING_MONITOR_TASK_KEY)
 
     if isinstance(existing_task, asyncio.Task) and not existing_task.done():
         return
 
     task = asyncio.create_task(
-        _bet365_monitor_loop(application, interval_seconds),
-        name="bet365-monitor-loop",
+        _tracking_monitor_loop(application, interval_seconds),
+        name="tracking-monitor-loop",
     )
-    application.bot_data[MONITOR_TASK_KEY] = task
+    application.bot_data[TRACKING_MONITOR_TASK_KEY] = task
+    application.bot_data[LEGACY_MONITOR_TASK_KEY] = task
 
     logger.info(
-        "Bet365 monitor loop started with interval_seconds=%s.",
+        "Tracking monitor loop started with interval_seconds=%s.",
         interval_seconds,
     )
 
 
-async def stop_bet365_monitor(application: Application) -> None:
-    """Stop the background Bet365 monitoring loop if it is running."""
+async def stop_tracking_monitor(application: Application) -> None:
+    """Stop the background tracking monitor loop if it is running."""
 
-    task = application.bot_data.get(MONITOR_TASK_KEY)
+    task = application.bot_data.get(TRACKING_MONITOR_TASK_KEY)
 
     if not isinstance(task, asyncio.Task):
         return
@@ -58,9 +62,10 @@ async def stop_bet365_monitor(application: Application) -> None:
     try:
         await task
     except asyncio.CancelledError:
-        logger.info("Bet365 monitor loop stopped.")
+        logger.info("Tracking monitor loop stopped.")
 
-    application.bot_data.pop(MONITOR_TASK_KEY, None)
+    application.bot_data.pop(TRACKING_MONITOR_TASK_KEY, None)
+    application.bot_data.pop(LEGACY_MONITOR_TASK_KEY, None)
 
 
 async def start_resource_monitor(
@@ -88,7 +93,7 @@ async def start_resource_monitor(
             log_to_file=log_to_file,
             chromium_ram_alert_mb=chromium_ram_alert_mb,
         ),
-        name="bet365-resource-monitor-loop",
+        name="resource-monitor-loop",
     )
     application.bot_data[RESOURCE_MONITOR_TASK_KEY] = task
 
@@ -118,20 +123,22 @@ async def stop_resource_monitor(application: Application) -> None:
     application.bot_data.pop(RESOURCE_MONITOR_TASK_KEY, None)
 
 
-async def _bet365_monitor_loop(application: Application, interval_seconds: int) -> None:
-    """Run the periodic Bet365 scrape and notification cycle forever."""
+async def _tracking_monitor_loop(application: Application, interval_seconds: int) -> None:
+    """Run the periodic scrape and notification cycle forever."""
 
-    tracking_service = application.bot_data.get("bet365_tracking_service")
+    tracking_service = application.bot_data.get(TRACKING_SERVICE_KEY) or application.bot_data.get(
+        LEGACY_TRACKING_SERVICE_KEY
+    )
 
-    if not isinstance(tracking_service, Bet365TrackingService):
-        logger.error("Bet365TrackingService is not configured; monitor loop will not run.")
+    if not isinstance(tracking_service, TrackingService):
+        logger.error("TrackingService is not configured; monitor loop will not run.")
         return
 
     while True:
         try:
             summary = await tracking_service.monitor_once(application.bot)
             logger.info(
-                "Bet365 monitor cycle finished: requested=%s refreshed=%s active_matches=%s new_events=%s odds_changes=%s failed=%s",
+                "Tracking monitor cycle finished: requested=%s refreshed=%s active_matches=%s new_events=%s odds_changes=%s failed=%s",
                 summary.tracks_requested,
                 summary.tracks_refreshed,
                 summary.active_matches,
@@ -142,9 +149,14 @@ async def _bet365_monitor_loop(application: Application, interval_seconds: int) 
         except asyncio.CancelledError:
             raise
         except Exception:
-            logger.exception("Unhandled error during Bet365 monitor cycle.")
+            logger.exception("Unhandled error during tracking monitor cycle.")
 
         await asyncio.sleep(interval_seconds)
+
+
+# Legacy compatibility aliases kept while the bot wiring migrates to neutral names.
+start_bet365_monitor = start_tracking_monitor
+stop_bet365_monitor = stop_tracking_monitor
 
 
 async def _resource_monitor_loop(

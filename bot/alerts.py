@@ -4,10 +4,18 @@ from __future__ import annotations
 
 from html import escape
 
-from storage.bet365_tracking import ActiveMatchRecord, LittleChangeRecord, MatchBaseline, TrackedLeague
+from storage.tracking_repository import (
+    ActiveEventRecord,
+    EventBaseline,
+    SmallChangeRecord,
+    TrackedCompetition,
+)
 
 
-def build_new_event_alert_message(tracked_league: TrackedLeague, match: ActiveMatchRecord) -> str:
+def build_new_event_alert_message(
+    tracked_league: TrackedCompetition,
+    match: ActiveEventRecord,
+) -> str:
     """Build a compact HTML-formatted Telegram message for a new event."""
 
     return (
@@ -22,9 +30,9 @@ def build_new_event_alert_message(tracked_league: TrackedLeague, match: ActiveMa
 
 
 def build_odds_change_alert_message(
-    tracked_league: TrackedLeague,
-    baseline: MatchBaseline,
-    current: ActiveMatchRecord,
+    tracked_league: TrackedCompetition,
+    baseline: EventBaseline,
+    current: ActiveEventRecord,
     max_percent_change: float,
 ) -> str:
     """Build a readable HTML-formatted Telegram message for an odds change."""
@@ -47,8 +55,8 @@ def build_odds_change_alert_message(
 
 
 def build_match_reminder_alert_message(
-    tracked_league: TrackedLeague,
-    match: ActiveMatchRecord,
+    tracked_league: TrackedCompetition,
+    match: ActiveEventRecord,
 ) -> str:
     """Build an HTML-formatted Telegram reminder sent 5 minutes before kickoff."""
 
@@ -64,7 +72,10 @@ def build_match_reminder_alert_message(
     )
 
 
-def build_match_card_message(tracked_league: TrackedLeague, match: ActiveMatchRecord) -> str:
+def build_match_card_message(
+    tracked_league: TrackedCompetition,
+    match: ActiveEventRecord,
+) -> str:
     """Build an HTML-formatted Telegram message for one stored match."""
 
     return (
@@ -78,8 +89,8 @@ def build_match_card_message(tracked_league: TrackedLeague, match: ActiveMatchRe
 
 
 def build_all_matches_message(
-    tracked_league: TrackedLeague,
-    matches: list[ActiveMatchRecord],
+    tracked_league: TrackedCompetition,
+    matches: list[ActiveEventRecord],
 ) -> str:
     """Build an HTML-formatted Telegram message containing all active matches."""
 
@@ -103,7 +114,7 @@ def build_all_matches_message(
     return "\n".join(lines)
 
 
-def build_little_changes_message(changes: list[LittleChangeRecord]) -> str:
+def build_little_changes_message(changes: list[SmallChangeRecord]) -> str:
     """Build an HTML-formatted list of pending little changes."""
 
     lines = ["🧩 <b>Little changes pendientes</b>"]
@@ -130,7 +141,7 @@ def build_little_changes_message(changes: list[LittleChangeRecord]) -> str:
     return "\n".join(lines)
 
 
-def format_kickoff_text(match: ActiveMatchRecord) -> str:
+def format_kickoff_text(match: ActiveEventRecord) -> str:
     """Format kickoff text for Telegram output."""
 
     date_label = (match.kickoff_label_date or "").strip()
