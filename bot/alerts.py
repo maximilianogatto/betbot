@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from html import escape
 
 from storage.tracking_repository import (
@@ -11,6 +12,8 @@ from storage.tracking_repository import (
     TrackedCompetition,
 )
 
+MAX_GROUPED_ALERT_ITEMS = 10
+
 
 def build_new_event_alert_message(
     tracked_league: TrackedCompetition,
@@ -18,15 +21,43 @@ def build_new_event_alert_message(
 ) -> str:
     """Build a compact HTML-formatted Telegram message for a new event."""
 
-    return (
-        f"🆕 <b>Nuevo evento - {escape(tracked_league.platform_display_name)}</b>\n"
-        f"🏷️ <b>Liga:</b> {escape(tracked_league.league_name)}\n"
-        f"⚽ <b>Partido:</b> {escape(match.home)} vs {escape(match.away)}\n"
-        f"🕒 <b>Horario:</b> {escape(format_kickoff_text(match))}\n"
-        f"💰 <b>Odds:</b> 1={format_odd_text(match.odds_home)} | "
-        f"X={format_odd_text(match.odds_draw)} | "
-        f"2={format_odd_text(match.odds_away)}"
-    )
+    lines = [
+        f"🌐 <b>Plataforma:</b> {escape(tracked_league.platform_display_name)}",
+        f"🏷️ <b>Liga:</b> {escape(tracked_league.league_name)}",
+        "",
+        "🆕 <b>Nuevo partido</b>",
+        "",
+    ]
+    lines.extend(_build_match_block_lines(match))
+    return "\n".join(lines)
+
+
+def build_grouped_new_event_alert_message(
+    tracked_league: TrackedCompetition,
+    matches: Sequence[ActiveEventRecord],
+    *,
+    max_items: int = MAX_GROUPED_ALERT_ITEMS,
+) -> str:
+    """Build one grouped Telegram message for multiple new events."""
+
+    total_matches = len(matches)
+    lines = [
+        f"🌐 <b>Plataforma:</b> {escape(tracked_league.platform_display_name)}",
+        f"🏷️ <b>Liga:</b> {escape(tracked_league.league_name)}",
+        "",
+        f"📋 <b>Nuevos partidos:</b> {total_matches}",
+    ]
+
+    for match in matches[:max_items]:
+        lines.append("")
+        lines.extend(_build_match_block_lines(match))
+
+    remaining = total_matches - min(total_matches, max_items)
+    if remaining > 0:
+        lines.append("")
+        lines.append(f"... y {remaining} más")
+
+    return "\n".join(lines)
 
 
 def build_odds_change_alert_message(
@@ -54,6 +85,48 @@ def build_odds_change_alert_message(
     )
 
 
+def build_grouped_odds_change_alert_message(
+    tracked_league: TrackedCompetition,
+    changes: Sequence[tuple[EventBaseline, ActiveEventRecord, float]],
+    *,
+    max_items: int = MAX_GROUPED_ALERT_ITEMS,
+) -> str:
+    """Build one grouped Telegram message for multiple odds changes."""
+
+    total_changes = len(changes)
+    lines = [
+        f"🌐 <b>Plataforma:</b> {escape(tracked_league.platform_display_name)}",
+        f"🏷️ <b>Liga:</b> {escape(tracked_league.league_name)}",
+        "",
+        f"📈 <b>Cambios de odds:</b> {total_changes}",
+    ]
+
+    for baseline, current, max_percent_change in changes[:max_items]:
+        lines.append("")
+        lines.append(f"🕒 <b>{escape(format_kickoff_text(current))}</b>")
+        lines.append(f"⚽ {escape(current.home)} vs {escape(current.away)}")
+        lines.append(
+            "Antes: "
+            f"1={format_odd_text(baseline.baseline_home)} | "
+            f"X={format_odd_text(baseline.baseline_draw)} | "
+            f"2={format_odd_text(baseline.baseline_away)}"
+        )
+        lines.append(
+            "Ahora: "
+            f"1={format_odd_text(current.odds_home)} | "
+            f"X={format_odd_text(current.odds_draw)} | "
+            f"2={format_odd_text(current.odds_away)}"
+        )
+        lines.append(f"📊 Variación máxima: {max_percent_change:.1f}%")
+
+    remaining = total_changes - min(total_changes, max_items)
+    if remaining > 0:
+        lines.append("")
+        lines.append(f"... y {remaining} más")
+
+    return "\n".join(lines)
+
+
 def build_match_reminder_alert_message(
     tracked_league: TrackedCompetition,
     match: ActiveEventRecord,
@@ -78,15 +151,13 @@ def build_match_card_message(
 ) -> str:
     """Build an HTML-formatted Telegram message for one stored match."""
 
-    return (
-        f"🌐 <b>Plataforma:</b> {escape(tracked_league.platform_display_name)}\n"
-        f"🏷️ <b>Liga:</b> {escape(tracked_league.league_name)}\n\n"
-        f"🕒 <b>{escape(format_kickoff_text(match))}</b>\n"
-        f"⚽ {escape(match.home)} vs {escape(match.away)}\n"
-        f"💰 1={format_odd_text(match.odds_home)} | "
-        f"X={format_odd_text(match.odds_draw)} | "
-        f"2={format_odd_text(match.odds_away)}"
-    )
+    lines = [
+        f"🌐 <b>Plataforma:</b> {escape(tracked_league.platform_display_name)}",
+        f"🏷️ <b>Liga:</b> {escape(tracked_league.league_name)}",
+        "",
+    ]
+    lines.extend(_build_match_block_lines(match))
+    return "\n".join(lines)
 
 
 def build_all_matches_message(
@@ -104,14 +175,7 @@ def build_all_matches_message(
 
     for match in matches:
         lines.append("")
-        lines.append(f"🕒 <b>{escape(format_kickoff_text(match))}</b>")
-        lines.append(f"⚽ {escape(match.home)} vs {escape(match.away)}")
-        lines.append(
-            "💰 "
-            f"1={format_odd_text(match.odds_home)} | "
-            f"X={format_odd_text(match.odds_draw)} | "
-            f"2={format_odd_text(match.odds_away)}"
-        )
+        lines.extend(_build_match_block_lines(match))
 
     return "\n".join(lines)
 
@@ -175,6 +239,21 @@ def format_kickoff_labels(date_label: str | None, time_label: str | None) -> str
         return normalized_time
 
     return "Horario no disponible"
+
+
+def _build_match_block_lines(match: ActiveEventRecord) -> list[str]:
+    """Build the standard three-line event block used across Telegram messages."""
+
+    return [
+        f"🕒 <b>{escape(format_kickoff_text(match))}</b>",
+        f"⚽ {escape(match.home)} vs {escape(match.away)}",
+        (
+            "💰 "
+            f"1={format_odd_text(match.odds_home)} | "
+            f"X={format_odd_text(match.odds_draw)} | "
+            f"2={format_odd_text(match.odds_away)}"
+        ),
+    ]
 
 
 def format_odd_text(value: float | None) -> str:

@@ -12,14 +12,17 @@ PATH_TO_ENV = os.path.join(os.path.dirname(__file__), "..", ".env")
 
 @dataclass
 class Settings:
-    """Container for runtime settings used by the Bet365 bot."""
+    """Container for runtime settings used by the tracking bot."""
 
     telegram_bot_token: str
     log_level: str = "INFO"
-    bet365_refresh_interval_seconds: int = 120
-    bet365_max_parallel_pages: int = 3
-    bet365_page_load_timeout_ms: int = 60_000
-    bet365_post_load_wait_ms: int = 4_000
+    tracking_refresh_interval_seconds: int = 120
+    tracking_max_parallel_refreshes: int = 3
+    extractor_max_parallel_pages: int = 3
+    extractor_page_load_timeout_ms: int = 60_000
+    extractor_post_load_wait_ms: int = 4_000
+    tracking_default_change_threshold_percent: float = 20.0
+    tracking_default_notify_odds_changes: bool = True
     enable_monitoring: bool = False
     monitor_interval_seconds: int = 60
     monitor_log_to_file: bool = False
@@ -36,24 +39,53 @@ def load_settings() -> Settings:
 
     telegram_bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
     log_level = os.getenv("LOG_LEVEL", "INFO").strip().upper() or "INFO"
-    bet365_refresh_interval_seconds = _parse_positive_int(
-        os.getenv(
+    tracking_refresh_interval_seconds = _parse_positive_int(
+        _first_env_value(
+            "TRACKING_REFRESH_INTERVAL_SECONDS",
             "BET365_REFRESH_INTERVAL_SECONDS",
-            os.getenv("BET365_MONITOR_INTERVAL_SECONDS", "120"),
+            "BET365_MONITOR_INTERVAL_SECONDS",
+            default="120",
         ),
-        variable_name="BET365_REFRESH_INTERVAL_SECONDS",
+        variable_name="TRACKING_REFRESH_INTERVAL_SECONDS",
     )
-    bet365_max_parallel_pages = _parse_positive_int(
-        os.getenv("BET365_MAX_PARALLEL_PAGES", "3"),
-        variable_name="BET365_MAX_PARALLEL_PAGES",
+    tracking_max_parallel_refreshes = _parse_positive_int(
+        _first_env_value(
+            "TRACKING_MAX_PARALLEL_REFRESHES",
+            "BET365_MAX_PARALLEL_PAGES",
+            default="3",
+        ),
+        variable_name="TRACKING_MAX_PARALLEL_REFRESHES",
     )
-    bet365_page_load_timeout_ms = _parse_positive_int(
-        os.getenv("BET365_PAGE_LOAD_TIMEOUT_MS", "60000"),
-        variable_name="BET365_PAGE_LOAD_TIMEOUT_MS",
+    extractor_max_parallel_pages = _parse_positive_int(
+        _first_env_value(
+            "EXTRACTOR_MAX_PARALLEL_PAGES",
+            "BET365_MAX_PARALLEL_PAGES",
+            default="3",
+        ),
+        variable_name="EXTRACTOR_MAX_PARALLEL_PAGES",
     )
-    bet365_post_load_wait_ms = _parse_positive_int(
-        os.getenv("BET365_POST_LOAD_WAIT_MS", "4000"),
-        variable_name="BET365_POST_LOAD_WAIT_MS",
+    extractor_page_load_timeout_ms = _parse_positive_int(
+        _first_env_value(
+            "EXTRACTOR_PAGE_LOAD_TIMEOUT_MS",
+            "BET365_PAGE_LOAD_TIMEOUT_MS",
+            default="60000",
+        ),
+        variable_name="EXTRACTOR_PAGE_LOAD_TIMEOUT_MS",
+    )
+    extractor_post_load_wait_ms = _parse_positive_int(
+        _first_env_value(
+            "EXTRACTOR_POST_LOAD_WAIT_MS",
+            "BET365_POST_LOAD_WAIT_MS",
+            default="4000",
+        ),
+        variable_name="EXTRACTOR_POST_LOAD_WAIT_MS",
+    )
+    tracking_default_change_threshold_percent = _parse_positive_float(
+        os.getenv("TRACKING_DEFAULT_CHANGE_THRESHOLD_PERCENT", "20.0"),
+        variable_name="TRACKING_DEFAULT_CHANGE_THRESHOLD_PERCENT",
+    )
+    tracking_default_notify_odds_changes = _parse_bool(
+        os.getenv("TRACKING_DEFAULT_NOTIFY_ODDS_CHANGES", "true")
     )
     enable_monitoring = _parse_bool(os.getenv("ENABLE_MONITORING", "false"))
     monitor_interval_seconds = _parse_positive_int(
@@ -74,15 +106,29 @@ def load_settings() -> Settings:
     return Settings(
         telegram_bot_token=telegram_bot_token,
         log_level=log_level,
-        bet365_refresh_interval_seconds=bet365_refresh_interval_seconds,
-        bet365_max_parallel_pages=bet365_max_parallel_pages,
-        bet365_page_load_timeout_ms=bet365_page_load_timeout_ms,
-        bet365_post_load_wait_ms=bet365_post_load_wait_ms,
+        tracking_refresh_interval_seconds=tracking_refresh_interval_seconds,
+        tracking_max_parallel_refreshes=tracking_max_parallel_refreshes,
+        extractor_max_parallel_pages=extractor_max_parallel_pages,
+        extractor_page_load_timeout_ms=extractor_page_load_timeout_ms,
+        extractor_post_load_wait_ms=extractor_post_load_wait_ms,
+        tracking_default_change_threshold_percent=tracking_default_change_threshold_percent,
+        tracking_default_notify_odds_changes=tracking_default_notify_odds_changes,
         enable_monitoring=enable_monitoring,
         monitor_interval_seconds=monitor_interval_seconds,
         monitor_log_to_file=monitor_log_to_file,
         monitor_chromium_ram_alert_mb=monitor_chromium_ram_alert_mb,
     )
+
+
+def _first_env_value(*names: str, default: str) -> str:
+    """Return the first non-empty environment variable among the provided names."""
+
+    for name in names:
+        value = os.getenv(name)
+        if value is not None and value.strip():
+            return value
+
+    return default
 
 
 def _parse_positive_int(raw_value: str, variable_name: str) -> int:

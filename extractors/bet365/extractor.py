@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from core.extractor_base import Extractor
 from core.models import CompetitionExtraction, CompetitionKey, EventKey, EventSnapshot, Odds1X2, utc_now_iso
-from services.bet365_extractor import (
+from extractors.bet365.client import (
     Bet365BrowserExtractor,
     Bet365ExtractorSettings,
     Bet365LeagueExtraction,

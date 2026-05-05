@@ -1,7 +1,6 @@
 """Lógica de monitoreo y reglas de negocio."""
 
 from monitors.tracking import (
-    Bet365TrackingService,
     CommandResult,
     CompetitionRefreshResult,
     RefreshSummary,
@@ -9,7 +8,6 @@ from monitors.tracking import (
 )
 
 __all__ = [
-    "Bet365TrackingService",
     "CommandResult",
     "CompetitionRefreshResult",
     "RefreshSummary",

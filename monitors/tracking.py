@@ -21,6 +21,8 @@ from telegram import Bot
 from telegram.constants import ParseMode
 
 from bot.alerts import (
+    build_grouped_new_event_alert_message,
+    build_grouped_odds_change_alert_message,
     build_match_reminder_alert_message,
     build_new_event_alert_message,
     build_odds_change_alert_message,
@@ -103,9 +105,6 @@ class TrackingService:
         repository: SqliteTrackingRepository | None = None,
         max_parallel_refreshes: int = 3,
     ) -> None:
-        # This service keeps its legacy name for compatibility with the current
-        # bot wiring, but it now consumes generic extractor and repository
-        # contracts so future sportsbooks can plug into the same flow.
         self.extractor_registry = extractor_registry or global_extractor_registry
         self.repository = repository or default_tracking_repository
         self.max_parallel_refreshes = max(1, max_parallel_refreshes)
@@ -191,6 +190,7 @@ class TrackingService:
 
         bootstrap_count: int | None = None
         bootstrap_error: str | None = None
+        active_events: list[ActiveEventRecord] = []
 
         async with self._refresh_lock:
             self.repository.sanitize_tracking_state()
@@ -234,17 +234,18 @@ class TrackingService:
                     bootstrap_error = str(error)
 
             try:
-                self.repository.initialize_event_baselines(
+                active_events = self.repository.get_active_events(
+                    confirmed_request.tracked_competition.id,
+                    only_future=True,
+                )
+                self._initialize_subscription_state(
                     chat_id,
                     confirmed_request.tracked_competition.id,
-                    self.repository.get_active_events(
-                        confirmed_request.tracked_competition.id,
-                        only_future=True,
-                    ),
+                    active_events,
                 )
             except Exception:
                 logger.exception(
-                    "Failed to initialize per-chat baselines for chat_id=%s tracked_league_id=%s.",
+                    "Failed to initialize per-chat subscription state for chat_id=%s tracked_league_id=%s.",
                     chat_id,
                     confirmed_request.tracked_competition.id,
                 )
@@ -287,6 +288,16 @@ class TrackingService:
                 confirmed_request = self.repository.confirm_pending_competition_request(chat_id)
             except ValueError as error:
                 return CommandResult(ok=False, message=str(error))
+
+            active_events = self.repository.get_active_events(
+                confirmed_request.tracked_competition.id,
+                only_future=True,
+            )
+            self._initialize_subscription_state(
+                chat_id,
+                confirmed_request.tracked_competition.id,
+                active_events,
+            )
 
         return CommandResult(
             ok=True,
@@ -545,26 +556,45 @@ class TrackingService:
             )
 
             if subscription.notify_new_matches:
-                for match in result.new_matches:
-                    if self.repository.has_sent_alert(
+                unsent_new_matches = [
+                    match
+                    for match in result.new_matches
+                    if not self.repository.has_sent_alert(
                         subscription.telegram_chat_id,
                         result.tracked_league.id,
                         match.fixture_id,
                         "new_event",
-                    ):
-                        continue
+                    )
+                ]
 
-                    await bot.send_message(
-                        chat_id=subscription.telegram_chat_id,
-                        text=build_new_event_alert_message(result.tracked_league, match),
-                        parse_mode=ParseMode.HTML,
-                    )
-                    self.repository.mark_sent_alert(
+                if unsent_new_matches:
+                    if len(unsent_new_matches) == 1:
+                        await bot.send_message(
+                            chat_id=subscription.telegram_chat_id,
+                            text=build_new_event_alert_message(
+                                result.tracked_league,
+                                unsent_new_matches[0],
+                            ),
+                            parse_mode=ParseMode.HTML,
+                        )
+                    else:
+                        await bot.send_message(
+                            chat_id=subscription.telegram_chat_id,
+                            text=build_grouped_new_event_alert_message(
+                                result.tracked_league,
+                                unsent_new_matches,
+                            ),
+                            parse_mode=ParseMode.HTML,
+                        )
+
+                    self.repository.mark_sent_alerts(
                         subscription.telegram_chat_id,
                         result.tracked_league.id,
-                        match.fixture_id,
+                        [match.fixture_id for match in unsent_new_matches],
                         "new_event",
                     )
+
+            pending_odds_alerts: list[SubscriptionOddsAlert] = []
 
             for change in result.odds_changes:
                 alert = _evaluate_subscription_odds_change(
@@ -575,6 +605,11 @@ class TrackingService:
                 )
 
                 if alert is not None and subscription.notify_odds_changes:
+                    pending_odds_alerts.append(alert)
+
+            if pending_odds_alerts:
+                if len(pending_odds_alerts) == 1:
+                    alert = pending_odds_alerts[0]
                     await bot.send_message(
                         chat_id=subscription.telegram_chat_id,
                         text=build_odds_change_alert_message(
@@ -585,6 +620,20 @@ class TrackingService:
                         ),
                         parse_mode=ParseMode.HTML,
                     )
+                else:
+                    await bot.send_message(
+                        chat_id=subscription.telegram_chat_id,
+                        text=build_grouped_odds_change_alert_message(
+                            result.tracked_league,
+                            [
+                                (alert.baseline, alert.match, alert.max_percent_change)
+                                for alert in pending_odds_alerts
+                            ],
+                        ),
+                        parse_mode=ParseMode.HTML,
+                    )
+
+                for alert in pending_odds_alerts:
                     self.repository.upsert_event_baseline(
                         subscription.telegram_chat_id,
                         result.tracked_league.id,
@@ -707,9 +756,11 @@ class TrackingService:
             f"🌐 Plataforma: {tracked_league.platform_display_name}",
             f"🏷️ Liga: {tracked_league.league_name}",
             f"🔑 Competencia: {tracked_league.topic}",
-            f"🆔 Track ID: {tracked_league.id}",
-            f"notify_new_matches={'on' if subscription.notify_new_matches else 'off'}",
-            f"notify_odds_changes={'on' if subscription.notify_odds_changes else 'off'}",
+            "",
+            "📈 Notificaciones de cambios de cuotas: "
+            f"{'activadas' if subscription.notify_odds_changes else 'desactivadas'}",
+            f"🎯 {'Threshold por defecto' if confirmed_request.subscription_created else 'Threshold configurado'}: "
+            f"{subscription.change_percent_threshold:.1f}%",
         ]
 
         if bootstrap_count is not None:
@@ -737,9 +788,12 @@ class TrackingService:
             f"🌐 Plataforma: {tracked_league.platform_display_name}",
             f"🏷️ Liga: {tracked_league.league_name}",
             f"🔑 Competencia: {tracked_league.topic}",
-            f"🆔 Track ID: {tracked_league.id}",
-            f"notify_new_matches={'on' if subscription.notify_new_matches else 'off'}",
-            f"notify_odds_changes={'on' if subscription.notify_odds_changes else 'off'}",
+            "",
+            "📈 Notificaciones de cambios de cuotas: "
+            f"{'activadas' if subscription.notify_odds_changes else 'desactivadas'}",
+            f"🎯 {'Threshold por defecto' if confirmed_request.subscription_created else 'Threshold configurado'}: "
+            f"{subscription.change_percent_threshold:.1f}%",
+            "",
             "La liga quedó guardada aunque todavía no tenga partidos activos.",
         ]
 
@@ -766,7 +820,7 @@ class TrackingService:
                 league_results=[],
             )
 
-        league_results: list[LeagueRefreshResult] = []
+        league_results: list[CompetitionRefreshResult] = []
         failed_leagues: list[str] = []
 
         tracked_leagues = [
@@ -862,18 +916,18 @@ class TrackingService:
             for match in self.repository.get_active_events(tracked_league_id, only_future=False)
         }
 
-        future_matches = [match for match in extraction.matches if not _is_past_match(match)]
-        current_fixture_ids = [match.fixture_id for match in future_matches]
+        future_matches = [match for match in extraction.events if not _is_past_match(match)]
+        current_event_ids = [match.external_event_id for match in future_matches]
         new_fixture_ids = {
-            match.fixture_id
+            match.external_event_id
             for match in future_matches
-            if match.fixture_id not in existing_by_fixture
+            if match.external_event_id not in existing_by_fixture
         }
         changed_fixture_ids = {
-            match.fixture_id
+            match.external_event_id
             for match in future_matches
-            if match.fixture_id in existing_by_fixture
-            and _odds_tuple_from_record(existing_by_fixture[match.fixture_id]) != _odds_tuple_from_match(match)
+            if match.external_event_id in existing_by_fixture
+            and _odds_tuple_from_record(existing_by_fixture[match.external_event_id]) != _odds_tuple_from_match(match)
         }
 
         upsert_payload = [
@@ -884,9 +938,9 @@ class TrackingService:
                 scheduled_label_date=match.scheduled_label_date,
                 scheduled_label_time=match.scheduled_label_time,
                 scheduled_at=match.scheduled_at,
-                odds_home=match.odds_home,
-                odds_draw=match.odds_draw,
-                odds_away=match.odds_away,
+                odds_home=match.odds_1x2.home,
+                odds_draw=match.odds_1x2.draw,
+                odds_away=match.odds_1x2.away,
                 event_url=match.source_url,
                 markets_payload=_markets_payload_from_event(match),
                 raw_payload=match.raw_payload,
@@ -899,7 +953,7 @@ class TrackingService:
 
         removed_missing_count = self.repository.remove_missing_events(
             tracked_league_id,
-            current_fixture_ids,
+            current_event_ids,
         )
         removed_past_count = self.repository.remove_past_events(tracked_league_id)
         active_matches = self.repository.get_active_events(tracked_league_id, only_future=True)
@@ -907,7 +961,7 @@ class TrackingService:
 
         new_matches = [
             active_by_fixture[fixture_id]
-            for fixture_id in current_fixture_ids
+            for fixture_id in current_event_ids
             if fixture_id in new_fixture_ids and fixture_id in active_by_fixture
         ]
         odds_changes = [
@@ -915,7 +969,7 @@ class TrackingService:
                 before=existing_by_fixture[fixture_id],
                 after=active_by_fixture[fixture_id],
             )
-            for fixture_id in current_fixture_ids
+            for fixture_id in current_event_ids
             if fixture_id in changed_fixture_ids and fixture_id in active_by_fixture
         ]
         reminder_matches = _select_due_reminders(active_matches)
@@ -952,8 +1006,8 @@ class TrackingService:
             last_synced_at=scraped_at,
         )
 
-        future_matches = [match for match in extraction.matches if not _is_past_match(match)]
-        current_fixture_ids = [match.fixture_id for match in future_matches]
+        future_matches = [match for match in extraction.events if not _is_past_match(match)]
+        current_event_ids = [match.external_event_id for match in future_matches]
         upsert_payload = [
             ActiveEventUpsert(
                 external_event_id=match.external_event_id,
@@ -962,9 +1016,9 @@ class TrackingService:
                 scheduled_label_date=match.scheduled_label_date,
                 scheduled_label_time=match.scheduled_label_time,
                 scheduled_at=match.scheduled_at,
-                odds_home=match.odds_home,
-                odds_draw=match.odds_draw,
-                odds_away=match.odds_away,
+                odds_home=match.odds_1x2.home,
+                odds_draw=match.odds_1x2.draw,
+                odds_away=match.odds_1x2.away,
                 event_url=match.source_url,
                 markets_payload=_markets_payload_from_event(match),
                 raw_payload=match.raw_payload,
@@ -975,7 +1029,7 @@ class TrackingService:
         if upsert_payload:
             self.repository.upsert_active_events(tracked_league_id, upsert_payload)
 
-        self.repository.remove_missing_events(tracked_league_id, current_fixture_ids)
+        self.repository.remove_missing_events(tracked_league_id, current_event_ids)
         self.repository.remove_past_events(tracked_league_id)
 
         active_count = len(self.repository.get_active_events(tracked_league_id, only_future=True))
@@ -994,7 +1048,7 @@ class TrackingService:
     ) -> tuple[str, bool]:
         """Resolve a safe league name for persistence during refreshes."""
 
-        extracted_name = extraction.league_name.strip() if extraction.league_name else ""
+        extracted_name = extraction.competition_name.strip() if extraction.competition_name else ""
 
         if extracted_name and extracted_name.lower() != "none":
             return extracted_name, extraction.is_provisional_name
@@ -1027,15 +1081,35 @@ class TrackingService:
             for match in active_matches
         )
 
+    def _initialize_subscription_state(
+        self,
+        chat_id: int,
+        tracked_competition_id: int,
+        active_events: Sequence[ActiveEventRecord],
+    ) -> None:
+        """Initialize per-chat baseline and seen-event state for current active events."""
+
+        self.repository.initialize_event_baselines(
+            chat_id,
+            tracked_competition_id,
+            active_events,
+        )
+        self.repository.mark_sent_alerts(
+            chat_id,
+            tracked_competition_id,
+            [event.fixture_id for event in active_events],
+            "new_event",
+        )
+
 
 def _is_past_match(match: EventSnapshot) -> bool:
     """Return whether a normalized event already kicked off in the past."""
 
-    if match.kickoff_at is None:
+    if match.scheduled_at is None:
         return False
 
     try:
-        kickoff = datetime.fromisoformat(match.kickoff_at)
+        kickoff = datetime.fromisoformat(match.scheduled_at)
     except ValueError:
         return False
 
@@ -1048,7 +1122,7 @@ def _is_past_match(match: EventSnapshot) -> bool:
 def _odds_tuple_from_match(match: EventSnapshot) -> tuple[float | None, float | None, float | None]:
     """Extract the comparable 1/X/2 odds tuple from a normalized event."""
 
-    return (match.odds_home, match.odds_draw, match.odds_away)
+    return (match.odds_1x2.home, match.odds_1x2.draw, match.odds_1x2.away)
 
 
 def _odds_tuple_from_record(
@@ -1062,14 +1136,18 @@ def _odds_tuple_from_record(
 def _markets_payload_from_event(match: EventSnapshot) -> dict[str, dict[str, float | None]] | None:
     """Build the current normalized market payload stored with one active event."""
 
-    if match.odds_home is None and match.odds_draw is None and match.odds_away is None:
+    if (
+        match.odds_1x2.home is None
+        and match.odds_1x2.draw is None
+        and match.odds_1x2.away is None
+    ):
         return None
 
     return {
         "1x2": {
-            "home": match.odds_home,
-            "draw": match.odds_draw,
-            "away": match.odds_away,
+            "home": match.odds_1x2.home,
+            "draw": match.odds_1x2.draw,
+            "away": match.odds_1x2.away,
         }
     }
 
@@ -1234,16 +1312,9 @@ def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-# Legacy aliases kept during the transition from Bet365-specific naming to
-# neutral tracking terminology.
-LeagueRefreshResult = CompetitionRefreshResult
-Bet365TrackingService = TrackingService
-
 __all__ = [
-    "Bet365TrackingService",
     "CommandResult",
     "CompetitionRefreshResult",
-    "LeagueRefreshResult",
     "OddsChange",
     "RefreshSummary",
     "SubscriptionOddsAlert",

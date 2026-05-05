@@ -23,8 +23,6 @@ logger = logging.getLogger(__name__)
 
 TRACKING_MONITOR_TASK_KEY = "tracking_monitor_task"
 RESOURCE_MONITOR_TASK_KEY = "resource_monitor_task"
-LEGACY_MONITOR_TASK_KEY = "bet365_monitor_task"
-LEGACY_TRACKING_SERVICE_KEY = "bet365_tracking_service"
 TRACKING_SERVICE_KEY = "tracking_service"
 
 
@@ -41,7 +39,6 @@ async def start_tracking_monitor(application: Application, interval_seconds: int
         name="tracking-monitor-loop",
     )
     application.bot_data[TRACKING_MONITOR_TASK_KEY] = task
-    application.bot_data[LEGACY_MONITOR_TASK_KEY] = task
 
     logger.info(
         "Tracking monitor loop started with interval_seconds=%s.",
@@ -65,7 +62,6 @@ async def stop_tracking_monitor(application: Application) -> None:
         logger.info("Tracking monitor loop stopped.")
 
     application.bot_data.pop(TRACKING_MONITOR_TASK_KEY, None)
-    application.bot_data.pop(LEGACY_MONITOR_TASK_KEY, None)
 
 
 async def start_resource_monitor(
@@ -126,9 +122,7 @@ async def stop_resource_monitor(application: Application) -> None:
 async def _tracking_monitor_loop(application: Application, interval_seconds: int) -> None:
     """Run the periodic scrape and notification cycle forever."""
 
-    tracking_service = application.bot_data.get(TRACKING_SERVICE_KEY) or application.bot_data.get(
-        LEGACY_TRACKING_SERVICE_KEY
-    )
+    tracking_service = application.bot_data.get(TRACKING_SERVICE_KEY)
 
     if not isinstance(tracking_service, TrackingService):
         logger.error("TrackingService is not configured; monitor loop will not run.")
@@ -152,12 +146,6 @@ async def _tracking_monitor_loop(application: Application, interval_seconds: int
             logger.exception("Unhandled error during tracking monitor cycle.")
 
         await asyncio.sleep(interval_seconds)
-
-
-# Legacy compatibility aliases kept while the bot wiring migrates to neutral names.
-start_bet365_monitor = start_tracking_monitor
-stop_bet365_monitor = stop_tracking_monitor
-
 
 async def _resource_monitor_loop(
     *,

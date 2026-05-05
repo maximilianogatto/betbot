@@ -16,27 +16,23 @@ from bot.jobs import (
 from core.registry import extractor_registry
 from extractors import register_default_extractors
 from monitors.tracking import TrackingService
-from services.bet365_extractor import Bet365ExtractorSettings
-from storage.tracking_repository import tracking_repository
+from storage.tracking_repository import SqliteTrackingRepository
 
 
 def create_application(settings: Settings) -> Application:
     """Create and configure the Telegram application instance."""
 
     extractor_registry.replace_all([])
-    registered_extractors = register_default_extractors(
-        extractor_registry,
-        bet365_settings=Bet365ExtractorSettings(
-            max_parallel_pages=settings.bet365_max_parallel_pages,
-            page_load_timeout_ms=settings.bet365_page_load_timeout_ms,
-            post_load_wait_ms=settings.bet365_post_load_wait_ms,
-        ),
+    registered_extractors = register_default_extractors(extractor_registry, settings=settings)
+    tracking_repository = SqliteTrackingRepository(
+        default_change_threshold_percent=settings.tracking_default_change_threshold_percent,
+        default_notify_odds_changes=settings.tracking_default_notify_odds_changes,
     )
 
     tracking_service = TrackingService(
         extractor_registry=extractor_registry,
         repository=tracking_repository,
-        max_parallel_refreshes=settings.bet365_max_parallel_pages,
+        max_parallel_refreshes=settings.tracking_max_parallel_refreshes,
     )
 
     async def post_init(application: Application) -> None:
@@ -46,7 +42,7 @@ def create_application(settings: Settings) -> Application:
             await extractor.start()
         await start_tracking_monitor(
             application,
-            interval_seconds=settings.bet365_refresh_interval_seconds,
+            interval_seconds=settings.tracking_refresh_interval_seconds,
         )
         await start_resource_monitor(
             application,
@@ -73,7 +69,6 @@ def create_application(settings: Settings) -> Application:
     )
 
     application.bot_data["tracking_service"] = tracking_service
-    application.bot_data["bet365_tracking_service"] = tracking_service
 
     register_handlers(application)
     application.add_error_handler(handle_error)

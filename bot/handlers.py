@@ -32,14 +32,14 @@ SELECT_LEAGUE_FOR_UNTRACK = 3
 SELECT_LEAGUE_FOR_ODDS = 4
 SELECT_LEAGUE_FOR_CHANGE_PERCENT = 5
 
-MATCHES_TRACKS_CONTEXT_KEY = "bet365_matches_tracks"
-MATCHES_ACTIVE_CONTEXT_KEY = "bet365_matches_active"
-MATCHES_SELECTED_TRACK_CONTEXT_KEY = "bet365_matches_selected_track"
-UNTRACK_TRACKS_CONTEXT_KEY = "bet365_untrack_tracks"
-ODDS_TRACKS_CONTEXT_KEY = "bet365_odds_tracks"
-ODDS_ENABLED_CONTEXT_KEY = "bet365_odds_enabled"
-CHANGE_PERCENT_TRACKS_CONTEXT_KEY = "bet365_change_percent_tracks"
-CHANGE_PERCENT_VALUE_CONTEXT_KEY = "bet365_change_percent_value"
+MATCHES_TRACKS_CONTEXT_KEY = "matches_tracks"
+MATCHES_ACTIVE_CONTEXT_KEY = "matches_active"
+MATCHES_SELECTED_TRACK_CONTEXT_KEY = "matches_selected_track"
+UNTRACK_TRACKS_CONTEXT_KEY = "untrack_tracks"
+ODDS_TRACKS_CONTEXT_KEY = "odds_tracks"
+ODDS_ENABLED_CONTEXT_KEY = "odds_enabled"
+CHANGE_PERCENT_TRACKS_CONTEXT_KEY = "change_percent_tracks"
+CHANGE_PERCENT_VALUE_CONTEXT_KEY = "change_percent_value"
 
 HELP_MESSAGE = (
     "Comandos generales\n"
@@ -87,8 +87,8 @@ GUIDE_MESSAGE = (
 
 TRACK_URL_USAGE_MESSAGE = (
     "Usá /track_url <url_de_plataforma>.\n"
-    "Ejemplo:\n"
-    "/track_url https://www.bet365.es/#/AC/B1/C1/D1002/E120757998/G40/"
+    "Primero podés usar /platforms para ver las plataformas disponibles\n"
+    "y después pegar la URL de una competencia."
 )
 
 SET_CHANGE_PERCENT_USAGE_MESSAGE = (
@@ -107,10 +107,6 @@ def get_tracking_service(context: ContextTypes.DEFAULT_TYPE) -> TrackingService:
         raise RuntimeError("TrackingService no está configurado en la aplicación.")
 
     return tracking_service
-
-
-# Legacy alias kept while the bot finishes migrating away from Bet365-specific names.
-get_bet365_tracking_service = get_tracking_service
 
 
 async def reply_with_result(update: Update, result: CommandResult) -> None:
@@ -816,7 +812,7 @@ def register_handlers(application: Application) -> None:
             ],
         },
         fallbacks=[CommandHandler("cancel", cancel_command)],
-        name="bet365_matches_conversation",
+        name="matches_conversation",
         persistent=False,
     )
     application.add_handler(matches_conversation)
@@ -829,7 +825,7 @@ def register_handlers(application: Application) -> None:
             ],
         },
         fallbacks=[CommandHandler("cancel", cancel_command)],
-        name="bet365_untrack_conversation",
+        name="untrack_conversation",
         persistent=False,
     )
     application.add_handler(untrack_conversation)
@@ -845,7 +841,7 @@ def register_handlers(application: Application) -> None:
             ],
         },
         fallbacks=[CommandHandler("cancel", cancel_command)],
-        name="bet365_odds_conversation",
+        name="odds_conversation",
         persistent=False,
     )
     application.add_handler(odds_conversation)
@@ -858,7 +854,7 @@ def register_handlers(application: Application) -> None:
             ],
         },
         fallbacks=[CommandHandler("cancel", cancel_command)],
-        name="bet365_change_percent_conversation",
+        name="change_percent_conversation",
         persistent=False,
     )
     application.add_handler(change_percent_conversation)

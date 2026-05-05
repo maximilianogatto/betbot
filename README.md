@@ -287,24 +287,39 @@ Current variables:
 ```env
 TELEGRAM_BOT_TOKEN=123456789:replace_with_your_real_token
 LOG_LEVEL=INFO
-BET365_REFRESH_INTERVAL_SECONDS=120
-BET365_MAX_PARALLEL_PAGES=3
-BET365_PAGE_LOAD_TIMEOUT_MS=60000
-BET365_POST_LOAD_WAIT_MS=4000
+TRACKING_REFRESH_INTERVAL_SECONDS=120
+TRACKING_MAX_PARALLEL_REFRESHES=3
+EXTRACTOR_MAX_PARALLEL_PAGES=3
+EXTRACTOR_PAGE_LOAD_TIMEOUT_MS=60000
+EXTRACTOR_POST_LOAD_WAIT_MS=4000
+TRACKING_DEFAULT_CHANGE_THRESHOLD_PERCENT=20.0
+TRACKING_DEFAULT_NOTIFY_ODDS_CHANGES=true
 ```
 
 ### What they mean
 
 - `TELEGRAM_BOT_TOKEN`: required BotFather token
 - `LOG_LEVEL`: console logging verbosity
-- `BET365_REFRESH_INTERVAL_SECONDS`: interval of the background Bet365 monitor loop
-- `BET365_MAX_PARALLEL_PAGES`: max number of Bet365 pages processed in parallel
-- `BET365_PAGE_LOAD_TIMEOUT_MS`: page load and runtime wait timeout
-- `BET365_POST_LOAD_WAIT_MS`: extra wait after runtime readiness before extraction
+- `TRACKING_REFRESH_INTERVAL_SECONDS`: interval of the background tracking monitor loop
+- `TRACKING_MAX_PARALLEL_REFRESHES`: max number of competitions refreshed in parallel per cycle
+- `EXTRACTOR_MAX_PARALLEL_PAGES`: max number of extractor pages processed in parallel
+- `EXTRACTOR_PAGE_LOAD_TIMEOUT_MS`: page load and runtime wait timeout
+- `EXTRACTOR_POST_LOAD_WAIT_MS`: extra wait after runtime readiness before extraction
+- `TRACKING_DEFAULT_CHANGE_THRESHOLD_PERCENT`: default threshold persisted for new chat subscriptions
+- `TRACKING_DEFAULT_NOTIFY_ODDS_CHANGES`: default odds-change notification flag for new chat subscriptions
 - `ENABLE_MONITORING`: enables periodic resource monitoring in background
 - `MONITOR_INTERVAL_SECONDS`: interval of the resource monitor loop
 - `MONITOR_LOG_TO_FILE`: when `true`, also writes monitor blocks to `monitor.log`
 - `MONITOR_CHROMIUM_RAM_ALERT_MB`: warning threshold for total Chromium RAM
+
+Legacy compatibility:
+
+- `BET365_REFRESH_INTERVAL_SECONDS`
+- `BET365_MAX_PARALLEL_PAGES`
+- `BET365_PAGE_LOAD_TIMEOUT_MS`
+- `BET365_POST_LOAD_WAIT_MS`
+
+Those legacy names are still accepted by the loader, but the internal app configuration now uses the generic `TRACKING_*` and `EXTRACTOR_*` names.
 
 ## Resource monitoring
 
@@ -433,18 +448,27 @@ python main.py
 │   ├── error_handler.py
 │   ├── handlers.py
 │   └── jobs.py
+├── core
+│   ├── extractor_base.py
+│   ├── models.py
+│   └── registry.py
 ├── data
+├── extractors
+│   ├── __init__.py
+│   └── bet365
+│       ├── __init__.py
+│       ├── client.py
+│       └── extractor.py
 ├── monitors
-│   └── bet365_tracking.py
+│   └── tracking.py
 ├── sandbox
-├── services
-│   └── bet365_extractor.py
 ├── storage
-│   └── bet365_tracking.py
+│   └── tracking_repository.py
 ├── .env.example
 ├── install.ps1
 ├── install.sh
 ├── main.py
+├── monitoring.py
 ├── README.md
 ├── requirements.txt
 ├── run.ps1

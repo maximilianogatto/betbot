@@ -1,13 +1,4 @@
-"""Bet365 league extraction helpers and persistent browser scraper.
-
-This module provides two layers:
-
-1. a persistent browser-backed extractor used by the running bot
-2. a small compatibility helper that can extract one league on demand
-
-The running bot reuses one Chromium browser and one browser context, then
-opens a few pages in parallel for each monitoring cycle.
-"""
+"""Bet365 browser client and page parser used by the Bet365 extractor."""
 
 from __future__ import annotations
 
@@ -21,6 +12,60 @@ from typing import Any
 from urllib.parse import urlparse
 
 logger = logging.getLogger(__name__)
+
+RUNTIME_STATE_JS = r"""
+(expectedTopic) => {
+  function findFirst(node, predicate) {
+    if (!node) return null;
+    if (predicate(node)) return node;
+    for (const child of node._actualChildren || []) {
+      const found = findFirst(child, predicate);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  const hasNavLib = typeof NavLib !== "undefined";
+  const hasDataReactLib = typeof DataReactLib !== "undefined";
+  const hasGetStemFromLookup =
+    hasDataReactLib && typeof DataReactLib.getStemFromLookup === "function";
+  const currentTopic = hasNavLib
+    ? NavLib?.WebsiteNavigationManager?.CurrentPageData ?? null
+    : null;
+  const topicMatchesExpected = !expectedTopic
+    ? true
+    : Boolean(currentTopic) && currentTopic === expectedTopic;
+
+  let stem = null;
+  if (hasGetStemFromLookup && currentTopic && topicMatchesExpected) {
+    try {
+      stem = DataReactLib.getStemFromLookup(currentTopic) ?? null;
+    } catch (err) {
+      stem = null;
+    }
+  }
+
+  const ev = findFirst(stem, n => n?.nodeName === "EV");
+  const marketGroups = ev?._actualChildren || [];
+  const fullTimeGroup = marketGroups.find(
+    n => n?.nodeName === "MG" && n?.data?.ID === "40"
+  );
+
+  return {
+    expectedTopic: expectedTopic || null,
+    currentTopic,
+    hasNavLib,
+    hasDataReactLib,
+    hasGetStemFromLookup,
+    topicMatchesExpected,
+    hasStem: Boolean(stem),
+    hasEv: Boolean(ev),
+    hasFullTimeGroup: Boolean(fullTimeGroup),
+    marketGroupCount: marketGroups.length,
+    readyForPayload: Boolean(currentTopic && topicMatchesExpected && stem),
+  };
+}
+"""
 
 EXTRACTOR_JS = r"""
 () => {
@@ -350,6 +395,7 @@ class Bet365BrowserExtractor:
 
         normalized_url = validate_bet365_league_url(url)
         await self.start()
+        expected_topic = _build_expected_topic_from_url(normalized_url)
 
         try:
             from playwright.async_api import TimeoutError as PlaywrightTimeoutError
@@ -364,27 +410,64 @@ class Bet365BrowserExtractor:
                 raise RuntimeError("Bet365 browser context is not available.")
 
             data: dict[str, Any] | None = None
+            last_error: Exception | None = None
+            last_runtime_state: dict[str, Any] | None = None
+            total_attempts = 3
+            attempt_used = 0
 
-            for attempt in range(1, 3):
+            for attempt in range(1, total_attempts + 1):
                 page = await self._context.new_page()
 
                 try:
-                    data = await self._extract_page_payload(page, normalized_url)
+                    data, last_runtime_state = await self._extract_page_payload(
+                        page,
+                        normalized_url,
+                        expected_topic=expected_topic,
+                    )
+                    attempt_used = attempt
                     break
                 except PlaywrightTimeoutError as error:
-                    logger.warning(
-                        "Timed out while loading Bet365 runtime state for %s (attempt %s/2).",
+                    last_error = error
+                    if attempt == total_attempts:
+                        logger.warning(
+                            "Bet365 extractor failed for %s after %s attempts: timeout while waiting for runtime state.",
+                            normalized_url,
+                            total_attempts,
+                        )
+                        raise RuntimeError("Timed out while loading Bet365 runtime state.") from error
+                    logger.debug(
+                        "Bet365 extractor runtime timeout for %s on attempt %s/%s. Retrying.",
                         normalized_url,
                         attempt,
+                        total_attempts,
                     )
-                    if attempt == 2:
-                        raise RuntimeError("Timed out while loading Bet365 runtime state.") from error
-                    await page.wait_for_timeout(1_500)
+                    await asyncio.sleep(float(attempt))
+                except _RecoverableBet365StateError as error:
+                    last_error = error
+                    last_runtime_state = error.diagnostics
+                    if attempt == total_attempts:
+                        logger.warning(
+                            "Bet365 extractor failed for %s after %s attempts: %s",
+                            normalized_url,
+                            total_attempts,
+                            _format_runtime_state_summary(last_runtime_state),
+                        )
+                        raise RuntimeError(
+                            "The Bet365 runtime did not stabilize for the requested competition."
+                        ) from error
+                    logger.debug(
+                        "Bet365 extractor attempt %s/%s did not stabilize for %s: %s",
+                        attempt,
+                        total_attempts,
+                        normalized_url,
+                        _format_runtime_state_summary(last_runtime_state),
+                    )
+                    await asyncio.sleep(float(attempt))
                 finally:
                     await page.close()
 
         if data is None:
-            raise RuntimeError("The Bet365 extractor could not load any runtime payload.")
+            raise RuntimeError("The Bet365 extractor could not load any runtime payload.") from last_error
 
         league_id = _optional_text(data.get("leagueId"))
         topic = str(data.get("topic", "")).strip()
@@ -392,7 +475,10 @@ class Bet365BrowserExtractor:
         extractor_error = str(data.get("error", "")).strip()
 
         if extractor_error:
-            logger.warning("Bet365 extractor reported an error for %s: %s", normalized_url, extractor_error)
+            raise RuntimeError(
+                "The Bet365 extractor returned an incomplete competition payload. "
+                f"Detail: {extractor_error}"
+            )
 
         if not topic:
             raise RuntimeError("The Bet365 page did not expose a usable topic.")
@@ -424,8 +510,24 @@ class Bet365BrowserExtractor:
             matches=matches,
             payload=data,
         )
+        logger.debug(
+            "Bet365 extraction succeeded: platform=%s url=%s topic=%s league_name=%s matches_count=%s attempt=%s",
+            extraction.platform,
+            extraction.url,
+            extraction.topic,
+            extraction.league_name,
+            len(extraction.matches),
+            attempt_used or 1,
+        )
+        return extraction
 
-    async def _extract_page_payload(self, page: Any, normalized_url: str) -> dict[str, Any]:
+    async def _extract_page_payload(
+        self,
+        page: Any,
+        normalized_url: str,
+        *,
+        expected_topic: str | None,
+    ) -> tuple[dict[str, Any], dict[str, Any]]:
         """Load one Bet365 league page and return the raw extracted payload."""
 
         await page.goto(
@@ -444,12 +546,75 @@ class Bet365BrowserExtractor:
             timeout=self.settings.page_load_timeout_ms,
         )
         await page.wait_for_timeout(self.settings.post_load_wait_ms)
-        data = await page.evaluate(EXTRACTOR_JS)
+        return await self._poll_for_stable_payload(
+            page,
+            normalized_url,
+            expected_topic=expected_topic,
+        )
 
-        if not isinstance(data, dict):
-            raise RuntimeError("The Bet365 extractor returned an unexpected payload format.")
+    async def _poll_for_stable_payload(
+        self,
+        page: Any,
+        normalized_url: str,
+        *,
+        expected_topic: str | None,
+    ) -> tuple[dict[str, Any], dict[str, Any]]:
+        """Poll the Bet365 runtime until the competition payload becomes stable."""
 
-        return data
+        poll_interval_ms = 500
+        stability_timeout_seconds = min(
+            15.0,
+            max(5.0, self.settings.post_load_wait_ms / 1000 + 3.0),
+        )
+        deadline = asyncio.get_running_loop().time() + stability_timeout_seconds
+        stable_empty_observations = 0
+        last_runtime_state: dict[str, Any] | None = None
+        last_payload_reason: str | None = None
+
+        while asyncio.get_running_loop().time() < deadline:
+            runtime_state = await page.evaluate(RUNTIME_STATE_JS, expected_topic)
+
+            if not isinstance(runtime_state, dict):
+                raise RuntimeError("The Bet365 runtime diagnostics returned an unexpected format.")
+
+            last_runtime_state = runtime_state
+
+            if not runtime_state.get("readyForPayload"):
+                last_payload_reason = _runtime_state_retry_reason(runtime_state)
+                await page.wait_for_timeout(poll_interval_ms)
+                continue
+
+            raw_data = await page.evaluate(EXTRACTOR_JS)
+
+            if not isinstance(raw_data, dict):
+                raise RuntimeError("The Bet365 extractor returned an unexpected payload format.")
+
+            payload_reason = _payload_retry_reason(raw_data)
+            if payload_reason is None:
+                return raw_data, runtime_state
+
+            last_payload_reason = payload_reason
+            extractor_error = _optional_text(raw_data.get("error"))
+            raw_matches = raw_data.get("matches", [])
+            league_name = _optional_text(raw_data.get("leagueName"))
+
+            if extractor_error is None and not league_name and isinstance(raw_matches, list) and not raw_matches:
+                stable_empty_observations += 1
+                if stable_empty_observations >= 3:
+                    return raw_data, runtime_state
+            else:
+                stable_empty_observations = 0
+
+            await page.wait_for_timeout(poll_interval_ms)
+
+        diagnostics = dict(last_runtime_state or {})
+        diagnostics["url"] = normalized_url
+        diagnostics["expectedTopic"] = expected_topic
+        diagnostics["payloadRetryReason"] = last_payload_reason
+        raise _RecoverableBet365StateError(
+            "Bet365 payload did not stabilize before the per-attempt deadline.",
+            diagnostics=diagnostics,
+        )
 
 def validate_bet365_league_url(url: str) -> str:
     """Validate and normalize a Bet365 league URL before scraping."""
@@ -468,35 +633,6 @@ def validate_bet365_league_url(url: str) -> str:
         raise ValueError("The URL must belong to Bet365.")
 
     return normalized_url
-
-
-async def extract_bet365_league(
-    url: str,
-    *,
-    headless: bool = True,
-    max_parallel_pages: int = 1,
-    page_load_timeout_ms: int = 60_000,
-    post_load_wait_ms: int = 4_000,
-) -> Bet365LeagueExtraction:
-    """Extract one Bet365 league using a temporary browser instance.
-
-    This helper keeps backwards compatibility for one-off uses. The real bot
-    should prefer `Bet365BrowserExtractor`.
-    """
-
-    extractor = Bet365BrowserExtractor(
-        Bet365ExtractorSettings(
-            max_parallel_pages=max_parallel_pages,
-            page_load_timeout_ms=page_load_timeout_ms,
-            post_load_wait_ms=post_load_wait_ms,
-            headless=headless,
-        )
-    )
-
-    try:
-        return await extractor.extract_league(url)
-    finally:
-        await extractor.stop()
 
 
 def _normalize_match_payload(raw_match: Any) -> Bet365Match:
@@ -629,6 +765,92 @@ def _coerce_optional_float(value: Any) -> float | None:
         return None
 
 
+def _payload_retry_reason(data: dict[str, Any]) -> str | None:
+    """Return why a Bet365 payload should be retried before being trusted."""
+
+    extractor_error = _optional_text(data.get("error"))
+
+    if extractor_error:
+        return f"extractor error: {extractor_error}"
+
+    league_name = _optional_text(data.get("leagueName"))
+    raw_matches = data.get("matches", [])
+
+    if not isinstance(raw_matches, list):
+        raw_matches = []
+
+    # With Bet365's SPA runtime it is common to see a transient state where the
+    # topic exists but the stem/market tree is not fully hydrated yet. In that
+    # case both the league name and the match list are still empty. Retry a few
+    # times before trusting the payload as a genuinely empty competition.
+    if league_name is None and not raw_matches:
+        return "payload has neither league name nor matches yet"
+
+    return None
+
+
+def _runtime_state_retry_reason(runtime_state: dict[str, Any]) -> str:
+    """Explain why the current Bet365 runtime state is not ready yet."""
+
+    if not runtime_state.get("hasNavLib"):
+        return "NavLib not available"
+    if not runtime_state.get("hasDataReactLib"):
+        return "DataReactLib not available"
+    if not runtime_state.get("hasGetStemFromLookup"):
+        return "DataReactLib.getStemFromLookup not available"
+    if not runtime_state.get("currentTopic"):
+        return "CurrentPageData not available"
+    if runtime_state.get("expectedTopic") and not runtime_state.get("topicMatchesExpected"):
+        return "current topic does not match requested topic yet"
+    if not runtime_state.get("hasStem"):
+        return "stem not available for current topic"
+    return "runtime is not stable yet"
+
+
+def _build_expected_topic_from_url(url: str) -> str | None:
+    """Derive the expected Bet365 topic string from a league URL fragment when possible."""
+
+    fragment = urlparse(url).fragment.strip()
+    if not fragment:
+        return None
+
+    normalized_fragment = fragment.lstrip("/").rstrip("/")
+    if not normalized_fragment:
+        return None
+
+    topic_parts = [part.strip() for part in normalized_fragment.split("/") if part.strip()]
+    if not topic_parts:
+        return None
+
+    return "#" + "#".join(topic_parts) + "#"
+
+
+def _format_runtime_state_summary(runtime_state: dict[str, Any] | None) -> str:
+    """Build a compact summary of the latest Bet365 runtime diagnostics."""
+
+    if not runtime_state:
+        return "no runtime diagnostics available"
+
+    return (
+        f"topic={runtime_state.get('currentTopic')!r} "
+        f"expected_topic={runtime_state.get('expectedTopic')!r} "
+        f"navlib={bool(runtime_state.get('hasNavLib'))} "
+        f"datareact={bool(runtime_state.get('hasDataReactLib'))} "
+        f"stem={bool(runtime_state.get('hasStem'))} "
+        f"ev={bool(runtime_state.get('hasEv'))} "
+        f"full_time_group={bool(runtime_state.get('hasFullTimeGroup'))} "
+        f"payload_reason={runtime_state.get('payloadRetryReason')!r}"
+    )
+
+
+class _RecoverableBet365StateError(RuntimeError):
+    """Represent a per-attempt Bet365 runtime state that did not stabilize in time."""
+
+    def __init__(self, message: str, *, diagnostics: dict[str, Any] | None = None) -> None:
+        super().__init__(message)
+        self.diagnostics = diagnostics or {}
+
+
 def _build_provisional_league_name(league_id: str | None, topic: str) -> str:
     """Build a stable placeholder name for a valid but currently empty league."""
 
@@ -645,3 +867,12 @@ def _build_provisional_league_name(league_id: str | None, topic: str) -> str:
         return f"Liga vacía E{topic_match.group(1)}"
 
     return "Liga vacía Bet365"
+
+
+__all__ = [
+    "Bet365BrowserExtractor",
+    "Bet365ExtractorSettings",
+    "Bet365LeagueExtraction",
+    "Bet365Match",
+    "validate_bet365_league_url",
+]

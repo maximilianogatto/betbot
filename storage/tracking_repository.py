@@ -33,6 +33,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 DB_FILE_PATH = DATA_DIR / "tracking.sqlite3"
 DEFAULT_CHANGE_THRESHOLD_PERCENT = 20.0
+DEFAULT_NOTIFY_ODDS_CHANGES = True
 
 
 @dataclass(frozen=True)
@@ -146,6 +147,7 @@ class ConfirmedCompetitionTrackRequest:
     pending_request: PendingCompetitionTrackRequest
     tracked_competition: TrackedCompetition
     subscription: CompetitionSubscription
+    subscription_created: bool
 
     @property
     def tracked_league(self) -> TrackedCompetition:
@@ -268,7 +270,7 @@ class EventBaseline:
     baseline_home: float | None
     baseline_draw: float | None
     baseline_away: float | None
-    baseline_markets_json: str | None
+    baseline_markets_json: str | None # for others markets
     baseline_set_at: str
     updated_at: str
 
@@ -277,7 +279,7 @@ class EventBaseline:
         return self.tracked_competition_id
 
     @property
-    def fixture_id(self) -> str:
+    def fixture_id(self) -> str:    #identifier for the event (depends on the platform)
         return self.external_event_id
 
 
@@ -333,6 +335,15 @@ class SmallChangeRecord:
 class SqliteTrackingRepository:
     """Generic repository backed by a platform-neutral SQLite schema."""
 
+    def __init__(
+        self,
+        *,
+        default_change_threshold_percent: float = DEFAULT_CHANGE_THRESHOLD_PERCENT,
+        default_notify_odds_changes: bool = DEFAULT_NOTIFY_ODDS_CHANGES,
+    ) -> None:
+        self.default_change_threshold_percent = float(default_change_threshold_percent)
+        self.default_notify_odds_changes = bool(default_notify_odds_changes)
+
     def create_pending_competition_request(
         self,
         chat_id: int,
@@ -363,14 +374,14 @@ class SqliteTrackingRepository:
 
         with _connect() as connection:
             _sanitize_tracking_state(connection)
-            connection.execute(
+            connection.execute(     # delete old pending tracks
                 """
                 DELETE FROM pending_track_requests
                 WHERE telegram_chat_id = ?
                 """,
                 (chat_id,),
             )
-            cursor = connection.execute(
+            cursor = connection.execute(    # create a new pending tracks
                 """
                 INSERT INTO pending_track_requests (
                     telegram_chat_id,
@@ -471,6 +482,7 @@ class SqliteTrackingRepository:
                 pending_request.competition_external_id,
             )
             now_iso = _utc_now_iso()
+            subscription_created = False
 
             if tracked_row is None:
                 cursor = connection.execute(
@@ -534,6 +546,7 @@ class SqliteTrackingRepository:
 
             subscription_row = _fetch_subscription_row(connection, chat_id, tracked_competition_id)
             if subscription_row is None:
+                subscription_created = True
                 connection.execute(
                     """
                     INSERT INTO competition_subscriptions (
@@ -546,12 +559,13 @@ class SqliteTrackingRepository:
                         created_at,
                         updated_at
                     )
-                    VALUES (?, ?, 1, 0, ?, 1, ?, ?)
+                    VALUES (?, ?, 1, ?, ?, 1, ?, ?)
                     """,
                     (
                         chat_id,
                         tracked_competition_id,
-                        DEFAULT_CHANGE_THRESHOLD_PERCENT,
+                        int(self.default_notify_odds_changes),
+                        self.default_change_threshold_percent,
                         now_iso,
                         now_iso,
                     ),
@@ -586,6 +600,7 @@ class SqliteTrackingRepository:
             pending_request=pending_request,
             tracked_competition=_row_to_tracked_competition(tracked_row),
             subscription=_row_to_subscription(subscription_row),
+            subscription_created=subscription_created,
         )
 
     def list_tracked_competitions(self, chat_id: int) -> list[TrackedCompetitionSubscription]:
@@ -1811,6 +1826,64 @@ class SqliteTrackingRepository:
 
         return cursor.rowcount > 0
 
+    def mark_sent_alerts(
+        self,
+        chat_id: int,
+        tracked_competition_id: int,
+        external_event_ids: Iterable[str],
+        alert_type: str,
+    ) -> int:
+        """Persist one alert type as sent for many events in one competition."""
+
+        normalized_event_ids = sorted(
+            {
+                external_event_id.strip()
+                for external_event_id in external_event_ids
+                if external_event_id and external_event_id.strip()
+            }
+        )
+        normalized_alert_type = alert_type.strip().lower()
+
+        if not normalized_event_ids or not normalized_alert_type:
+            return 0
+
+        placeholders = ", ".join("?" for _ in normalized_event_ids)
+        now_iso = _utc_now_iso()
+
+        with _connect() as connection:
+            _ensure_tracked_competition_exists(connection, tracked_competition_id)
+            _sanitize_tracking_state(connection)
+            event_rows = connection.execute(
+                f"""
+                SELECT id
+                FROM active_events
+                WHERE tracked_competition_id = ?
+                  AND external_event_id IN ({placeholders})
+                """,
+                (tracked_competition_id, *normalized_event_ids),
+            ).fetchall()
+
+            if not event_rows:
+                return 0
+
+            cursor = connection.executemany(
+                """
+                INSERT OR IGNORE INTO sent_alerts (
+                    chat_id,
+                    active_event_id,
+                    alert_type,
+                    sent_at
+                )
+                VALUES (?, ?, ?, ?)
+                """,
+                [
+                    (chat_id, int(row["id"]), normalized_alert_type, now_iso)
+                    for row in event_rows
+                ],
+            )
+
+        return cursor.rowcount
+
     def mark_events_alerted(
         self,
         tracked_competition_id: int,
@@ -1855,8 +1928,9 @@ class SqliteTrackingRepository:
         with _connect() as connection:
             _sanitize_tracking_state(connection)
 
-
-def _row_to_pending_request(row: sqlite3.Row) -> PendingCompetitionTrackRequest:
+# -------------------------- ADAPTORS -----------------------------
+# These functions adapt database storaged data to dataclases used in the code
+def _row_to_pending_request(row: sqlite3.Row) -> PendingCompetitionTrackRequest: 
     return PendingCompetitionTrackRequest(
         id=int(row["id"]),
         telegram_chat_id=int(row["telegram_chat_id"]),
@@ -2002,7 +2076,7 @@ def _row_to_small_change_record(row: sqlite3.Row) -> SmallChangeRecord:
         dismissed_at=_row_optional_text(row, "dismissed_at"),
     )
 
-
+# Connect to the database
 def _connect() -> sqlite3.Connection:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     connection = sqlite3.connect(DB_FILE_PATH)
@@ -2011,7 +2085,7 @@ def _connect() -> sqlite3.Connection:
     _initialize_schema(connection)
     return connection
 
-
+# Inizializate database schema
 def _initialize_schema(connection: sqlite3.Connection) -> None:
     connection.executescript(
         """
@@ -2051,7 +2125,7 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
             telegram_chat_id INTEGER NOT NULL,
             tracked_competition_id INTEGER NOT NULL,
             notify_new_events INTEGER NOT NULL DEFAULT 1,
-            notify_odds_changes INTEGER NOT NULL DEFAULT 0,
+            notify_odds_changes INTEGER NOT NULL DEFAULT 1,
             change_threshold_percent REAL NOT NULL DEFAULT 20.0,
             enabled INTEGER NOT NULL DEFAULT 1,
             created_at TEXT NOT NULL,
