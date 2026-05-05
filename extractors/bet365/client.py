@@ -62,7 +62,8 @@ RUNTIME_STATE_JS = r"""
     hasEv: Boolean(ev),
     hasFullTimeGroup: Boolean(fullTimeGroup),
     marketGroupCount: marketGroups.length,
-    readyForPayload: Boolean(currentTopic && topicMatchesExpected && stem),
+    readyForEvaluation: Boolean(currentTopic && topicMatchesExpected && hasGetStemFromLookup),
+    readyForPayload: Boolean(currentTopic && topicMatchesExpected && stem && ev),
   };
 }
 """
@@ -499,7 +500,7 @@ class Bet365BrowserExtractor:
             league_name = _build_provisional_league_name(league_id, topic)
             is_provisional_name = True
 
-        return Bet365LeagueExtraction(
+        extraction = Bet365LeagueExtraction(
             platform="bet365",
             url=normalized_url,
             league_id=league_id,
@@ -532,7 +533,7 @@ class Bet365BrowserExtractor:
 
         await page.goto(
             normalized_url,
-            wait_until="load",
+            wait_until="domcontentloaded",
             timeout=self.settings.page_load_timeout_ms,
         )
         await page.wait_for_function(
@@ -570,6 +571,7 @@ class Bet365BrowserExtractor:
         stable_empty_observations = 0
         last_runtime_state: dict[str, Any] | None = None
         last_payload_reason: str | None = None
+        has_reloaded_once = False
 
         while asyncio.get_running_loop().time() < deadline:
             runtime_state = await page.evaluate(RUNTIME_STATE_JS, expected_topic)
@@ -579,7 +581,7 @@ class Bet365BrowserExtractor:
 
             last_runtime_state = runtime_state
 
-            if not runtime_state.get("readyForPayload"):
+            if not runtime_state.get("readyForEvaluation"):
                 last_payload_reason = _runtime_state_retry_reason(runtime_state)
                 await page.wait_for_timeout(poll_interval_ms)
                 continue
@@ -590,20 +592,46 @@ class Bet365BrowserExtractor:
                 raise RuntimeError("The Bet365 extractor returned an unexpected payload format.")
 
             payload_reason = _payload_retry_reason(raw_data)
-            if payload_reason is None:
+            if _payload_has_usable_events(raw_data):
                 return raw_data, runtime_state
 
-            last_payload_reason = payload_reason
-            extractor_error = _optional_text(raw_data.get("error"))
-            raw_matches = raw_data.get("matches", [])
-            league_name = _optional_text(raw_data.get("leagueName"))
-
-            if extractor_error is None and not league_name and isinstance(raw_matches, list) and not raw_matches:
+            if payload_reason is None and _payload_is_real_empty(raw_data, runtime_state):
                 stable_empty_observations += 1
-                if stable_empty_observations >= 3:
+                if stable_empty_observations >= 2:
                     return raw_data, runtime_state
             else:
                 stable_empty_observations = 0
+
+            if payload_reason is None:
+                last_payload_reason = "payload has no usable events yet"
+            else:
+                last_payload_reason = payload_reason
+
+            time_left = deadline - asyncio.get_running_loop().time()
+            if (
+                not has_reloaded_once
+                and time_left > 2.5
+                and runtime_state.get("currentTopic")
+                and runtime_state.get("topicMatchesExpected")
+                and not runtime_state.get("hasStem")
+            ):
+                has_reloaded_once = True
+                await page.reload(
+                    wait_until="domcontentloaded",
+                    timeout=self.settings.page_load_timeout_ms,
+                )
+                await page.wait_for_function(
+                    """
+                    () =>
+                      typeof NavLib !== 'undefined' &&
+                      typeof DataReactLib !== 'undefined' &&
+                      NavLib?.WebsiteNavigationManager?.CurrentPageData &&
+                      typeof DataReactLib.getStemFromLookup === 'function'
+                    """,
+                    timeout=self.settings.page_load_timeout_ms,
+                )
+                await page.wait_for_timeout(self.settings.post_load_wait_ms)
+                continue
 
             await page.wait_for_timeout(poll_interval_ms)
 
@@ -787,6 +815,42 @@ def _payload_retry_reason(data: dict[str, Any]) -> str | None:
         return "payload has neither league name nor matches yet"
 
     return None
+
+
+def _payload_has_usable_events(data: dict[str, Any]) -> bool:
+    """Return whether the extractor payload already contains usable event rows."""
+
+    topic = _optional_text(data.get("topic"))
+    raw_matches = data.get("matches", [])
+
+    if topic is None or not isinstance(raw_matches, list) or not raw_matches:
+        return False
+
+    for raw_match in raw_matches:
+        if not isinstance(raw_match, dict):
+            continue
+
+        fixture_id = _optional_text(raw_match.get("fixtureId"))
+        home = _optional_text(raw_match.get("home"))
+        away = _optional_text(raw_match.get("away"))
+
+        if fixture_id and home and away:
+            return True
+
+    return False
+
+
+def _payload_is_real_empty(data: dict[str, Any], runtime_state: dict[str, Any]) -> bool:
+    """Return whether an empty payload should be treated as a genuine empty competition."""
+
+    if _optional_text(data.get("error")) is not None:
+        return False
+
+    raw_matches = data.get("matches", [])
+    if not isinstance(raw_matches, list) or raw_matches:
+        return False
+
+    return bool(runtime_state.get("hasStem")) and bool(runtime_state.get("hasEv"))
 
 
 def _runtime_state_retry_reason(runtime_state: dict[str, Any]) -> str:
