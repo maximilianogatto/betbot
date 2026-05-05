@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from core.models import CompetitionExtraction, EventSnapshot
+from core.models import CompetitionExtraction, EventSnapshot, PlatformDescriptor, platform_display_name
 
 
 class Extractor(ABC):
@@ -13,14 +13,19 @@ class Extractor(ABC):
     A future platform should only need to:
 
     1. decide whether it can handle a URL
-    2. return a `CompetitionExtraction` for competition URLs
-    3. optionally return an `EventSnapshot` for direct event URLs
+    2. expose a stable platform key plus optional display metadata
+    3. return a `CompetitionExtraction` for competition URLs
+    4. optionally return an `EventSnapshot` for direct event URLs
 
     The rest of the tracking stack can then operate on the generic models
     without knowing platform-specific parsing details.
     """
 
     name: str
+    display_name: str = ""
+    supported_domains: tuple[str, ...] = ()
+    supported_capabilities: tuple[str, ...] = ("ligas",)
+    implemented: bool = True
 
     @classmethod
     @abstractmethod
@@ -45,3 +50,14 @@ class Extractor(ABC):
 
     async def stop(self) -> None:
         """Stop any optional shared runtime resources for the extractor."""
+
+    def describe_platform(self) -> PlatformDescriptor:
+        """Return the platform metadata exposed by this extractor."""
+
+        return PlatformDescriptor(
+            key=self.name,
+            display_name=self.display_name or platform_display_name(self.name),
+            domains=self.supported_domains,
+            supports=self.supported_capabilities,
+            implemented=self.implemented,
+        )

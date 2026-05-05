@@ -1,4 +1,4 @@
-"""Formatting helpers for Bet365 notifications and match messages."""
+"""Formatting helpers for sportsbook notifications and match messages."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ def build_new_event_alert_message(
     """Build a compact HTML-formatted Telegram message for a new event."""
 
     return (
-        "🆕 <b>Nuevo evento - Bet365</b>\n"
+        f"🆕 <b>Nuevo evento - {escape(tracked_league.platform_display_name)}</b>\n"
         f"🏷️ <b>Liga:</b> {escape(tracked_league.league_name)}\n"
         f"⚽ <b>Partido:</b> {escape(match.home)} vs {escape(match.away)}\n"
         f"🕒 <b>Horario:</b> {escape(format_kickoff_text(match))}\n"
@@ -38,7 +38,7 @@ def build_odds_change_alert_message(
     """Build a readable HTML-formatted Telegram message for an odds change."""
 
     return (
-        "📈 <b>Cambio de odds</b>\n"
+        f"📈 <b>Cambio de odds - {escape(tracked_league.platform_display_name)}</b>\n"
         f"🏷️ <b>Liga:</b> {escape(tracked_league.league_name)}\n"
         f"⚽ <b>Partido:</b> {escape(current.home)} vs {escape(current.away)}\n"
         f"🕒 <b>Horario:</b> {escape(format_kickoff_text(current))}\n\n"
@@ -61,7 +61,7 @@ def build_match_reminder_alert_message(
     """Build an HTML-formatted Telegram reminder sent 5 minutes before kickoff."""
 
     return (
-        "⏰ <b>Recordatorio de partido (5 min)</b>\n\n"
+        f"⏰ <b>Recordatorio de partido (5 min) - {escape(tracked_league.platform_display_name)}</b>\n\n"
         f"🏷️ <b>Liga:</b> {escape(tracked_league.league_name)}\n"
         f"⚽ <b>Partido:</b> {escape(match.home)} vs {escape(match.away)}\n"
         f"🕒 <b>Hora:</b> {escape(format_kickoff_text(match))}\n\n"
@@ -79,6 +79,7 @@ def build_match_card_message(
     """Build an HTML-formatted Telegram message for one stored match."""
 
     return (
+        f"🌐 <b>Plataforma:</b> {escape(tracked_league.platform_display_name)}\n"
         f"🏷️ <b>Liga:</b> {escape(tracked_league.league_name)}\n\n"
         f"🕒 <b>{escape(format_kickoff_text(match))}</b>\n"
         f"⚽ {escape(match.home)} vs {escape(match.away)}\n"
@@ -95,6 +96,7 @@ def build_all_matches_message(
     """Build an HTML-formatted Telegram message containing all active matches."""
 
     lines = [
+        f"🌐 <b>Plataforma:</b> {escape(tracked_league.platform_display_name)}",
         f"🏷️ <b>Liga:</b> {escape(tracked_league.league_name)}",
         "",
         f"📋 <b>Partidos activos:</b> {len(matches)}",

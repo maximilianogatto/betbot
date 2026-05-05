@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from core.extractor_base import Extractor
+from core.models import PlatformDescriptor
 
 
 class ExtractorRegistry:
@@ -39,6 +40,11 @@ class ExtractorRegistry:
         """Return the currently registered extractor instances."""
 
         return list(self._extractors)
+
+    def list_platforms(self) -> list[PlatformDescriptor]:
+        """Return the platform metadata for every registered extractor."""
+
+        return [extractor.describe_platform() for extractor in self._extractors]
 
     def replace_all(self, extractors: Iterable[type[Extractor] | Extractor]) -> None:
         """Replace the full registry contents with a new ordered extractor set."""

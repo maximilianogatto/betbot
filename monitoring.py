@@ -1,4 +1,4 @@
-"""Lightweight runtime metrics for the Bet365 bot.
+"""Lightweight runtime metrics for the tracking bot.
 
 This module focuses first on the bot process tree:
 
@@ -18,7 +18,7 @@ import logging
 import os
 from pathlib import Path
 
-from storage.bet365_tracking import DB_FILE_PATH
+from storage.tracking_repository import DB_FILE_PATH
 
 logger = logging.getLogger(__name__)
 

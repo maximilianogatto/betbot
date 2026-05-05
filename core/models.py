@@ -1,8 +1,7 @@
 """Generic domain models shared across sportsbook extractors.
 
 These models represent the contract exposed by concrete extractors to the rest
-of the application. The current bot still stores many fields using the legacy
-Bet365-oriented names in SQLite, but the extractor boundary now speaks in
+of the application. The tracking stack and the SQLite repository now consume
 platform-agnostic terms such as competition, event, and odds snapshot.
 
 Identity rules expected by the tracking stack:
@@ -17,6 +16,17 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any
+
+
+@dataclass(frozen=True)
+class PlatformDescriptor:
+    """Describe one supported betting platform exposed by the extractor layer."""
+
+    key: str
+    display_name: str
+    domains: tuple[str, ...] = ()
+    supports: tuple[str, ...] = ()
+    implemented: bool = True
 
 # Manage 1X2 odds
 @dataclass(frozen=True)
@@ -196,11 +206,27 @@ def utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def platform_display_name(platform_key: str) -> str:
+    """Return a friendly display name for one platform key."""
+
+    normalized_key = platform_key.strip().lower()
+
+    if normalized_key == "bet365":
+        return "Bet365"
+
+    if not normalized_key:
+        return "Desconocida"
+
+    return normalized_key.replace("_", " ").replace("-", " ").title()
+
+
 __all__ = [
     "CompetitionExtraction",
     "CompetitionKey",
     "EventKey",
     "EventSnapshot",
     "Odds1X2",
+    "PlatformDescriptor",
+    "platform_display_name",
     "utc_now_iso",
 ]

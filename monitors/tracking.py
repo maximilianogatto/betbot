@@ -25,7 +25,7 @@ from bot.alerts import (
     build_new_event_alert_message,
     build_odds_change_alert_message,
 )
-from core.models import CompetitionExtraction, EventSnapshot
+from core.models import CompetitionExtraction, EventSnapshot, PlatformDescriptor
 from core.registry import ExtractorRegistry, extractor_registry as global_extractor_registry
 from storage.tracking_repository import (
     ActiveEventRecord,
@@ -112,21 +112,14 @@ class TrackingService:
         self._refresh_lock = asyncio.Lock()
 
     async def _extract_league(self, url: str) -> CompetitionExtraction:
-        """Resolve the right extractor for a league URL and delegate extraction."""
+        """Resolve the right extractor for a competition URL and delegate extraction."""
 
         extractor = self.extractor_registry.get_for_url(url)
         extraction = await extractor.extract_league(url)
 
-        # TODO: once the rest of the service becomes sportsbook-agnostic,
-        # replace this runtime guard with a shared cross-extractor model.
         if not isinstance(extraction, CompetitionExtraction):
             raise TypeError(
                 "TrackingService received an unexpected competition extraction payload type."
-            )
-
-        if extraction.platform != "bet365":
-            raise TypeError(
-                "TrackingService currently supports only Bet365-compatible competition payloads."
             )
 
         return extraction
@@ -136,6 +129,42 @@ class TrackingService:
 
         try:
             extraction = await self._extract_league(url)
+        except ValueError as error:
+            return CommandResult(
+                ok=False,
+                message=(
+                    "No tengo soporte para esa plataforma todavía.\n"
+                    "Usá /platforms para ver las disponibles.\n"
+                    f"Detalle: {error}"
+                ),
+            )
+        except RuntimeError as error:
+            logger.exception("Competition extraction failed for chat_id=%s.", chat_id)
+            return CommandResult(
+                ok=False,
+                message=(
+                    "No pude extraer la liga desde la plataforma indicada.\n"
+                    f"Detalle: {error}"
+                ),
+            )
+
+        existing_subscription = self.repository.get_tracked_competition_subscription_by_identity(
+            chat_id,
+            platform=extraction.platform,
+            competition_external_id=extraction.competition_external_id,
+        )
+
+        if existing_subscription is not None:
+            return CommandResult(
+                ok=False,
+                message=(
+                    "Esa liga ya está trackeada en este chat.\n"
+                    f"🌐 Plataforma: {existing_subscription.tracked_league.platform_display_name}\n"
+                    f"🏷️ Liga: {existing_subscription.tracked_league.league_name}"
+                ),
+            )
+
+        try:
             pending_request = self.repository.create_pending_competition_request(
                 chat_id=chat_id,
                 platform=extraction.platform,
@@ -147,16 +176,7 @@ class TrackingService:
                 payload=extraction.raw_payload,
             )
         except ValueError as error:
-            return CommandResult(ok=False, message=f"URL inválida: {error}")
-        except RuntimeError as error:
-            logger.exception("Competition extraction failed for chat_id=%s.", chat_id)
-            return CommandResult(
-                ok=False,
-                message=(
-                    "No pude extraer la liga desde Bet365.\n"
-                    f"Detalle: {error}"
-                ),
-            )
+            return CommandResult(ok=False, message=f"No pude guardar el tracking pendiente.\nDetalle: {error}")
 
         if extraction.is_empty:
             return CommandResult(
@@ -195,7 +215,7 @@ class TrackingService:
                     ok=False,
                     message=(
                         "No hay ninguna liga pendiente para confirmar.\n"
-                        "Primero usá /track_url <url_de_bet365>."
+                        "Primero usá /track_url <url_de_plataforma>."
                     ),
                 )
 
@@ -247,12 +267,12 @@ class TrackingService:
 
             if pending_request is None:
                 return CommandResult(
-                    ok=False,
-                    message=(
-                        "No hay ninguna liga pendiente para confirmar.\n"
-                        "Primero usá /track_url <url_de_bet365>."
-                    ),
-                )
+                ok=False,
+                message=(
+                    "No hay ninguna liga pendiente para confirmar.\n"
+                    "Primero usá /track_url <url_de_plataforma>."
+                ),
+            )
 
             if not pending_request.requires_empty_confirmation:
                 return CommandResult(
@@ -279,6 +299,36 @@ class TrackingService:
         self.repository.sanitize_tracking_state()
         return self.repository.list_tracked_competitions(chat_id)
 
+    def list_supported_platforms(self) -> list[PlatformDescriptor]:
+        """Return the currently registered betting platforms."""
+
+        return self.extractor_registry.list_platforms()
+
+    def build_platforms_message(self) -> CommandResult:
+        """Build the `/platforms` response from the extractor registry."""
+
+        platforms = self.list_supported_platforms()
+
+        if not platforms:
+            return CommandResult(
+                ok=True,
+                message="No hay plataformas registradas en este momento.",
+            )
+
+        lines = ["🌐 Plataformas disponibles"]
+
+        for platform in platforms:
+            lines.append("")
+            prefix = "✅" if platform.implemented else "⚪️"
+            lines.append(f"{prefix} {platform.display_name}")
+            lines.append(f"Key: {platform.key}")
+            if platform.domains:
+                lines.append(f"Dominios: {', '.join(platform.domains)}")
+            if platform.supports:
+                lines.append(f"Soporta: {', '.join(platform.supports)}")
+
+        return CommandResult(ok=True, message="\n".join(lines))
+
     def build_tracks_list_message(self, chat_id: int) -> CommandResult:
         """Build the `/list_tracks` response using tracked subscriptions."""
 
@@ -289,16 +339,27 @@ class TrackingService:
                 ok=True,
                 message=(
                     "No tenés ligas trackeadas todavía.\n"
-                    "Usá /track_url <url_de_bet365> y después /confirm_track."
+                    "Usá /track_url <url_de_plataforma> y después /confirm_track."
                 ),
             )
 
         lines = ["Ligas trackeadas:"]
+        current_platform: str | None = None
+        platform_index = 0
 
-        for index, item in enumerate(tracked_leagues, start=1):
+        for item in tracked_leagues:
+            platform_name = item.tracked_league.platform_display_name
+
+            if platform_name != current_platform:
+                if current_platform is not None:
+                    lines.append("")
+                lines.append(f"🌐 {platform_name}")
+                current_platform = platform_name
+                platform_index = 0
+
+            platform_index += 1
             lines.append(
-                f"{index}. {item.tracked_league.league_name} | "
-                f"{item.tracked_league.platform} | "
+                f"{platform_index}. {item.tracked_league.league_name} | "
                 f"enabled={'on' if item.subscription.enabled else 'off'} | "
                 f"odds={'on' if item.subscription.notify_odds_changes else 'off'} | "
                 f"threshold={item.subscription.change_percent_threshold:.1f}%"
@@ -485,10 +546,24 @@ class TrackingService:
 
             if subscription.notify_new_matches:
                 for match in result.new_matches:
+                    if self.repository.has_sent_alert(
+                        subscription.telegram_chat_id,
+                        result.tracked_league.id,
+                        match.fixture_id,
+                        "new_event",
+                    ):
+                        continue
+
                     await bot.send_message(
                         chat_id=subscription.telegram_chat_id,
                         text=build_new_event_alert_message(result.tracked_league, match),
                         parse_mode=ParseMode.HTML,
+                    )
+                    self.repository.mark_sent_alert(
+                        subscription.telegram_chat_id,
+                        result.tracked_league.id,
+                        match.fixture_id,
+                        "new_event",
                     )
 
             for change in result.odds_changes:
@@ -567,7 +642,7 @@ class TrackingService:
                 ok=True,
                 message=(
                     "No tenés ligas trackeadas todavía.\n"
-                    "Usá /track_url <url_de_bet365> y después /confirm_track."
+                    "Usá /track_url <url_de_plataforma> y después /confirm_track."
                 ),
             )
 
@@ -592,8 +667,9 @@ class TrackingService:
 
         return (
             f"Encontré la liga {pending_request.league_name}.\n"
-            f"Platform: {pending_request.platform}\n"
-            f"Topic: {pending_request.topic}\n"
+            f"🌐 Plataforma: {pending_request.platform_display_name}\n"
+            f"🔑 Key: {pending_request.platform}\n"
+            f"🏷️ Competencia: {pending_request.topic}\n"
             "Respondé /confirm_track para agregarla al tracking."
         )
 
@@ -606,7 +682,7 @@ class TrackingService:
         return (
             "⚠️ La liga fue detectada, pero actualmente no tiene partidos o cuotas disponibles.\n\n"
             f"Liga: {pending_request.league_name}\n"
-            f"Platform: {pending_request.platform}\n"
+            f"Plataforma: {pending_request.platform_display_name}\n"
             f"URL: {pending_request.url}\n\n"
             "¿Querés almacenarla igual para empezar a trackearla?\n"
             "Respondé:\n"
@@ -627,12 +703,13 @@ class TrackingService:
         subscription = confirmed_request.subscription
 
         lines = [
-            f"Tracking activado para {tracked_league.league_name}.\n"
-            f"Platform: {tracked_league.platform}\n"
-            f"Topic: {tracked_league.topic}\n"
-            f"Tracked League ID: {tracked_league.id}\n"
-            f"notify_new_matches={'on' if subscription.notify_new_matches else 'off'}\n"
-            f"notify_odds_changes={'on' if subscription.notify_odds_changes else 'off'}"
+            "✅ Liga trackeada",
+            f"🌐 Plataforma: {tracked_league.platform_display_name}",
+            f"🏷️ Liga: {tracked_league.league_name}",
+            f"🔑 Competencia: {tracked_league.topic}",
+            f"🆔 Track ID: {tracked_league.id}",
+            f"notify_new_matches={'on' if subscription.notify_new_matches else 'off'}",
+            f"notify_odds_changes={'on' if subscription.notify_odds_changes else 'off'}",
         ]
 
         if bootstrap_count is not None:
@@ -656,18 +733,19 @@ class TrackingService:
         subscription = confirmed_request.subscription
 
         lines = [
-            f"Tracking activado para {tracked_league.league_name}.\n"
-            f"Platform: {tracked_league.platform}\n"
-            f"Topic: {tracked_league.topic}\n"
-            f"Tracked League ID: {tracked_league.id}\n"
-            f"notify_new_matches={'on' if subscription.notify_new_matches else 'off'}\n"
+            "✅ Liga trackeada",
+            f"🌐 Plataforma: {tracked_league.platform_display_name}",
+            f"🏷️ Liga: {tracked_league.league_name}",
+            f"🔑 Competencia: {tracked_league.topic}",
+            f"🆔 Track ID: {tracked_league.id}",
+            f"notify_new_matches={'on' if subscription.notify_new_matches else 'off'}",
             f"notify_odds_changes={'on' if subscription.notify_odds_changes else 'off'}",
             "La liga quedó guardada aunque todavía no tenga partidos activos.",
         ]
 
         if tracked_league.needs_name_resolution:
             lines.append(
-                "Se usó un nombre provisorio y se reemplazará automáticamente cuando Bet365 muestre eventos reales."
+                "Se usó un nombre provisorio y se reemplazará automáticamente cuando la plataforma muestre eventos reales."
             )
 
         return "\n".join(lines)
@@ -709,7 +787,7 @@ class TrackingService:
                     if isinstance(extraction_or_error, Exception):
                         failed_leagues.append(tracked_league.league_name)
                         logger.error(
-                            "Failed to refresh tracked league id=%s, continuing with remaining leagues.",
+                            "Failed to refresh tracked competition id=%s, continuing with remaining competitions.",
                             tracked_league.id,
                             exc_info=(
                                 type(extraction_or_error),
@@ -727,15 +805,16 @@ class TrackingService:
                     except Exception as error:
                         failed_leagues.append(tracked_league.league_name)
                         logger.error(
-                            "Failed to refresh tracked league id=%s, continuing with remaining leagues.",
+                            "Failed to refresh tracked competition id=%s, continuing with remaining competitions.",
                             tracked_league.id,
                             exc_info=(type(error), error, error.__traceback__),
                         )
                         continue
 
                     logger.info(
-                        "Refreshed Bet365 league id=%s name=%s active=%s new=%s odds_changes=%s reminders=%s removed_missing=%s removed_past=%s",
+                        "Refreshed competition id=%s platform=%s name=%s active=%s new=%s odds_changes=%s reminders=%s removed_missing=%s removed_past=%s",
                         result.tracked_league.id,
+                        result.tracked_league.platform,
                         result.tracked_league.league_name,
                         len(result.active_matches),
                         len(result.new_matches),
@@ -808,6 +887,9 @@ class TrackingService:
                 odds_home=match.odds_home,
                 odds_draw=match.odds_draw,
                 odds_away=match.odds_away,
+                event_url=match.source_url,
+                markets_payload=_markets_payload_from_event(match),
+                raw_payload=match.raw_payload,
             )
             for match in future_matches
         ]
@@ -883,6 +965,9 @@ class TrackingService:
                 odds_home=match.odds_home,
                 odds_draw=match.odds_draw,
                 odds_away=match.odds_away,
+                event_url=match.source_url,
+                markets_payload=_markets_payload_from_event(match),
+                raw_payload=match.raw_payload,
             )
             for match in future_matches
         ]
@@ -972,6 +1057,21 @@ def _odds_tuple_from_record(
     """Extract the comparable 1/X/2 odds tuple from a stored active match."""
 
     return (match.odds_home, match.odds_draw, match.odds_away)
+
+
+def _markets_payload_from_event(match: EventSnapshot) -> dict[str, dict[str, float | None]] | None:
+    """Build the current normalized market payload stored with one active event."""
+
+    if match.odds_home is None and match.odds_draw is None and match.odds_away is None:
+        return None
+
+    return {
+        "1x2": {
+            "home": match.odds_home,
+            "draw": match.odds_draw,
+            "away": match.odds_away,
+        }
+    }
 
 
 def _evaluate_subscription_odds_change(

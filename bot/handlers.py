@@ -46,15 +46,16 @@ HELP_MESSAGE = (
     "/start - Mensaje de bienvenida\n"
     "/help - Lista de comandos\n"
     "/guide - Guía rápida del flujo\n"
+    "/platforms - Plataformas soportadas\n"
     "/ping - Responde pong\n"
     "/status - Informa si el bot está online\n"
     "/stats - Muestra métricas simples de recursos\n"
     "/echo <texto> - Devuelve el texto enviado\n\n"
     "Tracking de ligas\n"
-    "/track_url <url> - Extrae una liga Bet365 y la deja pendiente\n"
-    "/confirm_track - Confirma la última liga Bet365 pendiente\n"
-    "/confirm_empty_track - Confirma una liga Bet365 válida pero vacía\n"
-    "/list_tracks - Lista las ligas Bet365 trackeadas\n"
+    "/track_url <url> - Extrae una liga de una plataforma soportada y la deja pendiente\n"
+    "/confirm_track - Confirma la última liga pendiente\n"
+    "/confirm_empty_track - Confirma una liga válida pero vacía\n"
+    "/list_tracks - Lista las ligas trackeadas\n"
     "/refresh_tracks - Actualiza partidos y detecta eventos nuevos\n"
     "/untrack - Permite dejar de trackear una liga\n\n"
     "Consulta de partidos\n"
@@ -73,18 +74,19 @@ HELP_MESSAGE = (
 
 GUIDE_MESSAGE = (
     "Guía rápida\n\n"
-    "1. /track_url <url>\n"
-    "2. /confirm_track\n"
-    "3. /list_tracks\n"
-    "4. /matches\n"
-    "5. /odds_on\n"
-    "6. /set_change_percent 20\n"
-    "7. /check_little_changes\n"
-    "8. /confirm_change <n> o /confirm_all_little_changes"
+    "1. /platforms\n"
+    "2. /track_url <url>\n"
+    "3. /confirm_track\n"
+    "4. /list_tracks\n"
+    "5. /matches\n"
+    "6. /odds_on\n"
+    "7. /set_change_percent 20\n"
+    "8. /check_little_changes\n"
+    "9. /confirm_change <n> o /confirm_all_little_changes"
 )
 
 TRACK_URL_USAGE_MESSAGE = (
-    "Usá /track_url <url_de_bet365>.\n"
+    "Usá /track_url <url_de_plataforma>.\n"
     "Ejemplo:\n"
     "/track_url https://www.bet365.es/#/AC/B1/C1/D1002/E120757998/G40/"
 )
@@ -133,9 +135,9 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         first_name = update.effective_user.first_name
 
     welcome_message = (
-        f"Hola, {first_name}. Soy tu bot de tracking para Bet365.\n\n"
+        f"Hola, {first_name}. Soy tu bot de tracking de plataformas de apuestas.\n\n"
         "Podés registrar ligas con /track_url, confirmarlas con /confirm_track, "
-        "verlas con /list_tracks y consultar partidos con /matches."
+        "verlas con /list_tracks, consultar partidos con /matches y ver plataformas con /platforms."
     )
 
     await update.message.reply_text(welcome_message)
@@ -161,6 +163,16 @@ async def guide_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         return
 
     await update.message.reply_text(GUIDE_MESSAGE)
+
+
+async def platforms_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle `/platforms` with the registered extractor list."""
+
+    if update.message is None:
+        return
+
+    tracking_service = get_tracking_service(context)
+    await reply_with_result(update, tracking_service.build_platforms_message())
 
 
 async def ping_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -316,7 +328,7 @@ async def matches_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if not tracked_leagues:
         await update.message.reply_text(
             "No tenés ligas trackeadas todavía.\n"
-            "Usá /track_url <url_de_bet365> y después /confirm_track."
+            "Usá /track_url <url_de_plataforma> y después /confirm_track."
         )
         return ConversationHandler.END
 
@@ -777,6 +789,7 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("guide", guide_command))
+    application.add_handler(CommandHandler("platforms", platforms_command))
     application.add_handler(CommandHandler("ping", ping_command))
     application.add_handler(CommandHandler("status", status_command))
     application.add_handler(CommandHandler("stats", stats_command))
@@ -896,7 +909,9 @@ def _build_track_selection_message(prompt: str, tracks: list[TrackedCompetitionS
     lines = [prompt]
 
     for index, item in enumerate(tracks, start=1):
-        lines.append(f"{index} - {item.tracked_league.league_name}")
+        lines.append(
+            f"{index} - [{item.tracked_league.platform_display_name}] {item.tracked_league.league_name}"
+        )
 
     return "\n".join(lines)
 

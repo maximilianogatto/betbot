@@ -17,6 +17,9 @@ class Bet365Extractor(Extractor):
     """Wrap the current Bet365 scraper behind the generic extractor interface."""
 
     name = "bet365"
+    display_name = "Bet365"
+    supported_domains = ("bet365.bet.ar", "bet365.es", "bet365.com")
+    supported_capabilities = ("ligas", "eventos 1X2")
 
     def __init__(
         self,
