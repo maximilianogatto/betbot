@@ -11,6 +11,8 @@ import unicodedata
 from typing import Any
 from urllib.parse import urlparse
 
+from core.browser_handler import BrowserHandler, BrowserHandlerSettings
+
 logger = logging.getLogger(__name__)
 
 RUNTIME_STATE_JS = r"""
@@ -330,66 +332,35 @@ class Bet365BrowserExtractor:
 
     def __init__(self, settings: Bet365ExtractorSettings | None = None) -> None:
         self.settings = settings or Bet365ExtractorSettings()
-        self._playwright: Any = None
-        self._browser: Any = None
-        self._context: Any = None
-        self._start_lock = asyncio.Lock()
-        self._semaphore = asyncio.Semaphore(self.settings.max_parallel_pages)
+        self._browser_handler = BrowserHandler(
+            BrowserHandlerSettings(
+                browser_name="chromium",
+                headless=self.settings.headless,
+                max_parallel_pages=self.settings.max_parallel_pages,
+                launch_args=("--disable-blink-features=AutomationControlled",),
+                context_kwargs={
+                    "viewport": {"width": 1440, "height": 900},
+                    "locale": "es-AR",
+                    "user_agent": (
+                        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                        "Chrome/123.0.0.0 Safari/537.36"
+                    ),
+                },
+                page_default_timeout_ms=self.settings.page_load_timeout_ms,
+                page_default_navigation_timeout_ms=self.settings.page_load_timeout_ms,
+            )
+        )
 
     async def start(self) -> None:
         """Start the persistent Playwright browser and context if needed."""
 
-        if self._browser is not None and self._context is not None:
-            return
-
-        async with self._start_lock:
-            if self._browser is not None and self._context is not None:
-                return
-
-            try:
-                from playwright.async_api import async_playwright
-            except ImportError as error:
-                raise RuntimeError(
-                    "Playwright is not installed. Install dependencies and run "
-                    "'python -m playwright install chromium' before using Bet365 commands."
-                ) from error
-
-            self._playwright = await async_playwright().start()
-            self._browser = await self._playwright.chromium.launch(
-                headless=self.settings.headless,
-                args=["--disable-blink-features=AutomationControlled"],
-            )
-            self._context = await self._browser.new_context(
-                viewport={"width": 1440, "height": 900},
-                locale="es-AR",
-                user_agent=(
-                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) "
-                    "Chrome/123.0.0.0 Safari/537.36"
-                ),
-            )
-
-            logger.info(
-                "Persistent Bet365 browser started with max_parallel_pages=%s.",
-                self.settings.max_parallel_pages,
-            )
+        await self._browser_handler.start()
 
     async def stop(self) -> None:
         """Stop the persistent Playwright browser and context."""
 
-        if self._context is not None:
-            await self._context.close()
-            self._context = None
-
-        if self._browser is not None:
-            await self._browser.close()
-            self._browser = None
-
-        if self._playwright is not None:
-            await self._playwright.stop()
-            self._playwright = None
-
-        logger.info("Persistent Bet365 browser stopped.")
+        await self._browser_handler.stop()
 
     async def extract_league(self, url: str) -> Bet365LeagueExtraction:
         """Extract league metadata and fixtures from one Bet365 league URL."""
@@ -406,19 +377,14 @@ class Bet365BrowserExtractor:
                 "'python -m playwright install chromium' before using Bet365 commands."
             ) from error
 
-        async with self._semaphore:
-            if self._context is None:
-                raise RuntimeError("Bet365 browser context is not available.")
+        data: dict[str, Any] | None = None
+        last_error: Exception | None = None
+        last_runtime_state: dict[str, Any] | None = None
+        total_attempts = 3
+        attempt_used = 0
 
-            data: dict[str, Any] | None = None
-            last_error: Exception | None = None
-            last_runtime_state: dict[str, Any] | None = None
-            total_attempts = 3
-            attempt_used = 0
-
-            for attempt in range(1, total_attempts + 1):
-                page = await self._context.new_page()
-
+        for attempt in range(1, total_attempts + 1):
+            async with self._browser_handler.page() as page:
                 try:
                     data, last_runtime_state = await self._extract_page_payload(
                         page,
@@ -464,8 +430,6 @@ class Bet365BrowserExtractor:
                         _format_runtime_state_summary(last_runtime_state),
                     )
                     await asyncio.sleep(float(attempt))
-                finally:
-                    await page.close()
 
         if data is None:
             raise RuntimeError("The Bet365 extractor could not load any runtime payload.") from last_error

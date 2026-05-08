@@ -1,0 +1,67 @@
+"""Internal models for tracking refreshes, diffs, and command responses."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+from storage.tracking_repository import ActiveEventRecord, EventBaseline, TrackedCompetition
+
+
+@dataclass(frozen=True)
+class CommandResult:
+    """Represent a simple bot-facing command response."""
+
+    ok: bool
+    message: str
+
+
+@dataclass(frozen=True)
+class OddsChange:
+    """Represent one odds change detected for a fixture."""
+
+    before: ActiveEventRecord
+    after: ActiveEventRecord
+
+
+@dataclass(frozen=True)
+class SubscriptionOddsAlert:
+    """Represent one odds alert decision for a specific chat baseline."""
+
+    match: ActiveEventRecord
+    baseline: EventBaseline
+    max_percent_change: float
+
+
+@dataclass(frozen=True)
+class CompetitionRefreshResult:
+    """Summarize the result of refreshing one tracked competition."""
+
+    tracked_league: TrackedCompetition
+    active_matches: list[ActiveEventRecord]
+    new_matches: list[ActiveEventRecord]
+    odds_changes: list[OddsChange]
+    reminder_matches: list[ActiveEventRecord]
+    removed_missing_count: int
+    removed_past_count: int
+
+
+@dataclass(frozen=True)
+class RefreshSummary:
+    """Summarize a refresh pass over one or more tracked competitions."""
+
+    tracks_requested: int
+    tracks_refreshed: int
+    active_matches: int
+    new_events: int
+    odds_changes: int
+    failed_leagues: list[str]
+    league_results: list[CompetitionRefreshResult]
+
+
+__all__ = [
+    "CommandResult",
+    "CompetitionRefreshResult",
+    "OddsChange",
+    "RefreshSummary",
+    "SubscriptionOddsAlert",
+]

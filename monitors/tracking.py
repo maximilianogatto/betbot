@@ -13,8 +13,7 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import Sequence
-from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 import logging
 
 from telegram import Bot
@@ -27,14 +26,23 @@ from bot.alerts import (
     build_new_event_alert_message,
     build_odds_change_alert_message,
 )
+from monitors.change_detection import (
+    evaluate_subscription_odds_change,
+    select_due_reminders,
+)
+from monitors.models import (
+    CommandResult,
+    CompetitionRefreshResult,
+    OddsChange,
+    RefreshSummary,
+    SubscriptionOddsAlert,
+)
 from core.models import CompetitionExtraction, EventSnapshot, PlatformDescriptor
 from core.registry import ExtractorRegistry, extractor_registry as global_extractor_registry
 from storage.tracking_repository import (
     ActiveEventRecord,
     ActiveEventUpsert,
-    CompetitionSubscription,
     ConfirmedCompetitionTrackRequest,
-    EventBaseline,
     PendingCompetitionTrackRequest,
     SmallChangeRecord,
     SqliteTrackingRepository,
@@ -44,56 +52,6 @@ from storage.tracking_repository import (
 )
 
 logger = logging.getLogger(__name__)
-
-@dataclass(frozen=True)
-class CommandResult:
-    """Represent a simple bot-facing command response."""
-
-    ok: bool
-    message: str
-
-
-@dataclass(frozen=True)
-class OddsChange:
-    """Represent one odds change detected for a fixture."""
-
-    before: ActiveEventRecord
-    after: ActiveEventRecord
-
-
-@dataclass(frozen=True)
-class SubscriptionOddsAlert:
-    """Represent one odds alert decision for a specific chat baseline."""
-
-    match: ActiveEventRecord
-    baseline: EventBaseline
-    max_percent_change: float
-
-
-@dataclass(frozen=True)
-class CompetitionRefreshResult:
-    """Summarize the result of refreshing one tracked competition."""
-
-    tracked_league: TrackedCompetition
-    active_matches: list[ActiveEventRecord]
-    new_matches: list[ActiveEventRecord]
-    odds_changes: list[OddsChange]
-    reminder_matches: list[ActiveEventRecord]
-    removed_missing_count: int
-    removed_past_count: int
-
-
-@dataclass(frozen=True)
-class RefreshSummary:
-    """Summarize a refresh pass over one or more tracked competitions."""
-
-    tracks_requested: int
-    tracks_refreshed: int
-    active_matches: int
-    new_events: int
-    odds_changes: int
-    failed_leagues: list[str]
-    league_results: list[CompetitionRefreshResult]
 
 
 class TrackingService:
@@ -597,7 +555,7 @@ class TrackingService:
             pending_odds_alerts: list[SubscriptionOddsAlert] = []
 
             for change in result.odds_changes:
-                alert = _evaluate_subscription_odds_change(
+                alert = evaluate_subscription_odds_change(
                     self.repository,
                     subscription,
                     result.tracked_league,
@@ -972,7 +930,7 @@ class TrackingService:
             for fixture_id in current_event_ids
             if fixture_id in changed_fixture_ids and fixture_id in active_by_fixture
         ]
-        reminder_matches = _select_due_reminders(active_matches)
+        reminder_matches = select_due_reminders(active_matches)
 
         return CompetitionRefreshResult(
             tracked_league=tracked_league,
@@ -1150,154 +1108,6 @@ def _markets_payload_from_event(match: EventSnapshot) -> dict[str, dict[str, flo
             "away": match.odds_1x2.away,
         }
     }
-
-
-def _evaluate_subscription_odds_change(
-    repository: SqliteTrackingRepository,
-    subscription: CompetitionSubscription,
-    tracked_league: TrackedCompetition,
-    match: ActiveEventRecord,
-) -> SubscriptionOddsAlert | None:
-    """Evaluate one global odds change against a specific chat baseline."""
-
-    baseline = repository.get_event_baseline(
-        subscription.telegram_chat_id,
-        tracked_league.id,
-        match.fixture_id,
-    )
-
-    if baseline is None:
-        repository.initialize_event_baselines(
-            subscription.telegram_chat_id,
-            tracked_league.id,
-            [match],
-        )
-        return None
-
-    max_percent_change = _compute_max_percent_change(baseline, match)
-
-    if max_percent_change is None:
-        repository.upsert_event_baseline(
-            subscription.telegram_chat_id,
-            tracked_league.id,
-            match.fixture_id,
-            baseline_home=match.odds_home,
-            baseline_draw=match.odds_draw,
-            baseline_away=match.odds_away,
-        )
-        repository.resolve_small_change_with_current_baseline(
-            subscription.telegram_chat_id,
-            tracked_league.id,
-            match.fixture_id,
-        )
-        return None
-
-    should_notify = (
-        subscription.notify_odds_changes
-        and max_percent_change >= subscription.change_percent_threshold
-    )
-
-    if should_notify:
-        return SubscriptionOddsAlert(
-            match=match,
-            baseline=baseline,
-            max_percent_change=max_percent_change,
-        )
-
-    repository.upsert_small_change(
-        subscription.telegram_chat_id,
-        tracked_league.id,
-        match.fixture_id,
-        home=match.home,
-        away=match.away,
-        scheduled_label_date=match.kickoff_label_date,
-        scheduled_label_time=match.kickoff_label_time,
-        baseline_home=baseline.baseline_home,
-        baseline_draw=baseline.baseline_draw,
-        baseline_away=baseline.baseline_away,
-        current_home=match.odds_home,
-        current_draw=match.odds_draw,
-        current_away=match.odds_away,
-        max_percent_change=max_percent_change,
-        status="pending",
-    )
-    return None
-
-
-def _compute_max_percent_change(
-    baseline: EventBaseline,
-    match: ActiveEventRecord,
-) -> float | None:
-    """Return the maximum valid percent change between baseline and current odds."""
-
-    changes = [
-        _compute_percent_change(baseline.baseline_home, match.odds_home),
-        _compute_percent_change(baseline.baseline_draw, match.odds_draw),
-        _compute_percent_change(baseline.baseline_away, match.odds_away),
-    ]
-    valid_changes = [change for change in changes if change is not None]
-
-    if not valid_changes:
-        return None
-
-    return max(valid_changes)
-
-
-def _compute_percent_change(
-    baseline_value: float | None,
-    current_value: float | None,
-) -> float | None:
-    """Compute absolute percent change for one odds selection."""
-
-    if baseline_value is None or current_value is None:
-        return None
-
-    if baseline_value <= 0:
-        return None
-
-    return abs(current_value - baseline_value) / baseline_value * 100
-
-
-def _select_due_reminders(matches: Sequence[ActiveEventRecord]) -> list[ActiveEventRecord]:
-    """Return matches that should trigger the 5-minute reminder now."""
-
-    now = datetime.now(timezone.utc)
-    due_matches: list[ActiveEventRecord] = []
-
-    for match in matches:
-        if match.alerted:
-            continue
-
-        time_label = (match.kickoff_label_time or "").strip()
-        if not time_label:
-            continue
-
-        kickoff = _parse_match_kickoff(match)
-        if kickoff is None:
-            continue
-
-        reminder_time = kickoff - timedelta(minutes=5)
-        if reminder_time <= now <= kickoff:
-            due_matches.append(match)
-
-    return due_matches
-
-
-def _parse_match_kickoff(match: ActiveEventRecord) -> datetime | None:
-    """Parse the stored kickoff timestamp into an aware UTC datetime."""
-
-    if match.kickoff_at is None:
-        return None
-
-    try:
-        kickoff = datetime.fromisoformat(match.kickoff_at)
-    except ValueError:
-        return None
-
-    if kickoff.tzinfo is None:
-        kickoff = kickoff.replace(tzinfo=timezone.utc)
-
-    return kickoff.astimezone(timezone.utc)
 
 
 def _batched(items: Sequence[TrackedCompetition], batch_size: int) -> list[list[TrackedCompetition]]:

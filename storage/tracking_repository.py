@@ -19,13 +19,22 @@ from __future__ import annotations
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from datetime import datetime, timezone
-import json
 import logging
 from pathlib import Path
 import sqlite3
 from typing import Any
 
 from core.models import platform_display_name
+from storage.mappers import (
+    json_dumps as _json_dumps,
+    row_to_active_event_record as _row_to_active_event_record,
+    row_to_event_baseline as _row_to_event_baseline,
+    row_to_pending_request as _row_to_pending_request,
+    row_to_small_change_record as _row_to_small_change_record,
+    row_to_subscription as _row_to_subscription,
+    row_to_tracked_competition as _row_to_tracked_competition,
+    row_to_tracked_competition_subscription as _row_to_tracked_competition_subscription,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -1928,154 +1937,6 @@ class SqliteTrackingRepository:
         with _connect() as connection:
             _sanitize_tracking_state(connection)
 
-# -------------------------- ADAPTORS -----------------------------
-# These functions adapt database storaged data to dataclases used in the code
-def _row_to_pending_request(row: sqlite3.Row) -> PendingCompetitionTrackRequest: 
-    return PendingCompetitionTrackRequest(
-        id=int(row["id"]),
-        telegram_chat_id=int(row["telegram_chat_id"]),
-        platform=str(row["platform"]),
-        source_url=str(row["source_url"]),
-        competition_external_id=str(row["competition_external_id"]),
-        competition_name=str(row["competition_name"]),
-        requires_empty_confirmation=bool(row["requires_empty_confirmation"]),
-        needs_name_resolution=bool(row["needs_name_resolution"]),
-        payload_json=_row_optional_text(row, "payload_json"),
-        created_at=str(row["created_at"]),
-        expires_at=_row_optional_text(row, "expires_at"),
-    )
-
-
-def _row_to_tracked_competition(row: sqlite3.Row) -> TrackedCompetition:
-    return TrackedCompetition(
-        id=int(row["id"]),
-        platform=str(row["platform"]),
-        source_url=str(row["source_url"]),
-        competition_external_id=str(row["competition_external_id"]),
-        competition_name=str(row["competition_name"]),
-        metadata_json=_row_optional_text(row, "metadata_json"),
-        needs_name_resolution=bool(row["needs_name_resolution"]),
-        enabled=bool(row["enabled"]),
-        last_synced_at=_row_optional_text(row, "last_refreshed_at"),
-        created_at=str(row["created_at"]),
-        updated_at=str(row["updated_at"]),
-    )
-
-
-def _row_to_subscription(row: sqlite3.Row) -> CompetitionSubscription:
-    return CompetitionSubscription(
-        telegram_chat_id=int(row["telegram_chat_id"]),
-        tracked_competition_id=int(row["tracked_competition_id"]),
-        notify_new_events=bool(row["notify_new_events"]),
-        notify_odds_changes=bool(row["notify_odds_changes"]),
-        change_percent_threshold=float(row["change_threshold_percent"]),
-        enabled=bool(row["enabled"]),
-        created_at=str(row["created_at"]),
-        updated_at=str(row["updated_at"]),
-    )
-
-
-def _row_to_tracked_competition_subscription(
-    row: sqlite3.Row,
-) -> TrackedCompetitionSubscription:
-    tracked_competition = TrackedCompetition(
-        id=int(row["tracked_competition_id"]),
-        platform=str(row["tracked_platform"]),
-        source_url=str(row["tracked_source_url"]),
-        competition_external_id=str(row["tracked_competition_external_id"]),
-        competition_name=str(row["tracked_competition_name"]),
-        metadata_json=_row_optional_text(row, "tracked_metadata_json"),
-        needs_name_resolution=bool(row["tracked_needs_name_resolution"]),
-        enabled=bool(row["tracked_enabled"]),
-        last_synced_at=_row_optional_text(row, "tracked_last_refreshed_at"),
-        created_at=str(row["tracked_created_at"]),
-        updated_at=str(row["tracked_updated_at"]),
-    )
-    subscription = CompetitionSubscription(
-        telegram_chat_id=int(row["subscription_telegram_chat_id"]),
-        tracked_competition_id=int(row["subscription_tracked_competition_id"]),
-        notify_new_events=bool(row["subscription_notify_new_events"]),
-        notify_odds_changes=bool(row["subscription_notify_odds_changes"]),
-        change_percent_threshold=float(row["subscription_change_threshold_percent"]),
-        enabled=bool(row["subscription_enabled"]),
-        created_at=str(row["subscription_created_at"]),
-        updated_at=str(row["subscription_updated_at"]),
-    )
-    return TrackedCompetitionSubscription(
-        tracked_competition=tracked_competition,
-        subscription=subscription,
-    )
-
-
-def _row_to_active_event_record(row: sqlite3.Row) -> ActiveEventRecord:
-    return ActiveEventRecord(
-        id=int(row["id"]),
-        tracked_competition_id=int(row["tracked_competition_id"]),
-        platform=str(row["platform"]),
-        competition_external_id=str(row["competition_external_id"]),
-        external_event_id=str(row["external_event_id"]),
-        home=str(row["home"]),
-        away=str(row["away"]),
-        scheduled_label_date=_row_optional_text(row, "scheduled_label_date"),
-        scheduled_label_time=_row_optional_text(row, "scheduled_label_time"),
-        scheduled_at=_row_optional_text(row, "scheduled_at"),
-        event_url=_row_optional_text(row, "event_url"),
-        odds_home=_row_optional_float(row, "odds_home"),
-        odds_draw=_row_optional_float(row, "odds_draw"),
-        odds_away=_row_optional_float(row, "odds_away"),
-        markets_json=_row_optional_text(row, "markets_json"),
-        raw_payload_json=_row_optional_text(row, "raw_payload_json"),
-        alerted=_row_optional_text(row, "reminder_sent_at") is not None,
-        is_active=bool(row["is_active"]),
-        first_seen_at=str(row["first_seen_at"]),
-        last_seen_at=str(row["last_seen_at"]),
-        created_at=str(row["created_at"]),
-        updated_at=str(row["updated_at"]),
-    )
-
-
-def _row_to_event_baseline(row: sqlite3.Row) -> EventBaseline:
-    return EventBaseline(
-        telegram_chat_id=int(row["chat_id"]),
-        active_event_id=int(row["active_event_id"]),
-        tracked_competition_id=int(row["tracked_competition_id"]),
-        external_event_id=str(row["external_event_id"]),
-        baseline_home=_row_optional_float(row, "baseline_odds_home"),
-        baseline_draw=_row_optional_float(row, "baseline_odds_draw"),
-        baseline_away=_row_optional_float(row, "baseline_odds_away"),
-        baseline_markets_json=_row_optional_text(row, "baseline_markets_json"),
-        baseline_set_at=str(row["baseline_set_at"]),
-        updated_at=str(row["updated_at"]),
-    )
-
-
-def _row_to_small_change_record(row: sqlite3.Row) -> SmallChangeRecord:
-    return SmallChangeRecord(
-        id=int(row["id"]),
-        telegram_chat_id=int(row["chat_id"]),
-        active_event_id=int(row["active_event_id"]),
-        tracked_competition_id=int(row["tracked_competition_id"]),
-        external_event_id=str(row["external_event_id"]),
-        competition_name=str(row["competition_name"]),
-        home=str(row["home"]),
-        away=str(row["away"]),
-        scheduled_label_date=_row_optional_text(row, "scheduled_label_date"),
-        scheduled_label_time=_row_optional_text(row, "scheduled_label_time"),
-        baseline_home=_row_optional_float(row, "previous_odds_home"),
-        baseline_draw=_row_optional_float(row, "previous_odds_draw"),
-        baseline_away=_row_optional_float(row, "previous_odds_away"),
-        current_home=_row_optional_float(row, "current_odds_home"),
-        current_draw=_row_optional_float(row, "current_odds_draw"),
-        current_away=_row_optional_float(row, "current_odds_away"),
-        max_percent_change=float(row["max_change_percent"]),
-        payload_json=_row_optional_text(row, "payload_json"),
-        status=str(row["status"]),
-        created_at=str(row["created_at"]),
-        updated_at=str(row["updated_at"]),
-        confirmed_at=_row_optional_text(row, "confirmed_at"),
-        dismissed_at=_row_optional_text(row, "dismissed_at"),
-    )
-
 # Connect to the database
 def _connect() -> sqlite3.Connection:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -2665,26 +2526,6 @@ def _coerce_optional_float(value: float | int | None) -> float | None:
     if value is None:
         return None
     return float(value)
-
-
-def _row_optional_text(row: sqlite3.Row, key: str) -> str | None:
-    value = row[key]
-    if value is None:
-        return None
-    return str(value)
-
-
-def _row_optional_float(row: sqlite3.Row, key: str) -> float | None:
-    value = row[key]
-    if value is None:
-        return None
-    return float(value)
-
-
-def _json_dumps(value: Any) -> str | None:
-    if value is None:
-        return None
-    return json.dumps(value, ensure_ascii=False, sort_keys=True)
 
 
 def _default_markets_payload(event: ActiveEventUpsert) -> dict[str, Any] | None:
