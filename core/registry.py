@@ -36,6 +36,17 @@ class ExtractorRegistry:
 
         raise ValueError(f"No registered extractor can handle URL: {url}")
 
+    def get_for_platform(self, platform: str) -> Extractor:
+        """Return the registered extractor for one platform key."""
+
+        normalized_platform = platform.strip().lower()
+
+        for extractor in self._extractors:
+            if extractor.name == normalized_platform:
+                return extractor
+
+        raise ValueError(f"No registered extractor found for platform: {platform}")
+
     def list_registered(self) -> list[Extractor]:
         """Return the currently registered extractor instances."""
 

@@ -12,8 +12,14 @@ from typing import Any
 from urllib.parse import urlparse
 
 from core.browser_handler import BrowserHandler, BrowserHandlerSettings
+from core.extractor_base import CompetitionUnavailableError
 
 logger = logging.getLogger(__name__)
+
+UNAVAILABLE_COMPETITION_MESSAGE = (
+    "Competition could not be refreshed because the source currently has no active events "
+    "or the URL may have changed."
+)
 
 RUNTIME_STATE_JS = r"""
 (expectedTopic) => {
@@ -419,8 +425,12 @@ class Bet365BrowserExtractor:
                             total_attempts,
                             _format_runtime_state_summary(last_runtime_state),
                         )
-                        raise RuntimeError(
-                            "The Bet365 runtime did not stabilize for the requested competition."
+                        raise CompetitionUnavailableError(
+                            UNAVAILABLE_COMPETITION_MESSAGE,
+                            platform="bet365",
+                            source_url=normalized_url,
+                            reason_code="competition_unavailable",
+                            details=last_runtime_state,
                         ) from error
                     logger.debug(
                         "Bet365 extractor attempt %s/%s did not stabilize for %s: %s",
@@ -440,13 +450,29 @@ class Bet365BrowserExtractor:
         extractor_error = str(data.get("error", "")).strip()
 
         if extractor_error:
-            raise RuntimeError(
-                "The Bet365 extractor returned an incomplete competition payload. "
-                f"Detail: {extractor_error}"
+            raise CompetitionUnavailableError(
+                UNAVAILABLE_COMPETITION_MESSAGE,
+                platform="bet365",
+                source_url=normalized_url,
+                reason_code="competition_unavailable",
+                details={
+                    "topic": topic,
+                    "leagueId": league_id,
+                    "extractorError": extractor_error,
+                },
             )
 
         if not topic:
-            raise RuntimeError("The Bet365 page did not expose a usable topic.")
+            raise CompetitionUnavailableError(
+                UNAVAILABLE_COMPETITION_MESSAGE,
+                platform="bet365",
+                source_url=normalized_url,
+                reason_code="competition_unavailable",
+                details={
+                    "leagueId": league_id,
+                    "extractorError": "usable topic not available",
+                },
+            )
 
         raw_matches = data.get("matches", [])
         if not isinstance(raw_matches, list):

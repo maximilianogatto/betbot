@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from urllib.parse import urlparse
+
 from core.extractor_base import Extractor
 from core.models import CompetitionExtraction, CompetitionKey, EventKey, EventSnapshot, Odds1X2, utc_now_iso
 from extractors.bet365.client import (
@@ -61,6 +63,30 @@ class Bet365Extractor(Extractor):
 
         await self._browser_extractor.stop()
 
+    def build_event_url(
+        self,
+        *,
+        competition_external_id: str,
+        external_event_id: str,
+        source_url: str | None = None,
+        event_url: str | None = None,
+        competition_metadata: dict[str, object] | None = None,
+        event_metadata: dict[str, object] | None = None,
+    ) -> str | None:
+        """Return a direct Bet365 event URL when it can be derived safely."""
+
+        del competition_external_id, competition_metadata, event_metadata
+
+        normalized_source_url = (source_url or "").strip()
+        normalized_event_id = external_event_id.strip()
+
+        direct_url = _build_bet365_event_url(normalized_source_url, normalized_event_id)
+        if direct_url:
+            return direct_url
+
+        normalized_event_url = (event_url or "").strip()
+        return normalized_event_url or None
+
 
 def _to_competition_extraction(extraction: Bet365LeagueExtraction) -> CompetitionExtraction:
     """Adapt the current Bet365 payload to the generic competition model."""
@@ -76,7 +102,7 @@ def _to_competition_extraction(extraction: Bet365LeagueExtraction) -> Competitio
             platform=extraction.platform,
             competition_external_id=extraction.topic,
             competition_name=extraction.league_name,
-            source_url=extraction.url,
+            competition_url=extraction.url,
             extracted_at=extracted_at,
         )
         for match in extraction.matches
@@ -105,7 +131,7 @@ def _to_event_snapshot(
     platform: str,
     competition_external_id: str,
     competition_name: str,
-    source_url: str,
+    competition_url: str,
     extracted_at: str,
 ) -> EventSnapshot:
     """Adapt one normalized Bet365 match to the generic event snapshot model."""
@@ -122,7 +148,7 @@ def _to_event_snapshot(
         scheduled_label_date=match.kickoff_label_date,
         scheduled_label_time=match.kickoff_label_time,
         scheduled_at=match.kickoff_at,
-        source_url=source_url,
+        source_url=_build_bet365_event_url(competition_url, match.fixture_id),
         odds_1x2=Odds1X2(
             home=match.odds_home,
             draw=match.odds_draw,
@@ -134,4 +160,23 @@ def _to_event_snapshot(
             "competition_name": competition_name,
         },
         raw_payload=match.raw,
+    )
+
+
+def _build_bet365_event_url(competition_url: str, fixture_id: str) -> str | None:
+    """Build a direct Bet365 event URL from one competition URL and fixture id."""
+
+    normalized_fixture_id = fixture_id.strip()
+    normalized_competition_url = competition_url.strip()
+
+    if not normalized_fixture_id or not normalized_competition_url:
+        return None
+
+    parsed_url = urlparse(normalized_competition_url)
+    if "bet365" not in parsed_url.netloc.lower():
+        return None
+
+    return (
+        f"{parsed_url.scheme}://{parsed_url.netloc}"
+        f"/#/AC/B1/C1/D8/E{normalized_fixture_id}/F3/I1/"
     )

@@ -1,7 +1,7 @@
 """Core abstractions shared by concrete betting-site extractors."""
 
 from core.browser_handler import BrowserHandler, BrowserHandlerSettings
-from core.extractor_base import Extractor
+from core.extractor_base import CompetitionUnavailableError, Extractor
 from core.models import (
     CompetitionExtraction,
     CompetitionKey,
@@ -18,6 +18,7 @@ __all__ = [
     "BrowserHandlerSettings",
     "CompetitionExtraction",
     "CompetitionKey",
+    "CompetitionUnavailableError",
     "EventKey",
     "EventSnapshot",
     "Extractor",

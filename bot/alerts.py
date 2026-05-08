@@ -160,6 +160,50 @@ def build_match_card_message(
     return "\n".join(lines)
 
 
+def build_competition_unavailable_warning_message(
+    tracked_league: TrackedCompetition,
+    *,
+    track_number: int,
+    title: str = "⚠️ <b>No se pudo refrescar la liga</b>",
+) -> str:
+    """Build a friendly warning for a competition that could not be refreshed."""
+
+    return (
+        f"{title}\n\n"
+        f"🌐 <b>Plataforma:</b> {escape(tracked_league.platform_display_name)}\n"
+        f"🏷️ <b>Liga:</b> {escape(tracked_league.league_name)}\n\n"
+        "Puede estar temporalmente vacía, la plataforma puede haber removido los eventos "
+        "o el link puede haber cambiado.\n\n"
+        "🔗 <b>URL actual:</b>\n"
+        f"{escape(tracked_league.url)}\n\n"
+        "Verificá la liga en el navegador.\n"
+        "Si el link cambió, actualizalo con:\n\n"
+        f"<code>/update_track_url {track_number} &lt;nuevo_link&gt;</code>\n\n"
+        "📌 <b>Ejemplo:</b>\n"
+        f"<code>/update_track_url {track_number} https://example.com/...</code>"
+    )
+
+
+def build_competition_url_message(tracked_league: TrackedCompetition, url: str) -> str:
+    """Build the Telegram message that exposes one tracked competition URL."""
+
+    return (
+        f"🌐 <b>Plataforma:</b> {escape(tracked_league.platform_display_name)}\n"
+        f"🏷️ <b>Liga:</b> {escape(tracked_league.league_name)}\n\n"
+        "🔗 <b>URL:</b>\n"
+        f"{escape(url)}"
+    )
+
+
+def build_event_url_message(match: ActiveEventRecord, url: str) -> str:
+    """Build the Telegram message that exposes one direct event URL."""
+
+    return (
+        f"⚽ <b>{escape(match.home)} vs {escape(match.away)}</b>\n\n"
+        f"🔗 {escape(url)}"
+    )
+
+
 def build_all_matches_message(
     tracked_league: TrackedCompetition,
     matches: list[ActiveEventRecord],

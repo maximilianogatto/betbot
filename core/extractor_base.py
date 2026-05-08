@@ -3,8 +3,34 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 from core.models import CompetitionExtraction, EventSnapshot, PlatformDescriptor, platform_display_name
+
+
+class CompetitionUnavailableError(RuntimeError):
+    """Signal a controlled competition refresh failure from an extractor.
+
+    Extractors should raise this when the source URL is syntactically supported
+    but the competition currently cannot be refreshed in a trustworthy way, for
+    example because the source is temporarily empty, removed, or still exposing
+    an incomplete page/runtime state after retries.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        platform: str | None = None,
+        source_url: str | None = None,
+        reason_code: str = "competition_unavailable",
+        details: dict[str, Any] | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.platform = platform
+        self.source_url = source_url
+        self.reason_code = reason_code
+        self.details = details or {}
 
 
 class Extractor(ABC):
@@ -50,6 +76,33 @@ class Extractor(ABC):
 
     async def stop(self) -> None:
         """Stop any optional shared runtime resources for the extractor."""
+
+    def build_competition_url(
+        self,
+        *,
+        competition_external_id: str,
+        source_url: str | None = None,
+        metadata: dict[str, Any] | None = None,
+    ) -> str | None:
+        """Return a usable competition URL when the platform supports it."""
+
+        del competition_external_id, metadata
+        return source_url
+
+    def build_event_url(
+        self,
+        *,
+        competition_external_id: str,
+        external_event_id: str,
+        source_url: str | None = None,
+        event_url: str | None = None,
+        competition_metadata: dict[str, Any] | None = None,
+        event_metadata: dict[str, Any] | None = None,
+    ) -> str | None:
+        """Return a usable event URL when the platform supports direct event links."""
+
+        del competition_external_id, external_event_id, source_url, competition_metadata, event_metadata
+        return event_url
 
     def describe_platform(self) -> PlatformDescriptor:
         """Return the platform metadata exposed by this extractor."""

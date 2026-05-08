@@ -91,6 +91,10 @@ class TrackedCompetition:
     needs_name_resolution: bool
     enabled: bool
     last_synced_at: str | None
+    consecutive_unavailable_refreshes: int
+    last_unavailable_refresh_at: str | None
+    last_unavailable_reason: str | None
+    last_unavailable_notification_at: str | None
     created_at: str
     updated_at: str
 
@@ -504,11 +508,15 @@ class SqliteTrackingRepository:
                         metadata_json,
                         needs_name_resolution,
                         enabled,
+                        consecutive_unavailable_refreshes,
+                        last_unavailable_refresh_at,
+                        last_unavailable_reason,
+                        last_unavailable_notification_at,
                         last_refreshed_at,
                         created_at,
                         updated_at
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, 1, NULL, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, 1, 0, NULL, NULL, NULL, NULL, ?, ?)
                     """,
                     (
                         pending_request.platform,
@@ -540,6 +548,10 @@ class SqliteTrackingRepository:
                         metadata_json = COALESCE(?, metadata_json),
                         needs_name_resolution = ?,
                         enabled = 1,
+                        consecutive_unavailable_refreshes = 0,
+                        last_unavailable_refresh_at = NULL,
+                        last_unavailable_reason = NULL,
+                        last_unavailable_notification_at = NULL,
                         updated_at = ?
                     WHERE id = ?
                     """,
@@ -629,6 +641,10 @@ class SqliteTrackingRepository:
                     tc.needs_name_resolution AS tracked_needs_name_resolution,
                     tc.enabled AS tracked_enabled,
                     tc.last_refreshed_at AS tracked_last_refreshed_at,
+                    tc.consecutive_unavailable_refreshes AS tracked_consecutive_unavailable_refreshes,
+                    tc.last_unavailable_refresh_at AS tracked_last_unavailable_refresh_at,
+                    tc.last_unavailable_reason AS tracked_last_unavailable_reason,
+                    tc.last_unavailable_notification_at AS tracked_last_unavailable_notification_at,
                     tc.created_at AS tracked_created_at,
                     tc.updated_at AS tracked_updated_at,
                     cs.telegram_chat_id AS subscription_telegram_chat_id,
@@ -668,6 +684,10 @@ class SqliteTrackingRepository:
                     tc.needs_name_resolution,
                     tc.enabled,
                     tc.last_refreshed_at,
+                    tc.consecutive_unavailable_refreshes,
+                    tc.last_unavailable_refresh_at,
+                    tc.last_unavailable_reason,
+                    tc.last_unavailable_notification_at,
                     tc.created_at,
                     tc.updated_at
                 FROM tracked_competitions tc
@@ -726,6 +746,32 @@ class SqliteTrackingRepository:
             row = _fetch_tracked_competition_row(connection, tracked_competition_id)
 
         return _row_to_tracked_competition(row) if row is not None else None
+
+    def get_tracked_competition_by_identity(
+        self,
+        *,
+        platform: str,
+        competition_external_id: str,
+    ) -> TrackedCompetition | None:
+        """Load one tracked competition by platform plus external identity."""
+
+        with _connect() as connection:
+            _sanitize_tracking_state(connection)
+            row = _fetch_tracked_competition_by_identity_row(
+                connection,
+                platform,
+                competition_external_id,
+            )
+
+        return _row_to_tracked_competition(row) if row is not None else None
+
+    def get_enabled_subscription_count(self, tracked_competition_id: int) -> int:
+        """Return how many enabled chat subscriptions share one competition."""
+
+        with _connect() as connection:
+            _ensure_tracked_competition_exists(connection, tracked_competition_id)
+            _sanitize_tracking_state(connection)
+            return _count_enabled_subscriptions(connection, tracked_competition_id)
 
     def get_tracked_competition_subscription(
         self,
@@ -1453,6 +1499,10 @@ class SqliteTrackingRepository:
                         competition_external_id = ?,
                         competition_name = ?,
                         needs_name_resolution = ?,
+                        consecutive_unavailable_refreshes = 0,
+                        last_unavailable_refresh_at = NULL,
+                        last_unavailable_reason = NULL,
+                        last_unavailable_notification_at = NULL,
                         last_refreshed_at = ?,
                         updated_at = ?
                     WHERE id = ?
@@ -1477,6 +1527,10 @@ class SqliteTrackingRepository:
                         competition_name = ?,
                         needs_name_resolution = ?,
                         enabled = ?,
+                        consecutive_unavailable_refreshes = 0,
+                        last_unavailable_refresh_at = NULL,
+                        last_unavailable_reason = NULL,
+                        last_unavailable_notification_at = NULL,
                         last_refreshed_at = ?,
                         updated_at = ?
                     WHERE id = ?
@@ -1499,6 +1553,187 @@ class SqliteTrackingRepository:
             raise RuntimeError("Tracked competition update succeeded but the row could not be reloaded.")
 
         return _row_to_tracked_competition(row)
+
+    def update_tracked_competition_source(
+        self,
+        tracked_competition_id: int,
+        *,
+        source_url: str,
+        competition_external_id: str,
+        competition_name: str | None,
+        needs_name_resolution: bool | None = None,
+        payload: dict[str, Any] | None = None,
+    ) -> TrackedCompetition:
+        """Manually update the source URL and identity for one tracked competition."""
+
+        normalized_url = _normalize_url(source_url)
+        normalized_competition_id = competition_external_id.strip()
+        payload_json = _json_dumps(payload)
+        now_iso = _utc_now_iso()
+
+        if not normalized_competition_id:
+            raise ValueError("competition_external_id must not be empty.")
+
+        with _connect() as connection:
+            _ensure_tracked_competition_exists(connection, tracked_competition_id)
+            _sanitize_tracking_state(connection)
+
+            existing_row = _fetch_tracked_competition_row(connection, tracked_competition_id)
+            if existing_row is None:
+                raise RuntimeError("Tracked competition update could not load the current row.")
+
+            existing_competition = _row_to_tracked_competition(existing_row)
+            conflicting_row = _fetch_tracked_competition_by_identity_row(
+                connection,
+                existing_competition.platform,
+                normalized_competition_id,
+            )
+            if conflicting_row is not None and int(conflicting_row["id"]) != tracked_competition_id:
+                raise ValueError(
+                    "La nueva URL apunta a una competencia que ya existe en el tracking."
+                )
+
+            resolved_name, resolved_needs_name_resolution = _resolve_competition_name(
+                existing_competition.competition_name,
+                existing_competition.needs_name_resolution,
+                competition_name,
+                needs_name_resolution,
+            )
+
+            connection.execute(
+                """
+                UPDATE tracked_competitions
+                SET
+                    source_url = ?,
+                    competition_external_id = ?,
+                    competition_name = ?,
+                    metadata_json = COALESCE(?, metadata_json),
+                    needs_name_resolution = ?,
+                    consecutive_unavailable_refreshes = 0,
+                    last_unavailable_refresh_at = NULL,
+                    last_unavailable_reason = NULL,
+                    last_unavailable_notification_at = NULL,
+                    updated_at = ?
+                WHERE id = ?
+                """,
+                (
+                    normalized_url,
+                    normalized_competition_id,
+                    resolved_name,
+                    payload_json,
+                    int(resolved_needs_name_resolution),
+                    now_iso,
+                    tracked_competition_id,
+                ),
+            )
+            connection.execute(
+                """
+                UPDATE active_events
+                SET
+                    competition_external_id = ?,
+                    updated_at = ?
+                WHERE tracked_competition_id = ?
+                """,
+                (
+                    normalized_competition_id,
+                    now_iso,
+                    tracked_competition_id,
+                ),
+            )
+            row = _fetch_tracked_competition_row(connection, tracked_competition_id)
+
+        if row is None:
+            raise RuntimeError("Tracked competition source update succeeded but the row could not be reloaded.")
+
+        return _row_to_tracked_competition(row)
+
+    def record_unavailable_refresh(
+        self,
+        tracked_competition_id: int,
+        *,
+        reason: str,
+    ) -> TrackedCompetition:
+        """Increment the unavailable-refresh state for one tracked competition."""
+
+        normalized_reason = _normalize_optional_text(reason)
+        now_iso = _utc_now_iso()
+
+        with _connect() as connection:
+            _ensure_tracked_competition_exists(connection, tracked_competition_id)
+            _sanitize_tracking_state(connection)
+            connection.execute(
+                """
+                UPDATE tracked_competitions
+                SET
+                    consecutive_unavailable_refreshes = consecutive_unavailable_refreshes + 1,
+                    last_unavailable_refresh_at = ?,
+                    last_unavailable_reason = ?,
+                    updated_at = ?
+                WHERE id = ?
+                """,
+                (
+                    now_iso,
+                    normalized_reason,
+                    now_iso,
+                    tracked_competition_id,
+                ),
+            )
+            row = _fetch_tracked_competition_row(connection, tracked_competition_id)
+
+        if row is None:
+            raise RuntimeError("Unavailable refresh state update succeeded but the row could not be reloaded.")
+
+        return _row_to_tracked_competition(row)
+
+    def should_send_unavailable_refresh_warning(
+        self,
+        tracked_competition_id: int,
+        *,
+        minimum_failures: int,
+        cooldown_seconds: int,
+    ) -> bool:
+        """Return whether an unavailable-refresh warning should be sent now."""
+
+        tracked_competition = self.get_tracked_competition(tracked_competition_id)
+        if tracked_competition is None:
+            return False
+
+        if tracked_competition.consecutive_unavailable_refreshes < minimum_failures:
+            return False
+
+        last_notified_at = tracked_competition.last_unavailable_notification_at
+        if last_notified_at is None:
+            return True
+
+        try:
+            notified_at = datetime.fromisoformat(last_notified_at)
+        except ValueError:
+            return True
+
+        if notified_at.tzinfo is None:
+            notified_at = notified_at.replace(tzinfo=timezone.utc)
+
+        elapsed_seconds = (datetime.now(timezone.utc) - notified_at.astimezone(timezone.utc)).total_seconds()
+        return elapsed_seconds >= cooldown_seconds
+
+    def mark_unavailable_refresh_warning_sent(self, tracked_competition_id: int) -> None:
+        """Persist that an unavailable-refresh warning was sent recently."""
+
+        now_iso = _utc_now_iso()
+
+        with _connect() as connection:
+            _ensure_tracked_competition_exists(connection, tracked_competition_id)
+            _sanitize_tracking_state(connection)
+            connection.execute(
+                """
+                UPDATE tracked_competitions
+                SET
+                    last_unavailable_notification_at = ?,
+                    updated_at = ?
+                WHERE id = ?
+                """,
+                (now_iso, now_iso, tracked_competition_id),
+            )
 
     def upsert_active_events(
         self,
@@ -1977,6 +2212,10 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
             needs_name_resolution INTEGER NOT NULL DEFAULT 0,
             enabled INTEGER NOT NULL DEFAULT 1,
             last_refreshed_at TEXT,
+            consecutive_unavailable_refreshes INTEGER NOT NULL DEFAULT 0,
+            last_unavailable_refresh_at TEXT,
+            last_unavailable_reason TEXT,
+            last_unavailable_notification_at TEXT,
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL,
             UNIQUE(platform, competition_external_id)
@@ -2076,6 +2315,48 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
         );
         """
     )
+    _ensure_column(
+        connection,
+        "tracked_competitions",
+        "consecutive_unavailable_refreshes",
+        "INTEGER NOT NULL DEFAULT 0",
+    )
+    _ensure_column(
+        connection,
+        "tracked_competitions",
+        "last_unavailable_refresh_at",
+        "TEXT",
+    )
+    _ensure_column(
+        connection,
+        "tracked_competitions",
+        "last_unavailable_reason",
+        "TEXT",
+    )
+    _ensure_column(
+        connection,
+        "tracked_competitions",
+        "last_unavailable_notification_at",
+        "TEXT",
+    )
+
+
+def _ensure_column(
+    connection: sqlite3.Connection,
+    table_name: str,
+    column_name: str,
+    column_sql: str,
+) -> None:
+    existing_columns = {
+        str(row["name"])
+        for row in connection.execute(f"PRAGMA table_info({table_name})").fetchall()
+    }
+    if column_name in existing_columns:
+        return
+
+    connection.execute(
+        f"ALTER TABLE {table_name} ADD COLUMN {column_name} {column_sql}"
+    )
 
 
 def _fetch_pending_request_row(
@@ -2121,6 +2402,10 @@ def _fetch_tracked_competition_row(
             needs_name_resolution,
             enabled,
             last_refreshed_at,
+            consecutive_unavailable_refreshes,
+            last_unavailable_refresh_at,
+            last_unavailable_reason,
+            last_unavailable_notification_at,
             created_at,
             updated_at
         FROM tracked_competitions
@@ -2147,6 +2432,10 @@ def _fetch_tracked_competition_by_identity_row(
             needs_name_resolution,
             enabled,
             last_refreshed_at,
+            consecutive_unavailable_refreshes,
+            last_unavailable_refresh_at,
+            last_unavailable_reason,
+            last_unavailable_notification_at,
             created_at,
             updated_at
         FROM tracked_competitions
@@ -2196,6 +2485,10 @@ def _fetch_tracked_competition_subscription_row(
             tc.needs_name_resolution AS tracked_needs_name_resolution,
             tc.enabled AS tracked_enabled,
             tc.last_refreshed_at AS tracked_last_refreshed_at,
+            tc.consecutive_unavailable_refreshes AS tracked_consecutive_unavailable_refreshes,
+            tc.last_unavailable_refresh_at AS tracked_last_unavailable_refresh_at,
+            tc.last_unavailable_reason AS tracked_last_unavailable_reason,
+            tc.last_unavailable_notification_at AS tracked_last_unavailable_notification_at,
             tc.created_at AS tracked_created_at,
             tc.updated_at AS tracked_updated_at,
             cs.telegram_chat_id AS subscription_telegram_chat_id,
@@ -2233,6 +2526,10 @@ def _fetch_tracked_competition_subscription_by_identity_row(
             tc.needs_name_resolution AS tracked_needs_name_resolution,
             tc.enabled AS tracked_enabled,
             tc.last_refreshed_at AS tracked_last_refreshed_at,
+            tc.consecutive_unavailable_refreshes AS tracked_consecutive_unavailable_refreshes,
+            tc.last_unavailable_refresh_at AS tracked_last_unavailable_refresh_at,
+            tc.last_unavailable_reason AS tracked_last_unavailable_reason,
+            tc.last_unavailable_notification_at AS tracked_last_unavailable_notification_at,
             tc.created_at AS tracked_created_at,
             tc.updated_at AS tracked_updated_at,
             cs.telegram_chat_id AS subscription_telegram_chat_id,

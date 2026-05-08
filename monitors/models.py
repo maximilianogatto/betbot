@@ -46,6 +46,14 @@ class CompetitionRefreshResult:
 
 
 @dataclass(frozen=True)
+class UnavailableCompetitionRefresh:
+    """Summarize one refresh attempt that could not produce a usable snapshot."""
+
+    tracked_league: TrackedCompetition
+    reason: str
+
+
+@dataclass(frozen=True)
 class RefreshSummary:
     """Summarize a refresh pass over one or more tracked competitions."""
 
@@ -56,6 +64,7 @@ class RefreshSummary:
     odds_changes: int
     failed_leagues: list[str]
     league_results: list[CompetitionRefreshResult]
+    unavailable_competitions: list[UnavailableCompetitionRefresh]
 
 
 __all__ = [
@@ -64,4 +73,5 @@ __all__ = [
     "OddsChange",
     "RefreshSummary",
     "SubscriptionOddsAlert",
+    "UnavailableCompetitionRefresh",
 ]

@@ -49,6 +49,10 @@ def row_to_tracked_competition(row: sqlite3.Row) -> "TrackedCompetition":
         needs_name_resolution=bool(row["needs_name_resolution"]),
         enabled=bool(row["enabled"]),
         last_synced_at=row_optional_text(row, "last_refreshed_at"),
+        consecutive_unavailable_refreshes=int(row["consecutive_unavailable_refreshes"]),
+        last_unavailable_refresh_at=row_optional_text(row, "last_unavailable_refresh_at"),
+        last_unavailable_reason=row_optional_text(row, "last_unavailable_reason"),
+        last_unavailable_notification_at=row_optional_text(row, "last_unavailable_notification_at"),
         created_at=str(row["created_at"]),
         updated_at=str(row["updated_at"]),
     )
@@ -86,6 +90,10 @@ def row_to_tracked_competition_subscription(
         needs_name_resolution=bool(row["tracked_needs_name_resolution"]),
         enabled=bool(row["tracked_enabled"]),
         last_synced_at=row_optional_text(row, "tracked_last_refreshed_at"),
+        consecutive_unavailable_refreshes=int(row["tracked_consecutive_unavailable_refreshes"]),
+        last_unavailable_refresh_at=row_optional_text(row, "tracked_last_unavailable_refresh_at"),
+        last_unavailable_reason=row_optional_text(row, "tracked_last_unavailable_reason"),
+        last_unavailable_notification_at=row_optional_text(row, "tracked_last_unavailable_notification_at"),
         created_at=str(row["tracked_created_at"]),
         updated_at=str(row["tracked_updated_at"]),
     )

@@ -14,18 +14,23 @@ from __future__ import annotations
 import asyncio
 from collections.abc import Sequence
 from datetime import datetime, timezone
+import json
 import logging
 
 from telegram import Bot
 from telegram.constants import ParseMode
 
 from bot.alerts import (
+    build_competition_unavailable_warning_message,
+    build_competition_url_message,
+    build_event_url_message,
     build_grouped_new_event_alert_message,
     build_grouped_odds_change_alert_message,
     build_match_reminder_alert_message,
     build_new_event_alert_message,
     build_odds_change_alert_message,
 )
+from core.extractor_base import CompetitionUnavailableError
 from monitors.change_detection import (
     evaluate_subscription_odds_change,
     select_due_reminders,
@@ -36,6 +41,7 @@ from monitors.models import (
     OddsChange,
     RefreshSummary,
     SubscriptionOddsAlert,
+    UnavailableCompetitionRefresh,
 )
 from core.models import CompetitionExtraction, EventSnapshot, PlatformDescriptor
 from core.registry import ExtractorRegistry, extractor_registry as global_extractor_registry
@@ -52,6 +58,13 @@ from storage.tracking_repository import (
 )
 
 logger = logging.getLogger(__name__)
+
+UNAVAILABLE_COMPETITION_MESSAGE = (
+    "Competition could not be refreshed because the source currently has no active events "
+    "or the URL may have changed."
+)
+UNAVAILABLE_WARNING_FAILURE_THRESHOLD = 2
+UNAVAILABLE_WARNING_COOLDOWN_SECONDS = 12 * 60 * 60
 
 
 class TrackingService:
@@ -87,12 +100,34 @@ class TrackingService:
         try:
             extraction = await self._extract_league(url)
         except ValueError as error:
+            logger.warning(
+                "Competition extraction validation failed for chat_id=%s url=%s: %s",
+                chat_id,
+                url,
+                error,
+            )
             return CommandResult(
                 ok=False,
                 message=(
-                    "No tengo soporte para esa plataforma todavía.\n"
-                    "Usá /platforms para ver las disponibles.\n"
-                    f"Detalle: {error}"
+                    "No pude validar la URL de la competencia.\n\n"
+                    "Verificá que el link sea válido y que pertenezca a una plataforma soportada.\n"
+                    "Usá /platforms para ver las disponibles."
+                ),
+            )
+        except CompetitionUnavailableError as error:
+            logger.warning(
+                "Competition extraction unavailable for chat_id=%s url=%s: %s",
+                chat_id,
+                url,
+                error,
+            )
+            return CommandResult(
+                ok=False,
+                message=(
+                    "No pude validar la competencia en este momento.\n\n"
+                    "La competencia puede estar temporalmente vacía, los eventos pueden haber sido removidos "
+                    "o el link puede haber cambiado.\n\n"
+                    "Verificá la competencia en el navegador y volvé a intentar en unos minutos."
                 ),
             )
         except RuntimeError as error:
@@ -100,8 +135,8 @@ class TrackingService:
             return CommandResult(
                 ok=False,
                 message=(
-                    "No pude extraer la liga desde la plataforma indicada.\n"
-                    f"Detalle: {error}"
+                    "No pude extraer la liga desde la plataforma indicada.\n\n"
+                    "Verificá la competencia en el navegador y volvé a intentar."
                 ),
             )
 
@@ -133,7 +168,18 @@ class TrackingService:
                 payload=extraction.raw_payload,
             )
         except ValueError as error:
-            return CommandResult(ok=False, message=f"No pude guardar el tracking pendiente.\nDetalle: {error}")
+            logger.warning(
+                "Pending competition request could not be stored for chat_id=%s: %s",
+                chat_id,
+                error,
+            )
+            return CommandResult(
+                ok=False,
+                message=(
+                    "No pude guardar el tracking pendiente.\n\n"
+                    "Volvé a intentar en unos minutos."
+                ),
+            )
 
         if extraction.is_empty:
             return CommandResult(
@@ -184,6 +230,13 @@ class TrackingService:
                         confirmed_request.tracked_competition.id,
                         extraction,
                     )
+                except CompetitionUnavailableError as error:
+                    logger.warning(
+                        "Initial competition bootstrap unavailable for tracked_league_id=%s: %s",
+                        confirmed_request.tracked_competition.id,
+                        error,
+                    )
+                    bootstrap_error = str(error)
                 except Exception as error:
                     logger.exception(
                         "Initial competition bootstrap failed for tracked_league_id=%s.",
@@ -314,7 +367,7 @@ class TrackingService:
 
         lines = ["Ligas trackeadas:"]
         current_platform: str | None = None
-        platform_index = 0
+        visible_index = 0
 
         for item in tracked_leagues:
             platform_name = item.tracked_league.platform_display_name
@@ -324,17 +377,135 @@ class TrackingService:
                     lines.append("")
                 lines.append(f"🌐 {platform_name}")
                 current_platform = platform_name
-                platform_index = 0
 
-            platform_index += 1
+            visible_index += 1
             lines.append(
-                f"{platform_index}. {item.tracked_league.league_name} | "
+                f"{visible_index}. {item.tracked_league.league_name} | "
                 f"enabled={'on' if item.subscription.enabled else 'off'} | "
                 f"odds={'on' if item.subscription.notify_odds_changes else 'off'} | "
                 f"threshold={item.subscription.change_percent_threshold:.1f}%"
             )
 
         return CommandResult(ok=True, message="\n".join(lines))
+
+    async def update_tracked_competition_url(
+        self,
+        chat_id: int,
+        *,
+        track_number: int,
+        new_url: str,
+    ) -> CommandResult:
+        """Validate and replace the source URL for one tracked competition."""
+
+        tracked_subscription = self._get_track_by_number(chat_id, track_number)
+        if tracked_subscription is None:
+            return CommandResult(
+                ok=False,
+                message="No encontré ese número de liga en /list_tracks.",
+            )
+
+        tracked_competition = tracked_subscription.tracked_league
+
+        if self.repository.get_enabled_subscription_count(tracked_competition.id) > 1:
+            return CommandResult(
+                ok=False,
+                message=(
+                    "Esta competencia está compartida por múltiples chats y no puede actualizarse automáticamente."
+                ),
+            )
+
+        try:
+            extraction = await self._extract_league(new_url)
+        except ValueError as error:
+            logger.warning(
+                "Tracked competition URL update validation failed for tracked_league_id=%s url=%s: %s",
+                tracked_competition.id,
+                new_url,
+                error,
+            )
+            return CommandResult(
+                ok=False,
+                message=(
+                    "No pude validar la nueva URL.\n\n"
+                    "Verificá que el link sea válido y que pertenezca a una plataforma soportada.\n"
+                    "Usá /platforms para ver las disponibles."
+                ),
+            )
+        except CompetitionUnavailableError as error:
+            logger.warning(
+                "Tracked competition URL update unavailable for tracked_league_id=%s url=%s: %s",
+                tracked_competition.id,
+                new_url,
+                error,
+            )
+            return CommandResult(
+                ok=False,
+                message=(
+                    "No pude validar la nueva URL en este momento.\n\n"
+                    "La competencia puede estar temporalmente vacía, los eventos pueden haber sido removidos "
+                    "o el link puede haber cambiado.\n\n"
+                    "Verificá el link en el navegador y volvé a intentar."
+                ),
+            )
+        except RuntimeError as error:
+            logger.exception(
+                "Tracked competition URL update failed for tracked_league_id=%s.",
+                tracked_competition.id,
+            )
+            return CommandResult(
+                ok=False,
+                message=(
+                    "No pude actualizar la URL trackeada.\n\n"
+                    "Verificá el link en el navegador y volvé a intentar."
+                ),
+            )
+
+        if extraction.platform != tracked_competition.platform:
+            return CommandResult(
+                ok=False,
+                message="La nueva URL pertenece a otra plataforma y no puede reutilizar este tracking.",
+            )
+
+        if extraction.is_empty:
+            return CommandResult(
+                ok=False,
+                message=(
+                    "La nueva URL es válida, pero actualmente no muestra partidos activos.\n"
+                    "No actualicé la liga para evitar dejarla en un estado ambiguo."
+                ),
+            )
+
+        conflicting_competition = self.repository.get_tracked_competition_by_identity(
+            platform=extraction.platform,
+            competition_external_id=extraction.competition_external_id,
+        )
+        if conflicting_competition is not None and conflicting_competition.id != tracked_competition.id:
+            return CommandResult(
+                ok=False,
+                message="La nueva URL apunta a una competencia que ya existe en el tracking.",
+            )
+
+        async with self._refresh_lock:
+            updated_competition = self.repository.update_tracked_competition_source(
+                tracked_competition.id,
+                source_url=extraction.source_url,
+                competition_external_id=extraction.competition_external_id,
+                competition_name=extraction.competition_name,
+                needs_name_resolution=extraction.is_provisional_name,
+                payload=extraction.raw_payload,
+            )
+            seeded_count = self._seed_initial_snapshot(updated_competition.id, extraction)
+
+        return CommandResult(
+            ok=True,
+            message=(
+                "✅ URL de tracking actualizada\n"
+                f"🌐 Plataforma: {updated_competition.platform_display_name}\n"
+                f"🏷️ Liga: {updated_competition.league_name}\n"
+                f"🔑 Competencia: {updated_competition.topic}\n\n"
+                f"Estado actual sincronizado: {seeded_count} partidos activos."
+            ),
+        )
 
     def set_odds_change_notifications(
         self,
@@ -479,7 +650,27 @@ class TrackingService:
             if tracked_league is None:
                 raise ValueError(f"No tracked competition found with id={tracked_league_id}.")
 
-            extraction = await self._extract_league(tracked_league.url)
+            try:
+                extraction = await self._extract_league(tracked_league.url)
+            except CompetitionUnavailableError:
+                self.repository.record_unavailable_refresh(
+                    tracked_league.id,
+                    reason=UNAVAILABLE_COMPETITION_MESSAGE,
+                )
+                raise
+
+            if extraction.is_empty:
+                self.repository.record_unavailable_refresh(
+                    tracked_league.id,
+                    reason=UNAVAILABLE_COMPETITION_MESSAGE,
+                )
+                raise CompetitionUnavailableError(
+                    UNAVAILABLE_COMPETITION_MESSAGE,
+                    platform=tracked_league.platform,
+                    source_url=tracked_league.url,
+                    reason_code="competition_unavailable",
+                )
+
             return self._apply_extraction_to_tracked_league(tracked_league_id, extraction)
 
     async def monitor_once(self, bot: Bot) -> RefreshSummary:
@@ -489,11 +680,26 @@ class TrackingService:
         await self.dispatch_notifications(bot, summary)
         return summary
 
-    async def dispatch_notifications(self, bot: Bot, summary: RefreshSummary) -> None:
+    async def dispatch_notifications(
+        self,
+        bot: Bot,
+        summary: RefreshSummary,
+        *,
+        force_unavailable_warnings: bool = False,
+        unavailable_warning_chat_id: int | None = None,
+    ) -> None:
         """Send new-event and odds-change notifications to matching subscribers."""
 
         for result in summary.league_results:
             await self.notify_for_refresh_result(bot, result)
+
+        for unavailable in summary.unavailable_competitions:
+            await self.notify_for_unavailable_competition(
+                bot,
+                unavailable,
+                force_notify=force_unavailable_warnings,
+                target_chat_id=unavailable_warning_chat_id,
+            )
 
     async def notify_for_refresh_result(self, bot: Bot, result: CompetitionRefreshResult) -> None:
         """Send notifications for one refreshed league to all matching chats."""
@@ -619,6 +825,55 @@ class TrackingService:
                 [match.fixture_id for match in result.reminder_matches],
             )
 
+    async def notify_for_unavailable_competition(
+        self,
+        bot: Bot,
+        unavailable: UnavailableCompetitionRefresh,
+        *,
+        force_notify: bool = False,
+        target_chat_id: int | None = None,
+    ) -> None:
+        """Send a warning for a competition that keeps failing to refresh."""
+
+        if not force_notify and not self.repository.should_send_unavailable_refresh_warning(
+            unavailable.tracked_league.id,
+            minimum_failures=UNAVAILABLE_WARNING_FAILURE_THRESHOLD,
+            cooldown_seconds=UNAVAILABLE_WARNING_COOLDOWN_SECONDS,
+        ):
+            return
+
+        subscriptions = self.repository.get_subscriptions_for_competition(
+            unavailable.tracked_league.id,
+            only_enabled=True,
+        )
+        if not subscriptions:
+            return
+
+        sent_any_warning = False
+        for subscription in subscriptions:
+            if target_chat_id is not None and subscription.telegram_chat_id != target_chat_id:
+                continue
+
+            track_number = self._get_track_number(
+                subscription.telegram_chat_id,
+                unavailable.tracked_league.id,
+            )
+            if track_number is None:
+                continue
+
+            await bot.send_message(
+                chat_id=subscription.telegram_chat_id,
+                text=build_competition_unavailable_warning_message(
+                    unavailable.tracked_league,
+                    track_number=track_number,
+                ),
+                parse_mode=ParseMode.HTML,
+            )
+            sent_any_warning = True
+
+        if sent_any_warning and not force_notify:
+            self.repository.mark_unavailable_refresh_warning_sent(unavailable.tracked_league.id)
+
     def get_matches_for_track(
         self,
         chat_id: int,
@@ -639,6 +894,81 @@ class TrackingService:
         return tracked_subscription, self.repository.get_active_events(
             tracked_league_id,
             only_future=True,
+        )
+
+    def build_competition_url_message(
+        self,
+        chat_id: int,
+        track_number: int,
+    ) -> CommandResult:
+        """Build the user-facing message with the current competition URL."""
+
+        tracked_subscription = self._get_track_by_number(chat_id, track_number)
+        if tracked_subscription is None:
+            return CommandResult(
+                ok=False,
+                message="No encontré ese número de liga en /list_tracks.",
+            )
+
+        extractor = self.extractor_registry.get_for_platform(
+            tracked_subscription.tracked_league.platform
+        )
+        competition_url = extractor.build_competition_url(
+            competition_external_id=tracked_subscription.tracked_league.competition_external_id,
+            source_url=tracked_subscription.tracked_league.source_url,
+            metadata=_loads_optional_json(tracked_subscription.tracked_league.metadata_json),
+        )
+
+        if not competition_url:
+            return CommandResult(
+                ok=False,
+                message="⚠️ Esta plataforma no soporta links directos a competiciones.",
+            )
+
+        return CommandResult(
+            ok=True,
+            message=build_competition_url_message(
+                tracked_subscription.tracked_league,
+                competition_url,
+            ),
+        )
+
+    def build_event_url_message(
+        self,
+        tracked_subscription: TrackedCompetitionSubscription,
+        matches: Sequence[ActiveEventRecord],
+        event_number: int,
+    ) -> CommandResult:
+        """Build the user-facing message with one direct event URL."""
+
+        if event_number <= 0 or event_number > len(matches):
+            return CommandResult(
+                ok=False,
+                message="Elegí un número válido de partido de la última lista mostrada.",
+            )
+
+        match = matches[event_number - 1]
+        extractor = self.extractor_registry.get_for_platform(
+            tracked_subscription.tracked_league.platform
+        )
+        event_url = extractor.build_event_url(
+            competition_external_id=tracked_subscription.tracked_league.competition_external_id,
+            external_event_id=match.external_event_id,
+            source_url=tracked_subscription.tracked_league.source_url,
+            event_url=match.event_url,
+            competition_metadata=_loads_optional_json(tracked_subscription.tracked_league.metadata_json),
+            event_metadata=_loads_optional_json(match.raw_payload_json),
+        )
+
+        if not event_url:
+            return CommandResult(
+                ok=False,
+                message="⚠️ Esta plataforma no soporta links directos a eventos.",
+            )
+
+        return CommandResult(
+            ok=True,
+            message=build_event_url_message(match, event_url),
         )
 
     def build_refresh_summary_message(self, summary: RefreshSummary) -> CommandResult:
@@ -664,7 +994,7 @@ class TrackingService:
 
         if summary.failed_leagues:
             lines.append(
-                f"Ligas con error ({len(summary.failed_leagues)}): {', '.join(summary.failed_leagues)}"
+                f"Ligas con problemas ({len(summary.failed_leagues)}): {', '.join(summary.failed_leagues)}"
             )
 
         return CommandResult(ok=True, message="\n".join(lines))
@@ -776,10 +1106,12 @@ class TrackingService:
                 odds_changes=0,
                 failed_leagues=[],
                 league_results=[],
+                unavailable_competitions=[],
             )
 
         league_results: list[CompetitionRefreshResult] = []
         failed_leagues: list[str] = []
+        unavailable_competitions: list[UnavailableCompetitionRefresh] = []
 
         tracked_leagues = [
             tracked_league
@@ -796,6 +1128,27 @@ class TrackingService:
                 )
 
                 for tracked_league, extraction_or_error in zip(batch, extracted_batch, strict=True):
+                    if isinstance(extraction_or_error, CompetitionUnavailableError):
+                        failed_leagues.append(tracked_league.league_name)
+                        unavailable_tracked_league = self.repository.record_unavailable_refresh(
+                            tracked_league.id,
+                            reason=str(extraction_or_error),
+                        )
+                        logger.warning(
+                            "Competition refresh unavailable id=%s platform=%s name=%s reason=%s",
+                            unavailable_tracked_league.id,
+                            unavailable_tracked_league.platform,
+                            unavailable_tracked_league.league_name,
+                            extraction_or_error,
+                        )
+                        unavailable_competitions.append(
+                            UnavailableCompetitionRefresh(
+                                tracked_league=unavailable_tracked_league,
+                                reason=str(extraction_or_error),
+                            )
+                        )
+                        continue
+
                     if isinstance(extraction_or_error, Exception):
                         failed_leagues.append(tracked_league.league_name)
                         logger.error(
@@ -806,6 +1159,27 @@ class TrackingService:
                                 extraction_or_error,
                                 extraction_or_error.__traceback__,
                             ),
+                        )
+                        continue
+
+                    if extraction_or_error.is_empty:
+                        failed_leagues.append(tracked_league.league_name)
+                        unavailable_tracked_league = self.repository.record_unavailable_refresh(
+                            tracked_league.id,
+                            reason=UNAVAILABLE_COMPETITION_MESSAGE,
+                        )
+                        logger.warning(
+                            "Competition refresh unavailable id=%s platform=%s name=%s reason=%s",
+                            unavailable_tracked_league.id,
+                            unavailable_tracked_league.platform,
+                            unavailable_tracked_league.league_name,
+                            UNAVAILABLE_COMPETITION_MESSAGE,
+                        )
+                        unavailable_competitions.append(
+                            UnavailableCompetitionRefresh(
+                                tracked_league=unavailable_tracked_league,
+                                reason=UNAVAILABLE_COMPETITION_MESSAGE,
+                            )
                         )
                         continue
 
@@ -845,6 +1219,7 @@ class TrackingService:
             odds_changes=sum(len(result.odds_changes) for result in league_results),
             failed_leagues=failed_leagues,
             league_results=league_results,
+            unavailable_competitions=unavailable_competitions,
         )
 
     def _apply_extraction_to_tracked_league(
@@ -1059,6 +1434,39 @@ class TrackingService:
             "new_event",
         )
 
+    def _get_track_by_number(
+        self,
+        chat_id: int,
+        track_number: int,
+    ) -> TrackedCompetitionSubscription | None:
+        """Resolve one tracked competition from the visible `/list_tracks` number."""
+
+        if track_number <= 0:
+            return None
+
+        tracked_leagues = self.list_confirmed_tracks(chat_id)
+        index = track_number - 1
+
+        if index < 0 or index >= len(tracked_leagues):
+            return None
+
+        return tracked_leagues[index]
+
+    def _get_track_number(
+        self,
+        chat_id: int,
+        tracked_competition_id: int,
+    ) -> int | None:
+        """Return the visible `/list_tracks` number for one tracked competition."""
+
+        tracked_leagues = self.list_confirmed_tracks(chat_id)
+
+        for index, tracked_subscription in enumerate(tracked_leagues, start=1):
+            if tracked_subscription.tracked_league.id == tracked_competition_id:
+                return index
+
+        return None
+
 
 def _is_past_match(match: EventSnapshot) -> bool:
     """Return whether a normalized event already kicked off in the past."""
@@ -1108,6 +1516,21 @@ def _markets_payload_from_event(match: EventSnapshot) -> dict[str, dict[str, flo
             "away": match.odds_1x2.away,
         }
     }
+
+
+def _loads_optional_json(value: str | None) -> dict[str, object] | None:
+    """Decode one optional JSON payload for generic extractor helpers."""
+
+    normalized_value = (value or "").strip()
+    if not normalized_value:
+        return None
+
+    try:
+        payload = json.loads(normalized_value)
+    except json.JSONDecodeError:
+        return None
+
+    return payload if isinstance(payload, dict) else None
 
 
 def _batched(items: Sequence[TrackedCompetition], batch_size: int) -> list[list[TrackedCompetition]]:

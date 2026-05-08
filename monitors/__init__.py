@@ -4,6 +4,7 @@ from monitors.models import (
     CommandResult,
     CompetitionRefreshResult,
     RefreshSummary,
+    UnavailableCompetitionRefresh,
 )
 from monitors.tracking import (
     TrackingService,
@@ -14,4 +15,5 @@ __all__ = [
     "CompetitionRefreshResult",
     "RefreshSummary",
     "TrackingService",
+    "UnavailableCompetitionRefresh",
 ]

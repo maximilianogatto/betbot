@@ -17,9 +17,11 @@ from telegram.ext import (
 
 from bot.alerts import (
     build_all_matches_message,
+    build_competition_unavailable_warning_message,
     build_little_changes_message,
     build_match_card_message,
 )
+from core.extractor_base import CompetitionUnavailableError
 from monitoring import format_system_metrics_message, get_system_metrics
 from monitors.tracking import CommandResult, TrackingService
 from storage.tracking_repository import ActiveEventRecord, TrackedCompetitionSubscription
@@ -56,10 +58,13 @@ HELP_MESSAGE = (
     "/confirm_track - Confirma la última liga pendiente\n"
     "/confirm_empty_track - Confirma una liga válida pero vacía\n"
     "/list_tracks - Lista las ligas trackeadas\n"
+    "/competition_url <n> - Muestra la URL original de una liga trackeada\n"
     "/refresh_tracks - Actualiza partidos y detecta eventos nuevos\n"
+    "/update_track_url <n> <url> - Actualiza la URL de una liga usando el número de /list_tracks\n"
     "/untrack - Permite dejar de trackear una liga\n\n"
     "Consulta de partidos\n"
-    "/matches - Permite elegir una liga y ver sus partidos\n\n"
+    "/matches - Permite elegir una liga y ver sus partidos\n"
+    "/event_url <n> - Muestra la URL directa de un partido de la última lista de /matches\n\n"
     "Configuración de odds\n"
     "/odds_on - Activa notificaciones de cambios de odds para una liga\n"
     "/odds_off - Desactiva notificaciones de cambios de odds para una liga\n"
@@ -78,11 +83,14 @@ GUIDE_MESSAGE = (
     "2. /track_url <url>\n"
     "3. /confirm_track\n"
     "4. /list_tracks\n"
-    "5. /matches\n"
-    "6. /odds_on\n"
-    "7. /set_change_percent 20\n"
-    "8. /check_little_changes\n"
-    "9. /confirm_change <n> o /confirm_all_little_changes"
+    "5. /competition_url <n>\n"
+    "6. /matches\n"
+    "7. /event_url <n>\n"
+    "8. /update_track_url <n> <url> si el link cambió\n"
+    "9. /odds_on\n"
+    "10. /set_change_percent 20\n"
+    "11. /check_little_changes\n"
+    "12. /confirm_change <n> o /confirm_all_little_changes"
 )
 
 TRACK_URL_USAGE_MESSAGE = (
@@ -95,6 +103,25 @@ SET_CHANGE_PERCENT_USAGE_MESSAGE = (
     "Usá /set_change_percent <porcentaje>.\n"
     "Ejemplo:\n"
     "/set_change_percent 20"
+)
+
+UPDATE_TRACK_URL_USAGE_MESSAGE = (
+    "Usá /update_track_url <número_de_/list_tracks> <nuevo_link>.\n"
+    "Ejemplo:\n"
+    "/update_track_url 2 https://www.bet365.es/#/AC/B1/C1/D1002/E123/G40/"
+)
+
+COMPETITION_URL_USAGE_MESSAGE = (
+    "Usá /competition_url <número_de_/list_tracks>.\n"
+    "Ejemplo:\n"
+    "/competition_url 2"
+)
+
+EVENT_URL_USAGE_MESSAGE = (
+    "Usá /event_url <número_visible_en_/matches>.\n"
+    "Primero corré /matches, elegí una liga y después pedí el link del partido.\n"
+    "Ejemplo:\n"
+    "/event_url 3"
 )
 
 
@@ -286,6 +313,61 @@ async def list_tracks_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     await reply_with_result(update, result)
 
 
+async def competition_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle `/competition_url <track_number>` for one tracked competition."""
+
+    if update.message is None or update.effective_chat is None:
+        return
+
+    logger.info("Comando /competition_url recibido.")
+
+    if len(context.args) != 1 or not context.args[0].isdigit():
+        await update.message.reply_text(COMPETITION_URL_USAGE_MESSAGE)
+        return
+
+    track_number = int(context.args[0])
+    if track_number <= 0:
+        await update.message.reply_text(COMPETITION_URL_USAGE_MESSAGE)
+        return
+
+    tracking_service = get_tracking_service(context)
+    result = tracking_service.build_competition_url_message(
+        update.effective_chat.id,
+        track_number,
+    )
+
+    await update.message.reply_text(result.message, parse_mode=ParseMode.HTML)
+
+
+async def update_track_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle `/update_track_url <track_number> <new_url>` for one chat subscription."""
+
+    if update.message is None or update.effective_chat is None:
+        return
+
+    logger.info("Comando /update_track_url recibido.")
+
+    if len(context.args) < 2 or not context.args[0].isdigit():
+        await update.message.reply_text(UPDATE_TRACK_URL_USAGE_MESSAGE)
+        return
+
+    track_number = int(context.args[0])
+    new_url = " ".join(context.args[1:]).strip()
+
+    if track_number <= 0 or not new_url:
+        await update.message.reply_text(UPDATE_TRACK_URL_USAGE_MESSAGE)
+        return
+
+    tracking_service = get_tracking_service(context)
+    result = await tracking_service.update_tracked_competition_url(
+        update.effective_chat.id,
+        track_number=track_number,
+        new_url=new_url,
+    )
+
+    await reply_with_result(update, result)
+
+
 async def refresh_tracks_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle `/refresh_tracks` and send notifications for the refreshed leagues."""
 
@@ -298,16 +380,72 @@ async def refresh_tracks_command(update: Update, context: ContextTypes.DEFAULT_T
 
     try:
         summary = await tracking_service.refresh_chat_tracks(update.effective_chat.id)
-        await tracking_service.dispatch_notifications(context.bot, summary)
+        await tracking_service.dispatch_notifications(
+            context.bot,
+            summary,
+            force_unavailable_warnings=True,
+            unavailable_warning_chat_id=update.effective_chat.id,
+        )
     except (RuntimeError, ValueError) as error:
         logger.exception("Tracking refresh failed for chat_id=%s.", update.effective_chat.id)
         await update.message.reply_text(
-            "No pude actualizar las ligas trackeadas.\n"
-            f"Detalle: {error}"
+            "No pude actualizar las ligas trackeadas en este momento.\n\n"
+            "Volvé a intentar en unos minutos."
         )
         return
 
     await reply_with_result(update, tracking_service.build_refresh_summary_message(summary))
+
+
+async def event_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle `/event_url <event_number>` using the latest `/matches` context."""
+
+    if update.message is None:
+        return
+
+    logger.info("Comando /event_url recibido.")
+
+    if len(context.args) != 1 or not context.args[0].isdigit():
+        await update.message.reply_text(EVENT_URL_USAGE_MESSAGE)
+        return
+
+    active_matches = context.user_data.get(MATCHES_ACTIVE_CONTEXT_KEY)
+    tracked_subscription = context.user_data.get(MATCHES_SELECTED_TRACK_CONTEXT_KEY)
+
+    if not isinstance(active_matches, list) or not active_matches:
+        await update.message.reply_text(
+            "No tengo una lista reciente de partidos para este chat.\n\n"
+            "Usá /matches, elegí una liga y después /event_url <n>."
+        )
+        return
+
+    if not isinstance(tracked_subscription, TrackedCompetitionSubscription):
+        await update.message.reply_text(
+            "No tengo una liga seleccionada recientemente.\n\n"
+            "Usá /matches, elegí una liga y después /event_url <n>."
+        )
+        return
+
+    selected_index = _parse_selection_number(context.args[0], len(active_matches) + 1)
+    if selected_index is None:
+        await update.message.reply_text(EVENT_URL_USAGE_MESSAGE)
+        return
+
+    if selected_index == 0:
+        await update.message.reply_text(
+            "El número 1 corresponde a \"Ver todos\".\n\n"
+            "Elegí el número visible de un partido individual de la última lista de /matches."
+        )
+        return
+
+    tracking_service = get_tracking_service(context)
+    result = tracking_service.build_event_url_message(
+        tracked_subscription,
+        active_matches,
+        selected_index,
+    )
+
+    await update.message.reply_text(result.message, parse_mode=ParseMode.HTML)
 
 
 async def matches_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -383,6 +521,18 @@ async def matches_select_league(update: Update, context: ContextTypes.DEFAULT_TY
                 update.effective_chat.id,
                 selected_track.tracked_league.id,
             )
+        except CompetitionUnavailableError:
+            await update.message.reply_text(
+                build_competition_unavailable_warning_message(
+                    selected_track.tracked_league,
+                    track_number=selected_index + 1,
+                    title="⚠️ <b>No pude actualizar esa liga en este momento.</b>",
+                ),
+                reply_markup=ReplyKeyboardRemove(),
+                parse_mode=ParseMode.HTML,
+            )
+            _clear_all_selection_context(context)
+            return ConversationHandler.END
         except (RuntimeError, ValueError) as error:
             logger.exception(
                 "Failed to refresh tracked league %s for chat_id=%s.",
@@ -390,8 +540,8 @@ async def matches_select_league(update: Update, context: ContextTypes.DEFAULT_TY
                 update.effective_chat.id,
             )
             await update.message.reply_text(
-                "No pude actualizar esa liga en este momento.\n"
-                f"Detalle: {error}",
+                "⚠️ No pude actualizar esa liga en este momento.\n\n"
+                "Volvé a intentar en unos minutos.",
                 reply_markup=ReplyKeyboardRemove(),
             )
             _clear_all_selection_context(context)
@@ -794,7 +944,10 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("confirm_track", confirm_track_command))
     application.add_handler(CommandHandler("confirm_empty_track", confirm_empty_track_command))
     application.add_handler(CommandHandler("list_tracks", list_tracks_command))
+    application.add_handler(CommandHandler("competition_url", competition_url_command))
     application.add_handler(CommandHandler("refresh_tracks", refresh_tracks_command))
+    application.add_handler(CommandHandler("update_track_url", update_track_url_command))
+    application.add_handler(CommandHandler("event_url", event_url_command))
     application.add_handler(CommandHandler("check_little_changes", check_little_changes_command))
     application.add_handler(CommandHandler("confirm_change", confirm_change_command))
     application.add_handler(
