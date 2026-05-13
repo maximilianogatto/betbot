@@ -293,8 +293,12 @@ EXTRACTOR_MAX_PARALLEL_COMPETITIONS=3
 EXTRACTOR_MAX_PARALLEL_PAGES=3
 EXTRACTOR_MAX_PARALLEL_EVENT_PAGES=3
 EXTRACTOR_PAGE_REUSE_ENABLED=false
+EXTRACTOR_BROWSER_RESTART_AFTER_N_REFRESHES=
+EXTRACTOR_BROWSER_RESTART_IDLE_TTL_SECONDS=
 EXTRACTOR_PAGE_LOAD_TIMEOUT_MS=60000
 EXTRACTOR_POST_LOAD_WAIT_MS=4000
+EXTRACTOR_CAPTURE_ATTEMPTS=2
+EXTRACTOR_EVENT_CAPTURE_ATTEMPTS=1
 TRACKING_DEFAULT_CHANGE_THRESHOLD_PERCENT=20.0
 TRACKING_DEFAULT_NOTIFY_ODDS_CHANGES=true
 TRACKING_REMOVE_MISSING_AFTER_CYCLES=3
@@ -310,8 +314,12 @@ TRACKING_REMOVE_MISSING_AFTER_CYCLES=3
 - `EXTRACTOR_MAX_PARALLEL_PAGES`: global max number of Playwright pages processed in parallel
 - `EXTRACTOR_MAX_PARALLEL_EVENT_PAGES`: per-league max number of concurrent event captures
 - `EXTRACTOR_PAGE_REUSE_ENABLED`: reuses Playwright pages between captures when possible
+- `EXTRACTOR_BROWSER_RESTART_AFTER_N_REFRESHES`: optional browser recycle threshold measured in completed Bet365 league refreshes
+- `EXTRACTOR_BROWSER_RESTART_IDLE_TTL_SECONDS`: optional browser recycle threshold after staying idle
 - `EXTRACTOR_PAGE_LOAD_TIMEOUT_MS`: page load and runtime wait timeout
 - `EXTRACTOR_POST_LOAD_WAIT_MS`: extra wait after runtime readiness before extraction
+- `EXTRACTOR_CAPTURE_ATTEMPTS`: retry count for league response capture
+- `EXTRACTOR_EVENT_CAPTURE_ATTEMPTS`: retry count for event `I3` response capture
 - `TRACKING_DEFAULT_CHANGE_THRESHOLD_PERCENT`: default threshold persisted for new chat subscriptions
 - `TRACKING_DEFAULT_NOTIFY_ODDS_CHANGES`: default odds-change notification flag for new chat subscriptions
 - `TRACKING_REMOVE_MISSING_AFTER_CYCLES`: how many refresh cycles an event can stay missing before removal

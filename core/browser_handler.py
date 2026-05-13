@@ -6,6 +6,7 @@ import asyncio
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 import logging
+import time
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -23,6 +24,7 @@ class BrowserHandlerSettings:
     context_kwargs: dict[str, Any] = field(default_factory=dict)
     page_default_timeout_ms: int | None = None
     page_default_navigation_timeout_ms: int | None = None
+    idle_ttl_seconds: float | None = None
 
 
 class BrowserHandler:
@@ -34,9 +36,14 @@ class BrowserHandler:
         self._browser: Any = None
         self._context: Any = None
         self._start_lock = asyncio.Lock()
+        self._maintenance_lock = asyncio.Lock()
         self._semaphore = asyncio.Semaphore(self.settings.max_parallel_pages)
         self._page_pool: list[Any] = []
         self._page_pool_lock = asyncio.Lock()
+        self._active_page_count = 0
+        self._active_page_count_lock = asyncio.Lock()
+        self._restart_requested = False
+        self._last_release_monotonic: float | None = None
 
     async def start(self) -> None:
         """Start the Playwright runtime, browser, and context if needed."""
@@ -92,18 +99,28 @@ class BrowserHandler:
 
         logger.info("Persistent browser stopped: browser=%s", self.settings.browser_name)
 
+    async def request_restart(self, *, reason: str) -> None:
+        """Mark the persistent browser for restart before the next safe capture."""
+
+        self._restart_requested = True
+        logger.info(
+            "Persistent browser restart requested: browser=%s reason=%s",
+            self.settings.browser_name,
+            reason,
+        )
+
     @asynccontextmanager
     async def page(self) -> Any:
         """Yield a fresh page from the shared persistent context."""
 
-        await self.start()
-
         async with self._semaphore:
+            await self._prepare_runtime()
             await self._ensure_shared_context()
             if self._context is None:
                 raise RuntimeError("Browser context is not available.")
 
             page = await self._acquire_page()
+            await self._mark_page_opened()
 
             try:
                 if self.settings.page_default_timeout_ms is not None:
@@ -118,6 +135,7 @@ class BrowserHandler:
                     await self._recycle_page(page)
                 else:
                     await page.close()
+                await self._mark_page_closed()
 
     @asynccontextmanager
     async def capture_page(self) -> Any:
@@ -128,14 +146,14 @@ class BrowserHandler:
         process underneath.
         """
 
-        await self.start()
-
         async with self._semaphore:
+            await self._prepare_runtime()
             if self._browser is None:
                 raise RuntimeError("Browser instance is not available.")
 
             context = await self._browser.new_context(**self.settings.context_kwargs)
             page = await context.new_page()
+            await self._mark_page_opened()
 
             try:
                 if self.settings.page_default_timeout_ms is not None:
@@ -152,6 +170,7 @@ class BrowserHandler:
                 except Exception:
                     pass
                 await context.close()
+                await self._mark_page_closed()
 
     async def _acquire_page(self) -> Any:
         if not self.settings.page_reuse_enabled:
@@ -192,6 +211,47 @@ class BrowserHandler:
 
         async with self._page_pool_lock:
             self._page_pool.append(page)
+
+    async def _prepare_runtime(self) -> None:
+        async with self._maintenance_lock:
+            restart_reason = await self._restart_reason()
+            if restart_reason is not None:
+                logger.info(
+                    "Persistent browser restarting: browser=%s reason=%s",
+                    self.settings.browser_name,
+                    restart_reason,
+                )
+                await self.stop()
+                self._restart_requested = False
+
+            await self.start()
+
+    async def _restart_reason(self) -> str | None:
+        if self._browser is None:
+            return None
+
+        if self._restart_requested and self._active_page_count == 0:
+            return "restart_requested"
+
+        idle_ttl_seconds = self.settings.idle_ttl_seconds
+        if idle_ttl_seconds is None or idle_ttl_seconds <= 0:
+            return None
+
+        if self._active_page_count != 0 or self._last_release_monotonic is None:
+            return None
+
+        if (time.monotonic() - self._last_release_monotonic) >= idle_ttl_seconds:
+            return f"idle_ttl_exceeded:{idle_ttl_seconds}"
+        return None
+
+    async def _mark_page_opened(self) -> None:
+        async with self._active_page_count_lock:
+            self._active_page_count += 1
+
+    async def _mark_page_closed(self) -> None:
+        async with self._active_page_count_lock:
+            self._active_page_count = max(0, self._active_page_count - 1)
+            self._last_release_monotonic = time.monotonic()
 
     async def _ensure_shared_context(self) -> None:
         if self._context is not None:

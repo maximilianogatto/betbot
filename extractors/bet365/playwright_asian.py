@@ -87,6 +87,8 @@ class Bet365PlaywrightAsianClient:
         self._event_capture_semaphore = asyncio.Semaphore(
             max(1, self.settings.max_parallel_event_pages)
         )
+        self._refresh_counter = 0
+        self._refresh_counter_lock = asyncio.Lock()
         self._browser_handler = browser_handler or BrowserHandler(
             BrowserHandlerSettings(
                 browser_name="chromium",
@@ -113,6 +115,11 @@ class Bet365PlaywrightAsianClient:
                     "locale": "es-AR",
                     "timezone_id": "America/Argentina/Cordoba",
                 },
+                idle_ttl_seconds=(
+                    float(self.settings.browser_restart_idle_ttl_seconds)
+                    if self.settings.browser_restart_idle_ttl_seconds is not None
+                    else None
+                ),
                 page_default_timeout_ms=self.settings.page_load_timeout_ms,
                 page_default_navigation_timeout_ms=self.settings.page_load_timeout_ms,
             )
@@ -124,143 +131,192 @@ class Bet365PlaywrightAsianClient:
     async def stop(self) -> None:
         await self._browser_handler.stop()
 
+    async def _prepare_browser_for_refresh(self) -> None:
+        threshold = self.settings.browser_restart_after_n_refreshes
+        if threshold is None or threshold <= 0:
+            return
+
+        async with self._refresh_counter_lock:
+            if self._refresh_counter < threshold:
+                return
+            self._refresh_counter = 0
+
+        await self._browser_handler.request_restart(
+            reason=f"bet365_refresh_threshold_reached:{threshold}",
+        )
+
+    async def _mark_refresh_completed(self) -> None:
+        threshold = self.settings.browser_restart_after_n_refreshes
+        if threshold is None or threshold <= 0:
+            return
+
+        async with self._refresh_counter_lock:
+            self._refresh_counter += 1
+
     async def extract_league_with_asian_lines(self, league_url: str) -> Bet365AsianLeagueExtraction:
         normalized_url = validate_bet365_league_url(league_url)
+        league_started_at = time.monotonic()
+        await self._prepare_browser_for_refresh()
         await self.start()
-        async with self._league_capture_semaphore:
-            expected_pd = visual_url_to_pd(normalized_url)
-            host = urlparse(normalized_url).netloc
-            logger.info("Bet365 response-capture opening league url=%s", normalized_url)
-            league_payload, league_capture_url, league_debug = await self._capture_payload_with_retry(
-                normalized_url,
-                lambda captured_url, body: looks_like_league_payload(
-                    captured_url,
-                    body,
-                    expected_pd,
-                ),
-                max_wait_ms=self.settings.capture_wait_timeout_ms,
-                stable_ms=self.settings.capture_stable_ms,
-                debug_name="league",
-                attempts=2,
-                capture_kind="league",
-                capture_id=normalized_url,
-            )
-
-            if not league_payload:
-                self._save_debug_capture("league-debug", league_debug)
-                logger.warning(
-                    "Bet365 league capture timeout url=%s responses_seen=%s debug=%s",
+        try:
+            async with self._league_capture_semaphore:
+                expected_pd = visual_url_to_pd(normalized_url)
+                host = urlparse(normalized_url).netloc
+                logger.info("Bet365 response-capture opening league url=%s", normalized_url)
+                league_payload, league_capture_url, league_debug = await self._capture_payload_with_retry(
                     normalized_url,
-                    len(league_debug),
-                    self._compact_debug_records(league_debug),
-                )
-                raise CompetitionUnavailableError(
-                    "Bet365 league payload was not captured.",
-                    platform="bet365",
-                    source_url=normalized_url,
-                    reason_code="competition_unavailable",
-                    details={"debug": league_debug, "expected_pd": expected_pd},
+                    lambda captured_url, body: looks_like_league_payload(
+                        captured_url,
+                        body,
+                        expected_pd,
+                    ),
+                    max_wait_ms=self.settings.capture_wait_timeout_ms,
+                    stable_ms=self.settings.capture_stable_ms,
+                    debug_name="league",
+                    attempts=self.settings.capture_attempts,
+                    capture_kind="league",
+                    capture_id=normalized_url,
                 )
 
-            logger.info(
-                "Captured league markets url=%s captured_url=%s",
-                normalized_url,
-                league_capture_url,
-            )
+                if not league_payload:
+                    self._save_debug_capture("league-debug", league_debug)
+                    logger.warning(
+                        "Bet365 league capture timeout url=%s responses_seen=%s duration_seconds=%.2f debug=%s",
+                        normalized_url,
+                        len(league_debug),
+                        time.monotonic() - league_started_at,
+                        self._compact_debug_records(league_debug),
+                    )
+                    raise CompetitionUnavailableError(
+                        "Bet365 league payload was not captured.",
+                        platform="bet365",
+                        source_url=normalized_url,
+                        reason_code="competition_unavailable",
+                        details={"debug": league_debug, "expected_pd": expected_pd},
+                    )
 
-            league = parse_league_payload(league_payload, host=host)
-            matches = league["matches"]
-            if not matches:
-                raise CompetitionUnavailableError(
-                    "Bet365 league payload did not contain active matches.",
+                logger.info(
+                    "Captured league markets url=%s captured_url=%s duration_seconds=%.2f",
+                    normalized_url,
+                    league_capture_url,
+                    time.monotonic() - league_started_at,
+                )
+
+                league = parse_league_payload(league_payload, host=host)
+                matches = league["matches"]
+                if not matches:
+                    raise CompetitionUnavailableError(
+                        "Bet365 league payload did not contain active matches.",
+                        platform="bet365",
+                        source_url=normalized_url,
+                        reason_code="competition_unavailable",
+                        details={
+                            "captured_url": league_capture_url,
+                            "league_name": league.get("league_name"),
+                            "expected_pd": expected_pd,
+                        },
+                    )
+
+                asian_results = await asyncio.gather(
+                    *[
+                        self._extract_event_asian_lines(host, match)
+                        for match in matches
+                    ],
+                    return_exceptions=True,
+                )
+
+                normalized_matches: list[Bet365AsianMatch] = []
+                events_with_asian = 0
+                asian_unavailable_count = 0
+                for match, result in zip(matches, asian_results, strict=False):
+                    if isinstance(result, Exception):
+                        logger.warning(
+                            "Bet365 asian payload failed for fixture_id=%s home=%s away=%s: %s",
+                            match["fixture_id"],
+                            match["home"],
+                            match["away"],
+                            result,
+                        )
+                        merged_markets = match["markets_payload"]
+                        raw = {
+                            "capture_urls": {"league": league_capture_url, "asian": None},
+                            "league_name": match["league"],
+                            "asian_error": str(result),
+                            "asian_lines_unavailable": True,
+                            "asian_duration_seconds": None,
+                        }
+                        asian_unavailable_count += 1
+                    else:
+                        merged_markets = merge_market_payloads(
+                            match["markets_payload"],
+                            result["markets_payload"],
+                        )
+                        raw = {
+                            "capture_urls": {"league": league_capture_url, "asian": result["captured_url"]},
+                            "league_name": result["event"].get("league") or match["league"],
+                            "asian_error": result.get("error"),
+                            "asian_lines_unavailable": bool(result.get("asian_lines_unavailable")),
+                            "asian_duration_seconds": result.get("duration_seconds"),
+                        }
+                        if result["markets_payload"].get("asian_handicap") or result["markets_payload"].get("goal_line"):
+                            events_with_asian += 1
+                        elif result.get("asian_lines_unavailable"):
+                            asian_unavailable_count += 1
+
+                    raw.update(
+                        {
+                            "fixture_id": match["fixture_id"],
+                            "event_url": match["event_url"],
+                            "stats_url": match["stats_url"],
+                        }
+                    )
+
+                    normalized_matches.append(
+                        Bet365AsianMatch(
+                            fixture_id=match["fixture_id"],
+                            home=match["home"],
+                            away=match["away"],
+                            league_name=match["league"],
+                            scheduled_label_date=match["scheduled_label_date"],
+                            scheduled_label_time=match["scheduled_label_time"],
+                            scheduled_at=match["scheduled_at"],
+                            odds_home=match["odds_home"],
+                            odds_draw=match["odds_draw"],
+                            odds_away=match["odds_away"],
+                            event_url=match["event_url"],
+                            stats_url=match["stats_url"],
+                            markets_payload=merged_markets,
+                            raw=raw,
+                        )
+                    )
+
+                total_duration = time.monotonic() - league_started_at
+                logger.info(
+                    "Bet365 league extraction finished url=%s matches=%s events_with_asian=%s asian_unavailable=%s duration_seconds=%.2f",
+                    normalized_url,
+                    len(normalized_matches),
+                    events_with_asian,
+                    asian_unavailable_count,
+                    total_duration,
+                )
+
+                return Bet365AsianLeagueExtraction(
                     platform="bet365",
-                    source_url=normalized_url,
-                    reason_code="competition_unavailable",
-                    details={
-                        "captured_url": league_capture_url,
-                        "league_name": league.get("league_name"),
-                        "expected_pd": expected_pd,
+                    url=normalized_url,
+                    league_name=league["league_name"],
+                    topic=league["topic"],
+                    matches=normalized_matches,
+                    payload={
+                        "capture_urls": {"league": league_capture_url},
+                        "debug_counts": {"league_responses": len(league_debug)},
+                        "events_with_asian": events_with_asian,
+                        "asian_unavailable_count": asian_unavailable_count,
+                        "matches_count": len(normalized_matches),
+                        "duration_seconds": total_duration,
                     },
                 )
-
-            asian_results = await asyncio.gather(
-                *[
-                    self._extract_event_asian_lines(host, match)
-                    for match in matches
-                ],
-                return_exceptions=True,
-            )
-
-            normalized_matches: list[Bet365AsianMatch] = []
-            events_with_asian = 0
-            for match, result in zip(matches, asian_results, strict=False):
-                if isinstance(result, Exception):
-                    logger.warning(
-                        "Bet365 asian payload failed for fixture_id=%s home=%s away=%s: %s",
-                        match["fixture_id"],
-                        match["home"],
-                        match["away"],
-                        result,
-                    )
-                    merged_markets = match["markets_payload"]
-                    raw = {
-                        "capture_urls": {"league": league_capture_url, "asian": None},
-                        "league_name": match["league"],
-                        "asian_error": str(result),
-                    }
-                else:
-                    merged_markets = merge_market_payloads(
-                        match["markets_payload"],
-                        result["markets_payload"],
-                    )
-                    raw = {
-                        "capture_urls": {"league": league_capture_url, "asian": result["captured_url"]},
-                        "league_name": result["event"].get("league") or match["league"],
-                        "asian_error": result.get("error"),
-                    }
-                    if result["markets_payload"].get("asian_handicap") or result["markets_payload"].get("goal_line"):
-                        events_with_asian += 1
-
-                raw.update(
-                    {
-                        "fixture_id": match["fixture_id"],
-                        "event_url": match["event_url"],
-                        "stats_url": match["stats_url"],
-                    }
-                )
-
-                normalized_matches.append(
-                    Bet365AsianMatch(
-                        fixture_id=match["fixture_id"],
-                        home=match["home"],
-                        away=match["away"],
-                        league_name=match["league"],
-                        scheduled_label_date=match["scheduled_label_date"],
-                        scheduled_label_time=match["scheduled_label_time"],
-                        scheduled_at=match["scheduled_at"],
-                        odds_home=match["odds_home"],
-                        odds_draw=match["odds_draw"],
-                        odds_away=match["odds_away"],
-                        event_url=match["event_url"],
-                        stats_url=match["stats_url"],
-                        markets_payload=merged_markets,
-                        raw=raw,
-                    )
-                )
-
-            return Bet365AsianLeagueExtraction(
-                platform="bet365",
-                url=normalized_url,
-                league_name=league["league_name"],
-                topic=league["topic"],
-                matches=normalized_matches,
-                payload={
-                    "capture_urls": {"league": league_capture_url},
-                    "debug_counts": {"league_responses": len(league_debug)},
-                    "events_with_asian": events_with_asian,
-                    "matches_count": len(normalized_matches),
-                },
-            )
+        finally:
+            await self._mark_refresh_completed()
 
     async def _extract_event_asian_lines(
         self,
@@ -268,6 +324,7 @@ class Bet365PlaywrightAsianClient:
         match: dict[str, Any],
     ) -> dict[str, Any]:
         async with self._event_capture_semaphore:
+            event_started_at = time.monotonic()
             fixture_id = str(match["fixture_id"])
             asian_url = event_visual_url(host, fixture_id, section="I3")
             logger.info(
@@ -285,7 +342,7 @@ class Bet365PlaywrightAsianClient:
                 max_wait_ms=self.settings.event_capture_wait_timeout_ms,
                 stable_ms=self.settings.event_capture_stable_ms,
                 debug_name=f"asian-{fixture_id}",
-                attempts=2,
+                attempts=self.settings.event_capture_attempts,
                 capture_kind="asian",
                 capture_id=fixture_id,
             )
@@ -293,9 +350,10 @@ class Bet365PlaywrightAsianClient:
             if not asian_payload:
                 self._save_debug_capture(f"asian-{fixture_id}-debug", asian_debug)
                 logger.warning(
-                    "Bet365 asian capture timeout fixture_id=%s responses_seen=%s debug=%s",
+                    "Bet365 asian capture timeout fixture_id=%s responses_seen=%s duration_seconds=%.2f debug=%s",
                     fixture_id,
                     len(asian_debug),
+                    time.monotonic() - event_started_at,
                     self._compact_debug_records(asian_debug),
                 )
                 return {
@@ -304,12 +362,15 @@ class Bet365PlaywrightAsianClient:
                     "debug": asian_debug,
                     "event": {},
                     "markets_payload": {},
+                    "asian_lines_unavailable": True,
+                    "duration_seconds": time.monotonic() - event_started_at,
                 }
 
             logger.info(
-                "Captured asian coupon event_id=%s captured_url=%s",
+                "Captured asian coupon event_id=%s captured_url=%s duration_seconds=%.2f",
                 fixture_id,
                 asian_capture_url,
+                time.monotonic() - event_started_at,
             )
             parsed = parse_asian_payload(
                 asian_payload,
@@ -322,6 +383,8 @@ class Bet365PlaywrightAsianClient:
                 "debug": asian_debug,
                 "event": parsed["event"],
                 "markets_payload": parsed["markets_payload"],
+                "asian_lines_unavailable": False,
+                "duration_seconds": time.monotonic() - event_started_at,
             }
 
     async def _capture_payload(
@@ -339,6 +402,7 @@ class Bet365PlaywrightAsianClient:
             debug: list[dict[str, Any]] = []
             start = time.monotonic()
             last_capture = time.monotonic()
+            relevant_response_seen = False
 
             async def route_handler(route):
                 request = route.request
@@ -351,7 +415,7 @@ class Bet365PlaywrightAsianClient:
                 await route.continue_()
 
             async def handle_response(response):
-                nonlocal captured_payload, captured_url, last_capture
+                nonlocal captured_payload, captured_url, last_capture, relevant_response_seen
                 response_url = response.url
                 if (
                     "matchmarketscontentapi/markets" not in response_url
@@ -359,6 +423,7 @@ class Bet365PlaywrightAsianClient:
                 ):
                     return
 
+                relevant_response_seen = True
                 record: dict[str, Any] = {
                     "url": response_url,
                     "status": response.status,
@@ -367,10 +432,10 @@ class Bet365PlaywrightAsianClient:
                 try:
                     text = await response.text()
                     record["preview"] = text[:300].replace("\n", " ")
+                    last_capture = time.monotonic()
                     if predicate(response_url, text):
                         captured_payload = text
                         captured_url = response_url
-                        last_capture = time.monotonic()
                 except Exception as error:  # pragma: no cover - best effort debug path
                     record["error"] = repr(error)
                 debug.append(record)
@@ -388,6 +453,8 @@ class Bet365PlaywrightAsianClient:
                     elapsed_ms = int((time.monotonic() - start) * 1000)
                     quiet_ms = int((time.monotonic() - last_capture) * 1000)
                     if captured_payload and quiet_ms >= stable_ms:
+                        break
+                    if relevant_response_seen and not captured_payload and quiet_ms >= stable_ms:
                         break
                     if elapsed_ms >= max_wait_ms:
                         break

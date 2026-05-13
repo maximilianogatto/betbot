@@ -22,13 +22,17 @@ class Settings:
     extractor_max_parallel_pages: int = 3
     extractor_max_parallel_event_pages: int = 1
     extractor_page_reuse_enabled: bool = False
+    extractor_browser_restart_after_n_refreshes: int | None = None
+    extractor_browser_restart_idle_ttl_seconds: int | None = None
     extractor_page_load_timeout_ms: int = 60_000
     extractor_post_load_wait_ms: int = 4_000
     extractor_headless: bool = True
     extractor_capture_wait_timeout_ms: int = 25_000
     extractor_capture_stable_ms: int = 1_500
+    extractor_capture_attempts: int = 2
     extractor_event_capture_wait_timeout_ms: int = 20_000
     extractor_event_capture_stable_ms: int = 1_200
+    extractor_event_capture_attempts: int = 1
     extractor_save_debug_payloads: bool = False
     extractor_debug_payload_dir: str | None = None
     extractor_extract_alternative_markets: bool = False
@@ -96,6 +100,14 @@ def load_settings() -> Settings:
     extractor_page_reuse_enabled = _parse_bool(
         os.getenv("EXTRACTOR_PAGE_REUSE_ENABLED", "false")
     )
+    extractor_browser_restart_after_n_refreshes = _parse_optional_positive_int(
+        os.getenv("EXTRACTOR_BROWSER_RESTART_AFTER_N_REFRESHES"),
+        variable_name="EXTRACTOR_BROWSER_RESTART_AFTER_N_REFRESHES",
+    )
+    extractor_browser_restart_idle_ttl_seconds = _parse_optional_positive_int(
+        os.getenv("EXTRACTOR_BROWSER_RESTART_IDLE_TTL_SECONDS"),
+        variable_name="EXTRACTOR_BROWSER_RESTART_IDLE_TTL_SECONDS",
+    )
     extractor_page_load_timeout_ms = _parse_positive_int(
         _first_env_value(
             "EXTRACTOR_PAGE_LOAD_TIMEOUT_MS",
@@ -121,6 +133,10 @@ def load_settings() -> Settings:
         os.getenv("EXTRACTOR_CAPTURE_STABLE_MS", "1500"),
         variable_name="EXTRACTOR_CAPTURE_STABLE_MS",
     )
+    extractor_capture_attempts = _parse_positive_int(
+        os.getenv("EXTRACTOR_CAPTURE_ATTEMPTS", "2"),
+        variable_name="EXTRACTOR_CAPTURE_ATTEMPTS",
+    )
     extractor_event_capture_wait_timeout_ms = _parse_positive_int(
         os.getenv("EXTRACTOR_EVENT_CAPTURE_WAIT_TIMEOUT_MS", "20000"),
         variable_name="EXTRACTOR_EVENT_CAPTURE_WAIT_TIMEOUT_MS",
@@ -128,6 +144,10 @@ def load_settings() -> Settings:
     extractor_event_capture_stable_ms = _parse_positive_int(
         os.getenv("EXTRACTOR_EVENT_CAPTURE_STABLE_MS", "1200"),
         variable_name="EXTRACTOR_EVENT_CAPTURE_STABLE_MS",
+    )
+    extractor_event_capture_attempts = _parse_positive_int(
+        os.getenv("EXTRACTOR_EVENT_CAPTURE_ATTEMPTS", "1"),
+        variable_name="EXTRACTOR_EVENT_CAPTURE_ATTEMPTS",
     )
     extractor_save_debug_payloads = _parse_bool(
         os.getenv("EXTRACTOR_SAVE_DEBUG_PAYLOADS", "false")
@@ -189,13 +209,17 @@ def load_settings() -> Settings:
         extractor_max_parallel_pages=extractor_max_parallel_pages,
         extractor_max_parallel_event_pages=extractor_max_parallel_event_pages,
         extractor_page_reuse_enabled=extractor_page_reuse_enabled,
+        extractor_browser_restart_after_n_refreshes=extractor_browser_restart_after_n_refreshes,
+        extractor_browser_restart_idle_ttl_seconds=extractor_browser_restart_idle_ttl_seconds,
         extractor_page_load_timeout_ms=extractor_page_load_timeout_ms,
         extractor_post_load_wait_ms=extractor_post_load_wait_ms,
         extractor_headless=extractor_headless,
         extractor_capture_wait_timeout_ms=extractor_capture_wait_timeout_ms,
         extractor_capture_stable_ms=extractor_capture_stable_ms,
+        extractor_capture_attempts=extractor_capture_attempts,
         extractor_event_capture_wait_timeout_ms=extractor_event_capture_wait_timeout_ms,
         extractor_event_capture_stable_ms=extractor_event_capture_stable_ms,
+        extractor_event_capture_attempts=extractor_event_capture_attempts,
         extractor_save_debug_payloads=extractor_save_debug_payloads,
         extractor_debug_payload_dir=extractor_debug_payload_dir,
         extractor_extract_alternative_markets=extractor_extract_alternative_markets,
@@ -236,6 +260,15 @@ def _parse_positive_int(raw_value: str, variable_name: str) -> int:
         raise ValueError(f"{variable_name} debe ser mayor que cero.")
 
     return parsed_value
+
+
+def _parse_optional_positive_int(raw_value: str | None, variable_name: str) -> int | None:
+    """Parse one optional positive integer environment variable."""
+
+    if raw_value is None or not raw_value.strip():
+        return None
+
+    return _parse_positive_int(raw_value, variable_name)
 
 
 def _parse_positive_float(raw_value: str, variable_name: str) -> float:

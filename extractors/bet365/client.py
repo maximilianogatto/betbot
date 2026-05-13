@@ -296,13 +296,17 @@ class Bet365ExtractorSettings:
     max_parallel_pages: int = 3
     max_parallel_event_pages: int = 1
     page_reuse_enabled: bool = False
+    browser_restart_after_n_refreshes: int | None = None
+    browser_restart_idle_ttl_seconds: int | None = None
     page_load_timeout_ms: int = 60_000
     post_load_wait_ms: int = 4_000
     headless: bool = True
     capture_wait_timeout_ms: int = 25_000
     capture_stable_ms: int = 1_500
+    capture_attempts: int = 2
     event_capture_wait_timeout_ms: int = 20_000
     event_capture_stable_ms: int = 1_200
+    event_capture_attempts: int = 1
     save_debug_payloads: bool = False
     debug_payload_dir: str | None = None
     extract_alternative_markets: bool = False
