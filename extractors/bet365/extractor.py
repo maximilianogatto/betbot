@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 import logging
 from urllib.parse import urlparse
 
@@ -63,20 +64,40 @@ class Bet365Extractor(Extractor):
             extraction = await self._playwright_asian_client.extract_league_with_asian_lines(url)
         except CompetitionUnavailableError as error:
             logger.warning(
-                "Bet365 Playwright response-capture extractor could not refresh url=%s: %s. Falling back to legacy extractor.",
+                "Bet365 Playwright response-capture extractor could not refresh url=%s degraded=true fallback_enabled=%s: %s",
                 url,
+                self._settings.allow_legacy_fallback,
                 error,
             )
+            if not self._settings.allow_legacy_fallback:
+                raise
+
             fallback_extraction = await self._get_fallback_browser_extractor().extract_league(url)
-            return _to_competition_extraction(fallback_extraction)
+            return _to_degraded_competition_extraction(
+                _to_competition_extraction(fallback_extraction),
+                reason=str(error),
+            )
         except Exception as error:
             logger.warning(
-                "Bet365 Playwright response-capture extractor failed for url=%s: %s. Falling back to legacy extractor.",
+                "Bet365 Playwright response-capture extractor failed for url=%s degraded=true fallback_enabled=%s: %s",
                 url,
+                self._settings.allow_legacy_fallback,
                 error,
             )
+            if not self._settings.allow_legacy_fallback:
+                raise CompetitionUnavailableError(
+                    "Bet365 response-capture extractor failed.",
+                    platform="bet365",
+                    source_url=url,
+                    reason_code="competition_unavailable",
+                    details={"error": repr(error)},
+                ) from error
+
             fallback_extraction = await self._get_fallback_browser_extractor().extract_league(url)
-            return _to_competition_extraction(fallback_extraction)
+            return _to_degraded_competition_extraction(
+                _to_competition_extraction(fallback_extraction),
+                reason=repr(error),
+            )
 
         return _to_competition_extraction_from_asian(extraction)
 
@@ -197,6 +218,44 @@ def _to_competition_extraction_from_asian(
         extracted_at=extracted_at,
         metadata={},
         raw_payload=extraction.payload,
+    )
+
+
+def _to_degraded_competition_extraction(
+    extraction: CompetitionExtraction,
+    *,
+    reason: str,
+) -> CompetitionExtraction:
+    degraded_events = [
+        replace(
+            event,
+            raw_payload={
+                **(event.raw_payload or {}),
+                "degraded": True,
+                "degraded_reason": "legacy_fallback",
+                "degraded_cause": reason,
+            },
+        )
+        for event in extraction.events
+    ]
+
+    return replace(
+        extraction,
+        events=degraded_events,
+        metadata={
+            **(extraction.metadata or {}),
+            "degraded": True,
+            "degraded_reason": "legacy_fallback",
+            "degraded_cause": reason,
+            "markets_complete": False,
+        },
+        raw_payload={
+            **(extraction.raw_payload or {}),
+            "degraded": True,
+            "degraded_reason": "legacy_fallback",
+            "degraded_cause": reason,
+            "markets_complete": False,
+        },
     )
 
 

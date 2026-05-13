@@ -18,7 +18,10 @@ class Settings:
     log_level: str = "INFO"
     tracking_refresh_interval_seconds: int = 120
     tracking_max_parallel_refreshes: int = 3
+    extractor_max_parallel_competitions: int = 1
     extractor_max_parallel_pages: int = 3
+    extractor_max_parallel_event_pages: int = 1
+    extractor_page_reuse_enabled: bool = False
     extractor_page_load_timeout_ms: int = 60_000
     extractor_post_load_wait_ms: int = 4_000
     extractor_headless: bool = True
@@ -29,8 +32,10 @@ class Settings:
     extractor_save_debug_payloads: bool = False
     extractor_debug_payload_dir: str | None = None
     extractor_extract_alternative_markets: bool = False
+    bet365_allow_legacy_fallback: bool = False
     tracking_default_change_threshold_percent: float = 20.0
     tracking_default_notify_odds_changes: bool = True
+    tracking_remove_missing_after_cycles: int = 3
     enable_monitoring: bool = False
     monitor_interval_seconds: int = 60
     monitor_log_to_file: bool = False
@@ -59,10 +64,16 @@ def load_settings() -> Settings:
     tracking_max_parallel_refreshes = _parse_positive_int(
         _first_env_value(
             "TRACKING_MAX_PARALLEL_REFRESHES",
-            "BET365_MAX_PARALLEL_PAGES",
             default="3",
         ),
         variable_name="TRACKING_MAX_PARALLEL_REFRESHES",
+    )
+    extractor_max_parallel_competitions = _parse_positive_int(
+        _first_env_value(
+            "EXTRACTOR_MAX_PARALLEL_COMPETITIONS",
+            default="1",
+        ),
+        variable_name="EXTRACTOR_MAX_PARALLEL_COMPETITIONS",
     )
     extractor_max_parallel_pages = _parse_positive_int(
         _first_env_value(
@@ -71,6 +82,16 @@ def load_settings() -> Settings:
             default="3",
         ),
         variable_name="EXTRACTOR_MAX_PARALLEL_PAGES",
+    )
+    extractor_max_parallel_event_pages = _parse_positive_int(
+        _first_env_value(
+            "EXTRACTOR_MAX_PARALLEL_EVENT_PAGES",
+            default="1",
+        ),
+        variable_name="EXTRACTOR_MAX_PARALLEL_EVENT_PAGES",
+    )
+    extractor_page_reuse_enabled = _parse_bool(
+        os.getenv("EXTRACTOR_PAGE_REUSE_ENABLED", "false")
     )
     extractor_page_load_timeout_ms = _parse_positive_int(
         _first_env_value(
@@ -114,12 +135,19 @@ def load_settings() -> Settings:
     extractor_extract_alternative_markets = _parse_bool(
         os.getenv("EXTRACTOR_EXTRACT_ALTERNATIVE_MARKETS", "false")
     )
+    bet365_allow_legacy_fallback = _parse_bool(
+        os.getenv("BET365_ALLOW_LEGACY_FALLBACK", "false")
+    )
     tracking_default_change_threshold_percent = _parse_positive_float(
         os.getenv("TRACKING_DEFAULT_CHANGE_THRESHOLD_PERCENT", "20.0"),
         variable_name="TRACKING_DEFAULT_CHANGE_THRESHOLD_PERCENT",
     )
     tracking_default_notify_odds_changes = _parse_bool(
         os.getenv("TRACKING_DEFAULT_NOTIFY_ODDS_CHANGES", "true")
+    )
+    tracking_remove_missing_after_cycles = _parse_positive_int(
+        os.getenv("TRACKING_REMOVE_MISSING_AFTER_CYCLES", "3"),
+        variable_name="TRACKING_REMOVE_MISSING_AFTER_CYCLES",
     )
     enable_monitoring = _parse_bool(os.getenv("ENABLE_MONITORING", "false"))
     monitor_interval_seconds = _parse_positive_int(
@@ -142,7 +170,10 @@ def load_settings() -> Settings:
         log_level=log_level,
         tracking_refresh_interval_seconds=tracking_refresh_interval_seconds,
         tracking_max_parallel_refreshes=tracking_max_parallel_refreshes,
+        extractor_max_parallel_competitions=extractor_max_parallel_competitions,
         extractor_max_parallel_pages=extractor_max_parallel_pages,
+        extractor_max_parallel_event_pages=extractor_max_parallel_event_pages,
+        extractor_page_reuse_enabled=extractor_page_reuse_enabled,
         extractor_page_load_timeout_ms=extractor_page_load_timeout_ms,
         extractor_post_load_wait_ms=extractor_post_load_wait_ms,
         extractor_headless=extractor_headless,
@@ -153,8 +184,10 @@ def load_settings() -> Settings:
         extractor_save_debug_payloads=extractor_save_debug_payloads,
         extractor_debug_payload_dir=extractor_debug_payload_dir,
         extractor_extract_alternative_markets=extractor_extract_alternative_markets,
+        bet365_allow_legacy_fallback=bet365_allow_legacy_fallback,
         tracking_default_change_threshold_percent=tracking_default_change_threshold_percent,
         tracking_default_notify_odds_changes=tracking_default_notify_odds_changes,
+        tracking_remove_missing_after_cycles=tracking_remove_missing_after_cycles,
         enable_monitoring=enable_monitoring,
         monitor_interval_seconds=monitor_interval_seconds,
         monitor_log_to_file=monitor_log_to_file,

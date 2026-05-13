@@ -5,6 +5,7 @@ from pathlib import Path
 
 from extractors.bet365.playwright_asian import (
     extract_sportradar_url,
+    parse_datetime,
     parse_asian_payload,
     parse_league_payload,
 )
@@ -63,6 +64,16 @@ class Bet365PlaywrightAsianParserTests(unittest.TestCase):
         )
         self.assertIsNone(extract_sportradar_url(None))
         self.assertIsNone(extract_sportradar_url("puw~https://example.com/foo~OtherStats~Height=700"))
+
+    def test_parse_datetime_uses_bet365_site_timezone(self) -> None:
+        date_label, time_label, scheduled_at = parse_datetime(
+            "20260512190000",
+            host="www.bet365.bet.ar",
+        )
+
+        self.assertEqual(date_label, "2026-05-12")
+        self.assertEqual(time_label, "19:00")
+        self.assertEqual(scheduled_at, "2026-05-12T22:00:00+00:00")
 
     def test_parse_asian_payload_extracts_primary_markets(self) -> None:
         parsed = parse_asian_payload(

@@ -58,6 +58,8 @@ class CompetitionRefreshResult:
     reminder_matches: list[ActiveEventRecord]
     removed_missing_count: int
     removed_past_count: int
+    degraded: bool = False
+    degraded_reason: str | None = None
 
 
 @dataclass(frozen=True)
@@ -78,6 +80,7 @@ class RefreshSummary:
     new_events: int
     odds_changes: int
     failed_leagues: list[str]
+    degraded_leagues: list[str]
     league_results: list[CompetitionRefreshResult]
     unavailable_competitions: list[UnavailableCompetitionRefresh]
 

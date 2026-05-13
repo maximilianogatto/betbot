@@ -289,11 +289,15 @@ TELEGRAM_BOT_TOKEN=123456789:replace_with_your_real_token
 LOG_LEVEL=INFO
 TRACKING_REFRESH_INTERVAL_SECONDS=120
 TRACKING_MAX_PARALLEL_REFRESHES=3
+EXTRACTOR_MAX_PARALLEL_COMPETITIONS=3
 EXTRACTOR_MAX_PARALLEL_PAGES=3
+EXTRACTOR_MAX_PARALLEL_EVENT_PAGES=3
+EXTRACTOR_PAGE_REUSE_ENABLED=false
 EXTRACTOR_PAGE_LOAD_TIMEOUT_MS=60000
 EXTRACTOR_POST_LOAD_WAIT_MS=4000
 TRACKING_DEFAULT_CHANGE_THRESHOLD_PERCENT=20.0
 TRACKING_DEFAULT_NOTIFY_ODDS_CHANGES=true
+TRACKING_REMOVE_MISSING_AFTER_CYCLES=3
 ```
 
 ### What they mean
@@ -301,12 +305,16 @@ TRACKING_DEFAULT_NOTIFY_ODDS_CHANGES=true
 - `TELEGRAM_BOT_TOKEN`: required BotFather token
 - `LOG_LEVEL`: console logging verbosity
 - `TRACKING_REFRESH_INTERVAL_SECONDS`: interval of the background tracking monitor loop
-- `TRACKING_MAX_PARALLEL_REFRESHES`: max number of competitions refreshed in parallel per cycle
-- `EXTRACTOR_MAX_PARALLEL_PAGES`: max number of extractor pages processed in parallel
+- `TRACKING_MAX_PARALLEL_REFRESHES`: legacy alias for competition refresh parallelism
+- `EXTRACTOR_MAX_PARALLEL_COMPETITIONS`: max number of competitions refreshed in parallel per cycle
+- `EXTRACTOR_MAX_PARALLEL_PAGES`: global max number of Playwright pages processed in parallel
+- `EXTRACTOR_MAX_PARALLEL_EVENT_PAGES`: per-league max number of concurrent event captures
+- `EXTRACTOR_PAGE_REUSE_ENABLED`: reuses Playwright pages between captures when possible
 - `EXTRACTOR_PAGE_LOAD_TIMEOUT_MS`: page load and runtime wait timeout
 - `EXTRACTOR_POST_LOAD_WAIT_MS`: extra wait after runtime readiness before extraction
 - `TRACKING_DEFAULT_CHANGE_THRESHOLD_PERCENT`: default threshold persisted for new chat subscriptions
 - `TRACKING_DEFAULT_NOTIFY_ODDS_CHANGES`: default odds-change notification flag for new chat subscriptions
+- `TRACKING_REMOVE_MISSING_AFTER_CYCLES`: how many refresh cycles an event can stay missing before removal
 - `ENABLE_MONITORING`: enables periodic resource monitoring in background
 - `MONITOR_INTERVAL_SECONDS`: interval of the resource monitor loop
 - `MONITOR_LOG_TO_FILE`: when `true`, also writes monitor blocks to `monitor.log`

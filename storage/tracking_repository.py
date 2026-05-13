@@ -289,6 +289,31 @@ class ActiveEventRecord:
         stats_url = payload.get("stats_url")
         return stats_url.strip() if isinstance(stats_url, str) and stats_url.strip() else None
 
+    @property
+    def missing_seen_count(self) -> int:
+        normalized_payload = (self.raw_payload_json or "").strip()
+        if not normalized_payload:
+            return 0
+
+        try:
+            payload = json.loads(normalized_payload)
+        except json.JSONDecodeError:
+            return 0
+
+        if not isinstance(payload, dict):
+            return 0
+
+        raw_value = payload.get("missing_seen_count")
+        if isinstance(raw_value, int):
+            return max(0, raw_value)
+        if isinstance(raw_value, str) and raw_value.isdigit():
+            return int(raw_value)
+        return 0
+
+    @property
+    def is_missing(self) -> bool:
+        return self.missing_seen_count > 0
+
 
 @dataclass(frozen=True)
 class EventBaseline:
@@ -1874,8 +1899,10 @@ class SqliteTrackingRepository:
         self,
         tracked_competition_id: int,
         current_event_ids: Iterable[str],
+        *,
+        remove_after_cycles: int = 1,
     ) -> int:
-        """Delete active events that no longer appear in the latest refresh."""
+        """Soft-remove active events that no longer appear in the latest refresh."""
 
         normalized_event_ids = sorted(
             {
@@ -1897,18 +1924,56 @@ class SqliteTrackingRepository:
             if not obsolete_rows:
                 return 0
 
-            connection.executemany(
-                """
-                DELETE FROM active_events
-                WHERE id = ?
-                """,
-                [(int(row["id"]),) for row in obsolete_rows],
-            )
+            now_iso = _utc_now_iso()
+            rows_to_delete: list[tuple[int]] = []
 
+            for row in obsolete_rows:
+                raw_payload = _loads_json_object(row["raw_payload_json"])
+                next_missing_count = int(raw_payload.get("missing_seen_count", 0)) + 1
+
+                if next_missing_count >= max(1, remove_after_cycles):
+                    rows_to_delete.append((int(row["id"]),))
+                    continue
+
+                raw_payload["missing_seen_count"] = next_missing_count
+                raw_payload["missing_updated_at"] = now_iso
+                raw_payload["status"] = "missing"
+
+                connection.execute(
+                    """
+                    UPDATE active_events
+                    SET
+                        raw_payload_json = ?,
+                        updated_at = ?
+                    WHERE id = ?
+                    """,
+                    (_json_dumps(raw_payload), now_iso, int(row["id"])),
+                )
+
+            if rows_to_delete:
+                connection.executemany(
+                    """
+                    DELETE FROM active_events
+                    WHERE id = ?
+                    """,
+                    rows_to_delete,
+                )
+
+        deleted_event_ids = {
+            int(row_id)
+            for (row_id,) in rows_to_delete
+        }
         for row in obsolete_rows:
-            logger.info("Deleted obsolete match: %s", str(row["external_event_id"]))
+            if int(row["id"]) in deleted_event_ids:
+                logger.info("Deleted obsolete match: %s", str(row["external_event_id"]))
+            else:
+                logger.info(
+                    "Keeping temporarily missing match: %s missing_seen_count=%s",
+                    str(row["external_event_id"]),
+                    int(_loads_json_object(row["raw_payload_json"]).get("missing_seen_count", 0)) + 1,
+                )
 
-        return len(obsolete_rows)
+        return len(rows_to_delete)
 
     def remove_past_events(
         self,
@@ -2014,7 +2079,7 @@ class SqliteTrackingRepository:
         return [
             record
             for record in records
-            if _is_future_or_unscheduled(record.scheduled_at, now_utc)
+            if _is_future_or_unscheduled(record.scheduled_at, now_utc) and not record.is_missing
         ]
 
     def has_sent_alert(
@@ -2882,6 +2947,19 @@ def _parse_utc_datetime(raw_value: str) -> datetime | None:
         parsed = parsed.replace(tzinfo=timezone.utc)
 
     return parsed.astimezone(timezone.utc)
+
+
+def _loads_json_object(raw_value: Any) -> dict[str, Any]:
+    normalized = (str(raw_value).strip() if raw_value is not None else "")
+    if not normalized:
+        return {}
+
+    try:
+        payload = json.loads(normalized)
+    except json.JSONDecodeError:
+        return {}
+
+    return payload if isinstance(payload, dict) else {}
 
 
 def _is_past_scheduled_at(raw_value: str | None, reference: datetime) -> bool:

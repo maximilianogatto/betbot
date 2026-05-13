@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from monitors.models import MarketChangeDetail, SubscriptionOddsAlert
 
 MAX_GROUPED_ALERT_ITEMS = 10
+TELEGRAM_SAFE_MESSAGE_LIMIT = 3900
 
 
 def build_new_event_alert_message(
@@ -41,7 +42,7 @@ def build_grouped_new_event_alert_message(
     tracked_league: TrackedCompetition,
     matches: Sequence[ActiveEventRecord],
     *,
-    max_items: int = MAX_GROUPED_ALERT_ITEMS,
+    max_items: int | None = None,
 ) -> str:
     """Build one grouped Telegram message for multiple new events."""
 
@@ -53,14 +54,10 @@ def build_grouped_new_event_alert_message(
         f"📋 <b>Nuevos partidos:</b> {total_matches}",
     ]
 
-    for match in matches[:max_items]:
+    visible_matches = matches if max_items is None else matches[:max_items]
+    for match in visible_matches:
         lines.append("")
         lines.extend(_build_match_block_lines(match))
-
-    remaining = total_matches - min(total_matches, max_items)
-    if remaining > 0:
-        lines.append("")
-        lines.append(f"... y {remaining} más")
 
     return "\n".join(lines)
 
@@ -123,7 +120,7 @@ def build_grouped_odds_change_alert_message(
     tracked_league: TrackedCompetition,
     alerts: Sequence[SubscriptionOddsAlert],
     *,
-    max_items: int = MAX_GROUPED_ALERT_ITEMS,
+    max_items: int | None = None,
 ) -> str:
     """Build one grouped Telegram message for multiple odds changes."""
 
@@ -135,7 +132,8 @@ def build_grouped_odds_change_alert_message(
         f"📈 <b>Cambios de odds:</b> {total_changes}",
     ]
 
-    for alert in alerts[:max_items]:
+    visible_alerts = alerts if max_items is None else alerts[:max_items]
+    for alert in visible_alerts:
         baseline = alert.baseline
         current = alert.match
         lines.append("")
@@ -166,11 +164,6 @@ def build_grouped_odds_change_alert_message(
         if extra_market_details:
             lines.extend(_build_market_change_detail_lines(extra_market_details, max_items=3))
         lines.append(f"📊 Variación máxima: {alert.max_percent_change:.1f}%")
-
-    remaining = total_changes - min(total_changes, max_items)
-    if remaining > 0:
-        lines.append("")
-        lines.append(f"... y {remaining} más")
 
     return "\n".join(lines)
 
@@ -264,6 +257,54 @@ def build_event_stats_message(match: ActiveEventRecord, stats_url: str) -> str:
         f"📊 <b>Stats para {escape(match.home)} vs {escape(match.away)}</b>\n\n"
         f"{escape(stats_url)}"
     )
+
+
+def split_telegram_message(text: str, max_len: int = TELEGRAM_SAFE_MESSAGE_LIMIT) -> list[str]:
+    """Split a long Telegram message on line boundaries when possible."""
+
+    if max_len <= 0:
+        raise ValueError("max_len debe ser mayor que cero.")
+
+    if len(text) <= max_len:
+        return [text]
+
+    chunks: list[str] = []
+    current_lines: list[str] = []
+    current_length = 0
+
+    for line in text.split("\n"):
+        line_length = len(line)
+        separator_length = 1 if current_lines else 0
+
+        if line_length > max_len:
+            if current_lines:
+                chunks.append("\n".join(current_lines))
+                current_lines = []
+                current_length = 0
+
+            chunks.extend(_split_long_line(line, max_len))
+            continue
+
+        if current_length + separator_length + line_length > max_len and current_lines:
+            chunks.append("\n".join(current_lines))
+            current_lines = [line]
+            current_length = line_length
+            continue
+
+        current_lines.append(line)
+        current_length += separator_length + line_length
+
+    if current_lines:
+        chunks.append("\n".join(current_lines))
+
+    return chunks or [text]
+
+
+def _split_long_line(line: str, max_len: int) -> list[str]:
+    return [
+        line[index:index + max_len]
+        for index in range(0, len(line), max_len)
+    ]
 
 
 def build_all_matches_message(

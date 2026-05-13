@@ -292,7 +292,10 @@ SPANISH_MONTHS = {
 class Bet365ExtractorSettings:
     """Runtime settings for the persistent Bet365 extractor."""
 
+    max_parallel_competitions: int = 1
     max_parallel_pages: int = 3
+    max_parallel_event_pages: int = 1
+    page_reuse_enabled: bool = False
     page_load_timeout_ms: int = 60_000
     post_load_wait_ms: int = 4_000
     headless: bool = True
@@ -303,6 +306,7 @@ class Bet365ExtractorSettings:
     save_debug_payloads: bool = False
     debug_payload_dir: str | None = None
     extract_alternative_markets: bool = False
+    allow_legacy_fallback: bool = False
 
 
 @dataclass(frozen=True)
@@ -350,6 +354,7 @@ class Bet365BrowserExtractor:
                 browser_name="chromium",
                 headless=self.settings.headless,
                 max_parallel_pages=self.settings.max_parallel_pages,
+                page_reuse_enabled=self.settings.page_reuse_enabled,
                 launch_args=("--disable-blink-features=AutomationControlled",),
                 context_kwargs={
                     "viewport": {"width": 1440, "height": 900},

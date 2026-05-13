@@ -33,13 +33,12 @@ def create_application(settings: Settings) -> Application:
         extractor_registry=extractor_registry,
         repository=tracking_repository,
         max_parallel_refreshes=settings.tracking_max_parallel_refreshes,
+        remove_missing_after_cycles=settings.tracking_remove_missing_after_cycles,
     )
 
     async def post_init(application: Application) -> None:
         """Start background monitoring after the bot runtime is ready."""
 
-        for extractor in registered_extractors:
-            await extractor.start()
         await start_tracking_monitor(
             application,
             interval_seconds=settings.tracking_refresh_interval_seconds,

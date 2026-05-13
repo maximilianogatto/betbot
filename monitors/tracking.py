@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import Sequence
+from dataclasses import replace
 from datetime import datetime, timezone
 import json
 import logging
@@ -30,6 +31,7 @@ from bot.alerts import (
     build_match_reminder_alert_message,
     build_new_event_alert_message,
     build_odds_change_alert_message,
+    split_telegram_message,
 )
 from core.extractor_base import CompetitionUnavailableError
 from monitors.change_detection import (
@@ -76,10 +78,12 @@ class TrackingService:
         extractor_registry: ExtractorRegistry | None = None,
         repository: SqliteTrackingRepository | None = None,
         max_parallel_refreshes: int = 3,
+        remove_missing_after_cycles: int = 3,
     ) -> None:
         self.extractor_registry = extractor_registry or global_extractor_registry
         self.repository = repository or default_tracking_repository
         self.max_parallel_refreshes = max(1, max_parallel_refreshes)
+        self.remove_missing_after_cycles = max(1, remove_missing_after_cycles)
         self._refresh_lock = asyncio.Lock()
 
     async def _extract_league(self, url: str) -> CompetitionExtraction:
@@ -734,18 +738,20 @@ class TrackingService:
 
                 if unsent_new_matches:
                     if len(unsent_new_matches) == 1:
-                        await bot.send_message(
-                            chat_id=subscription.telegram_chat_id,
-                            text=build_new_event_alert_message(
+                        await self._send_split_message(
+                            bot,
+                            subscription.telegram_chat_id,
+                            build_new_event_alert_message(
                                 result.tracked_league,
                                 unsent_new_matches[0],
                             ),
                             parse_mode=ParseMode.HTML,
                         )
                     else:
-                        await bot.send_message(
-                            chat_id=subscription.telegram_chat_id,
-                            text=build_grouped_new_event_alert_message(
+                        await self._send_split_message(
+                            bot,
+                            subscription.telegram_chat_id,
+                            build_grouped_new_event_alert_message(
                                 result.tracked_league,
                                 unsent_new_matches,
                             ),
@@ -775,18 +781,20 @@ class TrackingService:
             if pending_odds_alerts:
                 if len(pending_odds_alerts) == 1:
                     alert = pending_odds_alerts[0]
-                    await bot.send_message(
-                        chat_id=subscription.telegram_chat_id,
-                        text=build_odds_change_alert_message(
+                    await self._send_split_message(
+                        bot,
+                        subscription.telegram_chat_id,
+                        build_odds_change_alert_message(
                             result.tracked_league,
                             alert,
                         ),
                         parse_mode=ParseMode.HTML,
                     )
                 else:
-                    await bot.send_message(
-                        chat_id=subscription.telegram_chat_id,
-                        text=build_grouped_odds_change_alert_message(
+                    await self._send_split_message(
+                        bot,
+                        subscription.telegram_chat_id,
+                        build_grouped_odds_change_alert_message(
                             result.tracked_league,
                             pending_odds_alerts,
                         ),
@@ -810,9 +818,10 @@ class TrackingService:
                     )
 
             for match in result.reminder_matches:
-                await bot.send_message(
-                    chat_id=subscription.telegram_chat_id,
-                    text=build_match_reminder_alert_message(result.tracked_league, match),
+                await self._send_split_message(
+                    bot,
+                    subscription.telegram_chat_id,
+                    build_match_reminder_alert_message(result.tracked_league, match),
                     parse_mode=ParseMode.HTML,
                 )
 
@@ -858,9 +867,10 @@ class TrackingService:
             if track_number is None:
                 continue
 
-            await bot.send_message(
-                chat_id=subscription.telegram_chat_id,
-                text=build_competition_unavailable_warning_message(
+            await self._send_split_message(
+                bot,
+                subscription.telegram_chat_id,
+                build_competition_unavailable_warning_message(
                     unavailable.tracked_league,
                     track_number=track_number,
                 ),
@@ -1022,6 +1032,10 @@ class TrackingService:
             lines.append(
                 f"Ligas con problemas ({len(summary.failed_leagues)}): {', '.join(summary.failed_leagues)}"
             )
+        if summary.degraded_leagues:
+            lines.append(
+                f"Ligas degradadas ({len(summary.degraded_leagues)}): {', '.join(summary.degraded_leagues)}"
+            )
 
         return CommandResult(ok=True, message="\n".join(lines))
 
@@ -1131,12 +1145,14 @@ class TrackingService:
                 new_events=0,
                 odds_changes=0,
                 failed_leagues=[],
+                degraded_leagues=[],
                 league_results=[],
                 unavailable_competitions=[],
             )
 
         league_results: list[CompetitionRefreshResult] = []
         failed_leagues: list[str] = []
+        degraded_leagues: list[str] = []
         unavailable_competitions: list[UnavailableCompetitionRefresh] = []
 
         tracked_leagues = [
@@ -1236,14 +1252,18 @@ class TrackingService:
                         result.removed_past_count,
                     )
                     league_results.append(result)
+                    if result.degraded:
+                        degraded_leagues.append(result.tracked_league.league_name)
+                        failed_leagues.append(result.tracked_league.league_name)
 
         return RefreshSummary(
             tracks_requested=len(tracked_leagues),
-            tracks_refreshed=len(league_results),
+            tracks_refreshed=sum(1 for result in league_results if not result.degraded),
             active_matches=sum(len(result.active_matches) for result in league_results),
             new_events=sum(len(result.new_matches) for result in league_results),
             odds_changes=sum(len(result.odds_changes) for result in league_results),
             failed_leagues=failed_leagues,
+            degraded_leagues=degraded_leagues,
             league_results=league_results,
             unavailable_competitions=unavailable_competitions,
         )
@@ -1275,7 +1295,15 @@ class TrackingService:
             for match in self.repository.get_active_events(tracked_league_id, only_future=False)
         }
 
-        future_matches = [match for match in extraction.events if not _is_past_match(match)]
+        future_matches = [
+            _normalize_extracted_match_for_persistence(
+                match,
+                existing_by_fixture.get(match.external_event_id),
+                extraction,
+            )
+            for match in extraction.events
+            if not _is_past_match(match)
+        ]
         current_event_ids = [match.external_event_id for match in future_matches]
         new_fixture_ids = {
             match.external_event_id
@@ -1313,10 +1341,14 @@ class TrackingService:
         if upsert_payload:
             self.repository.upsert_active_events(tracked_league_id, upsert_payload)
 
-        removed_missing_count = self.repository.remove_missing_events(
-            tracked_league_id,
-            current_event_ids,
-        )
+        if _is_degraded_extraction(extraction):
+            removed_missing_count = 0
+        else:
+            removed_missing_count = self.repository.remove_missing_events(
+                tracked_league_id,
+                current_event_ids,
+                remove_after_cycles=self.remove_missing_after_cycles,
+            )
         removed_past_count = self.repository.remove_past_events(tracked_league_id)
         active_matches = self.repository.get_active_events(tracked_league_id, only_future=True)
         active_by_fixture = {match.fixture_id: match for match in active_matches}
@@ -1344,6 +1376,8 @@ class TrackingService:
             reminder_matches=reminder_matches,
             removed_missing_count=removed_missing_count,
             removed_past_count=removed_past_count,
+            degraded=_is_degraded_extraction(extraction),
+            degraded_reason=_degraded_reason_from_extraction(extraction),
         )
 
     def _seed_initial_snapshot(
@@ -1391,7 +1425,11 @@ class TrackingService:
         if upsert_payload:
             self.repository.upsert_active_events(tracked_league_id, upsert_payload)
 
-        self.repository.remove_missing_events(tracked_league_id, current_event_ids)
+        self.repository.remove_missing_events(
+            tracked_league_id,
+            current_event_ids,
+            remove_after_cycles=self.remove_missing_after_cycles,
+        )
         self.repository.remove_past_events(tracked_league_id)
 
         active_count = len(self.repository.get_active_events(tracked_league_id, only_future=True))
@@ -1496,6 +1534,21 @@ class TrackingService:
 
         return None
 
+    async def _send_split_message(
+        self,
+        bot: Bot,
+        chat_id: int,
+        text: str,
+        *,
+        parse_mode: str | None = None,
+    ) -> None:
+        for chunk in split_telegram_message(text):
+            await bot.send_message(
+                chat_id=chat_id,
+                text=chunk,
+                parse_mode=parse_mode,
+            )
+
 
 def _is_past_match(match: EventSnapshot) -> bool:
     """Return whether a normalized event already kicked off in the past."""
@@ -1512,6 +1565,58 @@ def _is_past_match(match: EventSnapshot) -> bool:
         kickoff = kickoff.replace(tzinfo=timezone.utc)
 
     return kickoff <= datetime.now(timezone.utc)
+
+
+def _is_degraded_extraction(extraction: CompetitionExtraction) -> bool:
+    return bool(extraction.metadata.get("degraded"))
+
+
+def _degraded_reason_from_extraction(extraction: CompetitionExtraction) -> str | None:
+    raw_reason = extraction.metadata.get("degraded_reason")
+    return raw_reason.strip() if isinstance(raw_reason, str) and raw_reason.strip() else None
+
+
+def _normalize_extracted_match_for_persistence(
+    match: EventSnapshot,
+    existing_match: ActiveEventRecord | None,
+    extraction: CompetitionExtraction,
+) -> EventSnapshot:
+    if not _is_degraded_extraction(extraction):
+        return match
+
+    normalized_markets = _merge_existing_non_1x2_markets(
+        existing_match,
+        _markets_payload_from_event(match),
+    )
+    raw_payload = dict(match.raw_payload or {})
+    raw_payload["degraded"] = True
+    raw_payload["degraded_reason"] = _degraded_reason_from_extraction(extraction) or "legacy_fallback"
+    raw_payload["markets_complete"] = False
+
+    return replace(
+        match,
+        markets_payload=normalized_markets,
+        raw_payload=raw_payload,
+    )
+
+
+def _merge_existing_non_1x2_markets(
+    existing_match: ActiveEventRecord | None,
+    current_payload: dict[str, object] | None,
+) -> dict[str, object] | None:
+    normalized_payload = json.loads(json.dumps(current_payload or {}))
+    existing_payload = _loads_optional_json(existing_match.markets_json) if existing_match else None
+
+    if not isinstance(existing_payload, dict):
+        return normalized_payload or None
+
+    for market_key in ("asian_handicap", "goal_line", "alternative_markets"):
+        if market_key in normalized_payload:
+            continue
+        if market_key in existing_payload:
+            normalized_payload[market_key] = existing_payload[market_key]
+
+    return normalized_payload or None
 
 
 def _markets_payload_from_event(match: EventSnapshot) -> dict[str, object] | None:

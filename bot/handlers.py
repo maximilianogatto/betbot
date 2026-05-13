@@ -20,6 +20,7 @@ from bot.alerts import (
     build_competition_unavailable_warning_message,
     build_little_changes_message,
     build_match_card_message,
+    split_telegram_message,
 )
 from core.extractor_base import CompetitionUnavailableError
 from monitoring import format_system_metrics_message, get_system_metrics
@@ -151,7 +152,25 @@ async def reply_with_result(update: Update, result: CommandResult) -> None:
     if update.message is None:
         return
 
-    await update.message.reply_text(result.message)
+    await _reply_text_chunks(update.message, result.message)
+
+
+async def _reply_text_chunks(
+    message,
+    text: str,
+    *,
+    parse_mode: str | None = None,
+    reply_markup=None,
+) -> None:
+    """Reply in multiple Telegram messages when the payload is too long."""
+
+    chunks = split_telegram_message(text)
+    for index, chunk in enumerate(chunks):
+        await message.reply_text(
+            chunk,
+            parse_mode=parse_mode,
+            reply_markup=reply_markup if index == 0 else None,
+        )
 
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -286,7 +305,7 @@ async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         active_matches,
         selected_index,
     )
-    await update.message.reply_text(result.message, parse_mode=ParseMode.HTML)
+    await _reply_text_chunks(update.message, result.message, parse_mode=ParseMode.HTML)
 
 
 async def echo_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -393,7 +412,7 @@ async def competition_url_command(update: Update, context: ContextTypes.DEFAULT_
         track_number,
     )
 
-    await update.message.reply_text(result.message, parse_mode=ParseMode.HTML)
+    await _reply_text_chunks(update.message, result.message, parse_mode=ParseMode.HTML)
 
 
 async def update_track_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -502,7 +521,7 @@ async def event_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         selected_index,
     )
 
-    await update.message.reply_text(result.message, parse_mode=ParseMode.HTML)
+    await _reply_text_chunks(update.message, result.message, parse_mode=ParseMode.HTML)
 
 
 async def matches_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -661,14 +680,16 @@ async def matches_select_match(update: Update, context: ContextTypes.DEFAULT_TYP
         return SELECT_MATCH_FOR_MATCHES
 
     if selected_index == 0:
-        await update.message.reply_text(
+        await _reply_text_chunks(
+            update.message,
             build_all_matches_message(tracked_league.tracked_league, active_matches),
             reply_markup=ReplyKeyboardRemove(),
             parse_mode=ParseMode.HTML,
         )
     else:
         selected_match = active_matches[selected_index - 1]
-        await update.message.reply_text(
+        await _reply_text_chunks(
+            update.message,
             build_match_card_message(tracked_league.tracked_league, selected_match),
             reply_markup=ReplyKeyboardRemove(),
             parse_mode=ParseMode.HTML,

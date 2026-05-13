@@ -29,7 +29,10 @@ def _build_bet365_settings(settings: Any | None) -> Bet365ExtractorSettings | No
         return None
 
     return Bet365ExtractorSettings(
+        max_parallel_competitions=int(getattr(settings, "extractor_max_parallel_competitions")),
         max_parallel_pages=int(getattr(settings, "extractor_max_parallel_pages")),
+        max_parallel_event_pages=int(getattr(settings, "extractor_max_parallel_event_pages")),
+        page_reuse_enabled=bool(getattr(settings, "extractor_page_reuse_enabled")),
         page_load_timeout_ms=int(getattr(settings, "extractor_page_load_timeout_ms")),
         post_load_wait_ms=int(getattr(settings, "extractor_post_load_wait_ms")),
         headless=bool(getattr(settings, "extractor_headless")),
@@ -44,6 +47,7 @@ def _build_bet365_settings(settings: Any | None) -> Bet365ExtractorSettings | No
         extract_alternative_markets=bool(
             getattr(settings, "extractor_extract_alternative_markets")
         ),
+        allow_legacy_fallback=bool(getattr(settings, "bet365_allow_legacy_fallback")),
     )
 
 
