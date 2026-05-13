@@ -85,6 +85,7 @@ class RefreshSummary:
     degraded_leagues: list[str]
     league_results: list[CompetitionRefreshResult]
     unavailable_competitions: list[UnavailableCompetitionRefresh]
+    elapsed_seconds: float = 0.0
 
 
 __all__ = [

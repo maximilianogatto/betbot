@@ -17,6 +17,7 @@ from dataclasses import replace
 from datetime import datetime, timezone
 import json
 import logging
+import time
 
 from telegram import Bot
 from telegram.constants import ParseMode
@@ -70,6 +71,20 @@ UNAVAILABLE_WARNING_FAILURE_THRESHOLD = 2
 UNAVAILABLE_WARNING_COOLDOWN_SECONDS = 12 * 60 * 60
 
 
+def format_duration(seconds: float) -> str:
+    """Format one elapsed duration in a compact user-facing representation."""
+
+    whole_seconds = max(0, int(seconds))
+    hours, remainder = divmod(whole_seconds, 3600)
+    minutes, secs = divmod(remainder, 60)
+
+    if hours:
+        return f"{hours}h {minutes:02d}m {secs:02d}s"
+    if minutes:
+        return f"{minutes}m {secs:02d}s"
+    return f"{secs}s"
+
+
 class TrackingService:
     """Coordinate tracking, refresh, and notification workflows across platforms."""
 
@@ -91,6 +106,8 @@ class TrackingService:
         self.odds_flap_window_minutes = max(1, odds_flap_window_minutes)
         self.odds_flap_epsilon = max(0.0, odds_flap_epsilon)
         self._refresh_lock = asyncio.Lock()
+        self._refresh_slot_lock = asyncio.Lock()
+        self._active_refresh_trigger: str | None = None
 
     async def _extract_league(self, url: str) -> CompetitionExtraction:
         """Resolve the right extractor for a competition URL and delegate extraction."""
@@ -687,13 +704,23 @@ class TrackingService:
     async def monitor_once(self, bot: Bot) -> RefreshSummary:
         """Run one global monitoring cycle and dispatch notifications."""
 
-        summary = await self.refresh_all_active_leagues()
-        await self.dispatch_notifications(
-            bot,
-            summary,
-            notify_failures=False,
-        )
-        return summary
+        if not await self.try_start_refresh("automatic"):
+            logger.info(
+                "Skipping automatic refresh because another refresh is already running: trigger=%s",
+                self.current_refresh_trigger,
+            )
+            return self._build_empty_refresh_summary()
+
+        try:
+            summary = await self.refresh_all_active_leagues()
+            await self.dispatch_notifications(
+                bot,
+                summary,
+                notify_failures=False,
+            )
+            return summary
+        finally:
+            await self.finish_refresh("automatic")
 
     async def dispatch_notifications(
         self,
@@ -1041,6 +1068,7 @@ class TrackingService:
                 message=(
                     "No tenés ligas trackeadas todavía.\n"
                     "Usá /track_url <url_de_plataforma> y después /confirm_track."
+                    f"\n\n⏱️ Tiempo total: {format_duration(summary.elapsed_seconds)}"
                 ),
             )
 
@@ -1061,6 +1089,7 @@ class TrackingService:
             lines.append(
                 f"Ligas degradadas ({len(summary.degraded_leagues)}): {', '.join(summary.degraded_leagues)}"
             )
+        lines.append(f"⏱️ Tiempo total: {format_duration(summary.elapsed_seconds)}")
 
         return CommandResult(ok=True, message="\n".join(lines))
 
@@ -1160,6 +1189,7 @@ class TrackingService:
     async def _refresh_leagues(self, tracked_league_ids: Sequence[int]) -> RefreshSummary:
         """Refresh a deduplicated set of tracked leagues under one shared lock."""
 
+        started_at = time.monotonic()
         unique_ids = list(dict.fromkeys(tracked_league_ids))
 
         if not unique_ids:
@@ -1173,6 +1203,7 @@ class TrackingService:
                 degraded_leagues=[],
                 league_results=[],
                 unavailable_competitions=[],
+                elapsed_seconds=time.monotonic() - started_at,
             )
 
         league_results: list[CompetitionRefreshResult] = []
@@ -1291,6 +1322,7 @@ class TrackingService:
             degraded_leagues=degraded_leagues,
             league_results=league_results,
             unavailable_competitions=unavailable_competitions,
+            elapsed_seconds=time.monotonic() - started_at,
         )
 
     def _apply_extraction_to_tracked_league(
@@ -1573,6 +1605,44 @@ class TrackingService:
                 text=chunk,
                 parse_mode=parse_mode,
             )
+
+    @property
+    def current_refresh_trigger(self) -> str | None:
+        return self._active_refresh_trigger
+
+    async def try_start_refresh(self, trigger: str) -> bool:
+        normalized_trigger = trigger.strip().lower()
+        if not normalized_trigger:
+            normalized_trigger = "unknown"
+
+        async with self._refresh_slot_lock:
+            if self._active_refresh_trigger is not None:
+                return False
+            self._active_refresh_trigger = normalized_trigger
+            return True
+
+    async def finish_refresh(self, trigger: str) -> None:
+        normalized_trigger = trigger.strip().lower()
+        if not normalized_trigger:
+            normalized_trigger = "unknown"
+
+        async with self._refresh_slot_lock:
+            if self._active_refresh_trigger == normalized_trigger:
+                self._active_refresh_trigger = None
+
+    def _build_empty_refresh_summary(self) -> RefreshSummary:
+        return RefreshSummary(
+            tracks_requested=0,
+            tracks_refreshed=0,
+            active_matches=0,
+            new_events=0,
+            odds_changes=0,
+            failed_leagues=[],
+            degraded_leagues=[],
+            league_results=[],
+            unavailable_competitions=[],
+            elapsed_seconds=0.0,
+        )
 
 
 def _is_past_match(match: EventSnapshot) -> bool:

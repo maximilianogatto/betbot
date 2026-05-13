@@ -481,7 +481,15 @@ async def refresh_tracks_command(update: Update, context: ContextTypes.DEFAULT_T
             return
         context.application.bot_data.pop(MANUAL_REFRESH_TASK_KEY, None)
 
-    await update.message.reply_text("🔄 Refrescando tracks, aguardá un momento...")
+    if not await tracking_service.try_start_refresh("manual"):
+        await update.message.reply_text("⏳ Ya hay un refresh en curso. Esperá a que termine.")
+        return
+
+    try:
+        await update.message.reply_text("🔄 Refrescando tracks, aguardá un momento...")
+    except Exception:
+        await tracking_service.finish_refresh("manual")
+        raise
 
     async def run_manual_refresh() -> None:
         try:
@@ -493,19 +501,26 @@ async def refresh_tracks_command(update: Update, context: ContextTypes.DEFAULT_T
                 force_unavailable_warnings=True,
                 unavailable_warning_chat_id=update.effective_chat.id,
             )
+            summary_result = tracking_service.build_refresh_summary_message(summary)
+            await _send_text_chunks(
+                context.bot,
+                update.effective_chat.id,
+                summary_result.message,
+            )
         except Exception:
             logger.exception("Tracking refresh failed for chat_id=%s.", update.effective_chat.id)
-            await context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text="❌ Ocurrió un error refrescando los tracks. Revisá logs.",
-            )
-            return
-
-        await _send_text_chunks(
-            context.bot,
-            update.effective_chat.id,
-            tracking_service.build_refresh_summary_message(summary),
-        )
+            try:
+                await context.bot.send_message(
+                    chat_id=update.effective_chat.id,
+                    text="❌ Ocurrió un error refrescando los tracks. Revisá logs.",
+                )
+            except Exception:
+                logger.exception(
+                    "Also failed to send manual refresh error message for chat_id=%s.",
+                    update.effective_chat.id,
+                )
+        finally:
+            await tracking_service.finish_refresh("manual")
 
     task = asyncio.create_task(
         run_manual_refresh(),

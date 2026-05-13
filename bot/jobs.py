@@ -17,7 +17,7 @@ from monitoring import (
     get_metric_warnings,
     get_system_metrics,
 )
-from monitors.tracking import TrackingService
+from monitors.tracking import TrackingService, format_duration
 
 logger = logging.getLogger(__name__)
 
@@ -35,13 +35,18 @@ async def start_tracking_monitor(application: Application, interval_seconds: int
         return
 
     task = asyncio.create_task(
-        _tracking_monitor_loop(application, interval_seconds),
+        _tracking_monitor_loop(
+            application,
+            interval_seconds,
+            initial_delay_seconds=interval_seconds,
+        ),
         name="tracking-monitor-loop",
     )
     application.bot_data[TRACKING_MONITOR_TASK_KEY] = task
 
     logger.info(
-        "Tracking monitor loop started with interval_seconds=%s.",
+        "Tracking monitor loop started with interval_seconds=%s initial_delay_seconds=%s.",
+        interval_seconds,
         interval_seconds,
     )
 
@@ -119,7 +124,12 @@ async def stop_resource_monitor(application: Application) -> None:
     application.bot_data.pop(RESOURCE_MONITOR_TASK_KEY, None)
 
 
-async def _tracking_monitor_loop(application: Application, interval_seconds: int) -> None:
+async def _tracking_monitor_loop(
+    application: Application,
+    interval_seconds: int,
+    *,
+    initial_delay_seconds: float | None = None,
+) -> None:
     """Run the periodic scrape and notification cycle forever."""
 
     tracking_service = application.bot_data.get(TRACKING_SERVICE_KEY)
@@ -128,17 +138,25 @@ async def _tracking_monitor_loop(application: Application, interval_seconds: int
         logger.error("TrackingService is not configured; monitor loop will not run.")
         return
 
+    if initial_delay_seconds is None:
+        initial_delay_seconds = interval_seconds
+
+    if initial_delay_seconds > 0:
+        await asyncio.sleep(initial_delay_seconds)
+
     while True:
         try:
             summary = await tracking_service.monitor_once(application.bot)
             logger.info(
-                "Tracking monitor cycle finished: requested=%s refreshed=%s active_matches=%s new_events=%s odds_changes=%s failed=%s",
+                "Tracking monitor cycle finished: requested=%s refreshed=%s active_matches=%s new_events=%s odds_changes=%s failed=%s duration=%s duration_seconds=%.2f",
                 summary.tracks_requested,
                 summary.tracks_refreshed,
                 summary.active_matches,
                 summary.new_events,
                 summary.odds_changes,
                 len(summary.failed_leagues),
+                format_duration(summary.elapsed_seconds),
+                summary.elapsed_seconds,
             )
         except asyncio.CancelledError:
             raise

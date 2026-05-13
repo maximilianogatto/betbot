@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock
 
 from core.extractor_base import CompetitionUnavailableError
 from monitors.models import RefreshSummary, UnavailableCompetitionRefresh
-from monitors.tracking import TrackingService
+from monitors.tracking import TrackingService, format_duration
 from storage.tracking_repository import TrackedCompetition
 
 
@@ -62,6 +62,32 @@ class _RepositoryStub:
 
 
 class TrackingRefreshNotificationTests(unittest.IsolatedAsyncioTestCase):
+    def test_format_duration_formats_seconds_minutes_and_hours(self) -> None:
+        self.assertEqual(format_duration(42.9), "42s")
+        self.assertEqual(format_duration(68.0), "1m 08s")
+        self.assertEqual(format_duration(3730.0), "1h 02m 10s")
+
+    async def test_automatic_refresh_skips_when_manual_refresh_holds_lock(self) -> None:
+        service = TrackingService()
+        service.refresh_all_active_leagues = AsyncMock()
+        service.dispatch_notifications = AsyncMock()
+
+        await service.try_start_refresh("manual")
+        try:
+            with self.assertLogs("monitors.tracking", level="INFO") as captured_logs:
+                summary = await service.monitor_once(bot=object())
+        finally:
+            await service.finish_refresh("manual")
+
+        self.assertEqual(summary.tracks_requested, 0)
+        self.assertEqual(summary.tracks_refreshed, 0)
+        service.refresh_all_active_leagues.assert_not_awaited()
+        service.dispatch_notifications.assert_not_awaited()
+        self.assertTrue(
+            any("Skipping automatic refresh because another refresh is already running" in line
+                for line in captured_logs.output)
+        )
+
     async def test_automatic_refresh_does_not_notify_unavailable_competitions(self) -> None:
         service = TrackingService()
         service.notify_for_refresh_result = AsyncMock()
@@ -82,6 +108,7 @@ class TrackingRefreshNotificationTests(unittest.IsolatedAsyncioTestCase):
                     reason="Bet365 league payload was not captured.",
                 )
             ],
+            elapsed_seconds=12.0,
         )
 
         await service.dispatch_notifications(
@@ -112,6 +139,7 @@ class TrackingRefreshNotificationTests(unittest.IsolatedAsyncioTestCase):
                     reason="Bet365 league payload was not captured.",
                 )
             ],
+            elapsed_seconds=12.0,
         )
 
         await service.dispatch_notifications(
@@ -137,6 +165,7 @@ class TrackingRefreshNotificationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(summary.tracks_refreshed, 0)
         self.assertEqual(summary.failed_leagues, ["Spanish Primera"])
         self.assertEqual(len(summary.unavailable_competitions), 1)
+        self.assertGreaterEqual(summary.elapsed_seconds, 0.0)
 
 
 if __name__ == "__main__":
