@@ -353,6 +353,7 @@ class SmallChangeRecord:
     away: str
     scheduled_label_date: str | None
     scheduled_label_time: str | None
+    scheduled_at: str | None
     baseline_home: float | None
     baseline_draw: float | None
     baseline_away: float | None
@@ -1234,6 +1235,7 @@ class SqliteTrackingRepository:
                     ae.away,
                     ae.scheduled_label_date,
                     ae.scheduled_label_time,
+                    ae.scheduled_at,
                     sc.previous_odds_home,
                     sc.previous_odds_draw,
                     sc.previous_odds_away,
@@ -2706,6 +2708,7 @@ def _fetch_small_change_row_by_id(
             ae.away,
             ae.scheduled_label_date,
             ae.scheduled_label_time,
+            ae.scheduled_at,
             sc.previous_odds_home,
             sc.previous_odds_draw,
             sc.previous_odds_away,
@@ -2747,6 +2750,7 @@ def _fetch_small_change_row_by_identity(
             ae.away,
             ae.scheduled_label_date,
             ae.scheduled_label_time,
+            ae.scheduled_at,
             sc.previous_odds_home,
             sc.previous_odds_draw,
             sc.previous_odds_away,

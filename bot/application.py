@@ -34,6 +34,9 @@ def create_application(settings: Settings) -> Application:
         repository=tracking_repository,
         max_parallel_refreshes=settings.tracking_max_parallel_refreshes,
         remove_missing_after_cycles=settings.tracking_remove_missing_after_cycles,
+        odds_change_confirmation_refreshes=settings.odds_change_confirmation_refreshes,
+        odds_flap_window_minutes=settings.odds_flap_window_minutes,
+        odds_flap_epsilon=settings.odds_flap_epsilon,
     )
 
     async def post_init(application: Application) -> None:

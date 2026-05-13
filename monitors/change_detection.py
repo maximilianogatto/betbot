@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from datetime import datetime, timedelta, timezone
+import hashlib
 import json
 from typing import Any
 
@@ -22,6 +23,8 @@ MARKET_TYPE_LABELS = {
     "goal_line": "Goal Line",
     "alternative_markets": "Mercados alternativos",
 }
+TRACKING_META_KEY = "__tracking_meta__"
+RECENT_SNAPSHOT_HISTORY_SIZE = 4
 
 
 def evaluate_subscription_odds_change(
@@ -29,6 +32,10 @@ def evaluate_subscription_odds_change(
     subscription: CompetitionSubscription,
     tracked_league: TrackedCompetition,
     match: ActiveEventRecord,
+    *,
+    confirmation_refreshes: int = 2,
+    flap_window_minutes: int = 10,
+    flap_epsilon: float = 0.01,
 ) -> SubscriptionOddsAlert | None:
     """Evaluate one global odds change against a specific chat baseline."""
 
@@ -46,18 +53,40 @@ def evaluate_subscription_odds_change(
         )
         return None
 
+    baseline_payload, tracking_meta = _split_tracking_payload(
+        _loads_optional_json_dict(baseline.baseline_markets_json)
+    )
+    current_payload = _effective_current_payload(match)
     change_details = compute_market_change_details(baseline, match)
     max_percent_change = change_details[0].percent_change if change_details else None
+    stable_snapshot_hash = _build_snapshot_hash(
+        baseline_payload,
+        scheduled_at=match.kickoff_at,
+        raw_payload_json=match.raw_payload_json,
+        epsilon=flap_epsilon,
+    )
+    current_snapshot_hash = _build_snapshot_hash(
+        current_payload,
+        scheduled_at=match.kickoff_at,
+        raw_payload_json=match.raw_payload_json,
+        epsilon=flap_epsilon,
+    )
+    now = datetime.now(timezone.utc)
+    now_iso = now.isoformat()
 
-    if max_percent_change is None:
+    if max_percent_change is None or current_snapshot_hash == stable_snapshot_hash:
+        cleared_meta = _clear_pending_tracking_meta(tracking_meta)
         repository.upsert_event_baseline(
             subscription.telegram_chat_id,
             tracked_league.id,
             match.fixture_id,
-            baseline_home=match.odds_home,
-            baseline_draw=match.odds_draw,
-            baseline_away=match.odds_away,
-            baseline_markets_json=match.markets_json,
+            baseline_home=baseline.baseline_home,
+            baseline_draw=baseline.baseline_draw,
+            baseline_away=baseline.baseline_away,
+            baseline_markets_json=_serialize_tracking_payload(
+                baseline_payload,
+                cleared_meta,
+            ),
         )
         repository.resolve_small_change_with_current_baseline(
             subscription.telegram_chat_id,
@@ -66,9 +95,57 @@ def evaluate_subscription_odds_change(
         )
         return None
 
+    pending_state = _normalize_pending_state(tracking_meta.get("pending"))
+    is_same_pending_snapshot = pending_state.get("hash") == current_snapshot_hash
+    pending_seen_count = int(pending_state.get("seen_count", 0)) + 1 if is_same_pending_snapshot else 1
+    pending_first_seen_at = (
+        _normalize_optional_text(pending_state.get("first_seen_at")) if is_same_pending_snapshot else now_iso
+    ) or now_iso
+    is_flapping = _is_recent_reversion(
+        tracking_meta,
+        candidate_hash=current_snapshot_hash,
+        now=now,
+        flap_window_minutes=flap_window_minutes,
+    )
+    updated_meta = {
+        **_clear_pending_tracking_meta(tracking_meta),
+        "pending": {
+            "hash": current_snapshot_hash,
+            "seen_count": pending_seen_count,
+            "first_seen_at": pending_first_seen_at,
+            "detected_at": now_iso,
+            "flapping": is_flapping,
+        },
+    }
+
+    if pending_seen_count < max(1, confirmation_refreshes):
+        repository.upsert_event_baseline(
+            subscription.telegram_chat_id,
+            tracked_league.id,
+            match.fixture_id,
+            baseline_home=baseline.baseline_home,
+            baseline_draw=baseline.baseline_draw,
+            baseline_away=baseline.baseline_away,
+            baseline_markets_json=_serialize_tracking_payload(
+                baseline_payload,
+                updated_meta,
+            ),
+        )
+        return None
+
     should_notify = (
         subscription.notify_odds_changes
         and max_percent_change >= subscription.change_percent_threshold
+    )
+
+    confirmed_meta = _mark_confirmed_snapshot(
+        tracking_meta,
+        replaced_hash=stable_snapshot_hash,
+        confirmed_at=now_iso,
+    )
+    confirmed_payload_with_meta = _embed_tracking_meta(
+        current_payload,
+        confirmed_meta,
     )
 
     if should_notify:
@@ -78,8 +155,21 @@ def evaluate_subscription_odds_change(
             max_percent_change=max_percent_change,
             change_details=tuple(change_details),
             changed_market_types=_collect_changed_market_types(change_details),
+            confirmed_baseline_markets_payload=confirmed_payload_with_meta,
         )
 
+    repository.upsert_event_baseline(
+        subscription.telegram_chat_id,
+        tracked_league.id,
+        match.fixture_id,
+        baseline_home=baseline.baseline_home,
+        baseline_draw=baseline.baseline_draw,
+        baseline_away=baseline.baseline_away,
+        baseline_markets_json=_serialize_tracking_payload(
+            baseline_payload,
+            updated_meta,
+        ),
+    )
     repository.upsert_small_change(
         subscription.telegram_chat_id,
         tracked_league.id,
@@ -236,7 +326,7 @@ def _collect_changed_market_types(
 
 
 def _effective_baseline_payload(baseline: EventBaseline) -> dict[str, Any]:
-    payload = _loads_optional_json_dict(baseline.baseline_markets_json) or {}
+    payload, _ = _split_tracking_payload(_loads_optional_json_dict(baseline.baseline_markets_json))
     return _merge_1x2_payload(
         payload,
         home=baseline.baseline_home,
@@ -246,7 +336,7 @@ def _effective_baseline_payload(baseline: EventBaseline) -> dict[str, Any]:
 
 
 def _effective_current_payload(match: ActiveEventRecord) -> dict[str, Any]:
-    payload = _loads_optional_json_dict(match.markets_json) or {}
+    payload, _ = _split_tracking_payload(_loads_optional_json_dict(match.markets_json))
     return _merge_1x2_payload(
         payload,
         home=match.odds_home,
@@ -341,6 +431,174 @@ def _flatten_market_object(
             "line": line,
             "odds": odds_value,
         }
+
+
+def _split_tracking_payload(
+    payload: dict[str, Any] | None,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    if not isinstance(payload, dict):
+        return {}, {}
+
+    normalized_payload = json.loads(json.dumps(payload))
+    raw_meta = normalized_payload.pop(TRACKING_META_KEY, None)
+    return normalized_payload, raw_meta if isinstance(raw_meta, dict) else {}
+
+
+def _embed_tracking_meta(
+    payload: dict[str, Any] | None,
+    tracking_meta: dict[str, Any],
+) -> dict[str, Any]:
+    normalized_payload = json.loads(json.dumps(payload or {}))
+    cleaned_meta = _prune_tracking_meta(tracking_meta)
+    if cleaned_meta:
+        normalized_payload[TRACKING_META_KEY] = cleaned_meta
+    else:
+        normalized_payload.pop(TRACKING_META_KEY, None)
+    return normalized_payload
+
+
+def _serialize_tracking_payload(
+    payload: dict[str, Any] | None,
+    tracking_meta: dict[str, Any],
+) -> str | None:
+    merged_payload = _embed_tracking_meta(payload, tracking_meta)
+    if not merged_payload:
+        return None
+    return json.dumps(merged_payload, ensure_ascii=False, sort_keys=True)
+
+
+def _prune_tracking_meta(tracking_meta: dict[str, Any]) -> dict[str, Any]:
+    normalized_meta = dict(tracking_meta or {})
+    if "pending" in normalized_meta and not normalized_meta["pending"]:
+        normalized_meta.pop("pending", None)
+    recent_hashes = normalized_meta.get("recent_hashes")
+    if not recent_hashes:
+        normalized_meta.pop("recent_hashes", None)
+    return normalized_meta
+
+
+def _clear_pending_tracking_meta(tracking_meta: dict[str, Any]) -> dict[str, Any]:
+    normalized_meta = dict(tracking_meta or {})
+    normalized_meta.pop("pending", None)
+    return normalized_meta
+
+
+def _normalize_pending_state(raw_pending: object) -> dict[str, Any]:
+    if not isinstance(raw_pending, dict):
+        return {}
+    return {
+        "hash": _normalize_optional_text(raw_pending.get("hash")),
+        "seen_count": int(raw_pending.get("seen_count", 0) or 0),
+        "first_seen_at": _normalize_optional_text(raw_pending.get("first_seen_at")),
+        "detected_at": _normalize_optional_text(raw_pending.get("detected_at")),
+        "flapping": bool(raw_pending.get("flapping")),
+    }
+
+
+def _mark_confirmed_snapshot(
+    tracking_meta: dict[str, Any],
+    *,
+    replaced_hash: str,
+    confirmed_at: str,
+) -> dict[str, Any]:
+    normalized_meta = _clear_pending_tracking_meta(tracking_meta)
+    if not replaced_hash:
+        return normalized_meta
+
+    recent_hashes: list[dict[str, str]] = []
+    for entry in tracking_meta.get("recent_hashes") or []:
+        if not isinstance(entry, dict):
+            continue
+        entry_hash = _normalize_optional_text(entry.get("hash"))
+        entry_at = _normalize_optional_text(entry.get("at"))
+        if not entry_hash or not entry_at or entry_hash == replaced_hash:
+            continue
+        recent_hashes.append({"hash": entry_hash, "at": entry_at})
+
+    recent_hashes.insert(0, {"hash": replaced_hash, "at": confirmed_at})
+    normalized_meta["recent_hashes"] = recent_hashes[:RECENT_SNAPSHOT_HISTORY_SIZE]
+    return normalized_meta
+
+
+def _is_recent_reversion(
+    tracking_meta: dict[str, Any],
+    *,
+    candidate_hash: str,
+    now: datetime,
+    flap_window_minutes: int,
+) -> bool:
+    if not candidate_hash:
+        return False
+
+    window = timedelta(minutes=max(1, flap_window_minutes))
+    for entry in tracking_meta.get("recent_hashes") or []:
+        if not isinstance(entry, dict):
+            continue
+        entry_hash = _normalize_optional_text(entry.get("hash"))
+        entry_at = _normalize_optional_text(entry.get("at"))
+        if entry_hash != candidate_hash or not entry_at:
+            continue
+        try:
+            parsed_at = datetime.fromisoformat(entry_at)
+        except ValueError:
+            continue
+        if parsed_at.tzinfo is None:
+            parsed_at = parsed_at.replace(tzinfo=timezone.utc)
+        if now - parsed_at <= window:
+            return True
+    return False
+
+
+def _build_snapshot_hash(
+    payload: dict[str, Any] | None,
+    *,
+    scheduled_at: str | None,
+    raw_payload_json: str | None,
+    epsilon: float,
+) -> str:
+    canonical_payload = _canonicalize_for_hash(payload or {}, epsilon=epsilon)
+    extractor_mode = _extract_snapshot_mode(raw_payload_json)
+    canonical_snapshot = {
+        "scheduled_at": _normalize_optional_text(scheduled_at),
+        "extractor_mode": extractor_mode,
+        "markets": canonical_payload,
+    }
+    encoded = json.dumps(canonical_snapshot, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+
+def _canonicalize_for_hash(value: Any, *, epsilon: float) -> Any:
+    if isinstance(value, dict):
+        return {
+            str(key): _canonicalize_for_hash(nested_value, epsilon=epsilon)
+            for key, nested_value in sorted(value.items(), key=lambda item: str(item[0]))
+            if str(key) != TRACKING_META_KEY
+        }
+    if isinstance(value, list):
+        return [_canonicalize_for_hash(item, epsilon=epsilon) for item in value]
+    if isinstance(value, bool) or value is None:
+        return value
+    if isinstance(value, (int, float)):
+        return _round_with_epsilon(float(value), epsilon)
+    if isinstance(value, str):
+        maybe_float = _coerce_float(value)
+        if maybe_float is not None:
+            return _round_with_epsilon(maybe_float, epsilon)
+        return value.strip()
+    return str(value)
+
+
+def _round_with_epsilon(value: float, epsilon: float) -> float:
+    normalized_epsilon = epsilon if epsilon > 0 else 0.01
+    rounded = round(round(value / normalized_epsilon) * normalized_epsilon, 6)
+    return 0.0 if abs(rounded) < normalized_epsilon else rounded
+
+
+def _extract_snapshot_mode(raw_payload_json: str | None) -> str:
+    payload = _loads_optional_json_dict(raw_payload_json) or {}
+    if payload.get("degraded"):
+        return "degraded"
+    return "primary"
 
 
 def _loads_optional_json_dict(raw_value: str | None) -> dict[str, Any] | None:

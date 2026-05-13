@@ -173,6 +173,7 @@ def row_to_small_change_record(row: sqlite3.Row) -> "SmallChangeRecord":
         away=str(row["away"]),
         scheduled_label_date=row_optional_text(row, "scheduled_label_date"),
         scheduled_label_time=row_optional_text(row, "scheduled_label_time"),
+        scheduled_at=row_optional_text(row, "scheduled_at"),
         baseline_home=row_optional_float(row, "previous_odds_home"),
         baseline_draw=row_optional_float(row, "previous_odds_draw"),
         baseline_away=row_optional_float(row, "previous_odds_away"),

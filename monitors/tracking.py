@@ -79,11 +79,17 @@ class TrackingService:
         repository: SqliteTrackingRepository | None = None,
         max_parallel_refreshes: int = 3,
         remove_missing_after_cycles: int = 3,
+        odds_change_confirmation_refreshes: int = 2,
+        odds_flap_window_minutes: int = 10,
+        odds_flap_epsilon: float = 0.01,
     ) -> None:
         self.extractor_registry = extractor_registry or global_extractor_registry
         self.repository = repository or default_tracking_repository
         self.max_parallel_refreshes = max(1, max_parallel_refreshes)
         self.remove_missing_after_cycles = max(1, remove_missing_after_cycles)
+        self.odds_change_confirmation_refreshes = max(1, odds_change_confirmation_refreshes)
+        self.odds_flap_window_minutes = max(1, odds_flap_window_minutes)
+        self.odds_flap_epsilon = max(0.0, odds_flap_epsilon)
         self._refresh_lock = asyncio.Lock()
 
     async def _extract_league(self, url: str) -> CompetitionExtraction:

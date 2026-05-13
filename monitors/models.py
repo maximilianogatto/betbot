@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 from storage.tracking_repository import ActiveEventRecord, EventBaseline, TrackedCompetition
 
@@ -45,6 +46,7 @@ class SubscriptionOddsAlert:
     max_percent_change: float
     change_details: tuple[MarketChangeDetail, ...]
     changed_market_types: tuple[str, ...]
+    confirmed_baseline_markets_payload: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)

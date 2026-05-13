@@ -36,6 +36,9 @@ class Settings:
     tracking_default_change_threshold_percent: float = 20.0
     tracking_default_notify_odds_changes: bool = True
     tracking_remove_missing_after_cycles: int = 3
+    odds_change_confirmation_refreshes: int = 2
+    odds_flap_window_minutes: int = 10
+    odds_flap_epsilon: float = 0.01
     enable_monitoring: bool = False
     monitor_interval_seconds: int = 60
     monitor_log_to_file: bool = False
@@ -149,6 +152,18 @@ def load_settings() -> Settings:
         os.getenv("TRACKING_REMOVE_MISSING_AFTER_CYCLES", "3"),
         variable_name="TRACKING_REMOVE_MISSING_AFTER_CYCLES",
     )
+    odds_change_confirmation_refreshes = _parse_positive_int(
+        os.getenv("ODDS_CHANGE_CONFIRMATION_REFRESHES", "2"),
+        variable_name="ODDS_CHANGE_CONFIRMATION_REFRESHES",
+    )
+    odds_flap_window_minutes = _parse_positive_int(
+        os.getenv("ODDS_FLAP_WINDOW_MINUTES", "10"),
+        variable_name="ODDS_FLAP_WINDOW_MINUTES",
+    )
+    odds_flap_epsilon = _parse_positive_float(
+        os.getenv("ODDS_FLAP_EPSILON", "0.01"),
+        variable_name="ODDS_FLAP_EPSILON",
+    )
     enable_monitoring = _parse_bool(os.getenv("ENABLE_MONITORING", "false"))
     monitor_interval_seconds = _parse_positive_int(
         os.getenv("MONITOR_INTERVAL_SECONDS", "60"),
@@ -188,6 +203,9 @@ def load_settings() -> Settings:
         tracking_default_change_threshold_percent=tracking_default_change_threshold_percent,
         tracking_default_notify_odds_changes=tracking_default_notify_odds_changes,
         tracking_remove_missing_after_cycles=tracking_remove_missing_after_cycles,
+        odds_change_confirmation_refreshes=odds_change_confirmation_refreshes,
+        odds_flap_window_minutes=odds_flap_window_minutes,
+        odds_flap_epsilon=odds_flap_epsilon,
         enable_monitoring=enable_monitoring,
         monitor_interval_seconds=monitor_interval_seconds,
         monitor_log_to_file=monitor_log_to_file,
