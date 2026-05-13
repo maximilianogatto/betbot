@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
@@ -43,6 +44,7 @@ ODDS_TRACKS_CONTEXT_KEY = "odds_tracks"
 ODDS_ENABLED_CONTEXT_KEY = "odds_enabled"
 CHANGE_PERCENT_TRACKS_CONTEXT_KEY = "change_percent_tracks"
 CHANGE_PERCENT_VALUE_CONTEXT_KEY = "change_percent_value"
+MANUAL_REFRESH_TASK_KEY = "manual_refresh_task"
 
 HELP_MESSAGE = (
     "Comandos generales\n"
@@ -170,6 +172,24 @@ async def _reply_text_chunks(
             chunk,
             parse_mode=parse_mode,
             reply_markup=reply_markup if index == 0 else None,
+        )
+
+
+async def _send_text_chunks(
+    bot,
+    chat_id: int,
+    text: str,
+    *,
+    parse_mode: str | None = None,
+) -> None:
+    """Send one text in multiple Telegram bot messages when needed."""
+
+    chunks = split_telegram_message(text)
+    for chunk in chunks:
+        await bot.send_message(
+            chat_id=chat_id,
+            text=chunk,
+            parse_mode=parse_mode,
         )
 
 
@@ -453,24 +473,52 @@ async def refresh_tracks_command(update: Update, context: ContextTypes.DEFAULT_T
     logger.info("Comando /refresh_tracks recibido.")
 
     tracking_service = get_tracking_service(context)
+    existing_task = context.application.bot_data.get(MANUAL_REFRESH_TASK_KEY)
 
-    try:
-        summary = await tracking_service.refresh_chat_tracks(update.effective_chat.id)
-        await tracking_service.dispatch_notifications(
+    if isinstance(existing_task, asyncio.Task):
+        if not existing_task.done():
+            await update.message.reply_text("⏳ Ya hay un refresh en curso. Esperá a que termine.")
+            return
+        context.application.bot_data.pop(MANUAL_REFRESH_TASK_KEY, None)
+
+    await update.message.reply_text("🔄 Refrescando tracks, aguardá un momento...")
+
+    async def run_manual_refresh() -> None:
+        try:
+            summary = await tracking_service.refresh_chat_tracks(update.effective_chat.id)
+            await tracking_service.dispatch_notifications(
+                context.bot,
+                summary,
+                notify_failures=True,
+                force_unavailable_warnings=True,
+                unavailable_warning_chat_id=update.effective_chat.id,
+            )
+        except Exception:
+            logger.exception("Tracking refresh failed for chat_id=%s.", update.effective_chat.id)
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text="❌ Ocurrió un error refrescando los tracks. Revisá logs.",
+            )
+            return
+
+        await _send_text_chunks(
             context.bot,
-            summary,
-            force_unavailable_warnings=True,
-            unavailable_warning_chat_id=update.effective_chat.id,
+            update.effective_chat.id,
+            tracking_service.build_refresh_summary_message(summary),
         )
-    except (RuntimeError, ValueError) as error:
-        logger.exception("Tracking refresh failed for chat_id=%s.", update.effective_chat.id)
-        await update.message.reply_text(
-            "No pude actualizar las ligas trackeadas en este momento.\n\n"
-            "Volvé a intentar en unos minutos."
-        )
-        return
 
-    await reply_with_result(update, tracking_service.build_refresh_summary_message(summary))
+    task = asyncio.create_task(
+        run_manual_refresh(),
+        name=f"manual-refresh-tracks-{update.effective_chat.id}",
+    )
+    context.application.bot_data[MANUAL_REFRESH_TASK_KEY] = task
+
+    def _clear_manual_refresh_task(finished_task: asyncio.Task) -> None:
+        current_task = context.application.bot_data.get(MANUAL_REFRESH_TASK_KEY)
+        if current_task is finished_task:
+            context.application.bot_data.pop(MANUAL_REFRESH_TASK_KEY, None)
+
+    task.add_done_callback(_clear_manual_refresh_task)
 
 
 async def event_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

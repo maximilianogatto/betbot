@@ -688,7 +688,11 @@ class TrackingService:
         """Run one global monitoring cycle and dispatch notifications."""
 
         summary = await self.refresh_all_active_leagues()
-        await self.dispatch_notifications(bot, summary)
+        await self.dispatch_notifications(
+            bot,
+            summary,
+            notify_failures=False,
+        )
         return summary
 
     async def dispatch_notifications(
@@ -696,6 +700,7 @@ class TrackingService:
         bot: Bot,
         summary: RefreshSummary,
         *,
+        notify_failures: bool = False,
         force_unavailable_warnings: bool = False,
         unavailable_warning_chat_id: int | None = None,
     ) -> None:
@@ -703,6 +708,9 @@ class TrackingService:
 
         for result in summary.league_results:
             await self.notify_for_refresh_result(bot, result)
+
+        if not notify_failures:
+            return
 
         for unavailable in summary.unavailable_competitions:
             await self.notify_for_unavailable_competition(
@@ -779,6 +787,9 @@ class TrackingService:
                     subscription,
                     result.tracked_league,
                     change.after,
+                    confirmation_refreshes=self.odds_change_confirmation_refreshes,
+                    flap_window_minutes=self.odds_flap_window_minutes,
+                    flap_epsilon=self.odds_flap_epsilon,
                 )
 
                 if alert is not None and subscription.notify_odds_changes:
@@ -815,7 +826,15 @@ class TrackingService:
                         baseline_home=alert.match.odds_home,
                         baseline_draw=alert.match.odds_draw,
                         baseline_away=alert.match.odds_away,
-                        baseline_markets_json=alert.match.markets_json,
+                        baseline_markets_json=(
+                            alert.match.markets_json
+                            if alert.confirmed_baseline_markets_payload is None
+                            else json.dumps(
+                                alert.confirmed_baseline_markets_payload,
+                                ensure_ascii=False,
+                                sort_keys=True,
+                            )
+                        ),
                     )
                     self.repository.resolve_small_change_with_current_baseline(
                         subscription.telegram_chat_id,
