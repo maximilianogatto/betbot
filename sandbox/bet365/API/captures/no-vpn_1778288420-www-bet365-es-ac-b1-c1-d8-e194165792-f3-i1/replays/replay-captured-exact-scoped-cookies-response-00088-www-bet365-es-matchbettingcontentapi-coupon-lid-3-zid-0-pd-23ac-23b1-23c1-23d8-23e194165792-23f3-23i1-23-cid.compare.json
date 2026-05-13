@@ -1,0 +1,221 @@
+{
+  "capture_record_id": "response-00088",
+  "replay_file_candidate_id": "response-00088",
+  "request": {
+    "captured_url": "https://www.bet365.es/matchbettingcontentapi/coupon?lid=3&zid=0&pd=%23AC%23B1%23C1%23D8%23E194165792%23F3%23I1%23&cid=171&cgid=4&ctid=171",
+    "replay_url": "https://www.bet365.es/matchbettingcontentapi/coupon?lid=3&zid=0&pd=%23AC%23B1%23C1%23D8%23E194165792%23F3%23I1%23&cid=171&cgid=4&ctid=171",
+    "captured_method": "GET",
+    "replay_method": "GET",
+    "query_diff": {
+      "captured_order": [
+        [
+          "lid",
+          "3"
+        ],
+        [
+          "zid",
+          "0"
+        ],
+        [
+          "pd",
+          "#AC#B1#C1#D8#E194165792#F3#I1#"
+        ],
+        [
+          "cid",
+          "171"
+        ],
+        [
+          "cgid",
+          "4"
+        ],
+        [
+          "ctid",
+          "171"
+        ]
+      ],
+      "replay_order": [
+        [
+          "lid",
+          "3"
+        ],
+        [
+          "zid",
+          "0"
+        ],
+        [
+          "pd",
+          "#AC#B1#C1#D8#E194165792#F3#I1#"
+        ],
+        [
+          "cid",
+          "171"
+        ],
+        [
+          "cgid",
+          "4"
+        ],
+        [
+          "ctid",
+          "171"
+        ]
+      ],
+      "same_order": true,
+      "differing_params": []
+    },
+    "critical_headers": [
+      {
+        "header": "referer",
+        "captured": "https://www.bet365.es/",
+        "replay": "https://www.bet365.es/",
+        "same": true
+      },
+      {
+        "header": "origin",
+        "captured": null,
+        "replay": null,
+        "same": true
+      },
+      {
+        "header": "accept",
+        "captured": "*/*",
+        "replay": "*/*",
+        "same": true
+      },
+      {
+        "header": "accept-language",
+        "captured": "es-419,es;q=0.9",
+        "replay": "es-419,es;q=0.9",
+        "same": true
+      },
+      {
+        "header": "accept-encoding",
+        "captured": null,
+        "replay": null,
+        "same": true
+      },
+      {
+        "header": "user-agent",
+        "captured": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
+        "replay": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
+        "same": true
+      },
+      {
+        "header": "sec-fetch-site",
+        "captured": "same-origin",
+        "replay": "same-origin",
+        "same": true
+      },
+      {
+        "header": "sec-fetch-mode",
+        "captured": "cors",
+        "replay": "cors",
+        "same": true
+      },
+      {
+        "header": "sec-fetch-dest",
+        "captured": "empty",
+        "replay": "empty",
+        "same": true
+      },
+      {
+        "header": "sec-ch-ua",
+        "captured": "\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
+        "replay": "\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
+        "same": true
+      },
+      {
+        "header": "x-net-sync-term",
+        "captured": "AzQABAC6AAGf1vLWw+8loHakSfhTkg+ixlAOt2YE3HM1b0iL+IWxl3g4DaX5uYteiZ04EbiG7Qoed1kUV9mMYaKNOOahXhUWXu3WUvTU68BoFdJmHs93hrYTowKLpdo6HN2iKbU6OgVNtrsb7ntRxQW9QCo3SR/2fbfdVWSAVBrr1WEs5OBt2J54bjYMNnLANmaEk2ONo7MgGz7tsepjHVTtHmr+otDK4sP37awk5f7FGHmrzQBHdMklNruRX2LyfxLRkFBcJ39qs3HWT0MIQ9vSCgcjOKqushTW384SMrBYuLp32dJrvklGuXIRK1N+jZeM/czvp0ly+0VgS7Qsw0w3zen2XBqV7WLrCReNwuXogxwTp6E25gjkzilkYNrLmbH0iKngKhr1SYKgtJGj0OuigtHCS28U1AhwxOKLPTChxkLI9Mxw0m0wRv3ohUsQCFCUweDlvTO2iNFR4kuVwqKSo9TK5bfuJUScC44ky7pMZKdw8V2ogx5m6nZrqXyx2bXnc15goyslguZYIVtu3vvk8ueHQM69dITXu6ZnRI/YPbn6eLWWA3adqn2XtxJDrbY+BP8ZqZJe1qUhIjeRXE/Gi8EAUxm9t8UXKaWpd7nIF01WGnvoXlTFEWbDleaCJY2PgdQEqjERq+gY7LnV/yGXKV1F1Zbi3ZJ/m19xG/h88JbqdXY7Y+ysWGenYXzLXOU3TZzInMoQeZMAltEwe6BmE/vETf6P7Hqct2kJCdibEgwnCbkg9eyHR646wj78sG6Hpd7L5FwDRmEyY7Fb2+DI5Gp20MORSN0GDnG9vpuLb85LMCxgvkMgQ0DrSz9aTr3v1g9QX8B4fCjMhMPUJNYBHg27Gz7kUhyN8fUSU0i2iZOwpMIoi+CNIJiyBpcNFS+mhLnMHKoxclkQpX+iO+3R6uJjVutafssC53+fVpnFBYEdDukzSJWQnPpYi6+0TCNPnbDiSohGSNH1+OwYY8oAQ+E2vz/CwsZqXZ8SNWHXBhqUCYQYW6vg08eezHhBvHKGaZkCJf60L1uI8ion0DblFQJiM0Kdg0b6I1PCbuJSwrywQHl3qMmf5RlCzOQti3y6utLMQ7/dR0Vry3UeZWprFd1yuv5G3Wsgl/tpcllGnkd37BFneJx8QR9yv4Le+8HB8oxCRe+/YYXAuuvDx0RY0mQ2ZIjS1ml0yICI6ocOrsF9ZcfFjigWKKMYqtum8isWfXaW13DcAZ4l9zedwxp3stIFP7X4wvcgbyFRmoXMhkoHSW5jihoL6AmsUsOP5S8MyE3ZmK/2FdLDimMWZeLVMXf3VIBOM5i5tZ76mtspm8LVBy0yq8DjkYHeqqiRBIppUigySM2bwPEzDXGBXW7Np21tfugDzD5cu1HTqQi1k6mNxvMNvmzpPI7qLS09RW0/DlYAGjbKuUrpHDaAtsMvlP+Bs1tcA7ljS7Glsa4jAV71Jw1FnwgTMMfzHp0HaDBshxwVrkS4",
+        "replay": "AzQABAC6AAGf1vLWw+8loHakSfhTkg+ixlAOt2YE3HM1b0iL+IWxl3g4DaX5uYteiZ04EbiG7Qoed1kUV9mMYaKNOOahXhUWXu3WUvTU68BoFdJmHs93hrYTowKLpdo6HN2iKbU6OgVNtrsb7ntRxQW9QCo3SR/2fbfdVWSAVBrr1WEs5OBt2J54bjYMNnLANmaEk2ONo7MgGz7tsepjHVTtHmr+otDK4sP37awk5f7FGHmrzQBHdMklNruRX2LyfxLRkFBcJ39qs3HWT0MIQ9vSCgcjOKqushTW384SMrBYuLp32dJrvklGuXIRK1N+jZeM/czvp0ly+0VgS7Qsw0w3zen2XBqV7WLrCReNwuXogxwTp6E25gjkzilkYNrLmbH0iKngKhr1SYKgtJGj0OuigtHCS28U1AhwxOKLPTChxkLI9Mxw0m0wRv3ohUsQCFCUweDlvTO2iNFR4kuVwqKSo9TK5bfuJUScC44ky7pMZKdw8V2ogx5m6nZrqXyx2bXnc15goyslguZYIVtu3vvk8ueHQM69dITXu6ZnRI/YPbn6eLWWA3adqn2XtxJDrbY+BP8ZqZJe1qUhIjeRXE/Gi8EAUxm9t8UXKaWpd7nIF01WGnvoXlTFEWbDleaCJY2PgdQEqjERq+gY7LnV/yGXKV1F1Zbi3ZJ/m19xG/h88JbqdXY7Y+ysWGenYXzLXOU3TZzInMoQeZMAltEwe6BmE/vETf6P7Hqct2kJCdibEgwnCbkg9eyHR646wj78sG6Hpd7L5FwDRmEyY7Fb2+DI5Gp20MORSN0GDnG9vpuLb85LMCxgvkMgQ0DrSz9aTr3v1g9QX8B4fCjMhMPUJNYBHg27Gz7kUhyN8fUSU0i2iZOwpMIoi+CNIJiyBpcNFS+mhLnMHKoxclkQpX+iO+3R6uJjVutafssC53+fVpnFBYEdDukzSJWQnPpYi6+0TCNPnbDiSohGSNH1+OwYY8oAQ+E2vz/CwsZqXZ8SNWHXBhqUCYQYW6vg08eezHhBvHKGaZkCJf60L1uI8ion0DblFQJiM0Kdg0b6I1PCbuJSwrywQHl3qMmf5RlCzOQti3y6utLMQ7/dR0Vry3UeZWprFd1yuv5G3Wsgl/tpcllGnkd37BFneJx8QR9yv4Le+8HB8oxCRe+/YYXAuuvDx0RY0mQ2ZIjS1ml0yICI6ocOrsF9ZcfFjigWKKMYqtum8isWfXaW13DcAZ4l9zedwxp3stIFP7X4wvcgbyFRmoXMhkoHSW5jihoL6AmsUsOP5S8MyE3ZmK/2FdLDimMWZeLVMXf3VIBOM5i5tZ76mtspm8LVBy0yq8DjkYHeqqiRBIppUigySM2bwPEzDXGBXW7Np21tfugDzD5cu1HTqQi1k6mNxvMNvmzpPI7qLS09RW0/DlYAGjbKuUrpHDaAtsMvlP+Bs1tcA7ljS7Glsa4jAV71Jw1FnwgTMMfzHp0HaDBshxwVrkS4",
+        "same": true
+      },
+      {
+        "header": "x-request-id",
+        "captured": "2acf0a57-2eda-4320-0cec-a160ac9bcd9e",
+        "replay": "2acf0a57-2eda-4320-0cec-a160ac9bcd9e",
+        "same": true
+      },
+      {
+        "header": "priority",
+        "captured": "u=1, i",
+        "replay": "u=1, i",
+        "same": true
+      }
+    ],
+    "request_header_diff": {
+      "missing_in_replay": [],
+      "extra_in_replay": [],
+      "differing_values": []
+    },
+    "captured_cookie_names": [
+      "__cf_bm",
+      "aps03",
+      "pers",
+      "pstk",
+      "rmbs",
+      "swt"
+    ],
+    "replay_cookie_names": [
+      "__cf_bm",
+      "aps03",
+      "pers",
+      "pstk",
+      "rmbs",
+      "swt"
+    ],
+    "missing_cookies_in_replay": [],
+    "extra_cookies_in_replay": [],
+    "warmup_urls": [],
+    "backend": "httpx"
+  },
+  "response": {
+    "captured_status": 200,
+    "replay_status": 403,
+    "same_status": false,
+    "captured_content_type": "text/plain; charset=utf-8",
+    "replay_content_type": "text/html; charset=UTF-8",
+    "captured_body_hash": "bccefd2ffe83fdffcfe883747b8eb70be2cbf72f7b396ca08153169ef1f7137e",
+    "replay_body_hash": "3353ba1191ab8ebec4a0f8abdd8100025724c9b217c8fae0a679bd091eb3c911",
+    "same_body_hash": false,
+    "captured_body_size": 9523,
+    "replay_body_size": 4543,
+    "captured_preview": "F|CL;ID=1;CL=1;IT=#AC#B1#C1#D8#E194165792#F3#I1#;OR=0;EX=7,#AC#B1#C1#D8#E194165792#F3#@8,AUDIO1@9,BETTINGNEWS1@15,<;ED=1,#AS#B1#Q1#,0@2,#AS#B1#,1;H1=1,#AS#B1#Q1#,0@2,#AS#B1#,1;MF=1;PV=matchbettingcontentapi_0;L3=ESTONIA-ESIL-B;FF=H5H6HBHHHxIAIrJlJvK1K6K7W3W9WdWqWTWUWuWXWzX2;|EV;ID=EMB;IT=CC-EMB_#AC#B1#C1#D8#E194165792#F3#I1#;EX=JK Tammeka Tartu II v Tallinna JK Legion;CM=Start Time~20260509170000;TB=Soccer,#AS#B1#¬Estonia Esiliiga B,#AC#B1#C1#D1002#E130740247#G40#¬JK Tammeka Tartu II v Tallinna JK Legion,#ABM#B1#C1#D8#E194165792#F3#I1#;EN=2;FI=194165792;P1=20295;P2=18749;CC=ESTONIA-ESIL-B;CK=1123;SO=0;OI=194165792;BC=20260509170000;LT=#LT#B1#C1#D8#E194165792#F3#;NV=;NT=;AU=;LP=;CE=;CB=;MC=Live In-Play.;DS=;D1=0;N2=JK Tammeka Tartu II;N3=Tallinna JK Legion;KI=11;KC=#F0F0F0,#FF8000,#FF8000,#FF8000,#C40010,#0046A8,#F0F0F0,#F0F0F0,#FF8000,#FF8000,#F0F0F0;K1=Soccer_Generic_Solid_Navy_Front.svg;TX=16;TC=#C40010,#C40010,#D446BA,#00C1BA,#C40010,#0046A8,#C40010,#C40010,#0A0A0A,#0A0A0A,#C40010;K2=;PB=#0046A8,#C40010;HT=20295;AT=18749;FF=H5H6HBHHHxIAIrJlJvK1K6K7W3W9WdWqWTWUWuWXWzX2;|MG;SY=cm;FF=;|MA;IT=RC_RMG_#AC#B1#C1#D8#E194165792#F3#I1#_#AC#B1#C1#D8#E194165792#F3#I1#;NA=Popular;PD=#AC#B1#C1#D8#E194165792#F3#I1#;LS=1;FF=H5H6HBHHHxIAIrJlJvK1K6K7W3W9WTWUWXWdWqWuWzX2;|MA;IT=RC_RMG_#AC#B1#C1#D8#E194165792#F3#I1#_#AC#B1#C1#D8#E194165792#F3#I99#;NA=Bet Builder;PD=#AC#B1#C1#D8#E194165792#F3#I99#;FF=HX;FG=;|MA;IT=RC_RMG_#AC#B1#C1#D8#E194165792#F3#I1#_#AC#B1#C1#D8#E194165792#F3#I6#;NA=Goals...",
+    "replay_preview": "<!DOCTYPE html>\n<!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 7]>    <html class=\"no-js ie7 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 8]>    <html class=\"no-js ie8 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en-US\"> <!--<![endif]-->\n<head>\n<title>Attention Required! | Cloudflare</title>\n<meta charset=\"UTF-8\" />\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\" />\n<meta name=\"robots\" content=\"noindex, nofollow\" />\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\n<link rel=\"stylesheet\" id=\"cf_styles-css\" href=\"/cdn-cgi/styles/cf.errors.css\" />\n<!--[if lt IE 9]><link rel=\"stylesheet\" id='cf_styles-ie-css' href=\"/cdn-cgi/styles/cf.errors.ie.css\" /><![endif]-->\n<style>body{margin:0;padding:0}</style>\n\n\n<!--[if gte IE 10]><!-->\n<script>\n  if (!navigator.cookieEnabled) {\n    window.addEventListener('DOMContentLoaded', function () {\n      var cookieEl = document.getElementById('cookie-alert');\n      cookieEl.style.display = 'block';\n    })\n  }\n</script>\n<!--<![endif]-->\n\n</head>\n<body>\n  <div id=\"cf-wrapper\">\n    <div class=\"cf-alert cf-alert-error cf-cookie-error\" id=\"cookie-alert\" data-translate=\"enable_cookies\">Please enable cookies.</div>\n    <div id=\"cf-error-details\" class=\"cf-error-details-wrapper\">\n      <div class=\"cf-wrapper cf-header cf-error-overview\">\n        <h1 data-translate=\"block_headline\">...",
+    "response_header_diff": {
+      "missing_in_replay": [
+        "cf-cache-status"
+      ],
+      "extra_in_replay": [
+        "cache-control",
+        "connection",
+        "content-encoding",
+        "expires",
+        "referrer-policy",
+        "transfer-encoding",
+        "x-frame-options"
+      ],
+      "differing_values": [
+        {
+          "header": "cf-ray",
+          "captured": "9f8cc46409572903-EZE",
+          "replay": "9f8d5b06d95db356-MIA"
+        },
+        {
+          "header": "content-type",
+          "captured": "text/plain; charset=utf-8",
+          "replay": "text/html; charset=UTF-8"
+        },
+        {
+          "header": "date",
+          "captured": "Sat, 09 May 2026 01:00:25 GMT",
+          "replay": "Sat, 09 May 2026 02:43:15 GMT"
+        },
+        {
+          "header": "set-cookie",
+          "captured": "__cf_bm=5oMIAjAbXWjsgGS80zfCJfocNZNNnaqmbfUypktErsY-1778288425.604685-1.0.1.1-.LUPcsPxmYodLApPNlAXGZjPP1cZ6yMGd9TuTX3h82I9KhulSEADqXmOGxRyjOu2pX0N8uwUy8clLDWWmg6hJm52gy0kiA7YH8bbBnmIlE2yhtST_bdYhLU.IXS5Cr37; HttpOnly; Secure; Path=/; Domain=bet365.es; Expires=Sat, 09 May 2026 01:30:25 GMT",
+          "replay": "__cf_bm=P4T_S0w19vBi1BYYCDvOb8UyXb0r_8GVIWlJTc.xTbE-1778294595.6540978-1.0.1.1-xVXMHTwHdTo3eD.P4w1XwqkO5ThDbQJuvuT8PcCf3AoNr_p73JqX5DA_HJ_uCee8bjydFwBIfplv8x2yBMTNdyk8P7Bv_8DEktKJBIimXA35tGcBkTd_rMFO_M82DM0u; HttpOnly; Secure; Path=/; Domain=bet365.es; Expires=Sat, 09 May 2026 03:13:15 GMT"
+        }
+      ]
+    }
+  }
+}

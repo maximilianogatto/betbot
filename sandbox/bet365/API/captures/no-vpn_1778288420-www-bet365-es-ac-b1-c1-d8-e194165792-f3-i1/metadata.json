@@ -1,0 +1,29 @@
+{
+  "target_url": "https://www.bet365.es/#/AC/B1/C1/D8/E194165792/F3/I1/",
+  "capture_dir": "sandbox/bet365/API/captures/no-vpn_1778288420-www-bet365-es-ac-b1-c1-d8-e194165792-f3-i1",
+  "search_terms": [],
+  "fixture_ids": [
+    "194165792"
+  ],
+  "identifiers": {
+    "competition_id": null,
+    "event_id": "194165792",
+    "event_tab": "1"
+  },
+  "browser_mode": "connect",
+  "cdp_endpoint": "http://127.0.0.1:9222",
+  "pid": 90591,
+  "argv": [
+    "sandbox/bet365/API/capture_network.py",
+    "https://www.bet365.es/#/AC/B1/C1/D8/E194165792/F3/I1/",
+    "--browser-mode",
+    "connect",
+    "--launch-chrome-if-needed",
+    "--wait-ms",
+    "12000",
+    "--contains-fixture",
+    "194165792",
+    "--capture-prefix",
+    "no_vpn"
+  ]
+}

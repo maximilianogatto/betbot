@@ -1,0 +1,47 @@
+{
+  "target": "194165792",
+  "mode": "event-i3",
+  "identifiers": {
+    "competition_id": null,
+    "event_id": "194165792",
+    "event_tab": "3"
+  },
+  "capture_dir": "sandbox/bet365/API/captures/no-vpn_1778288446-www-bet365-es-ac-b1-c1-d8-e194165792-f3-i3",
+  "candidate": {
+    "id": "response-00087",
+    "url": "https://www.bet365.es/matchbettingcontentapi/coupon?lid=3&zid=0&pd=%23AC%23B1%23C1%23D8%23E194165792%23F3%23I3%23&cid=171&cgid=4&ctid=171",
+    "resource_type": "xhr",
+    "captured_status": 200,
+    "captured_body_hash": null,
+    "captured_body_path": null,
+    "header_profile": "browserlike",
+    "cookies_used": true,
+    "http2": true,
+    "trust_env": false
+  },
+  "replay": {
+    "status_code": 403,
+    "http_version": "HTTP/2",
+    "headers": {
+      "date": "Sat, 09 May 2026 01:04:53 GMT",
+      "content-type": "text/html; charset=UTF-8",
+      "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+      "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+      "referrer-policy": "same-origin",
+      "x-frame-options": "SAMEORIGIN",
+      "server": "cloudflare",
+      "cf-ray": "9f8ccaec9af4f458-EZE"
+    },
+    "content_type": "text/html; charset=UTF-8",
+    "body_size": 4545,
+    "body_hash": "9f577ce5d30657849ea3bfa2babce544a589a5dd1779e028129502d24b670972",
+    "body_encoding": "utf-8",
+    "body_kind": "html",
+    "body_preview": "<!DOCTYPE html>\n<!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 7]>    <html class=\"no-js ie7 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 8]>    <html class=\"no-js ie8 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en-US\"> <!--<![endif]-->\n<head>\n<title>Attention Required! | Cloudflare</title>\n<meta charset=\"UTF-8\" />\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\" />\n<meta name=\"robots\" content=\"noindex, nofollow\" />\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\n<link rel=\"stylesheet\" id=\"cf_styles-css\" href=\"/cdn-cgi/styles/cf.errors.css\" />\n<!--[if lt IE 9]><link rel=\"stylesheet\" id='cf_styles-ie-css' href=\"/cdn-cgi/styles/cf.errors.ie.css\" /><![endif]-->\n<style>body{margin:0;padding:0}</style>\n\n\n<!--[if gte IE 10]><!-->\n<script>\n  if (!navigator.cookieEnabled) {\n    window.addEventListener('DOMContentLoaded', function () {\n      var cookieEl = document.getElementById('cookie-alert');\n      cookieEl.style.display = 'block';\n    })\n  }\n</script>\n<!--<![endif]-->\n\n</head>\n<body>\n  <div id=\"cf-wrapper\">\n    <div class=\"cf-alert cf-alert-error cf-cookie-error\" id=\"cookie-alert\" data-translate=\"enable_cookies\">Please enable cookies.</div>\n    <div id=\"cf-error-details\" class=\"cf-error-details-wrapper\">\n      <div class=\"cf-wrapper cf-header cf-error-overview\">\n        <h1 data-translate=\"block_headline\">...",
+    "json_top_level": null
+  },
+  "normalized": null,
+  "notes": [
+    "La response replayed no parece JSON parseable. Puede ser script, HTML o payload ofuscado."
+  ]
+}

@@ -1,0 +1,3772 @@
+{
+  "payload_type": "coupon",
+  "competition": {
+    "name": "Spanish Primera",
+    "topic": "#AC#B1#C1#D8#E193003384#F3#I1#"
+  },
+  "events": [
+    {
+      "event_id": "193003384",
+      "fixture_id": "193003384",
+      "topic": "#AC#B1#C1#D8#E193003384#F3#I1#",
+      "competition_name": "Spanish Primera",
+      "name": "Elche v CD Alaves",
+      "home": "Elche",
+      "away": "CD Alaves",
+      "start_raw": "20260509130000",
+      "event_pd": "#AC#B1#C1#D8#E193003384#F3#I1#",
+      "event_url": "https://www.bet365.es/#/AC/B1/C1/D8/E193003384/F3/I1/",
+      "sportradar_url": null,
+      "markets": [
+        {
+          "market_id": "40",
+          "name": "Full Time Result",
+          "selections": [
+            {
+              "selection_id": "1068792243",
+              "name": "Elche",
+              "odds_fractional": "23/20",
+              "odds_decimal": 2.15,
+              "participant_code": "1",
+              "line": null
+            },
+            {
+              "selection_id": "1068792245",
+              "name": "Draw",
+              "odds_fractional": "2/1",
+              "odds_decimal": 3.0,
+              "participant_code": "X",
+              "line": null
+            },
+            {
+              "selection_id": "1068792246",
+              "name": "CD Alaves",
+              "odds_fractional": "11/5",
+              "odds_decimal": 3.2,
+              "participant_code": "2",
+              "line": null
+            }
+          ]
+        },
+        {
+          "market_id": "981",
+          "name": "Goals Over/Under",
+          "selections": [
+            {
+              "selection_id": "1068792248",
+              "name": "Over 2.5",
+              "odds_fractional": "10/11",
+              "odds_decimal": 1.909,
+              "participant_code": null,
+              "line": "2.5"
+            },
+            {
+              "selection_id": "1068792250",
+              "name": "Under 2.5",
+              "odds_fractional": "10/11",
+              "odds_decimal": 1.909,
+              "participant_code": null,
+              "line": "2.5"
+            }
+          ]
+        },
+        {
+          "market_id": "10150",
+          "name": "Both Teams to Score",
+          "selections": [
+            {
+              "selection_id": "1103261717",
+              "name": "Yes",
+              "odds_fractional": "7/10",
+              "odds_decimal": 1.7,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103261718",
+              "name": "No",
+              "odds_fractional": "21/20",
+              "odds_decimal": 2.05,
+              "participant_code": null,
+              "line": null
+            }
+          ]
+        },
+        {
+          "market_id": "50404",
+          "name": "Result/Both Teams to Score",
+          "selections": [
+            {
+              "selection_id": "PC1103262457",
+              "name": "Elche",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262453",
+              "name": "CD Alaves",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262449",
+              "name": "Draw",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262457",
+              "name": "Yes",
+              "odds_fractional": "7/2",
+              "odds_decimal": 4.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262453",
+              "name": "Yes",
+              "odds_fractional": "11/2",
+              "odds_decimal": 6.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262449",
+              "name": "Yes",
+              "odds_fractional": "3/1",
+              "odds_decimal": 4.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262447",
+              "name": "No",
+              "odds_fractional": "3/1",
+              "odds_decimal": 4.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262454",
+              "name": "No",
+              "odds_fractional": "5/1",
+              "odds_decimal": 6.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262452",
+              "name": "No",
+              "odds_fractional": "9/1",
+              "odds_decimal": 10.0,
+              "participant_code": null,
+              "line": null
+            }
+          ]
+        },
+        {
+          "market_id": "43",
+          "name": "Correct Score",
+          "selections": [
+            {
+              "selection_id": "1103249288",
+              "name": "1-0",
+              "odds_fractional": "7/1",
+              "odds_decimal": 8.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249218",
+              "name": "2-0",
+              "odds_fractional": "10/1",
+              "odds_decimal": 11.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249186",
+              "name": "2-1",
+              "odds_fractional": "8/1",
+              "odds_decimal": 9.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249183",
+              "name": "3-0",
+              "odds_fractional": "20/1",
+              "odds_decimal": 21.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249153",
+              "name": "3-1",
+              "odds_fractional": "16/1",
+              "odds_decimal": 17.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249141",
+              "name": "3-2",
+              "odds_fractional": "25/1",
+              "odds_decimal": 26.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249265",
+              "name": "4-0",
+              "odds_fractional": "40/1",
+              "odds_decimal": 41.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249163",
+              "name": "4-1",
+              "odds_fractional": "40/1",
+              "odds_decimal": 41.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249165",
+              "name": "4-2",
+              "odds_fractional": "50/1",
+              "odds_decimal": 51.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249275",
+              "name": "4-3",
+              "odds_fractional": "80/1",
+              "odds_decimal": 81.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249232",
+              "name": "5-0",
+              "odds_fractional": "80/1",
+              "odds_decimal": 81.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249236",
+              "name": "5-1",
+              "odds_fractional": "80/1",
+              "odds_decimal": 81.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249144",
+              "name": "5-2",
+              "odds_fractional": "100/1",
+              "odds_decimal": 101.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249268",
+              "name": "5-3",
+              "odds_fractional": "200/1",
+              "odds_decimal": 201.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249198",
+              "name": "6-0",
+              "odds_fractional": "250/1",
+              "odds_decimal": 251.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249201",
+              "name": "6-1",
+              "odds_fractional": "200/1",
+              "odds_decimal": 201.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249205",
+              "name": "6-2",
+              "odds_fractional": "350/1",
+              "odds_decimal": 351.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249169",
+              "name": "0-0",
+              "odds_fractional": "9/1",
+              "odds_decimal": 10.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249239",
+              "name": "1-1",
+              "odds_fractional": "5/1",
+              "odds_decimal": 6.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249280",
+              "name": "2-2",
+              "odds_fractional": "12/1",
+              "odds_decimal": 13.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249147",
+              "name": "3-3",
+              "odds_fractional": "40/1",
+              "odds_decimal": 41.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249155",
+              "name": "4-4",
+              "odds_fractional": "200/1",
+              "odds_decimal": 201.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249208",
+              "name": "1-0",
+              "odds_fractional": "10/1",
+              "odds_decimal": 11.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249245",
+              "name": "2-0",
+              "odds_fractional": "16/1",
+              "odds_decimal": 17.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249171",
+              "name": "2-1",
+              "odds_fractional": "11/1",
+              "odds_decimal": 12.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249158",
+              "name": "3-0",
+              "odds_fractional": "33/1",
+              "odds_decimal": 34.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249284",
+              "name": "3-1",
+              "odds_fractional": "25/1",
+              "odds_decimal": 26.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249212",
+              "name": "3-2",
+              "odds_fractional": "33/1",
+              "odds_decimal": 34.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249124",
+              "name": "4-0",
+              "odds_fractional": "66/1",
+              "odds_decimal": 67.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249137",
+              "name": "4-1",
+              "odds_fractional": "50/1",
+              "odds_decimal": 51.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249285",
+              "name": "4-2",
+              "odds_fractional": "66/1",
+              "odds_decimal": 67.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249253",
+              "name": "4-3",
+              "odds_fractional": "100/1",
+              "odds_decimal": 101.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249257",
+              "name": "5-0",
+              "odds_fractional": "200/1",
+              "odds_decimal": 201.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249229",
+              "name": "5-1",
+              "odds_fractional": "150/1",
+              "odds_decimal": 151.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249261",
+              "name": "5-2",
+              "odds_fractional": "200/1",
+              "odds_decimal": 201.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249174",
+              "name": "5-3",
+              "odds_fractional": "350/1",
+              "odds_decimal": 351.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249151",
+              "name": "6-1",
+              "odds_fractional": "500/1",
+              "odds_decimal": 501.0,
+              "participant_code": null,
+              "line": null
+            }
+          ]
+        },
+        {
+          "market_id": "10540",
+          "name": "Half Time Correct Score",
+          "selections": [
+            {
+              "selection_id": "1103249484",
+              "name": "1-0",
+              "odds_fractional": "10/3",
+              "odds_decimal": 4.333,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249441",
+              "name": "2-0",
+              "odds_fractional": "11/1",
+              "odds_decimal": 12.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249512",
+              "name": "2-1",
+              "odds_fractional": "20/1",
+              "odds_decimal": 21.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249407",
+              "name": "3-0",
+              "odds_fractional": "40/1",
+              "odds_decimal": 41.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249535",
+              "name": "3-1",
+              "odds_fractional": "50/1",
+              "odds_decimal": 51.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249409",
+              "name": "3-2",
+              "odds_fractional": "150/1",
+              "odds_decimal": 151.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249463",
+              "name": "4-0",
+              "odds_fractional": "125/1",
+              "odds_decimal": 126.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249487",
+              "name": "4-1",
+              "odds_fractional": "200/1",
+              "odds_decimal": 201.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249451",
+              "name": "0-0",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249414",
+              "name": "1-1",
+              "odds_fractional": "13/2",
+              "odds_decimal": 7.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249418",
+              "name": "2-2",
+              "odds_fractional": "50/1",
+              "odds_decimal": 51.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249454",
+              "name": "1-0",
+              "odds_fractional": "4/1",
+              "odds_decimal": 5.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249497",
+              "name": "2-0",
+              "odds_fractional": "16/1",
+              "odds_decimal": 17.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249530",
+              "name": "2-1",
+              "odds_fractional": "25/1",
+              "odds_decimal": 26.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249473",
+              "name": "3-0",
+              "odds_fractional": "50/1",
+              "odds_decimal": 51.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249436",
+              "name": "3-1",
+              "odds_fractional": "66/1",
+              "odds_decimal": 67.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249396",
+              "name": "3-2",
+              "odds_fractional": "150/1",
+              "odds_decimal": 151.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249501",
+              "name": "4-0",
+              "odds_fractional": "250/1",
+              "odds_decimal": 251.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249477",
+              "name": "4-1",
+              "odds_fractional": "350/1",
+              "odds_decimal": 351.0,
+              "participant_code": null,
+              "line": null
+            }
+          ]
+        },
+        {
+          "market_id": "177816",
+          "name": "Match Goals Range",
+          "selections": [
+            {
+              "selection_id": "PC1103262802",
+              "name": "Match Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262776",
+              "name": "Yes",
+              "odds_fractional": "11/10",
+              "odds_decimal": 2.1,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262757",
+              "name": "Yes",
+              "odds_fractional": "1/2",
+              "odds_decimal": 1.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262758",
+              "name": "Yes",
+              "odds_fractional": "1/5",
+              "odds_decimal": 1.2,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262802",
+              "name": "Yes",
+              "odds_fractional": "1/9",
+              "odds_decimal": 1.111,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262762",
+              "name": "Yes",
+              "odds_fractional": "1/14",
+              "odds_decimal": 1.071,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262809",
+              "name": "Yes",
+              "odds_fractional": "1/1",
+              "odds_decimal": 2.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262847",
+              "name": "Yes",
+              "odds_fractional": "8/15",
+              "odds_decimal": 1.533,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262842",
+              "name": "Yes",
+              "odds_fractional": "4/11",
+              "odds_decimal": 1.364,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262814",
+              "name": "Yes",
+              "odds_fractional": "3/10",
+              "odds_decimal": 1.3,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262819",
+              "name": "Yes",
+              "odds_fractional": "6/4",
+              "odds_decimal": 2.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262838",
+              "name": "Yes",
+              "odds_fractional": "11/10",
+              "odds_decimal": 2.1,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262752",
+              "name": "Yes",
+              "odds_fractional": "1/1",
+              "odds_decimal": 2.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262866",
+              "name": "Yes",
+              "odds_fractional": "3/1",
+              "odds_decimal": 4.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262790",
+              "name": "Yes",
+              "odds_fractional": "5/2",
+              "odds_decimal": 3.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262754",
+              "name": "Yes",
+              "odds_fractional": "7/1",
+              "odds_decimal": 8.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262755",
+              "name": "No",
+              "odds_fractional": "4/6",
+              "odds_decimal": 1.667,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262747",
+              "name": "No",
+              "odds_fractional": "6/4",
+              "odds_decimal": 2.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262749",
+              "name": "No",
+              "odds_fractional": "10/3",
+              "odds_decimal": 4.333,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262833",
+              "name": "No",
+              "odds_fractional": "11/2",
+              "odds_decimal": 6.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262764",
+              "name": "No",
+              "odds_fractional": "8/1",
+              "odds_decimal": 9.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262780",
+              "name": "No",
+              "odds_fractional": "8/11",
+              "odds_decimal": 1.727,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262769",
+              "name": "No",
+              "odds_fractional": "11/8",
+              "odds_decimal": 2.375,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262852",
+              "name": "No",
+              "odds_fractional": "2/1",
+              "odds_decimal": 3.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262857",
+              "name": "No",
+              "odds_fractional": "12/5",
+              "odds_decimal": 3.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262860",
+              "name": "No",
+              "odds_fractional": "1/2",
+              "odds_decimal": 1.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262750",
+              "name": "No",
+              "odds_fractional": "4/6",
+              "odds_decimal": 1.667,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262827",
+              "name": "No",
+              "odds_fractional": "8/11",
+              "odds_decimal": 1.727,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262783",
+              "name": "No",
+              "odds_fractional": "2/9",
+              "odds_decimal": 1.222,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262753",
+              "name": "No",
+              "odds_fractional": "2/7",
+              "odds_decimal": 1.286,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262797",
+              "name": "No",
+              "odds_fractional": "1/12",
+              "odds_decimal": 1.083,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262776",
+              "name": "1-2 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262757",
+              "name": "1-3 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262758",
+              "name": "1-4 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262802",
+              "name": "1-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262762",
+              "name": "1-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262809",
+              "name": "2-3 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262847",
+              "name": "2-4 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262842",
+              "name": "2-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262814",
+              "name": "2-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262819",
+              "name": "3-4 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262838",
+              "name": "3-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262752",
+              "name": "3-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262866",
+              "name": "4-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262790",
+              "name": "4-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262754",
+              "name": "5-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262776",
+              "name": "Yes",
+              "odds_fractional": "11/10",
+              "odds_decimal": 2.1,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262757",
+              "name": "Yes",
+              "odds_fractional": "1/2",
+              "odds_decimal": 1.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262758",
+              "name": "Yes",
+              "odds_fractional": "1/5",
+              "odds_decimal": 1.2,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262802",
+              "name": "Yes",
+              "odds_fractional": "1/9",
+              "odds_decimal": 1.111,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262762",
+              "name": "Yes",
+              "odds_fractional": "1/14",
+              "odds_decimal": 1.071,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262809",
+              "name": "Yes",
+              "odds_fractional": "1/1",
+              "odds_decimal": 2.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262847",
+              "name": "Yes",
+              "odds_fractional": "8/15",
+              "odds_decimal": 1.533,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262842",
+              "name": "Yes",
+              "odds_fractional": "4/11",
+              "odds_decimal": 1.364,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262814",
+              "name": "Yes",
+              "odds_fractional": "3/10",
+              "odds_decimal": 1.3,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262819",
+              "name": "Yes",
+              "odds_fractional": "6/4",
+              "odds_decimal": 2.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262838",
+              "name": "Yes",
+              "odds_fractional": "11/10",
+              "odds_decimal": 2.1,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262752",
+              "name": "Yes",
+              "odds_fractional": "1/1",
+              "odds_decimal": 2.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262866",
+              "name": "Yes",
+              "odds_fractional": "3/1",
+              "odds_decimal": 4.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262790",
+              "name": "Yes",
+              "odds_fractional": "5/2",
+              "odds_decimal": 3.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262754",
+              "name": "Yes",
+              "odds_fractional": "7/1",
+              "odds_decimal": 8.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262755",
+              "name": "No",
+              "odds_fractional": "4/6",
+              "odds_decimal": 1.667,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262747",
+              "name": "No",
+              "odds_fractional": "6/4",
+              "odds_decimal": 2.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262749",
+              "name": "No",
+              "odds_fractional": "10/3",
+              "odds_decimal": 4.333,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262833",
+              "name": "No",
+              "odds_fractional": "11/2",
+              "odds_decimal": 6.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262764",
+              "name": "No",
+              "odds_fractional": "8/1",
+              "odds_decimal": 9.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262780",
+              "name": "No",
+              "odds_fractional": "8/11",
+              "odds_decimal": 1.727,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262769",
+              "name": "No",
+              "odds_fractional": "11/8",
+              "odds_decimal": 2.375,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262852",
+              "name": "No",
+              "odds_fractional": "2/1",
+              "odds_decimal": 3.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262857",
+              "name": "No",
+              "odds_fractional": "12/5",
+              "odds_decimal": 3.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262860",
+              "name": "No",
+              "odds_fractional": "1/2",
+              "odds_decimal": 1.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262750",
+              "name": "No",
+              "odds_fractional": "4/6",
+              "odds_decimal": 1.667,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262827",
+              "name": "No",
+              "odds_fractional": "8/11",
+              "odds_decimal": 1.727,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262783",
+              "name": "No",
+              "odds_fractional": "2/9",
+              "odds_decimal": 1.222,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262753",
+              "name": "No",
+              "odds_fractional": "2/7",
+              "odds_decimal": 1.286,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262797",
+              "name": "No",
+              "odds_fractional": "1/12",
+              "odds_decimal": 1.083,
+              "participant_code": null,
+              "line": null
+            }
+          ]
+        },
+        {
+          "market_id": "177817",
+          "name": "Team Goals Range",
+          "selections": [
+            {
+              "selection_id": "PC1103262951",
+              "name": "Elche",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262951",
+              "name": "Yes",
+              "odds_fractional": "4/7",
+              "odds_decimal": 1.571,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262957",
+              "name": "Yes",
+              "odds_fractional": "1/3",
+              "odds_decimal": 1.333,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262975",
+              "name": "Yes",
+              "odds_fractional": "1/4",
+              "odds_decimal": 1.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262962",
+              "name": "Yes",
+              "odds_fractional": "1/4",
+              "odds_decimal": 1.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262894",
+              "name": "Yes",
+              "odds_fractional": "2/9",
+              "odds_decimal": 1.222,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262928",
+              "name": "Yes",
+              "odds_fractional": "6/4",
+              "odds_decimal": 2.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262872",
+              "name": "Yes",
+              "odds_fractional": "6/5",
+              "odds_decimal": 2.2,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263002",
+              "name": "Yes",
+              "odds_fractional": "11/10",
+              "odds_decimal": 2.1,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262911",
+              "name": "Yes",
+              "odds_fractional": "11/10",
+              "odds_decimal": 2.1,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262934",
+              "name": "Yes",
+              "odds_fractional": "9/2",
+              "odds_decimal": 5.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262880",
+              "name": "Yes",
+              "odds_fractional": "4/1",
+              "odds_decimal": 5.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262964",
+              "name": "Yes",
+              "odds_fractional": "4/1",
+              "odds_decimal": 5.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263032",
+              "name": "Yes",
+              "odds_fractional": "12/1",
+              "odds_decimal": 13.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262944",
+              "name": "Yes",
+              "odds_fractional": "12/1",
+              "odds_decimal": 13.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262995",
+              "name": "Yes",
+              "odds_fractional": "28/1",
+              "odds_decimal": 29.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263009",
+              "name": "No",
+              "odds_fractional": "5/4",
+              "odds_decimal": 2.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263012",
+              "name": "No",
+              "odds_fractional": "9/4",
+              "odds_decimal": 3.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262981",
+              "name": "No",
+              "odds_fractional": "11/4",
+              "odds_decimal": 3.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262888",
+              "name": "No",
+              "odds_fractional": "11/4",
+              "odds_decimal": 3.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262999",
+              "name": "No",
+              "odds_fractional": "3/1",
+              "odds_decimal": 4.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262986",
+              "name": "No",
+              "odds_fractional": "1/2",
+              "odds_decimal": 1.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263027",
+              "name": "No",
+              "odds_fractional": "8/13",
+              "odds_decimal": 1.615,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263007",
+              "name": "No",
+              "odds_fractional": "4/6",
+              "odds_decimal": 1.667,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262877",
+              "name": "No",
+              "odds_fractional": "4/6",
+              "odds_decimal": 1.667,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263018",
+              "name": "No",
+              "odds_fractional": "1/7",
+              "odds_decimal": 1.143,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262940",
+              "name": "No",
+              "odds_fractional": "1/6",
+              "odds_decimal": 1.167,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263022",
+              "name": "No",
+              "odds_fractional": "1/6",
+              "odds_decimal": 1.167,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262970",
+              "name": "No",
+              "odds_fractional": "1/25",
+              "odds_decimal": 1.04,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262991",
+              "name": "No",
+              "odds_fractional": "1/25",
+              "odds_decimal": 1.04,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262884",
+              "name": "No",
+              "odds_fractional": "1/150",
+              "odds_decimal": 1.007,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263163",
+              "name": "CD Alaves",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263163",
+              "name": "Yes",
+              "odds_fractional": "8/13",
+              "odds_decimal": 1.615,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263075",
+              "name": "Yes",
+              "odds_fractional": "4/9",
+              "odds_decimal": 1.444,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263083",
+              "name": "Yes",
+              "odds_fractional": "4/11",
+              "odds_decimal": 1.364,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263039",
+              "name": "Yes",
+              "odds_fractional": "4/11",
+              "odds_decimal": 1.364,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263095",
+              "name": "Yes",
+              "odds_fractional": "4/11",
+              "odds_decimal": 1.364,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263106",
+              "name": "Yes",
+              "odds_fractional": "9/4",
+              "odds_decimal": 3.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263112",
+              "name": "Yes",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263117",
+              "name": "Yes",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263054",
+              "name": "Yes",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263173",
+              "name": "Yes",
+              "odds_fractional": "7/1",
+              "odds_decimal": 8.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263144",
+              "name": "Yes",
+              "odds_fractional": "7/1",
+              "odds_decimal": 8.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263127",
+              "name": "Yes",
+              "odds_fractional": "7/1",
+              "odds_decimal": 8.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263149",
+              "name": "Yes",
+              "odds_fractional": "20/1",
+              "odds_decimal": 21.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263065",
+              "name": "Yes",
+              "odds_fractional": "20/1",
+              "odds_decimal": 21.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263174",
+              "name": "Yes",
+              "odds_fractional": "50/1",
+              "odds_decimal": 51.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263168",
+              "name": "No",
+              "odds_fractional": "6/5",
+              "odds_decimal": 2.2,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263169",
+              "name": "No",
+              "odds_fractional": "13/8",
+              "odds_decimal": 2.625,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263170",
+              "name": "No",
+              "odds_fractional": "2/1",
+              "odds_decimal": 3.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263049",
+              "name": "No",
+              "odds_fractional": "2/1",
+              "odds_decimal": 3.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263164",
+              "name": "No",
+              "odds_fractional": "2/1",
+              "odds_decimal": 3.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263172",
+              "name": "No",
+              "odds_fractional": "1/3",
+              "odds_decimal": 1.333,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263046",
+              "name": "No",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263123",
+              "name": "No",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263139",
+              "name": "No",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263085",
+              "name": "No",
+              "odds_fractional": "1/12",
+              "odds_decimal": 1.083,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263091",
+              "name": "No",
+              "odds_fractional": "1/12",
+              "odds_decimal": 1.083,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263133",
+              "name": "No",
+              "odds_fractional": "1/12",
+              "odds_decimal": 1.083,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263154",
+              "name": "No",
+              "odds_fractional": "1/66",
+              "odds_decimal": 1.015,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263069",
+              "name": "No",
+              "odds_fractional": "1/66",
+              "odds_decimal": 1.015,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263159",
+              "name": "No",
+              "odds_fractional": "1/500",
+              "odds_decimal": 1.002,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262951",
+              "name": "1-2 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262957",
+              "name": "1-3 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262975",
+              "name": "1-4 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262962",
+              "name": "1-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262894",
+              "name": "1-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262928",
+              "name": "2-3 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262872",
+              "name": "2-4 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263002",
+              "name": "2-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262911",
+              "name": "2-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262934",
+              "name": "3-4 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262880",
+              "name": "3-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262964",
+              "name": "3-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263032",
+              "name": "4-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262944",
+              "name": "4-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103262995",
+              "name": "5-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262951",
+              "name": "Yes",
+              "odds_fractional": "4/7",
+              "odds_decimal": 1.571,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262957",
+              "name": "Yes",
+              "odds_fractional": "1/3",
+              "odds_decimal": 1.333,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262975",
+              "name": "Yes",
+              "odds_fractional": "1/4",
+              "odds_decimal": 1.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262962",
+              "name": "Yes",
+              "odds_fractional": "1/4",
+              "odds_decimal": 1.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262894",
+              "name": "Yes",
+              "odds_fractional": "2/9",
+              "odds_decimal": 1.222,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262928",
+              "name": "Yes",
+              "odds_fractional": "6/4",
+              "odds_decimal": 2.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262872",
+              "name": "Yes",
+              "odds_fractional": "6/5",
+              "odds_decimal": 2.2,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263002",
+              "name": "Yes",
+              "odds_fractional": "11/10",
+              "odds_decimal": 2.1,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262911",
+              "name": "Yes",
+              "odds_fractional": "11/10",
+              "odds_decimal": 2.1,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262934",
+              "name": "Yes",
+              "odds_fractional": "9/2",
+              "odds_decimal": 5.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262880",
+              "name": "Yes",
+              "odds_fractional": "4/1",
+              "odds_decimal": 5.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262964",
+              "name": "Yes",
+              "odds_fractional": "4/1",
+              "odds_decimal": 5.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263032",
+              "name": "Yes",
+              "odds_fractional": "12/1",
+              "odds_decimal": 13.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262944",
+              "name": "Yes",
+              "odds_fractional": "12/1",
+              "odds_decimal": 13.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262995",
+              "name": "Yes",
+              "odds_fractional": "28/1",
+              "odds_decimal": 29.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263009",
+              "name": "No",
+              "odds_fractional": "5/4",
+              "odds_decimal": 2.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263012",
+              "name": "No",
+              "odds_fractional": "9/4",
+              "odds_decimal": 3.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262981",
+              "name": "No",
+              "odds_fractional": "11/4",
+              "odds_decimal": 3.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262888",
+              "name": "No",
+              "odds_fractional": "11/4",
+              "odds_decimal": 3.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262999",
+              "name": "No",
+              "odds_fractional": "3/1",
+              "odds_decimal": 4.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262986",
+              "name": "No",
+              "odds_fractional": "1/2",
+              "odds_decimal": 1.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263027",
+              "name": "No",
+              "odds_fractional": "8/13",
+              "odds_decimal": 1.615,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263007",
+              "name": "No",
+              "odds_fractional": "4/6",
+              "odds_decimal": 1.667,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262877",
+              "name": "No",
+              "odds_fractional": "4/6",
+              "odds_decimal": 1.667,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263018",
+              "name": "No",
+              "odds_fractional": "1/7",
+              "odds_decimal": 1.143,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262940",
+              "name": "No",
+              "odds_fractional": "1/6",
+              "odds_decimal": 1.167,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263022",
+              "name": "No",
+              "odds_fractional": "1/6",
+              "odds_decimal": 1.167,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262970",
+              "name": "No",
+              "odds_fractional": "1/25",
+              "odds_decimal": 1.04,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262991",
+              "name": "No",
+              "odds_fractional": "1/25",
+              "odds_decimal": 1.04,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103262884",
+              "name": "No",
+              "odds_fractional": "1/150",
+              "odds_decimal": 1.007,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263163",
+              "name": "1-2 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263075",
+              "name": "1-3 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263083",
+              "name": "1-4 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263039",
+              "name": "1-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263095",
+              "name": "1-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263106",
+              "name": "2-3 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263112",
+              "name": "2-4 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263117",
+              "name": "2-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263054",
+              "name": "2-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263173",
+              "name": "3-4 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263144",
+              "name": "3-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263127",
+              "name": "3-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263149",
+              "name": "4-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263065",
+              "name": "4-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263174",
+              "name": "5-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263163",
+              "name": "Yes",
+              "odds_fractional": "8/13",
+              "odds_decimal": 1.615,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263075",
+              "name": "Yes",
+              "odds_fractional": "4/9",
+              "odds_decimal": 1.444,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263083",
+              "name": "Yes",
+              "odds_fractional": "4/11",
+              "odds_decimal": 1.364,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263039",
+              "name": "Yes",
+              "odds_fractional": "4/11",
+              "odds_decimal": 1.364,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263095",
+              "name": "Yes",
+              "odds_fractional": "4/11",
+              "odds_decimal": 1.364,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263106",
+              "name": "Yes",
+              "odds_fractional": "9/4",
+              "odds_decimal": 3.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263112",
+              "name": "Yes",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263117",
+              "name": "Yes",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263054",
+              "name": "Yes",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263173",
+              "name": "Yes",
+              "odds_fractional": "7/1",
+              "odds_decimal": 8.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263144",
+              "name": "Yes",
+              "odds_fractional": "7/1",
+              "odds_decimal": 8.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263127",
+              "name": "Yes",
+              "odds_fractional": "7/1",
+              "odds_decimal": 8.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263149",
+              "name": "Yes",
+              "odds_fractional": "20/1",
+              "odds_decimal": 21.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263065",
+              "name": "Yes",
+              "odds_fractional": "20/1",
+              "odds_decimal": 21.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263174",
+              "name": "Yes",
+              "odds_fractional": "50/1",
+              "odds_decimal": 51.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263168",
+              "name": "No",
+              "odds_fractional": "6/5",
+              "odds_decimal": 2.2,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263169",
+              "name": "No",
+              "odds_fractional": "13/8",
+              "odds_decimal": 2.625,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263170",
+              "name": "No",
+              "odds_fractional": "2/1",
+              "odds_decimal": 3.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263049",
+              "name": "No",
+              "odds_fractional": "2/1",
+              "odds_decimal": 3.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263164",
+              "name": "No",
+              "odds_fractional": "2/1",
+              "odds_decimal": 3.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263172",
+              "name": "No",
+              "odds_fractional": "1/3",
+              "odds_decimal": 1.333,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263046",
+              "name": "No",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263123",
+              "name": "No",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263139",
+              "name": "No",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263085",
+              "name": "No",
+              "odds_fractional": "1/12",
+              "odds_decimal": 1.083,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263091",
+              "name": "No",
+              "odds_fractional": "1/12",
+              "odds_decimal": 1.083,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263133",
+              "name": "No",
+              "odds_fractional": "1/12",
+              "odds_decimal": 1.083,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263154",
+              "name": "No",
+              "odds_fractional": "1/66",
+              "odds_decimal": 1.015,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263069",
+              "name": "No",
+              "odds_fractional": "1/66",
+              "odds_decimal": 1.015,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263159",
+              "name": "No",
+              "odds_fractional": "1/500",
+              "odds_decimal": 1.002,
+              "participant_code": null,
+              "line": null
+            }
+          ]
+        },
+        {
+          "market_id": "10544",
+          "name": "Draw No Bet",
+          "selections": [
+            {
+              "selection_id": "1103249550",
+              "name": "Elche",
+              "odds_fractional": "4/7",
+              "odds_decimal": 1.571,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103249554",
+              "name": "CD Alaves",
+              "odds_fractional": "5/4",
+              "odds_decimal": 2.25,
+              "participant_code": null,
+              "line": null
+            }
+          ]
+        },
+        {
+          "market_id": "177819",
+          "name": "1st Half Goals Range",
+          "selections": [
+            {
+              "selection_id": "PC1103263183",
+              "name": "1st Half Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263285",
+              "name": "Yes",
+              "odds_fractional": "8/13",
+              "odds_decimal": 1.615,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263292",
+              "name": "Yes",
+              "odds_fractional": "4/9",
+              "odds_decimal": 1.444,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263298",
+              "name": "Yes",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263183",
+              "name": "Yes",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263222",
+              "name": "Yes",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263230",
+              "name": "Yes",
+              "odds_fractional": "9/4",
+              "odds_decimal": 3.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263189",
+              "name": "Yes",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263304",
+              "name": "Yes",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263391",
+              "name": "Yes",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263311",
+              "name": "Yes",
+              "odds_fractional": "7/1",
+              "odds_decimal": 8.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263185",
+              "name": "Yes",
+              "odds_fractional": "7/1",
+              "odds_decimal": 8.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263198",
+              "name": "Yes",
+              "odds_fractional": "7/1",
+              "odds_decimal": 8.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263335",
+              "name": "Yes",
+              "odds_fractional": "20/1",
+              "odds_decimal": 21.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263206",
+              "name": "Yes",
+              "odds_fractional": "20/1",
+              "odds_decimal": 21.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263345",
+              "name": "Yes",
+              "odds_fractional": "50/1",
+              "odds_decimal": 51.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263175",
+              "name": "No",
+              "odds_fractional": "6/5",
+              "odds_decimal": 2.2,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263214",
+              "name": "No",
+              "odds_fractional": "13/8",
+              "odds_decimal": 2.625,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263240",
+              "name": "No",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263357",
+              "name": "No",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263367",
+              "name": "No",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263379",
+              "name": "No",
+              "odds_fractional": "1/3",
+              "odds_decimal": 1.333,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263179",
+              "name": "No",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263194",
+              "name": "No",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263264",
+              "name": "No",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263251",
+              "name": "No",
+              "odds_fractional": "1/12",
+              "odds_decimal": 1.083,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263177",
+              "name": "No",
+              "odds_fractional": "1/12",
+              "odds_decimal": 1.083,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263323",
+              "name": "No",
+              "odds_fractional": "1/12",
+              "odds_decimal": 1.083,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263186",
+              "name": "No",
+              "odds_fractional": "1/66",
+              "odds_decimal": 1.015,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263270",
+              "name": "No",
+              "odds_fractional": "1/66",
+              "odds_decimal": 1.015,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263258",
+              "name": "No",
+              "odds_fractional": "1/500",
+              "odds_decimal": 1.002,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263285",
+              "name": "1-2 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263292",
+              "name": "1-3 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263298",
+              "name": "1-4 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263183",
+              "name": "1-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263222",
+              "name": "1-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263230",
+              "name": "2-3 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263189",
+              "name": "2-4 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263304",
+              "name": "2-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263391",
+              "name": "2-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263311",
+              "name": "3-4 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263185",
+              "name": "3-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263198",
+              "name": "3-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263335",
+              "name": "4-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263206",
+              "name": "4-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263345",
+              "name": "5-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263285",
+              "name": "Yes",
+              "odds_fractional": "8/13",
+              "odds_decimal": 1.615,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263292",
+              "name": "Yes",
+              "odds_fractional": "4/9",
+              "odds_decimal": 1.444,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263298",
+              "name": "Yes",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263183",
+              "name": "Yes",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263222",
+              "name": "Yes",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263230",
+              "name": "Yes",
+              "odds_fractional": "9/4",
+              "odds_decimal": 3.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263189",
+              "name": "Yes",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263304",
+              "name": "Yes",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263391",
+              "name": "Yes",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263311",
+              "name": "Yes",
+              "odds_fractional": "7/1",
+              "odds_decimal": 8.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263185",
+              "name": "Yes",
+              "odds_fractional": "7/1",
+              "odds_decimal": 8.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263198",
+              "name": "Yes",
+              "odds_fractional": "7/1",
+              "odds_decimal": 8.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263335",
+              "name": "Yes",
+              "odds_fractional": "20/1",
+              "odds_decimal": 21.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263206",
+              "name": "Yes",
+              "odds_fractional": "20/1",
+              "odds_decimal": 21.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263345",
+              "name": "Yes",
+              "odds_fractional": "50/1",
+              "odds_decimal": 51.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263175",
+              "name": "No",
+              "odds_fractional": "6/5",
+              "odds_decimal": 2.2,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263214",
+              "name": "No",
+              "odds_fractional": "13/8",
+              "odds_decimal": 2.625,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263240",
+              "name": "No",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263357",
+              "name": "No",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263367",
+              "name": "No",
+              "odds_fractional": "7/4",
+              "odds_decimal": 2.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263379",
+              "name": "No",
+              "odds_fractional": "1/3",
+              "odds_decimal": 1.333,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263179",
+              "name": "No",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263194",
+              "name": "No",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263264",
+              "name": "No",
+              "odds_fractional": "2/5",
+              "odds_decimal": 1.4,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263251",
+              "name": "No",
+              "odds_fractional": "1/12",
+              "odds_decimal": 1.083,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263177",
+              "name": "No",
+              "odds_fractional": "1/12",
+              "odds_decimal": 1.083,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263323",
+              "name": "No",
+              "odds_fractional": "1/12",
+              "odds_decimal": 1.083,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263186",
+              "name": "No",
+              "odds_fractional": "1/66",
+              "odds_decimal": 1.015,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263270",
+              "name": "No",
+              "odds_fractional": "1/66",
+              "odds_decimal": 1.015,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263258",
+              "name": "No",
+              "odds_fractional": "1/500",
+              "odds_decimal": 1.002,
+              "participant_code": null,
+              "line": null
+            }
+          ]
+        },
+        {
+          "market_id": "177820",
+          "name": "2nd Half Goals Range",
+          "selections": [
+            {
+              "selection_id": "PC1103263524",
+              "name": "2nd Half Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263542",
+              "name": "Yes",
+              "odds_fractional": "8/13",
+              "odds_decimal": 1.615,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263518",
+              "name": "Yes",
+              "odds_fractional": "1/3",
+              "odds_decimal": 1.333,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263519",
+              "name": "Yes",
+              "odds_fractional": "1/4",
+              "odds_decimal": 1.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263524",
+              "name": "Yes",
+              "odds_fractional": "1/4",
+              "odds_decimal": 1.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263479",
+              "name": "Yes",
+              "odds_fractional": "2/9",
+              "odds_decimal": 1.222,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263485",
+              "name": "Yes",
+              "odds_fractional": "11/8",
+              "odds_decimal": 2.375,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263562",
+              "name": "Yes",
+              "odds_fractional": "6/5",
+              "odds_decimal": 2.2,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263515",
+              "name": "Yes",
+              "odds_fractional": "11/10",
+              "odds_decimal": 2.1,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263517",
+              "name": "Yes",
+              "odds_fractional": "11/10",
+              "odds_decimal": 2.1,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263466",
+              "name": "Yes",
+              "odds_fractional": "4/1",
+              "odds_decimal": 5.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263501",
+              "name": "Yes",
+              "odds_fractional": "7/2",
+              "odds_decimal": 4.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263435",
+              "name": "Yes",
+              "odds_fractional": "7/2",
+              "odds_decimal": 4.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263540",
+              "name": "Yes",
+              "odds_fractional": "12/1",
+              "odds_decimal": 13.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263533",
+              "name": "Yes",
+              "odds_fractional": "12/1",
+              "odds_decimal": 13.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263539",
+              "name": "Yes",
+              "odds_fractional": "28/1",
+              "odds_decimal": 29.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263530",
+              "name": "No",
+              "odds_fractional": "6/5",
+              "odds_decimal": 2.2,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263546",
+              "name": "No",
+              "odds_fractional": "9/4",
+              "odds_decimal": 3.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263447",
+              "name": "No",
+              "odds_fractional": "11/4",
+              "odds_decimal": 3.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263551",
+              "name": "No",
+              "odds_fractional": "11/4",
+              "odds_decimal": 3.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263556",
+              "name": "No",
+              "odds_fractional": "3/1",
+              "odds_decimal": 4.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263537",
+              "name": "No",
+              "odds_fractional": "8/15",
+              "odds_decimal": 1.533,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263456",
+              "name": "No",
+              "odds_fractional": "8/13",
+              "odds_decimal": 1.615,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263413",
+              "name": "No",
+              "odds_fractional": "4/6",
+              "odds_decimal": 1.667,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263531",
+              "name": "No",
+              "odds_fractional": "4/6",
+              "odds_decimal": 1.667,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263527",
+              "name": "No",
+              "odds_fractional": "1/6",
+              "odds_decimal": 1.167,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263513",
+              "name": "No",
+              "odds_fractional": "2/11",
+              "odds_decimal": 1.182,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263514",
+              "name": "No",
+              "odds_fractional": "2/11",
+              "odds_decimal": 1.182,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263532",
+              "name": "No",
+              "odds_fractional": "1/25",
+              "odds_decimal": 1.04,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263538",
+              "name": "No",
+              "odds_fractional": "1/25",
+              "odds_decimal": 1.04,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263534",
+              "name": "No",
+              "odds_fractional": "1/150",
+              "odds_decimal": 1.007,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263542",
+              "name": "1-2 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263518",
+              "name": "1-3 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263519",
+              "name": "1-4 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263524",
+              "name": "1-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263479",
+              "name": "1-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263485",
+              "name": "2-3 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263562",
+              "name": "2-4 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263515",
+              "name": "2-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263517",
+              "name": "2-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263466",
+              "name": "3-4 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263501",
+              "name": "3-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263435",
+              "name": "3-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263540",
+              "name": "4-5 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263533",
+              "name": "4-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "PC1103263539",
+              "name": "5-6 Goals",
+              "odds_fractional": null,
+              "odds_decimal": null,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263542",
+              "name": "Yes",
+              "odds_fractional": "8/13",
+              "odds_decimal": 1.615,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263518",
+              "name": "Yes",
+              "odds_fractional": "1/3",
+              "odds_decimal": 1.333,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263519",
+              "name": "Yes",
+              "odds_fractional": "1/4",
+              "odds_decimal": 1.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263524",
+              "name": "Yes",
+              "odds_fractional": "1/4",
+              "odds_decimal": 1.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263479",
+              "name": "Yes",
+              "odds_fractional": "2/9",
+              "odds_decimal": 1.222,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263485",
+              "name": "Yes",
+              "odds_fractional": "11/8",
+              "odds_decimal": 2.375,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263562",
+              "name": "Yes",
+              "odds_fractional": "6/5",
+              "odds_decimal": 2.2,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263515",
+              "name": "Yes",
+              "odds_fractional": "11/10",
+              "odds_decimal": 2.1,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263517",
+              "name": "Yes",
+              "odds_fractional": "11/10",
+              "odds_decimal": 2.1,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263466",
+              "name": "Yes",
+              "odds_fractional": "4/1",
+              "odds_decimal": 5.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263501",
+              "name": "Yes",
+              "odds_fractional": "7/2",
+              "odds_decimal": 4.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263435",
+              "name": "Yes",
+              "odds_fractional": "7/2",
+              "odds_decimal": 4.5,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263540",
+              "name": "Yes",
+              "odds_fractional": "12/1",
+              "odds_decimal": 13.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263533",
+              "name": "Yes",
+              "odds_fractional": "12/1",
+              "odds_decimal": 13.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263539",
+              "name": "Yes",
+              "odds_fractional": "28/1",
+              "odds_decimal": 29.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263530",
+              "name": "No",
+              "odds_fractional": "6/5",
+              "odds_decimal": 2.2,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263546",
+              "name": "No",
+              "odds_fractional": "9/4",
+              "odds_decimal": 3.25,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263447",
+              "name": "No",
+              "odds_fractional": "11/4",
+              "odds_decimal": 3.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263551",
+              "name": "No",
+              "odds_fractional": "11/4",
+              "odds_decimal": 3.75,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263556",
+              "name": "No",
+              "odds_fractional": "3/1",
+              "odds_decimal": 4.0,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263537",
+              "name": "No",
+              "odds_fractional": "8/15",
+              "odds_decimal": 1.533,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263456",
+              "name": "No",
+              "odds_fractional": "8/13",
+              "odds_decimal": 1.615,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263413",
+              "name": "No",
+              "odds_fractional": "4/6",
+              "odds_decimal": 1.667,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263531",
+              "name": "No",
+              "odds_fractional": "4/6",
+              "odds_decimal": 1.667,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263527",
+              "name": "No",
+              "odds_fractional": "1/6",
+              "odds_decimal": 1.167,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263513",
+              "name": "No",
+              "odds_fractional": "2/11",
+              "odds_decimal": 1.182,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263514",
+              "name": "No",
+              "odds_fractional": "2/11",
+              "odds_decimal": 1.182,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263532",
+              "name": "No",
+              "odds_fractional": "1/25",
+              "odds_decimal": 1.04,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263538",
+              "name": "No",
+              "odds_fractional": "1/25",
+              "odds_decimal": 1.04,
+              "participant_code": null,
+              "line": null
+            },
+            {
+              "selection_id": "1103263534",
+              "name": "No",
+              "odds_fractional": "1/150",
+              "odds_decimal": 1.007,
+              "participant_code": null,
+              "line": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "co_records": [
+    {
+      "fixture_id": null,
+      "market_id": null,
+      "selection_name": null,
+      "market_name": null,
+      "odds_fractional": null,
+      "odds_decimal": null
+    },
+    {
+      "fixture_id": "193003384",
+      "market_id": "40",
+      "selection_name": null,
+      "market_name": null,
+      "odds_fractional": "11/2",
+      "odds_decimal": 6.5
+    },
+    {
+      "fixture_id": "193003384",
+      "market_id": "10228",
+      "selection_name": null,
+      "market_name": null,
+      "odds_fractional": "5/1",
+      "odds_decimal": 6.0
+    },
+    {
+      "fixture_id": "193003384",
+      "market_id": "42",
+      "selection_name": null,
+      "market_name": null,
+      "odds_fractional": "15/2",
+      "odds_decimal": 8.5
+    },
+    {
+      "fixture_id": "193003384",
+      "market_id": "10150",
+      "selection_name": null,
+      "market_name": null,
+      "odds_fractional": "6/1",
+      "odds_decimal": 7.0
+    }
+  ],
+  "record_counts": {
+    "CL": 2,
+    "EV": 2,
+    "MG": 20,
+    "MA": 196,
+    "PA": 467,
+    "CO": 5
+  }
+}

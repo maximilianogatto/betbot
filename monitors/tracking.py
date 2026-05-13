@@ -23,6 +23,7 @@ from telegram.constants import ParseMode
 from bot.alerts import (
     build_competition_unavailable_warning_message,
     build_competition_url_message,
+    build_event_stats_message,
     build_event_url_message,
     build_grouped_new_event_alert_message,
     build_grouped_odds_change_alert_message,
@@ -778,9 +779,7 @@ class TrackingService:
                         chat_id=subscription.telegram_chat_id,
                         text=build_odds_change_alert_message(
                             result.tracked_league,
-                            alert.baseline,
-                            alert.match,
-                            alert.max_percent_change,
+                            alert,
                         ),
                         parse_mode=ParseMode.HTML,
                     )
@@ -789,10 +788,7 @@ class TrackingService:
                         chat_id=subscription.telegram_chat_id,
                         text=build_grouped_odds_change_alert_message(
                             result.tracked_league,
-                            [
-                                (alert.baseline, alert.match, alert.max_percent_change)
-                                for alert in pending_odds_alerts
-                            ],
+                            pending_odds_alerts,
                         ),
                         parse_mode=ParseMode.HTML,
                     )
@@ -805,6 +801,7 @@ class TrackingService:
                         baseline_home=alert.match.odds_home,
                         baseline_draw=alert.match.odds_draw,
                         baseline_away=alert.match.odds_away,
+                        baseline_markets_json=alert.match.markets_json,
                     )
                     self.repository.resolve_small_change_with_current_baseline(
                         subscription.telegram_chat_id,
@@ -969,6 +966,35 @@ class TrackingService:
         return CommandResult(
             ok=True,
             message=build_event_url_message(match, event_url),
+        )
+
+    def build_event_stats_message(
+        self,
+        tracked_subscription: TrackedCompetitionSubscription,
+        matches: Sequence[ActiveEventRecord],
+        event_number: int,
+    ) -> CommandResult:
+        """Build the user-facing message with one direct Bet365Stats / Sportradar URL."""
+
+        del tracked_subscription
+
+        if event_number <= 0 or event_number > len(matches):
+            return CommandResult(
+                ok=False,
+                message="Elegí un número válido de partido de la última lista mostrada.",
+            )
+
+        match = matches[event_number - 1]
+
+        if not match.stats_url:
+            return CommandResult(
+                ok=False,
+                message="No encontré URL de stats para ese evento.",
+            )
+
+        return CommandResult(
+            ok=True,
+            message=build_event_stats_message(match, match.stats_url),
         )
 
     def build_refresh_summary_message(self, summary: RefreshSummary) -> CommandResult:
@@ -1260,7 +1286,10 @@ class TrackingService:
             match.external_event_id
             for match in future_matches
             if match.external_event_id in existing_by_fixture
-            and _odds_tuple_from_record(existing_by_fixture[match.external_event_id]) != _odds_tuple_from_match(match)
+            and _has_market_payload_changed(
+                existing_by_fixture[match.external_event_id],
+                match,
+            )
         }
 
         upsert_payload = [
@@ -1482,25 +1511,19 @@ def _is_past_match(match: EventSnapshot) -> bool:
     if kickoff.tzinfo is None:
         kickoff = kickoff.replace(tzinfo=timezone.utc)
 
-    return kickoff < datetime.now(timezone.utc)
+    return kickoff <= datetime.now(timezone.utc)
 
 
-def _odds_tuple_from_match(match: EventSnapshot) -> tuple[float | None, float | None, float | None]:
-    """Extract the comparable 1/X/2 odds tuple from a normalized event."""
-
-    return (match.odds_1x2.home, match.odds_1x2.draw, match.odds_1x2.away)
-
-
-def _odds_tuple_from_record(
-    match: ActiveEventRecord,
-) -> tuple[float | None, float | None, float | None]:
-    """Extract the comparable 1/X/2 odds tuple from a stored active match."""
-
-    return (match.odds_home, match.odds_draw, match.odds_away)
-
-
-def _markets_payload_from_event(match: EventSnapshot) -> dict[str, dict[str, float | None]] | None:
+def _markets_payload_from_event(match: EventSnapshot) -> dict[str, object] | None:
     """Build the current normalized market payload stored with one active event."""
+
+    if match.markets_payload:
+        return _merge_1x2_into_markets_payload(
+            match.markets_payload,
+            home=match.odds_1x2.home,
+            draw=match.odds_1x2.draw,
+            away=match.odds_1x2.away,
+        )
 
     if (
         match.odds_1x2.home is None
@@ -1516,6 +1539,55 @@ def _markets_payload_from_event(match: EventSnapshot) -> dict[str, dict[str, flo
             "away": match.odds_1x2.away,
         }
     }
+
+
+def _has_market_payload_changed(
+    stored_match: ActiveEventRecord,
+    extracted_match: EventSnapshot,
+) -> bool:
+    """Return whether any normalized market payload changed for one event."""
+
+    return _normalized_market_payload_from_record(stored_match) != _normalized_market_payload_from_match(
+        extracted_match
+    )
+
+
+def _normalized_market_payload_from_match(match: EventSnapshot) -> dict[str, object] | None:
+    return _merge_1x2_into_markets_payload(
+        _markets_payload_from_event(match),
+        home=match.odds_1x2.home,
+        draw=match.odds_1x2.draw,
+        away=match.odds_1x2.away,
+    )
+
+
+def _normalized_market_payload_from_record(match: ActiveEventRecord) -> dict[str, object] | None:
+    return _merge_1x2_into_markets_payload(
+        _loads_optional_json(match.markets_json),
+        home=match.odds_home,
+        draw=match.odds_draw,
+        away=match.odds_away,
+    )
+
+
+def _merge_1x2_into_markets_payload(
+    payload: dict[str, object] | None,
+    *,
+    home: float | None,
+    draw: float | None,
+    away: float | None,
+) -> dict[str, object] | None:
+    normalized_payload = json.loads(json.dumps(payload or {}))
+
+    if home is None and draw is None and away is None:
+        return normalized_payload or None
+
+    normalized_payload["1x2"] = {
+        "home": home,
+        "draw": draw,
+        "away": away,
+    }
+    return normalized_payload
 
 
 def _loads_optional_json(value: str | None) -> dict[str, object] | None:

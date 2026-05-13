@@ -1,0 +1,750 @@
+{
+  "capture_dir": "sandbox/bet365/API/captures/1778287440-www-bet365-es-ac-b1-c1-d1002-e130740247-g40",
+  "target_url": "https://www.bet365.es/#/AC/B1/C1/D1002/E130740247/G40/",
+  "total_records": 159,
+  "record_types": {
+    "websocket_event": 6,
+    "response": 98,
+    "websocket_frame": 54,
+    "request_failed": 1
+  },
+  "response_resource_types": {
+    "document": 1,
+    "other": 6,
+    "xhr": 27,
+    "image": 58,
+    "font": 4,
+    "fetch": 1,
+    "ping": 1
+  },
+  "top_http_candidates": [
+    {
+      "id": "response-00089",
+      "type": "response",
+      "timestamp": 1778287450.3559859,
+      "url": "https://www.bet365.es/matchmarketscontentapi/markets?lid=3&zid=0&pd=%23AC%23B1%23C1%23D1002%23E130740247%23G40%23&cid=171&cgid=4&ctid=171",
+      "method": "GET",
+      "status": 200,
+      "resource_type": "xhr",
+      "request_headers": {
+        "accept": "*/*",
+        "accept-language": "es-419,es;q=0.9",
+        "cookie": "rmbs=3; aps03=cf=N&cg=4&cst=0&ct=171&hd=N&lng=3&oty=2&tzi=4; pstk=C52562599FC1CDCE98F00221550C9048000003; swt=AdyOjkaYKvgLxCKkBa0t/egk6lyOSWP14d8OO/yqb26Y4yzUvVUPTH/9YSlq6gYOxKP1RCjqv9STZt3W+iv+kZJDaxagmH8TimQKVtFTr8c+yE6L35l8IoDG4h8UlqOD68rGIJFmC0WQXoQ4uC8X3kO2Dr6XGObD1F/icjqSaXWPg7LxWMeIhB8G+lB8QgCd; pers=id=52792c5d-6820-4d1f-bfaf-c22121a5eaa3&pc=00&username=TEMP; __cf_bm=vgoz2oD0DlFYBwQKGNmNTII9nl.o9r1sdGI.WmUKI6M-1778287448-1.0.1.1-WczXNoFbJRFEC3L77Wz2UEXHpUnOiosHBx3EhQhcRECjQM6BW.0kKvWGzoT870Xgf4_ij_gxTHyrYO2AZiaM4WaVdC2wU0YCaz50Nqnb5Gg",
+        "priority": "u=1, i",
+        "referer": "https://www.bet365.es/",
+        "sec-ch-ua": "\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
+        "x-net-sync-term": "AzQABAC6AAEtGm8T8LAQFQ3PFuSZbZDbiKoJvkEYppERurqJr+RK9dsIUT497MgYfSSWNpgOsv31g27SKg56Iu8i8vyS0bijU+XaCr9C+VfyxliOBmUC52eYw8vpbv6pepaDQRHqDoiYFrvb8en1R8DSM1vi569/8ycyb/mEbvJ/R2AIFfdEjzHgM0oVmBIAOSHbcyuEsUsE2SXFE2ch+iIHCpKMdWpCGgNWoYmRXvSjJIWap5aF6qJNJ37BBwsHIka353q7G8YgalUFUwcxiPlWEM1fn8u9Rct0R6VQ0JLa0m5TqHHfXuIZCZ33Ml7xttLBg91lqjVUUw1rxU+HuC6B5WX3pDE+UWnesK0y3MtY97IfOYZMTMiGuBd0zBJvmRc7XVmfLtYKJg3fNfw9SqIohfr3TZfXlu7Jt4JrIjqZWwL765zw5jmsqifFGDYvSDC+HOnVJZu3o1jtFa8FUiVN3pcHuFtq9SVYb4HV+i8nLYC9laHIeWhr+Bq0/y4uNUUbhOqzHAoBt4nIjRVcyyb5mr7GRYW4tBM03AlbIBv35/mRDiLTkdLHQo79nAq3AyyALOU5s5geL19h7n0QPVQyn/RRX5zocjhLlXYv5flL58an4uXzsoux8IZhk1XRvZjUbPpWjjy/xObS0kj54TZochFjxvzsurvAVo8CL/vFdc28ecg2+W4nAwVMBe+nlP8zzD0Vy+ueQaUeGrGsQb3Ymcj6x2F2l0aPF2dPLwBmua/xDlGSfaLKkpqNAx+uMgK7iWy0xfjT3dqJYszqmdJO8I8Er1xVnJrzULxcmGF6V3ILh+7KzOdKhyNhMK9UM8ZOQga7sRR4bwDvWAkmvdlKj6IrYNsDIgMVTr+sqjjZe+jVepCA3UlDbNcapNQpKkpEPZYGXP6tCCCTEe0v72hFP9g8NZjRTGv4MtJCrpzlel+Wj12bgWc3NGWKTve8Dt/wmKPWAEfLp+CMhX8n1MD79Ypxg+aGFI8XIJmPxubXdmnPggZxSf/0J9aWZWRRXvcUL+qvgESc0PUlDopd8aEfDLjO8kxmflXEf34USNUA7CHHtMZwwEd9IV81YXLnOOgjXsoA/hjOVQ/9COeuGWtJYDSdc+b3+5QcYoob//tU8L2xydajnbAIEwf97pf+YxAPyS+pU8gzPWIj1cBZJKwisKsqdwwH9CPjK2c+L23yUotrzd1/5tFKWwf2r956yaBWqkcz7ey+FLfEgQAojA+8P8BfmcPi+lOjDtw6D6pD/knAstqtuQVJtIF0/+DZfCHSRIisVfw5qC2u497VpnbIdPbZLrX19h5HTXSOtAhMcC6Bo91xI2A5OP2taP5AGlZdzCOlp38buUWS2vbMFfWvj+RnaDYHtQqcrKa5cfQRANqqoFSBxMPy+pGfslWfVB0uYMgDG+3A2+mBjYHy8Q67jKwZGgWyk0EoacA3UZob/SHW5l/kgVebhOCd4T6APjJnT3TaYlrGUJDEG5HyVaO5",
+        "x-request-id": "6d9d16e2-7a8c-907e-dcb2-1928fe03647a"
+      },
+      "request_post_data": null,
+      "response_headers": {
+        "cf-cache-status": "DYNAMIC",
+        "cf-ray": "9f8cac879dafa4c4-MIA",
+        "content-type": "text/plain; charset=utf-8",
+        "date": "Sat, 09 May 2026 00:44:08 GMT",
+        "server": "cloudflare",
+        "set-cookie": "__cf_bm=ESioj_4mPBpjXFrT5DHxZKaEEh7B_aVPf63QqF4Ru6Y-1778287448.259461-1.0.1.1-Z6ObJTUCzFiVT80k9HTzR5P1F.ZNT0KknTsZ5g7goH5RhSDJZB3YxcLtbBgYEItKlDKrSfR9Fwa3r7hNBonnO2pctb.CM9.rsot6i9sN7xXdbv2JbwsZQGUS6xwOWWMt; HttpOnly; Secure; Path=/; Domain=bet365.es; Expires=Sat, 09 May 2026 01:14:08 GMT"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "body_size": 3248,
+      "body_hash": "6ddbb0a4b7b60e715d77aa6c652523c007f2f3fdee0ba7a2e057d0e314d79fdd",
+      "body_encoding": "utf-8",
+      "body_kind": "text",
+      "body_preview": "F|CL;ID=1;IT=#AC#B1#C1#D1002#E130740247#G40#;OR=0;EX=7,#AC#B1#C1#D1002#E130740247#G40#@8,AUDIO1@9,BETTINGNEWS1@15,<;ED=1,#AS#B1#Q1#,0@2,#AS#B1#,1;H1=1,#AS#B1#Q1#,0@2,#AS#B1#,1;NS=0;PV=matchmarketscontentapi_0;|EV;ID=E1;IT=CC-EV_#AC#B1#C1#D1002#E130740247#G40#;NA= ;TB=Fútbol,#AS#B1#¬Estonia - Esiliiga - B ,#ABM#B1#C1#D1002#E130740247#G40#;EN=2;SO=1;LT=#LT#B1#C1#D1002#E130740247#F0;L3=ESTONIA-ESIL-B;|MG;SY=cm;TB=1;|MA;NA=Encuentros;PD=#AC#B1#C1#D1002#E130740247#G40#;IT=CC-MG-AF#AC#B1#C1#D1002#E130740247#G40#;LS=1;|MA;NA=Noticias;PD=#AC#B1#C1#D1002#E130740247#G40#K^9#;IT=CC-MG-AF#AC#B1#C1#D1002#E130740247#G40#K^9#;|MG;SY=cms;NA=Todo;PC=#AZM#B1#C1#D1002#E130740247#G40#N0#;IT=AZMB1C1D1002E130740247G40N0;|MA;NA=Resultado final;PD=#AC#B1#C1#D1002#E130740247#G40#N0#;IT=MA-ACB1C1D1002E130740247G40N0;LS=1;|MA;NA=Total de goles;PD=#AC#B1#C1#D1002#E130740247#G981#N0#;IT=MA-ACB1C1D1002E130740247G981N0;|MA;NA=Doble oportunidad;PD=#AC#B1#C1#D1002#E130740247#G10114#N0#;IT=MA-ACB1C1D1002E130740247G10114N0;|MA;NA=Marcador correcto;PD=#AC#B1#C1#D1002#E130740247#G43#N0#;IT=MA-ACB1C1D1002E130740247G43N0;|MA;NA=Descanso/Final;PD=#AC#B1#C1#D1002#E130740247#G42#N0#;IT=MA-ACB1C1D1002E130740247G42N0;|MA;NA=Hándicap asiático y línea de gol;PD=#AC#B1#C1#D1002#E130740249#G938#N0#;IT=MA-ACB1C1D1002E130740249G938N0;|MG;ID=40;SY=cmx;EN=4;IA=1;DO=1;OI=194165792;CL=1;|MA;MA=40;ID=M40;NA= ;FI=194165792;CN=1;SY=ed;PY=ew;PF=2;|PA;ID=PC1229145530;NA=JK Tammeka Tartu II;N2=Tallinna JK Legion;FS=0;MP=0;FD=JK Tam...",
+      "body_path": "bodies/response-00089-www-bet365-es-matchmarketscontentapi-markets-lid-3-zid-0-pd-23ac-23b1-23c1-23d1002-23e130740247-23g40-23-cid-171-cgid-4-ctid-171.txt",
+      "body_error": null,
+      "json_top_level": null,
+      "text_hits": {
+        "contains_terms": [],
+        "markers": [
+          "EV",
+          "MG",
+          "MA",
+          "PA",
+          "40",
+          "981",
+          "938"
+        ],
+        "fixture_ids": [
+          "130740247"
+        ],
+        "market_ids": [
+          "40"
+        ]
+      },
+      "score": 77
+    },
+    {
+      "id": "response-00011",
+      "type": "response",
+      "timestamp": 1778287447.485858,
+      "url": "https://www.bet365.es/Api/1/Blob?3,www-sports,fbr/4/S%7Caar-Default/5/%7Cal/5071/%7Casl-ES/25/%7Casl/27/%7Ccic/37/SL%7Cfll/32/%7Csui/47/S%7Caar/29/SL%7Cpnl/5064/%7Clru/21/%7Clrm/11/%7Crhm-Default/10/%7Crhm/9/SL%7Clhs-Default/3/%7Ccar-Default/6/%7Ccar/10/S%7Ccll/20/%7Clhs/14/SL%7Cfxs/2/%7Cpv/37/%7Crgl/68/SL%7Cfrm/51/S",
+      "method": "GET",
+      "status": 200,
+      "resource_type": "xhr",
+      "request_headers": {
+        "accept": "*/*",
+        "accept-language": "es-419,es;q=0.9",
+        "cookie": "rmbs=3; aps03=cf=N&cg=4&cst=0&ct=171&hd=N&lng=3&oty=2&tzi=4; pstk=C52562599FC1CDCE98F00221550C9048000003; swt=AdyOjkaYKvgLxCKkBa0t/egk6lyOSWP14d8OO/yqb26Y4yzUvVUPTH/9YSlq6gYOxKP1RCjqv9STZt3W+iv+kZJDaxagmH8TimQKVtFTr8c+yE6L35l8IoDG4h8UlqOD68rGIJFmC0WQXoQ4uC8X3kO2Dr6XGObD1F/icjqSaXWPg7LxWMeIhB8G+lB8QgCd; pers=id=52792c5d-6820-4d1f-bfaf-c22121a5eaa3&pc=00&username=TEMP; __cf_bm=EfrS_Cwk56CnzVlqJMKgrEiPcKDMgEsr9AjhNrkesk8-1778287446-1.0.1.1-4G.rqSQH5kMQ025jbNcH3a1vWfvvrqR3lA82x2DYrazNuwCuz_7vrbu0X3JmAWuiFuj_UdigQqBtfEihb9kap5TUoqMSUaOtZnEm7HRQoRU",
+        "priority": "u=1, i",
+        "referer": "https://www.bet365.es/",
+        "sec-ch-ua": "\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36"
+      },
+      "request_post_data": null,
+      "response_headers": {
+        "age": "636343",
+        "cache-control": "max-age=1296000, s-maxage=1296000, stale-while-revalidate=10",
+        "cf-cache-status": "HIT",
+        "cf-ray": "9f8cac81afe7a4c4-MIA",
+        "content-type": "text/plain; charset=utf-8",
+        "date": "Sat, 09 May 2026 00:44:07 GMT",
+        "last-modified": "Fri, 01 May 2026 15:59:34 GMT",
+        "server": "cloudflare",
+        "set-cookie": "__cf_bm=ljwPhAZ181nq62sExw_rwqTh1j24.DqLoFKFBL0dJgI-1778287447.3096497-1.0.1.1-yHxy8AvrrersKUf9owyWQcqhhlGHnh_zLFWX07KhGz.wVf5Vi.bte0loGz8U2jM.NWu1mOkRhZtakmXx62EIyi5DhL5FrlNVlTSD5CclZT3nPhdXU3mUcTr4uChRUK9l; HttpOnly; Secure; Path=/; Domain=bet365.es; Expires=Sat, 09 May 2026 01:14:07 GMT"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "body_size": 299382,
+      "body_hash": "d40ecb11ced3073e8c62174d01b0687497df0d780aa8180b636021f413b5dc78",
+      "body_encoding": "utf-8",
+      "body_kind": "script",
+      "body_preview": "\u0004(()=>{window.FirebaseWebSDKModuleX=window.FirebaseWebSDKModuleX||{};var e,t=[function(e,t,r){\"use strict\";var s=this&&this.__decorate||function(e,t,r,s){var o,i=arguments.length,n=i<3?t:null===s?s=Object.getOwnPropertyDescriptor(t,r):s;if(\"object\"==typeof Reflect&&\"function\"==typeof Reflect.decorate)n=Reflect.decorate(e,t,r,s);else for(var a=e.length-1;a>=0;a--)(o=e[a])&&(n=(i<3?o(n):i>3?o(t,r,n):o(t,r))||n);return i>3&&n&&Object.defineProperty(t,r,n),n};Object.defineProperty(t,\"__esModule\",{value:!0}),t.FirebaseWebSDKModule=void 0;const o=r(2),i=r(3),n=r(7),a=r(1),c=r(5);class FirebaseWebSDKModule extends n.ReactModule{cookiesAccepted(){this.cookieAcceptance=!0,this.renderReact()}cookiesRejected(){this.cookieAcceptance=!1,this.renderReact()}dispose(){}render(){return flashvars.FIREBASE_WEB_LOGS_ENABLED?(0,o.jsx)(FirebaseWebSDK,{cookiesAllowed:this.cookieAcceptance}):null}}t.FirebaseWebSDKModule=FirebaseWebSDKModule,s([override],FirebaseWebSDKModule.prototype,\"dispose\",null),s([override],FirebaseWebSDKModule.prototype,\"render\",null);const FirebaseWebSDK=({cookiesAllowed:e})=>((0,i.useEffect)(()=>{flashvars.SHOW_COOKIE_MSG&&(void 0===e?c.firebaseLogger.setBatchLogs(!0):c.firebaseLogger.setBatchLogs(!1))},[e]),flashvars.SHOW_COOKIE_MSG&&!e?null:(0,o.jsx)(a.FirebaseWebSDKIFrame,{}));FirebaseWebSDK.displayName=\"FirebaseWebSDKModule.FirebaseWebSDK\"},function(e,t,r){\"use strict\";var s=this&&this.__importDefault||function(e){return e&&e.__esModule?e:{default:e}};Object.definePro...",
+      "body_path": "bodies/response-00011-www-bet365-es-api-1-blob-3-www-sports-fbr-4-s-7caar-default-5-7cal-5071-7casl-es-25-7casl-27-7ccic-37-sl-7cfll-32-7csui-47-s-7caar-29-sl-7cpnl-50.txt",
+      "body_error": null,
+      "json_top_level": null,
+      "text_hits": {
+        "contains_terms": [],
+        "markers": [
+          "EV",
+          "MG",
+          "MA",
+          "PA",
+          "NavLib",
+          "DataReactLib",
+          "CurrentPageData",
+          "40",
+          "981",
+          "938",
+          "10143"
+        ],
+        "fixture_ids": [],
+        "market_ids": [
+          "10143",
+          "40",
+          "938",
+          "981"
+        ]
+      },
+      "score": 56
+    },
+    {
+      "id": "response-00093",
+      "type": "response",
+      "timestamp": 1778287450.385709,
+      "url": "https://www.bet365.es/splashcontentapi/changecompetition?lid=3&zid=0&pd=%23ABM%23B1%23C1%23D1002%23E130740247%23G40%23&cid=171&cgid=4&ctid=171",
+      "method": "GET",
+      "status": 200,
+      "resource_type": "xhr",
+      "request_headers": {
+        "accept": "*/*",
+        "accept-language": "es-419,es;q=0.9",
+        "cookie": "rmbs=3; aps03=cf=N&cg=4&cst=0&ct=171&hd=N&lng=3&oty=2&tzi=4; pstk=C52562599FC1CDCE98F00221550C9048000003; swt=AdyOjkaYKvgLxCKkBa0t/egk6lyOSWP14d8OO/yqb26Y4yzUvVUPTH/9YSlq6gYOxKP1RCjqv9STZt3W+iv+kZJDaxagmH8TimQKVtFTr8c+yE6L35l8IoDG4h8UlqOD68rGIJFmC0WQXoQ4uC8X3kO2Dr6XGObD1F/icjqSaXWPg7LxWMeIhB8G+lB8QgCd; pers=id=52792c5d-6820-4d1f-bfaf-c22121a5eaa3&pc=00&username=TEMP; __cf_bm=ESioj_4mPBpjXFrT5DHxZKaEEh7B_aVPf63QqF4Ru6Y-1778287448.259461-1.0.1.1-Z6ObJTUCzFiVT80k9HTzR5P1F.ZNT0KknTsZ5g7goH5RhSDJZB3YxcLtbBgYEItKlDKrSfR9Fwa3r7hNBonnO2pctb.CM9.rsot6i9sN7xXdbv2JbwsZQGUS6xwOWWMt",
+        "priority": "u=1, i",
+        "referer": "https://www.bet365.es/",
+        "sec-ch-ua": "\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
+        "x-net-sync-term": "AzQABAC6AAEtGm8T8LAQFQ3PFuSZbZDbiKoJvkEYppERurqJr+RK9dsIUT497MgYfSSWNpgOsv31g27SKg56Iu8i8vyS0bijU+XaCr9C+VfyxliOBmUC52eYw8vpbv6pepaDQRHqDoiYFrvb8en1R8DSM1vi569/8ycyb/mEbvJ/R2AIFfdEjzHgM0oVmBIAOSHbcyuEsUsE2SXFE2ch+iIHCpKMdWpCGgNWoYmRXvSjJIWap5aF6qJNJ37BBwsHGUWlnwsZW24wMqpDcokRQI7tcx2r1sd/oa3yXL60SO1kWKMm1L3JGeeBP9DQmxqpBNXKshyMcMMEgKU0jYkxeZscP4UGHVaTXz9TUocZrYDPkT1riI+ggZVmx7gnRp0ROEP4d+2yItpsCkzM/Yu41pGUadL+VhmG+OW4txBvvo/3l3+hoXfergqXhAYiO36MLAiux+CxJLJss5uYtRBgz+WQs5aCIW6Jcf7Oyjtilm5sdMDT+cG7QWgLKxwXwYHT3B1DOlAhhEHcZmgQoIuOIv6S0HKthwzYMAJ1LjzCNtyaHKeqqcasid1KJrn4YVWwXRbDpl2zEVPKsqgrAA0LEZvMVgI6LMxir2880K2biDfgmFfE0tCOjGOjp8lvMg0V4DA1Bj043wP1PhYGzIVYpuxejzzI8SWXG0Q8okQTCyJ3OM5hYnNejR2N8srQnZ8Bk0ucCQ7nymn98WOGonjvyDrahhA6UkwTkvxy1EBGjKWRF8MH6NBslJ3kYg5ZQLt6ChxuJSfigZ2JxZ6wiDR21I9lxy2tfuKm+4roHqJJOg1o4vLadv2n2IsznjK6z8YrfNMJqpdLQ6gBkrrTVhLeh05JtJe3dyL3jFGmdKjSKmU9hUTmriCGQd28DN2YO74DrezvXE9llKI52HbdIy1dLIIPFWjjJYf6OJpsxVH7sSbRbCTIaEOrs254tnscfK62Oww3CyRZHjcP0p+sdjHO//EBHJSSU3toWTi+DbmifSxFl0dv7kF/81ChewPLMJrn+CnulRiLm/fwdESP12BKgWKQdxGzXq9IAW176TfEchO7HumCZCJv15gsIaTQkVcPzdqo8r4t+FVHb/q/V2e9Nfln587ZlIsmrUBYBtbO0rB3D7MBM/l3bw9faDUCiQKZMyQ7wfesPHF2Mu2bu9jI41pC0gx7U5CGSUYiyalMYHLyJxfArdgXBLFfaUIhnc0Cia6xQ7FBS7hVLXVdjkENQwlCWYqTjSfNigI1pk0ZkSHoUfbSYwF0IeTqt1Q6uwLeY56NpxhTFqIXvTzyOCk7uVrBzkNPYUMEqCTXTtWeNjeSdvG/nZTLlRh5APqdy1u9JDuCXIovP2iLYPZOfKwSbEuNr+m3KbWN7ghMfcGOg2jgK/KF6MHXK+Xxca8p4KWitiDSFDAP/7Z4UULxt+MWvkM/glkIHyS+cZnrjXoV851L2dGgxwlrvEkuPDsRa3R7rEvuzCBxk85kpbzCqXezYuP3hrvtdKqH",
+        "x-request-id": "6d9d16e2-7a8c-907e-dcb2-1928fe03647a"
+      },
+      "request_post_data": null,
+      "response_headers": {
+        "cf-cache-status": "DYNAMIC",
+        "cf-ray": "9f8cac8b896ba4c4-MIA",
+        "content-type": "text/plain; charset=utf-8",
+        "date": "Sat, 09 May 2026 00:44:09 GMT",
+        "server": "cloudflare"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "body_size": 19260,
+      "body_hash": "be3db365f798228188020f1542497658b0cc92d43c5e82a19f8b8ae6ba093d22",
+      "body_encoding": "utf-8",
+      "body_kind": "text",
+      "body_preview": "F|CL;IT=#ABM#B1#C1#D1002#E130740247#G40#;PV=splashcontentapi_;|EV;ID=0;NA=Europa;PD=#ABM#B1#C1#D1002#E120757998#G40#Z^1#Y^1_1002_130740247_0#;IT=#ABM#B1#C1#D1002#E130740247#G40#BC-EV-AA#ABM#B1#C1#D1002#E120757998#G40#Z^1#Y^1_1002_130740247_0;SY=1;|EV;ID=50;NA=Andorra - Primera División;PD=#AC#B1#C1#D1002#E133404273#G40#;IT=#ABM#B1#C1#D1002#E130740247#G40#CM-EV-ABAC#AC#B1#C1#D1002#E133404273#G40#;|EV;ID=51;NA=Andorra - Segunda División;PD=#AC#B1#C1#D1002#E133453819#G40#;IT=#ABM#B1#C1#D1002#E130740247#G40#CM-EV-ABAC#AC#B1#C1#D1002#E133453819#G40#;|EV;ID=52;NA=Armenia - Premier League;PD=#AC#B1#C1#D1002#E131927048#G40#;IT=#ABM#B1#C1#D1002#E130740247#G40#CM-EV-ABAC#AC#B1#C1#D1002#E131927048#G40#;|EV;ID=53;NA=Austria - Bundesliga;PD=#AC#B1#C1#D1002#E120498695#G40#;IT=#ABM#B1#C1#D1002#E130740247#G40#CM-EV-ABAC#AC#B1#C1#D1002#E120498695#G40#;|EV;ID=54;NA=Austria - Regionalliga - Centro;PD=#AC#B1#C1#D1002#E130454372#G40#;IT=#ABM#B1#C1#D1002#E130740247#G40#CM-EV-ABAC#AC#B1#C1#D1002#E130454372#G40#;|EV;ID=55;NA=Austria - Regionalliga - Este;PD=#AC#B1#C1#D1002#E130174230#G40#;IT=#ABM#B1#C1#D1002#E130740247#G40#CM-EV-ABAC#AC#B1#C1#D1002#E130174230#G40#;|EV;ID=56;NA=Austria - Regionalliga - Oeste;PD=#AC#B1#C1#D1002#E131098100#G40#;IT=#ABM#B1#C1#D1002#E130740247#G40#CM-EV-ABAC#AC#B1#C1#D1002#E131098100#G40#;|EV;ID=57;NA=Austria - Landesliga;PD=#AC#B1#C1#D1002#E130495125#G40#;IT=#ABM#B1#C1#D1002#E130740247#G40#CM-EV-ABAC#AC#B1#C1#D1002#E130495125#G40#;|EV;ID=58;NA=Austria - Bundesliga - ...",
+      "body_path": "bodies/response-00093-www-bet365-es-splashcontentapi-changecompetition-lid-3-zid-0-pd-23abm-23b1-23c1-23d1002-23e130740247-23g40-23-cid-171-cgid-4-ctid-171.txt",
+      "body_error": null,
+      "json_top_level": null,
+      "text_hits": {
+        "contains_terms": [],
+        "markers": [
+          "EV",
+          "MA",
+          "PA",
+          "40",
+          "981",
+          "938"
+        ],
+        "fixture_ids": [
+          "130740247"
+        ],
+        "market_ids": []
+      },
+      "score": 53
+    },
+    {
+      "id": "response-00015",
+      "type": "response",
+      "timestamp": 1778287449.313312,
+      "url": "https://www.bet365.es/Api/1/Blob?3,www-sports,rcc-Default/9/%7Crcc/19/SL%7Cbcc-Default/5064/%7Cbcc/5096/%7Cbcl5-Default/5065/%7Cpvb/31/%7Cbcl5/5278/%7Cbsl-Default/5076/%7Caul/59/S%7Cbul/4/SL%7Cbrcl/4/SL%7Cbs-Default/5066/%7CPlayerImagesLib-Default/11/%7Ctll-Default/14/%7Ctll/47/%7CPlayerImagesLib/14/S%7Cbbl-Default/14/%7Cfcl/20/%7Cfl/5077/%7Cglc-Default/16/%7Cglc/5133/S%7Cgl/5120/S%7Cofl-Default/12/%7Cofl/30/%7Cprs/13/SL%7Cscr/5087/S%7Csob-Default/10/%7Csob/5171/SL%7Ctfl/13/S%7Cbbl/320/SL%7Cblib-Default/6/%7Cblib/4/%7Cbol-Default/6/%7Crbl/5/%7Cbol/32/SL%7Cbsl2-Default/19/%7Cbsl2/5324/%7Cbsw/6/S%7Cmal/5098/S%7Cbs/5346/SL%7Cbsl/5354/SL",
+      "method": "GET",
+      "status": 200,
+      "resource_type": "xhr",
+      "request_headers": {
+        "accept": "*/*",
+        "accept-language": "es-419,es;q=0.9",
+        "cookie": "rmbs=3; aps03=cf=N&cg=4&cst=0&ct=171&hd=N&lng=3&oty=2&tzi=4; pstk=C52562599FC1CDCE98F00221550C9048000003; swt=AdyOjkaYKvgLxCKkBa0t/egk6lyOSWP14d8OO/yqb26Y4yzUvVUPTH/9YSlq6gYOxKP1RCjqv9STZt3W+iv+kZJDaxagmH8TimQKVtFTr8c+yE6L35l8IoDG4h8UlqOD68rGIJFmC0WQXoQ4uC8X3kO2Dr6XGObD1F/icjqSaXWPg7LxWMeIhB8G+lB8QgCd; pers=id=52792c5d-6820-4d1f-bfaf-c22121a5eaa3&pc=00&username=TEMP; __cf_bm=EfrS_Cwk56CnzVlqJMKgrEiPcKDMgEsr9AjhNrkesk8-1778287446-1.0.1.1-4G.rqSQH5kMQ025jbNcH3a1vWfvvrqR3lA82x2DYrazNuwCuz_7vrbu0X3JmAWuiFuj_UdigQqBtfEihb9kap5TUoqMSUaOtZnEm7HRQoRU",
+        "priority": "u=1, i",
+        "referer": "https://www.bet365.es/",
+        "sec-ch-ua": "\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36"
+      },
+      "request_post_data": null,
+      "response_headers": {
+        "age": "140046",
+        "cache-control": "max-age=1296000, s-maxage=1296000, stale-while-revalidate=10",
+        "cf-cache-status": "HIT",
+        "cf-ray": "9f8cac823877a4c4-MIA",
+        "content-type": "text/plain; charset=utf-8",
+        "date": "Sat, 09 May 2026 00:44:07 GMT",
+        "last-modified": "Thu, 07 May 2026 13:49:01 GMT",
+        "server": "cloudflare",
+        "set-cookie": "__cf_bm=SKKlYIu2R8n96jR9tWsgU4HSmLNnfR712pzCzFjEQWY-1778287447.3964467-1.0.1.1-3EBqCVRfoQf0Bpx.BEypj4Ux6lm5KoYi9BBmaN8i1s6P5s_b9ytlefLNhAc6w6UMFEgBTqoPIGXVG3R3awrBXDt95QfwNODxqPe3C930YvgtLmMDTyGAKMEh7zKLo245; HttpOnly; Secure; Path=/; Domain=bet365.es; Expires=Sat, 09 May 2026 01:14:07 GMT"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "body_size": 2276774,
+      "body_hash": "7eeebdcb4e73dd2a35b4a853247e729ba4cce8be0fd63f6dda4472de384bc2c3",
+      "body_encoding": "utf-8",
+      "body_kind": "text",
+      "body_preview": "\u0004(()=>{window.CookieConsentReactModuleDefaultX=window.CookieConsentReactModuleDefaultX||{};var e,o=[,(e,o,t)=>{Object.defineProperty(o,\"__esModule\",{value:!0}),o.CookieConsentReactModuleDefault=void 0;const n=t(2);class CookieConsentReactModuleDefault extends n.Module{hasGPC(){return{enabled:!1}}}o.CookieConsentReactModuleDefault=CookieConsentReactModuleDefault},e=>{e.exports=window.ns_gen5_ui}],t={};function __webpack_require__(e){var n=t[e];if(void 0!==n)return n.exports;var u=t[e]={exports:{}};return o[e](u,u.exports,__webpack_require__),u.exports}var n={};(()=>{var e=n;Object.defineProperty(e,\"__esModule\",{value:!0}),e.CookieConsentReactModuleDefault=void 0;var o=__webpack_require__(1);Object.defineProperty(e,\"CookieConsentReactModuleDefault\",{enumerable:!0,get:function(){return o.CookieConsentReactModuleDefault}})})(),e=n,ns_gen5_ui.ModuleContainer.RegisterModule(\"rcc-Default\",e.CookieConsentReactModuleDefault),window.CookieConsentReactModuleX=window.CookieConsentReactModuleX||{},\"object\"==typeof e.CookieConsentReactModuleDefault?window.CookieConsentReactModuleX.locale=e.CookieConsentReactModuleDefault:window.CookieConsentReactModuleX.locale=new e.CookieConsentReactModuleDefault})();\n//# sourceMappingURL=/sports-assets/map/sports?m=rcc-Default&t=js&v=9\u0003\u0006\u0005\u0004(()=>{window.CookieConsentReactModuleX=window.CookieConsentReactModuleX||{};const e={};var t;e.getML=function(e,t){return window.CookieConsentReactModuleX.ml[e]||t},e.getLocale=()=>window.CookieConsentReactModuleX.lo...",
+      "body_path": "bodies/response-00015-www-bet365-es-api-1-blob-3-www-sports-rcc-default-9-7crcc-19-sl-7cbcc-default-5064-7cbcc-5096-7cbcl5-default-5065-7cpvb-31-7cbcl5-5278-7cbsl-defa.txt",
+      "body_error": null,
+      "json_top_level": null,
+      "text_hits": {
+        "contains_terms": [],
+        "markers": [
+          "EV",
+          "MG",
+          "MA",
+          "PA",
+          "NavLib",
+          "DataReactLib",
+          "CurrentPageData",
+          "40",
+          "981",
+          "938"
+        ],
+        "fixture_ids": [],
+        "market_ids": [
+          "40",
+          "938",
+          "981"
+        ]
+      },
+      "score": 45
+    },
+    {
+      "id": "response-00074",
+      "type": "response",
+      "timestamp": 1778287450.294454,
+      "url": "https://www.bet365.es/Api/1/Blob?3,www-sports,cm-Default/5/%7Ccbl/5058/%7Cmsl/5069/S%7Cqr/11/%7Cbbo-ES/15/%7Cbbo/129/SL%7Cbxl-Default/11/%7Cbxl/27/SL%7Cnph-ES/16/%7Cnph/26/%7Cme-Default/22/%7Cmr-Default/3/%7Cmr/11/%7Csdl-Default/13/%7Csdl/9/%7Cme/5194/SL%7Csif-Default/7/%7Csif/10/%7Csph-Default/19/%7Csph/5261/SL%7Ccm/5214/SL%7Csrb-Default/15/%7Csrb/5356/SL%7Cssf/5054/%7Cmcs/29/S%7Cscl/5074/S%7Cmsm/5080/SL%7Csc-Default/11/%7Cipv/5065/%7Csdd-Default/10/%7Csdd/5126/SL%7Csmd/5082/S%7Crcl/5177/SL%7Csc/5106/SL%7Coog/34/S%7Cppl/29/SL%7Cppp-Default/14/%7Cppp/74/SL%7Csgl/5118/SL%7Csrc-Default/13/%7Csrc/5336/SL%7Csac/5123/S",
+      "method": "GET",
+      "status": 200,
+      "resource_type": "xhr",
+      "request_headers": {
+        "accept": "*/*",
+        "accept-language": "es-419,es;q=0.9",
+        "cookie": "rmbs=3; aps03=cf=N&cg=4&cst=0&ct=171&hd=N&lng=3&oty=2&tzi=4; pstk=C52562599FC1CDCE98F00221550C9048000003; swt=AdyOjkaYKvgLxCKkBa0t/egk6lyOSWP14d8OO/yqb26Y4yzUvVUPTH/9YSlq6gYOxKP1RCjqv9STZt3W+iv+kZJDaxagmH8TimQKVtFTr8c+yE6L35l8IoDG4h8UlqOD68rGIJFmC0WQXoQ4uC8X3kO2Dr6XGObD1F/icjqSaXWPg7LxWMeIhB8G+lB8QgCd; pers=id=52792c5d-6820-4d1f-bfaf-c22121a5eaa3&pc=00&username=TEMP; __cf_bm=vgoz2oD0DlFYBwQKGNmNTII9nl.o9r1sdGI.WmUKI6M-1778287448-1.0.1.1-WczXNoFbJRFEC3L77Wz2UEXHpUnOiosHBx3EhQhcRECjQM6BW.0kKvWGzoT870Xgf4_ij_gxTHyrYO2AZiaM4WaVdC2wU0YCaz50Nqnb5Gg",
+        "priority": "u=1, i",
+        "referer": "https://www.bet365.es/",
+        "sec-ch-ua": "\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36"
+      },
+      "request_post_data": null,
+      "response_headers": {
+        "age": "117055",
+        "cache-control": "max-age=1296000, s-maxage=1296000, stale-while-revalidate=10",
+        "cf-cache-status": "HIT",
+        "cf-ray": "9f8cac884e29a4c4-MIA",
+        "content-type": "text/plain; charset=utf-8",
+        "date": "Sat, 09 May 2026 00:44:08 GMT",
+        "last-modified": "Thu, 07 May 2026 16:37:09 GMT",
+        "server": "cloudflare",
+        "set-cookie": "__cf_bm=vyCfKyhLezot9V5V2078SiEgtemhX75D0OmoAqiRL2c-1778287448.3619113-1.0.1.1-A8mncnAB7ij37cgKGbu2lWjYT4iP42fdh0WX24p7pLoEdgJLz_4tMgnjMWZ5S_TY7Ad_Vr4F75i1jFHGSbjMViGti5f8umzxDcb9KsZECbZnf1wPWXqhaQQspffDRNPU; HttpOnly; Secure; Path=/; Domain=bet365.es; Expires=Sat, 09 May 2026 01:14:08 GMT"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "body_size": 1615600,
+      "body_hash": "3aa4e70cb69c5d4ee6cb986231df7baf9ccac04b2a9b3586c57d05dcdb1b88c5",
+      "body_encoding": "utf-8",
+      "body_kind": "text",
+      "body_preview": "\u0004var SITE_ROOT_PATH=\"sports\";(()=>{var e=ns_gen5_ui.Module;class r extends e{showMarketOfferText(){return!1}showSubOfferBanner(){return!0}}ns_gen5_ui.ModuleContainer.RegisterModule(\"cm-Default\",r)})();\u0003\u0006\u0005\u0004(()=>{window.CouponBreadcrumbLibX=window.CouponBreadcrumbLibX||{};const e={};var r;e.getApp=()=>window.CouponBreadcrumbLibX.app||!1;var a=[(e,r,a)=>{Object.defineProperty(r,\"__esModule\",{value:!0}),r.BreadcrumbManager=void 0;a(4);const n=a(5),u=a(1),t=a(2),c=[\"A\",\"B\",\"C\",\"D\",\"E\",\"F\",\"G\"],o=n.UserPreferences.AdditionalPreferences(u.BreadcrumbPreferences),setBreadcrumb=(e,r,a)=>{for(;r&&\"EV\"!==r.nodeName;)r=r.parent;if(!r)return void clearBreadcrumb();let n;if(r.data.TB){const e=r.data.TB.split(\"¬\"),a=[];for(const r of e){const e=r.split(\",\");a.push(e[0])}n=a.join(\" - \")}n?(o.currentPageData=normalize(a),o.title=n,o.pageData=e):clearBreadcrumb()},clearBreadcrumb=()=>{o.currentPageData=null,o.title=null,o.pageData=null},stripBreadcrumb=e=>{const r=(0,t.getApp)();return r&&r.requiresBreadcrumbData()?e:e.split(\"#\").reduce((e,r)=>(0===r.indexOf(\"P^\")||0===r.indexOf(\"Q^\")||0===r.indexOf(\"O^\")||e.push(r),e),[]).join(\"#\")},normalize=e=>e.split(\"#\").filter(e=>-1!==c.indexOf(e[0])).join(\"#\");r.BreadcrumbManager={prepareNavigation:(e,r,a)=>(setBreadcrumb(e,r,a),stripBreadcrumb(a)),setBreadcrumb,getBreadcrumb:e=>normalize(e)!==o.currentPageData?null:{title:o.title,pageData:o.pageData},clearBreadcrumb,stripBreadcrumb,normalize}},(e,r)=>{Object.defineProperty(r,\"__esModule\",{value:!0}),...",
+      "body_path": "bodies/response-00074-www-bet365-es-api-1-blob-3-www-sports-cm-default-5-7ccbl-5058-7cmsl-5069-s-7cqr-11-7cbbo-es-15-7cbbo-129-sl-7cbxl-default-11-7cbxl-27-sl-7cnph-es.txt",
+      "body_error": null,
+      "json_top_level": null,
+      "text_hits": {
+        "contains_terms": [],
+        "markers": [
+          "EV",
+          "MG",
+          "MA",
+          "PA",
+          "NavLib",
+          "CurrentPageData",
+          "40",
+          "981",
+          "938"
+        ],
+        "fixture_ids": [],
+        "market_ids": [
+          "40",
+          "938",
+          "981"
+        ]
+      },
+      "score": 43
+    },
+    {
+      "id": "response-00007",
+      "type": "response",
+      "timestamp": 1778287446.757679,
+      "url": "https://www.bet365.es/defaultapi/sports-configuration?_h=WHT6WjT4-5qJlFXU1v4dYg==&pd=%23%2FAC%2FB1%2FC1%2FD1002%2FE130740247%2FG40%2F",
+      "method": "GET",
+      "status": 200,
+      "resource_type": "xhr",
+      "request_headers": {
+        "accept": "*/*",
+        "accept-language": "es-419,es;q=0.9",
+        "cookie": "aps03=ct=171&lng=3; __cf_bm=9_WHXD4IALABA.AHPHvbziXJH6hQD8luQEWcWqg9ux4-1778287445.4841158-1.0.1.1-isT.hMElFTyAFqh1WZy10pvb_0C8AG0EBUJD6jcdYp60MjJMEY8d1i6w1DhF6DqTfqbzCUBDpeSmgBp94C.aHIF.NrWb4tqvvAPMxZQ7tYIgH9Jdkex3nRKnUBYtQpp.",
+        "priority": "u=1, i",
+        "referer": "https://www.bet365.es/",
+        "sec-ch-ua": "\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36"
+      },
+      "request_post_data": null,
+      "response_headers": {
+        "accept-ch": "UA",
+        "cache-control": "no-cache, no-store, private, must-revalidate, max-age=0",
+        "cf-cache-status": "DYNAMIC",
+        "cf-ray": "9f8cac79081ea4c4-MIA",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Sat, 09 May 2026 00:44:06 GMT",
+        "expires": "0",
+        "pragma": "no-cache",
+        "server": "cloudflare",
+        "set-cookie": "pstk=C52562599FC1CDCE98F00221550C9048000003; Path=/; Expires=Sat, 16 May 2026 00:44:05 GMT; Domain=.bet365.es; SameSite=None; Secure\nswt=AdyOjkaYKvgLxCKkBa0t/egk6lyOSWP14d8OO/yqb26Y4yzUvVUPTH/9YSlq6gYOxKP1RCjqv9STZt3W+iv+kZJDaxagmH8TimQKVtFTr8c+yE6L35l8IoDG4h8UlqOD68rGIJFmC0WQXoQ4uC8X3kO2Dr6XGObD1F/icjqSaXWPg7LxWMeIhB8G+lB8QgCd; Path=/; Expires=Sat, 16 May 2026 00:44:05 GMT; Domain=.bet365.es; SameSite=None; Secure;\nrmbs=3; Path=/; Expires=Mon, 09 Nov 2026 01:44:05 GMT; SameSite=None; Secure\npers=id=52792c5d-6820-4d1f-bfaf-c22121a5eaa3&pc=00&username=TEMP; Path=/; Domain=bet365.es; Expires=Fri, 09 May 2036 00:44:05 GMT; SameSite=None; Secure\naps03=cf=N&cg=4&cst=0&ct=171&hd=N&lng=3&oty=2&tzi=4; Path=/; Expires=Fri, 09 May 2036 00:44:05 GMT; SameSite=None; Secure",
+        "vary": "accept-encoding"
+      },
+      "content_type": "application/json; charset=utf-8",
+      "body_size": 5006,
+      "body_hash": "46fcc59ba5683db041bdea9ab861fb179dbd3364ed111a257e32afb15da50bac",
+      "body_encoding": "utf-8",
+      "body_kind": "json_like",
+      "body_preview": "{\"ns_weblib_util\":{\"WebsiteConfig\":{\"GEOCOMPLY_INSTALLER_ID\":\"\",\"GEOCOMPLY_ENVIROMENT\":\"\",\"GEOCOMPLY_HOSTNAME\":\"\",\"GEOCOMPLY_VERSION\":\"\",\"OOBEE_URL\":\"\",\"OOBEE_SERVICE_URL\":\"\",\"OOBEEV2_URL\":\"\",\"SITE_EXCLUDED_SPORTS\":[6,6,130,130,131,131,135,135,144,144,145,145,146,146,149,149,156,159,160,161,165,166,2019,2019,2020,2020,2021,2021,2022,2022,2023,2023,2024,2024,2026,2026,2027,2028,2029,2030,2031,2032,2033,2034],\"SITE_EXCLUDED_VIRTUALS\":[144,144,145,145,146,146,2019,2019,2020,2020,2021,2021,2022,2022,2023,2023,2024,2024,2026,2026,2027,2028,2029,2030,2031,2032,2033,2034],\"DEFAULT_ZONE_TOPIC_PREFIXES\":[\"6V\"],\"DEFAULT_ZONE\":\"0\",\"US_DOMAINS\":null,\"US_STATES\":[],\"WELCOME_PAGE_LOCATION\":\"\",\"SST\":\"ALoAAS0abxPwsBAVDc8W5JltkNuIqgm+QRimkRG6uomv5Er12whRPj3syBh9JJY2mA6y/fWDbtIqDnoi7yLy/JLRuKNT5doKv0L5V/LGWI4GZQLnZ5jDy+lu/ql6loNBEeoOiJgWu9vx6fVHwNIzW+Lnr3/zJzJv+YRu8n9HYAgV90SPMeAzShWYEgA5IdtzK4SxSwTZJcUTZyH6IgcKkox1akIaA1ahiZFe9KMkhZqnloXqok0nfsEHCwc=\",\"CONTENTSQUARE_TAG_URL\":\"cs_conf.js\",\"CONTENTSQUARE_ENABLED\":true,\"CONTENTSQUARE_COUNTRY_ENABLED\":false,\"FIREBASE_API_KEY\":\"AIzaSyAzNlbcbXwm3K-ukcPyQch7fvK5koIDSjs\",\"FIREBASE_AUTH_DOMAIN\":\"hillsidepush001-d025f.firebaseapp.com\",\"FIREBASE_DATABASE_URL\":\"https://hillsidepush001-d025f.firebaseio.com\",\"FIREBASE_PROJECT_ID\":\"hillsidepush001-d025f\",\"FIREBASE_STORAGE_BUCKET\":\"hillsidepush001-d025f.firebasestorage.app\",\"FIREBASE_MESSAGING_SENDER_ID\":\"611806613886\",\"FIREBASE_APP_ID\":\"1:611806613886:web:e0743176b570d421c2632f\",\"FIREBASE_MEASUREMENT_ID\"...",
+      "body_path": "bodies/response-00007-www-bet365-es-defaultapi-sports-configuration-h-wht6wjt4-5qjlfxu1v4dyg-pd-23-2fac-2fb1-2fc1-2fd1002-2fe130740247-2fg40-2f.json",
+      "body_error": null,
+      "json_top_level": [
+        "ns_weblib_util",
+        "flashvars"
+      ],
+      "text_hits": {
+        "contains_terms": [],
+        "markers": [
+          "EV",
+          "MG",
+          "MA",
+          "PA"
+        ],
+        "fixture_ids": [],
+        "market_ids": []
+      },
+      "score": 39
+    },
+    {
+      "id": "response-00071",
+      "type": "response",
+      "timestamp": 1778287449.70244,
+      "url": "https://www.bet365.es/offersapi/offers/v2/?countryid=171",
+      "method": "GET",
+      "status": 200,
+      "resource_type": "xhr",
+      "request_headers": {
+        "accept": "*/*",
+        "accept-language": "es-419,es;q=0.9",
+        "cookie": "rmbs=3; aps03=cf=N&cg=4&cst=0&ct=171&hd=N&lng=3&oty=2&tzi=4; pstk=C52562599FC1CDCE98F00221550C9048000003; swt=AdyOjkaYKvgLxCKkBa0t/egk6lyOSWP14d8OO/yqb26Y4yzUvVUPTH/9YSlq6gYOxKP1RCjqv9STZt3W+iv+kZJDaxagmH8TimQKVtFTr8c+yE6L35l8IoDG4h8UlqOD68rGIJFmC0WQXoQ4uC8X3kO2Dr6XGObD1F/icjqSaXWPg7LxWMeIhB8G+lB8QgCd; pers=id=52792c5d-6820-4d1f-bfaf-c22121a5eaa3&pc=00&username=TEMP; __cf_bm=vgoz2oD0DlFYBwQKGNmNTII9nl.o9r1sdGI.WmUKI6M-1778287448-1.0.1.1-WczXNoFbJRFEC3L77Wz2UEXHpUnOiosHBx3EhQhcRECjQM6BW.0kKvWGzoT870Xgf4_ij_gxTHyrYO2AZiaM4WaVdC2wU0YCaz50Nqnb5Gg",
+        "priority": "u=1, i",
+        "referer": "https://www.bet365.es/",
+        "sec-ch-ua": "\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
+        "x-request-id": "6d9d16e2-7a8c-907e-dcb2-1928fe03647a"
+      },
+      "request_post_data": null,
+      "response_headers": {
+        "age": "299",
+        "cache-control": "no-cache",
+        "cf-cache-status": "HIT",
+        "cf-ray": "9f8cac884e2da4c4-MIA",
+        "content-type": "text/plain; charset=utf-8",
+        "date": "Sat, 09 May 2026 00:44:08 GMT",
+        "expires": "-1",
+        "last-modified": "Sat, 09 May 2026 00:39:09 GMT",
+        "pragma": "no-cache",
+        "server": "cloudflare",
+        "set-cookie": "__cf_bm=0b77ibFEKwhAXULAJ_kbYntFPJRLuCQIB5kfXGS61S8-1778287448.362633-1.0.1.1-_LMeVz0P.uwUSzlYSq8FLKO250Bo2ZlZrBAURJsyW672tAoJ7dkxg2LeXjMsrgRlZi1aSUtKWSpAxCAzdYijlyep5dmFmvufS2mx2lOJVXL43qQHn9BNGD0yAeUUv_z_; HttpOnly; Secure; Path=/; Domain=bet365.es; Expires=Sat, 09 May 2026 01:14:08 GMT"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "body_size": 53584,
+      "body_hash": "e9a961ccbfe06e506ee059e0d35fcb804ea19f17c9bc47409c1d8e6baae62bac",
+      "body_encoding": "utf-8",
+      "body_kind": "text",
+      "body_preview": "F|MA;OL=11,109;IT=OF_194080971;|MA;OL=21,109;IT=OF_193711306;|MA;OL=109,115;IT=OF_194266222;|MA;OL=109;IT=OF_194316834;|MA;OL=11,109,115;IT=OF_193003629;EN=1;|MA;OL=11,109;IT=OF_193332606;|MA;OL=24,109;IT=OF_193711265;|MA;OL=11,109,115;IT=OF_193711490;|MA;OL=11,109,115;IT=OF_193323550;|MA;OL=11,109;IT=OF_194080896;|MA;OL=109,115;IT=OF_194280351;|MA;OL=115;IT=OF_193201031;|MA;OL=11,109,115;IT=OF_194081784;|MA;OL=115;IT=OF_193997167;|MA;OL=11,109;IT=OF_193710494;|MA;OL=11,109,115;IT=OF_194121775;|MA;OL=11,109;IT=OF_194091279;|MA;OL=115;IT=OF_194310712;|MA;OL=11,109,115;IT=OF_193330559;|MA;OL=11,109,115;IT=OF_193332154;|MA;OL=11,109;IT=OF_193710451;|MA;OL=11,109,115;IT=OF_193332417;|MA;OL=11,109;IT=OF_193719713;|MA;OL=11,109,115;IT=OF_194079835;|MA;OL=115;IT=OF_194267711;|MA;OL=109;IT=OF_194257970;|MA;OL=11,109,115;IT=OF_194084881;|MA;OL=11,109;IT=OF_192256735;|MA;OL=11,109,115;IT=OF_193711655;|MA;OL=11,109,115;IT=OF_194081775;|MA;OL=20,109,115;IT=OF_194111135;|MA;OL=49,109;IT=OF_194110692;|MA;OL=11,109;IT=OF_193757967;|MA;OL=21,109;IT=OF_193711038;|MA;OL=109;IT=OF_191860018;|MA;OL=19,109;IT=OF_194276850;|MA;OL=19,109;IT=OF_194256954;|MA;OL=109,115;IT=OF_194202406;|MA;OL=11,109,115;IT=OF_193332149;|MA;OL=21,109;IT=OF_193710298;|MA;OL=115;IT=OF_194330073;|MA;OL=11,109,115;IT=OF_193332195;|MA;OL=11,109,115;IT=OF_193328038;|MA;OL=21,109;IT=OF_194087178;|MA;OL=11,109;IT=OF_193331301;|MA;OL=115;IT=OF_194339205;|MA;OL=11,109,115;IT=OF_193330553;|MA;OL=21,109;IT=OF_193710789;|MA;OL=...",
+      "body_path": "bodies/response-00071-www-bet365-es-offersapi-offers-v2-countryid-171.txt",
+      "body_error": null,
+      "json_top_level": null,
+      "text_hits": {
+        "contains_terms": [],
+        "markers": [
+          "MA",
+          "PA",
+          "40",
+          "981",
+          "938"
+        ],
+        "fixture_ids": [],
+        "market_ids": [
+          "40"
+        ]
+      },
+      "score": 35
+    },
+    {
+      "id": "response-00095",
+      "type": "response",
+      "timestamp": 1778287450.420083,
+      "url": "https://www.bet365.es/Api/1/Blob?3,www-sports,tkm/5121/S",
+      "method": "GET",
+      "status": 200,
+      "resource_type": "xhr",
+      "request_headers": {
+        "accept": "*/*",
+        "accept-language": "es-419,es;q=0.9",
+        "cookie": "rmbs=3; aps03=cf=N&cg=4&cst=0&ct=171&hd=N&lng=3&oty=2&tzi=4; pstk=C52562599FC1CDCE98F00221550C9048000003; swt=AdyOjkaYKvgLxCKkBa0t/egk6lyOSWP14d8OO/yqb26Y4yzUvVUPTH/9YSlq6gYOxKP1RCjqv9STZt3W+iv+kZJDaxagmH8TimQKVtFTr8c+yE6L35l8IoDG4h8UlqOD68rGIJFmC0WQXoQ4uC8X3kO2Dr6XGObD1F/icjqSaXWPg7LxWMeIhB8G+lB8QgCd; pers=id=52792c5d-6820-4d1f-bfaf-c22121a5eaa3&pc=00&username=TEMP; __cf_bm=ESioj_4mPBpjXFrT5DHxZKaEEh7B_aVPf63QqF4Ru6Y-1778287448.259461-1.0.1.1-Z6ObJTUCzFiVT80k9HTzR5P1F.ZNT0KknTsZ5g7goH5RhSDJZB3YxcLtbBgYEItKlDKrSfR9Fwa3r7hNBonnO2pctb.CM9.rsot6i9sN7xXdbv2JbwsZQGUS6xwOWWMt",
+        "priority": "u=1, i",
+        "referer": "https://www.bet365.es/",
+        "sec-ch-ua": "\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36"
+      },
+      "request_post_data": null,
+      "response_headers": {
+        "age": "1338261",
+        "cache-control": "max-age=2592000, s-maxage=2592000, stale-while-revalidate=10",
+        "cf-cache-status": "HIT",
+        "cf-ray": "9f8cac8f5d55a4c4-MIA",
+        "content-type": "text/plain; charset=utf-8",
+        "date": "Sat, 09 May 2026 00:44:09 GMT",
+        "last-modified": "Thu, 23 Apr 2026 12:51:51 GMT",
+        "server": "cloudflare"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "body_size": 289907,
+      "body_hash": "9c3c624cd613f430ff1f878be7152c9f7edc7f5f3ee936f86df8bd516973489b",
+      "body_encoding": "utf-8",
+      "body_kind": "text",
+      "body_preview": "\u0004var SITE_ROOT_PATH,RegisterCompiledAsset,GetCompiledAsset,cache;function appModule(i){i=ns_gen5_ui.Module.getRoot(i).parent.appModule;return i&&i.getModule()}SITE_ROOT_PATH=\"sports\",(()=>{var l,s,h,a,d,t,L,e,o,r,k,f,m,g,p,n,K,c,v,w,C,x,u,z;{t=l=l||{},L=ns_accessibilityuilib_ui_image.ImageAccessibilityDelegate,e=ns_teamflagslib.TeamFlagLoader,o=ns_teamlogosloaderlib_ui.TeamLogosLoader;class i extends ns_gen5_ui.SVGWrapperComponent{constructor(){super(...arguments),this.teamColours=[]}commitProperties(){var i,l,t;this.dataChanged&&(this.dataChanged=!1,l=`K${i=y.ClassificationIdToKitGroupLookup[this.classificationId]}-${this.kitStyleId}.svg`,t=GetCompiledAsset(l),t=this.formatSvg(this.classificationId,t,this.teamColours,l),this.setSVGData(t),this.teamFlag&&this.appendChild(this.teamFlag),this.applyStyles)&&(this.addStyle(\"tk-TeamKit\"),this.addStyle(\"tk-TeamKit-\"+i),this.addStyle(`tk-TeamKit-${i}-`+this.kitStyleId))}addLogo(i,l,t){!this.logo&&i&&-1!==o.LOGO_SUPPORTED_LEAGUES.indexOf(l)&&(new o).loadTeamLogos(i=>{this.logo=i,this.addStyle(\"tk-TeamKit-haslogo\"),this.logo.addStyle(\"tk-TeamKit_Logo\"),Locator.validationManager.callNewContext(()=>{this.appendChild(this.logo)})},i,this.classificationId,t,l)}addFlag(i){return this.teamFlag&&this.teamFlag.parent&&this.teamFlag.parent.removeChild(this.teamFlag),this.teamFlag=e.CreateTeamFlag(i),this.addStyle(\"tk-TeamKit-hasflag\"),this.teamFlag.addStyle(\"tk-TeamKit_Flag\"),this.appendChild(this.teamFlag),this.teamFlag}setTeamData(i,l,t,L...",
+      "body_path": "bodies/response-00095-www-bet365-es-api-1-blob-3-www-sports-tkm-5121-s.txt",
+      "body_error": null,
+      "json_top_level": null,
+      "text_hits": {
+        "contains_terms": [],
+        "markers": [
+          "EV",
+          "MG",
+          "MA",
+          "PA",
+          "40",
+          "981",
+          "938"
+        ],
+        "fixture_ids": [],
+        "market_ids": [
+          "40",
+          "981"
+        ]
+      },
+      "score": 35
+    }
+  ],
+  "top_script_candidates": [],
+  "top_websocket_candidates": [
+    {
+      "id": "ws-00032",
+      "type": "websocket_frame",
+      "timestamp": 1778287449.53729,
+      "event_type": "Network.webSocketFrameReceived",
+      "url": null,
+      "request_id": "86970.9",
+      "opcode": 1,
+      "payload_size": 95844,
+      "body_kind": "websocket_text",
+      "body_preview": "\u0014InPlay_3_0\u0001F|CL;CD=1;DO=1;FF=1~IA;HO=1;HZ=11;ID=1;IT=CL_1_3_0;NA=Fútbol;OR=0;RO=1;|EV;AL=194067568C1A_3/1777-194067568C1A_3;AU=0;C1=1;C2=133414554;C3=194276215;CB=ARXAXB;CK=ARG-CUP;CL=1;CT=Copa Argentina;DC=1;DO=0;DS=;EL=0;ES=0;ET=0;FB=0;FF=;FI=194067568;FS=1;HO=0;HP=1;ID=194067568C1A_3_0;IH=0;IT=L1-1-5-133414554-2-737_3_0;L3=ARG-CUP;LO=0000;MD=0;ML=90;MO=0;MP=61;MS=109150802;NA=Banfield v San Martín de Tucumán;NT=;OI=194276215;OR=0;PE=;PS=;RO=0;SB=0;SD=0;SE=0;SS=0-0;SV=1;SY=;T1=5;T2=2;T3=3;TD=0;TM=0;TS=0;TT=1;TU=20260509011144;VI=1;VS=;|MA;CN=3;DO=1;FF=;FI=194276215;GO=1°;ID=1777;IT=L194067568C1-1777_3_0;LA=0;NA=Resultado final;OR=0;PC=CL_1_3_0;SU=0;TO=1~GD;|PA;FI=194276215;HA=;HD=;ID=1244103497;IT=L194276215-1244103497_3_0;NA=Banfield;OD=15/8;OR=0;SU=0;|PA;FI=194276215;HA=;HD=;ID=1244103499;IT=L194276215-1244103499_3_0;NA=Empate;OD=6/5;OR=1;SU=0;|PA;FI=194276215;HA=;HD=;ID=1244103500;IT=L194276215-1244103500_3_0;NA=San Martín de Tucumán;OD=11/4;OR=2;SU=0;|EV;AL=194151042C1A_3/1777-194151042C1A_3;AU=0;C1=1;C2=133402453;C3=194257219;CB=;CK=ARG-PRIM-B-M;CL=1;CT=Argentina - Primera B;DC=1;DO=0;DS=;EL=0;ES=0;ET=0;FB=0;FF=;FI=194151042;FS=1;HO=0;HP=1;ID=194151042C1A_3_0;IH=0;IT=L1-1-5-133402453-2-737_3_0;L3=ARG-PRIM-B-M;LO=0000;MD=1;ML=90;MO=0;MP=0;MS=0;NA=Excursionistas v UAI Urquiza;NT=;OI=194257219;OR=1;PE=;PS=;RO=0;SB=0;SD=0;SE=0;SS=0-0;SV=1;SY=;T1=5;T2=2;T3=3;TD=0;TM=45;TS=1;TT=1;TU=20260509010315;VI=0;VS=-1;|MA;CN=3;DO=1;FF=;FI=194257219;GO=1°;ID=1777;IT=L194151042C1-17...",
+      "text_hits": {
+        "contains_terms": [
+          "Liverpool"
+        ],
+        "markers": [
+          "EV",
+          "MG",
+          "MA",
+          "PA",
+          "40",
+          "981",
+          "938"
+        ],
+        "fixture_ids": [],
+        "market_ids": [
+          "40"
+        ]
+      },
+      "body_path": "bodies/ws-00032-websocket.txt",
+      "score": 24
+    },
+    {
+      "id": "ws-00013",
+      "type": "websocket_frame",
+      "timestamp": 1778287449.355663,
+      "event_type": "Network.webSocketFrameReceived",
+      "url": null,
+      "request_id": "86970.9",
+      "opcode": 1,
+      "payload_size": 4405,
+      "body_kind": "websocket_text",
+      "body_preview": "\u0014PVG_CONFIG_1\u0001F|CL;CB=97,129,14,75,150,240,95,197,;CO=;DC=2;EN=1;ID=1;IT=PVG_CONFIG_1;SE=;SO=;|EV;CB=B-NCAABEGM~198,272,36,#B-NITM~198,272,36,#Eur-Bask-Men~171,78,#GB~78,#NBL~13,#Olympics Women~198,272,36,#SB~171,#WNCAAB~198,272,36,#B-NITW~198,272,36,#ELB~171,78,#NCAAB~36,198,272,#WNBA~198,272,36,#;EN=1;ID=18;IT=PVG_CONFIG_1_18;LE=WNCAAB,B-NITM,B-NITW,BB,Eur-Bask-Men,NBL,NCAAB,SB,WNBA,B-NCAABEGM,ELB,GB,Olympics Women,;ME=960,1453,1454,;SE=;|EV;CB=Campeonato Bras~10,28,58,270,271,#Arg Nac B~271,10,25,28,41,270,#Greece Division~51,78,#Erediv Pl-offs~135,#PORT-PRIM-LIGA~28,#SLOVSUPLIGA-PO~172,#Swedish Allsven~181,68,#ARGENTINA-PRIM~25,28,41,270,271,10,#CHILE-PLAY-OFF~41,#Danish Div1~54,#NPower Champs~95,197,#FA Cup~95,#Italy Serie B~97,#SOC-SWI-CUP~174,#BOLIV-PLAY-OFF~25,#J2 League~42,99,#Spain Segunda~171,#Switzerland Sup~174,#SOC-ARG-CLP~41,270,271,10,25,28,#CHL-PRIMERA~41,#CAPITAL-ONE-CUP~95,197,#Japan J-League~42,99,#Mexico Clausura~126,#Holl Jup POs~135,#Australia A Lea~13,138,#CHINA-FA-CUP~42,#Cyprus Div 1~51,#NPower 2~95,197,#MLS Playoffs~198,36,275,272,#Npower 1~95,197,#JAP-J-LGUE-PLOF~42,99,#MEXLIGADEEXP~126,#Scottish Premie~95,197,#ARG-CUP~10,25,28,41,270,271,#SCOT_PREM_PLYOF~95,197,#Bolivia Aper~25,#Copa do Brasil~270,271,10,28,58,#Danish Cup~54,#Dutch Cup~135,#SLOVAKIA-2-LIGA~172,#BULGARIA-PO~31,#Danish Super Li~54,#FA-WSL~95,197,#SOC-GRE-CUP~51,78,#Coppa Italia~97,#MEXICO-CUP~126,#BUL A PFG~31,#China Sup Lge~42,#DEN-SUP-PL-OFFS~54,#SLOV CUP~172,#Switzerlan Chal~1...",
+      "text_hits": {
+        "contains_terms": [],
+        "markers": [
+          "EV",
+          "MG",
+          "MA",
+          "PA",
+          "40"
+        ],
+        "fixture_ids": [],
+        "market_ids": [
+          "40"
+        ]
+      },
+      "body_path": "bodies/ws-00013-websocket.txt",
+      "score": 14
+    },
+    {
+      "id": "ws-00015",
+      "type": "websocket_frame",
+      "timestamp": 1778287449.358894,
+      "event_type": "Network.webSocketFrameReceived",
+      "url": null,
+      "request_id": "86970.9",
+      "opcode": 1,
+      "payload_size": 12587,
+      "body_kind": "websocket_text",
+      "body_preview": "\u0014P_CONFIG\u0001F|CG;ID=;IT=P_CONFIG;|PA;IT=P_CONFIG_AUI;VA=1;|PA;IT=P_CONFIG_LFDA;VA=1;|PA;IT=P_CONFIG_PAA;VA=0;|PA;IT=P_CONFIG_LL;VA=1;|PA;IT=P_CONFIG_PI;VA=1;|PA;IT=P_CONFIG_SOSS;VA=0;|PA;IT=P_CONFIG_BSD;VA=135;|PA;IT=P_CONFIG_TAXUSIN;VA=0,5000,0,1,1#5000,-1,0.27,1,0.73~0,5000,0,1,1#5000,-1,0.2695,1,0.7305~1767247200000;|PA;IT=P_CONFIG_TAXUSVA;VA=0,5000,0,1,1#5000,-1,0.28,1,0.72~0,5000,0,1,1#5000,-1,0.24,1,0.76~1767243600000;|PA;IT=P_CONFIG_FG;VA=197,198;|PA;IT=P_CONFIG_WBI;VA=1;|PA;IT=P_CONFIG_IAV;VA=;|PA;IT=P_CONFIG_GPE;VA=197;|PA;IT=P_CONFIG_SP;VA=16,17,18,20,21;|PA;IT=P_CONFIG_HGA;VA=*;|PA;IT=P_CONFIG_QW;VA=12,30,36,43,49,57,32;|PA;IT=P_CONFIG_AA;VA=5;|PA;IT=P_CONFIG_OAECI;VA=;|PA;IT=P_CONFIG_COL;VA=1;|PA;IT=P_CONFIG_BTCODC;VA=;|PA;IT=P_CONFIG_LFD;VA=1;|PA;IT=P_CONFIG_MBS;VA=*;|PA;IT=P_CONFIG_UC;VA=;|PA;IT=P_CONFIG_AH;VA=1;|PA;IT=P_CONFIG_CSE-Android;VA=1;|PA;IT=P_CONFIG_CTLI;VA=1;|PA;IT=P_CONFIG_URID;VA=1;|PA;IT=P_CONFIG_AAT;VA=3;|PA;IT=P_CONFIG_BSNEW;VA=1;|PA;IT=P_CONFIG_BTME;VA=1;|PA;IT=P_CONFIG_SOS;VA=15;|PA;IT=P_CONFIG_ERRP;VA=2#BBP,2#AH,4#AH,88#AH,2#AS,4#AS,88#AS,2#AC,4#AC,88#AC,2#AA,4#AA,88#AA;|PA;IT=P_CONFIG_EP;VA=1;|PA;IT=P_CONFIG_BTLE;VA=1;|PA;IT=P_CONFIG_PVBV-VF;VA=0.1;|PA;IT=P_CONFIG_PAG;VA=1;|PA;IT=P_CONFIG_QDA1-V3;VA=1;|PA;IT=P_CONFIG_OB;VA=1;|PA;IT=P_CONFIG_AQ;VA=0;|PA;IT=P_CONFIG_IF;VA=;|PA;IT=P_CONFIG_OI;VA=1;|PA;IT=P_CONFIG_BTPTSE;VA=1;|PA;IT=P_CONFIG_BDC;VA=0;|PA;IT=P_CONFIG_MB;VA=0;|PA;IT=P_CONFIG_MT;VA=0;|PA;IT=P_CONFIG_IS;VA=1,2,3,4,5,8,9,10,11;|PA;I...",
+      "text_hits": {
+        "contains_terms": [],
+        "markers": [
+          "EV",
+          "MG",
+          "MA",
+          "PA",
+          "40"
+        ],
+        "fixture_ids": [],
+        "market_ids": [
+          "40"
+        ]
+      },
+      "body_path": "bodies/ws-00015-websocket.txt",
+      "score": 14
+    },
+    {
+      "id": "ws-00016",
+      "type": "websocket_frame",
+      "timestamp": 1778287449.360994,
+      "event_type": "Network.webSocketFrameReceived",
+      "url": null,
+      "request_id": "86970.9",
+      "opcode": 1,
+      "payload_size": 23590,
+      "body_kind": "websocket_text",
+      "body_preview": "\u0014PV_CHARTS\u0001F|EV;ID=;IT=PV_CHARTS;|MA;ID=1;IT=PV_CHART_1;OR=0;|PA;ID=1;IT=PV_CHART_1_1;LR=1;OR=0;PV=0;UR=1.001;|PA;ID=2;IT=PV_CHART_1_2;LR=1.001;OR=1;PV=0;UR=1.002;|PA;ID=3;IT=PV_CHART_1_3;LR=1.002;OR=2;PV=0.001;UR=1.003;|PA;ID=4;IT=PV_CHART_1_4;LR=1.003;OR=3;PV=0.001;UR=1.004;|PA;ID=5;IT=PV_CHART_1_5;LR=1.004;OR=4;PV=0.001;UR=1.006;|PA;ID=6;IT=PV_CHART_1_6;LR=1.006;OR=5;PV=0.001;UR=1.008;|PA;ID=7;IT=PV_CHART_1_7;LR=1.008;OR=6;PV=0.001;UR=1.01;|PA;ID=8;IT=PV_CHART_1_8;LR=1.01;OR=7;PV=0.002;UR=1.015;|PA;ID=9;IT=PV_CHART_1_9;LR=1.015;OR=8;PV=0.003;UR=1.02;|PA;ID=10;IT=PV_CHART_1_10;LR=1.02;OR=9;PV=0.004;UR=1.025;|PA;ID=11;IT=PV_CHART_1_11;LR=1.025;OR=10;PV=0.005;UR=1.03;|PA;ID=12;IT=PV_CHART_1_12;LR=1.03;OR=11;PV=0.005;UR=1.04;|PA;ID=13;IT=PV_CHART_1_13;LR=1.04;OR=12;PV=0.008;UR=1.05;|PA;ID=14;IT=PV_CHART_1_14;LR=1.05;OR=13;PV=0.01;UR=1.06;|PA;ID=15;IT=PV_CHART_1_15;LR=1.06;OR=14;PV=0.01;UR=1.08;|PA;ID=16;IT=PV_CHART_1_16;LR=1.08;OR=15;PV=0.015;UR=1.1;|PA;ID=17;IT=PV_CHART_1_17;LR=1.1;OR=16;PV=0.02;UR=1.12;|PA;ID=18;IT=PV_CHART_1_18;LR=1.12;OR=17;PV=0.025;UR=1.15;|PA;ID=19;IT=PV_CHART_1_19;LR=1.15;OR=18;PV=0.03;UR=1.2;|PA;ID=20;IT=PV_CHART_1_20;LR=1.2;OR=19;PV=0.03;UR=1.25;|PA;ID=21;IT=PV_CHART_1_21;LR=1.25;OR=20;PV=0.03;UR=1.3;|PA;ID=22;IT=PV_CHART_1_22;LR=1.3;OR=21;PV=0.03;UR=1.35;|PA;ID=23;IT=PV_CHART_1_23;LR=1.35;OR=22;PV=0.03;UR=1.4;|PA;ID=24;IT=PV_CHART_1_24;LR=1.4;OR=23;PV=0.03;UR=1.45;|PA;ID=25;IT=PV_CHART_1_25;LR=1.45;OR=24;PV=0.03;UR=1.5;|PA;ID=26;IT=PV_CHART_1_26;L...",
+      "text_hits": {
+        "contains_terms": [],
+        "markers": [
+          "EV",
+          "MA",
+          "PA",
+          "40"
+        ],
+        "fixture_ids": [],
+        "market_ids": [
+          "40"
+        ]
+      },
+      "body_path": "bodies/ws-00016-websocket.txt",
+      "score": 12
+    },
+    {
+      "id": "ws-00011",
+      "type": "websocket_frame",
+      "timestamp": 1778287447.6787388,
+      "event_type": "Network.webSocketFrameReceived",
+      "url": null,
+      "request_id": "86970.9",
+      "opcode": 1,
+      "payload_size": 12240,
+      "body_kind": "websocket_text",
+      "body_preview": "\u0014P-ENDP\u0001F|EV;ID=;IT=P-ENDP;|MG;ID=;IT=ENDP;|MA;AD=;ED=B:3,12,15,16,17,18~K^:6;EX=AC;IT=bbp;NA=/matchmarketscontentapi/betbuilder;OT=171;|MA;AD=;ED=B:1,12,13,14,15,16,17,18~D:1002,1003,7,29,43,47,48,512,516,517,522,700,701,702,705,706~S^:1;EX=AC;IT=mmsp;NA=/matchmarketscontentapi/partial;OT=240;|MA;AD=;ED=B:2,4,73,88~C:1~D:17;EX=AC;IT=n3;NA=/racecouponcontentapi/next3;OT=310;|MA;AD=;ED=B:6~Y:15;EX=AN;IT=lc365;NA=/lottocontentapi/coupon365;OT=640;|MA;AD=;ED=B:78,91~D:1002~Q:1~F^:3,12,24;EX=AC;IT=osum;NA=/othersportsmatchmarketscontentapi/upcomingmatches;OT=842;|MA;AD=;ED=B:2,4,88~C:101,102,103,104~E:174,407,462,559,20006,20009,20010,20011,20016,20017,20024,20058,20078,20080,20104,20105,20106,230565,230700,702,738,40000,40001,40002,40004,40007,40010,40224,880005,880006,880007,880013,880212;EX=AC;IT=aps;NA=/antepostcontentapi/antepostcoupon;OT=280;|MA;AD=;ED=B:2,4,24,88,145,146,2019,2020,2021,2023,2024,2022,2026,2028,2029,2030,2031,2032,2033,2034~V^:1,4;EX=AC;IT=vs;NA=/virtualsportscontentapi/coupon;OT=320;|MA;AD=;ED=B:2,4,73,88,2021,2110;EX=AA;IT=rr;NA=/raceresultcontentapi/race;OT=350;|MA;AD=;ED=B:1~I^:16,17,18,20,21~J^:1;EX=AM;IT=secm;NA=/specialeventcontentapi/changemarket;OT=480;|MA;AD=;ED=B:1,2,3,4,7,8,10,12,13,15,16,17,18,19,36,91;EX=PU;IT=pndc;NA=/pushnotificationdialogcontentapi/pushnotifications;OT=1130;|MA;AD=;ED=B:1,12,13,14,15,16,17,18~D:1002,1003,7,29,43,47,48,512,516,517,522,700,701,702,705,706;EX=AC;IT=mms;NA=/matchmarketscontentapi/markets;OT=250;|MA;AD=;ED=B:...",
+      "text_hits": {
+        "contains_terms": [],
+        "markers": [
+          "EV",
+          "MG",
+          "MA",
+          "PA",
+          "40"
+        ],
+        "fixture_ids": [],
+        "market_ids": []
+      },
+      "body_path": "bodies/ws-00011-websocket.txt",
+      "score": 10
+    },
+    {
+      "id": "ws-00014",
+      "type": "websocket_frame",
+      "timestamp": 1778287449.3574662,
+      "event_type": "Network.webSocketFrameReceived",
+      "url": null,
+      "request_id": "86970.9",
+      "opcode": 1,
+      "payload_size": 12240,
+      "body_kind": "websocket_text",
+      "body_preview": "\u0014P-ENDP\u0001F|EV;ID=;IT=P-ENDP;|MG;ID=;IT=ENDP;|MA;AD=;ED=B:3,12,15,16,17,18~K^:6;EX=AC;IT=bbp;NA=/matchmarketscontentapi/betbuilder;OT=171;|MA;AD=;ED=B:1,12,13,14,15,16,17,18~D:1002,1003,7,29,43,47,48,512,516,517,522,700,701,702,705,706~S^:1;EX=AC;IT=mmsp;NA=/matchmarketscontentapi/partial;OT=240;|MA;AD=;ED=B:2,4,73,88~C:1~D:17;EX=AC;IT=n3;NA=/racecouponcontentapi/next3;OT=310;|MA;AD=;ED=B:6~Y:15;EX=AN;IT=lc365;NA=/lottocontentapi/coupon365;OT=640;|MA;AD=;ED=B:78,91~D:1002~Q:1~F^:3,12,24;EX=AC;IT=osum;NA=/othersportsmatchmarketscontentapi/upcomingmatches;OT=842;|MA;AD=;ED=B:2,4,88~C:101,102,103,104~E:174,407,462,559,20006,20009,20010,20011,20016,20017,20024,20058,20078,20080,20104,20105,20106,230565,230700,702,738,40000,40001,40002,40004,40007,40010,40224,880005,880006,880007,880013,880212;EX=AC;IT=aps;NA=/antepostcontentapi/antepostcoupon;OT=280;|MA;AD=;ED=B:2,4,24,88,145,146,2019,2020,2021,2023,2024,2022,2026,2028,2029,2030,2031,2032,2033,2034~V^:1,4;EX=AC;IT=vs;NA=/virtualsportscontentapi/coupon;OT=320;|MA;AD=;ED=B:2,4,73,88,2021,2110;EX=AA;IT=rr;NA=/raceresultcontentapi/race;OT=350;|MA;AD=;ED=B:1~I^:16,17,18,20,21~J^:1;EX=AM;IT=secm;NA=/specialeventcontentapi/changemarket;OT=480;|MA;AD=;ED=B:1,2,3,4,7,8,10,12,13,15,16,17,18,19,36,91;EX=PU;IT=pndc;NA=/pushnotificationdialogcontentapi/pushnotifications;OT=1130;|MA;AD=;ED=B:1,12,13,14,15,16,17,18~D:1002,1003,7,29,43,47,48,512,516,517,522,700,701,702,705,706;EX=AC;IT=mms;NA=/matchmarketscontentapi/markets;OT=250;|MA;AD=;ED=B:...",
+      "text_hits": {
+        "contains_terms": [],
+        "markers": [
+          "EV",
+          "MG",
+          "MA",
+          "PA",
+          "40"
+        ],
+        "fixture_ids": [],
+        "market_ids": []
+      },
+      "body_path": "bodies/ws-00014-websocket.txt",
+      "score": 10
+    },
+    {
+      "id": "ws-00023",
+      "type": "websocket_frame",
+      "timestamp": 1778287449.470409,
+      "event_type": "Network.webSocketFrameSent",
+      "url": null,
+      "request_id": "86970.9",
+      "opcode": 1,
+      "payload_size": 1477,
+      "body_kind": "websocket_text",
+      "body_preview": "\u0016\u0000PM194165792-PC1229145530,PM194259715-PC1241803294,PM194165792-1229145530,PM194259715-1241803294,PM194165792-1229145533,PM194259715-1241803300,PM194165792-1229145534,PM194259715-1241803301,A_AzQABAC6AAEtGm8T8LAQFQ3PFuSZbZDbiKoJvkEYppERurqJr+RK9dsIUT497MgYfSSWNpgOsv31g27SKg56Iu8i8vyS0bijU+XaCr9C+VfyxliOBmUC52eYw8vpbv6pepaDQRHqDoiYFrvb8en1R8DSM1vi569/8ycyb/mEbvJ/R2AIFfdEjzHgM0oVmBIAOSHbcyuEsUsE2SXFE2ch+iIHCpKMdWpCGgNWoYmRXvSjJIWap5aF6qJNJ37BBwsHUdgANHCDB2EgM80qUDy5DUIu3T++ZDYV5VpdU86+4hVV1TO40gtwGQqhiYvvsotN08b/ysFLS+CoN21ETWf36fl63eRyS7cSd04fG23tmOUx5eOhrwwAwmJ8OOXl1rUxdj+z4nB3hObFw05AjBVUcLRq8KOqA3HDnyED51/LSTtO1OZFAJAL4a+new/Ol9HsMUXCGimUaCeYGZR7QH0RZNjthf2UGvrBT3SdYGxykh3UkiTGGhF9Lf8LFoxcuB1rxw/uDHVn1o0ovJDGAazAl9aVIiXbgQGq73aPVFPEo588KqttSTjW32/ns3nG0kn3zY7Ke1N9mf4+PF/g5XtXSo1s4KvsWDq7QjZoF1uj/Inba8b927J7X3CKnFISKW/NWTbW/CkJoxOITq6huiT+XsV6xx6Jq8shnzfvR0wGq514FPOHZ6amoORNFhM18nuXXia0Pw72aPnC/P33mE4JMyq2iCOgRUGzrnpGpbhcVeB7ZvQxtcRD+UJOkhmZsr5nBKul41d28yAVWsnXQREvRnnj6RkmPi5/f/FD4530jSRxAWnC6g1jsmaFRCwKKAhTQAOp+zbpG/fajhVtlR6kcgQuLS+0fATyHqsVG+abLaO39vNifMwZtU3N4PXH3Y/bxKQTJ9xDf4bm5emQHEqubAUSKhQqQoXxlvk9y1pp+hkboa6mI5P2nYbkh9wKArdPSfwYsuc6BKvO3AZ1ZzkUZF0Ma4CuHNH7iew/7VQAog2UXyPseCTC8T7SSiR4RH6xtM+3Oly8XAsRKlCaPIw29BQzUyt5bjLlDw/LZ4L50JlAVvQwewf2FzV+7VqJlkLNwOHKF9j7/2pst0sXshXn+7jVbAVhPhnAQt5pnH0pRtVz54aINBS42+L7zPlmOZ068A8p70ISXHn55QSOOLRA3W0vSJx7ewyIWJaTNszCDzA3Jm2k2wIsylTcamHw3VDqFTCnghERtQJP3e+CuTyisE7ZfnYgLEvELctFh7HNgD0BC5kmaa6wpLCwSIAsLz8Hh0o=\u0001",
+      "text_hits": {
+        "contains_terms": [],
+        "markers": [
+          "EV",
+          "MG",
+          "MA",
+          "PA",
+          "40"
+        ],
+        "fixture_ids": [],
+        "market_ids": []
+      },
+      "body_path": "bodies/ws-00023-websocket.txt",
+      "score": 10
+    },
+    {
+      "id": "ws-00006",
+      "type": "websocket_frame",
+      "timestamp": 1778287447.2873988,
+      "event_type": "Network.webSocketFrameSent",
+      "url": null,
+      "request_id": "86970.9",
+      "opcode": 1,
+      "payload_size": 1282,
+      "body_kind": "websocket_text",
+      "body_preview": "#\u0003P\u0001__time,P-ENDP,S_C52562599FC1CDCE98F00221550C9048000003,A_AzQABAC6AAEtGm8T8LAQFQ3PFuSZbZDbiKoJvkEYppERurqJr+RK9dsIUT497MgYfSSWNpgOsv31g27SKg56Iu8i8vyS0bijU+XaCr9C+VfyxliOBmUC52eYw8vpbv6pepaDQRHqDoiYFrvb8en1R8DSM1vi569/8ycyb/mEbvJ/R2AIFfdEjzHgM0oVmBIAOSHbcyuEsUsE2SXFE2ch+iIHCpKMdWpCGgNWoYmRXvSjJIWap5aF6qJNJ37BBwsHSRsd4EuzeaMaYkkyRLNyQSJibzziFEO6n3MXMlNlZlYkRO3IAzlBYwrWMYRIW9ZgSxBXV96ILabregsRSzd4SJKxqLf71yo8+hcjnxxTkRG4VSAjXcBf1o+Ws/fJsFx4A9p0Pnj2dw753K3okL8t5jE/ZtOJgT9Aw4BcDQmUMD+I2MXY4WTIVs6+1ozL5koPBYd2YhFyGtTtOuVr2AIHPf+nmq6kVKScFL2pDFnAA7yEyYiaSH+AI2X7bK8AJCFtDZJtGJ+cAnK8KIihFXXWUljDHpEYL5d+766dWlH3sQqtMkMXSyHCplxpd3uldCKcvE8mUkdOxY9vGx1pMQI1DHGtTdIH/jtpOsxWhWeDRv7epDlo27szABtk+aKUQZOkx9grh6Mb7b6069KuGJ0LsgacYgxJHaZyBKFQd3oGwZqjqgJSfFhQf77SZh0i8jsJwhsDZtnimiCrI9b6skmliK7owtJlnpytEDZ8z6WqI7uvnRgWQOipJThazPl/VeMZtBNuj8cQSS+QluwT5/0ikygSw4qAd1+O88w4cliMrLDnndaUFOVDu44m2O+ITv8qk3O9zPx0YxVE/r1NgktGnRMuAUrlPpT0bkD/iH+EdfS+XBSTEXrnqjW/6Zt5a4SauaGY4syN++eYZvx8CDzD1vBFMkoi7D6VprobnUFY8Hxom1b8+OtaeeBy7gpLaTU3uQa46kk339vKFdqOVb6sEdEV6cWFJxLdcBFnJgxAzUTl7UcysIB25OZfsCtAHQp5YfWhrEtAaAvbV0H7Djn5Z3bHQUMLOvrEcpUol8YPG1Bgz5l0jCUM21FrG/8xBLWxf7BWhz3tkymaAxr8ClNlxfNbeQpHn73x1l3BIZOZeAuUXMQReZ8UPZqbtzGPbbH/FROUVQycR++21VgoPEMVvO6oOG7JzeLqiCZfEWlgLr9/KN8zsfx2Gx32MPUN4PXJQhHb\u0000",
+      "text_hits": {
+        "contains_terms": [],
+        "markers": [
+          "EV",
+          "MG",
+          "MA",
+          "PA"
+        ],
+        "fixture_ids": [],
+        "market_ids": []
+      },
+      "body_path": "bodies/ws-00006-websocket.txt",
+      "score": 8
+    }
+  ],
+  "conclusions": [
+    "Hay responses HTTP candidatas que contienen fixture IDs y market IDs. Vale la pena intentar replay HTTP puro.",
+    "Hay tráfico WebSocket candidato. Conviene revisar si los datos de mercado viajan por frames y si son repetibles fuera del navegador."
+  ]
+}

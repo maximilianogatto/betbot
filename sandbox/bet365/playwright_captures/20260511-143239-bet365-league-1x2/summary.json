@@ -1,0 +1,15 @@
+{
+  "source_url": "https://www.bet365.es/#/AC/B1/C1/D1002/E120757998/G40/",
+  "expected_pd": "#AC#B1#C1#D1002#E120757998#G40#",
+  "useful_payloads": 0,
+  "matches_count": 0,
+  "matches": [],
+  "debug_responses": [
+    {
+      "url": "https://www.bet365.es/matchmarketscontentapi/markets?lid=3&zid=0&pd=%23AC%23B1%23C1%23D1002%23E120757998%23G40%23&cid=171&cgid=4&ctid=171",
+      "status": 403,
+      "resource_type": "xhr",
+      "preview": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\"><meta name=\"robots\" content=\"noindex,nofollow\"><meta name=\"viewport\" content=\"width=device-width,initial-scal"
+    }
+  ]
+}

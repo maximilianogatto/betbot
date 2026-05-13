@@ -19,6 +19,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from datetime import datetime, timezone
+import json
 import logging
 from pathlib import Path
 import sqlite3
@@ -270,6 +271,23 @@ class ActiveEventRecord:
     @property
     def kickoff_at(self) -> str | None:
         return self.scheduled_at
+
+    @property
+    def stats_url(self) -> str | None:
+        normalized_payload = (self.raw_payload_json or "").strip()
+        if not normalized_payload:
+            return None
+
+        try:
+            payload = json.loads(normalized_payload)
+        except json.JSONDecodeError:
+            return None
+
+        if not isinstance(payload, dict):
+            return None
+
+        stats_url = payload.get("stats_url")
+        return stats_url.strip() if isinstance(stats_url, str) and stats_url.strip() else None
 
 
 @dataclass(frozen=True)
@@ -1235,6 +1253,17 @@ class SqliteTrackingRepository:
                 raise ValueError("No encontré ese little change para este chat.")
 
             record = _row_to_small_change_record(row)
+            active_event_row = connection.execute(
+                """
+                SELECT markets_json
+                FROM active_events
+                WHERE id = ?
+                """,
+                (record.active_event_id,),
+            ).fetchone()
+            baseline_markets_json = None
+            if active_event_row is not None:
+                baseline_markets_json = _normalize_optional_text(active_event_row["markets_json"])
             connection.execute(
                 """
                 INSERT INTO user_event_baselines (
@@ -1247,7 +1276,7 @@ class SqliteTrackingRepository:
                     baseline_set_at,
                     updated_at
                 )
-                VALUES (?, ?, ?, ?, ?, NULL, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(chat_id, active_event_id) DO UPDATE SET
                     baseline_odds_home = excluded.baseline_odds_home,
                     baseline_odds_draw = excluded.baseline_odds_draw,
@@ -1262,6 +1291,7 @@ class SqliteTrackingRepository:
                     _coerce_optional_float(record.current_home),
                     _coerce_optional_float(record.current_draw),
                     _coerce_optional_float(record.current_away),
+                    baseline_markets_json,
                     now_iso,
                     now_iso,
                 ),
@@ -2862,7 +2892,7 @@ def _is_past_scheduled_at(raw_value: str | None, reference: datetime) -> bool:
     if parsed is None:
         return False
 
-    return parsed < reference
+    return parsed <= reference
 
 
 def _is_future_or_unscheduled(raw_value: str | None, reference: datetime) -> bool:
@@ -2873,7 +2903,7 @@ def _is_future_or_unscheduled(raw_value: str | None, reference: datetime) -> boo
     if parsed is None:
         return True
 
-    return parsed >= reference
+    return parsed > reference
 
 
 def _utc_now_iso() -> str:

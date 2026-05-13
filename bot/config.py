@@ -21,6 +21,14 @@ class Settings:
     extractor_max_parallel_pages: int = 3
     extractor_page_load_timeout_ms: int = 60_000
     extractor_post_load_wait_ms: int = 4_000
+    extractor_headless: bool = True
+    extractor_capture_wait_timeout_ms: int = 25_000
+    extractor_capture_stable_ms: int = 1_500
+    extractor_event_capture_wait_timeout_ms: int = 20_000
+    extractor_event_capture_stable_ms: int = 1_200
+    extractor_save_debug_payloads: bool = False
+    extractor_debug_payload_dir: str | None = None
+    extractor_extract_alternative_markets: bool = False
     tracking_default_change_threshold_percent: float = 20.0
     tracking_default_notify_odds_changes: bool = True
     enable_monitoring: bool = False
@@ -80,6 +88,32 @@ def load_settings() -> Settings:
         ),
         variable_name="EXTRACTOR_POST_LOAD_WAIT_MS",
     )
+    extractor_headless = _parse_bool(os.getenv("EXTRACTOR_HEADLESS", "true"))
+    extractor_capture_wait_timeout_ms = _parse_positive_int(
+        os.getenv("EXTRACTOR_CAPTURE_WAIT_TIMEOUT_MS", "25000"),
+        variable_name="EXTRACTOR_CAPTURE_WAIT_TIMEOUT_MS",
+    )
+    extractor_capture_stable_ms = _parse_positive_int(
+        os.getenv("EXTRACTOR_CAPTURE_STABLE_MS", "1500"),
+        variable_name="EXTRACTOR_CAPTURE_STABLE_MS",
+    )
+    extractor_event_capture_wait_timeout_ms = _parse_positive_int(
+        os.getenv("EXTRACTOR_EVENT_CAPTURE_WAIT_TIMEOUT_MS", "20000"),
+        variable_name="EXTRACTOR_EVENT_CAPTURE_WAIT_TIMEOUT_MS",
+    )
+    extractor_event_capture_stable_ms = _parse_positive_int(
+        os.getenv("EXTRACTOR_EVENT_CAPTURE_STABLE_MS", "1200"),
+        variable_name="EXTRACTOR_EVENT_CAPTURE_STABLE_MS",
+    )
+    extractor_save_debug_payloads = _parse_bool(
+        os.getenv("EXTRACTOR_SAVE_DEBUG_PAYLOADS", "false")
+    )
+    extractor_debug_payload_dir = _normalize_optional_text(
+        os.getenv("EXTRACTOR_DEBUG_PAYLOAD_DIR")
+    )
+    extractor_extract_alternative_markets = _parse_bool(
+        os.getenv("EXTRACTOR_EXTRACT_ALTERNATIVE_MARKETS", "false")
+    )
     tracking_default_change_threshold_percent = _parse_positive_float(
         os.getenv("TRACKING_DEFAULT_CHANGE_THRESHOLD_PERCENT", "20.0"),
         variable_name="TRACKING_DEFAULT_CHANGE_THRESHOLD_PERCENT",
@@ -111,6 +145,14 @@ def load_settings() -> Settings:
         extractor_max_parallel_pages=extractor_max_parallel_pages,
         extractor_page_load_timeout_ms=extractor_page_load_timeout_ms,
         extractor_post_load_wait_ms=extractor_post_load_wait_ms,
+        extractor_headless=extractor_headless,
+        extractor_capture_wait_timeout_ms=extractor_capture_wait_timeout_ms,
+        extractor_capture_stable_ms=extractor_capture_stable_ms,
+        extractor_event_capture_wait_timeout_ms=extractor_event_capture_wait_timeout_ms,
+        extractor_event_capture_stable_ms=extractor_event_capture_stable_ms,
+        extractor_save_debug_payloads=extractor_save_debug_payloads,
+        extractor_debug_payload_dir=extractor_debug_payload_dir,
+        extractor_extract_alternative_markets=extractor_extract_alternative_markets,
         tracking_default_change_threshold_percent=tracking_default_change_threshold_percent,
         tracking_default_notify_odds_changes=tracking_default_notify_odds_changes,
         enable_monitoring=enable_monitoring,
@@ -164,3 +206,8 @@ def _parse_bool(raw_value: str) -> bool:
 
     normalized_value = raw_value.strip().lower()
     return normalized_value in {"1", "true", "yes", "on", "si", "sí"}
+
+
+def _normalize_optional_text(raw_value: str | None) -> str | None:
+    normalized_value = (raw_value or "").strip()
+    return normalized_value or None

@@ -1,0 +1,88 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://www.bet365.es/matchmarketscontentapi/markets?lid=3&zid=0&pd=%23AC%23B1%23C1%23D1002%23E130740247%23G40%23&cid=171&cgid=4&ctid=171",
+    "headers": {
+      "accept": "*/*",
+      "accept-language": "es-419,es;q=0.9",
+      "cookie": "rmbs=3; aps03=cf=N&cg=4&cst=0&ct=171&hd=N&lng=3&oty=2&tzi=4; pers=id=52792c5d-6820-4d1f-bfaf-c22121a5eaa3&pc=00&username=TEMP; swt=AfAdjt/4k2OnBAqYXsuDfQeaamAGfEAFQrgIJYBIVRA8KcvZX+oic1H34xmYuY+U/jvb9uSBtiysWO47ORcaaBO7hb3RYznzxmsg14VJfVnQRjSwfK653fyxWqK7Iwqz2iqEDJtUGURyYgW+Uf+D9LtOUy1EZCDJ/PAhuJOciILWoBhdKtcxPtT6RlYwd1iS; pstk=5750E4AF7AFC71F1BDA8854C5DD93D86000003; __cf_bm=Pub0..Z4cbaPjsmBMuPe1gLL7daBKjDBauq6s7pxMus-1778288399-1.0.1.1-K7EckpOkhkUcWtdWyna3xXOoz89yoqfvrm2dOMpqRrwZQK.Ur4KKKgg6r9OBSJinVsiX3L47_Xeuk6qotpqJcrEn3glai0Kxcbi2zm1.YEM",
+      "priority": "u=1, i",
+      "referer": "https://www.bet365.es/",
+      "sec-ch-ua": "\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"macOS\"",
+      "sec-fetch-dest": "empty",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-site": "same-origin",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
+      "x-net-sync-term": "AzQABAC6AAGSR7wchHphOQJEPGYIZ8tDZQCTiBRTexiveuAIcT09yhrdg7eV9KrBhV7/bLk0LTXuqmfLfzjKbrnW7si0KPXZP1JfeO/WW8q9tqcHvcZUU1o27HXFNnkUYwZguXHFMoNIZkpjmKw0gckt/vuQNBfVwxoCzREp6QN2gEjNkpxxmtJH7Y3ohS8vP9FYSnmR6fmvxnxhjPq6s/xhEg3FO0UtkvtL2h+0siYpNFHE/Yx4TpL1IiN0RTbjL9TIE3Lz3Kh75j3tKA7VDv+jSVF5+j06CrFNWdXHZAwXLnbz/+J569d0qiVGKkwPVVbJJh/rBAzzvtORZ1Wmo/wsLwmHBsg09bg+DfAN0sYIDWBX+CW7QUFb/YkR6HR6jBZW+L9mMvWTMoTd71BMrWPxVV2sFPXbIM+cp7tg1kTd4nlcvIPSR0O3YEFfl1d2jBWgjbStLZeGyrAbXOwiVOfbaW9/MzOA8ynhmR4jhgnWFPrSX19JivAYin14ZL5HpJyDL/wFcvisgerUMGH4w8wZm2v3gh9RnjysHNS8YUxUdc7LSOQLjjNVGZJhTqYiK4Y1wNiBnYINTfsgPVZvh8TWi8V4h9E0B8bp01LzO6h6qP4on9WvkZgt7uvT92aiiV3bgfFaBNcpRcIyHFo5PHNhfIK6DVeKYq6HwlWnXjYZAc1FITwVmBdzEmEo+4yXwGFAkbOUF0CtV63C6S7TYl865Rb+LLWcjNK2Mni9UmxmGW1g91ng358ImhWTdtdfGsZliRZDLclUvAMWH15dKJ/+QzflvfFRb4nymTN37A3C5+F2r3TGNAoTny58jwZKJnEsTt9WDTHy9tDuX7BVPjH0IdLdDHkbk7lWLMEmKRM40pPK/Jm0lPRDNRuOGjutV1EHkhBaX5xFhQkKDUU2OKVf+AdlWgXHIzppQcvEJFAHKRmmbaWx6q1qVPgXs3XINsK1ftLQvsMVnZ9DlpOEqdcixSH7GaND9LS1KoQv+9E8NVGabhsRis16QUj5r+UC5AYhedV4Zwn5cy+JgRVEd+HPAoyput/7STKq2z0BU9NGvS4yBe52Ys74wFR2vT+Xtnu28Ha2G09YguOH1wQ0cuRX4d9Cvo3JRzr9CxGgwE//liC55rx4ShOq9J5rkGbyYDVzofShKgdduPv5H2grKJ7ju05T8FwVTZh5uIRQJW+mdhakf27YA3kxDk3LHQtuxqMwdBz09VInLGzPcCqjlMsmQa1RZNKMGO1z4wTKX+JhvXAdEox52Lexm603/fk/m9J1/Ht2TbsFNLaqHm+1eQCU6DLvqNQdt20fUE7ANfNp4modDIdisoPtONZcSrCIwmS9VGvKZ/DUIQJ7+naMXpohVQ25egu7/khJ0ffj+F371hrFSd49/PmQ7g8bF6JdI+BeITeDX1od4NRYsoqzqjPDknKP61uVXDoM0TydpLeO+ykudOEoOLV7hzHyCCig6CRSb/ua",
+      "x-request-id": "c7277785-1dca-0fbd-e807-bfac5e676cc2"
+    },
+    "cookies_count": 8,
+    "warmup_urls": [],
+    "http2": false,
+    "trust_env": false
+  },
+  "response": {
+    "status_code": 403,
+    "http_version": "HTTP/1.1",
+    "headers": {
+      "date": "Sat, 09 May 2026 01:02:04 GMT",
+      "content-type": "text/html; charset=UTF-8",
+      "connection": "keep-alive",
+      "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+      "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+      "referrer-policy": "same-origin",
+      "x-frame-options": "SAMEORIGIN",
+      "set-cookie": "__cf_bm=sQg5WG1ICpyAzI9ol6RteJYxZAGjAbcyBsl3W1Mgp2Y-1778288524.3664498-1.0.1.1-k1mAf.92WFVgQvphW387QS8rM5U7AM_BiEYY9juUfzlu2Z342Zsoqg7JjIbEuI_34btSFNMPP6uzU_RZJ2Pjo_rvB.GPZ9uIIM9drMFRzOacUgLmYo3Ure32AbRlzg4N; HttpOnly; Secure; Path=/; Domain=bet365.es; Expires=Sat, 09 May 2026 01:32:04 GMT",
+      "server": "cloudflare",
+      "cf-ray": "9f8cc6cd4e7a0c2c-EZE"
+    },
+    "content_type": "text/html; charset=UTF-8",
+    "body_size": 4545,
+    "body_hash": "cf707f085a979985c352fa3e7d6d957f3cf82712bec03d95d1252b751f4fe37c",
+    "body_encoding": "utf-8",
+    "body_kind": "html",
+    "body_preview": "<!DOCTYPE html>\n<!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 7]>    <html class=\"no-js ie7 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 8]>    <html class=\"no-js ie8 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en-US\"> <!--<![endif]-->\n<head>\n<title>Attention Required! | Cloudflare</title>\n<meta charset=\"UTF-8\" />\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\" />\n<meta name=\"robots\" content=\"noindex, nofollow\" />\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\n<link rel=\"stylesheet\" id=\"cf_styles-css\" href=\"/cdn-cgi/styles/cf.errors.css\" />\n<!--[if lt IE 9]><link rel=\"stylesheet\" id='cf_styles-ie-css' href=\"/cdn-cgi/styles/cf.errors.ie.css\" /><![endif]-->\n<style>body{margin:0;padding:0}</style>\n\n\n<!--[if gte IE 10]><!-->\n<script>\n  if (!navigator.cookieEnabled) {\n    window.addEventListener('DOMContentLoaded', function () {\n      var cookieEl = document.getElementById('cookie-alert');\n      cookieEl.style.display = 'block';\n    })\n  }\n</script>\n<!--<![endif]-->\n\n</head>\n<body>\n  <div id=\"cf-wrapper\">\n    <div class=\"cf-alert cf-alert-error cf-cookie-error\" id=\"cookie-alert\" data-translate=\"enable_cookies\">Please enable cookies.</div>\n    <div id=\"cf-error-details\" class=\"cf-error-details-wrapper\">\n      <div class=\"cf-wrapper cf-header cf-error-overview\">\n        <h1 data-translate=\"block_headline\">...",
+    "json_top_level": null,
+    "body_path": "replays/replay-captured-no-vpn-captured-response-00089-www-bet365-es-matchmarketscontentapi-markets-lid-3-zid-0-pd-23ac-23b1-23c1-23d1002-23e130740247-23g40-23-cid-171-.body.txt",
+    "text_hits": {
+      "contains_terms": [],
+      "markers": [
+        "EV",
+        "MA",
+        "PA",
+        "40"
+      ],
+      "fixture_ids": [],
+      "market_ids": [
+        "40"
+      ]
+    }
+  },
+  "candidate": {
+    "id": "response-00089",
+    "captured_status": 200,
+    "captured_body_hash": null,
+    "captured_body_kind": "text",
+    "captured_resource_type": "xhr",
+    "captured_body_path": null
+  },
+  "comparison": {
+    "same_status": false,
+    "same_body_hash": false,
+    "text_hits": {
+      "contains_terms": [],
+      "markers": [
+        "EV",
+        "MA",
+        "PA",
+        "40"
+      ],
+      "fixture_ids": [],
+      "market_ids": [
+        "40"
+      ]
+    }
+  }
+}

@@ -296,6 +296,13 @@ class Bet365ExtractorSettings:
     page_load_timeout_ms: int = 60_000
     post_load_wait_ms: int = 4_000
     headless: bool = True
+    capture_wait_timeout_ms: int = 25_000
+    capture_stable_ms: int = 1_500
+    event_capture_wait_timeout_ms: int = 20_000
+    event_capture_stable_ms: int = 1_200
+    save_debug_payloads: bool = False
+    debug_payload_dir: str | None = None
+    extract_alternative_markets: bool = False
 
 
 @dataclass(frozen=True)

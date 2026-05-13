@@ -51,7 +51,7 @@ HELP_MESSAGE = (
     "/platforms - Plataformas soportadas\n"
     "/ping - Responde pong\n"
     "/status - Informa si el bot está online\n"
-    "/stats - Muestra métricas simples de recursos\n"
+    "/resources - Muestra métricas simples de recursos\n"
     "/echo <texto> - Devuelve el texto enviado\n\n"
     "Tracking de ligas\n"
     "/track_url <url> - Extrae una liga de una plataforma soportada y la deja pendiente\n"
@@ -65,6 +65,7 @@ HELP_MESSAGE = (
     "Consulta de partidos\n"
     "/matches - Permite elegir una liga y ver sus partidos\n"
     "/event_url <n> - Muestra la URL directa de un partido de la última lista de /matches\n\n"
+    "/stats <n> - Muestra la URL de stats del partido de la última lista de /matches\n\n"
     "Configuración de odds\n"
     "/odds_on - Activa notificaciones de cambios de odds para una liga\n"
     "/odds_off - Desactiva notificaciones de cambios de odds para una liga\n"
@@ -86,11 +87,12 @@ GUIDE_MESSAGE = (
     "5. /competition_url <n>\n"
     "6. /matches\n"
     "7. /event_url <n>\n"
-    "8. /update_track_url <n> <url> si el link cambió\n"
-    "9. /odds_on\n"
-    "10. /set_change_percent 20\n"
-    "11. /check_little_changes\n"
-    "12. /confirm_change <n> o /confirm_all_little_changes"
+    "8. /stats <n>\n"
+    "9. /update_track_url <n> <url> si el link cambió\n"
+    "10. /odds_on\n"
+    "11. /set_change_percent 20\n"
+    "12. /check_little_changes\n"
+    "13. /confirm_change <n> o /confirm_all_little_changes"
 )
 
 TRACK_URL_USAGE_MESSAGE = (
@@ -122,6 +124,13 @@ EVENT_URL_USAGE_MESSAGE = (
     "Primero corré /matches, elegí una liga y después pedí el link del partido.\n"
     "Ejemplo:\n"
     "/event_url 3"
+)
+
+STATS_URL_USAGE_MESSAGE = (
+    "Usá /stats <número_visible_en_/matches>.\n"
+    "Primero corré /matches, elegí una liga y después pedí las stats del partido.\n"
+    "Ejemplo:\n"
+    "/stats 3"
 )
 
 
@@ -220,16 +229,64 @@ async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     await update.message.reply_text("El bot está online y funcionando correctamente.")
 
 
-async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle the `/stats` command with runtime resource metrics."""
-
-    del context
+async def resources_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle `/resources` with runtime resource metrics."""
 
     if update.message is None:
         return
 
     metrics = get_system_metrics()
     await update.message.reply_text(format_system_metrics_message(metrics))
+
+
+async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle `/stats <event_number>` using the latest `/matches` context."""
+
+    if update.message is None:
+        return
+
+    logger.info("Comando /stats recibido.")
+
+    if len(context.args) != 1 or not context.args[0].isdigit():
+        await update.message.reply_text(STATS_URL_USAGE_MESSAGE)
+        return
+
+    active_matches = context.user_data.get(MATCHES_ACTIVE_CONTEXT_KEY)
+    tracked_subscription = context.user_data.get(MATCHES_SELECTED_TRACK_CONTEXT_KEY)
+
+    if not isinstance(active_matches, list) or not active_matches:
+        await update.message.reply_text(
+            "No tengo una lista reciente de partidos para este chat.\n\n"
+            "Usá /matches, elegí una liga y después /stats <n>."
+        )
+        return
+
+    if not isinstance(tracked_subscription, TrackedCompetitionSubscription):
+        await update.message.reply_text(
+            "No tengo una liga seleccionada recientemente.\n\n"
+            "Usá /matches, elegí una liga y después /stats <n>."
+        )
+        return
+
+    selected_index = _parse_selection_number(context.args[0], len(active_matches) + 1)
+    if selected_index is None:
+        await update.message.reply_text(STATS_URL_USAGE_MESSAGE)
+        return
+
+    if selected_index == 0:
+        await update.message.reply_text(
+            "El número 1 corresponde a \"Ver todos\".\n\n"
+            "Elegí el número visible de un partido individual de la última lista de /matches."
+        )
+        return
+
+    tracking_service = get_tracking_service(context)
+    result = tracking_service.build_event_stats_message(
+        tracked_subscription,
+        active_matches,
+        selected_index,
+    )
+    await update.message.reply_text(result.message, parse_mode=ParseMode.HTML)
 
 
 async def echo_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -938,6 +995,7 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("platforms", platforms_command))
     application.add_handler(CommandHandler("ping", ping_command))
     application.add_handler(CommandHandler("status", status_command))
+    application.add_handler(CommandHandler("resources", resources_command))
     application.add_handler(CommandHandler("stats", stats_command))
     application.add_handler(CommandHandler("echo", echo_command))
     application.add_handler(CommandHandler("track_url", track_url_command))

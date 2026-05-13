@@ -1,0 +1,57 @@
+{
+  "candidate": {
+    "id": "response-00087",
+    "url": "https://www.bet365.es/matchbettingcontentapi/coupon?lid=3&zid=0&pd=%23AC%23B1%23C1%23D8%23E194165792%23F3%23I3%23&cid=171&cgid=4&ctid=171",
+    "captured_status": 200,
+    "captured_body_hash": null
+  },
+  "request": {
+    "method": "GET",
+    "impersonate": "chrome136",
+    "header_profile": "browserlike",
+    "cookies_count": 8,
+    "headers": {
+      "accept": "*/*",
+      "accept-language": "es-419,es;q=0.9",
+      "cache-control": "no-cache",
+      "pragma": "no-cache",
+      "referer": "https://www.bet365.es/",
+      "origin": "https://www.bet365.es",
+      "upgrade-insecure-requests": "1",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"macOS\"",
+      "sec-fetch-dest": "empty",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-site": "same-origin"
+    },
+    "warmup_urls": [
+      "https://www.bet365.es/"
+    ]
+  },
+  "response": {
+    "status_code": 200,
+    "http_version": 3,
+    "headers": {
+      "date": "Sat, 09 May 2026 01:03:45 GMT",
+      "server": "cloudflare",
+      "cf-cache-status": "DYNAMIC",
+      "cf-ray": "9f8cc9449cbc3be2-EZE"
+    },
+    "body_size": 0,
+    "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "body_preview": "",
+    "text_hits": {
+      "contains_terms": [],
+      "markers": [],
+      "fixture_ids": [],
+      "market_ids": []
+    },
+    "body_path": "replays/no-vpn-curl-cffi-response-00087-www-bet365-es-matchbettingcontentapi-coupon-lid-3-zid-0-pd-23ac-23b1-23c1-23d8-23e194165792-23f3-23i3-23-cid-171-cgid-4-ctid-171.body.txt"
+  },
+  "comparison": {
+    "same_status": true,
+    "same_body_hash": false
+  }
+}

@@ -68,8 +68,9 @@ class EventSnapshot:
     scheduled_at: str | None
     source_url: str | None
     odds_1x2: Odds1X2
-    #TODO: add optional `odds_handicap: OddsHandicap` field when we have a concrete use case for it in the current flow
     extracted_at: str
+    stats_url: str | None = None
+    markets_payload: dict[str, Any] | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
     raw_payload: dict[str, Any] = field(default_factory=dict)
 

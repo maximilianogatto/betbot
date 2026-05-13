@@ -1,0 +1,88 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://www.bet365.es/matchmarketscontentapi/markets?lid=3&zid=0&pd=%23AC%23B1%23C1%23D1002%23E130740247%23G40%23&cid=171&cgid=4&ctid=171",
+    "headers": {
+      "accept": "*/*",
+      "accept-language": "es-419,es;q=0.9",
+      "cache-control": "no-cache",
+      "pragma": "no-cache",
+      "referer": "https://www.bet365.es/",
+      "origin": "https://www.bet365.es",
+      "upgrade-insecure-requests": "1",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"macOS\"",
+      "sec-fetch-dest": "empty",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-site": "same-origin"
+    },
+    "cookies_count": 8,
+    "warmup_urls": [
+      "https://www.bet365.es/"
+    ],
+    "http2": true,
+    "trust_env": false
+  },
+  "response": {
+    "status_code": 403,
+    "http_version": "HTTP/2",
+    "headers": {
+      "date": "Sat, 09 May 2026 01:02:40 GMT",
+      "content-type": "text/html; charset=UTF-8",
+      "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+      "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+      "referrer-policy": "same-origin",
+      "x-frame-options": "SAMEORIGIN",
+      "server": "cloudflare",
+      "cf-ray": "9f8cc7b1ec3b70a7-EZE"
+    },
+    "content_type": "text/html; charset=UTF-8",
+    "body_size": 4545,
+    "body_hash": "e0c3429fabc7999f52183c012002e895ed51b9228b5962c9ef1bf3b8a3c3e16c",
+    "body_encoding": "utf-8",
+    "body_kind": "html",
+    "body_preview": "<!DOCTYPE html>\n<!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 7]>    <html class=\"no-js ie7 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 8]>    <html class=\"no-js ie8 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en-US\"> <!--<![endif]-->\n<head>\n<title>Attention Required! | Cloudflare</title>\n<meta charset=\"UTF-8\" />\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\" />\n<meta name=\"robots\" content=\"noindex, nofollow\" />\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\n<link rel=\"stylesheet\" id=\"cf_styles-css\" href=\"/cdn-cgi/styles/cf.errors.css\" />\n<!--[if lt IE 9]><link rel=\"stylesheet\" id='cf_styles-ie-css' href=\"/cdn-cgi/styles/cf.errors.ie.css\" /><![endif]-->\n<style>body{margin:0;padding:0}</style>\n\n\n<!--[if gte IE 10]><!-->\n<script>\n  if (!navigator.cookieEnabled) {\n    window.addEventListener('DOMContentLoaded', function () {\n      var cookieEl = document.getElementById('cookie-alert');\n      cookieEl.style.display = 'block';\n    })\n  }\n</script>\n<!--<![endif]-->\n\n</head>\n<body>\n  <div id=\"cf-wrapper\">\n    <div class=\"cf-alert cf-alert-error cf-cookie-error\" id=\"cookie-alert\" data-translate=\"enable_cookies\">Please enable cookies.</div>\n    <div id=\"cf-error-details\" class=\"cf-error-details-wrapper\">\n      <div class=\"cf-wrapper cf-header cf-error-overview\">\n        <h1 data-translate=\"block_headline\">...",
+    "json_top_level": null,
+    "body_path": "replays/replay-browserlike-http2-no-vpn-browserlike-http2-response-00089-www-bet365-es-matchmarketscontentapi-markets-lid-3-zid-0-pd-23ac-23b1-23c1-23d1002-23e130740247.body.txt",
+    "text_hits": {
+      "contains_terms": [],
+      "markers": [
+        "EV",
+        "MA",
+        "PA",
+        "40"
+      ],
+      "fixture_ids": [],
+      "market_ids": [
+        "40"
+      ]
+    }
+  },
+  "candidate": {
+    "id": "response-00089",
+    "captured_status": 200,
+    "captured_body_hash": null,
+    "captured_body_kind": "text",
+    "captured_resource_type": "xhr",
+    "captured_body_path": null
+  },
+  "comparison": {
+    "same_status": false,
+    "same_body_hash": false,
+    "text_hits": {
+      "contains_terms": [],
+      "markers": [
+        "EV",
+        "MA",
+        "PA",
+        "40"
+      ],
+      "fixture_ids": [],
+      "market_ids": [
+        "40"
+      ]
+    }
+  }
+}

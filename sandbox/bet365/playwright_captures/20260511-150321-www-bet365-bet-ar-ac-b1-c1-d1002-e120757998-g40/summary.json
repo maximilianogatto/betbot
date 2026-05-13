@@ -1,0 +1,11 @@
+{
+  "source_url": "https://www.bet365.bet.ar/#/AC/B1/C1/D1002/E120757998/G40",
+  "host": "www.bet365.bet.ar",
+  "expected_pd": "#AC#B1#C1#D1002#E120757998#G40#",
+  "captured": true,
+  "captured_url": "https://www.bet365.bet.ar/matchmarketscontentapi/markets?lid=36&zid=0&pd=%23AC%23B1%23C1%23D1002%23E120757998%23G40%23&cid=271&cgid=1&ctid=271",
+  "debug_responses_count": 4,
+  "raw_path": "playwright_captures/20260511-150321-www-bet365-bet-ar-ac-b1-c1-d1002-e120757998-g40/raw_league_market.txt",
+  "parsed_path": "playwright_captures/20260511-150321-www-bet365-bet-ar-ac-b1-c1-d1002-e120757998-g40/parsed_league_1x2.json",
+  "matches_count": 11
+}

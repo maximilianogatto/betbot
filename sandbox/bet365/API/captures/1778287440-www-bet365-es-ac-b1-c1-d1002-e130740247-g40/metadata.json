@@ -1,0 +1,31 @@
+{
+  "target_url": "https://www.bet365.es/#/AC/B1/C1/D1002/E130740247/G40/",
+  "capture_dir": "sandbox/bet365/API/captures/1778287440-www-bet365-es-ac-b1-c1-d1002-e130740247-g40",
+  "search_terms": [
+    "Liverpool"
+  ],
+  "fixture_ids": [
+    "130740247"
+  ],
+  "identifiers": {
+    "competition_id": "130740247",
+    "event_id": null,
+    "event_tab": null
+  },
+  "browser_mode": "connect",
+  "cdp_endpoint": "http://127.0.0.1:9222",
+  "pid": 86895,
+  "argv": [
+    "sandbox/bet365/API/capture_network.py",
+    "https://www.bet365.es/#/AC/B1/C1/D1002/E130740247/G40/",
+    "--browser-mode",
+    "connect",
+    "--launch-chrome-if-needed",
+    "--wait-ms",
+    "12000",
+    "--contains",
+    "Liverpool",
+    "--contains-fixture",
+    "130740247"
+  ]
+}

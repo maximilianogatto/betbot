@@ -1,0 +1,1744 @@
+{
+  "league": {
+    "name": "España - La Liga",
+    "source_url": "https://www.bet365.bet.ar/#/AC/B1/C1/D1002/E120757998/G40",
+    "captured_url": "https://www.bet365.bet.ar/matchmarketscontentapi/markets?lid=36&zid=0&pd=%23AC%23B1%23C1%23D1002%23E120757998%23G40%23&cid=271&cgid=1&ctid=271",
+    "matches_count": 20,
+    "matches": [
+      {
+        "event_id": "193003419",
+        "home": "Celta de Vigo",
+        "away": "Levante",
+        "name": "Celta de Vigo v Levante",
+        "league": "Spanish Primera",
+        "start_raw": "20260512180000",
+        "start_iso": "2026-05-12 18:00:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "10/11",
+            "decimal": 1.909091,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "27/10",
+            "decimal": 3.7,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "14/5",
+            "decimal": 3.8,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193003416",
+        "home": "Real Betis",
+        "away": "Elche",
+        "name": "Real Betis v Elche",
+        "league": "Spanish Primera",
+        "start_raw": "20260512190000",
+        "start_iso": "2026-05-12 19:00:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "3/5",
+            "decimal": 1.6,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "16/5",
+            "decimal": 4.2,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "4/1",
+            "decimal": 5.0,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193003456",
+        "home": "Osasuna",
+        "away": "Atlético de Madrid",
+        "name": "Osasuna v Atlético de Madrid",
+        "league": "Spanish Primera",
+        "start_raw": "20260512203000",
+        "start_iso": "2026-05-12 20:30:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "31/20",
+            "decimal": 2.55,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "5/2",
+            "decimal": 3.5,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "13/8",
+            "decimal": 2.625,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193003421",
+        "home": "Espanyol",
+        "away": "Athletic Club",
+        "name": "Espanyol v Athletic Club",
+        "league": "Spanish Primera",
+        "start_raw": "20260513180000",
+        "start_iso": "2026-05-13 18:00:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "13/8",
+            "decimal": 2.625,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "23/10",
+            "decimal": 3.3,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "17/10",
+            "decimal": 2.7,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193003470",
+        "home": "Villarreal",
+        "away": "Sevilla",
+        "name": "Villarreal v Sevilla",
+        "league": "Spanish Primera",
+        "start_raw": "20260513180000",
+        "start_iso": "2026-05-13 18:00:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "21/20",
+            "decimal": 2.05,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "23/10",
+            "decimal": 3.3,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "11/4",
+            "decimal": 3.75,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193003413",
+        "home": "Alavés",
+        "away": "Barcelona",
+        "name": "Alavés v Barcelona",
+        "league": "Spanish Primera",
+        "start_raw": "20260513203000",
+        "start_iso": "2026-05-13 20:30:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "11/5",
+            "decimal": 3.2,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "11/4",
+            "decimal": 3.75,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "11/10",
+            "decimal": 2.1,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193003427",
+        "home": "Getafe",
+        "away": "Mallorca",
+        "name": "Getafe v Mallorca",
+        "league": "Spanish Primera",
+        "start_raw": "20260513203000",
+        "start_iso": "2026-05-13 20:30:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "6/5",
+            "decimal": 2.2,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "11/5",
+            "decimal": 3.2,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "5/2",
+            "decimal": 3.5,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193003466",
+        "home": "Valencia",
+        "away": "Rayo Vallecano",
+        "name": "Valencia v Rayo Vallecano",
+        "league": "Spanish Primera",
+        "start_raw": "20260514180000",
+        "start_iso": "2026-05-14 18:00:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "6/5",
+            "decimal": 2.2,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "12/5",
+            "decimal": 3.4,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "23/10",
+            "decimal": 3.3,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193003440",
+        "home": "Girona",
+        "away": "Real Sociedad",
+        "name": "Girona v Real Sociedad",
+        "league": "Spanish Primera",
+        "start_raw": "20260514190000",
+        "start_iso": "2026-05-14 19:00:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "1/1",
+            "decimal": 2.0,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "29/10",
+            "decimal": 3.9,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "5/2",
+            "decimal": 3.5,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193003460",
+        "home": "Real Madrid",
+        "away": "Real Oviedo",
+        "name": "Real Madrid v Real Oviedo",
+        "league": "Spanish Primera",
+        "start_raw": "20260514203000",
+        "start_iso": "2026-05-14 20:30:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "2/9",
+            "decimal": 1.222222,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "6/1",
+            "decimal": 7.0,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "10/1",
+            "decimal": 11.0,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193332391",
+        "home": "Athletic Club",
+        "away": "Celta de Vigo",
+        "name": "Athletic Club v Celta de Vigo",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "19/20",
+            "decimal": 1.95,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "12/5",
+            "decimal": 3.4,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "11/4",
+            "decimal": 3.75,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193332394",
+        "home": "Atlético de Madrid",
+        "away": "Girona",
+        "name": "Atlético de Madrid v Girona",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "5/6",
+            "decimal": 1.833333,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "5/2",
+            "decimal": 3.5,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "3/1",
+            "decimal": 4.0,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193332397",
+        "home": "Osasuna",
+        "away": "Espanyol",
+        "name": "Osasuna v Espanyol",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "19/20",
+            "decimal": 1.95,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "12/5",
+            "decimal": 3.4,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "11/4",
+            "decimal": 3.75,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193332402",
+        "home": "Elche",
+        "away": "Getafe",
+        "name": "Elche v Getafe",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "5/4",
+            "decimal": 2.25,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "21/10",
+            "decimal": 3.1,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "9/4",
+            "decimal": 3.25,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193332405",
+        "home": "Barcelona",
+        "away": "Real Betis",
+        "name": "Barcelona v Real Betis",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "21/50",
+            "decimal": 1.42,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "4/1",
+            "decimal": 5.0,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "5/1",
+            "decimal": 6.0,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193332408",
+        "home": "Levante",
+        "away": "Mallorca",
+        "name": "Levante v Mallorca",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "11/10",
+            "decimal": 2.1,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "12/5",
+            "decimal": 3.4,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "23/10",
+            "decimal": 3.3,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193332411",
+        "home": "Rayo Vallecano",
+        "away": "Villarreal",
+        "name": "Rayo Vallecano v Villarreal",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "27/20",
+            "decimal": 2.35,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "5/2",
+            "decimal": 3.5,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "13/8",
+            "decimal": 2.625,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193332417",
+        "home": "Real Oviedo",
+        "away": "Alavés",
+        "name": "Real Oviedo v Alavés",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "3/1",
+            "decimal": 4.0,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "23/10",
+            "decimal": 3.3,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "9/10",
+            "decimal": 1.9,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193332423",
+        "home": "Real Sociedad",
+        "away": "Valencia",
+        "name": "Real Sociedad v Valencia",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "1/1",
+            "decimal": 2.0,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "12/5",
+            "decimal": 3.4,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "5/2",
+            "decimal": 3.5,
+            "suspended": false
+          }
+        }
+      },
+      {
+        "event_id": "193332428",
+        "home": "Sevilla",
+        "away": "Real Madrid",
+        "name": "Sevilla v Real Madrid",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "21/10",
+            "decimal": 3.1,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "5/2",
+            "decimal": 3.5,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "11/10",
+            "decimal": 2.1,
+            "suspended": false
+          }
+        }
+      }
+    ]
+  },
+  "asian_by_event": {
+    "193003419": {
+      "event": {
+        "event_id": "193003419",
+        "name": "Celta de Vigo v Levante",
+        "home": "Celta de Vigo",
+        "away": "Levante",
+        "league": "Spanish Primera",
+        "start_raw": "20260512180000",
+        "start_iso": "2026-05-12 18:00:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Hándicap asiático",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Celta de Vigo",
+              "line": "-0.5",
+              "handicap": "-0.5",
+              "handicap_display": "-0.5",
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            },
+            {
+              "selection": "Levante",
+              "line": "+0.5",
+              "handicap": "0.5",
+              "handicap_display": "+0.5",
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Línea de gol",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Más de",
+              "line": "2.5, 3.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "41/40",
+              "odds_decimal": 2.025,
+              "suspended": false
+            },
+            {
+              "selection": "Menos de",
+              "line": "2.5, 3.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "33/40",
+              "odds_decimal": 1.825,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193003419%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    },
+    "193003416": {
+      "event": {
+        "event_id": "193003416",
+        "name": "Real Betis v Elche",
+        "home": "Real Betis",
+        "away": "Elche",
+        "league": "Spanish Primera",
+        "start_raw": "20260512190000",
+        "start_iso": "2026-05-12 19:00:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Hándicap asiático",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Real Betis",
+              "line": "-1.0",
+              "handicap": "-1",
+              "handicap_display": "-1.0",
+              "odds_fractional": "21/20",
+              "odds_decimal": 2.05,
+              "suspended": false
+            },
+            {
+              "selection": "Elche",
+              "line": "+1.0",
+              "handicap": "1",
+              "handicap_display": "+1.0",
+              "odds_fractional": "4/5",
+              "odds_decimal": 1.8,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Línea de gol",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Más de",
+              "line": "2.5, 3.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "33/40",
+              "odds_decimal": 1.825,
+              "suspended": false
+            },
+            {
+              "selection": "Menos de",
+              "line": "2.5, 3.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "41/40",
+              "odds_decimal": 2.025,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193003416%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    },
+    "193003456": {
+      "event": {
+        "event_id": "193003456",
+        "name": "Osasuna v Atlético de Madrid",
+        "home": "Osasuna",
+        "away": "Atlético de Madrid",
+        "league": "Spanish Primera",
+        "start_raw": "20260512203000",
+        "start_iso": "2026-05-12 20:30:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Hándicap asiático",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Osasuna",
+              "line": "0.0",
+              "handicap": "0",
+              "handicap_display": "0.0",
+              "odds_fractional": "7/8",
+              "odds_decimal": 1.875,
+              "suspended": false
+            },
+            {
+              "selection": "Atlético de Madrid",
+              "line": "0.0",
+              "handicap": "-0",
+              "handicap_display": "0.0",
+              "odds_fractional": "39/40",
+              "odds_decimal": 1.975,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Línea de gol",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Más de",
+              "line": "2.5, 3.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            },
+            {
+              "selection": "Menos de",
+              "line": "2.5, 3.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193003456%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    },
+    "193003421": {
+      "event": {
+        "event_id": "193003421",
+        "name": "Espanyol v Athletic Club",
+        "home": "Espanyol",
+        "away": "Athletic Club",
+        "league": "Spanish Primera",
+        "start_raw": "20260513180000",
+        "start_iso": "2026-05-13 18:00:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Hándicap asiático",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Espanyol",
+              "line": "0.0",
+              "handicap": "0",
+              "handicap_display": "0.0",
+              "odds_fractional": "9/10",
+              "odds_decimal": 1.9,
+              "suspended": false
+            },
+            {
+              "selection": "Athletic Club",
+              "line": "0.0",
+              "handicap": "-0",
+              "handicap_display": "0.0",
+              "odds_fractional": "19/20",
+              "odds_decimal": 1.95,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Línea de gol",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Más de",
+              "line": "2.0, 2.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            },
+            {
+              "selection": "Menos de",
+              "line": "2.0, 2.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193003421%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    },
+    "193003470": {
+      "error": "not_captured",
+      "event": {
+        "event_id": "193003470",
+        "home": "Villarreal",
+        "away": "Sevilla",
+        "name": "Villarreal v Sevilla",
+        "league": "Spanish Primera",
+        "start_raw": "20260513180000",
+        "start_iso": "2026-05-13 18:00:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "21/20",
+            "decimal": 2.05,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "23/10",
+            "decimal": 3.3,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "11/4",
+            "decimal": 3.75,
+            "suspended": false
+          }
+        }
+      },
+      "markets": []
+    },
+    "193003413": {
+      "error": "not_captured",
+      "event": {
+        "event_id": "193003413",
+        "home": "Alavés",
+        "away": "Barcelona",
+        "name": "Alavés v Barcelona",
+        "league": "Spanish Primera",
+        "start_raw": "20260513203000",
+        "start_iso": "2026-05-13 20:30:00",
+        "odds_1x2": {
+          "1": {
+            "fractional": "11/5",
+            "decimal": 3.2,
+            "suspended": false
+          },
+          "X": {
+            "fractional": "11/4",
+            "decimal": 3.75,
+            "suspended": false
+          },
+          "2": {
+            "fractional": "11/10",
+            "decimal": 2.1,
+            "suspended": false
+          }
+        }
+      },
+      "markets": []
+    },
+    "193003427": {
+      "event": {
+        "event_id": "193003427",
+        "name": "Getafe v Mallorca",
+        "home": "Getafe",
+        "away": "Mallorca",
+        "league": "Spanish Primera",
+        "start_raw": "20260513203000",
+        "start_iso": "2026-05-13 20:30:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Asian Handicap",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Getafe",
+              "line": "0.0, -0.5",
+              "handicap": "-0.25",
+              "handicap_display": "0.0, -0.5",
+              "odds_fractional": "7/8",
+              "odds_decimal": 1.875,
+              "suspended": false
+            },
+            {
+              "selection": "Mallorca",
+              "line": "0.0, +0.5",
+              "handicap": "0.25",
+              "handicap_display": "0.0, +0.5",
+              "odds_fractional": "39/40",
+              "odds_decimal": 1.975,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Goal Line",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Over",
+              "line": "2.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            },
+            {
+              "selection": "Under",
+              "line": "2.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193003427%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    },
+    "193003466": {
+      "event": {
+        "event_id": "193003466",
+        "name": "Valencia v Rayo Vallecano",
+        "home": "Valencia",
+        "away": "Rayo Vallecano",
+        "league": "Spanish Primera",
+        "start_raw": "20260514180000",
+        "start_iso": "2026-05-14 18:00:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Asian Handicap",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Valencia",
+              "line": "0.0, -0.5",
+              "handicap": "-0.25",
+              "handicap_display": "0.0, -0.5",
+              "odds_fractional": "7/8",
+              "odds_decimal": 1.875,
+              "suspended": false
+            },
+            {
+              "selection": "Rayo Vallecano",
+              "line": "0.0, +0.5",
+              "handicap": "0.25",
+              "handicap_display": "0.0, +0.5",
+              "odds_fractional": "39/40",
+              "odds_decimal": 1.975,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Goal Line",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Over",
+              "line": "2.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            },
+            {
+              "selection": "Under",
+              "line": "2.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193003466%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    },
+    "193003440": {
+      "event": {
+        "event_id": "193003440",
+        "name": "Girona v Real Sociedad",
+        "home": "Girona",
+        "away": "Real Sociedad",
+        "league": "Spanish Primera",
+        "start_raw": "20260514190000",
+        "start_iso": "2026-05-14 19:00:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Asian Handicap",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Girona",
+              "line": "-0.5",
+              "handicap": "-0.5",
+              "handicap_display": "-0.5",
+              "odds_fractional": "1/1",
+              "odds_decimal": 2.0,
+              "suspended": false
+            },
+            {
+              "selection": "Real Sociedad",
+              "line": "+0.5",
+              "handicap": "0.5",
+              "handicap_display": "+0.5",
+              "odds_fractional": "17/20",
+              "odds_decimal": 1.85,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Goal Line",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Over",
+              "line": "2.5, 3.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            },
+            {
+              "selection": "Under",
+              "line": "2.5, 3.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193003440%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    },
+    "193003460": {
+      "event": {
+        "event_id": "193003460",
+        "name": "Real Madrid v Real Oviedo",
+        "home": "Real Madrid",
+        "away": "Real Oviedo",
+        "league": "Spanish Primera",
+        "start_raw": "20260514203000",
+        "start_iso": "2026-05-14 20:30:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Asian Handicap",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Real Madrid",
+              "line": "-1.5, -2.0",
+              "handicap": "-1.75",
+              "handicap_display": "-1.5, -2.0",
+              "odds_fractional": "7/8",
+              "odds_decimal": 1.875,
+              "suspended": false
+            },
+            {
+              "selection": "Real Oviedo",
+              "line": "+1.5, +2.0",
+              "handicap": "1.75",
+              "handicap_display": "+1.5, +2.0",
+              "odds_fractional": "39/40",
+              "odds_decimal": 1.975,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Goal Line",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Over",
+              "line": "3.0, 3.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "17/20",
+              "odds_decimal": 1.85,
+              "suspended": false
+            },
+            {
+              "selection": "Under",
+              "line": "3.0, 3.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "1/1",
+              "odds_decimal": 2.0,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193003460%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    },
+    "193332391": {
+      "event": {
+        "event_id": "193332391",
+        "name": "Athletic Club v Celta Vigo",
+        "home": "Athletic Club",
+        "away": "Celta Vigo",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Asian Handicap",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Athletic Club",
+              "line": "-0.5",
+              "handicap": "-0.5",
+              "handicap_display": "-0.5",
+              "odds_fractional": "1/1",
+              "odds_decimal": 2.0,
+              "suspended": false
+            },
+            {
+              "selection": "Celta Vigo",
+              "line": "+0.5",
+              "handicap": "0.5",
+              "handicap_display": "+0.5",
+              "odds_fractional": "17/20",
+              "odds_decimal": 1.85,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Goal Line",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Over",
+              "line": "2.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "39/40",
+              "odds_decimal": 1.975,
+              "suspended": false
+            },
+            {
+              "selection": "Under",
+              "line": "2.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "7/8",
+              "odds_decimal": 1.875,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193332391%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    },
+    "193332394": {
+      "event": {
+        "event_id": "193332394",
+        "name": "Atletico Madrid v Girona",
+        "home": "Atletico Madrid",
+        "away": "Girona",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Asian Handicap",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Atletico Madrid",
+              "line": "-0.5",
+              "handicap": "-0.5",
+              "handicap_display": "-0.5",
+              "odds_fractional": "17/20",
+              "odds_decimal": 1.85,
+              "suspended": false
+            },
+            {
+              "selection": "Girona",
+              "line": "+0.5",
+              "handicap": "0.5",
+              "handicap_display": "+0.5",
+              "odds_fractional": "1/1",
+              "odds_decimal": 2.0,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Goal Line",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Over",
+              "line": "2.5, 3.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            },
+            {
+              "selection": "Under",
+              "line": "2.5, 3.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193332394%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    },
+    "193332397": {
+      "event": {
+        "event_id": "193332397",
+        "name": "Osasuna v Espanyol",
+        "home": "Osasuna",
+        "away": "Espanyol",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Asian Handicap",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Osasuna",
+              "line": "-0.5",
+              "handicap": "-0.5",
+              "handicap_display": "-0.5",
+              "odds_fractional": "1/1",
+              "odds_decimal": 2.0,
+              "suspended": false
+            },
+            {
+              "selection": "Espanyol",
+              "line": "+0.5",
+              "handicap": "0.5",
+              "handicap_display": "+0.5",
+              "odds_fractional": "17/20",
+              "odds_decimal": 1.85,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Goal Line",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Over",
+              "line": "2.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "21/20",
+              "odds_decimal": 2.05,
+              "suspended": false
+            },
+            {
+              "selection": "Under",
+              "line": "2.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "4/5",
+              "odds_decimal": 1.8,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193332397%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    },
+    "193332402": {
+      "event": {
+        "event_id": "193332402",
+        "name": "Elche v Getafe",
+        "home": "Elche",
+        "away": "Getafe",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Asian Handicap",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Elche",
+              "line": "0.0, -0.5",
+              "handicap": "-0.25",
+              "handicap_display": "0.0, -0.5",
+              "odds_fractional": "39/40",
+              "odds_decimal": 1.975,
+              "suspended": false
+            },
+            {
+              "selection": "Getafe",
+              "line": "0.0, +0.5",
+              "handicap": "0.25",
+              "handicap_display": "0.0, +0.5",
+              "odds_fractional": "7/8",
+              "odds_decimal": 1.875,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Goal Line",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Over",
+              "line": "2.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "7/8",
+              "odds_decimal": 1.875,
+              "suspended": false
+            },
+            {
+              "selection": "Under",
+              "line": "2.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "39/40",
+              "odds_decimal": 1.975,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193332402%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    },
+    "193332405": {
+      "event": {
+        "event_id": "193332405",
+        "name": "Barcelona v Real Betis",
+        "home": "Barcelona",
+        "away": "Real Betis",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Asian Handicap",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Barcelona",
+              "line": "-1.0, -1.5",
+              "handicap": "-1.25",
+              "handicap_display": "-1.0, -1.5",
+              "odds_fractional": "33/40",
+              "odds_decimal": 1.825,
+              "suspended": false
+            },
+            {
+              "selection": "Real Betis",
+              "line": "+1.0, +1.5",
+              "handicap": "1.25",
+              "handicap_display": "+1.0, +1.5",
+              "odds_fractional": "41/40",
+              "odds_decimal": 2.025,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Goal Line",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Over",
+              "line": "3.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            },
+            {
+              "selection": "Under",
+              "line": "3.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193332405%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    },
+    "193332408": {
+      "event": {
+        "event_id": "193332408",
+        "name": "Levante v Mallorca",
+        "home": "Levante",
+        "away": "Mallorca",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Asian Handicap",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Levante",
+              "line": "0.0, -0.5",
+              "handicap": "-0.25",
+              "handicap_display": "0.0, -0.5",
+              "odds_fractional": "17/20",
+              "odds_decimal": 1.85,
+              "suspended": false
+            },
+            {
+              "selection": "Mallorca",
+              "line": "0.0, +0.5",
+              "handicap": "0.25",
+              "handicap_display": "0.0, +0.5",
+              "odds_fractional": "1/1",
+              "odds_decimal": 2.0,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Goal Line",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Over",
+              "line": "2.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "7/8",
+              "odds_decimal": 1.875,
+              "suspended": false
+            },
+            {
+              "selection": "Under",
+              "line": "2.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "39/40",
+              "odds_decimal": 1.975,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193332408%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    },
+    "193332411": {
+      "event": {
+        "event_id": "193332411",
+        "name": "Rayo Vallecano v Villarreal",
+        "home": "Rayo Vallecano",
+        "away": "Villarreal",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Asian Handicap",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Rayo Vallecano",
+              "line": "0.0",
+              "handicap": "0",
+              "handicap_display": "0.0",
+              "odds_fractional": "4/5",
+              "odds_decimal": 1.8,
+              "suspended": false
+            },
+            {
+              "selection": "Villarreal",
+              "line": "0.0",
+              "handicap": "-0",
+              "handicap_display": "0.0",
+              "odds_fractional": "21/20",
+              "odds_decimal": 2.05,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Goal Line",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Over",
+              "line": "2.5, 3.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "39/40",
+              "odds_decimal": 1.975,
+              "suspended": false
+            },
+            {
+              "selection": "Under",
+              "line": "2.5, 3.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "7/8",
+              "odds_decimal": 1.875,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193332411%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    },
+    "193332417": {
+      "event": {
+        "event_id": "193332417",
+        "name": "Real Oviedo v CD Alaves",
+        "home": "Real Oviedo",
+        "away": "CD Alaves",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Asian Handicap",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Real Oviedo",
+              "line": "+0.5",
+              "handicap": "0.5",
+              "handicap_display": "+0.5",
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            },
+            {
+              "selection": "CD Alaves",
+              "line": "-0.5",
+              "handicap": "-0.5",
+              "handicap_display": "-0.5",
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Goal Line",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Over",
+              "line": "2.0, 2.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "39/40",
+              "odds_decimal": 1.975,
+              "suspended": false
+            },
+            {
+              "selection": "Under",
+              "line": "2.0, 2.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "7/8",
+              "odds_decimal": 1.875,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193332417%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    },
+    "193332423": {
+      "event": {
+        "event_id": "193332423",
+        "name": "Real Sociedad v Valencia",
+        "home": "Real Sociedad",
+        "away": "Valencia",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Asian Handicap",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Real Sociedad",
+              "line": "-0.5",
+              "handicap": "-0.5",
+              "handicap_display": "-0.5",
+              "odds_fractional": "21/20",
+              "odds_decimal": 2.05,
+              "suspended": false
+            },
+            {
+              "selection": "Valencia",
+              "line": "+0.5",
+              "handicap": "0.5",
+              "handicap_display": "+0.5",
+              "odds_fractional": "4/5",
+              "odds_decimal": 1.8,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Goal Line",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Over",
+              "line": "2.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "7/8",
+              "odds_decimal": 1.875,
+              "suspended": false
+            },
+            {
+              "selection": "Under",
+              "line": "2.5",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "39/40",
+              "odds_decimal": 1.975,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193332423%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    },
+    "193332428": {
+      "event": {
+        "event_id": "193332428",
+        "name": "Sevilla v Real Madrid",
+        "home": "Sevilla",
+        "away": "Real Madrid",
+        "league": "Spanish Primera",
+        "start_raw": "20260517180000",
+        "start_iso": "2026-05-17 18:00:00"
+      },
+      "markets": [
+        {
+          "market_id": "938",
+          "market_name": "Asian Handicap",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Sevilla",
+              "line": "0.0, +0.5",
+              "handicap": "0.25",
+              "handicap_display": "0.0, +0.5",
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            },
+            {
+              "selection": "Real Madrid",
+              "line": "0.0, -0.5",
+              "handicap": "-0.25",
+              "handicap_display": "0.0, -0.5",
+              "odds_fractional": "37/40",
+              "odds_decimal": 1.925,
+              "suspended": false
+            }
+          ]
+        },
+        {
+          "market_id": "10143",
+          "market_name": "Goal Line",
+          "expanded": true,
+          "selections": [
+            {
+              "selection": "Over",
+              "line": "2.5, 3.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "39/40",
+              "odds_decimal": 1.975,
+              "suspended": false
+            },
+            {
+              "selection": "Under",
+              "line": "2.5, 3.0",
+              "handicap": null,
+              "handicap_display": null,
+              "odds_fractional": "7/8",
+              "odds_decimal": 1.875,
+              "suspended": false
+            }
+          ]
+        }
+      ],
+      "captured_url": "https://www.bet365.bet.ar/matchbettingcontentapi/coupon?lid=36&zid=0&pd=%23AC%23B1%23C1%23D8%23E193332428%23F3%23I3%23&cid=271&cgid=1&ctid=271"
+    }
+  }
+}

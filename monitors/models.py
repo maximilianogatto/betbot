@@ -24,12 +24,27 @@ class OddsChange:
 
 
 @dataclass(frozen=True)
+class MarketChangeDetail:
+    """Represent one concrete odds change inside a normalized market payload."""
+
+    market_type: str
+    market_name: str
+    selection: str
+    line: str | None
+    before: float
+    after: float
+    percent_change: float
+
+
+@dataclass(frozen=True)
 class SubscriptionOddsAlert:
     """Represent one odds alert decision for a specific chat baseline."""
 
     match: ActiveEventRecord
     baseline: EventBaseline
     max_percent_change: float
+    change_details: tuple[MarketChangeDetail, ...]
+    changed_market_types: tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -70,6 +85,7 @@ class RefreshSummary:
 __all__ = [
     "CommandResult",
     "CompetitionRefreshResult",
+    "MarketChangeDetail",
     "OddsChange",
     "RefreshSummary",
     "SubscriptionOddsAlert",

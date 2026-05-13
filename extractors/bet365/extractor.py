@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import logging
 from urllib.parse import urlparse
 
+from core.extractor_base import CompetitionUnavailableError
 from core.extractor_base import Extractor
 from core.models import CompetitionExtraction, CompetitionKey, EventKey, EventSnapshot, Odds1X2, utc_now_iso
 from extractors.bet365.client import (
@@ -13,6 +15,13 @@ from extractors.bet365.client import (
     Bet365Match,
     validate_bet365_league_url,
 )
+from extractors.bet365.playwright_asian import (
+    Bet365AsianLeagueExtraction,
+    Bet365AsianMatch,
+    Bet365PlaywrightAsianClient,
+)
+
+logger = logging.getLogger(__name__)
 
 
 class Bet365Extractor(Extractor):
@@ -21,15 +30,20 @@ class Bet365Extractor(Extractor):
     name = "bet365"
     display_name = "Bet365"
     supported_domains = ("bet365.bet.ar", "bet365.es", "bet365.com")
-    supported_capabilities = ("ligas", "eventos 1X2")
+    supported_capabilities = ("ligas", "eventos 1X2", "asian handicap", "goal line")
 
     def __init__(
         self,
         *,
         settings: Bet365ExtractorSettings | None = None,
+        playwright_asian_client: Bet365PlaywrightAsianClient | None = None,
         browser_extractor: Bet365BrowserExtractor | None = None,
     ) -> None:
-        self._browser_extractor = browser_extractor or Bet365BrowserExtractor(settings)
+        self._settings = settings or Bet365ExtractorSettings()
+        self._playwright_asian_client = playwright_asian_client or Bet365PlaywrightAsianClient(
+            self._settings
+        )
+        self._fallback_browser_extractor = browser_extractor
 
     @classmethod
     def can_handle_url(cls, url: str) -> bool:
@@ -45,8 +59,26 @@ class Bet365Extractor(Extractor):
     async def extract_league(self, url: str) -> CompetitionExtraction:
         """Extract one Bet365 league and adapt it to the generic domain model."""
 
-        extraction = await self._browser_extractor.extract_league(url)
-        return _to_competition_extraction(extraction)
+        try:
+            extraction = await self._playwright_asian_client.extract_league_with_asian_lines(url)
+        except CompetitionUnavailableError as error:
+            logger.warning(
+                "Bet365 Playwright response-capture extractor could not refresh url=%s: %s. Falling back to legacy extractor.",
+                url,
+                error,
+            )
+            fallback_extraction = await self._get_fallback_browser_extractor().extract_league(url)
+            return _to_competition_extraction(fallback_extraction)
+        except Exception as error:
+            logger.warning(
+                "Bet365 Playwright response-capture extractor failed for url=%s: %s. Falling back to legacy extractor.",
+                url,
+                error,
+            )
+            fallback_extraction = await self._get_fallback_browser_extractor().extract_league(url)
+            return _to_competition_extraction(fallback_extraction)
+
+        return _to_competition_extraction_from_asian(extraction)
 
     async def extract_match(self, url: str) -> EventSnapshot:
         """Match-level extraction is reserved for a future refactor."""
@@ -56,12 +88,15 @@ class Bet365Extractor(Extractor):
     async def start(self) -> None:
         """Start the persistent browser used by the current Bet365 scraper."""
 
-        await self._browser_extractor.start()
+        await self._playwright_asian_client.start()
 
     async def stop(self) -> None:
         """Stop the persistent browser used by the current Bet365 scraper."""
 
-        await self._browser_extractor.stop()
+        await self._playwright_asian_client.stop()
+
+        if self._fallback_browser_extractor is not None:
+            await self._fallback_browser_extractor.stop()
 
     def build_event_url(
         self,
@@ -86,6 +121,11 @@ class Bet365Extractor(Extractor):
 
         normalized_event_url = (event_url or "").strip()
         return normalized_event_url or None
+
+    def _get_fallback_browser_extractor(self) -> Bet365BrowserExtractor:
+        if self._fallback_browser_extractor is None:
+            self._fallback_browser_extractor = Bet365BrowserExtractor(self._settings)
+        return self._fallback_browser_extractor
 
 
 def _to_competition_extraction(extraction: Bet365LeagueExtraction) -> CompetitionExtraction:
@@ -125,6 +165,41 @@ def _to_competition_extraction(extraction: Bet365LeagueExtraction) -> Competitio
     )
 
 
+def _to_competition_extraction_from_asian(
+    extraction: Bet365AsianLeagueExtraction,
+) -> CompetitionExtraction:
+    """Adapt the Playwright response-capture Bet365 payload to the generic model."""
+
+    competition_key = CompetitionKey(
+        platform=extraction.platform,
+        competition_external_id=extraction.topic,
+    )
+    extracted_at = utc_now_iso()
+    events = [
+        _to_event_snapshot_from_asian(
+            match,
+            platform=extraction.platform,
+            competition_external_id=extraction.topic,
+            competition_name=extraction.league_name,
+            competition_url=extraction.url,
+            extracted_at=extracted_at,
+        )
+        for match in extraction.matches
+    ]
+
+    return CompetitionExtraction(
+        competition=competition_key,
+        competition_name=extraction.league_name,
+        source_url=extraction.url,
+        events=events,
+        is_empty=not events,
+        is_provisional_name=False,
+        extracted_at=extracted_at,
+        metadata={},
+        raw_payload=extraction.payload,
+    )
+
+
 def _to_event_snapshot(
     match: Bet365Match,
     *,
@@ -155,6 +230,47 @@ def _to_event_snapshot(
             away=match.odds_away,
         ),
         extracted_at=extracted_at,
+        markets_payload=None,
+        metadata={
+            "platform": platform,
+            "competition_name": competition_name,
+        },
+        raw_payload=match.raw,
+    )
+
+
+def _to_event_snapshot_from_asian(
+    match: Bet365AsianMatch,
+    *,
+    platform: str,
+    competition_external_id: str,
+    competition_name: str,
+    competition_url: str,
+    extracted_at: str,
+) -> EventSnapshot:
+    """Adapt one Playwright-captured Bet365 match to the generic event snapshot model."""
+
+    return EventSnapshot(
+        key=EventKey(
+            platform=platform,
+            competition_external_id=competition_external_id,
+            external_event_id=match.fixture_id,
+        ),
+        competition_name=competition_name,
+        home=match.home,
+        away=match.away,
+        scheduled_label_date=match.scheduled_label_date,
+        scheduled_label_time=match.scheduled_label_time,
+        scheduled_at=match.scheduled_at,
+        source_url=match.event_url or _build_bet365_event_url(competition_url, match.fixture_id),
+        odds_1x2=Odds1X2(
+            home=match.odds_home,
+            draw=match.odds_draw,
+            away=match.odds_away,
+        ),
+        extracted_at=extracted_at,
+        stats_url=match.stats_url,
+        markets_payload=match.markets_payload,
         metadata={
             "platform": platform,
             "competition_name": competition_name,
