@@ -485,6 +485,41 @@ class SportradarMatchSnapshotTests(unittest.TestCase):
         self.assertTrue(snapshot["feature_quality"]["has_injuries"])
         self.assertEqual(len(snapshot["raw_refs"]["source_records"]), len(records))
 
+    def test_build_match_snapshot_reads_useful_fetch_when_present(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir_name:
+            capture_dir = Path(tmp_dir_name)
+            (capture_dir / "metadata.json").write_text(
+                json.dumps(
+                    {
+                        "stats_url": "https://s5.sir.sportradar.com/bet365/en/match/61624664",
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+            record = make_filtered_record(
+                "stats_match_get",
+                "stats_match_get/61624664",
+                {
+                    "_doc": "match",
+                    "_id": 61624664,
+                    "teams": {
+                        "home": {"_id": 1, "uid": 1001, "name": "Elche"},
+                        "away": {"_id": 2, "uid": 1002, "name": "Getafe"},
+                    },
+                    "time": time_doc(1779037200),
+                },
+            )
+            with (capture_dir / "useful_fetch.ndjson").open("w", encoding="utf-8") as handle:
+                handle.write(json.dumps(record, ensure_ascii=False))
+                handle.write("\n")
+
+            snapshot = build_match_snapshot_from_capture_dir(capture_dir)
+
+        self.assertEqual(snapshot["match_id"], "61624664")
+        self.assertEqual(snapshot["home"], "Elche")
+        self.assertEqual(snapshot["away"], "Getafe")
+
 
 if __name__ == "__main__":
     unittest.main()

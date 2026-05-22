@@ -1,0 +1,1903 @@
+{
+  "generated_at": "2026-05-18T14:26:19.366290+00:00",
+  "capture_dir": "/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/sandbox/sportradar_stats/captures/rayo_villareal_full",
+  "source_file": "/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/sandbox/sportradar_stats/captures/rayo_villareal_full/useful_fetch.ndjson",
+  "cookie_source": "/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/sandbox/sportradar_stats/captures/rayo_villareal_full/cookies.json",
+  "endpoint_count": 21,
+  "target_count": 30,
+  "endpoint_summaries": {
+    "event_get": {
+      "count": 1,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/event_get/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/event_get/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "event_get",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/event_get/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/event_get/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "match_details": {
+      "count": 1,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_details/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_details/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "match_details",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_details/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_details/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "match_info_statshub": {
+      "count": 1,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_info_statshub/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_info_statshub/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "match_info_statshub",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_info_statshub/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_info_statshub/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "match_markets": {
+      "count": 1,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_markets/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_markets/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "match_markets",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_markets/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_markets/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "match_timeline": {
+      "count": 1,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_timeline/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_timeline/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "match_timeline",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_timeline/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_timeline/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "match_timelinedelta": {
+      "count": 1,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_timelinedelta/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_timelinedelta/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "match_timelinedelta",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_timelinedelta/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_timelinedelta/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "odds_ukformat": {
+      "count": 1,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/odds_ukformat/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/odds_ukformat/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "odds_ukformat",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/odds_ukformat/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/odds_ukformat/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "stats_formtable": {
+      "count": 1,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_formtable/130805?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_formtable/130805?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_formtable",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_formtable/130805?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_formtable/130805?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "stats_h2h_versus": {
+      "count": 1,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_h2h_versus/2818/2819/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_h2h_versus/2818/2819/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_h2h_versus",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_h2h_versus/2818/2819/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_h2h_versus/2818/2819/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "stats_match_get": {
+      "count": 1,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_match_get/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_match_get/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_match_get",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_match_get/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_match_get/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "stats_season_injuries": {
+      "count": 1,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_injuries/130805?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_injuries/130805?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_season_injuries",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_injuries/130805?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_injuries/130805?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "stats_season_tables": {
+      "count": 2,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_tables/130805//?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_tables/130805//?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_season_tables",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_tables/130805//?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_tables/130805//?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        },
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_tables/130805/1/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_season_tables",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_tables/130805/1/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_tables/130805/1/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "stats_season_teamscoringconceding": {
+      "count": 2,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_season_teamscoringconceding/130805/2818/-1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_season_teamscoringconceding/130805/2818/-1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_season_teamscoringconceding",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_season_teamscoringconceding/130805/2818/-1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_season_teamscoringconceding/130805/2818/-1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        },
+        {
+          "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_season_teamscoringconceding/130805/2819/-1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_season_teamscoringconceding",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_season_teamscoringconceding/130805/2819/-1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_season_teamscoringconceding/130805/2819/-1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "stats_season_topassists": {
+      "count": 2,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topassists/130805/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topassists/130805/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_season_topassists",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topassists/130805/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topassists/130805/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        },
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topassists/130805/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_season_topassists",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topassists/130805/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topassists/130805/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "stats_season_topcards": {
+      "count": 2,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topcards/130805/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topcards/130805/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_season_topcards",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topcards/130805/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topcards/130805/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        },
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topcards/130805/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_season_topcards",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topcards/130805/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topcards/130805/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "stats_season_topgoals": {
+      "count": 2,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topgoals/130805/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topgoals/130805/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_season_topgoals",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topgoals/130805/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topgoals/130805/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        },
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topgoals/130805/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_season_topgoals",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topgoals/130805/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topgoals/130805/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "stats_team_lastx": {
+      "count": 2,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_lastx/2818/20?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_lastx/2818/20?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_team_lastx",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_lastx/2818/20?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_lastx/2818/20?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        },
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_lastx/2819/20?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_team_lastx",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_lastx/2819/20?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_lastx/2819/20?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "stats_team_nextx": {
+      "count": 2,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_nextx/2819/1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_nextx/2819/1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_team_nextx",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_nextx/2819/1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_nextx/2819/1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        },
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_nextx/2818/1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_team_nextx",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_nextx/2818/1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_nextx/2818/1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "stats_team_streaks": {
+      "count": 2,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_team_streaks/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_team_streaks/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_team_streaks",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_team_streaks/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_team_streaks/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        },
+        {
+          "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_team_streaks/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_team_streaks",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_team_streaks/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_team_streaks/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "stats_team_versus": {
+      "count": 1,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_versus/2818/2819/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_versus/2818/2819/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "stats_team_versus",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_versus/2818/2819/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_versus/2818/2819/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    },
+    "uniqueteam_markets": {
+      "count": 2,
+      "statuses": [
+        200
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/uniqueteam_markets/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+      "conclusion": "HTTP requires cookies",
+      "targets": [
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/uniqueteam_markets/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "uniqueteam_markets",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/uniqueteam_markets/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/uniqueteam_markets/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        },
+        {
+          "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/uniqueteam_markets/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+          "endpoint_name": "uniqueteam_markets",
+          "method": "GET",
+          "request_headers": {},
+          "response_headers": {},
+          "match_id": null,
+          "signed_url": true,
+          "attempts": [
+            {
+              "attempt_label": "httpx_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/uniqueteam_markets/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            },
+            {
+              "attempt_label": "curl_cffi_anonymous",
+              "status": 200,
+              "final_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/uniqueteam_markets/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=111b2731a83c98de1679b7115ec606866e88f96e8cbf3fc7d6d4cc310c7a6286",
+              "content_type": "text/html",
+              "is_json": true,
+              "same_endpoint": false,
+              "response_endpoint_name": null,
+              "json_exception": {
+                "event": "exception",
+                "name": "Unauthorized",
+                "code": 403,
+                "message": "Unauthorized feed "
+              },
+              "body_size_bytes": 149,
+              "preview": null,
+              "json_top_level_keys": [
+                "doc"
+              ],
+              "exception": null,
+              "outcome": "blocked"
+            }
+          ],
+          "conclusion": "HTTP requires cookies"
+        }
+      ]
+    }
+  },
+  "global_conclusions": {
+    "HTTP requires cookies": 21
+  }
+}

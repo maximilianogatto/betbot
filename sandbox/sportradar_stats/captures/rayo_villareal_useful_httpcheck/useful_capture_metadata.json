@@ -1,0 +1,16 @@
+{
+  "stats_url": "https://s5.sir.sportradar.com/bet365/en/match/61624668",
+  "bootstrap_url": null,
+  "captured_at": "2026-05-18T14:20:38.652456+00:00",
+  "seconds": 15.0,
+  "user_data_dir": "/tmp/chrome-sportradar-profile",
+  "responses_seen": 1,
+  "requests_seen": 1,
+  "useful_records_count": 1,
+  "endpoint_count": 1,
+  "files": {
+    "useful_fetch_ndjson": "/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/sandbox/sportradar_stats/captures/rayo_villareal_useful_httpcheck/useful_fetch.ndjson",
+    "useful_fetch_json": "/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/sandbox/sportradar_stats/captures/rayo_villareal_useful_httpcheck/useful_fetch.json",
+    "useful_endpoints_index": "/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/sandbox/sportradar_stats/captures/rayo_villareal_useful_httpcheck/useful_endpoints_index.json"
+  }
+}

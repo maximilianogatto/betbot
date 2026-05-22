@@ -1,0 +1,8 @@
+{
+  "stats_url": "https://s5.sir.sportradar.com/bet365/en/match/61624664",
+  "match_id": "61624664",
+  "captured_at": "2026-05-15T20:11:30.294318+00:00",
+  "capture_seconds": 12.0,
+  "responses_count": 1,
+  "out_dir": "sandbox/sportradar_stats/captures/test"
+}

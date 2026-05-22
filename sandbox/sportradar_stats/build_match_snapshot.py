@@ -19,7 +19,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "capture_dir",
         type=Path,
-        help="Directory containing filtered_fetch.ndjson.",
+        help="Directory containing useful_fetch.ndjson or filtered_fetch.ndjson.",
     )
     parser.add_argument(
         "--pretty",

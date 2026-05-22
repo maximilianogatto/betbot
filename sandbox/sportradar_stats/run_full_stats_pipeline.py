@@ -19,6 +19,7 @@ from sandbox.sportradar_stats.analyze_filtered_capture import (
 )
 from sandbox.sportradar_stats.build_match_features import load_or_build_snapshot
 from sandbox.sportradar_stats.capture_everything import capture_everything
+from sandbox.sportradar_stats.capture_runtime import resolve_capture_user_data_dir
 from sandbox.sportradar_stats.features_builder import build_match_features_document
 from sandbox.sportradar_stats.filtering import filter_capture_directory
 from sandbox.sportradar_stats.snapshot_builder import build_match_snapshot_from_capture_dir
@@ -221,6 +222,7 @@ def print_generated_paths(paths: dict[str, Path | None]) -> None:
 
 def run_pipeline(options: PipelineOptions) -> dict[str, Path | None]:
     options.out_dir.mkdir(parents=True, exist_ok=True)
+    options.user_data_dir = resolve_capture_user_data_dir(options.user_data_dir)
 
     generated_paths: dict[str, Path | None] = {
         "responses.ndjson": options.out_dir / "responses.ndjson",
@@ -234,6 +236,10 @@ def run_pipeline(options: PipelineOptions) -> dict[str, Path | None]:
 
     try:
         if not options.skip_capture:
+            if options.user_data_dir:
+                print(f"Using capture profile: {options.user_data_dir}")
+            else:
+                print("Using capture profile: none")
             asyncio.run(run_capture_stage(options))
         run_filter_stage(options)
         if not (options.out_dir / "filtered_fetch.ndjson").exists():

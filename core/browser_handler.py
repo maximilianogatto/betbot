@@ -114,15 +114,16 @@ class BrowserHandler:
         """Yield a fresh page from the shared persistent context."""
 
         async with self._semaphore:
-            await self._prepare_runtime()
-            await self._ensure_shared_context()
-            if self._context is None:
-                raise RuntimeError("Browser context is not available.")
-
-            page = await self._acquire_page()
+            page = None
             await self._mark_page_opened()
 
             try:
+                await self._prepare_runtime()
+                await self._ensure_shared_context()
+                if self._context is None:
+                    raise RuntimeError("Browser context is not available.")
+
+                page = await self._acquire_page()
                 if self.settings.page_default_timeout_ms is not None:
                     page.set_default_timeout(self.settings.page_default_timeout_ms)
                 if self.settings.page_default_navigation_timeout_ms is not None:
@@ -131,10 +132,11 @@ class BrowserHandler:
                     )
                 yield page
             finally:
-                if self.settings.page_reuse_enabled:
-                    await self._recycle_page(page)
-                else:
-                    await page.close()
+                if page is not None:
+                    if self.settings.page_reuse_enabled:
+                        await self._recycle_page(page)
+                    else:
+                        await page.close()
                 await self._mark_page_closed()
 
     @asynccontextmanager
@@ -147,15 +149,17 @@ class BrowserHandler:
         """
 
         async with self._semaphore:
-            await self._prepare_runtime()
-            if self._browser is None:
-                raise RuntimeError("Browser instance is not available.")
-
-            context = await self._browser.new_context(**self.settings.context_kwargs)
-            page = await context.new_page()
+            context = None
+            page = None
             await self._mark_page_opened()
 
             try:
+                await self._prepare_runtime()
+                if self._browser is None:
+                    raise RuntimeError("Browser instance is not available.")
+
+                context = await self._browser.new_context(**self.settings.context_kwargs)
+                page = await context.new_page()
                 if self.settings.page_default_timeout_ms is not None:
                     page.set_default_timeout(self.settings.page_default_timeout_ms)
                 if self.settings.page_default_navigation_timeout_ms is not None:
@@ -165,11 +169,12 @@ class BrowserHandler:
                 yield page
             finally:
                 try:
-                    if not page.is_closed():
+                    if page is not None and not page.is_closed():
                         await page.close()
                 except Exception:
                     pass
-                await context.close()
+                if context is not None:
+                    await context.close()
                 await self._mark_page_closed()
 
     async def _acquire_page(self) -> Any:

@@ -7,6 +7,7 @@ from datetime import datetime
 from html import escape
 import json
 from typing import TYPE_CHECKING
+from zoneinfo import ZoneInfo
 
 from storage.tracking_repository import (
     ActiveEventRecord,
@@ -19,6 +20,16 @@ if TYPE_CHECKING:
 
 MAX_GROUPED_ALERT_ITEMS = 10
 TELEGRAM_SAFE_MESSAGE_LIMIT = 3900
+DISPLAY_TIMEZONE = ZoneInfo("America/Argentina/Buenos_Aires")
+SPANISH_WEEKDAY_ABBREVIATIONS = (
+    "Lun",
+    "Mar",
+    "Mié",
+    "Jue",
+    "Vie",
+    "Sáb",
+    "Dom",
+)
 
 
 def build_new_event_alert_message(
@@ -365,7 +376,9 @@ def format_kickoff_text(match: ActiveEventRecord) -> str:
         return formatted_labels
 
     if match.kickoff_at is not None:
-        return match.kickoff_at
+        formatted_kickoff = format_display_datetime(match.kickoff_at)
+        if formatted_kickoff is not None:
+            return formatted_kickoff
 
     return "Horario no disponible"
 
@@ -375,13 +388,16 @@ def format_kickoff_labels(date_label: str | None, time_label: str | None) -> str
 
     normalized_date = (date_label or "").strip()
     normalized_time = (time_label or "").strip()
-    rendered_date = _with_weekday_prefix(normalized_date)
 
-    if rendered_date and normalized_time:
-        return f"{rendered_date} {normalized_time}"
+    if normalized_date and normalized_time:
+        combined = format_display_datetime(f"{normalized_date}T{normalized_time}")
+        if combined is not None:
+            return combined
 
-    if rendered_date:
-        return rendered_date
+    if normalized_date:
+        rendered_date = _format_display_date_label(normalized_date)
+        if rendered_date is not None:
+            return rendered_date
 
     if normalized_time:
         return normalized_time
@@ -389,33 +405,59 @@ def format_kickoff_labels(date_label: str | None, time_label: str | None) -> str
     return "Horario no disponible"
 
 
-def _with_weekday_prefix(date_label: str) -> str:
-    """Prefix plain ISO-style dates with their weekday in Spanish."""
+def format_display_datetime(value: datetime | str | None) -> str | None:
+    """Format one date/time value for Telegram as `Mié 13/05 23:00`."""
+
+    if value is None:
+        return None
+
+    parsed = _parse_display_datetime(value)
+    if parsed is None:
+        return None
+
+    localized = parsed.astimezone(DISPLAY_TIMEZONE)
+    weekday = SPANISH_WEEKDAY_ABBREVIATIONS[localized.weekday()]
+    return f"{weekday} {localized.strftime('%d/%m %H:%M')}"
+
+
+def _format_display_date_label(date_label: str) -> str | None:
+    """Format one plain ISO-style date label without the year."""
 
     if not date_label:
-        return ""
+        return None
 
     prefix = date_label[:10]
     try:
         parsed = datetime.strptime(prefix, "%Y-%m-%d")
     except ValueError:
-        return date_label
+        return None
 
-    weekday_name = (
-        "Lunes",
-        "Martes",
-        "Miércoles",
-        "Jueves",
-        "Viernes",
-        "Sábado",
-        "Domingo",
-    )[parsed.weekday()]
-    suffix = date_label[10:].strip()
+    weekday = SPANISH_WEEKDAY_ABBREVIATIONS[parsed.weekday()]
+    return f"{weekday} {parsed.strftime('%d/%m')}"
 
-    if suffix:
-        return f"{weekday_name} {prefix} {suffix}"
 
-    return f"{weekday_name} {prefix}"
+def _parse_display_datetime(value: datetime | str) -> datetime | None:
+    if isinstance(value, datetime):
+        parsed = value
+    elif isinstance(value, str):
+        normalized = value.strip()
+        if not normalized:
+            return None
+
+        try:
+            parsed = datetime.fromisoformat(normalized)
+        except ValueError:
+            try:
+                parsed = datetime.strptime(normalized, "%Y-%m-%dT%H:%M")
+            except ValueError:
+                return None
+    else:
+        return None
+
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=DISPLAY_TIMEZONE)
+
+    return parsed
 
 
 def _build_match_block_lines(match: ActiveEventRecord) -> list[str]:
@@ -517,13 +559,13 @@ def _build_extra_market_lines(match: ActiveEventRecord) -> list[str]:
 def _format_asian_handicap_line(
     match: ActiveEventRecord,
     market_payload: object,
-) -> str:
+) -> str | None:
     if not isinstance(market_payload, dict):
-        return "📐 AH Sin línea valor"
+        return None
 
     selections = market_payload.get("selections")
     if not isinstance(selections, list) or not selections:
-        return "📐 AH Sin línea valor"
+        return None
 
     normalized_home = _normalize_name(match.home)
     normalized_away = _normalize_name(match.away)
@@ -541,13 +583,13 @@ def _format_asian_handicap_line(
             away_selection = selection_payload
 
     if home_selection is None or away_selection is None:
-        return "📐 AH Sin línea valor"
+        return None
 
     rendered_home = _format_asian_selection("L", home_selection)
     rendered_away = _format_asian_selection("V", away_selection)
 
     if rendered_home is None or rendered_away is None:
-        return "📐 AH Sin línea valor"
+        return None
 
     return f"📐 AH {escape(rendered_home)} | {escape(rendered_away)}"
 

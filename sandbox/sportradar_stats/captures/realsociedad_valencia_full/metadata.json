@@ -1,0 +1,9 @@
+{
+  "stats_url": "https://s5.sir.sportradar.com/bet365/en/match/61624670",
+  "bootstrap_url": null,
+  "captured_at": "2026-05-17T07:47:46.309335+00:00",
+  "responses_seen": 218,
+  "requests_seen": 242,
+  "seconds": 30.0,
+  "user_data_dir": "/tmp/chrome-sportradar-profile"
+}

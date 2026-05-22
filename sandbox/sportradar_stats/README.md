@@ -8,7 +8,13 @@ Este sandbox sirve para investigar el feed de estadísticas que Bet365 incrusta 
 capture_everything.py -> filter_capture.py -> analyze_filtered_capture.py -> build_match_snapshot.py -> build_match_features.py
 ```
 
-`capture_everything.py` guarda todo lo que ve el navegador. Después el filtro deja solo lo útil para research (`fetch` / `xhr` y rutas `/gismo/`), y el análisis genera un reporte enfocado en endpoints accionables para BetBot.
+Flujo alternativo para investigación más liviana:
+
+```text
+capture_useful.py -> probe_useful_http.py
+```
+
+`capture_everything.py` guarda todo lo que ve el navegador. Después el filtro deja solo lo útil para research (`fetch` / `xhr` y rutas `/gismo/`), y el análisis genera un reporte enfocado en endpoints accionables para BetBot. `capture_useful.py` ataca el mismo problema desde el inicio, guardando solo endpoints útiles ya filtrados.
 
 ## Archivos principales
 
@@ -18,14 +24,18 @@ capture_everything.py -> filter_capture.py -> analyze_filtered_capture.py -> bui
   Helpers puros de filtrado, normalización y agrupación por endpoint.
 - `filter_capture.py`
   Filtra `responses.ndjson` y genera artefactos útiles de análisis.
+- `capture_useful.py`
+  Captura directamente solo endpoints útiles de `/gismo/` y algunos documentos relevantes de StatsHub.
 - `analysis.py`
   Helpers puros de clasificación y render de reportes.
 - `analyze_filtered_capture.py`
   Lee el filtrado y genera un `endpoint_report.md`.
+- `probe_useful_http.py`
+  Intenta repetir por HTTP puro las URLs firmadas de la captura útil para ver si son reutilizables sin navegador.
 - `snapshot_builder.py`
   Normaliza los endpoints útiles en un snapshot compacto por partido.
 - `build_match_snapshot.py`
-  CLI para construir `match_snapshot.json` desde `filtered_fetch.ndjson`.
+  CLI para construir `match_snapshot.json` desde `filtered_fetch.ndjson` o `useful_fetch.ndjson`.
 - `features_builder.py`
   Deriva features compactas y robustas desde `match_snapshot.json`.
 - `build_match_features.py`
@@ -50,6 +60,89 @@ Ejemplo real de `stats_url`:
 ```text
 https://s5.sir.sportradar.com/bet365/en/match/61624664
 ```
+
+### Nota sobre perfiles reales
+
+En varias pruebas, StatsHub respondió mejor cuando Chromium reutilizó un perfil persistente real.
+
+El pipeline y el wrapper headless ahora intentan resolver el perfil así:
+
+- `--user-data-dir` si lo pasás explícitamente
+- `SPORTRADAR_USER_DATA_DIR` o `BETBOT_SPORTRADAR_USER_DATA_DIR`
+- `/tmp/chrome-sportradar-profile` si existe
+
+## Cómo capturar sin ventana visible
+
+Sin tocar `capture_everything.py`, podés usar este wrapper:
+
+```bash
+./betbot/bin/python sandbox/sportradar_stats/capture_everything_headless.py \
+  "https://s5.sir.sportradar.com/bet365/en/match/61624664" \
+  --seconds 30 \
+  --out-dir sandbox/sportradar_stats/captures/headless_test
+```
+
+Esto sigue usando Playwright/Chromium, pero en `headless`, así que no abre una ventana visible.
+
+## Cómo correr la captura útil
+
+```bash
+./betbot/bin/python sandbox/sportradar_stats/capture_useful.py "<stats_url>" \
+  --seconds 30 \
+  --out-dir sandbox/sportradar_stats/captures/useful_test
+```
+
+Esta variante:
+
+- reutiliza el perfil persistente igual que `capture_everything.py`
+- guarda solo `fetch` / `xhr` / `document` relevantes
+- prioriza endpoints allowlist bajo `/gismo/`
+- produce artefactos más compactos y directos para inspección
+
+### Qué produce la captura útil
+
+Dentro del directorio de captura:
+
+- `useful_fetch.ndjson`
+- `useful_fetch.json`
+- `useful_endpoints_index.json`
+- `useful_capture_metadata.json`
+
+## Cómo probar si las URLs útiles se pueden repetir por HTTP puro
+
+```bash
+./betbot/bin/python sandbox/sportradar_stats/probe_useful_http.py \
+  sandbox/sportradar_stats/captures/useful_test
+```
+
+Si querés sumar cookies exportadas:
+
+```bash
+./betbot/bin/python sandbox/sportradar_stats/probe_useful_http.py \
+  sandbox/sportradar_stats/captures/useful_test \
+  --cookies-json sandbox/sportradar_stats/captures/useful_test/cookies.json
+```
+
+O un `storage_state.json` compatible con Playwright:
+
+```bash
+./betbot/bin/python sandbox/sportradar_stats/probe_useful_http.py \
+  sandbox/sportradar_stats/captures/useful_test \
+  --storage-state /tmp/storage_state.json
+```
+
+### Qué produce el probe HTTP
+
+- `http_probe_results.json`
+- `http_probe_report.md`
+
+La idea es responder rápido:
+
+- si una URL firmada sirve por `httpx`
+- si requiere cookies
+- si la firma venció
+- si devuelve HTML / empty body / 403
+- si el endpoint sigue siendo el mismo útil o redirige a otra cosa
 
 ## Cómo correr el filtrado
 
@@ -97,6 +190,10 @@ Además, si la captura vive bajo `sandbox/sportradar_stats/captures/...`, el scr
 
 - `responses.ndjson`
   Captura cruda, con mucho ruido: scripts, css, fuentes, assets, fetches útiles, etc.
+- `useful_fetch.ndjson`
+  Captura ya filtrada en origen, con endpoints útiles de StatsHub / Sportradar.
+- `useful_endpoints_index.json`
+  Índice agrupado solo para la captura útil.
 - `filtered_fetch.ndjson`
   Solo responses útiles para research.
 - `endpoints_index.json`
@@ -126,6 +223,8 @@ El reporte intenta responder:
   sandbox/sportradar_stats/captures/test \
   --pretty
 ```
+
+Si en la carpeta existe `useful_fetch.ndjson`, el builder lo usa antes que `filtered_fetch.ndjson`.
 
 Opciones útiles:
 
@@ -183,6 +282,7 @@ Opciones útiles:
 ```
 
 Si `match_snapshot.json` no existe, la CLI lo reconstruye automáticamente desde `filtered_fetch.ndjson`.
+Si hay `useful_fetch.ndjson`, también lo acepta como fuente.
 
 ## Cómo correr todo el pipeline de una vez
 
@@ -224,6 +324,8 @@ Y al final imprime las rutas generadas para:
 - `match_snapshot.json`
 - `match_features.json`
 
+Si ya tenés una captura cruda con `responses.ndjson`, el flujo recomendado es usar `--skip-capture`.
+
 ## Conclusiones iniciales
 
 - `match_markets` es un hallazgo fuerte: expone mercados/odds del partido por HTTP.
@@ -232,6 +334,8 @@ Y al final imprime las rutas generadas para:
 - `stats_formtable`, `stats_season_tables`, `stats_team_lastx`, `stats_team_streaks` y relacionados aportan contexto pre-match interesante.
 - `stats_season_injuries`, `stats_season_topgoals`, `stats_season_topcards` y `stats_season_topassists` sirven para enriquecer análisis.
 - `event_get` parece especialmente prometedor, pero hay que validar si es del partido abierto o un feed live más global.
+- `capture_useful.py` sirve como atajo para quedarse solo con endpoints importantes sin arrastrar todos los assets del widget.
+- `probe_useful_http.py` sirve para separar qué endpoints podrían reciclarse con HTTP puro de cuáles siguen dependiendo del navegador o de cookies/sesión.
 
 ## Próximos pasos recomendados
 

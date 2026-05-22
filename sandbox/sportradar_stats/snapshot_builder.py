@@ -128,10 +128,14 @@ def load_capture_metadata(capture_dir: Path) -> dict[str, Any]:
 
 
 def load_filtered_records(capture_dir: Path) -> list[dict[str, Any]]:
-    filtered_path = capture_dir / "filtered_fetch.ndjson"
-    if not filtered_path.exists():
-        raise FileNotFoundError(f"No existe {filtered_path}")
-    return list(iter_ndjson_records(filtered_path))
+    candidate_paths = (
+        capture_dir / "useful_fetch.ndjson",
+        capture_dir / "filtered_fetch.ndjson",
+    )
+    for candidate_path in candidate_paths:
+        if candidate_path.exists():
+            return list(iter_ndjson_records(candidate_path))
+    raise FileNotFoundError(f"No existe ninguno de estos archivos: {', '.join(str(path) for path in candidate_paths)}")
 
 
 def group_records_by_endpoint(records: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:

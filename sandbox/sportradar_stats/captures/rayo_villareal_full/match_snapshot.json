@@ -1,0 +1,3191 @@
+{
+  "schema_version": 1,
+  "snapshot_metadata": {
+    "snapshot_version": 1,
+    "generated_at": "2026-05-17T15:56:34.318802+00:00",
+    "capture_type": "prematch",
+    "data_completeness": {
+      "important_endpoints_present": 14,
+      "important_endpoints_expected": 15,
+      "important_endpoints_ratio": 0.9333,
+      "quality_flags": {
+        "has_match_metadata": true,
+        "has_odds": true,
+        "has_table": true,
+        "has_team_form": true,
+        "has_h2h": true,
+        "has_team_scoring": true,
+        "has_injuries": true,
+        "has_player_leaders": true,
+        "has_live_state": true
+      }
+    },
+    "endpoints_used": [
+      "match_info_statshub",
+      "match_markets",
+      "match_timeline",
+      "match_timelinedelta",
+      "stats_formtable",
+      "stats_h2h_versus",
+      "stats_match_get",
+      "stats_season_injuries",
+      "stats_season_tables",
+      "stats_season_teamscoringconceding",
+      "stats_season_topassists",
+      "stats_season_topcards",
+      "stats_season_topgoals",
+      "stats_team_lastx",
+      "stats_team_nextx",
+      "stats_team_streaks",
+      "stats_team_versus"
+    ],
+    "missing_important_endpoints": [
+      "stats_match_tableslice"
+    ]
+  },
+  "source_capture_dir": "/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/sandbox/sportradar_stats/captures/rayo_villareal_full",
+  "match_id": "61624668",
+  "bet365_event_id": null,
+  "stats_url": "https://s5.sir.sportradar.com/bet365/en/match/61624668",
+  "home": "Vallecano",
+  "away": "Villarreal",
+  "competition": "LaLiga",
+  "season": "LaLiga 25/26",
+  "round": 37,
+  "kickoff_utc": "2026-05-17T17:00:00+00:00",
+  "odds": {
+    "source": "match_markets",
+    "markets": {
+      "1x2": {
+        "home": 2.3,
+        "draw": 3.5,
+        "away": 3.0
+      },
+      "handicap": [
+        {
+          "market_name": "Handicap 0:1",
+          "line": "0:1",
+          "outcomes": [
+            {
+              "name": "Vallecano (0:1)",
+              "odds": 4.333,
+              "active": true,
+              "position": 0
+            },
+            {
+              "name": "draw (0:1)",
+              "odds": 4.333,
+              "active": true,
+              "position": 1
+            },
+            {
+              "name": "Villarreal (0:1)",
+              "odds": 1.571,
+              "active": true,
+              "position": 2
+            }
+          ]
+        },
+        {
+          "market_name": "Handicap",
+          "line": "-0.25",
+          "outcomes": [
+            {
+              "name": "Vallecano (-0.25)",
+              "odds": 2.0,
+              "active": true,
+              "position": 0
+            },
+            {
+              "name": "Villarreal (0.25)",
+              "odds": 1.85,
+              "active": true,
+              "position": 1
+            }
+          ]
+        },
+        {
+          "market_name": "1st half - handicap",
+          "line": "0.0",
+          "outcomes": [
+            {
+              "name": "Vallecano (0.0)",
+              "odds": 1.725,
+              "active": true,
+              "position": 0
+            },
+            {
+              "name": "Villarreal (-0.0)",
+              "odds": 2.075,
+              "active": true,
+              "position": 1
+            }
+          ]
+        }
+      ],
+      "totals": [
+        {
+          "market_name": "Total",
+          "line": "2.75",
+          "outcomes": [
+            {
+              "name": "over 2.75",
+              "odds": 1.925,
+              "active": true,
+              "position": 0
+            },
+            {
+              "name": "under 2.75",
+              "odds": 1.925,
+              "active": true,
+              "position": 1
+            }
+          ]
+        }
+      ],
+      "raw_market_count": 11
+    }
+  },
+  "table_context": {
+    "competition_position_context": {
+      "home_position": 10,
+      "away_position": 3,
+      "home_points": 44,
+      "away_points": 69,
+      "home_goal_diff": -6,
+      "away_goal_diff": 24,
+      "position_gap": 7,
+      "points_gap": -25
+    },
+    "current_round": 36,
+    "max_rounds": 38,
+    "season_progress_pct": 94.74
+  },
+  "team_standing": {
+    "home": {
+      "team_id": "2818",
+      "team_name": "Vallecano",
+      "position": 10,
+      "points": 44,
+      "matches": 36,
+      "wins": 10,
+      "draws": 14,
+      "losses": 12,
+      "goals_for": 37,
+      "goals_against": 43,
+      "goal_diff": -6,
+      "home_position": 11,
+      "away_position": 13,
+      "promotion": null
+    },
+    "away": {
+      "team_id": "2819",
+      "team_name": "Villarreal",
+      "position": 3,
+      "points": 69,
+      "matches": 36,
+      "wins": 21,
+      "draws": 6,
+      "losses": 9,
+      "goals_for": 67,
+      "goals_against": 43,
+      "goal_diff": 24,
+      "home_position": 3,
+      "away_position": 4,
+      "promotion": "Champions League"
+    }
+  },
+  "team_score": {
+    "home": {
+      "form": {
+        "recent_points": 9,
+        "recent_position": 9,
+        "matches_considered": 6,
+        "wins": 2,
+        "draws": 3,
+        "losses": 1,
+        "goals_for": 8,
+        "goals_against": 8,
+        "form_sequence": [
+          "D",
+          "D",
+          "W",
+          "D",
+          "W",
+          "L"
+        ]
+      },
+      "streaks": {
+        "nolosing": {
+          "total": {
+            "value": 7,
+            "match_ids": [
+              "61624652",
+              "61624636",
+              "69340064",
+              "61624606",
+              "69340060",
+              "61624566",
+              "61624594"
+            ]
+          },
+          "home": {
+            "value": 6,
+            "match_ids": [
+              "61624636",
+              "69340060",
+              "61624566",
+              "61624594",
+              "69339976",
+              "61624534"
+            ]
+          }
+        },
+        "goalsscored": {
+          "total": {
+            "value": 8,
+            "match_ids": [
+              "61624652",
+              "61624636",
+              "69340064",
+              "61624606",
+              "69340060",
+              "61624566",
+              "61624594",
+              "69340054"
+            ]
+          },
+          "home": {
+            "value": 6,
+            "match_ids": [
+              "61624636",
+              "69340060",
+              "61624566",
+              "61624594",
+              "69339976",
+              "61624534"
+            ]
+          }
+        }
+      },
+      "last_matches_summary": {
+        "matches_count": 5,
+        "wins": 3,
+        "draws": 2,
+        "losses": 0,
+        "points": 11,
+        "goals_for": 6,
+        "goals_against": 2,
+        "clean_sheets": 3,
+        "failed_to_score": 0,
+        "btts": 2
+      }
+    },
+    "away": {
+      "form": {
+        "recent_points": 11,
+        "recent_position": 5,
+        "matches_considered": 6,
+        "wins": 3,
+        "draws": 2,
+        "losses": 1,
+        "goals_for": 13,
+        "goals_against": 8,
+        "form_sequence": [
+          "L",
+          "D",
+          "W",
+          "W",
+          "D",
+          "W"
+        ]
+      },
+      "streaks": {
+        "nodrawing": {
+          "home": {
+            "value": 10,
+            "match_ids": [
+              "61624654",
+              "61624614",
+              "61624572",
+              "61624516",
+              "61624470",
+              "61624434",
+              "61624390",
+              "61624356",
+              "63369965",
+              "61624304"
+            ]
+          }
+        },
+        "goalsscored": {
+          "total": {
+            "value": 6,
+            "match_ids": [
+              "61624654",
+              "61624626",
+              "61624614",
+              "61624572",
+              "61624586",
+              "61624538"
+            ]
+          },
+          "home": {
+            "value": 7,
+            "match_ids": [
+              "61624654",
+              "61624614",
+              "61624572",
+              "61624516",
+              "61624470",
+              "61624434",
+              "61624390"
+            ]
+          }
+        },
+        "goalsconceded": {
+          "total": {
+            "value": 10,
+            "match_ids": [
+              "61624654",
+              "61624626",
+              "61624614",
+              "61624572",
+              "61624586",
+              "61624538",
+              "61624524",
+              "61624516",
+              "61624478",
+              "61624470"
+            ]
+          },
+          "home": {
+            "value": 10,
+            "match_ids": [
+              "61624654",
+              "61624614",
+              "61624572",
+              "61624516",
+              "61624470",
+              "61624434",
+              "61624390",
+              "61624356",
+              "63369965",
+              "61624304"
+            ]
+          },
+          "away": {
+            "value": 6,
+            "match_ids": [
+              "61624626",
+              "61624586",
+              "61624538",
+              "61624524",
+              "61624478",
+              "61624438"
+            ]
+          }
+        }
+      },
+      "last_matches_summary": {
+        "matches_count": 5,
+        "wins": 2,
+        "draws": 2,
+        "losses": 1,
+        "points": 8,
+        "goals_for": 11,
+        "goals_against": 7,
+        "clean_sheets": 0,
+        "failed_to_score": 0,
+        "btts": 5
+      }
+    }
+  },
+  "team_dif_score": {
+    "home_minus_away": {
+      "avg_goals_for_diff": -0.833333,
+      "avg_goals_against_diff": 0.0,
+      "clean_sheet_rate_diff": 0.083333,
+      "failed_to_score_rate_diff": 0.194444,
+      "btts_rate_diff": -0.194444,
+      "recent_form_points_diff": -2
+    },
+    "notes": [
+      "Differences are computed as home minus away."
+    ]
+  },
+  "team_form": {
+    "home_last_matches": [
+      {
+        "match_id": "61624652",
+        "date_utc": "2026-05-14T17:00:00+00:00",
+        "home": "Valencia",
+        "away": "Vallecano",
+        "opponent": "Valencia",
+        "opponent_id": "2828",
+        "venue": "away",
+        "result": "D",
+        "goals_for": 1,
+        "goals_against": 1,
+        "tournament": "LaLiga",
+        "round": 36
+      },
+      {
+        "match_id": "61624636",
+        "date_utc": "2026-05-11T19:00:00+00:00",
+        "home": "Vallecano",
+        "away": "Girona",
+        "opponent": "Girona",
+        "opponent_id": "24264",
+        "venue": "home",
+        "result": "D",
+        "goals_for": 1,
+        "goals_against": 1,
+        "tournament": "LaLiga",
+        "round": 35
+      },
+      {
+        "match_id": "69340064",
+        "date_utc": "2026-05-07T19:00:00+00:00",
+        "home": "Strasbourg Alsace",
+        "away": "Vallecano",
+        "opponent": "Strasbourg Alsace",
+        "opponent_id": "1659",
+        "venue": "away",
+        "result": "W",
+        "goals_for": 1,
+        "goals_against": 0,
+        "tournament": "UEFA Conference League, Knockout stage",
+        "round": 2
+      },
+      {
+        "match_id": "61624606",
+        "date_utc": "2026-05-03T14:15:00+00:00",
+        "home": "Getafe",
+        "away": "Vallecano",
+        "opponent": "Getafe",
+        "opponent_id": "2859",
+        "venue": "away",
+        "result": "W",
+        "goals_for": 2,
+        "goals_against": 0,
+        "tournament": "LaLiga",
+        "round": 34
+      },
+      {
+        "match_id": "69340060",
+        "date_utc": "2026-04-30T19:00:00+00:00",
+        "home": "Vallecano",
+        "away": "Strasbourg Alsace",
+        "opponent": "Strasbourg Alsace",
+        "opponent_id": "1659",
+        "venue": "home",
+        "result": "W",
+        "goals_for": 1,
+        "goals_against": 0,
+        "tournament": "UEFA Conference League, Knockout stage",
+        "round": 2
+      },
+      {
+        "match_id": "61624566",
+        "date_utc": "2026-04-26T12:00:00+00:00",
+        "home": "Vallecano",
+        "away": "Real Sociedad",
+        "opponent": "Real Sociedad",
+        "opponent_id": "2824",
+        "venue": "home",
+        "result": "D",
+        "goals_for": 3,
+        "goals_against": 3,
+        "tournament": "LaLiga",
+        "round": 32
+      },
+      {
+        "match_id": "61624594",
+        "date_utc": "2026-04-23T18:00:00+00:00",
+        "home": "Vallecano",
+        "away": "Espanyol",
+        "opponent": "Espanyol",
+        "opponent_id": "2814",
+        "venue": "home",
+        "result": "W",
+        "goals_for": 1,
+        "goals_against": 0,
+        "tournament": "LaLiga",
+        "round": 33
+      },
+      {
+        "match_id": "69340054",
+        "date_utc": "2026-04-16T19:00:00+00:00",
+        "home": "AEK Athens",
+        "away": "Vallecano",
+        "opponent": "AEK Athens",
+        "opponent_id": "3250",
+        "venue": "away",
+        "result": "L",
+        "goals_for": 1,
+        "goals_against": 3,
+        "tournament": "UEFA Conference League, Knockout stage",
+        "round": 3
+      },
+      {
+        "match_id": "61624546",
+        "date_utc": "2026-04-12T14:15:00+00:00",
+        "home": "Mallorca",
+        "away": "Vallecano",
+        "opponent": "Mallorca",
+        "opponent_id": "2826",
+        "venue": "away",
+        "result": "L",
+        "goals_for": 0,
+        "goals_against": 3,
+        "tournament": "LaLiga",
+        "round": 31
+      },
+      {
+        "match_id": "69339976",
+        "date_utc": "2026-04-09T16:45:00+00:00",
+        "home": "Vallecano",
+        "away": "AEK Athens",
+        "opponent": "AEK Athens",
+        "opponent_id": "3250",
+        "venue": "home",
+        "result": "W",
+        "goals_for": 3,
+        "goals_against": 0,
+        "tournament": "UEFA Conference League, Knockout stage",
+        "round": 3
+      }
+    ],
+    "away_last_matches": [
+      {
+        "match_id": "61624654",
+        "date_utc": "2026-05-13T17:00:00+00:00",
+        "home": "Villarreal",
+        "away": "Sevilla",
+        "opponent": "Sevilla",
+        "opponent_id": "2833",
+        "venue": "home",
+        "result": "L",
+        "goals_for": 2,
+        "goals_against": 3,
+        "tournament": "LaLiga",
+        "round": 36
+      },
+      {
+        "match_id": "61624626",
+        "date_utc": "2026-05-10T12:00:00+00:00",
+        "home": "Mallorca",
+        "away": "Villarreal",
+        "opponent": "Mallorca",
+        "opponent_id": "2826",
+        "venue": "away",
+        "result": "D",
+        "goals_for": 1,
+        "goals_against": 1,
+        "tournament": "LaLiga",
+        "round": 35
+      },
+      {
+        "match_id": "61624614",
+        "date_utc": "2026-05-02T12:00:00+00:00",
+        "home": "Villarreal",
+        "away": "Levante",
+        "opponent": "Levante",
+        "opponent_id": "2849",
+        "venue": "home",
+        "result": "W",
+        "goals_for": 5,
+        "goals_against": 1,
+        "tournament": "LaLiga",
+        "round": 34
+      },
+      {
+        "match_id": "61624572",
+        "date_utc": "2026-04-26T19:00:00+00:00",
+        "home": "Villarreal",
+        "away": "Celta Vigo",
+        "opponent": "Celta Vigo",
+        "opponent_id": "2821",
+        "venue": "home",
+        "result": "W",
+        "goals_for": 2,
+        "goals_against": 1,
+        "tournament": "LaLiga",
+        "round": 32
+      },
+      {
+        "match_id": "61624586",
+        "date_utc": "2026-04-23T19:30:00+00:00",
+        "home": "Oviedo",
+        "away": "Villarreal",
+        "opponent": "Oviedo",
+        "opponent_id": "2851",
+        "venue": "away",
+        "result": "D",
+        "goals_for": 1,
+        "goals_against": 1,
+        "tournament": "LaLiga",
+        "round": 33
+      },
+      {
+        "match_id": "61624538",
+        "date_utc": "2026-04-12T19:00:00+00:00",
+        "home": "Bilbao",
+        "away": "Villarreal",
+        "opponent": "Bilbao",
+        "opponent_id": "2825",
+        "venue": "away",
+        "result": "W",
+        "goals_for": 2,
+        "goals_against": 1,
+        "tournament": "LaLiga",
+        "round": 31
+      },
+      {
+        "match_id": "61624524",
+        "date_utc": "2026-04-06T19:00:00+00:00",
+        "home": "Girona",
+        "away": "Villarreal",
+        "opponent": "Girona",
+        "opponent_id": "24264",
+        "venue": "away",
+        "result": "L",
+        "goals_for": 0,
+        "goals_against": 1,
+        "tournament": "LaLiga",
+        "round": 30
+      },
+      {
+        "match_id": "61624516",
+        "date_utc": "2026-03-20T20:00:00+00:00",
+        "home": "Villarreal",
+        "away": "Real Sociedad",
+        "opponent": "Real Sociedad",
+        "opponent_id": "2824",
+        "venue": "home",
+        "result": "W",
+        "goals_for": 3,
+        "goals_against": 1,
+        "tournament": "LaLiga",
+        "round": 29
+      },
+      {
+        "match_id": "61624478",
+        "date_utc": "2026-03-13T20:00:00+00:00",
+        "home": "Alaves",
+        "away": "Villarreal",
+        "opponent": "Alaves",
+        "opponent_id": "2885",
+        "venue": "away",
+        "result": "D",
+        "goals_for": 1,
+        "goals_against": 1,
+        "tournament": "LaLiga",
+        "round": 28
+      },
+      {
+        "match_id": "61624470",
+        "date_utc": "2026-03-08T13:00:00+00:00",
+        "home": "Villarreal",
+        "away": "Elche",
+        "opponent": "Elche",
+        "opponent_id": "2846",
+        "venue": "home",
+        "result": "W",
+        "goals_for": 2,
+        "goals_against": 1,
+        "tournament": "LaLiga",
+        "round": 27
+      }
+    ],
+    "home_next_matches": [
+      {
+        "match_id": "61624668",
+        "date_utc": "2026-05-17T17:00:00+00:00",
+        "home": "Vallecano",
+        "away": "Villarreal",
+        "opponent": "Villarreal",
+        "opponent_id": "2819",
+        "venue": "home",
+        "result": null,
+        "goals_for": null,
+        "goals_against": null,
+        "tournament": "LaLiga",
+        "round": 37
+      }
+    ],
+    "away_next_matches": [
+      {
+        "match_id": "61624668",
+        "date_utc": "2026-05-17T17:00:00+00:00",
+        "home": "Vallecano",
+        "away": "Villarreal",
+        "opponent": "Vallecano",
+        "opponent_id": "2818",
+        "venue": "away",
+        "result": null,
+        "goals_for": null,
+        "goals_against": null,
+        "tournament": "LaLiga",
+        "round": 37
+      }
+    ]
+  },
+  "traceable_matches": {
+    "direct_h2h_matches": [
+      {
+        "match_id": "61624156",
+        "date_utc": "2025-11-01T13:00:00+00:00",
+        "home_team_id": "2819",
+        "away_team_id": "2818",
+        "score_home": 4,
+        "score_away": 0,
+        "winner": "home",
+        "tournament": "LaLiga",
+        "round": 11
+      },
+      {
+        "match_id": "50852565",
+        "date_utc": "2025-02-22T15:15:00+00:00",
+        "home_team_id": "2818",
+        "away_team_id": "2819",
+        "score_home": 0,
+        "score_away": 1,
+        "winner": "away",
+        "tournament": "LaLiga",
+        "round": 25
+      },
+      {
+        "match_id": "55396411",
+        "date_utc": "2024-12-18T20:30:00+00:00",
+        "home_team_id": "2819",
+        "away_team_id": "2818",
+        "score_home": 1,
+        "score_away": 1,
+        "winner": null,
+        "tournament": "LaLiga",
+        "round": 12
+      },
+      {
+        "match_id": "41893565",
+        "date_utc": "2024-04-28T16:30:00+00:00",
+        "home_team_id": "2819",
+        "away_team_id": "2818",
+        "score_home": 3,
+        "score_away": 0,
+        "winner": "home",
+        "tournament": "LaLiga",
+        "round": 33
+      },
+      {
+        "match_id": "41893009",
+        "date_utc": "2023-09-24T14:15:00+00:00",
+        "home_team_id": "2818",
+        "away_team_id": "2819",
+        "score_home": 1,
+        "score_away": 1,
+        "winner": null,
+        "tournament": "LaLiga",
+        "round": 6
+      },
+      {
+        "match_id": "34277929",
+        "date_utc": "2023-05-28T17:00:00+00:00",
+        "home_team_id": "2818",
+        "away_team_id": "2819",
+        "score_home": 2,
+        "score_away": 1,
+        "winner": "home",
+        "tournament": "LaLiga",
+        "round": 37
+      }
+    ],
+    "versus_matches": [
+      {
+        "match_id": "61624156",
+        "date_utc": "2025-11-01T13:00:00+00:00",
+        "home": "Villarreal",
+        "away": "Vallecano",
+        "opponent": "Villarreal",
+        "opponent_id": "2819",
+        "venue": "away",
+        "result": "L",
+        "goals_for": 0,
+        "goals_against": 4,
+        "tournament": "LaLiga",
+        "round": 11
+      },
+      {
+        "match_id": "50852565",
+        "date_utc": "2025-02-22T15:15:00+00:00",
+        "home": "Vallecano",
+        "away": "Villarreal",
+        "opponent": "Villarreal",
+        "opponent_id": "2819",
+        "venue": "home",
+        "result": "L",
+        "goals_for": 0,
+        "goals_against": 1,
+        "tournament": "LaLiga",
+        "round": 25
+      },
+      {
+        "match_id": "55396411",
+        "date_utc": "2024-12-18T20:30:00+00:00",
+        "home": "Villarreal",
+        "away": "Vallecano",
+        "opponent": "Villarreal",
+        "opponent_id": "2819",
+        "venue": "away",
+        "result": "D",
+        "goals_for": 1,
+        "goals_against": 1,
+        "tournament": "LaLiga",
+        "round": 12
+      },
+      {
+        "match_id": "41893565",
+        "date_utc": "2024-04-28T16:30:00+00:00",
+        "home": "Villarreal",
+        "away": "Vallecano",
+        "opponent": "Villarreal",
+        "opponent_id": "2819",
+        "venue": "away",
+        "result": "L",
+        "goals_for": 0,
+        "goals_against": 3,
+        "tournament": "LaLiga",
+        "round": 33
+      },
+      {
+        "match_id": "41893009",
+        "date_utc": "2023-09-24T14:15:00+00:00",
+        "home": "Vallecano",
+        "away": "Villarreal",
+        "opponent": "Villarreal",
+        "opponent_id": "2819",
+        "venue": "home",
+        "result": "D",
+        "goals_for": 1,
+        "goals_against": 1,
+        "tournament": "LaLiga",
+        "round": 6
+      },
+      {
+        "match_id": "34277929",
+        "date_utc": "2023-05-28T17:00:00+00:00",
+        "home": "Vallecano",
+        "away": "Villarreal",
+        "opponent": "Villarreal",
+        "opponent_id": "2819",
+        "venue": "home",
+        "result": "W",
+        "goals_for": 2,
+        "goals_against": 1,
+        "tournament": "LaLiga",
+        "round": 37
+      },
+      {
+        "match_id": "34277577",
+        "date_utc": "2023-01-30T20:00:00+00:00",
+        "home": "Villarreal",
+        "away": "Vallecano",
+        "opponent": "Villarreal",
+        "opponent_id": "2819",
+        "venue": "away",
+        "result": "W",
+        "goals_for": 1,
+        "goals_against": 0,
+        "tournament": "LaLiga",
+        "round": 19
+      },
+      {
+        "match_id": "27965882",
+        "date_utc": "2022-05-12T18:00:00+00:00",
+        "home": "Vallecano",
+        "away": "Villarreal",
+        "opponent": "Villarreal",
+        "opponent_id": "2819",
+        "venue": "home",
+        "result": "L",
+        "goals_for": 1,
+        "goals_against": 5,
+        "tournament": "LaLiga",
+        "round": 36
+      },
+      {
+        "match_id": "27965500",
+        "date_utc": "2021-12-12T13:00:00+00:00",
+        "home": "Villarreal",
+        "away": "Vallecano",
+        "opponent": "Villarreal",
+        "opponent_id": "2819",
+        "venue": "away",
+        "result": "L",
+        "goals_for": 0,
+        "goals_against": 2,
+        "tournament": "LaLiga",
+        "round": 17
+      },
+      {
+        "match_id": "21087425",
+        "date_utc": "2020-01-29T18:00:00+00:00",
+        "home": "Vallecano",
+        "away": "Villarreal",
+        "opponent": "Villarreal",
+        "opponent_id": "2819",
+        "venue": "home",
+        "result": "L",
+        "goals_for": 0,
+        "goals_against": 2,
+        "tournament": "Copa del Rey",
+        "round": 4
+      },
+      {
+        "match_id": "15109527",
+        "date_utc": "2019-03-17T17:30:00+00:00",
+        "home": "Villarreal",
+        "away": "Vallecano",
+        "opponent": "Villarreal",
+        "opponent_id": "2819",
+        "venue": "away",
+        "result": "L",
+        "goals_for": 1,
+        "goals_against": 3,
+        "tournament": "LaLiga",
+        "round": 28
+      },
+      {
+        "match_id": "15109201",
+        "date_utc": "2018-11-11T17:30:00+00:00",
+        "home": "Vallecano",
+        "away": "Villarreal",
+        "opponent": "Villarreal",
+        "opponent_id": "2819",
+        "venue": "home",
+        "result": "D",
+        "goals_for": 2,
+        "goals_against": 2,
+        "tournament": "LaLiga",
+        "round": 12
+      }
+    ],
+    "common_opponents": [
+      {
+        "opponent_id": "24264",
+        "opponent_name": "Girona",
+        "home_matches": [
+          {
+            "match_id": "61624636",
+            "date_utc": "2026-05-11T19:00:00+00:00",
+            "home": "Vallecano",
+            "away": "Girona",
+            "opponent": "Girona",
+            "opponent_id": "24264",
+            "venue": "home",
+            "result": "D",
+            "goals_for": 1,
+            "goals_against": 1,
+            "tournament": "LaLiga",
+            "round": 35
+          }
+        ],
+        "away_matches": [
+          {
+            "match_id": "61624524",
+            "date_utc": "2026-04-06T19:00:00+00:00",
+            "home": "Girona",
+            "away": "Villarreal",
+            "opponent": "Girona",
+            "opponent_id": "24264",
+            "venue": "away",
+            "result": "L",
+            "goals_for": 0,
+            "goals_against": 1,
+            "tournament": "LaLiga",
+            "round": 30
+          }
+        ]
+      },
+      {
+        "opponent_id": "2824",
+        "opponent_name": "Real Sociedad",
+        "home_matches": [
+          {
+            "match_id": "61624566",
+            "date_utc": "2026-04-26T12:00:00+00:00",
+            "home": "Vallecano",
+            "away": "Real Sociedad",
+            "opponent": "Real Sociedad",
+            "opponent_id": "2824",
+            "venue": "home",
+            "result": "D",
+            "goals_for": 3,
+            "goals_against": 3,
+            "tournament": "LaLiga",
+            "round": 32
+          }
+        ],
+        "away_matches": [
+          {
+            "match_id": "61624516",
+            "date_utc": "2026-03-20T20:00:00+00:00",
+            "home": "Villarreal",
+            "away": "Real Sociedad",
+            "opponent": "Real Sociedad",
+            "opponent_id": "2824",
+            "venue": "home",
+            "result": "W",
+            "goals_for": 3,
+            "goals_against": 1,
+            "tournament": "LaLiga",
+            "round": 29
+          }
+        ]
+      },
+      {
+        "opponent_id": "2826",
+        "opponent_name": "Mallorca",
+        "home_matches": [
+          {
+            "match_id": "61624546",
+            "date_utc": "2026-04-12T14:15:00+00:00",
+            "home": "Mallorca",
+            "away": "Vallecano",
+            "opponent": "Mallorca",
+            "opponent_id": "2826",
+            "venue": "away",
+            "result": "L",
+            "goals_for": 0,
+            "goals_against": 3,
+            "tournament": "LaLiga",
+            "round": 31
+          }
+        ],
+        "away_matches": [
+          {
+            "match_id": "61624626",
+            "date_utc": "2026-05-10T12:00:00+00:00",
+            "home": "Mallorca",
+            "away": "Villarreal",
+            "opponent": "Mallorca",
+            "opponent_id": "2826",
+            "venue": "away",
+            "result": "D",
+            "goals_for": 1,
+            "goals_against": 1,
+            "tournament": "LaLiga",
+            "round": 35
+          }
+        ]
+      }
+    ],
+    "transitive_edges": [
+      {
+        "opponent_id": "24264",
+        "opponent_name": "Girona",
+        "home_edge": {
+          "match_id": "61624636",
+          "venue": "home",
+          "result": "D",
+          "score": "1-1"
+        },
+        "away_edge": {
+          "match_id": "61624524",
+          "venue": "away",
+          "result": "L",
+          "score": "0-1"
+        }
+      },
+      {
+        "opponent_id": "2824",
+        "opponent_name": "Real Sociedad",
+        "home_edge": {
+          "match_id": "61624566",
+          "venue": "home",
+          "result": "D",
+          "score": "3-3"
+        },
+        "away_edge": {
+          "match_id": "61624516",
+          "venue": "home",
+          "result": "W",
+          "score": "3-1"
+        }
+      },
+      {
+        "opponent_id": "2826",
+        "opponent_name": "Mallorca",
+        "home_edge": {
+          "match_id": "61624546",
+          "venue": "away",
+          "result": "L",
+          "score": "0-3"
+        },
+        "away_edge": {
+          "match_id": "61624626",
+          "venue": "away",
+          "result": "D",
+          "score": "1-1"
+        }
+      }
+    ],
+    "notes": []
+  },
+  "h2h": {
+    "summary": {
+      "total_matches": 28,
+      "home_team_wins": 6,
+      "away_team_wins": 17,
+      "draws": 5,
+      "home_team_avg_goals": 1.1785714285714286,
+      "away_team_avg_goals": 2.0357142857142856
+    },
+    "recent_matches": [
+      {
+        "match_id": "61624156",
+        "date_utc": "2025-11-01T13:00:00+00:00",
+        "home_team_id": "2819",
+        "away_team_id": "2818",
+        "score_home": 4,
+        "score_away": 0,
+        "winner": "home",
+        "tournament": "LaLiga",
+        "round": 11
+      },
+      {
+        "match_id": "50852565",
+        "date_utc": "2025-02-22T15:15:00+00:00",
+        "home_team_id": "2818",
+        "away_team_id": "2819",
+        "score_home": 0,
+        "score_away": 1,
+        "winner": "away",
+        "tournament": "LaLiga",
+        "round": 25
+      },
+      {
+        "match_id": "55396411",
+        "date_utc": "2024-12-18T20:30:00+00:00",
+        "home_team_id": "2819",
+        "away_team_id": "2818",
+        "score_home": 1,
+        "score_away": 1,
+        "winner": null,
+        "tournament": "LaLiga",
+        "round": 12
+      },
+      {
+        "match_id": "41893565",
+        "date_utc": "2024-04-28T16:30:00+00:00",
+        "home_team_id": "2819",
+        "away_team_id": "2818",
+        "score_home": 3,
+        "score_away": 0,
+        "winner": "home",
+        "tournament": "LaLiga",
+        "round": 33
+      },
+      {
+        "match_id": "41893009",
+        "date_utc": "2023-09-24T14:15:00+00:00",
+        "home_team_id": "2818",
+        "away_team_id": "2819",
+        "score_home": 1,
+        "score_away": 1,
+        "winner": null,
+        "tournament": "LaLiga",
+        "round": 6
+      },
+      {
+        "match_id": "34277929",
+        "date_utc": "2023-05-28T17:00:00+00:00",
+        "home_team_id": "2818",
+        "away_team_id": "2819",
+        "score_home": 2,
+        "score_away": 1,
+        "winner": "home",
+        "tournament": "LaLiga",
+        "round": 37
+      }
+    ],
+    "same_venue_matches": [
+      {
+        "match_id": "50852565",
+        "date_utc": "2025-02-22T15:15:00+00:00",
+        "home_team_id": "2818",
+        "away_team_id": "2819",
+        "score_home": 0,
+        "score_away": 1,
+        "winner": "away",
+        "tournament": "LaLiga",
+        "round": 25
+      },
+      {
+        "match_id": "41893009",
+        "date_utc": "2023-09-24T14:15:00+00:00",
+        "home_team_id": "2818",
+        "away_team_id": "2819",
+        "score_home": 1,
+        "score_away": 1,
+        "winner": null,
+        "tournament": "LaLiga",
+        "round": 6
+      },
+      {
+        "match_id": "34277929",
+        "date_utc": "2023-05-28T17:00:00+00:00",
+        "home_team_id": "2818",
+        "away_team_id": "2819",
+        "score_home": 2,
+        "score_away": 1,
+        "winner": "home",
+        "tournament": "LaLiga",
+        "round": 37
+      },
+      {
+        "match_id": "27965882",
+        "date_utc": "2022-05-12T18:00:00+00:00",
+        "home_team_id": "2818",
+        "away_team_id": "2819",
+        "score_home": 1,
+        "score_away": 5,
+        "winner": "away",
+        "tournament": "LaLiga",
+        "round": 36
+      },
+      {
+        "match_id": "21087425",
+        "date_utc": "2020-01-29T18:00:00+00:00",
+        "home_team_id": "2818",
+        "away_team_id": "2819",
+        "score_home": 0,
+        "score_away": 2,
+        "winner": "away",
+        "tournament": "Copa del Rey",
+        "round": 4
+      },
+      {
+        "match_id": "15109201",
+        "date_utc": "2018-11-11T17:30:00+00:00",
+        "home_team_id": "2818",
+        "away_team_id": "2819",
+        "score_home": 2,
+        "score_away": 2,
+        "winner": null,
+        "tournament": "LaLiga",
+        "round": 12
+      }
+    ]
+  },
+  "team_scoring": {
+    "home": {
+      "overall": {
+        "matches": 36,
+        "wins": 10,
+        "goals_scored": 37,
+        "goals_conceded": 43
+      },
+      "home_split": {
+        "matches": 18,
+        "wins": 6,
+        "goals_scored": 22,
+        "goals_conceded": 15
+      },
+      "away_split": {
+        "matches": 18,
+        "wins": 4,
+        "goals_scored": 15,
+        "goals_conceded": 28
+      },
+      "goals_by_minutes": {
+        "scored": {
+          "0-15": {
+            "total": 0.05555555555555555,
+            "home": 0.05555555555555555,
+            "away": 0.05555555555555555
+          },
+          "16-30": {
+            "total": 0.1388888888888889,
+            "home": 0.05555555555555555,
+            "away": 0.2222222222222222
+          },
+          "31-45": {
+            "total": 0.3055555555555556,
+            "home": 0.3888888888888889,
+            "away": 0.2222222222222222
+          },
+          "46-60": {
+            "total": 0.1111111111111111,
+            "home": 0.1111111111111111,
+            "away": 0.1111111111111111
+          },
+          "61-75": {
+            "total": 0.16666666666666666,
+            "home": 0.2222222222222222,
+            "away": 0.1111111111111111
+          },
+          "76-90": {
+            "total": 0.25,
+            "home": 0.3888888888888889,
+            "away": 0.1111111111111111
+          }
+        },
+        "conceded": {
+          "0-15": {
+            "total": 0.1388888888888889,
+            "home": 0,
+            "away": 0.2777777777777778
+          },
+          "16-30": {
+            "total": 0.16666666666666666,
+            "home": 0.16666666666666666,
+            "away": 0.16666666666666666
+          },
+          "31-45": {
+            "total": 0.19444444444444445,
+            "home": 0.1111111111111111,
+            "away": 0.2777777777777778
+          },
+          "46-60": {
+            "total": 0.16666666666666666,
+            "home": 0.1111111111111111,
+            "away": 0.2222222222222222
+          },
+          "61-75": {
+            "total": 0.19444444444444445,
+            "home": 0.1111111111111111,
+            "away": 0.2777777777777778
+          },
+          "76-90": {
+            "total": 0.3333333333333333,
+            "home": 0.3333333333333333,
+            "away": 0.3333333333333333
+          }
+        },
+        "average": {
+          "0-15": 0.3085399449035813,
+          "16-30": 0.31955922865013775,
+          "31-45": 0.5041322314049587,
+          "46-60": 0.4297520661157025,
+          "61-75": 0.4380165289256198,
+          "76-90": 0.6694214876033058
+        }
+      },
+      "derived_features": {
+        "goals_scored_avg_total": 1.0277777777777777,
+        "goals_scored_avg_home": 1.2222222222222223,
+        "goals_scored_avg_away": 0.8333333333333334,
+        "goals_conceded_avg_total": 1.1944444444444444,
+        "goals_conceded_avg_home": 0.8333333333333334,
+        "goals_conceded_avg_away": 1.5555555555555556,
+        "clean_sheet_rate": 0.3055555555555556,
+        "failed_to_score_rate": 0.3333333333333333,
+        "both_teams_scored_rate": 0.4444444444444444,
+        "first_half_scoring_rate": 0.3611111111111111,
+        "first_half_conceding_rate": 0.5,
+        "minutes_per_goal_scored": 87.568,
+        "minutes_per_goal_conceded": 79.93023255813954,
+        "goals_by_minutes": {
+          "0-15": {
+            "total": 0.05555555555555555,
+            "home": 0.05555555555555555,
+            "away": 0.05555555555555555
+          },
+          "16-30": {
+            "total": 0.1388888888888889,
+            "home": 0.05555555555555555,
+            "away": 0.2222222222222222
+          },
+          "31-45": {
+            "total": 0.3055555555555556,
+            "home": 0.3888888888888889,
+            "away": 0.2222222222222222
+          },
+          "46-60": {
+            "total": 0.1111111111111111,
+            "home": 0.1111111111111111,
+            "away": 0.1111111111111111
+          },
+          "61-75": {
+            "total": 0.16666666666666666,
+            "home": 0.2222222222222222,
+            "away": 0.1111111111111111
+          },
+          "76-90": {
+            "total": 0.25,
+            "home": 0.3888888888888889,
+            "away": 0.1111111111111111
+          }
+        }
+      }
+    },
+    "away": {
+      "overall": {
+        "matches": 36,
+        "wins": 21,
+        "goals_scored": 67,
+        "goals_conceded": 43
+      },
+      "home_split": {
+        "matches": 18,
+        "wins": 14,
+        "goals_scored": 43,
+        "goals_conceded": 18
+      },
+      "away_split": {
+        "matches": 18,
+        "wins": 7,
+        "goals_scored": 24,
+        "goals_conceded": 25
+      },
+      "goals_by_minutes": {
+        "scored": {
+          "0-15": {
+            "total": 0.25,
+            "home": 0.3333333333333333,
+            "away": 0.16666666666666666
+          },
+          "16-30": {
+            "total": 0.3055555555555556,
+            "home": 0.4444444444444444,
+            "away": 0.16666666666666666
+          },
+          "31-45": {
+            "total": 0.4166666666666667,
+            "home": 0.5555555555555556,
+            "away": 0.2777777777777778
+          },
+          "46-60": {
+            "total": 0.3333333333333333,
+            "home": 0.3333333333333333,
+            "away": 0.3333333333333333
+          },
+          "61-75": {
+            "total": 0.2777777777777778,
+            "home": 0.4444444444444444,
+            "away": 0.1111111111111111
+          },
+          "76-90": {
+            "total": 0.2777777777777778,
+            "home": 0.2777777777777778,
+            "away": 0.2777777777777778
+          }
+        },
+        "conceded": {
+          "0-15": {
+            "total": 0.08333333333333333,
+            "home": 0.1111111111111111,
+            "away": 0.05555555555555555
+          },
+          "16-30": {
+            "total": 0.1111111111111111,
+            "home": 0.05555555555555555,
+            "away": 0.16666666666666666
+          },
+          "31-45": {
+            "total": 0.25,
+            "home": 0.16666666666666666,
+            "away": 0.3333333333333333
+          },
+          "46-60": {
+            "total": 0.25,
+            "home": 0.16666666666666666,
+            "away": 0.3333333333333333
+          },
+          "61-75": {
+            "total": 0.19444444444444445,
+            "home": 0.2222222222222222,
+            "away": 0.16666666666666666
+          },
+          "76-90": {
+            "total": 0.3055555555555556,
+            "home": 0.2777777777777778,
+            "away": 0.3333333333333333
+          }
+        },
+        "average": {
+          "0-15": 0.3085399449035813,
+          "16-30": 0.31955922865013775,
+          "31-45": 0.5041322314049587,
+          "46-60": 0.4297520661157025,
+          "61-75": 0.4380165289256198,
+          "76-90": 0.6694214876033058
+        }
+      },
+      "derived_features": {
+        "goals_scored_avg_total": 1.8611111111111112,
+        "goals_scored_avg_home": 2.388888888888889,
+        "goals_scored_avg_away": 1.3333333333333333,
+        "goals_conceded_avg_total": 1.1944444444444444,
+        "goals_conceded_avg_home": 1.0,
+        "goals_conceded_avg_away": 1.3888888888888888,
+        "clean_sheet_rate": 0.2222222222222222,
+        "failed_to_score_rate": 0.1388888888888889,
+        "both_teams_scored_rate": 0.6388888888888888,
+        "first_half_scoring_rate": 0.6111111111111112,
+        "first_half_conceding_rate": 0.4444444444444444,
+        "minutes_per_goal_scored": 48.358,
+        "minutes_per_goal_conceded": 79.65116279069767,
+        "goals_by_minutes": {
+          "0-15": {
+            "total": 0.25,
+            "home": 0.3333333333333333,
+            "away": 0.16666666666666666
+          },
+          "16-30": {
+            "total": 0.3055555555555556,
+            "home": 0.4444444444444444,
+            "away": 0.16666666666666666
+          },
+          "31-45": {
+            "total": 0.4166666666666667,
+            "home": 0.5555555555555556,
+            "away": 0.2777777777777778
+          },
+          "46-60": {
+            "total": 0.3333333333333333,
+            "home": 0.3333333333333333,
+            "away": 0.3333333333333333
+          },
+          "61-75": {
+            "total": 0.2777777777777778,
+            "home": 0.4444444444444444,
+            "away": 0.1111111111111111
+          },
+          "76-90": {
+            "total": 0.2777777777777778,
+            "home": 0.2777777777777778,
+            "away": 0.2777777777777778
+          }
+        }
+      }
+    },
+    "comparison": {
+      "avg_goals_for_diff": -0.833333,
+      "avg_goals_against_diff": 0.0,
+      "clean_sheet_rate_diff": 0.083333,
+      "failed_to_score_rate_diff": 0.194444,
+      "btts_rate_diff": -0.194444
+    }
+  },
+  "injuries": {
+    "home": [
+      {
+        "player_id": "1033841",
+        "player_name": "Felipe, Luiz",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-04-30T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2249345",
+        "player_name": "Akhomach, Ilias",
+        "position": "Forward",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-13T00:00:00+00:00",
+        "end_utc": null
+      }
+    ],
+    "away": [
+      {
+        "player_id": "2303541",
+        "player_name": "Freeman, Alex",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Other",
+        "comment": "",
+        "start_utc": "2025-10-12T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2804287",
+        "player_name": "Cabanes, Pau",
+        "position": "Forward",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-12T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "1104383",
+        "player_name": "Foyth, Juan",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-04-21T00:00:00+00:00",
+        "end_utc": null
+      }
+    ],
+    "unknown_team": [
+      {
+        "player_id": "83708",
+        "player_name": "Carlos, Juan",
+        "position": "Goalkeeper",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2025-09-20T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2187596",
+        "player_name": "Vargas, Obed",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Other",
+        "comment": "",
+        "start_utc": "2025-10-12T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "218616",
+        "player_name": "Portu",
+        "position": "Forward",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2025-11-20T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "820984",
+        "player_name": "Diakhaby, Mouctar",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-01-06T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "1244528",
+        "player_name": "Puado, Javi",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-01-15T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "88625",
+        "player_name": "Ter Stegen, Marc-Andre",
+        "position": "Goalkeeper",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-02-04T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "995487",
+        "player_name": "Marcao",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-02-04T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "151138",
+        "player_name": "Foulquier, Dimitri",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-02-12T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2846753",
+        "player_name": "Salas, Jan",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-02-12T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "353250",
+        "player_name": "Odriozola, Alvaro",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-02-26T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "1350378",
+        "player_name": "Rodrygo",
+        "position": "Forward",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-03-03T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "190405",
+        "player_name": "Dendoncker, Leander",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-09T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2502297",
+        "player_name": "Roman Gonzalez, Miguel",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-03-12T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "896968",
+        "player_name": "Elgezabal, Unai",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-11T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2891611",
+        "player_name": "Ortiz, Angel",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-04-30T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "1631718",
+        "player_name": "Vanat, Vladyslav",
+        "position": "Forward",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-04-09T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2491027",
+        "player_name": "Mateo Joseph",
+        "position": "Forward",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-04-11T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "918726",
+        "player_name": "Militao, Eder",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-04-23T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2439417",
+        "player_name": "Yamal, Lamine",
+        "position": "Forward",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-04-23T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "99519",
+        "player_name": "Bartra, Marc",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-04-30T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2259755",
+        "player_name": "Barrios, Pablo",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-04-30T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "1296654",
+        "player_name": "Gonzalez, Nico",
+        "position": "Forward",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-04-30T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2463945",
+        "player_name": "de Santiago Alonso, Yago",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-02T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "96369",
+        "player_name": "Juanmi",
+        "position": "Forward",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-04-30T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2352375",
+        "player_name": "Primo, Alejandro",
+        "position": "Goalkeeper",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-04-30T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2059833",
+        "player_name": "Domingues, Brandon",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-04-30T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "1059113",
+        "player_name": "Ngonge, Cyril",
+        "position": "Forward",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-16T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2102310",
+        "player_name": "Alvarez, Carlos",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-06T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "934274",
+        "player_name": "Kumbulla, Marash",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-09T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2586747",
+        "player_name": "Kalumba, Justin-Noel",
+        "position": "Forward",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-12T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2265455",
+        "player_name": "Bueno, Manu",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-03T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "1630398",
+        "player_name": "Alvarez, Julian",
+        "position": "Forward",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-08T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "53739",
+        "player_name": "Femenia, Kiko",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-16T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "815912",
+        "player_name": "Mendy, Ferland",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-09T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "1137497",
+        "player_name": "Ruibal, Aitor",
+        "position": "Forward",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-14T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2719920",
+        "player_name": "Boayar Benaisa, Adam",
+        "position": "Forward",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-11T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "962405",
+        "player_name": "Molina, Nahuel",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-11T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "325355",
+        "player_name": "Gimenez, Jose Maria",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-11T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "1660625",
+        "player_name": "Cardoso, Johnny",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-11T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "1836818",
+        "player_name": "Sancet, Oihan",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-12T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2112956",
+        "player_name": "Williams, Nico",
+        "position": "Forward",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-12T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "1383611",
+        "player_name": "Copete, Jose",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-13T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2159140",
+        "player_name": "Guler, Arda",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-13T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "1347730",
+        "player_name": "Vivian, Dani",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-14T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "360718",
+        "player_name": "Starfelt, Carl",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-16T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2355077",
+        "player_name": "Martinez Moya, Rodrigo Mendoza",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-16T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "935064",
+        "player_name": "Ruiz, Abel",
+        "position": "Forward",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-16T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "1644302",
+        "player_name": "Moro, Raul",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-16T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2691210",
+        "player_name": "Gorrotxategi, Jon",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-16T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "227922",
+        "player_name": "Gaya, Jose",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-16T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "315916",
+        "player_name": "Saravia, Renzo",
+        "position": "Defender",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-16T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "838293",
+        "player_name": "De Jong, Frenkie",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-16T00:00:00+00:00",
+        "end_utc": null
+      },
+      {
+        "player_id": "2270821",
+        "player_name": "Altimira, Sergi",
+        "position": "Midfielder",
+        "status": "Missing",
+        "status_name": "Injured",
+        "comment": "",
+        "start_utc": "2026-05-16T00:00:00+00:00",
+        "end_utc": null
+      }
+    ]
+  },
+  "players": {
+    "home": {
+      "top_goals": [
+        {
+          "player_id": "1793402",
+          "name": "De Frutos, Jorge",
+          "full_name": "de Frutos Sebastian, Jorge",
+          "position": "Forward",
+          "shirt_number": 19,
+          "totals": {
+            "goals": 10,
+            "matches": 34,
+            "penalties": 1,
+            "goal_points": 11,
+            "minutes_played": 2350,
+            "substituted_in": 4,
+            "first_goals": 6,
+            "last_goals": 1
+          }
+        },
+        {
+          "player_id": "345111",
+          "name": "Garcia, Alvaro",
+          "full_name": "Garcia Rivera, Alvaro",
+          "position": "Midfielder",
+          "shirt_number": 18,
+          "totals": {
+            "goals": 4,
+            "matches": 31,
+            "goal_points": 9,
+            "minutes_played": 2062,
+            "substituted_in": 9,
+            "last_goals": 2
+          }
+        },
+        {
+          "player_id": "891282",
+          "name": "Palazon, Isi",
+          "full_name": "Palazon Camacho, Isaac",
+          "position": "Midfielder",
+          "shirt_number": 7,
+          "totals": {
+            "goals": 3,
+            "matches": 31,
+            "penalties": 2,
+            "goal_points": 6,
+            "minutes_played": 2266,
+            "substituted_in": 4,
+            "last_goals": 2
+          }
+        },
+        {
+          "player_id": "1297802",
+          "name": "Camello, Sergio",
+          "full_name": "Camello Perez, Sergio",
+          "position": "Forward",
+          "shirt_number": 10,
+          "totals": {
+            "goals": 3,
+            "matches": 20,
+            "goal_points": 3,
+            "minutes_played": 690,
+            "substituted_in": 13,
+            "first_goals": 2,
+            "last_goals": 1
+          }
+        },
+        {
+          "player_id": "1411617",
+          "name": "Alemao",
+          "full_name": "Zurawski, Alexandre",
+          "position": "Forward",
+          "shirt_number": 9,
+          "totals": {
+            "goals": 3,
+            "matches": 24,
+            "goal_points": 3,
+            "minutes_played": 1028,
+            "substituted_in": 14,
+            "first_goals": 2,
+            "last_goals": 2
+          }
+        },
+        {
+          "player_id": "88528",
+          "name": "Lejeune, Florian",
+          "full_name": null,
+          "position": "Defender",
+          "shirt_number": 24,
+          "totals": {
+            "goals": 2,
+            "matches": 35,
+            "goal_points": 3,
+            "minutes_played": 3141,
+            "first_goals": 1
+          }
+        },
+        {
+          "player_id": "542634",
+          "name": "Espino, Alfonso",
+          "full_name": "Espino Garcia, Luis Alfonso",
+          "position": "Defender",
+          "shirt_number": 22,
+          "totals": {
+            "goals": 2,
+            "matches": 28,
+            "goal_points": 2,
+            "minutes_played": 1380,
+            "substituted_in": 14,
+            "first_goals": 1,
+            "last_goals": 2
+          }
+        },
+        {
+          "player_id": "1247646",
+          "name": "Ciss, Pathe",
+          "full_name": "Ciss, Pathe Ismael",
+          "position": "Midfielder",
+          "shirt_number": 6,
+          "totals": {
+            "goals": 2,
+            "matches": 27,
+            "goal_points": 2,
+            "minutes_played": 1876,
+            "substituted_in": 8,
+            "last_goals": 1
+          }
+        }
+      ],
+      "top_cards": [
+        {
+          "player_id": "1247646",
+          "name": "Ciss, Pathe",
+          "full_name": "Ciss, Pathe Ismael",
+          "position": "Midfielder",
+          "shirt_number": 6,
+          "totals": {
+            "yellow_cards": 8,
+            "red_cards": 2,
+            "matches": 27,
+            "minutes_played": 1876,
+            "substituted_in": 8,
+            "number_of_cards_1st_half": 1,
+            "number_of_cards_2nd_half": 9
+          }
+        },
+        {
+          "player_id": "2530597",
+          "name": "Mendy, Nobel",
+          "full_name": null,
+          "position": "Defender",
+          "shirt_number": 0,
+          "totals": {
+            "yellow_cards": 7,
+            "yellowred_cards": 1,
+            "red_cards": 1,
+            "matches": 23,
+            "minutes_played": 1715,
+            "substituted_in": 2,
+            "number_of_cards_1st_half": 7,
+            "number_of_cards_2nd_half": 3
+          }
+        },
+        {
+          "player_id": "891282",
+          "name": "Palazon, Isi",
+          "full_name": "Palazon Camacho, Isaac",
+          "position": "Midfielder",
+          "shirt_number": 7,
+          "totals": {
+            "yellow_cards": 10,
+            "red_cards": 1,
+            "matches": 31,
+            "minutes_played": 2266,
+            "substituted_in": 4,
+            "number_of_cards_1st_half": 5,
+            "number_of_cards_2nd_half": 6
+          }
+        },
+        {
+          "player_id": "1278174",
+          "name": "Valentin, Oscar",
+          "full_name": "Martin Luengo, Oscar Valentin",
+          "position": "Midfielder",
+          "shirt_number": 23,
+          "totals": {
+            "yellow_cards": 3,
+            "red_cards": 1,
+            "matches": 31,
+            "minutes_played": 1961,
+            "substituted_in": 7,
+            "number_of_cards_1st_half": 1,
+            "number_of_cards_2nd_half": 3
+          }
+        },
+        {
+          "player_id": "1297802",
+          "name": "Camello, Sergio",
+          "full_name": "Camello Perez, Sergio",
+          "position": "Forward",
+          "shirt_number": 10,
+          "totals": {
+            "yellow_cards": 2,
+            "red_cards": 1,
+            "matches": 20,
+            "minutes_played": 690,
+            "substituted_in": 13,
+            "number_of_cards_1st_half": 1,
+            "number_of_cards_2nd_half": 2
+          }
+        },
+        {
+          "player_id": "588566",
+          "name": "Lopez, Unai",
+          "full_name": "Lopez Cabrera, Unai",
+          "position": "Midfielder",
+          "shirt_number": 17,
+          "totals": {
+            "yellow_cards": 5,
+            "yellowred_cards": 1,
+            "matches": 27,
+            "minutes_played": 1537,
+            "substituted_in": 9,
+            "number_of_cards_1st_half": 4,
+            "number_of_cards_2nd_half": 3
+          }
+        },
+        {
+          "player_id": "2056455",
+          "name": "Chavarria, Pep",
+          "full_name": "Chavarria Perez, Josep Maria",
+          "position": "Defender",
+          "shirt_number": 3,
+          "totals": {
+            "yellow_cards": 4,
+            "yellowred_cards": 1,
+            "matches": 32,
+            "minutes_played": 2602,
+            "substituted_in": 4,
+            "number_of_cards_2nd_half": 6
+          }
+        },
+        {
+          "player_id": "1725596",
+          "name": "Ratiu, Andrei",
+          "full_name": "Ratiu, Andrei Florin",
+          "position": "Defender",
+          "shirt_number": 2,
+          "totals": {
+            "yellow_cards": 9,
+            "matches": 33,
+            "minutes_played": 2712,
+            "substituted_in": 3,
+            "number_of_cards_1st_half": 2,
+            "number_of_cards_2nd_half": 7
+          }
+        }
+      ],
+      "top_assists": [
+        {
+          "player_id": "345111",
+          "name": "Garcia, Alvaro",
+          "full_name": "Garcia Rivera, Alvaro",
+          "position": "Midfielder",
+          "shirt_number": 18,
+          "totals": {
+            "matches": 31,
+            "assists": 5,
+            "minutes_played": 2062,
+            "substituted_in": 9
+          }
+        },
+        {
+          "player_id": "588566",
+          "name": "Lopez, Unai",
+          "full_name": "Lopez Cabrera, Unai",
+          "position": "Midfielder",
+          "shirt_number": 17,
+          "totals": {
+            "matches": 27,
+            "assists": 4,
+            "minutes_played": 1537,
+            "substituted_in": 9
+          }
+        },
+        {
+          "player_id": "2249345",
+          "name": "Akhomach, Ilias",
+          "full_name": "Akhomach Chakkour, Ilias",
+          "position": "Forward",
+          "shirt_number": 11,
+          "totals": {
+            "matches": 11,
+            "assists": 3,
+            "minutes_played": 713,
+            "substituted_in": 4
+          }
+        },
+        {
+          "player_id": "326471",
+          "name": "Gumbau, Gerard",
+          "full_name": "Gumbau Garriga, Gerard",
+          "position": "Midfielder",
+          "shirt_number": 15,
+          "totals": {
+            "matches": 27,
+            "assists": 3,
+            "minutes_played": 1081,
+            "substituted_in": 14
+          }
+        },
+        {
+          "player_id": "891282",
+          "name": "Palazon, Isi",
+          "full_name": "Palazon Camacho, Isaac",
+          "position": "Midfielder",
+          "shirt_number": 7,
+          "totals": {
+            "matches": 31,
+            "assists": 3,
+            "minutes_played": 2266,
+            "substituted_in": 4
+          }
+        },
+        {
+          "player_id": "1725596",
+          "name": "Ratiu, Andrei",
+          "full_name": "Ratiu, Andrei Florin",
+          "position": "Defender",
+          "shirt_number": 2,
+          "totals": {
+            "matches": 33,
+            "assists": 3,
+            "minutes_played": 2712,
+            "substituted_in": 3
+          }
+        },
+        {
+          "player_id": "2056455",
+          "name": "Chavarria, Pep",
+          "full_name": "Chavarria Perez, Josep Maria",
+          "position": "Defender",
+          "shirt_number": 3,
+          "totals": {
+            "matches": 32,
+            "assists": 2,
+            "minutes_played": 2602,
+            "substituted_in": 4
+          }
+        },
+        {
+          "player_id": "1637570",
+          "name": "Perez, Fran",
+          "full_name": "Perez Martinez, Francisco",
+          "position": "Midfielder",
+          "shirt_number": 21,
+          "totals": {
+            "matches": 28,
+            "assists": 1,
+            "minutes_played": 1217,
+            "substituted_in": 16
+          }
+        }
+      ]
+    },
+    "away": {
+      "top_goals": [
+        {
+          "player_id": "1981109",
+          "name": "Mikautadze, Georges",
+          "full_name": null,
+          "position": "Forward",
+          "shirt_number": 9,
+          "totals": {
+            "goals": 12,
+            "matches": 31,
+            "goal_points": 18,
+            "minutes_played": 2029,
+            "substituted_in": 9,
+            "first_goals": 3,
+            "last_goals": 3
+          }
+        },
+        {
+          "player_id": "146866",
+          "name": "Moreno, Gerard",
+          "full_name": "Moreno Balaguero, Gerard",
+          "position": "Forward",
+          "shirt_number": 7,
+          "totals": {
+            "goals": 10,
+            "matches": 21,
+            "penalties": 3,
+            "goal_points": 10,
+            "minutes_played": 1321,
+            "substituted_in": 5,
+            "first_goals": 8,
+            "last_goals": 1
+          }
+        },
+        {
+          "player_id": "2067865",
+          "name": "Moleiro, Alberto",
+          "full_name": "Moleiro Gonzalez, Alberto",
+          "position": "Forward",
+          "shirt_number": 20,
+          "totals": {
+            "goals": 10,
+            "matches": 34,
+            "goal_points": 15,
+            "minutes_played": 2289,
+            "substituted_in": 6,
+            "first_goals": 3,
+            "last_goals": 3
+          }
+        },
+        {
+          "player_id": "593526",
+          "name": "Pepe, Nicolas",
+          "full_name": null,
+          "position": "Forward",
+          "shirt_number": 19,
+          "totals": {
+            "goals": 8,
+            "matches": 35,
+            "penalties": 1,
+            "goal_points": 14,
+            "minutes_played": 2306,
+            "substituted_in": 10,
+            "first_goals": 3,
+            "last_goals": 2
+          }
+        },
+        {
+          "player_id": "1709893",
+          "name": "Buchanan, Tajon",
+          "full_name": "Buchanan, Tajon Trevor",
+          "position": "Midfielder",
+          "shirt_number": 17,
+          "totals": {
+            "goals": 7,
+            "matches": 33,
+            "goal_points": 8,
+            "minutes_played": 1771,
+            "substituted_in": 13,
+            "first_goals": 3,
+            "last_goals": 1
+          }
+        },
+        {
+          "player_id": "1132445",
+          "name": "Gueye, Pape",
+          "full_name": "Gueye, Pape Alassane",
+          "position": "Midfielder",
+          "shirt_number": 18,
+          "totals": {
+            "goals": 4,
+            "matches": 28,
+            "penalties": 1,
+            "goal_points": 6,
+            "minutes_played": 1996,
+            "substituted_in": 4,
+            "last_goals": 3
+          }
+        },
+        {
+          "player_id": "345195",
+          "name": "Perez, Ayoze",
+          "full_name": "Perez Gutierrez, Ayoze",
+          "position": "Forward",
+          "shirt_number": 22,
+          "totals": {
+            "goals": 3,
+            "matches": 23,
+            "penalties": 1,
+            "goal_points": 6,
+            "minutes_played": 964,
+            "substituted_in": 13,
+            "first_goals": 2,
+            "last_goals": 1
+          }
+        },
+        {
+          "player_id": "1008335",
+          "name": "Comesana, Santi",
+          "full_name": "Comesana Veiga, Santiago",
+          "position": "Midfielder",
+          "shirt_number": 14,
+          "totals": {
+            "goals": 3,
+            "matches": 33,
+            "goal_points": 9,
+            "minutes_played": 2349,
+            "substituted_in": 6,
+            "last_goals": 1
+          }
+        }
+      ],
+      "top_cards": [
+        {
+          "player_id": "1008335",
+          "name": "Comesana, Santi",
+          "full_name": "Comesana Veiga, Santiago",
+          "position": "Midfielder",
+          "shirt_number": 14,
+          "totals": {
+            "yellow_cards": 5,
+            "red_cards": 1,
+            "matches": 33,
+            "minutes_played": 2349,
+            "substituted_in": 6,
+            "number_of_cards_2nd_half": 6
+          }
+        },
+        {
+          "player_id": "2265643",
+          "name": "Veiga, Renato",
+          "full_name": "Veiga, Renato Palma",
+          "position": "Defender",
+          "shirt_number": 12,
+          "totals": {
+            "yellow_cards": 5,
+            "red_cards": 1,
+            "matches": 32,
+            "minutes_played": 2478,
+            "substituted_in": 5,
+            "number_of_cards_1st_half": 2,
+            "number_of_cards_2nd_half": 4
+          }
+        },
+        {
+          "player_id": "2184780",
+          "name": "Mourino, Santiago",
+          "full_name": "Mourino Gonzalez, Alvaro Santiago",
+          "position": "Defender",
+          "shirt_number": 15,
+          "totals": {
+            "yellow_cards": 8,
+            "yellowred_cards": 1,
+            "matches": 26,
+            "minutes_played": 2206,
+            "substituted_in": 1,
+            "number_of_cards_1st_half": 4,
+            "number_of_cards_2nd_half": 6
+          }
+        },
+        {
+          "player_id": "1709893",
+          "name": "Buchanan, Tajon",
+          "full_name": "Buchanan, Tajon Trevor",
+          "position": "Midfielder",
+          "shirt_number": 17,
+          "totals": {
+            "yellow_cards": 8,
+            "matches": 33,
+            "minutes_played": 1771,
+            "substituted_in": 13,
+            "number_of_cards_1st_half": 1,
+            "number_of_cards_2nd_half": 7
+          }
+        },
+        {
+          "player_id": "1132445",
+          "name": "Gueye, Pape",
+          "full_name": "Gueye, Pape Alassane",
+          "position": "Midfielder",
+          "shirt_number": 18,
+          "totals": {
+            "yellow_cards": 8,
+            "matches": 28,
+            "minutes_played": 1996,
+            "substituted_in": 4,
+            "number_of_cards_1st_half": 3,
+            "number_of_cards_2nd_half": 5
+          }
+        },
+        {
+          "player_id": "844071",
+          "name": "Pedraza, Alfonso",
+          "full_name": "Pedraza Sag, Alfonso",
+          "position": "Forward",
+          "shirt_number": 24,
+          "totals": {
+            "yellow_cards": 8,
+            "matches": 26,
+            "minutes_played": 1621,
+            "substituted_in": 8,
+            "number_of_cards_1st_half": 3,
+            "number_of_cards_2nd_half": 5
+          }
+        },
+        {
+          "player_id": "1609374",
+          "name": "Cardona, Sergi",
+          "full_name": "Cardona Bermadez, Sergi",
+          "position": "Defender",
+          "shirt_number": 23,
+          "totals": {
+            "yellow_cards": 4,
+            "matches": 29,
+            "minutes_played": 1852,
+            "substituted_in": 10,
+            "number_of_cards_1st_half": 1,
+            "number_of_cards_2nd_half": 3
+          }
+        },
+        {
+          "player_id": "2670935",
+          "name": "Navarro, Pau",
+          "full_name": "Navarro Badeness, Pau",
+          "position": "Defender",
+          "shirt_number": 6,
+          "totals": {
+            "yellow_cards": 4,
+            "matches": 22,
+            "minutes_played": 1834,
+            "number_of_cards_1st_half": 2,
+            "number_of_cards_2nd_half": 2
+          }
+        }
+      ],
+      "top_assists": [
+        {
+          "player_id": "1981109",
+          "name": "Mikautadze, Georges",
+          "full_name": null,
+          "position": "Forward",
+          "shirt_number": 9,
+          "totals": {
+            "matches": 31,
+            "assists": 6,
+            "minutes_played": 2029,
+            "substituted_in": 9
+          }
+        },
+        {
+          "player_id": "593526",
+          "name": "Pepe, Nicolas",
+          "full_name": null,
+          "position": "Forward",
+          "shirt_number": 19,
+          "totals": {
+            "matches": 35,
+            "assists": 6,
+            "minutes_played": 2306,
+            "substituted_in": 10
+          }
+        },
+        {
+          "player_id": "1008335",
+          "name": "Comesana, Santi",
+          "full_name": "Comesana Veiga, Santiago",
+          "position": "Midfielder",
+          "shirt_number": 14,
+          "totals": {
+            "matches": 33,
+            "assists": 6,
+            "minutes_played": 2349,
+            "substituted_in": 6
+          }
+        },
+        {
+          "player_id": "2067865",
+          "name": "Moleiro, Alberto",
+          "full_name": "Moleiro Gonzalez, Alberto",
+          "position": "Forward",
+          "shirt_number": 20,
+          "totals": {
+            "matches": 34,
+            "assists": 5,
+            "minutes_played": 2289,
+            "substituted_in": 6
+          }
+        },
+        {
+          "player_id": "1609374",
+          "name": "Cardona, Sergi",
+          "full_name": "Cardona Bermadez, Sergi",
+          "position": "Defender",
+          "shirt_number": 23,
+          "totals": {
+            "matches": 29,
+            "assists": 4,
+            "minutes_played": 1852,
+            "substituted_in": 10
+          }
+        },
+        {
+          "player_id": "345195",
+          "name": "Perez, Ayoze",
+          "full_name": "Perez Gutierrez, Ayoze",
+          "position": "Forward",
+          "shirt_number": 22,
+          "totals": {
+            "matches": 23,
+            "assists": 3,
+            "minutes_played": 964,
+            "substituted_in": 13
+          }
+        },
+        {
+          "player_id": "844071",
+          "name": "Pedraza, Alfonso",
+          "full_name": "Pedraza Sag, Alfonso",
+          "position": "Forward",
+          "shirt_number": 24,
+          "totals": {
+            "matches": 26,
+            "assists": 3,
+            "minutes_played": 1621,
+            "substituted_in": 8
+          }
+        },
+        {
+          "player_id": "2418935",
+          "name": "Etta, Karl",
+          "full_name": "Etta Eyong, Karl Edouard Blaise",
+          "position": "Midfielder",
+          "shirt_number": 21,
+          "totals": {
+            "matches": 3,
+            "assists": 2,
+            "minutes_played": 257
+          }
+        }
+      ]
+    }
+  },
+  "live_state": {
+    "status": "Not started",
+    "period": "NS",
+    "clock": null,
+    "score_home": null,
+    "score_away": null,
+    "cards": {
+      "home": {
+        "yellow_count": 0,
+        "red_count": 0
+      },
+      "away": {
+        "yellow_count": 0,
+        "red_count": 0
+      }
+    },
+    "corners": null,
+    "events": []
+  },
+  "feature_quality": {
+    "has_match_metadata": true,
+    "has_odds": true,
+    "has_table": true,
+    "has_team_form": true,
+    "has_h2h": true,
+    "has_team_scoring": true,
+    "has_injuries": true,
+    "has_player_leaders": true,
+    "has_live_state": true,
+    "missing_endpoints": [
+      "stats_match_tableslice"
+    ]
+  },
+  "raw_refs": {
+    "endpoints_used": [
+      "match_info_statshub",
+      "match_markets",
+      "match_timeline",
+      "match_timelinedelta",
+      "stats_formtable",
+      "stats_h2h_versus",
+      "stats_match_get",
+      "stats_season_injuries",
+      "stats_season_tables",
+      "stats_season_teamscoringconceding",
+      "stats_season_topassists",
+      "stats_season_topcards",
+      "stats_season_topgoals",
+      "stats_team_lastx",
+      "stats_team_nextx",
+      "stats_team_streaks",
+      "stats_team_versus"
+    ],
+    "endpoints_ignored": [
+      "event_get",
+      "match_details",
+      "odds_ukformat",
+      "uniqueteam_markets"
+    ],
+    "source_records": [
+      {
+        "endpoint": "match_info_statshub",
+        "query_url": "match_info_statshub/61624668",
+        "status": 200,
+        "body_size_bytes": 7321,
+        "captured_at": "2026-05-17T07:41:23.500384+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_info_statshub/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob..."
+      },
+      {
+        "endpoint": "stats_match_get",
+        "query_url": "stats_match_get/61624668",
+        "status": 200,
+        "body_size_bytes": 5737,
+        "captured_at": "2026-05-17T07:41:23.501485+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_match_get/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0a..."
+      },
+      {
+        "endpoint": "stats_formtable",
+        "query_url": "stats_formtable/130805",
+        "status": 200,
+        "body_size_bytes": 54744,
+        "captured_at": "2026-05-17T07:41:23.503588+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_formtable/130805?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGV..."
+      },
+      {
+        "endpoint": "stats_season_topassists",
+        "query_url": "stats_season_topassists/130805/2819",
+        "status": 200,
+        "body_size_bytes": 13266,
+        "captured_at": "2026-05-17T07:41:23.510158+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topassists/130805/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcm..."
+      },
+      {
+        "endpoint": "match_details",
+        "query_url": "match_details/61624668",
+        "status": 200,
+        "body_size_bytes": 113,
+        "captured_at": "2026-05-17T07:41:23.510627+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_details/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGV..."
+      },
+      {
+        "endpoint": "match_timeline",
+        "query_url": "match_timeline/61624668",
+        "status": 200,
+        "body_size_bytes": 2406,
+        "captured_at": "2026-05-17T07:41:23.511059+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_timeline/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aG..."
+      },
+      {
+        "endpoint": "stats_team_streaks",
+        "query_url": "stats_team_streaks/2819",
+        "status": 200,
+        "body_size_bytes": 3595,
+        "captured_at": "2026-05-17T07:41:23.512013+00:00",
+        "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_team_streaks/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aG..."
+      },
+      {
+        "endpoint": "stats_team_lastx",
+        "query_url": "stats_team_lastx/2818/20",
+        "status": 200,
+        "body_size_bytes": 26651,
+        "captured_at": "2026-05-17T07:41:23.512695+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_lastx/2818/20?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0a..."
+      },
+      {
+        "endpoint": "stats_team_lastx",
+        "query_url": "stats_team_lastx/2819/20",
+        "status": 200,
+        "body_size_bytes": 25917,
+        "captured_at": "2026-05-17T07:41:23.527254+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_lastx/2819/20?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0a..."
+      },
+      {
+        "endpoint": "stats_season_topgoals",
+        "query_url": "stats_season_topgoals/130805/2818",
+        "status": 200,
+        "body_size_bytes": 13497,
+        "captured_at": "2026-05-17T07:41:23.563207+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topgoals/130805/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMi..."
+      },
+      {
+        "endpoint": "stats_season_teamscoringconceding",
+        "query_url": "stats_season_teamscoringconceding/130805/2818/-1",
+        "status": 200,
+        "body_size_bytes": 3548,
+        "captured_at": "2026-05-17T07:41:23.613759+00:00",
+        "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_season_teamscoringconceding/130805/2818/-1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5ja..."
+      },
+      {
+        "endpoint": "stats_team_nextx",
+        "query_url": "stats_team_nextx/2819/1",
+        "status": 200,
+        "body_size_bytes": 2650,
+        "captured_at": "2026-05-17T07:41:23.614600+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_nextx/2819/1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aG..."
+      },
+      {
+        "endpoint": "stats_h2h_versus",
+        "query_url": "stats_h2h_versus/2818/2819/61624668",
+        "status": 200,
+        "body_size_bytes": 20337,
+        "captured_at": "2026-05-17T07:41:23.617112+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_h2h_versus/2818/2819/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcm..."
+      },
+      {
+        "endpoint": "stats_team_streaks",
+        "query_url": "stats_team_streaks/2818",
+        "status": 200,
+        "body_size_bytes": 2883,
+        "captured_at": "2026-05-17T07:41:23.618446+00:00",
+        "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_team_streaks/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aG..."
+      },
+      {
+        "endpoint": "match_timelinedelta",
+        "query_url": "match_timelinedelta/61624668",
+        "status": 200,
+        "body_size_bytes": 2431,
+        "captured_at": "2026-05-17T07:41:23.619081+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_timelinedelta/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob..."
+      },
+      {
+        "endpoint": "stats_season_tables",
+        "query_url": "stats_season_tables/130805",
+        "status": 200,
+        "body_size_bytes": 21881,
+        "captured_at": "2026-05-17T07:41:23.619862+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_tables/130805//?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob..."
+      },
+      {
+        "endpoint": "stats_season_topgoals",
+        "query_url": "stats_season_topgoals/130805/2819",
+        "status": 200,
+        "body_size_bytes": 16389,
+        "captured_at": "2026-05-17T07:41:23.620556+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topgoals/130805/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMi..."
+      },
+      {
+        "endpoint": "match_markets",
+        "query_url": "match_markets/61624668",
+        "status": 200,
+        "body_size_bytes": 6632,
+        "captured_at": "2026-05-17T07:41:23.621123+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_markets/61624668?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGV..."
+      },
+      {
+        "endpoint": "stats_season_teamscoringconceding",
+        "query_url": "stats_season_teamscoringconceding/130805/2819/-1",
+        "status": 200,
+        "body_size_bytes": 3579,
+        "captured_at": "2026-05-17T07:41:23.621684+00:00",
+        "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_season_teamscoringconceding/130805/2819/-1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5ja..."
+      },
+      {
+        "endpoint": "stats_team_nextx",
+        "query_url": "stats_team_nextx/2818/1",
+        "status": 200,
+        "body_size_bytes": 2650,
+        "captured_at": "2026-05-17T07:41:23.629479+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_nextx/2818/1?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aG..."
+      },
+      {
+        "endpoint": "stats_season_injuries",
+        "query_url": "stats_season_injuries/130805",
+        "status": 200,
+        "body_size_bytes": 59729,
+        "captured_at": "2026-05-17T07:41:23.631241+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_injuries/130805?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob..."
+      },
+      {
+        "endpoint": "stats_team_versus",
+        "query_url": "stats_team_versus/2818/2819",
+        "status": 200,
+        "body_size_bytes": 57498,
+        "captured_at": "2026-05-17T07:41:23.632926+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_versus/2818/2819/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob..."
+      },
+      {
+        "endpoint": "stats_season_topcards",
+        "query_url": "stats_season_topcards/130805/2818",
+        "status": 200,
+        "body_size_bytes": 22383,
+        "captured_at": "2026-05-17T07:41:23.635432+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topcards/130805/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMi..."
+      },
+      {
+        "endpoint": "stats_season_topassists",
+        "query_url": "stats_season_topassists/130805/2818",
+        "status": 200,
+        "body_size_bytes": 9985,
+        "captured_at": "2026-05-17T07:41:23.636134+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topassists/130805/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcm..."
+      },
+      {
+        "endpoint": "stats_season_topcards",
+        "query_url": "stats_season_topcards/130805/2819",
+        "status": 200,
+        "body_size_bytes": 19514,
+        "captured_at": "2026-05-17T07:41:23.636878+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topcards/130805/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMi..."
+      },
+      {
+        "endpoint": "odds_ukformat",
+        "query_url": "odds_ukformat/",
+        "status": 200,
+        "body_size_bytes": 9785,
+        "captured_at": "2026-05-17T07:41:23.646776+00:00",
+        "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/odds_ukformat/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0..."
+      },
+      {
+        "endpoint": "uniqueteam_markets",
+        "query_url": "uniqueteam_markets/2819",
+        "status": 200,
+        "body_size_bytes": 360765,
+        "captured_at": "2026-05-17T07:41:23.652587+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/uniqueteam_markets/2819?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aG..."
+      },
+      {
+        "endpoint": "uniqueteam_markets",
+        "query_url": "uniqueteam_markets/2818",
+        "status": 200,
+        "body_size_bytes": 398964,
+        "captured_at": "2026-05-17T07:41:23.659383+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/uniqueteam_markets/2818?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aG..."
+      },
+      {
+        "endpoint": "stats_season_tables",
+        "query_url": "stats_season_tables/130805/1",
+        "status": 200,
+        "body_size_bytes": 21884,
+        "captured_at": "2026-05-17T07:41:23.673506+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_tables/130805/1/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJo..."
+      },
+      {
+        "endpoint": "event_get",
+        "query_url": "event_get/",
+        "status": 200,
+        "body_size_bytes": 294095,
+        "captured_at": "2026-05-17T07:41:23.689957+00:00",
+        "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/event_get/?T=exp=1779093664~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hma..."
+      }
+    ]
+  }
+}

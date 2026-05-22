@@ -2782,7 +2782,7 @@ def _fetch_obsolete_event_rows(
     if not current_event_ids:
         return connection.execute(
             """
-            SELECT id, external_event_id
+            SELECT id, external_event_id, raw_payload_json
             FROM active_events
             WHERE tracked_competition_id = ? AND is_active = 1
             ORDER BY external_event_id
@@ -2793,7 +2793,7 @@ def _fetch_obsolete_event_rows(
     placeholders = ", ".join("?" for _ in current_event_ids)
     return connection.execute(
         f"""
-        SELECT id, external_event_id
+        SELECT id, external_event_id, raw_payload_json
         FROM active_events
         WHERE tracked_competition_id = ?
           AND is_active = 1

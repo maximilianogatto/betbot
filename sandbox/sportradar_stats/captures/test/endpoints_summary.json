@@ -1,0 +1,46 @@
+{
+  "records_count": 1,
+  "endpoints_count": 1,
+  "overall_capabilities": {
+    "match_id": 1
+  },
+  "endpoints": [
+    {
+      "endpoint_key": "/bet365/en/match/:id",
+      "normalized_path": "/bet365/en/match/:id",
+      "count": 1,
+      "statuses": {
+        "403": 1
+      },
+      "blocked": true,
+      "content_types": {
+        "text/html": 1
+      },
+      "resource_types": {
+        "document": 1
+      },
+      "polling_likely": false,
+      "polling_reason": "single_capture",
+      "median_interval_seconds": null,
+      "avg_body_size_bytes": 411,
+      "median_body_size_bytes": 411,
+      "max_body_size_bytes": 411,
+      "capabilities": {
+        "match_id": 1
+      },
+      "main_fields": [],
+      "sample_urls": [
+        "https://s5.sir.sportradar.com/bet365/en/match/61624664"
+      ],
+      "sample_preview": {
+        "status": 403,
+        "content_type": "text/html",
+        "preview": "<HTML><HEAD>\n<TITLE>Access Denied</TITLE>\n</HEAD><BODY>\n<H1>Access Denied</H1>\n \nYou don't have permission to access \"http&#58;&#47;&#47;s5&#46;sir&#46;sportradar&#46;com&#47;bet365&#47;en&#47;match&#47;61624664\" on this server.<P>\nReference&#32;&#35;18&#46;b9f71202&#46;1778875891&#46;19d1d9\n<P>http"
+      },
+      "sample_request_data": null,
+      "match_ids": [
+        "61624664"
+      ]
+    }
+  ]
+}
