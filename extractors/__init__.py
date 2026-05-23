@@ -7,6 +7,7 @@ from typing import Any
 from core.extractor_base import Extractor
 from core.registry import ExtractorRegistry
 from extractors.bet365 import Bet365Extractor, Bet365ExtractorSettings
+from extractors.xbet_http import XBetHttpExtractor
 
 
 def register_default_extractors(
@@ -19,7 +20,8 @@ def register_default_extractors(
     bet365_extractor = registry.register(
         Bet365Extractor(settings=_build_bet365_settings(settings))
     )
-    return [bet365_extractor]
+    xbet_http_extractor = registry.register(XBetHttpExtractor())
+    return [bet365_extractor, xbet_http_extractor]
 
 
 def _build_bet365_settings(settings: Any | None) -> Bet365ExtractorSettings | None:
@@ -61,4 +63,4 @@ def _build_bet365_settings(settings: Any | None) -> Bet365ExtractorSettings | No
     )
 
 
-__all__ = ["Bet365Extractor", "register_default_extractors"]
+__all__ = ["Bet365Extractor", "XBetHttpExtractor", "register_default_extractors"]

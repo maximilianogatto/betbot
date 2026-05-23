@@ -3,6 +3,8 @@ from __future__ import annotations
 import unittest
 
 from core.models import CompetitionExtraction
+from core.registry import ExtractorRegistry
+from extractors import register_default_extractors
 from extractors.xbet_http.client import build_champ_url, build_game_url
 from extractors.xbet_http import XBetHttpExtractor, XBetHttpSettings
 
@@ -91,6 +93,12 @@ class XBetHttpExtractorTests(unittest.TestCase):
             build_game_url(base_url="spinbetter.com", event_id="722570772", language="es"),
             "https://spinbetter.com/service-api/LineFeed/GetGameZip?id=722570772&lng=es",
         )
+
+    def test_default_registry_includes_1xbet_http(self) -> None:
+        registry = ExtractorRegistry()
+        register_default_extractors(registry)
+        platforms = {platform.key for platform in registry.list_platforms()}
+        self.assertIn("1xbet_http", platforms)
 
 
 class XBetHttpExtractionTests(unittest.IsolatedAsyncioTestCase):
