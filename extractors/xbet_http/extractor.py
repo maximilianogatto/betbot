@@ -2,10 +2,20 @@
 
 from __future__ import annotations
 
+from typing import Any, Protocol
 from urllib.parse import parse_qs, urlparse
 
+from core.extractor_base import CompetitionUnavailableError
 from core.extractor_base import Extractor
 from core.models import CompetitionExtraction, EventSnapshot
+from extractors.xbet_http.client import (
+    XBetHttpClient,
+    base_url_from_linefeed_url,
+    build_champ_url,
+    build_game_url,
+    extract_champ_id,
+)
+from extractors.xbet_http.parser import parse_champ_zip_payload
 from extractors.xbet_http.settings import XBetHttpSettings
 
 
@@ -17,6 +27,11 @@ SUPPORTED_HOSTS = {
 }
 
 
+class XBetChampClient(Protocol):
+    async def fetch_champ_zip(self, url: str) -> dict[str, Any]:
+        """Fetch one GetChampZip envelope."""
+
+
 class XBetHttpExtractor(Extractor):
     """Expose 1xBet/SpinBetter prematch LineFeed data through the common interface."""
 
@@ -25,8 +40,13 @@ class XBetHttpExtractor(Extractor):
     supported_domains = tuple(sorted(SUPPORTED_HOSTS))
     supported_capabilities = ("ligas", "eventos 1X2", "handicap", "totales")
 
-    def __init__(self, settings: XBetHttpSettings | None = None) -> None:
+    def __init__(
+        self,
+        settings: XBetHttpSettings | None = None,
+        client: XBetChampClient | None = None,
+    ) -> None:
         self.settings = settings or XBetHttpSettings()
+        self._client = client or XBetHttpClient(self.settings)
 
     @classmethod
     def can_handle_url(cls, url: str) -> bool:
@@ -35,20 +55,51 @@ class XBetHttpExtractor(Extractor):
             return False
         if not parsed.path.rstrip("/").endswith("/LineFeed/GetChampZip"):
             return False
-        champ_id = _extract_champ_id(url)
+        champ_id = extract_champ_id(url)
         return champ_id is not None
 
     async def extract_league(self, url: str) -> CompetitionExtraction:
-        raise NotImplementedError("1xBet HTTP league extraction is not implemented yet.")
+        if not self.can_handle_url(url):
+            raise ValueError("The URL must be a supported 1xBet-compatible GetChampZip URL.")
+
+        champ_id = extract_champ_id(url)
+        if champ_id is None:
+            raise ValueError("GetChampZip URL must include champ=<league_id>.")
+
+        base_url = base_url_from_linefeed_url(url)
+        source_url = build_champ_url(
+            base_url=base_url,
+            champ_id=champ_id,
+            language=_language_from_url(url) or self.settings.language,
+        )
+
+        payload = await self._client.fetch_champ_zip(source_url)
+        extraction = parse_champ_zip_payload(
+            payload,
+            source_url=source_url,
+            event_url_builder=lambda event_id: build_game_url(
+                base_url=base_url,
+                event_id=event_id,
+                language=_language_from_url(source_url) or self.settings.language,
+            ),
+        )
+
+        if extraction.is_empty:
+            raise CompetitionUnavailableError(
+                "1xBet GetChampZip returned no fixtures.",
+                platform=self.name,
+                source_url=source_url,
+                reason_code="competition_unavailable",
+            )
+
+        return extraction
 
     async def extract_match(self, url: str) -> EventSnapshot:
         raise NotImplementedError("1xBet HTTP match extraction is not implemented yet.")
 
-
-def _extract_champ_id(url: str) -> str | None:
-    query = parse_qs(urlparse(url).query)
-    raw_values = query.get("champ")
+def _language_from_url(url: str) -> str | None:
+    raw_values = parse_qs(urlparse(url).query).get("lng")
     if not raw_values:
         return None
-    champ_id = str(raw_values[0]).strip()
-    return champ_id or None
+    language = str(raw_values[0]).strip()
+    return language or None
