@@ -11,6 +11,8 @@ class XBetHttpSettings:
 
     base_url: str = "https://spinbetter.com/service-api/LineFeed"
     language: str = "es"
+    sport_id: str = "1"
+    discovery_country_group: str = "14"
     timeout_seconds: float = 20.0
     max_attempts: int = 2
     retry_backoff_seconds: float = 0.75

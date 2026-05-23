@@ -59,6 +59,27 @@ def build_game_url(*, base_url: str, event_id: str, language: str) -> str:
     return f"{normalize_linefeed_base_url(base_url)}/GetGameZip?{query}"
 
 
+def build_sports_short_url(
+    *,
+    base_url: str,
+    sport_id: str,
+    language: str,
+    country_group: str,
+) -> str:
+    query = urlencode(
+        {
+            "sports": sport_id,
+            "lng": language,
+            "withCountries": "true",
+            "country": country_group,
+            "virtualSports": "true",
+            "gr": "2025",
+            "groupChamps": "true",
+        }
+    )
+    return f"{normalize_linefeed_base_url(base_url)}/GetSportsShortZip?{query}"
+
+
 def base_url_from_linefeed_url(url: str) -> str:
     parsed = urlparse(url)
     path = parsed.path
@@ -77,6 +98,9 @@ class XBetHttpClient:
         self._last_request_at = 0.0
 
     async def fetch_champ_zip(self, url: str) -> dict[str, Any]:
+        return await self._fetch_json(url)
+
+    async def fetch_sports_short_zip(self, url: str) -> dict[str, Any]:
         return await self._fetch_json(url)
 
     async def _fetch_json(self, url: str) -> dict[str, Any]:

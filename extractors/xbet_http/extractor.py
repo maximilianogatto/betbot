@@ -6,14 +6,18 @@ from typing import Any, Protocol
 from urllib.parse import parse_qs, urlparse
 
 from core.extractor_base import Extractor
+from core.extractor_base import LeagueDiscoveryOption
 from core.models import CompetitionExtraction, EventSnapshot
 from extractors.xbet_http.client import (
     XBetHttpClient,
     base_url_from_linefeed_url,
     build_champ_url,
     build_game_url,
+    build_sports_short_url,
     extract_champ_id,
+    normalize_linefeed_base_url,
 )
+from extractors.xbet_http.discovery import build_league_options_from_sports_short
 from extractors.xbet_http.parser import parse_champ_zip_payload
 from extractors.xbet_http.settings import XBetHttpSettings
 
@@ -30,6 +34,9 @@ class XBetChampClient(Protocol):
     async def fetch_champ_zip(self, url: str) -> dict[str, Any]:
         """Fetch one GetChampZip envelope."""
 
+    async def fetch_sports_short_zip(self, url: str) -> dict[str, Any]:
+        """Fetch one GetSportsShortZip envelope."""
+
 
 class XBetHttpExtractor(Extractor):
     """Expose 1xBet/SpinBetter prematch LineFeed data through the common interface."""
@@ -38,6 +45,7 @@ class XBetHttpExtractor(Extractor):
     display_name = "1xBet HTTP"
     supported_domains = tuple(sorted(SUPPORTED_HOSTS))
     supported_capabilities = ("ligas", "eventos 1X2", "handicap", "totales")
+    supports_league_discovery = True
 
     def __init__(
         self,
@@ -87,6 +95,31 @@ class XBetHttpExtractor(Extractor):
 
     async def extract_match(self, url: str) -> EventSnapshot:
         raise NotImplementedError("1xBet HTTP match extraction is not implemented yet.")
+
+    async def search_leagues(
+        self,
+        *,
+        country_name: str,
+        query: str | None = None,
+        limit: int = 80,
+    ) -> list[LeagueDiscoveryOption]:
+        sports_url = build_sports_short_url(
+            base_url=self.settings.base_url,
+            sport_id=self.settings.sport_id,
+            language=self.settings.language,
+            country_group=self.settings.discovery_country_group,
+        )
+        payload = await self._client.fetch_sports_short_zip(sports_url)
+        return build_league_options_from_sports_short(
+            payload,
+            platform=self.name,
+            platform_display_name=self.display_name,
+            base_url=normalize_linefeed_base_url(self.settings.base_url),
+            language=self.settings.language,
+            country_name=country_name,
+            query=query,
+            limit=limit,
+        )
 
 def _language_from_url(url: str) -> str | None:
     raw_values = parse_qs(urlparse(url).query).get("lng")

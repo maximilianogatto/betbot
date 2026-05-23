@@ -42,6 +42,47 @@ CHAMP_PAYLOAD = {
     },
 }
 
+SPORTS_SHORT_PAYLOAD = {
+    "Success": True,
+    "Value": [
+        {
+            "IT": 1,
+            "N": "Fútbol",
+            "L": [
+                {
+                    "L": "Australia",
+                    "LI": 83,
+                    "SC": [
+                        {
+                            "L": "Australia. ACT National Premier League",
+                            "LE": "Australia. ACT National Premier League",
+                            "LI": 2872359,
+                            "CI": 4,
+                            "CN": "Australia",
+                            "GC": 5,
+                        },
+                        {
+                            "L": "Australia. NPL Victoria",
+                            "LE": "Australia. NPL Victoria",
+                            "LI": 2664249,
+                            "CI": 4,
+                            "CN": "Australia",
+                            "GC": 7,
+                        },
+                    ],
+                },
+                {
+                    "L": "England. Premier League",
+                    "LI": 88637,
+                    "CI": 33,
+                    "CN": "England",
+                    "GC": 10,
+                },
+            ],
+        }
+    ],
+}
+
 CHAMP_WITH_MARKETS_PAYLOAD = {
     **CHAMP_PAYLOAD,
     "Value": {
@@ -86,13 +127,23 @@ EMPTY_CHAMP_PAYLOAD = {
 
 
 class FakeXBetHttpClient:
-    def __init__(self, payload: dict[str, object]) -> None:
+    def __init__(
+        self,
+        payload: dict[str, object],
+        *,
+        sports_payload: dict[str, object] | None = None,
+    ) -> None:
         self.payload = payload
+        self.sports_payload = sports_payload or SPORTS_SHORT_PAYLOAD
         self.requested_urls: list[str] = []
 
     async def fetch_champ_zip(self, url: str) -> dict[str, object]:
         self.requested_urls.append(url)
         return self.payload
+
+    async def fetch_sports_short_zip(self, url: str) -> dict[str, object]:
+        self.requested_urls.append(url)
+        return self.sports_payload
 
 
 class XBetHttpExtractorTests(unittest.TestCase):
@@ -203,6 +254,23 @@ class XBetHttpExtractionTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(extraction.is_empty)
         self.assertEqual(extraction.events, [])
         self.assertEqual(extraction.competition_external_id, "2872359")
+
+    async def test_search_leagues_discovers_country_leagues(self) -> None:
+        client = FakeXBetHttpClient(CHAMP_PAYLOAD)
+        extractor = XBetHttpExtractor(client=client)
+
+        options = await extractor.search_leagues(country_name="Australia", query="ACT")
+
+        self.assertEqual(len(options), 1)
+        option = options[0]
+        self.assertEqual(option.platform, "1xbet_http")
+        self.assertEqual(option.country_name, "Australia")
+        self.assertEqual(option.league_id, "2872359")
+        self.assertEqual(option.league_name, "Australia. ACT National Premier League")
+        self.assertEqual(
+            option.source_url,
+            "https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=2872359&lng=es",
+        )
 
     async def test_tracking_service_persists_1xbet_events_in_existing_schema(self) -> None:
         old_db_path = tracking_repository_module.DB_FILE_PATH
