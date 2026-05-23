@@ -76,6 +76,14 @@ FUTURE_CHAMP_WITH_MARKETS_PAYLOAD = {
     },
 }
 
+EMPTY_CHAMP_PAYLOAD = {
+    **CHAMP_PAYLOAD,
+    "Value": {
+        **CHAMP_PAYLOAD["Value"],
+        "G": [],
+    },
+}
+
 
 class FakeXBetHttpClient:
     def __init__(self, payload: dict[str, object]) -> None:
@@ -183,6 +191,18 @@ class XBetHttpExtractionTests(unittest.IsolatedAsyncioTestCase):
                 {"selection": "Under", "line": "2.5", "odds": 1.89},
             ],
         )
+
+    async def test_extract_league_returns_empty_snapshot_without_exception(self) -> None:
+        client = FakeXBetHttpClient(EMPTY_CHAMP_PAYLOAD)
+        extractor = XBetHttpExtractor(client=client)
+
+        extraction = await extractor.extract_league(
+            "https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=2872359&lng=es"
+        )
+
+        self.assertTrue(extraction.is_empty)
+        self.assertEqual(extraction.events, [])
+        self.assertEqual(extraction.competition_external_id, "2872359")
 
     async def test_tracking_service_persists_1xbet_events_in_existing_schema(self) -> None:
         old_db_path = tracking_repository_module.DB_FILE_PATH

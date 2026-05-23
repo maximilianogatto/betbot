@@ -5,7 +5,6 @@ from __future__ import annotations
 from typing import Any, Protocol
 from urllib.parse import parse_qs, urlparse
 
-from core.extractor_base import CompetitionUnavailableError
 from core.extractor_base import Extractor
 from core.models import CompetitionExtraction, EventSnapshot
 from extractors.xbet_http.client import (
@@ -83,14 +82,6 @@ class XBetHttpExtractor(Extractor):
                 language=_language_from_url(source_url) or self.settings.language,
             ),
         )
-
-        if extraction.is_empty:
-            raise CompetitionUnavailableError(
-                "1xBet GetChampZip returned no fixtures.",
-                platform=self.name,
-                source_url=source_url,
-                reason_code="competition_unavailable",
-            )
 
         return extraction
 
