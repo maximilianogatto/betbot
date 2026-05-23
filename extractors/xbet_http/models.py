@@ -19,6 +19,10 @@ class XBetFixture:
     label_time: str | None
     home_id: str | None
     away_id: str | None
+    odds_home: float | None
+    odds_draw: float | None
+    odds_away: float | None
+    markets_payload: dict[str, Any] | None
     raw_payload: dict[str, Any]
 
 

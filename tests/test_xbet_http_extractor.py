@@ -33,6 +33,27 @@ CHAMP_PAYLOAD = {
     },
 }
 
+CHAMP_WITH_MARKETS_PAYLOAD = {
+    **CHAMP_PAYLOAD,
+    "Value": {
+        **CHAMP_PAYLOAD["Value"],
+        "G": [
+            {
+                **CHAMP_PAYLOAD["Value"]["G"][0],
+                "E": [
+                    {"T": 1, "G": 1, "C": 1.49},
+                    {"T": 2, "G": 1, "C": 4.55},
+                    {"T": 3, "G": 1, "C": 4.75},
+                    {"T": 7, "G": 2, "P": -1.5, "C": 2.21},
+                    {"T": 8, "G": 2, "P": 1.5, "C": 1.62},
+                    {"T": 9, "G": 17, "P": 2.5, "C": 1.91},
+                    {"T": 10, "G": 17, "P": 2.5, "C": 1.89},
+                ],
+            }
+        ],
+    },
+}
+
 
 class FakeXBetHttpClient:
     def __init__(self, payload: dict[str, object]) -> None:
@@ -101,6 +122,38 @@ class XBetHttpExtractionTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(
             client.requested_urls,
             ["https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=2872359&lng=es"],
+        )
+
+    async def test_extract_league_normalizes_markets_when_getchampzip_contains_odds(self) -> None:
+        client = FakeXBetHttpClient(CHAMP_WITH_MARKETS_PAYLOAD)
+        extractor = XBetHttpExtractor(client=client)
+
+        extraction = await extractor.extract_league(
+            "https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=2872359&lng=es"
+        )
+
+        event = extraction.events[0]
+        self.assertEqual(event.odds_1x2.home, 1.49)
+        self.assertEqual(event.odds_1x2.draw, 4.55)
+        self.assertEqual(event.odds_1x2.away, 4.75)
+        assert event.markets_payload is not None
+        self.assertEqual(
+            event.markets_payload["1x2"],
+            {"home": 1.49, "draw": 4.55, "away": 4.75},
+        )
+        self.assertEqual(
+            event.markets_payload["asian_handicap"]["selections"],
+            [
+                {"selection": "Canberra Olympic", "line": "-1.5", "odds": 2.21},
+                {"selection": "Belconnen United", "line": "+1.5", "odds": 1.62},
+            ],
+        )
+        self.assertEqual(
+            event.markets_payload["goal_line"]["selections"],
+            [
+                {"selection": "Over", "line": "2.5", "odds": 1.91},
+                {"selection": "Under", "line": "2.5", "odds": 1.89},
+            ],
         )
 
 

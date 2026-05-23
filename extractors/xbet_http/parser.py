@@ -12,6 +12,11 @@ from core.models import utc_now_iso
 from extractors.xbet_http.models import XBetFixture, XBetLeagueSnapshot
 
 PLATFORM = "1xbet_http"
+ONE_X_TWO_TYPES = {1: "home", 2: "draw", 3: "away"}
+HANDICAP_HOME_TYPE = 7
+HANDICAP_AWAY_TYPE = 8
+TOTAL_OVER_TYPE = 9
+TOTAL_UNDER_TYPE = 10
 
 
 def parse_champ_zip_payload(
@@ -121,6 +126,7 @@ def _parse_fixture(raw_game: object, *, fallback_country: object | None) -> XBet
         return None
 
     start_time_unix, start_time_utc, label_date, label_time = _parse_start_time(raw_game.get("S"))
+    odds_1x2, markets_payload = _extract_markets(raw_game, home=home, away=away)
     raw_payload = {
         "event_id": event_id,
         "game_code": _safe_str(raw_game.get("N")),
@@ -129,6 +135,7 @@ def _parse_fixture(raw_game: object, *, fallback_country: object | None) -> XBet
         "away_id": _safe_str(raw_game.get("O2I")),
         "country": _safe_str(raw_game.get("CE") or fallback_country),
         "source": "GetChampZip",
+        "raw_market_count": _raw_market_count(raw_game),
     }
 
     return XBetFixture(
@@ -141,6 +148,10 @@ def _parse_fixture(raw_game: object, *, fallback_country: object | None) -> XBet
         label_time=label_time,
         home_id=_safe_str(raw_game.get("O1I")),
         away_id=_safe_str(raw_game.get("O2I")),
+        odds_home=odds_1x2.home,
+        odds_draw=odds_1x2.draw,
+        odds_away=odds_1x2.away,
+        markets_payload=markets_payload,
         raw_payload=raw_payload,
     )
 
@@ -173,9 +184,13 @@ def _fixture_to_event_snapshot(
         scheduled_label_time=fixture.label_time,
         scheduled_at=fixture.start_time_utc,
         source_url=event_url,
-        odds_1x2=Odds1X2(home=None, draw=None, away=None),
+        odds_1x2=Odds1X2(
+            home=fixture.odds_home,
+            draw=fixture.odds_draw,
+            away=fixture.odds_away,
+        ),
         extracted_at=snapshot.extracted_at,
-        markets_payload=None,
+        markets_payload=fixture.markets_payload,
         metadata={
             "home_id": fixture.home_id,
             "away_id": fixture.away_id,
@@ -200,6 +215,174 @@ def _parse_start_time(value: object | None) -> tuple[int | None, str | None, str
         kickoff.date().isoformat(),
         kickoff.strftime("%H:%M"),
     )
+
+
+def _extract_markets(raw_game: dict[str, Any], *, home: str, away: str) -> tuple[Odds1X2, dict[str, Any] | None]:
+    outcomes = raw_game.get("E")
+    if not isinstance(outcomes, list):
+        return Odds1X2(home=None, draw=None, away=None), None
+
+    one_x_two = _extract_1x2(outcomes)
+    asian_handicap = _extract_asian_handicap(outcomes, home=home, away=away)
+    goal_line = _extract_goal_line(outcomes)
+    markets_payload: dict[str, Any] = {}
+
+    if any(value is not None for value in (one_x_two.home, one_x_two.draw, one_x_two.away)):
+        markets_payload["1x2"] = {
+            "home": one_x_two.home,
+            "draw": one_x_two.draw,
+            "away": one_x_two.away,
+        }
+    if asian_handicap is not None:
+        markets_payload["asian_handicap"] = asian_handicap
+    if goal_line is not None:
+        markets_payload["goal_line"] = goal_line
+
+    return one_x_two, markets_payload or None
+
+
+def _extract_1x2(outcomes: list[object]) -> Odds1X2:
+    values: dict[str, float | None] = {"home": None, "draw": None, "away": None}
+
+    for outcome in outcomes:
+        if not isinstance(outcome, dict):
+            continue
+        outcome_type = outcome.get("T")
+        market_key = ONE_X_TWO_TYPES.get(outcome_type)
+        if market_key is None:
+            continue
+        values[market_key] = _coerce_float(outcome.get("C"))
+
+    return Odds1X2(
+        home=values["home"],
+        draw=values["draw"],
+        away=values["away"],
+    )
+
+
+def _extract_asian_handicap(
+    outcomes: list[object],
+    *,
+    home: str,
+    away: str,
+) -> dict[str, Any] | None:
+    grouped: dict[tuple[float, str], dict[str, Any]] = {}
+
+    for outcome in outcomes:
+        if not isinstance(outcome, dict):
+            continue
+        outcome_type = outcome.get("T")
+        if outcome_type not in {HANDICAP_HOME_TYPE, HANDICAP_AWAY_TYPE}:
+            continue
+        raw_line = _coerce_float(outcome.get("P"))
+        if raw_line is None:
+            continue
+        normalized_line = -raw_line if outcome_type == HANDICAP_AWAY_TYPE else raw_line
+        group = _safe_str(outcome.get("G")) or "handicap"
+        record = grouped.setdefault(
+            (normalized_line, group),
+            {
+                "line": normalized_line,
+                "group": group,
+                "home": None,
+                "away": None,
+            },
+        )
+        odds = _coerce_float(outcome.get("C"))
+        if outcome_type == HANDICAP_HOME_TYPE:
+            record["home"] = odds
+        else:
+            record["away"] = odds
+
+    selections: list[dict[str, Any]] = []
+    for record in sorted(grouped.values(), key=lambda item: (abs(float(item["line"])), float(item["line"]))):
+        line = float(record["line"])
+        if record.get("home") is not None:
+            selections.append({"selection": home, "line": _format_line(line), "odds": record["home"]})
+        if record.get("away") is not None:
+            selections.append({"selection": away, "line": _format_line(-line), "odds": record["away"]})
+
+    if not selections:
+        return None
+
+    return {
+        "market_id": "1xbet_asian_handicap",
+        "market_name": "Asian Handicap",
+        "selections": selections,
+    }
+
+
+def _extract_goal_line(outcomes: list[object]) -> dict[str, Any] | None:
+    grouped: dict[tuple[float, str], dict[str, Any]] = {}
+
+    for outcome in outcomes:
+        if not isinstance(outcome, dict):
+            continue
+        outcome_type = outcome.get("T")
+        if outcome_type not in {TOTAL_OVER_TYPE, TOTAL_UNDER_TYPE}:
+            continue
+        line = _coerce_float(outcome.get("P"))
+        if line is None:
+            continue
+        group = _safe_str(outcome.get("G")) or "total"
+        record = grouped.setdefault(
+            (line, group),
+            {
+                "line": line,
+                "group": group,
+                "over": None,
+                "under": None,
+            },
+        )
+        odds = _coerce_float(outcome.get("C"))
+        if outcome_type == TOTAL_OVER_TYPE:
+            record["over"] = odds
+        else:
+            record["under"] = odds
+
+    selections: list[dict[str, Any]] = []
+    for record in sorted(grouped.values(), key=lambda item: (abs(float(item["line"]) - 2.5), float(item["line"]))):
+        line = _format_line(float(record["line"]), show_plus=False)
+        if record.get("over") is not None:
+            selections.append({"selection": "Over", "line": line, "odds": record["over"]})
+        if record.get("under") is not None:
+            selections.append({"selection": "Under", "line": line, "odds": record["under"]})
+
+    if not selections:
+        return None
+
+    return {
+        "market_id": "1xbet_goal_line",
+        "market_name": "Goal Line",
+        "selections": selections,
+    }
+
+
+def _raw_market_count(raw_game: dict[str, Any]) -> int:
+    outcomes = raw_game.get("E")
+    return len(outcomes) if isinstance(outcomes, list) else 0
+
+
+def _coerce_float(value: object | None) -> float | None:
+    if isinstance(value, bool) or value in (None, ""):
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    try:
+        return float(str(value))
+    except (TypeError, ValueError):
+        return None
+
+
+def _format_line(value: float, *, show_plus: bool = True) -> str:
+    if value > 0 and show_plus:
+        sign = "+"
+    else:
+        sign = ""
+
+    if value.is_integer():
+        return f"{sign}{int(value)}"
+    return f"{sign}{value:g}"
 
 
 def _safe_str(value: object | None) -> str | None:
