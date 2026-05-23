@@ -1,12 +1,19 @@
 from __future__ import annotations
 
 import unittest
+import importlib
+from pathlib import Path
+import tempfile
 
 from core.models import CompetitionExtraction
 from core.registry import ExtractorRegistry
 from extractors import register_default_extractors
 from extractors.xbet_http.client import build_champ_url, build_game_url
 from extractors.xbet_http import XBetHttpExtractor, XBetHttpSettings
+from monitors.tracking import TrackingService
+from storage.tracking_repository import SqliteTrackingRepository
+
+tracking_repository_module = importlib.import_module("storage.tracking_repository")
 
 
 CHAMP_PAYLOAD = {
@@ -51,6 +58,19 @@ CHAMP_WITH_MARKETS_PAYLOAD = {
                     {"T": 9, "G": 17, "P": 2.5, "C": 1.91},
                     {"T": 10, "G": 17, "P": 2.5, "C": 1.89},
                 ],
+            }
+        ],
+    },
+}
+
+FUTURE_CHAMP_WITH_MARKETS_PAYLOAD = {
+    **CHAMP_WITH_MARKETS_PAYLOAD,
+    "Value": {
+        **CHAMP_WITH_MARKETS_PAYLOAD["Value"],
+        "G": [
+            {
+                **CHAMP_WITH_MARKETS_PAYLOAD["Value"]["G"][0],
+                "S": 4102444800,
             }
         ],
     },
@@ -163,6 +183,50 @@ class XBetHttpExtractionTests(unittest.IsolatedAsyncioTestCase):
                 {"selection": "Under", "line": "2.5", "odds": 1.89},
             ],
         )
+
+    async def test_tracking_service_persists_1xbet_events_in_existing_schema(self) -> None:
+        old_db_path = tracking_repository_module.DB_FILE_PATH
+        old_data_dir = tracking_repository_module.DATA_DIR
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tracking_repository_module.DATA_DIR = Path(tmp_dir)
+            tracking_repository_module.DB_FILE_PATH = Path(tmp_dir) / "tracking.sqlite3"
+            try:
+                repository = SqliteTrackingRepository()
+                registry = ExtractorRegistry()
+                registry.register(XBetHttpExtractor(client=FakeXBetHttpClient(FUTURE_CHAMP_WITH_MARKETS_PAYLOAD)))
+                service = TrackingService(
+                    extractor_registry=registry,
+                    repository=repository,
+                )
+                chat_id = 12345
+                url = "https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=2872359&lng=es"
+
+                pending = await service.create_pending_track_from_url(chat_id, url)
+                self.assertTrue(pending.ok)
+                confirmed = await service.confirm_pending_track(chat_id)
+                self.assertTrue(confirmed.ok)
+
+                tracked = repository.list_tracked_competitions(chat_id)
+                self.assertEqual(len(tracked), 1)
+                self.assertEqual(tracked[0].tracked_league.platform, "1xbet_http")
+
+                active_events = repository.get_active_events(
+                    tracked[0].tracked_league.id,
+                    only_future=True,
+                )
+                self.assertEqual(len(active_events), 1)
+                event = active_events[0]
+                self.assertEqual(event.home, "Canberra Olympic")
+                self.assertEqual(event.away, "Belconnen United")
+                self.assertEqual(event.odds_home, 1.49)
+                self.assertEqual(event.odds_draw, 4.55)
+                self.assertEqual(event.odds_away, 4.75)
+                self.assertIn("asian_handicap", event.markets_json or "")
+                self.assertIn("goal_line", event.markets_json or "")
+            finally:
+                tracking_repository_module.DB_FILE_PATH = old_db_path
+                tracking_repository_module.DATA_DIR = old_data_dir
 
 
 if __name__ == "__main__":
