@@ -23,7 +23,8 @@ from bot.alerts import (
     build_match_card_message,
     split_telegram_message,
 )
-from core.extractor_base import CompetitionUnavailableError
+from core.extractor_base import CompetitionUnavailableError, LeagueDiscoveryOption
+from core.models import PlatformDescriptor
 from monitoring import format_system_metrics_message, get_system_metrics
 from monitors.tracking import CommandResult, TrackingService
 from storage.tracking_repository import ActiveEventRecord, TrackedCompetitionSubscription
@@ -35,6 +36,9 @@ SELECT_MATCH_FOR_MATCHES = 2
 SELECT_LEAGUE_FOR_UNTRACK = 3
 SELECT_LEAGUE_FOR_ODDS = 4
 SELECT_LEAGUE_FOR_CHANGE_PERCENT = 5
+SELECT_PLATFORM_FOR_TRACK_LEAGUE = 6
+ENTER_COUNTRY_FOR_TRACK_LEAGUE = 7
+SELECT_LEAGUE_FOR_TRACK_LEAGUE = 8
 
 MATCHES_TRACKS_CONTEXT_KEY = "matches_tracks"
 MATCHES_ACTIVE_CONTEXT_KEY = "matches_active"
@@ -44,6 +48,9 @@ ODDS_TRACKS_CONTEXT_KEY = "odds_tracks"
 ODDS_ENABLED_CONTEXT_KEY = "odds_enabled"
 CHANGE_PERCENT_TRACKS_CONTEXT_KEY = "change_percent_tracks"
 CHANGE_PERCENT_VALUE_CONTEXT_KEY = "change_percent_value"
+TRACK_LEAGUE_PLATFORMS_CONTEXT_KEY = "track_league_platforms"
+TRACK_LEAGUE_SELECTED_PLATFORM_CONTEXT_KEY = "track_league_selected_platform"
+TRACK_LEAGUE_OPTIONS_CONTEXT_KEY = "track_league_options"
 MANUAL_REFRESH_TASK_KEY = "manual_refresh_task"
 
 HELP_MESSAGE = (
@@ -57,6 +64,7 @@ HELP_MESSAGE = (
     "/resources - Muestra métricas simples de recursos\n"
     "/echo <texto> - Devuelve el texto enviado\n\n"
     "Tracking de ligas\n"
+    "/track_league - Elegí plataforma, país y liga sin pegar URL\n"
     "/track_url <url> - Extrae una liga de una plataforma soportada y la deja pendiente\n"
     "/confirm_track - Confirma la última liga pendiente\n"
     "/confirm_empty_track - Confirma una liga válida pero vacía\n"
@@ -365,6 +373,189 @@ async def track_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     )
 
     await reply_with_result(update, result)
+
+
+async def track_league_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Start `/track_league` platform/country/league discovery."""
+
+    if update.message is None or update.effective_chat is None:
+        return ConversationHandler.END
+
+    logger.info("Comando /track_league recibido.")
+
+    tracking_service = get_tracking_service(context)
+    platforms = tracking_service.list_league_discovery_platforms()
+
+    if not platforms:
+        await update.message.reply_text(
+            "No hay plataformas con discovery de ligas habilitado todavía.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        return ConversationHandler.END
+
+    context.user_data[TRACK_LEAGUE_PLATFORMS_CONTEXT_KEY] = platforms
+    await update.message.reply_text(
+        _build_discovery_platform_selection_message(platforms),
+        reply_markup=_build_numeric_keyboard(len(platforms), "Elegí la plataforma"),
+    )
+    return SELECT_PLATFORM_FOR_TRACK_LEAGUE
+
+
+async def track_league_select_platform(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE,
+) -> int:
+    """Handle platform selection for `/track_league`."""
+
+    if update.message is None:
+        return ConversationHandler.END
+
+    platforms = context.user_data.get(TRACK_LEAGUE_PLATFORMS_CONTEXT_KEY)
+    if not isinstance(platforms, list) or not platforms:
+        await update.message.reply_text(
+            "No encontré la selección de plataformas. Probá de nuevo con /track_league.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        _clear_all_selection_context(context)
+        return ConversationHandler.END
+
+    selected_index = _parse_selection_number(update.message.text, len(platforms))
+    if selected_index is None:
+        await update.message.reply_text(
+            "Elegí un número válido de plataforma.",
+            reply_markup=_build_numeric_keyboard(len(platforms), "Elegí la plataforma"),
+        )
+        return SELECT_PLATFORM_FOR_TRACK_LEAGUE
+
+    selected_platform = platforms[selected_index]
+    if not isinstance(selected_platform, PlatformDescriptor):
+        await update.message.reply_text(
+            "La plataforma seleccionada no es válida. Probá de nuevo con /track_league.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        _clear_all_selection_context(context)
+        return ConversationHandler.END
+
+    context.user_data[TRACK_LEAGUE_SELECTED_PLATFORM_CONTEXT_KEY] = selected_platform
+    await update.message.reply_text(
+        (
+            f"Plataforma elegida: {selected_platform.display_name}\n\n"
+            "Escribí el país para buscar ligas.\n"
+            "Ejemplos: Australia, Argentina, England"
+        ),
+        reply_markup=ReplyKeyboardRemove(),
+    )
+    return ENTER_COUNTRY_FOR_TRACK_LEAGUE
+
+
+async def track_league_enter_country(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE,
+) -> int:
+    """Search platform leagues after the user enters a country."""
+
+    if update.message is None:
+        return ConversationHandler.END
+
+    selected_platform = context.user_data.get(TRACK_LEAGUE_SELECTED_PLATFORM_CONTEXT_KEY)
+    if not isinstance(selected_platform, PlatformDescriptor):
+        await update.message.reply_text(
+            "No encontré la plataforma seleccionada. Probá de nuevo con /track_league.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        _clear_all_selection_context(context)
+        return ConversationHandler.END
+
+    country_name = (update.message.text or "").strip()
+    if not country_name:
+        await update.message.reply_text("Escribí un país válido.")
+        return ENTER_COUNTRY_FOR_TRACK_LEAGUE
+
+    tracking_service = get_tracking_service(context)
+    await update.message.reply_text(f"Buscando ligas en {country_name}...")
+
+    try:
+        league_options = await tracking_service.search_discoverable_leagues(
+            platform=selected_platform.key,
+            country_name=country_name,
+            limit=80,
+        )
+    except Exception:
+        logger.exception(
+            "League discovery failed platform=%s country=%s",
+            selected_platform.key,
+            country_name,
+        )
+        await update.message.reply_text(
+            "No pude buscar ligas ahora. Probá de nuevo en unos minutos.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        _clear_all_selection_context(context)
+        return ConversationHandler.END
+
+    if not league_options:
+        await update.message.reply_text(
+            f"No encontré ligas para {country_name} en {selected_platform.display_name}.\n\n"
+            "Probá con otro nombre de país o /cancel.",
+        )
+        return ENTER_COUNTRY_FOR_TRACK_LEAGUE
+
+    context.user_data[TRACK_LEAGUE_OPTIONS_CONTEXT_KEY] = league_options
+    await update.message.reply_text(
+        _build_discovered_league_selection_message(league_options),
+        reply_markup=_build_numeric_keyboard(len(league_options), "Elegí la liga"),
+    )
+    return SELECT_LEAGUE_FOR_TRACK_LEAGUE
+
+
+async def track_league_select_league(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE,
+) -> int:
+    """Track the league selected during `/track_league`."""
+
+    if update.message is None or update.effective_chat is None:
+        return ConversationHandler.END
+
+    league_options = context.user_data.get(TRACK_LEAGUE_OPTIONS_CONTEXT_KEY)
+    if not isinstance(league_options, list) or not league_options:
+        await update.message.reply_text(
+            "No encontré la selección de ligas. Probá de nuevo con /track_league.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        _clear_all_selection_context(context)
+        return ConversationHandler.END
+
+    selected_index = _parse_selection_number(update.message.text, len(league_options))
+    if selected_index is None:
+        await update.message.reply_text(
+            "Elegí un número válido de liga.",
+            reply_markup=_build_numeric_keyboard(len(league_options), "Elegí la liga"),
+        )
+        return SELECT_LEAGUE_FOR_TRACK_LEAGUE
+
+    selected_option = league_options[selected_index]
+    if not isinstance(selected_option, LeagueDiscoveryOption):
+        await update.message.reply_text(
+            "La liga seleccionada no es válida. Probá de nuevo con /track_league.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        _clear_all_selection_context(context)
+        return ConversationHandler.END
+
+    tracking_service = get_tracking_service(context)
+    await update.message.reply_text(
+        f"Guardando tracking de {selected_option.league_name}...",
+        reply_markup=ReplyKeyboardRemove(),
+    )
+    result = await tracking_service.track_discovered_league(
+        update.effective_chat.id,
+        selected_option,
+    )
+
+    await _reply_text_chunks(update.message, result.message, reply_markup=ReplyKeyboardRemove())
+    _clear_all_selection_context(context)
+    return ConversationHandler.END
 
 
 async def confirm_track_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -1096,6 +1287,25 @@ def register_handlers(application: Application) -> None:
         CommandHandler("confirm_all_little_changes", confirm_all_little_changes_command)
     )
 
+    track_league_conversation = ConversationHandler(
+        entry_points=[CommandHandler(["track_league", "tracl_league"], track_league_command)],
+        states={
+            SELECT_PLATFORM_FOR_TRACK_LEAGUE: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, track_league_select_platform)
+            ],
+            ENTER_COUNTRY_FOR_TRACK_LEAGUE: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, track_league_enter_country)
+            ],
+            SELECT_LEAGUE_FOR_TRACK_LEAGUE: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, track_league_select_league)
+            ],
+        },
+        fallbacks=[CommandHandler("cancel", cancel_command)],
+        name="track_league_conversation",
+        persistent=False,
+    )
+    application.add_handler(track_league_conversation)
+
     matches_conversation = ConversationHandler(
         entry_points=[CommandHandler("matches", matches_command)],
         states={
@@ -1207,6 +1417,29 @@ def _build_track_selection_message(prompt: str, tracks: list[TrackedCompetitionS
     return "\n".join(lines)
 
 
+def _build_discovery_platform_selection_message(platforms: list[PlatformDescriptor]) -> str:
+    """Build the platform prompt for `/track_league`."""
+
+    lines = ["Qué plataforma querés usar para buscar ligas?"]
+
+    for index, platform in enumerate(platforms, start=1):
+        lines.append(f"{index} - {platform.display_name} ({platform.key})")
+
+    return "\n".join(lines)
+
+
+def _build_discovered_league_selection_message(options: list[LeagueDiscoveryOption]) -> str:
+    """Build the league prompt for `/track_league`."""
+
+    lines = ["Elegí la liga a trackear:"]
+
+    for index, option in enumerate(options, start=1):
+        games = f" | partidos={option.games_count}" if option.games_count is not None else ""
+        lines.append(f"{index} - {option.league_name} | id={option.league_id}{games}")
+
+    return "\n".join(lines)
+
+
 def _build_match_selection_message(
     tracked_league: TrackedCompetitionSubscription,
     matches: list[ActiveEventRecord],
@@ -1267,3 +1500,6 @@ def _clear_all_selection_context(context: ContextTypes.DEFAULT_TYPE) -> None:
     context.user_data.pop(ODDS_ENABLED_CONTEXT_KEY, None)
     context.user_data.pop(CHANGE_PERCENT_TRACKS_CONTEXT_KEY, None)
     context.user_data.pop(CHANGE_PERCENT_VALUE_CONTEXT_KEY, None)
+    context.user_data.pop(TRACK_LEAGUE_PLATFORMS_CONTEXT_KEY, None)
+    context.user_data.pop(TRACK_LEAGUE_SELECTED_PLATFORM_CONTEXT_KEY, None)
+    context.user_data.pop(TRACK_LEAGUE_OPTIONS_CONTEXT_KEY, None)

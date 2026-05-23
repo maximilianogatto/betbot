@@ -288,11 +288,18 @@ class XBetHttpExtractionTests(unittest.IsolatedAsyncioTestCase):
                     repository=repository,
                 )
                 chat_id = 12345
-                url = "https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=2872359&lng=es"
 
-                pending = await service.create_pending_track_from_url(chat_id, url)
-                self.assertTrue(pending.ok)
-                confirmed = await service.confirm_pending_track(chat_id)
+                discovery_platforms = service.list_league_discovery_platforms()
+                self.assertEqual([platform.key for platform in discovery_platforms], ["1xbet_http"])
+
+                options = await service.search_discoverable_leagues(
+                    platform="1xbet_http",
+                    country_name="Australia",
+                    query="ACT",
+                )
+                self.assertEqual(len(options), 1)
+
+                confirmed = await service.track_discovered_league(chat_id, options[0])
                 self.assertTrue(confirmed.ok)
 
                 tracked = repository.list_tracked_competitions(chat_id)
