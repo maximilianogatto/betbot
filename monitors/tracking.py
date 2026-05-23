@@ -34,7 +34,7 @@ from bot.alerts import (
     build_odds_change_alert_message,
     split_telegram_message,
 )
-from core.extractor_base import CompetitionUnavailableError
+from core.extractor_base import CompetitionUnavailableError, LeagueDiscoveryOption
 from monitors.change_detection import (
     evaluate_subscription_odds_change,
     select_due_reminders,
@@ -353,6 +353,51 @@ class TrackingService:
         """Return the currently registered betting platforms."""
 
         return self.extractor_registry.list_platforms()
+
+    def list_league_discovery_platforms(self) -> list[PlatformDescriptor]:
+        """Return platforms that can discover leagues without a pasted URL."""
+
+        return [
+            extractor.describe_platform()
+            for extractor in self.extractor_registry.list_registered()
+            if extractor.supports_league_discovery
+        ]
+
+    async def search_discoverable_leagues(
+        self,
+        *,
+        platform: str,
+        country_name: str,
+        query: str | None = None,
+        limit: int = 80,
+    ) -> list[LeagueDiscoveryOption]:
+        """Search trackable leagues for one discovery-capable platform."""
+
+        extractor = self.extractor_registry.get_for_platform(platform)
+        if not extractor.supports_league_discovery:
+            raise ValueError(f"La plataforma {platform} no soporta /track_league.")
+        return await extractor.search_leagues(
+            country_name=country_name,
+            query=query,
+            limit=limit,
+        )
+
+    async def track_discovered_league(
+        self,
+        chat_id: int,
+        option: LeagueDiscoveryOption,
+    ) -> CommandResult:
+        """Create and confirm a track from a discovery option in one step."""
+
+        pending_result = await self.create_pending_track_from_url(chat_id, option.source_url)
+        if not pending_result.ok:
+            return pending_result
+
+        pending_request = self.repository.get_latest_pending_competition_request(chat_id)
+        if pending_request is not None and pending_request.requires_empty_confirmation:
+            return await self.confirm_empty_pending_track(chat_id)
+
+        return await self.confirm_pending_track(chat_id)
 
     def build_platforms_message(self) -> CommandResult:
         """Build the `/platforms` response from the extractor registry."""

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import Any
 
 from core.models import CompetitionExtraction, EventSnapshot, PlatformDescriptor, platform_display_name
@@ -33,6 +34,21 @@ class CompetitionUnavailableError(RuntimeError):
         self.details = details or {}
 
 
+@dataclass(frozen=True)
+class LeagueDiscoveryOption:
+    """Represent one platform-native league that can be tracked without pasting a URL."""
+
+    platform: str
+    platform_display_name: str
+    country_id: str | None
+    country_name: str
+    league_id: str
+    league_name: str
+    source_url: str
+    games_count: int | None = None
+    raw_payload: dict[str, Any] | None = None
+
+
 class Extractor(ABC):
     """Common interface implemented by each sportsbook extractor.
 
@@ -52,6 +68,7 @@ class Extractor(ABC):
     supported_domains: tuple[str, ...] = ()
     supported_capabilities: tuple[str, ...] = ("ligas",)
     implemented: bool = True
+    supports_league_discovery: bool = False
 
     @classmethod
     @abstractmethod
@@ -76,6 +93,18 @@ class Extractor(ABC):
 
     async def stop(self) -> None:
         """Stop any optional shared runtime resources for the extractor."""
+
+    async def search_leagues(
+        self,
+        *,
+        country_name: str,
+        query: str | None = None,
+        limit: int = 80,
+    ) -> list[LeagueDiscoveryOption]:
+        """Return trackable leagues discovered by country for platforms that support it."""
+
+        del country_name, query, limit
+        raise NotImplementedError(f"{self.name} does not support league discovery.")
 
     def build_competition_url(
         self,
