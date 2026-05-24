@@ -1,0 +1,1402 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-05-24T07:52:29.924459+00:00",
+  "source": {
+    "platform": "solcasino",
+    "provider": "betby_sptpub",
+    "source_url": "https://solcasino.io/sports?bt-path=%2Fsoccer%2Fbrazil%2Fbrasileiro-serie-a-1669818812230406144",
+    "api_host": "api-g-c7818b61-607.sptpub.com",
+    "brand_id": "2392759269461204992",
+    "language": "en",
+    "snapshot_endpoint": "https://api-g-c7818b61-607.sptpub.com/api/v4/prematch/brand/2392759269461204992/en/0",
+    "manifest_version": 1779609118987,
+    "chunk_versions": [
+      1779609118987,
+      1779609118988,
+      1779609118989,
+      1779609118990,
+      1779609118991
+    ]
+  },
+  "league": {
+    "league_id": "1669818812230406144",
+    "league": "Brasileiro Serie A",
+    "slug": "brasileiro-serie-a",
+    "country": "Brazil",
+    "country_id": "1669818812180074496",
+    "sport_id": "1"
+  },
+  "summary": {
+    "matches_count": 14,
+    "matches_with_1x2": 14,
+    "matches_with_handicap": 0,
+    "matches_with_totals": 14
+  },
+  "matches": [
+    {
+      "platform": "solcasino",
+      "external_event_id": "2665608857816014856",
+      "external_competition_id": "1669818812230406144",
+      "competition_name": "Brasileiro Serie A",
+      "category_name": "Brazil",
+      "home": "Cruzeiro EC MG",
+      "away": "Chapecoense SC",
+      "home_id": "1954",
+      "away_id": "21845",
+      "sport_id": "1",
+      "kickoff": {
+        "unix": 1779649200,
+        "utc": "2026-05-24T19:00:00+00:00",
+        "date_utc": "2026-05-24",
+        "time_utc": "19:00"
+      },
+      "odds_1x2": {
+        "1": 1.35,
+        "X": 5.0,
+        "2": 8.8
+      },
+      "handicap": [],
+      "totals": [
+        {
+          "line": 2.5,
+          "over": 1.74,
+          "under": 2.1,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.5"
+        },
+        {
+          "line": 2.75,
+          "over": 1.92,
+          "under": 1.88,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.75"
+        },
+        {
+          "line": 2.25,
+          "over": 1.53,
+          "under": 2.5,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.25"
+        },
+        {
+          "line": 3.0,
+          "over": 2.28,
+          "under": 1.63,
+          "raw_market_id": "18",
+          "raw_spec": "total=3"
+        },
+        {
+          "line": 2.0,
+          "over": 1.34,
+          "under": 3.25,
+          "raw_market_id": "18",
+          "raw_spec": "total=2"
+        },
+        {
+          "line": 3.25,
+          "over": 2.6,
+          "under": 1.5,
+          "raw_market_id": "18",
+          "raw_spec": "total=3.25"
+        },
+        {
+          "line": 1.5,
+          "over": 1.23,
+          "under": 4.2,
+          "raw_market_id": "18",
+          "raw_spec": "total=1.5"
+        },
+        {
+          "line": 3.5,
+          "over": 2.86,
+          "under": 1.42,
+          "raw_market_id": "18",
+          "raw_spec": "total=3.5"
+        },
+        {
+          "line": 4.5,
+          "over": 5.4,
+          "under": 1.15,
+          "raw_market_id": "18",
+          "raw_spec": "total=4.5"
+        },
+        {
+          "line": 0.5,
+          "over": 1.01,
+          "under": 10.0,
+          "raw_market_id": "18",
+          "raw_spec": "total=0.5"
+        },
+        {
+          "line": 5.5,
+          "over": 10.0,
+          "under": 1.04,
+          "raw_market_id": "18",
+          "raw_spec": "total=5.5"
+        }
+      ],
+      "market_status": {
+        "has_1x2": true,
+        "has_handicap": false,
+        "has_totals": true,
+        "missing": [
+          "handicap"
+        ]
+      },
+      "raw_refs": {
+        "market_keys": [
+          "1",
+          "10",
+          "18"
+        ],
+        "raw_market_count": 3,
+        "desc_flags": {
+          "all_markets": null,
+          "bet_builder": true,
+          "player_props": true
+        }
+      }
+    },
+    {
+      "platform": "solcasino",
+      "external_event_id": "2665608818020454449",
+      "external_competition_id": "1669818812230406144",
+      "competition_name": "Brasileiro Serie A",
+      "category_name": "Brazil",
+      "home": "Clube do Remo PA",
+      "away": "CA Paranaense PR",
+      "home_id": "2012",
+      "away_id": "1967",
+      "sport_id": "1",
+      "kickoff": {
+        "unix": 1779649200,
+        "utc": "2026-05-24T19:00:00+00:00",
+        "date_utc": "2026-05-24",
+        "time_utc": "19:00"
+      },
+      "odds_1x2": {
+        "1": 2.52,
+        "X": 3.25,
+        "2": 2.88
+      },
+      "handicap": [],
+      "totals": [
+        {
+          "line": 2.5,
+          "over": 2.08,
+          "under": 1.74,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.5"
+        },
+        {
+          "line": 2.75,
+          "over": 2.44,
+          "under": 1.55,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.75"
+        },
+        {
+          "line": 2.25,
+          "over": 1.83,
+          "under": 1.97,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.25"
+        },
+        {
+          "line": 2.0,
+          "over": 1.57,
+          "under": 2.42,
+          "raw_market_id": "18",
+          "raw_spec": "total=2"
+        },
+        {
+          "line": 1.75,
+          "over": 1.41,
+          "under": 2.9,
+          "raw_market_id": "18",
+          "raw_spec": "total=1.75"
+        },
+        {
+          "line": 1.5,
+          "over": 1.34,
+          "under": 3.25,
+          "raw_market_id": "18",
+          "raw_spec": "total=1.5"
+        },
+        {
+          "line": 3.5,
+          "over": 3.8,
+          "under": 1.27,
+          "raw_market_id": "18",
+          "raw_spec": "total=3.5"
+        },
+        {
+          "line": 4.5,
+          "over": 7.8,
+          "under": 1.08,
+          "raw_market_id": "18",
+          "raw_spec": "total=4.5"
+        },
+        {
+          "line": 0.5,
+          "over": 1.06,
+          "under": 9.4,
+          "raw_market_id": "18",
+          "raw_spec": "total=0.5"
+        }
+      ],
+      "market_status": {
+        "has_1x2": true,
+        "has_handicap": false,
+        "has_totals": true,
+        "missing": [
+          "handicap"
+        ]
+      },
+      "raw_refs": {
+        "market_keys": [
+          "1",
+          "10",
+          "18"
+        ],
+        "raw_market_count": 3,
+        "desc_flags": {
+          "all_markets": null,
+          "bet_builder": true,
+          "player_props": true
+        }
+      }
+    },
+    {
+      "platform": "solcasino",
+      "external_event_id": "2665608820704817172",
+      "external_competition_id": "1669818812230406144",
+      "competition_name": "Brasileiro Serie A",
+      "category_name": "Brazil",
+      "home": "SC Corinthians SP",
+      "away": "Atletico Mineiro MG",
+      "home_id": "260739",
+      "away_id": "552277",
+      "sport_id": "1",
+      "kickoff": {
+        "unix": 1779658200,
+        "utc": "2026-05-24T21:30:00+00:00",
+        "date_utc": "2026-05-24",
+        "time_utc": "21:30"
+      },
+      "odds_1x2": {
+        "1": 1.81,
+        "X": 3.35,
+        "2": 4.9
+      },
+      "handicap": [],
+      "totals": [
+        {
+          "line": 2.5,
+          "over": 2.42,
+          "under": 1.57,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.5"
+        },
+        {
+          "line": 2.25,
+          "over": 2.08,
+          "under": 1.75,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.25"
+        },
+        {
+          "line": 3.0,
+          "over": 3.8,
+          "under": 1.27,
+          "raw_market_id": "18",
+          "raw_spec": "total=3"
+        },
+        {
+          "line": 2.0,
+          "over": 1.77,
+          "under": 2.04,
+          "raw_market_id": "18",
+          "raw_spec": "total=2"
+        },
+        {
+          "line": 1.75,
+          "over": 1.55,
+          "under": 2.44,
+          "raw_market_id": "18",
+          "raw_spec": "total=1.75"
+        },
+        {
+          "line": 1.5,
+          "over": 1.45,
+          "under": 2.74,
+          "raw_market_id": "18",
+          "raw_spec": "total=1.5"
+        },
+        {
+          "line": 3.5,
+          "over": 4.8,
+          "under": 1.18,
+          "raw_market_id": "18",
+          "raw_spec": "total=3.5"
+        },
+        {
+          "line": 4.5,
+          "over": 10.0,
+          "under": 1.04,
+          "raw_market_id": "18",
+          "raw_spec": "total=4.5"
+        },
+        {
+          "line": 0.5,
+          "over": 1.08,
+          "under": 7.8,
+          "raw_market_id": "18",
+          "raw_spec": "total=0.5"
+        }
+      ],
+      "market_status": {
+        "has_1x2": true,
+        "has_handicap": false,
+        "has_totals": true,
+        "missing": [
+          "handicap"
+        ]
+      },
+      "raw_refs": {
+        "market_keys": [
+          "1",
+          "10",
+          "18"
+        ],
+        "raw_market_count": 3,
+        "desc_flags": {
+          "all_markets": null,
+          "bet_builder": true,
+          "player_props": true
+        }
+      }
+    },
+    {
+      "platform": "solcasino",
+      "external_event_id": "2665612708778487855",
+      "external_competition_id": "1669818812230406144",
+      "competition_name": "Brasileiro Serie A",
+      "category_name": "Brazil",
+      "home": "CR Vasco da Gama RJ",
+      "away": "Red Bull Bragantino SP",
+      "home_id": "1974",
+      "away_id": "1999",
+      "sport_id": "1",
+      "kickoff": {
+        "unix": 1779665400,
+        "utc": "2026-05-24T23:30:00+00:00",
+        "date_utc": "2026-05-24",
+        "time_utc": "23:30"
+      },
+      "odds_1x2": {
+        "1": 2.02,
+        "X": 3.35,
+        "2": 3.85
+      },
+      "handicap": [],
+      "totals": [
+        {
+          "line": 2.5,
+          "over": 2.08,
+          "under": 1.75,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.5"
+        },
+        {
+          "line": 2.75,
+          "over": 2.42,
+          "under": 1.56,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.75"
+        },
+        {
+          "line": 2.25,
+          "over": 1.82,
+          "under": 1.99,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.25"
+        },
+        {
+          "line": 3.0,
+          "over": 3.05,
+          "under": 1.38,
+          "raw_market_id": "18",
+          "raw_spec": "total=3"
+        },
+        {
+          "line": 2.0,
+          "over": 1.56,
+          "under": 2.42,
+          "raw_market_id": "18",
+          "raw_spec": "total=2"
+        },
+        {
+          "line": 1.75,
+          "over": 1.41,
+          "under": 2.9,
+          "raw_market_id": "18",
+          "raw_spec": "total=1.75"
+        },
+        {
+          "line": 1.5,
+          "over": 1.35,
+          "under": 3.2,
+          "raw_market_id": "18",
+          "raw_spec": "total=1.5"
+        },
+        {
+          "line": 3.5,
+          "over": 3.8,
+          "under": 1.27,
+          "raw_market_id": "18",
+          "raw_spec": "total=3.5"
+        },
+        {
+          "line": 4.5,
+          "over": 8.0,
+          "under": 1.08,
+          "raw_market_id": "18",
+          "raw_spec": "total=4.5"
+        },
+        {
+          "line": 0.5,
+          "over": 1.05,
+          "under": 10.0,
+          "raw_market_id": "18",
+          "raw_spec": "total=0.5"
+        }
+      ],
+      "market_status": {
+        "has_1x2": true,
+        "has_handicap": false,
+        "has_totals": true,
+        "missing": [
+          "handicap"
+        ]
+      },
+      "raw_refs": {
+        "market_keys": [
+          "1",
+          "10",
+          "18"
+        ],
+        "raw_market_count": 3,
+        "desc_flags": {
+          "all_markets": null,
+          "bet_builder": true,
+          "player_props": true
+        }
+      }
+    },
+    {
+      "platform": "solcasino",
+      "external_event_id": "2665608857816014854",
+      "external_competition_id": "1669818812230406144",
+      "competition_name": "Brasileiro Serie A",
+      "category_name": "Brazil",
+      "home": "Coritiba FC PR",
+      "away": "EC Bahia BA",
+      "home_id": "1982",
+      "away_id": "1955",
+      "sport_id": "1",
+      "kickoff": {
+        "unix": 1779750000,
+        "utc": "2026-05-25T23:00:00+00:00",
+        "date_utc": "2026-05-25",
+        "time_utc": "23:00"
+      },
+      "odds_1x2": {
+        "1": 2.7,
+        "X": 3.25,
+        "2": 2.66
+      },
+      "handicap": [],
+      "totals": [
+        {
+          "line": 2.5,
+          "over": 2.02,
+          "under": 1.79,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.5"
+        },
+        {
+          "line": 2.75,
+          "over": 2.3,
+          "under": 1.62,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.75"
+        },
+        {
+          "line": 2.25,
+          "over": 1.77,
+          "under": 2.06,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.25"
+        },
+        {
+          "line": 3.0,
+          "over": 2.86,
+          "under": 1.42,
+          "raw_market_id": "18",
+          "raw_spec": "total=3"
+        },
+        {
+          "line": 2.0,
+          "over": 1.5,
+          "under": 2.6,
+          "raw_market_id": "18",
+          "raw_spec": "total=2"
+        },
+        {
+          "line": 1.5,
+          "over": 1.32,
+          "under": 3.4,
+          "raw_market_id": "18",
+          "raw_spec": "total=1.5"
+        },
+        {
+          "line": 3.5,
+          "over": 3.6,
+          "under": 1.29,
+          "raw_market_id": "18",
+          "raw_spec": "total=3.5"
+        },
+        {
+          "line": 4.5,
+          "over": 7.4,
+          "under": 1.09,
+          "raw_market_id": "18",
+          "raw_spec": "total=4.5"
+        },
+        {
+          "line": 0.5,
+          "over": 1.05,
+          "under": 10.0,
+          "raw_market_id": "18",
+          "raw_spec": "total=0.5"
+        }
+      ],
+      "market_status": {
+        "has_1x2": true,
+        "has_handicap": false,
+        "has_totals": true,
+        "missing": [
+          "handicap"
+        ]
+      },
+      "raw_refs": {
+        "market_keys": [
+          "1",
+          "10",
+          "18"
+        ],
+        "raw_market_count": 3,
+        "desc_flags": {
+          "all_markets": null,
+          "bet_builder": true,
+          "player_props": true
+        }
+      }
+    },
+    {
+      "platform": "solcasino",
+      "external_event_id": "2668167858558734385",
+      "external_competition_id": "1669818812230406144",
+      "competition_name": "Brasileiro Serie A",
+      "category_name": "Brazil",
+      "home": "CR Flamengo RJ",
+      "away": "Coritiba FC PR",
+      "home_id": "5981",
+      "away_id": "1982",
+      "sport_id": "1",
+      "kickoff": {
+        "unix": 1780167600,
+        "utc": "2026-05-30T19:00:00+00:00",
+        "date_utc": "2026-05-30",
+        "time_utc": "19:00"
+      },
+      "odds_1x2": {
+        "1": 1.33,
+        "X": 4.9,
+        "2": 9.2
+      },
+      "handicap": [],
+      "totals": [
+        {
+          "line": 2.5,
+          "over": 1.63,
+          "under": 2.22,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.5"
+        },
+        {
+          "line": 3.0,
+          "over": 2.02,
+          "under": 1.76,
+          "raw_market_id": "18",
+          "raw_spec": "total=3"
+        },
+        {
+          "line": 1.5,
+          "over": 1.2,
+          "under": 4.4,
+          "raw_market_id": "18",
+          "raw_spec": "total=1.5"
+        },
+        {
+          "line": 3.5,
+          "over": 2.6,
+          "under": 1.47,
+          "raw_market_id": "18",
+          "raw_spec": "total=3.5"
+        },
+        {
+          "line": 4.5,
+          "over": 4.7,
+          "under": 1.18,
+          "raw_market_id": "18",
+          "raw_spec": "total=4.5"
+        },
+        {
+          "line": 5.5,
+          "over": 9.4,
+          "under": 1.04,
+          "raw_market_id": "18",
+          "raw_spec": "total=5.5"
+        }
+      ],
+      "market_status": {
+        "has_1x2": true,
+        "has_handicap": false,
+        "has_totals": true,
+        "missing": [
+          "handicap"
+        ]
+      },
+      "raw_refs": {
+        "market_keys": [
+          "1",
+          "10",
+          "18"
+        ],
+        "raw_market_count": 3,
+        "desc_flags": {
+          "all_markets": null,
+          "bet_builder": true,
+          "player_props": false
+        }
+      }
+    },
+    {
+      "platform": "solcasino",
+      "external_event_id": "2668167891605655571",
+      "external_competition_id": "1669818812230406144",
+      "competition_name": "Brasileiro Serie A",
+      "category_name": "Brazil",
+      "home": "CA Paranaense PR",
+      "away": "Mirassol FC SP",
+      "home_id": "1967",
+      "away_id": "21982",
+      "sport_id": "1",
+      "kickoff": {
+        "unix": 1780167600,
+        "utc": "2026-05-30T19:00:00+00:00",
+        "date_utc": "2026-05-30",
+        "time_utc": "19:00"
+      },
+      "odds_1x2": {
+        "1": 1.88,
+        "X": 3.3,
+        "2": 4.4
+      },
+      "handicap": [],
+      "totals": [
+        {
+          "line": 2.5,
+          "over": 2.22,
+          "under": 1.63,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.5"
+        },
+        {
+          "line": 2.0,
+          "over": 1.66,
+          "under": 2.16,
+          "raw_market_id": "18",
+          "raw_spec": "total=2"
+        },
+        {
+          "line": 1.5,
+          "over": 1.38,
+          "under": 2.94,
+          "raw_market_id": "18",
+          "raw_spec": "total=1.5"
+        },
+        {
+          "line": 3.5,
+          "over": 4.1,
+          "under": 1.22,
+          "raw_market_id": "18",
+          "raw_spec": "total=3.5"
+        },
+        {
+          "line": 4.5,
+          "over": 8.8,
+          "under": 1.05,
+          "raw_market_id": "18",
+          "raw_spec": "total=4.5"
+        },
+        {
+          "line": 0.5,
+          "over": 1.06,
+          "under": 8.6,
+          "raw_market_id": "18",
+          "raw_spec": "total=0.5"
+        }
+      ],
+      "market_status": {
+        "has_1x2": true,
+        "has_handicap": false,
+        "has_totals": true,
+        "missing": [
+          "handicap"
+        ]
+      },
+      "raw_refs": {
+        "market_keys": [
+          "1",
+          "10",
+          "18"
+        ],
+        "raw_market_count": 3,
+        "desc_flags": {
+          "all_markets": null,
+          "bet_builder": true,
+          "player_props": false
+        }
+      }
+    },
+    {
+      "platform": "solcasino",
+      "external_event_id": "2668167891605655573",
+      "external_competition_id": "1669818812230406144",
+      "competition_name": "Brasileiro Serie A",
+      "category_name": "Brazil",
+      "home": "Gremio FB Porto Alegrense RS",
+      "away": "SC Corinthians SP",
+      "home_id": "5926",
+      "away_id": "260739",
+      "sport_id": "1",
+      "kickoff": {
+        "unix": 1780173000,
+        "utc": "2026-05-30T20:30:00+00:00",
+        "date_utc": "2026-05-30",
+        "time_utc": "20:30"
+      },
+      "odds_1x2": {
+        "1": 2.26,
+        "X": 3.2,
+        "2": 3.2
+      },
+      "handicap": [],
+      "totals": [
+        {
+          "line": 2.5,
+          "over": 2.14,
+          "under": 1.68,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.5"
+        },
+        {
+          "line": 2.0,
+          "over": 1.56,
+          "under": 2.36,
+          "raw_market_id": "18",
+          "raw_spec": "total=2"
+        },
+        {
+          "line": 1.5,
+          "over": 1.36,
+          "under": 3.05,
+          "raw_market_id": "18",
+          "raw_spec": "total=1.5"
+        },
+        {
+          "line": 3.5,
+          "over": 3.9,
+          "under": 1.24,
+          "raw_market_id": "18",
+          "raw_spec": "total=3.5"
+        },
+        {
+          "line": 4.5,
+          "over": 8.2,
+          "under": 1.06,
+          "raw_market_id": "18",
+          "raw_spec": "total=4.5"
+        },
+        {
+          "line": 0.5,
+          "over": 1.06,
+          "under": 8.6,
+          "raw_market_id": "18",
+          "raw_spec": "total=0.5"
+        }
+      ],
+      "market_status": {
+        "has_1x2": true,
+        "has_handicap": false,
+        "has_totals": true,
+        "missing": [
+          "handicap"
+        ]
+      },
+      "raw_refs": {
+        "market_keys": [
+          "1",
+          "10",
+          "18"
+        ],
+        "raw_market_count": 3,
+        "desc_flags": {
+          "all_markets": null,
+          "bet_builder": true,
+          "player_props": false
+        }
+      }
+    },
+    {
+      "platform": "solcasino",
+      "external_event_id": "2668167871229730840",
+      "external_competition_id": "1669818812230406144",
+      "competition_name": "Brasileiro Serie A",
+      "category_name": "Brazil",
+      "home": "EC Bahia BA",
+      "away": "Botafogo FR RJ",
+      "home_id": "1955",
+      "away_id": "1958",
+      "sport_id": "1",
+      "kickoff": {
+        "unix": 1780173000,
+        "utc": "2026-05-30T20:30:00+00:00",
+        "date_utc": "2026-05-30",
+        "time_utc": "20:30"
+      },
+      "odds_1x2": {
+        "1": 1.97,
+        "X": 3.45,
+        "2": 3.75
+      },
+      "handicap": [],
+      "totals": [
+        {
+          "line": 2.5,
+          "over": 1.79,
+          "under": 1.98,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.5"
+        },
+        {
+          "line": 1.5,
+          "over": 1.24,
+          "under": 3.9,
+          "raw_market_id": "18",
+          "raw_spec": "total=1.5"
+        },
+        {
+          "line": 3.5,
+          "over": 2.94,
+          "under": 1.38,
+          "raw_market_id": "18",
+          "raw_spec": "total=3.5"
+        },
+        {
+          "line": 4.5,
+          "over": 5.6,
+          "under": 1.13,
+          "raw_market_id": "18",
+          "raw_spec": "total=4.5"
+        },
+        {
+          "line": 0.5,
+          "over": 1.02,
+          "under": 10.0,
+          "raw_market_id": "18",
+          "raw_spec": "total=0.5"
+        },
+        {
+          "line": 5.5,
+          "over": 10.0,
+          "under": 1.02,
+          "raw_market_id": "18",
+          "raw_spec": "total=5.5"
+        }
+      ],
+      "market_status": {
+        "has_1x2": true,
+        "has_handicap": false,
+        "has_totals": true,
+        "missing": [
+          "handicap"
+        ]
+      },
+      "raw_refs": {
+        "market_keys": [
+          "1",
+          "10",
+          "18"
+        ],
+        "raw_market_count": 3,
+        "desc_flags": {
+          "all_markets": null,
+          "bet_builder": true,
+          "player_props": false
+        }
+      }
+    },
+    {
+      "platform": "solcasino",
+      "external_event_id": "2668167871229730852",
+      "external_competition_id": "1669818812230406144",
+      "competition_name": "Brasileiro Serie A",
+      "category_name": "Brazil",
+      "home": "Red Bull Bragantino SP",
+      "away": "SC Internacional RS",
+      "home_id": "1999",
+      "away_id": "1966",
+      "sport_id": "1",
+      "kickoff": {
+        "unix": 1780236000,
+        "utc": "2026-05-31T14:00:00+00:00",
+        "date_utc": "2026-05-31",
+        "time_utc": "14:00"
+      },
+      "odds_1x2": {
+        "1": 2.18,
+        "X": 3.25,
+        "2": 3.3
+      },
+      "handicap": [],
+      "totals": [
+        {
+          "line": 2.5,
+          "over": 1.95,
+          "under": 1.78,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.5"
+        },
+        {
+          "line": 1.5,
+          "over": 1.3,
+          "under": 3.3,
+          "raw_market_id": "18",
+          "raw_spec": "total=1.5"
+        },
+        {
+          "line": 3.5,
+          "over": 3.4,
+          "under": 1.28,
+          "raw_market_id": "18",
+          "raw_spec": "total=3.5"
+        },
+        {
+          "line": 4.5,
+          "over": 6.4,
+          "under": 1.09,
+          "raw_market_id": "18",
+          "raw_spec": "total=4.5"
+        },
+        {
+          "line": 0.5,
+          "over": 1.04,
+          "under": 8.8,
+          "raw_market_id": "18",
+          "raw_spec": "total=0.5"
+        }
+      ],
+      "market_status": {
+        "has_1x2": true,
+        "has_handicap": false,
+        "has_totals": true,
+        "missing": [
+          "handicap"
+        ]
+      },
+      "raw_refs": {
+        "market_keys": [
+          "1",
+          "10",
+          "18"
+        ],
+        "raw_market_count": 3,
+        "desc_flags": {
+          "all_markets": null,
+          "bet_builder": true,
+          "player_props": false
+        }
+      }
+    },
+    {
+      "platform": "solcasino",
+      "external_event_id": "2668167871229730854",
+      "external_competition_id": "1669818812230406144",
+      "competition_name": "Brasileiro Serie A",
+      "category_name": "Brazil",
+      "home": "SE Palmeiras SP",
+      "away": "Chapecoense SC",
+      "home_id": "1963",
+      "away_id": "21845",
+      "sport_id": "1",
+      "kickoff": {
+        "unix": 1780254000,
+        "utc": "2026-05-31T19:00:00+00:00",
+        "date_utc": "2026-05-31",
+        "time_utc": "19:00"
+      },
+      "odds_1x2": {
+        "1": 1.22,
+        "X": 5.8,
+        "2": 12.0
+      },
+      "handicap": [],
+      "totals": [
+        {
+          "line": 2.5,
+          "over": 1.67,
+          "under": 2.1,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.5"
+        },
+        {
+          "line": 3.0,
+          "over": 2.18,
+          "under": 1.63,
+          "raw_market_id": "18",
+          "raw_spec": "total=3"
+        },
+        {
+          "line": 1.5,
+          "over": 1.2,
+          "under": 4.2,
+          "raw_market_id": "18",
+          "raw_spec": "total=1.5"
+        },
+        {
+          "line": 3.5,
+          "over": 2.66,
+          "under": 1.43,
+          "raw_market_id": "18",
+          "raw_spec": "total=3.5"
+        },
+        {
+          "line": 4.5,
+          "over": 4.8,
+          "under": 1.15,
+          "raw_market_id": "18",
+          "raw_spec": "total=4.5"
+        },
+        {
+          "line": 0.5,
+          "over": 1.01,
+          "under": 10.0,
+          "raw_market_id": "18",
+          "raw_spec": "total=0.5"
+        },
+        {
+          "line": 5.5,
+          "over": 9.4,
+          "under": 1.03,
+          "raw_market_id": "18",
+          "raw_spec": "total=5.5"
+        }
+      ],
+      "market_status": {
+        "has_1x2": true,
+        "has_handicap": false,
+        "has_totals": true,
+        "missing": [
+          "handicap"
+        ]
+      },
+      "raw_refs": {
+        "market_keys": [
+          "1",
+          "10",
+          "18"
+        ],
+        "raw_market_count": 3,
+        "desc_flags": {
+          "all_markets": null,
+          "bet_builder": true,
+          "player_props": false
+        }
+      }
+    },
+    {
+      "platform": "solcasino",
+      "external_event_id": "2668167871229730861",
+      "external_competition_id": "1669818812230406144",
+      "competition_name": "Brasileiro Serie A",
+      "category_name": "Brazil",
+      "home": "CR Vasco da Gama RJ",
+      "away": "Atletico Mineiro MG",
+      "home_id": "1974",
+      "away_id": "552277",
+      "sport_id": "1",
+      "kickoff": {
+        "unix": 1780254000,
+        "utc": "2026-05-31T19:00:00+00:00",
+        "date_utc": "2026-05-31",
+        "time_utc": "19:00"
+      },
+      "odds_1x2": {
+        "1": 2.04,
+        "X": 3.25,
+        "2": 3.6
+      },
+      "handicap": [],
+      "totals": [
+        {
+          "line": 2.5,
+          "over": 2.04,
+          "under": 1.71,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.5"
+        },
+        {
+          "line": 2.0,
+          "over": 1.51,
+          "under": 2.42,
+          "raw_market_id": "18",
+          "raw_spec": "total=2"
+        },
+        {
+          "line": 1.5,
+          "over": 1.33,
+          "under": 3.1,
+          "raw_market_id": "18",
+          "raw_spec": "total=1.5"
+        },
+        {
+          "line": 3.5,
+          "over": 3.55,
+          "under": 1.26,
+          "raw_market_id": "18",
+          "raw_spec": "total=3.5"
+        },
+        {
+          "line": 4.5,
+          "over": 7.2,
+          "under": 1.07,
+          "raw_market_id": "18",
+          "raw_spec": "total=4.5"
+        },
+        {
+          "line": 0.5,
+          "over": 1.05,
+          "under": 8.2,
+          "raw_market_id": "18",
+          "raw_spec": "total=0.5"
+        }
+      ],
+      "market_status": {
+        "has_1x2": true,
+        "has_handicap": false,
+        "has_totals": true,
+        "missing": [
+          "handicap"
+        ]
+      },
+      "raw_refs": {
+        "market_keys": [
+          "1",
+          "10",
+          "18"
+        ],
+        "raw_market_count": 3,
+        "desc_flags": {
+          "all_markets": null,
+          "bet_builder": true,
+          "player_props": false
+        }
+      }
+    },
+    {
+      "platform": "solcasino",
+      "external_event_id": "2668167891605655576",
+      "external_competition_id": "1669818812230406144",
+      "competition_name": "Brasileiro Serie A",
+      "category_name": "Brazil",
+      "home": "Clube do Remo PA",
+      "away": "Sao Paulo FC SP",
+      "home_id": "2012",
+      "away_id": "1981",
+      "sport_id": "1",
+      "kickoff": {
+        "unix": 1780270200,
+        "utc": "2026-05-31T23:30:00+00:00",
+        "date_utc": "2026-05-31",
+        "time_utc": "23:30"
+      },
+      "odds_1x2": {
+        "1": 3.05,
+        "X": 3.2,
+        "2": 2.3
+      },
+      "handicap": [],
+      "totals": [
+        {
+          "line": 2.5,
+          "over": 2.08,
+          "under": 1.69,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.5"
+        },
+        {
+          "line": 2.0,
+          "over": 1.59,
+          "under": 2.24,
+          "raw_market_id": "18",
+          "raw_spec": "total=2"
+        },
+        {
+          "line": 1.5,
+          "over": 1.33,
+          "under": 3.05,
+          "raw_market_id": "18",
+          "raw_spec": "total=1.5"
+        },
+        {
+          "line": 3.5,
+          "over": 3.7,
+          "under": 1.24,
+          "raw_market_id": "18",
+          "raw_spec": "total=3.5"
+        },
+        {
+          "line": 4.5,
+          "over": 7.6,
+          "under": 1.06,
+          "raw_market_id": "18",
+          "raw_spec": "total=4.5"
+        },
+        {
+          "line": 0.5,
+          "over": 1.05,
+          "under": 8.2,
+          "raw_market_id": "18",
+          "raw_spec": "total=0.5"
+        }
+      ],
+      "market_status": {
+        "has_1x2": true,
+        "has_handicap": false,
+        "has_totals": true,
+        "missing": [
+          "handicap"
+        ]
+      },
+      "raw_refs": {
+        "market_keys": [
+          "1",
+          "10",
+          "18"
+        ],
+        "raw_market_count": 3,
+        "desc_flags": {
+          "all_markets": null,
+          "bet_builder": true,
+          "player_props": false
+        }
+      }
+    },
+    {
+      "platform": "solcasino",
+      "external_event_id": "2668177934711402543",
+      "external_competition_id": "1669818812230406144",
+      "competition_name": "Brasileiro Serie A",
+      "category_name": "Brazil",
+      "home": "Cruzeiro EC MG",
+      "away": "Fluminense FC RJ",
+      "home_id": "1954",
+      "away_id": "1961",
+      "sport_id": "1",
+      "kickoff": {
+        "unix": 1780270200,
+        "utc": "2026-05-31T23:30:00+00:00",
+        "date_utc": "2026-05-31",
+        "time_utc": "23:30"
+      },
+      "odds_1x2": {
+        "1": 2.08,
+        "X": 3.25,
+        "2": 3.5
+      },
+      "handicap": [],
+      "totals": [
+        {
+          "line": 2.5,
+          "over": 1.99,
+          "under": 1.75,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.5"
+        },
+        {
+          "line": 1.5,
+          "over": 1.31,
+          "under": 3.25,
+          "raw_market_id": "18",
+          "raw_spec": "total=1.5"
+        },
+        {
+          "line": 3.5,
+          "over": 3.45,
+          "under": 1.27,
+          "raw_market_id": "18",
+          "raw_spec": "total=3.5"
+        },
+        {
+          "line": 4.5,
+          "over": 6.8,
+          "under": 1.08,
+          "raw_market_id": "18",
+          "raw_spec": "total=4.5"
+        },
+        {
+          "line": 0.5,
+          "over": 1.04,
+          "under": 8.8,
+          "raw_market_id": "18",
+          "raw_spec": "total=0.5"
+        }
+      ],
+      "market_status": {
+        "has_1x2": true,
+        "has_handicap": false,
+        "has_totals": true,
+        "missing": [
+          "handicap"
+        ]
+      },
+      "raw_refs": {
+        "market_keys": [
+          "1",
+          "10",
+          "18"
+        ],
+        "raw_market_count": 3,
+        "desc_flags": {
+          "all_markets": null,
+          "bet_builder": true,
+          "player_props": false
+        }
+      }
+    }
+  ]
+}
