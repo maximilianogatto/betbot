@@ -19,6 +19,16 @@ from typing import Any
 
 
 @dataclass(frozen=True)
+class ProviderCapabilities:
+    """Machine-readable capabilities exposed by a provider adapter."""
+
+    supports_http: bool = False
+    supports_live: bool = False
+    supports_deep_markets: bool = False
+    supports_browserless: bool = False
+
+
+@dataclass(frozen=True)
 class PlatformDescriptor:
     """Describe one supported betting platform exposed by the extractor layer."""
 
@@ -27,6 +37,7 @@ class PlatformDescriptor:
     domains: tuple[str, ...] = ()
     supports: tuple[str, ...] = ()
     implemented: bool = True
+    capabilities: ProviderCapabilities = field(default_factory=ProviderCapabilities)
 
 
 @dataclass(frozen=True)
@@ -144,6 +155,7 @@ __all__ = [
     "EventSnapshot",
     "Odds1X2",
     "PlatformDescriptor",
+    "ProviderCapabilities",
     "platform_display_name",
     "utc_now_iso",
 ]

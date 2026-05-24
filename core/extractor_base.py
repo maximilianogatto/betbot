@@ -6,7 +6,13 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any
 
-from core.models import CompetitionExtraction, EventSnapshot, PlatformDescriptor, platform_display_name
+from core.models import (
+    CompetitionExtraction,
+    EventSnapshot,
+    PlatformDescriptor,
+    ProviderCapabilities,
+    platform_display_name,
+)
 
 
 class CompetitionUnavailableError(RuntimeError):
@@ -67,6 +73,7 @@ class Extractor(ABC):
     display_name: str = ""
     supported_domains: tuple[str, ...] = ()
     supported_capabilities: tuple[str, ...] = ("ligas",)
+    provider_capabilities: ProviderCapabilities = ProviderCapabilities()
     implemented: bool = True
     supports_league_discovery: bool = False
 
@@ -142,4 +149,5 @@ class Extractor(ABC):
             domains=self.supported_domains,
             supports=self.supported_capabilities,
             implemented=self.implemented,
+            capabilities=self.provider_capabilities,
         )

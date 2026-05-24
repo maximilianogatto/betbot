@@ -9,6 +9,7 @@ from core.models import (
     EventSnapshot,
     Odds1X2,
     PlatformDescriptor,
+    ProviderCapabilities,
     platform_display_name,
 )
 from core.registry import ExtractorRegistry, extractor_registry
@@ -25,6 +26,7 @@ __all__ = [
     "ExtractorRegistry",
     "Odds1X2",
     "PlatformDescriptor",
+    "ProviderCapabilities",
     "extractor_registry",
     "platform_display_name",
 ]

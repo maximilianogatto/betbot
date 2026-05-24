@@ -4,9 +4,11 @@ import unittest
 import importlib
 from pathlib import Path
 import tempfile
+from types import SimpleNamespace
 from urllib.parse import parse_qs, urlparse
 
 from core.models import CompetitionExtraction
+from core.models import ProviderCapabilities
 from core.registry import ExtractorRegistry
 from extractors import register_default_extractors
 from extractors.xbet_http.client import build_champ_url, build_game_url
@@ -202,6 +204,33 @@ class XBetHttpExtractorTests(unittest.TestCase):
         register_default_extractors(registry)
         platforms = {platform.key for platform in registry.list_platforms()}
         self.assertIn("1xbet_http", platforms)
+
+    def test_default_registry_exposes_provider_capabilities(self) -> None:
+        registry = ExtractorRegistry()
+        register_default_extractors(registry)
+        platforms = {platform.key: platform for platform in registry.list_platforms()}
+
+        self.assertEqual(
+            platforms["1xbet_http"].capabilities,
+            ProviderCapabilities(
+                supports_http=True,
+                supports_live=False,
+                supports_deep_markets=True,
+                supports_browserless=True,
+            ),
+        )
+        self.assertFalse(platforms["bet365"].capabilities.supports_browserless)
+        self.assertTrue(platforms["bet365"].capabilities.supports_deep_markets)
+
+    def test_default_registry_can_disable_browser_providers(self) -> None:
+        registry = ExtractorRegistry()
+        register_default_extractors(
+            registry,
+            settings=SimpleNamespace(extractor_browser_enabled=False),
+        )
+
+        platforms = {platform.key for platform in registry.list_platforms()}
+        self.assertEqual(platforms, {"1xbet_http"})
 
 
 class XBetHttpExtractionTests(unittest.IsolatedAsyncioTestCase):

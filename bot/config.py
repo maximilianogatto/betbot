@@ -18,6 +18,7 @@ class Settings:
     log_level: str = "INFO"
     tracking_refresh_interval_seconds: int = 120
     tracking_max_parallel_refreshes: int = 3
+    extractor_browser_enabled: bool = True
     extractor_max_parallel_competitions: int = 1
     extractor_max_parallel_pages: int = 3
     extractor_max_parallel_event_pages: int = 1
@@ -75,6 +76,7 @@ def load_settings() -> Settings:
         ),
         variable_name="TRACKING_MAX_PARALLEL_REFRESHES",
     )
+    extractor_browser_enabled = _parse_bool(os.getenv("EXTRACTOR_BROWSER_ENABLED", "true"))
     extractor_max_parallel_competitions = _parse_positive_int(
         _first_env_value(
             "EXTRACTOR_MAX_PARALLEL_COMPETITIONS",
@@ -205,6 +207,7 @@ def load_settings() -> Settings:
         log_level=log_level,
         tracking_refresh_interval_seconds=tracking_refresh_interval_seconds,
         tracking_max_parallel_refreshes=tracking_max_parallel_refreshes,
+        extractor_browser_enabled=extractor_browser_enabled,
         extractor_max_parallel_competitions=extractor_max_parallel_competitions,
         extractor_max_parallel_pages=extractor_max_parallel_pages,
         extractor_max_parallel_event_pages=extractor_max_parallel_event_pages,

@@ -17,11 +17,33 @@ def register_default_extractors(
 ) -> list[Extractor]:
     """Register the built-in extractor set used by the current bot."""
 
-    bet365_extractor = registry.register(
-        Bet365Extractor(settings=_build_bet365_settings(settings))
-    )
-    xbet_http_extractor = registry.register(XBetHttpExtractor())
-    return [bet365_extractor, xbet_http_extractor]
+    browser_enabled = _extractor_browser_enabled(settings)
+    registered: list[Extractor] = []
+
+    if _should_register_provider(Bet365Extractor, browser_enabled=browser_enabled):
+        registered.append(
+            registry.register(Bet365Extractor(settings=_build_bet365_settings(settings)))
+        )
+    if _should_register_provider(XBetHttpExtractor, browser_enabled=browser_enabled):
+        registered.append(registry.register(XBetHttpExtractor()))
+
+    return registered
+
+
+def _should_register_provider(
+    extractor: type[Extractor],
+    *,
+    browser_enabled: bool,
+) -> bool:
+    """Return whether a provider can be enabled in the current runtime."""
+
+    return browser_enabled or extractor.provider_capabilities.supports_browserless
+
+
+def _extractor_browser_enabled(settings: Any | None) -> bool:
+    if settings is None:
+        return True
+    return bool(getattr(settings, "extractor_browser_enabled", True))
 
 
 def _build_bet365_settings(settings: Any | None) -> Bet365ExtractorSettings | None:

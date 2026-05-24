@@ -8,7 +8,15 @@ from urllib.parse import urlparse
 
 from core.extractor_base import CompetitionUnavailableError
 from core.extractor_base import Extractor
-from core.models import CompetitionExtraction, CompetitionKey, EventKey, EventSnapshot, Odds1X2, utc_now_iso
+from core.models import (
+    CompetitionExtraction,
+    CompetitionKey,
+    EventKey,
+    EventSnapshot,
+    Odds1X2,
+    ProviderCapabilities,
+    utc_now_iso,
+)
 from extractors.bet365.client import (
     Bet365BrowserExtractor,
     Bet365ExtractorSettings,
@@ -32,6 +40,12 @@ class Bet365Extractor(Extractor):
     display_name = "Bet365"
     supported_domains = ("bet365.bet.ar", "bet365.es", "bet365.com")
     supported_capabilities = ("ligas", "eventos 1X2", "asian handicap", "goal line")
+    provider_capabilities = ProviderCapabilities(
+        supports_http=False,
+        supports_live=False,
+        supports_deep_markets=True,
+        supports_browserless=False,
+    )
 
     def __init__(
         self,

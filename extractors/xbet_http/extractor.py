@@ -9,7 +9,7 @@ from urllib.parse import parse_qs, urlparse
 
 from core.extractor_base import Extractor
 from core.extractor_base import LeagueDiscoveryOption
-from core.models import CompetitionExtraction, EventSnapshot
+from core.models import CompetitionExtraction, EventSnapshot, ProviderCapabilities
 from extractors.xbet_http.client import (
     XBetHttpClient,
     base_url_from_linefeed_url,
@@ -55,6 +55,12 @@ class XBetHttpExtractor(Extractor):
     display_name = "1xBet HTTP"
     supported_domains = tuple(sorted(SUPPORTED_HOSTS))
     supported_capabilities = ("ligas", "eventos 1X2", "handicap", "totales")
+    provider_capabilities = ProviderCapabilities(
+        supports_http=True,
+        supports_live=False,
+        supports_deep_markets=True,
+        supports_browserless=True,
+    )
     supports_league_discovery = True
 
     def __init__(
