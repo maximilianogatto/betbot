@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import logging
+from dataclasses import replace
 from typing import Any, Protocol
 from urllib.parse import parse_qs, urlparse
 
@@ -18,9 +20,14 @@ from extractors.xbet_http.client import (
     normalize_linefeed_base_url,
 )
 from extractors.xbet_http.discovery import build_league_options_from_sports_short
-from extractors.xbet_http.parser import parse_champ_zip_payload
+from extractors.xbet_http.parser import (
+    enrich_event_snapshot_with_game_detail,
+    parse_champ_zip_payload,
+)
 from extractors.xbet_http.settings import XBetHttpSettings
 
+
+logger = logging.getLogger(__name__)
 
 SUPPORTED_HOSTS = {
     "1xbetarge.com",
@@ -33,6 +40,9 @@ SUPPORTED_HOSTS = {
 class XBetChampClient(Protocol):
     async def fetch_champ_zip(self, url: str) -> dict[str, Any]:
         """Fetch one GetChampZip envelope."""
+
+    async def fetch_game_zip(self, url: str) -> dict[str, Any]:
+        """Fetch one GetGameZip envelope."""
 
     async def fetch_sports_short_zip(self, url: str) -> dict[str, Any]:
         """Fetch one GetSportsShortZip envelope."""
@@ -91,7 +101,7 @@ class XBetHttpExtractor(Extractor):
             ),
         )
 
-        return extraction
+        return await self._enrich_extraction_with_game_details(extraction)
 
     async def extract_match(self, url: str) -> EventSnapshot:
         raise NotImplementedError("1xBet HTTP match extraction is not implemented yet.")
@@ -120,6 +130,82 @@ class XBetHttpExtractor(Extractor):
             query=query,
             limit=limit,
         )
+
+    async def _enrich_extraction_with_game_details(
+        self,
+        extraction: CompetitionExtraction,
+    ) -> CompetitionExtraction:
+        if (
+            not self.settings.fetch_game_details
+            or extraction.is_empty
+            or self.settings.max_game_detail_requests == 0
+        ):
+            return extraction
+
+        enriched_events: list[EventSnapshot] = []
+        requests_count = 0
+        failures_count = 0
+        enriched_count = 0
+        limit_reached = False
+
+        for event in extraction.events:
+            if not _event_needs_game_detail(event):
+                enriched_events.append(event)
+                continue
+            if requests_count >= self.settings.max_game_detail_requests:
+                limit_reached = True
+                enriched_events.append(event)
+                continue
+            if not event.source_url:
+                enriched_events.append(event)
+                continue
+
+            requests_count += 1
+            try:
+                payload = await self._client.fetch_game_zip(event.source_url)
+            except Exception as error:  # noqa: BLE001 - one failed event must not break the league refresh.
+                failures_count += 1
+                logger.warning(
+                    "1xBet GetGameZip enrichment failed event_id=%s url=%s error=%s",
+                    event.external_event_id,
+                    event.source_url,
+                    error,
+                )
+                enriched_events.append(event)
+                continue
+
+            enriched_event = enrich_event_snapshot_with_game_detail(event, payload)
+            if not _event_needs_game_detail(enriched_event):
+                enriched_count += 1
+            enriched_events.append(enriched_event)
+
+        metadata = {
+            **extraction.metadata,
+            "game_detail_enabled": True,
+            "game_detail_requests": requests_count,
+            "game_detail_failures": failures_count,
+            "game_detail_markets_enriched": enriched_count,
+            "game_detail_limit_reached": limit_reached,
+        }
+        raw_payload = {
+            **extraction.raw_payload,
+            "game_detail_requests": requests_count,
+            "game_detail_failures": failures_count,
+            "game_detail_markets_enriched": enriched_count,
+            "game_detail_limit_reached": limit_reached,
+        }
+
+        return replace(extraction, events=enriched_events, metadata=metadata, raw_payload=raw_payload)
+
+
+def _event_needs_game_detail(event: EventSnapshot) -> bool:
+    markets = event.markets_payload or {}
+    missing_1x2 = any(
+        value is None
+        for value in (event.odds_1x2.home, event.odds_1x2.draw, event.odds_1x2.away)
+    )
+    return missing_1x2 or "asian_handicap" not in markets or "goal_line" not in markets
+
 
 def _language_from_url(url: str) -> str | None:
     raw_values = parse_qs(urlparse(url).query).get("lng")

@@ -100,6 +100,9 @@ class XBetHttpClient:
     async def fetch_champ_zip(self, url: str) -> dict[str, Any]:
         return await self._fetch_json(url)
 
+    async def fetch_game_zip(self, url: str) -> dict[str, Any]:
+        return await self._fetch_json(url)
+
     async def fetch_sports_short_zip(self, url: str) -> dict[str, Any]:
         return await self._fetch_json(url)
 

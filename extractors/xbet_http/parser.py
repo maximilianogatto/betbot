@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from dataclasses import replace
 from datetime import UTC, datetime
 from typing import Any
 
@@ -112,6 +113,51 @@ def parse_champ_zip_snapshot(payload: dict[str, Any], *, source_url: str) -> XBe
             "country": _safe_str(value.get("CN")),
             "events_count": len(fixtures),
         },
+    )
+
+
+def enrich_event_snapshot_with_game_detail(
+    event: EventSnapshot,
+    payload: dict[str, Any],
+) -> EventSnapshot:
+    """Merge GetGameZip market detail into an already parsed fixture snapshot."""
+
+    detail = _unwrap_value_dict(payload)
+    raw_market_count = _raw_market_count(detail) if detail is not None else 0
+    raw_payload = {
+        **event.raw_payload,
+        "game_detail_source": "GetGameZip",
+        "game_detail_raw_market_count": raw_market_count,
+    }
+
+    if detail is None:
+        return replace(event, raw_payload=raw_payload)
+
+    odds_1x2, markets_payload = _extract_markets(detail, home=event.home, away=event.away)
+    if markets_payload is None and not any(
+        value is not None for value in (odds_1x2.home, odds_1x2.draw, odds_1x2.away)
+    ):
+        return replace(event, raw_payload=raw_payload)
+
+    merged_markets = _merge_markets_payload(event.markets_payload, markets_payload)
+    merged_odds = Odds1X2(
+        home=odds_1x2.home if odds_1x2.home is not None else event.odds_1x2.home,
+        draw=odds_1x2.draw if odds_1x2.draw is not None else event.odds_1x2.draw,
+        away=odds_1x2.away if odds_1x2.away is not None else event.odds_1x2.away,
+    )
+    metadata = {
+        **event.metadata,
+        "game_detail_event_id": (
+            _safe_str(detail.get("I")) or event.metadata.get("game_detail_event_id")
+        ),
+    }
+
+    return replace(
+        event,
+        odds_1x2=merged_odds,
+        markets_payload=merged_markets,
+        metadata=metadata,
+        raw_payload=raw_payload,
     )
 
 
@@ -241,6 +287,20 @@ def _extract_markets(raw_game: dict[str, Any], *, home: str, away: str) -> tuple
     return one_x_two, markets_payload or None
 
 
+def _merge_markets_payload(
+    current: dict[str, Any] | None,
+    incoming: dict[str, Any] | None,
+) -> dict[str, Any] | None:
+    if not current:
+        return incoming
+    if not incoming:
+        return current
+
+    merged = dict(current)
+    merged.update(incoming)
+    return merged
+
+
 def _extract_1x2(outcomes: list[object]) -> Odds1X2:
     values: dict[str, float | None] = {"home": None, "draw": None, "away": None}
 
@@ -275,6 +335,8 @@ def _extract_asian_handicap(
         if outcome_type not in {HANDICAP_HOME_TYPE, HANDICAP_AWAY_TYPE}:
             continue
         raw_line = _coerce_float(outcome.get("P"))
+        if raw_line is None and outcome.get("CE") == 1:
+            raw_line = 0.0
         if raw_line is None:
             continue
         normalized_line = -raw_line if outcome_type == HANDICAP_AWAY_TYPE else raw_line
@@ -322,6 +384,8 @@ def _extract_goal_line(outcomes: list[object]) -> dict[str, Any] | None:
         if outcome_type not in {TOTAL_OVER_TYPE, TOTAL_UNDER_TYPE}:
             continue
         line = _coerce_float(outcome.get("P"))
+        if line is None and outcome.get("CE") == 1:
+            line = 0.0
         if line is None:
             continue
         group = _safe_str(outcome.get("G")) or "total"
@@ -361,6 +425,15 @@ def _extract_goal_line(outcomes: list[object]) -> dict[str, Any] | None:
 def _raw_market_count(raw_game: dict[str, Any]) -> int:
     outcomes = raw_game.get("E")
     return len(outcomes) if isinstance(outcomes, list) else 0
+
+
+def _unwrap_value_dict(payload: dict[str, Any]) -> dict[str, Any] | None:
+    value = payload.get("Value")
+    if isinstance(value, dict):
+        return value
+    if isinstance(payload, dict) and isinstance(payload.get("E"), list):
+        return payload
+    return None
 
 
 def _coerce_float(value: object | None) -> float | None:

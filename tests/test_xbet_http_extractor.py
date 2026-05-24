@@ -4,6 +4,7 @@ import unittest
 import importlib
 from pathlib import Path
 import tempfile
+from urllib.parse import parse_qs, urlparse
 
 from core.models import CompetitionExtraction
 from core.registry import ExtractorRegistry
@@ -104,13 +105,29 @@ CHAMP_WITH_MARKETS_PAYLOAD = {
     },
 }
 
-FUTURE_CHAMP_WITH_MARKETS_PAYLOAD = {
-    **CHAMP_WITH_MARKETS_PAYLOAD,
+GAME_DETAIL_PAYLOAD = {
+    "Id": 0,
+    "Success": True,
+    "Error": "",
+    "ErrorCode": 0,
+    "Value": CHAMP_WITH_MARKETS_PAYLOAD["Value"]["G"][0],
+}
+
+EMPTY_GAME_DETAIL_PAYLOAD = {
+    "Id": 0,
+    "Success": True,
+    "Error": "",
+    "ErrorCode": 0,
+    "Value": {},
+}
+
+FUTURE_CHAMP_PAYLOAD = {
+    **CHAMP_PAYLOAD,
     "Value": {
-        **CHAMP_WITH_MARKETS_PAYLOAD["Value"],
+        **CHAMP_PAYLOAD["Value"],
         "G": [
             {
-                **CHAMP_WITH_MARKETS_PAYLOAD["Value"]["G"][0],
+                **CHAMP_PAYLOAD["Value"]["G"][0],
                 "S": 4102444800,
             }
         ],
@@ -132,14 +149,21 @@ class FakeXBetHttpClient:
         payload: dict[str, object],
         *,
         sports_payload: dict[str, object] | None = None,
+        game_payloads: dict[str, dict[str, object]] | None = None,
     ) -> None:
         self.payload = payload
         self.sports_payload = sports_payload or SPORTS_SHORT_PAYLOAD
+        self.game_payloads = game_payloads or {}
         self.requested_urls: list[str] = []
 
     async def fetch_champ_zip(self, url: str) -> dict[str, object]:
         self.requested_urls.append(url)
         return self.payload
+
+    async def fetch_game_zip(self, url: str) -> dict[str, object]:
+        self.requested_urls.append(url)
+        event_id = (parse_qs(urlparse(url).query).get("id") or [""])[0]
+        return self.game_payloads.get(url) or self.game_payloads.get(event_id) or EMPTY_GAME_DETAIL_PAYLOAD
 
     async def fetch_sports_short_zip(self, url: str) -> dict[str, object]:
         self.requested_urls.append(url)
@@ -208,8 +232,31 @@ class XBetHttpExtractionTests(unittest.IsolatedAsyncioTestCase):
         )
         self.assertEqual(
             client.requested_urls,
-            ["https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=2872359&lng=es"],
+            [
+                "https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=2872359&lng=es",
+                "https://spinbetter.com/service-api/LineFeed/GetGameZip?id=722570772&lng=es",
+            ],
         )
+
+    async def test_extract_league_enriches_missing_markets_with_getgamezip(self) -> None:
+        client = FakeXBetHttpClient(CHAMP_PAYLOAD, game_payloads={"722570772": GAME_DETAIL_PAYLOAD})
+        extractor = XBetHttpExtractor(client=client)
+
+        extraction = await extractor.extract_league(
+            "https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=2872359&lng=es"
+        )
+
+        event = extraction.events[0]
+        self.assertEqual(event.odds_1x2.home, 1.49)
+        self.assertEqual(event.odds_1x2.draw, 4.55)
+        self.assertEqual(event.odds_1x2.away, 4.75)
+        self.assertEqual(extraction.metadata["game_detail_requests"], 1)
+        self.assertEqual(extraction.metadata["game_detail_failures"], 0)
+        self.assertEqual(extraction.metadata["game_detail_markets_enriched"], 1)
+        self.assertEqual(event.raw_payload["game_detail_raw_market_count"], 7)
+        assert event.markets_payload is not None
+        self.assertIn("asian_handicap", event.markets_payload)
+        self.assertIn("goal_line", event.markets_payload)
 
     async def test_extract_league_normalizes_markets_when_getchampzip_contains_odds(self) -> None:
         client = FakeXBetHttpClient(CHAMP_WITH_MARKETS_PAYLOAD)
@@ -282,7 +329,14 @@ class XBetHttpExtractionTests(unittest.IsolatedAsyncioTestCase):
             try:
                 repository = SqliteTrackingRepository()
                 registry = ExtractorRegistry()
-                registry.register(XBetHttpExtractor(client=FakeXBetHttpClient(FUTURE_CHAMP_WITH_MARKETS_PAYLOAD)))
+                registry.register(
+                    XBetHttpExtractor(
+                        client=FakeXBetHttpClient(
+                            FUTURE_CHAMP_PAYLOAD,
+                            game_payloads={"722570772": GAME_DETAIL_PAYLOAD},
+                        )
+                    )
+                )
                 service = TrackingService(
                     extractor_registry=registry,
                     repository=repository,
