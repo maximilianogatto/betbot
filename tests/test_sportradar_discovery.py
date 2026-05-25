@@ -41,6 +41,7 @@ class SportradarDiscoveryTests(unittest.TestCase):
         self.assertIn("league", infer_roles("stats_season_tables", "/stats_season_tables/:id"))
         self.assertIn("fixture", infer_roles("sport_schedule", "/sport_schedule/:id"))
         self.assertIn("standings", infer_roles("stats_season_tables", "/stats_season_tables/:id"))
+        self.assertIn("navigation", infer_roles("config_tree_mini", "/config_tree_mini/:id/:id/:id"))
 
     def test_build_record_and_index(self) -> None:
         record = build_discovery_record(

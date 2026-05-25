@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "records_count": 1,
+  "endpoint_count": 1,
+  "by_role": {
+    "sport": [
+      "/bet365/en/sport/:id"
+    ]
+  },
+  "endpoints": {
+    "/bet365/en/sport/:id": {
+      "count": 1,
+      "statuses": {
+        "403": 1
+      },
+      "resource_types": {
+        "document": 1
+      },
+      "hosts": {
+        "statshub.sportradar.com": 1
+      },
+      "roles": {
+        "sport": 1
+      },
+      "normalized_paths": [
+        "/bet365/en/sport/:id"
+      ],
+      "example_url": "https://statshub.sportradar.com/bet365/en/sport/1",
+      "body_size_min_bytes": 406,
+      "body_size_max_bytes": 406,
+      "body_size_avg_bytes": 406.0,
+      "id_patterns": {
+        "path_ids": [
+          "1"
+        ],
+        "query_ids": [],
+        "payload_ids": []
+      },
+      "top_level_keys": [],
+      "doc_events": {},
+      "query_urls": [],
+      "repeated": false
+    }
+  }
+}

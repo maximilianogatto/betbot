@@ -9,8 +9,13 @@ anything into BetBot production code.
 ./betbot/bin/python sandbox/sportradar_stats/discovery/capture_discovery.py \
   "https://statshub.sportradar.com/bet365/en/sport/1" \
   --seconds 25 \
-  --out-dir sandbox/sportradar_stats/discovery/captures/sport_1
+  --out-dir sandbox/sportradar_stats/discovery/captures/sport_1_headed \
+  --headed
 ```
+
+In the current macOS/research environment, headless Chromium can receive an
+Akamai `403 Access Denied` document for this URL. `--headed` produced usable
+XHR/fetch captures.
 
 Optional navigation helpers:
 

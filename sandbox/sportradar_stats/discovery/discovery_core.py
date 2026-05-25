@@ -41,8 +41,9 @@ HEXISH_RE = re.compile(r"^[0-9a-f]{10,}$", re.IGNORECASE)
 
 
 ROLE_HINTS = {
+    "navigation": ("config", "tree", "menu"),
     "sport": ("sport", "sports"),
-    "league": ("league", "tournament", "competition", "category", "season"),
+    "league": ("league", "tournament", "competition", "category", "season", "realcategories", "uniquetournament"),
     "fixture": ("fixture", "schedule", "calendar", "matches", "matchlist"),
     "match": ("match", "event"),
     "standings": ("standing", "table"),
@@ -326,7 +327,26 @@ def build_endpoints_index(records: Iterable[dict[str, Any]]) -> dict[str, Any]:
         bucket["statuses"][str(record.get("status") or "")] += 1
         bucket["resource_types"][str(record.get("resource_type") or "")] += 1
         bucket["hosts"][str(record.get("host") or "")] += 1
-        for role in record.get("roles") or []:
+        roles = set(str(role) for role in (record.get("roles") or []))
+        summary = record.get("response_json_summary") or {}
+        if isinstance(summary, dict):
+            fake_payload = {
+                "doc": [
+                    {
+                        "event": summary.get("doc_event"),
+                        "data": {str(key): None for key in (summary.get("top_level_keys") or [])},
+                    }
+                ]
+            }
+            roles.update(
+                infer_roles(
+                    str(record.get("endpoint_key") or ""),
+                    str(record.get("normalized_path") or ""),
+                    fake_payload,
+                )
+            )
+
+        for role in sorted(roles):
             bucket["roles"][str(role)] += 1
         path = str(record.get("normalized_path") or "")
         if path and path not in bucket["_normalized_paths_seen"]:
@@ -348,7 +368,6 @@ def build_endpoints_index(records: Iterable[dict[str, Any]]) -> dict[str, Any]:
                 if text not in bucket["id_patterns"][id_kind]:
                     bucket["id_patterns"][id_kind].append(text)
 
-        summary = record.get("response_json_summary") or {}
         for key_name in summary.get("top_level_keys") or []:
             bucket["top_level_keys"][str(key_name)] += 1
         doc_event = summary.get("doc_event")

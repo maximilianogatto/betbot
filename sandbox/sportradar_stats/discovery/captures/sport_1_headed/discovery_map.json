@@ -1,0 +1,603 @@
+{
+  "schema_version": 1,
+  "records_count": 43,
+  "endpoint_count": 9,
+  "by_role": {
+    "fixture": [
+      "sport_matches_prevnext",
+      "stats_sport_matches_prevnext",
+      "unified_sport_matches",
+      "unified_sport_matches_markets"
+    ],
+    "league": [
+      "config_tree_mini",
+      "config_uniquetournamentsall"
+    ],
+    "match": [
+      "event_get",
+      "sport_matches_prevnext",
+      "stats_sport_matches_prevnext",
+      "unified_sport_matches",
+      "unified_sport_matches_markets"
+    ],
+    "navigation": [
+      "config_tree_mini",
+      "config_uniquetournamentsall"
+    ],
+    "odds": [
+      "odds_ukformat",
+      "unified_sport_matches_markets"
+    ],
+    "sport": [
+      "/bet365/en/sport/:id",
+      "sport_matches_prevnext",
+      "stats_sport_matches_prevnext",
+      "unified_sport_matches",
+      "unified_sport_matches_markets"
+    ],
+    "team": [
+      "event_get"
+    ]
+  },
+  "endpoints": {
+    "/bet365/en/sport/:id": {
+      "count": 4,
+      "statuses": {
+        "200": 4
+      },
+      "resource_types": {
+        "document": 4
+      },
+      "hosts": {
+        "statshub.sportradar.com": 4
+      },
+      "roles": {
+        "sport": 4
+      },
+      "normalized_paths": [
+        "/bet365/en/sport/:id"
+      ],
+      "example_url": "https://statshub.sportradar.com/bet365/en/sport/1",
+      "body_size_min_bytes": 282170,
+      "body_size_max_bytes": 629314,
+      "body_size_avg_bytes": 522258.75,
+      "id_patterns": {
+        "path_ids": [
+          "1",
+          "5",
+          "2",
+          "4"
+        ],
+        "query_ids": [],
+        "payload_ids": []
+      },
+      "top_level_keys": [],
+      "doc_events": {},
+      "query_urls": [],
+      "repeated": true
+    },
+    "config_tree_mini": {
+      "count": 6,
+      "statuses": {
+        "200": 6
+      },
+      "resource_types": {
+        "fetch": 6
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 6
+      },
+      "roles": {
+        "league": 6,
+        "navigation": 6
+      },
+      "normalized_paths": [
+        "/config_tree_mini/:id/:id/:id"
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/config_tree_mini/67/0/1?T=exp=1779767584~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=19e340b4c8562fcb51836635e10a6a846f1cead08c797511c1b32f81f57454d2",
+      "body_size_min_bytes": 77425,
+      "body_size_max_bytes": 2738438,
+      "body_size_avg_bytes": 1012514.67,
+      "id_patterns": {
+        "path_ids": [
+          "67",
+          "0",
+          "1",
+          "5",
+          "2",
+          "4"
+        ],
+        "query_ids": [],
+        "payload_ids": [
+          "1",
+          "4",
+          "55016",
+          "2386",
+          "105587",
+          "2307",
+          "2308",
+          "2309",
+          "2310",
+          "53231",
+          "6996",
+          "2383",
+          "105589",
+          "147109",
+          "147111",
+          "147113",
+          "3948",
+          "101177",
+          "3954",
+          "3955"
+        ]
+      },
+      "top_level_keys": [
+        "_doc",
+        "_id",
+        "_sid",
+        "name",
+        "realcategories",
+        "_sk"
+      ],
+      "doc_events": {
+        "config_tree_mini": 6
+      },
+      "query_urls": [
+        "config_tree_mini/67/0/1",
+        "config_tree_mini/67/0/5",
+        "config_tree_mini/67/0/2",
+        "config_tree_mini/67/0/4"
+      ],
+      "repeated": true
+    },
+    "config_uniquetournamentsall": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "roles": {
+        "league": 1,
+        "navigation": 1
+      },
+      "normalized_paths": [
+        "/config_uniquetournamentsall/:id/:id/:id"
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/config_uniquetournamentsall/0/67/5?T=exp=1779767584~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=19e340b4c8562fcb51836635e10a6a846f1cead08c797511c1b32f81f57454d2",
+      "body_size_min_bytes": 421119,
+      "body_size_max_bytes": 421119,
+      "body_size_avg_bytes": 421119.0,
+      "id_patterns": {
+        "path_ids": [
+          "0",
+          "67",
+          "5"
+        ],
+        "query_ids": [],
+        "payload_ids": [
+          "14666",
+          "14664",
+          "2711",
+          "2707",
+          "2709",
+          "31361",
+          "31357",
+          "31359",
+          "41961",
+          "41957",
+          "41959",
+          "48176",
+          "48172",
+          "48174",
+          "2633",
+          "2629",
+          "2631",
+          "2771",
+          "2767",
+          "2769"
+        ]
+      },
+      "top_level_keys": [
+        "_doc",
+        "_id",
+        "_utid",
+        "_sid",
+        "_rcid",
+        "name",
+        "currentseason",
+        "friendly",
+        "parent",
+        "_sk",
+        "a2"
+      ],
+      "doc_events": {
+        "config_uniquetournamentsall": 1
+      },
+      "query_urls": [
+        "config_uniquetournamentsall/0/67/5"
+      ],
+      "repeated": false
+    },
+    "event_get": {
+      "count": 6,
+      "statuses": {
+        "200": 6
+      },
+      "resource_types": {
+        "fetch": 6
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 6
+      },
+      "roles": {
+        "match": 6,
+        "team": 6
+      },
+      "normalized_paths": [
+        "/event_get"
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/event_get/?T=exp=1779767584~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=19e340b4c8562fcb51836635e10a6a846f1cead08c797511c1b32f81f57454d2",
+      "body_size_min_bytes": 94141,
+      "body_size_max_bytes": 117730,
+      "body_size_avg_bytes": 106232.17,
+      "id_patterns": {
+        "path_ids": [],
+        "query_ids": [],
+        "payload_ids": [
+          "2370418294",
+          "71681250",
+          "7",
+          "34199836",
+          "33993526",
+          "2370418682",
+          "71649874",
+          "34029156",
+          "34029152",
+          "6",
+          "2370419178",
+          "71661600",
+          "33313490",
+          "25431263",
+          "2370419414",
+          "71698312",
+          "10",
+          "22957743",
+          "26725055",
+          "2370419612"
+        ]
+      },
+      "top_level_keys": [
+        "_doc",
+        "_doctype",
+        "_id",
+        "_scoutid",
+        "_sid",
+        "_rcid",
+        "_tid",
+        "_dc",
+        "_typeid",
+        "uts",
+        "updated_uts",
+        "type",
+        "matchid",
+        "disabled",
+        "time",
+        "seconds",
+        "injurytime",
+        "team",
+        "name",
+        "updatedate"
+      ],
+      "doc_events": {
+        "event_get": 6
+      },
+      "query_urls": [
+        "event_get/"
+      ],
+      "repeated": true
+    },
+    "odds_ukformat": {
+      "count": 6,
+      "statuses": {
+        "200": 6
+      },
+      "resource_types": {
+        "fetch": 6
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 6
+      },
+      "roles": {
+        "odds": 6
+      },
+      "normalized_paths": [
+        "/odds_ukformat"
+      ],
+      "example_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/odds_ukformat/?T=exp=1779767584~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=19e340b4c8562fcb51836635e10a6a846f1cead08c797511c1b32f81f57454d2",
+      "body_size_min_bytes": 9785,
+      "body_size_max_bytes": 9785,
+      "body_size_avg_bytes": 9785.0,
+      "id_patterns": {
+        "path_ids": [],
+        "query_ids": [],
+        "payload_ids": []
+      },
+      "top_level_keys": [
+        "dec",
+        "frac"
+      ],
+      "doc_events": {
+        "odds_ukformat": 6
+      },
+      "query_urls": [
+        "odds_ukformat/"
+      ],
+      "repeated": true
+    },
+    "sport_matches_prevnext": {
+      "count": 4,
+      "statuses": {
+        "200": 4
+      },
+      "resource_types": {
+        "fetch": 4
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 4
+      },
+      "roles": {
+        "fixture": 4,
+        "match": 4,
+        "sport": 4
+      },
+      "normalized_paths": [
+        "/sport_matches_prevnext/:id/2026-05-25/:id"
+      ],
+      "example_url": "https://sh.fn.sportradar.com/common/en/America:Montevideo/gismo/sport_matches_prevnext/1/2026-05-25/0?T=exp=1779767584~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=19e340b4c8562fcb51836635e10a6a846f1cead08c797511c1b32f81f57454d2",
+      "body_size_min_bytes": 7992,
+      "body_size_max_bytes": 8808,
+      "body_size_avg_bytes": 8369.25,
+      "id_patterns": {
+        "path_ids": [
+          "1",
+          "0",
+          "5",
+          "2",
+          "4"
+        ],
+        "query_ids": [],
+        "payload_ids": [
+          "66299228",
+          "843",
+          "841",
+          "855",
+          "853",
+          "845",
+          "847",
+          "5519",
+          "6413",
+          "100",
+          "71658354",
+          "20191285",
+          "153",
+          "15482275",
+          "71670764",
+          "28",
+          "1151",
+          "1149",
+          "1155",
+          "1157"
+        ]
+      },
+      "top_level_keys": [
+        "previous",
+        "next",
+        "validCalendarDates"
+      ],
+      "doc_events": {
+        "sport_matches_prevnext": 4
+      },
+      "query_urls": [
+        "sport_matches_prevnext/1/2026-05-25/0",
+        "sport_matches_prevnext/5/2026-05-25/0",
+        "sport_matches_prevnext/2/2026-05-25/0",
+        "sport_matches_prevnext/4/2026-05-25/0"
+      ],
+      "repeated": true
+    },
+    "stats_sport_matches_prevnext": {
+      "count": 4,
+      "statuses": {
+        "200": 4
+      },
+      "resource_types": {
+        "fetch": 4
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 4
+      },
+      "roles": {
+        "fixture": 4,
+        "match": 4,
+        "sport": 4
+      },
+      "normalized_paths": [
+        "/stats_sport_matches_prevnext/:id/2026-05-25/:id"
+      ],
+      "example_url": "https://sh.fn.sportradar.com/common/en/America:Montevideo/gismo/stats_sport_matches_prevnext/1/2026-05-25/0?T=exp=1779767584~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=19e340b4c8562fcb51836635e10a6a846f1cead08c797511c1b32f81f57454d2",
+      "body_size_min_bytes": 2354,
+      "body_size_max_bytes": 5820,
+      "body_size_avg_bytes": 4202.25,
+      "id_patterns": {
+        "path_ids": [
+          "1",
+          "0",
+          "5",
+          "2",
+          "4"
+        ],
+        "query_ids": [],
+        "payload_ids": [
+          "68746862",
+          "12553590",
+          "9609970",
+          "1",
+          "71670764",
+          "9838964",
+          "226",
+          "30802923",
+          "28",
+          "8",
+          "71659354",
+          "8823095",
+          "13",
+          "24062873",
+          "69748626",
+          "11167457",
+          "11166799",
+          "122",
+          "71655922",
+          "34142252"
+        ]
+      },
+      "top_level_keys": [
+        "previous",
+        "next",
+        "validCalendarDates"
+      ],
+      "doc_events": {
+        "stats_sport_matches_prevnext": 4
+      },
+      "query_urls": [
+        "stats_sport_matches_prevnext/1/2026-05-25/0",
+        "stats_sport_matches_prevnext/5/2026-05-25/0",
+        "stats_sport_matches_prevnext/2/2026-05-25/0",
+        "stats_sport_matches_prevnext/4/2026-05-25/0"
+      ],
+      "repeated": true
+    },
+    "unified_sport_matches": {
+      "count": 6,
+      "statuses": {
+        "200": 6
+      },
+      "resource_types": {
+        "fetch": 6
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 6
+      },
+      "roles": {
+        "fixture": 6,
+        "match": 6,
+        "sport": 6
+      },
+      "normalized_paths": [
+        "/unified_sport_matches/:id/2026-05-25/:id"
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/America:Montevideo/gismo/unified_sport_matches/1/2026-05-25/0?T=exp=1779767584~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=19e340b4c8562fcb51836635e10a6a846f1cead08c797511c1b32f81f57454d2",
+      "body_size_min_bytes": 24817,
+      "body_size_max_bytes": 638865,
+      "body_size_avg_bytes": 394806.33,
+      "id_patterns": {
+        "path_ids": [
+          "1",
+          "0",
+          "5",
+          "2",
+          "4"
+        ],
+        "query_ids": [],
+        "payload_ids": [
+          "1",
+          "304",
+          "3",
+          "3657",
+          "133306",
+          "48",
+          "10",
+          "10427",
+          "138214",
+          "85968",
+          "140338",
+          "127687",
+          "146255",
+          "140046",
+          "296",
+          "11",
+          "9174",
+          "132744",
+          "34",
+          "13"
+        ]
+      },
+      "top_level_keys": [
+        "sport"
+      ],
+      "doc_events": {
+        "unified_sport_matches": 6
+      },
+      "query_urls": [
+        "unified_sport_matches/1/2026-05-25/0",
+        "unified_sport_matches/5/2026-05-25/0",
+        "unified_sport_matches/2/2026-05-25/0",
+        "unified_sport_matches/4/2026-05-25/0"
+      ],
+      "repeated": true
+    },
+    "unified_sport_matches_markets": {
+      "count": 6,
+      "statuses": {
+        "200": 6
+      },
+      "resource_types": {
+        "fetch": 6
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 6
+      },
+      "roles": {
+        "fixture": 6,
+        "match": 6,
+        "odds": 6,
+        "sport": 6
+      },
+      "normalized_paths": [
+        "/unified_sport_matches_markets/:id/2026-05-25/:id"
+      ],
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/America:Montevideo/gismo/unified_sport_matches_markets/1/2026-05-25/0?T=exp=1779767584~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=19e340b4c8562fcb51836635e10a6a846f1cead08c797511c1b32f81f57454d2",
+      "body_size_min_bytes": 17917,
+      "body_size_max_bytes": 239874,
+      "body_size_avg_bytes": 139045.67,
+      "id_patterns": {
+        "path_ids": [
+          "1",
+          "0",
+          "5",
+          "2",
+          "4"
+        ],
+        "query_ids": [],
+        "payload_ids": []
+      },
+      "top_level_keys": [
+        "matches"
+      ],
+      "doc_events": {
+        "unified_sport_matches_markets": 6
+      },
+      "query_urls": [
+        "unified_sport_matches_markets/1/2026-05-25/0",
+        "unified_sport_matches_markets/5/2026-05-25/0",
+        "unified_sport_matches_markets/2/2026-05-25/0",
+        "unified_sport_matches_markets/4/2026-05-25/0"
+      ],
+      "repeated": true
+    }
+  }
+}
