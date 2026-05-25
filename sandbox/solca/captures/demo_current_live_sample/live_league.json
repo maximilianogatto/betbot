@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-05-25T04:18:56.189866+00:00",
+  "source": {
+    "platform": "betby_demo",
+    "provider": "betby_sptpub",
+    "source_url": "https://demo.betby.com/sportsbook/sidebar/soccer/india/delhi-senior-division-2622765713244434457",
+    "api_host": "demoapi.betby.com",
+    "brand_id": "1653815133341880320",
+    "language": "en",
+    "feed": "live",
+    "snapshot_endpoint": "https://demoapi.betby.com/api/v4/live/brand/1653815133341880320/en/0",
+    "manifest_version": 1779682708584,
+    "chunk_versions": [
+      1779682708584,
+      1779682708585
+    ]
+  },
+  "league": {
+    "league_id": "2622765713244434457",
+    "league": "Delhi Senior Division",
+    "slug": "delhi-senior-division",
+    "country": "India",
+    "country_id": "1669819126262140928",
+    "sport_id": "1"
+  },
+  "summary": {
+    "matches_count": 1,
+    "matches_with_1x2": 0,
+    "matches_with_handicap": 0,
+    "matches_with_totals": 1,
+    "matches_in_live_feed": 1,
+    "matches_currently_live": 1
+  },
+  "matches": [
+    {
+      "platform": "betby_demo",
+      "external_event_id": "2670213321378111500",
+      "external_competition_id": "2622765713244434457",
+      "competition_name": "Delhi Senior Division",
+      "category_name": "India",
+      "home": "Garhwal Diamond",
+      "away": "Garhwal FC",
+      "home_id": "2059613281928220672",
+      "away_id": "207403",
+      "sport_id": "1",
+      "kickoff": {
+        "unix": 1779678000,
+        "utc": "2026-05-25T03:00:00+00:00",
+        "date_utc": "2026-05-25",
+        "time_utc": "03:00"
+      },
+      "odds_1x2": {
+        "1": null,
+        "X": null,
+        "2": null
+      },
+      "handicap": [],
+      "totals": [
+        {
+          "line": 2.5,
+          "over": 1.37,
+          "under": 2.65,
+          "raw_market_id": "18",
+          "raw_spec": "total=2.5"
+        },
+        {
+          "line": 3.5,
+          "over": 2.65,
+          "under": 1.37,
+          "raw_market_id": "18",
+          "raw_spec": "total=3.5"
+        }
+      ],
+      "live_state": {
+        "in_live_feed": true,
+        "is_live": true,
+        "status_code": 1,
+        "match_status_code": 7,
+        "clock": {
+          "match_time": "60:47",
+          "stopped": false,
+          "timestamp": 1779682706411
+        },
+        "score_home": null,
+        "score_away": null,
+        "raw_state": {
+          "provider": "fca8278d",
+          "status": 1,
+          "match_status": 7,
+          "clock": {
+            "match_time": "60:47",
+            "stopped": false,
+            "timestamp": 1779682706411
+          }
+        }
+      },
+      "market_status": {
+        "has_1x2": false,
+        "has_handicap": false,
+        "has_totals": true,
+        "missing": [
+          "1x2",
+          "handicap"
+        ]
+      },
+      "raw_refs": {
+        "market_keys": [
+          "18"
+        ],
+        "raw_market_count": 1,
+        "desc_flags": {
+          "all_markets": null,
+          "bet_builder": true,
+          "player_props": false
+        }
+      }
+    }
+  ]
+}

@@ -1,7 +1,7 @@
-"""HTTP-only helpers for Solcasino/Rainbet Betby prematch snapshots.
+"""HTTP-only helpers for Betby prematch/live snapshots.
 
 This module intentionally stays in sandbox. It models the observed public
-`sptpub` snapshot/chunk feed without integrating it into the production bot.
+snapshot/chunk feed without integrating it into the production bot.
 """
 
 from __future__ import annotations
@@ -16,8 +16,11 @@ import httpx
 
 
 DEFAULT_API_HOST = "api-g-c7818b61-607.sptpub.com"
+DEMO_API_HOST = "demoapi.betby.com"
 DEFAULT_BRAND_ID = "2392759269461204992"
+DEMO_BRAND_ID = "1653815133341880320"
 DEFAULT_LANG = "en"
+SUPPORTED_FEEDS = {"prematch", "live"}
 
 SUPPORTED_BRANDS: dict[str, dict[str, str]] = {
     "solcasino.io": {
@@ -29,6 +32,11 @@ SUPPORTED_BRANDS: dict[str, dict[str, str]] = {
         "platform": "rainbet",
         "api_host": DEFAULT_API_HOST,
         "brand_id": DEFAULT_BRAND_ID,
+    },
+    "demo.betby.com": {
+        "platform": "betby_demo",
+        "api_host": DEMO_API_HOST,
+        "brand_id": DEMO_BRAND_ID,
     },
 }
 
@@ -45,13 +53,14 @@ class BetbyBrandConfig:
 
 
 def extract_tournament_id(url: str) -> str:
-    """Extract the numeric Betby tournament id from a Solcasino/Rainbet bt-path URL."""
+    """Extract the numeric Betby tournament id from a sportsbook URL."""
 
-    bt_path = parse_qs(urlparse(url).query).get("bt-path", [""])[0]
-    decoded_path = unquote(bt_path)
+    parsed = urlparse(url)
+    bt_path = parse_qs(parsed.query).get("bt-path", [""])[0]
+    decoded_path = unquote(bt_path or parsed.path)
     match = re.search(r"-(\d{12,})/?$", decoded_path)
     if not match:
-        raise ValueError(f"No tournament id found in bt-path={decoded_path!r}.")
+        raise ValueError(f"No tournament id found in path={decoded_path!r}.")
     return match.group(1)
 
 
@@ -73,13 +82,32 @@ def config_from_site_url(url: str, *, language: str = DEFAULT_LANG) -> BetbyBran
     )
 
 
+def build_feed_url(
+    config: BetbyBrandConfig,
+    *,
+    feed: str = "prematch",
+    version: int | str = 0,
+) -> str:
+    """Build one Betby snapshot/chunk URL for a supported feed."""
+
+    if feed not in SUPPORTED_FEEDS:
+        raise ValueError(f"Unsupported Betby feed: {feed!r}")
+    return (
+        f"https://{config.api_host}/api/v4/{feed}/brand/"
+        f"{config.brand_id}/{config.language}/{version}"
+    )
+
+
 def build_prematch_url(config: BetbyBrandConfig, version: int | str = 0) -> str:
     """Build one Betby prematch snapshot/chunk URL."""
 
-    return (
-        f"https://{config.api_host}/api/v4/prematch/brand/"
-        f"{config.brand_id}/{config.language}/{version}"
-    )
+    return build_feed_url(config, feed="prematch", version=version)
+
+
+def build_live_url(config: BetbyBrandConfig, version: int | str = 0) -> str:
+    """Build one Betby live snapshot/chunk URL."""
+
+    return build_feed_url(config, feed="live", version=version)
 
 
 def default_headers(config: BetbyBrandConfig) -> dict[str, str]:
@@ -153,15 +181,16 @@ def fetch_json(
     return payload
 
 
-def fetch_prematch_snapshot(
+def fetch_snapshot(
     config: BetbyBrandConfig,
     *,
+    feed: str = "prematch",
     timeout_seconds: float = 30.0,
 ) -> tuple[dict[str, Any], dict[str, Any], list[dict[str, Any]]]:
     """Fetch version=0, then all advertised snapshot chunks, and merge them."""
 
     headers = default_headers(config)
-    manifest_url = build_prematch_url(config, 0)
+    manifest_url = build_feed_url(config, feed=feed, version=0)
     merged = empty_snapshot()
     chunks: list[dict[str, Any]] = []
 
@@ -175,12 +204,32 @@ def fetch_prematch_snapshot(
             return manifest, merged, chunks
 
         for version in versions:
-            chunk_url = build_prematch_url(config, version)
+            chunk_url = build_feed_url(config, feed=feed, version=version)
             chunk = fetch_json(client, chunk_url, headers=headers)
             deep_merge(merged, chunk)
             chunks.append(_chunk_summary(version=version, status=200, payload=chunk))
 
     return manifest, merged, chunks
+
+
+def fetch_prematch_snapshot(
+    config: BetbyBrandConfig,
+    *,
+    timeout_seconds: float = 30.0,
+) -> tuple[dict[str, Any], dict[str, Any], list[dict[str, Any]]]:
+    """Fetch and merge the Betby prematch snapshot."""
+
+    return fetch_snapshot(config, feed="prematch", timeout_seconds=timeout_seconds)
+
+
+def fetch_live_snapshot(
+    config: BetbyBrandConfig,
+    *,
+    timeout_seconds: float = 30.0,
+) -> tuple[dict[str, Any], dict[str, Any], list[dict[str, Any]]]:
+    """Fetch and merge the Betby live snapshot."""
+
+    return fetch_snapshot(config, feed="live", timeout_seconds=timeout_seconds)
 
 
 def build_league_odds_document(
@@ -191,13 +240,19 @@ def build_league_odds_document(
     tournament_id: str,
     manifest: dict[str, Any] | None = None,
     chunks: list[dict[str, Any]] | None = None,
+    feed: str = "prematch",
 ) -> dict[str, Any]:
     """Build a compact tracking-ready league odds JSON from a merged snapshot."""
 
     tournament = (snapshot.get("tournaments") or {}).get(str(tournament_id), {})
     category_id = tournament.get("category_id")
     category = (snapshot.get("categories") or {}).get(str(category_id), {}) if category_id else {}
-    matches = extract_league_matches(snapshot, tournament_id=tournament_id, platform=config.platform)
+    matches = extract_league_matches(
+        snapshot,
+        tournament_id=tournament_id,
+        platform=config.platform,
+        feed=feed,
+    )
 
     return {
         "schema_version": 1,
@@ -209,7 +264,8 @@ def build_league_odds_document(
             "api_host": config.api_host,
             "brand_id": config.brand_id,
             "language": config.language,
-            "snapshot_endpoint": build_prematch_url(config, 0),
+            "feed": feed,
+            "snapshot_endpoint": build_feed_url(config, feed=feed, version=0),
             "manifest_version": (manifest or {}).get("version"),
             "chunk_versions": [item["version"] for item in (chunks or [])],
         },
@@ -226,6 +282,8 @@ def build_league_odds_document(
             "matches_with_1x2": sum(1 for item in matches if item["market_status"]["has_1x2"]),
             "matches_with_handicap": sum(1 for item in matches if item["market_status"]["has_handicap"]),
             "matches_with_totals": sum(1 for item in matches if item["market_status"]["has_totals"]),
+            "matches_in_live_feed": sum(1 for item in matches if item["live_state"]["in_live_feed"]),
+            "matches_currently_live": sum(1 for item in matches if item["live_state"]["is_live"]),
         },
         "matches": matches,
     }
@@ -236,6 +294,7 @@ def extract_league_matches(
     *,
     tournament_id: str,
     platform: str,
+    feed: str = "prematch",
 ) -> list[dict[str, Any]]:
     """Extract normalized football-ish matches for one tournament id."""
 
@@ -264,6 +323,7 @@ def extract_league_matches(
         odds_1x2 = extract_1x2(markets)
         handicap = extract_handicap(markets)
         totals = extract_totals(markets)
+        live_state = extract_live_state(event, feed=feed)
 
         missing: list[str] = []
         if not any(value is not None for value in odds_1x2.values()):
@@ -289,6 +349,7 @@ def extract_league_matches(
                 "odds_1x2": odds_1x2,
                 "handicap": handicap,
                 "totals": totals,
+                "live_state": live_state,
                 "market_status": {
                     "has_1x2": "1x2" not in missing,
                     "has_handicap": bool(handicap),
@@ -308,6 +369,34 @@ def extract_league_matches(
         )
 
     return sorted(matches, key=lambda item: item["kickoff"]["unix"] or 0)
+
+
+def extract_live_state(event: dict[str, Any], *, feed: str = "prematch") -> dict[str, Any]:
+    """Extract a compact, defensive live-state view from one Betby event."""
+
+    state = event.get("state") or {}
+    if not isinstance(state, dict):
+        state = {}
+    clock = state.get("clock") if isinstance(state.get("clock"), dict) else {}
+    status = state.get("status")
+    match_status = state.get("match_status")
+
+    return {
+        "in_live_feed": feed == "live",
+        "is_live": status == 1 or bool(clock),
+        "status_code": status,
+        "match_status_code": match_status,
+        "clock": {
+            "match_time": _safe_str(clock.get("match_time")),
+            "stopped": clock.get("stopped") if isinstance(clock.get("stopped"), bool) else None,
+            "timestamp": clock.get("timestamp"),
+        }
+        if clock
+        else None,
+        "score_home": _extract_score_value(state, side="home"),
+        "score_away": _extract_score_value(state, side="away"),
+        "raw_state": state,
+    }
 
 
 def extract_1x2(markets: dict[str, Any]) -> dict[str, float | None]:
@@ -436,6 +525,43 @@ def _coerce_float(value: Any) -> float | None:
         return None
     try:
         return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _extract_score_value(state: dict[str, Any], *, side: str) -> int | None:
+    """Best-effort score extraction; observed live samples often omit score."""
+
+    direct_keys = (
+        ("home_score", "score_home", "homeScore", "team1_score", "score1")
+        if side == "home"
+        else ("away_score", "score_away", "awayScore", "team2_score", "score2")
+    )
+    for key in direct_keys:
+        score = _coerce_int(state.get(key))
+        if score is not None:
+            return score
+
+    score_payload = state.get("score")
+    if isinstance(score_payload, dict):
+        nested_keys = (
+            ("home", "home_score", "score_home", "1")
+            if side == "home"
+            else ("away", "away_score", "score_away", "2")
+        )
+        for key in nested_keys:
+            score = _coerce_int(score_payload.get(key))
+            if score is not None:
+                return score
+
+    return None
+
+
+def _coerce_int(value: Any) -> int | None:
+    if isinstance(value, bool) or value in (None, ""):
+        return None
+    try:
+        return int(value)
     except (TypeError, ValueError):
         return None
 
