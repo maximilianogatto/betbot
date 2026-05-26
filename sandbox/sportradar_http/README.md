@@ -25,3 +25,54 @@ browser bootstrap -> signed token/cookies/headers -> HTTP replay client
 
 Phase 1 is implemented in `session_manager.py`.
 
+## Run Phase 1 Bootstrap
+
+Compare headless vs headed:
+
+```bash
+./betbot/bin/python sandbox/sportradar_http/bootstrap_session.py \
+  --compare \
+  --seconds 4 \
+  --out-dir sandbox/sportradar_http/reports/session_bootstrap
+```
+
+Run only headed when headless is blocked:
+
+```bash
+./betbot/bin/python sandbox/sportradar_http/bootstrap_session.py \
+  --headed \
+  --seconds 4 \
+  --out-dir sandbox/sportradar_http/reports/session_bootstrap_headed
+```
+
+Outputs:
+
+- `session_state_headless.json`
+- `session_state_headed.json`
+- `session_bootstrap_report.md`
+
+## Programmatic Use
+
+```python
+from sandbox.sportradar_http.session_manager import BootstrapConfig, SportradarSessionManager
+
+manager = SportradarSessionManager(BootstrapConfig(headed=True))
+state = manager.refresh_session()
+
+with manager.get_http_session(refresh_if_needed=False) as client:
+    response = client.get(state.sample_signed_url)
+```
+
+The returned HTTP client is configured with:
+
+- `origin: https://statshub.sportradar.com`
+- `referer: https://statshub.sportradar.com/`
+- captured cookies
+- captured user-agent/language hints when available
+
+## Limitations
+
+- This phase does not implement endpoint wrappers yet.
+- This phase does not generate or crack signed tokens.
+- Headless bootstrap can be blocked with 403 depending on environment.
+- If the token expires, `refresh_session()` must run browser bootstrap again.
