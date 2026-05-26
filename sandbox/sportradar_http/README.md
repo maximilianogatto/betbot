@@ -297,3 +297,14 @@ Outputs:
 The probe stores compact live state documents per poll. It is meant to compare
 `match_timeline`, `match_timelinedelta`, and `stats_match_situation` behavior
 without keeping a browser open.
+
+## Viability Report
+
+Current provider viability notes are in:
+
+- `sandbox/sportradar_http/reports/provider_viability.md`
+
+Summary: this is already viable as a stats/report provider with browser
+bootstrap plus HTTP replay. Odds endpoints are reachable, but active prematch or
+live priced-market validation is still required before using it as an odds
+provider.
