@@ -16,6 +16,7 @@ class EndpointSpec:
     prematch: bool = False
     live: bool = False
     expected_payload: str = "gismo doc JSON"
+    observed_payload_size: str = "variable / not measured in this phase"
     notes: str = ""
 
     def path(self, **kwargs: Any) -> str:
@@ -38,6 +39,7 @@ ENDPOINT_SPECS: dict[str, EndpointSpec] = {
         params=("sport_id", "date", "cursor"),
         utility="sport-level fixtures by date",
         prematch=True,
+        observed_payload_size="~417 KB for football 2026-05-26",
         notes="Core discovery endpoint for fixtures.",
     ),
     "unified_sport_matches_markets": EndpointSpec(
@@ -47,6 +49,7 @@ ENDPOINT_SPECS: dict[str, EndpointSpec] = {
         params=("sport_id", "date", "cursor"),
         utility="sport-level fixtures with market references",
         prematch=True,
+        observed_payload_size="~144 KB for football 2026-05-26",
         notes="Good candidate for odds-server discovery.",
     ),
     "sport_matches_prevnext": EndpointSpec(
@@ -95,6 +98,7 @@ ENDPOINT_SPECS: dict[str, EndpointSpec] = {
         params=("season_id", "table_id"),
         utility="standings/table",
         prematch=True,
+        observed_payload_size="~25 KB for season 130805",
         notes="Observed table_id can be empty string or 1.",
     ),
     "stats_formtable": EndpointSpec(
@@ -103,6 +107,7 @@ ENDPOINT_SPECS: dict[str, EndpointSpec] = {
         params=("season_id",),
         utility="form table",
         prematch=True,
+        observed_payload_size="~55 KB for season 130805",
     ),
     "stats_season_teams2": EndpointSpec(
         name="stats_season_teams2",
@@ -140,6 +145,7 @@ ENDPOINT_SPECS: dict[str, EndpointSpec] = {
         utility="match odds/markets",
         prematch=True,
         live=True,
+        observed_payload_size="~137 B for inactive/no-market match 61624678; larger when markets exist",
     ),
     "uniqueteam_markets": EndpointSpec(
         name="uniqueteam_markets",
@@ -206,6 +212,7 @@ ENDPOINT_SPECS: dict[str, EndpointSpec] = {
         params=("team_id", "count"),
         utility="recent team matches",
         prematch=True,
+        observed_payload_size="~7 KB for team 2885 count 5",
     ),
     "stats_team_nextx": EndpointSpec(
         name="stats_team_nextx",
@@ -221,6 +228,7 @@ ENDPOINT_SPECS: dict[str, EndpointSpec] = {
         params=("team_id",),
         utility="team streaks/form signals",
         prematch=True,
+        observed_payload_size="~3 KB for team 2885",
     ),
     "stats_season_teamscoringconceding": EndpointSpec(
         name="stats_season_teamscoringconceding",
@@ -318,19 +326,20 @@ def render_endpoint_catalog_v2() -> str:
         "",
         "This catalog is generated from typed endpoint specs in `sandbox/sportradar_http/endpoints/catalog.py`.",
         "",
-        "| Endpoint | Path | Params | Namespace | Prematch | Live | Utility | Stability | Notes |",
-        "|---|---|---|---|---:|---:|---|---|---|",
+        "| Endpoint | Path | Params | Namespace | Prematch | Live | Observed payload | Utility | Stability | Notes |",
+        "|---|---|---|---|---:|---:|---|---|---|---|",
     ]
     for name in sorted(ENDPOINT_SPECS):
         spec = ENDPOINT_SPECS[name]
         lines.append(
-            "| `{name}` | `{path}` | `{params}` | `{namespace}` | `{prematch}` | `{live}` | {utility} | {stability} | {notes} |".format(
+            "| `{name}` | `{path}` | `{params}` | `{namespace}` | `{prematch}` | `{live}` | {payload_size} | {utility} | {stability} | {notes} |".format(
                 name=spec.name,
                 path=spec.path_template,
                 params=", ".join(spec.params) or "-",
                 namespace=f"{spec.namespace}/{spec.timezone}",
                 prematch="yes" if spec.prematch else "no",
                 live="yes" if spec.live else "no",
+                payload_size=spec.observed_payload_size,
                 utility=spec.utility,
                 stability=spec.stability,
                 notes=spec.notes or "-",
@@ -348,4 +357,3 @@ def render_endpoint_catalog_v2() -> str:
         ]
     )
     return "\n".join(lines) + "\n"
-

@@ -322,16 +322,21 @@ def summarize_payload(payload: dict[str, Any]) -> dict[str, Any]:
     doc = payload.get("doc")
     first = doc[0] if isinstance(doc, list) and doc and isinstance(doc[0], dict) else {}
     data = first.get("data") if isinstance(first, dict) else None
+    data_counts = {
+        key: len(value)
+        for key, value in data.items()
+        if isinstance(data, dict) and isinstance(value, (list, dict))
+    } if isinstance(data, dict) else None
     return {
         "queryUrl": payload.get("queryUrl"),
         "doc_event": first.get("event") if isinstance(first, dict) else None,
         "top_level_keys": sorted(payload.keys()),
         "data_type": type(data).__name__,
         "data_keys": sorted(data.keys())[:25] if isinstance(data, dict) else None,
+        "data_counts": data_counts,
     }
 
 
 def write_json(path: str, payload: object) -> None:
     with open(path, "w", encoding="utf-8") as handle:
         json.dump(payload, handle, ensure_ascii=False, indent=2)
-

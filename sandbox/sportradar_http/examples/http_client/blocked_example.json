@@ -1,0 +1,17 @@
+{
+  "url": "https://sh.fn.sportradar.com/bet365/en/America:Montevideo/gismo/unified_sport_matches/1/2026-05-26/0?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+  "status_code": 200,
+  "body_size_bytes": 149,
+  "validation": {
+    "ok": false,
+    "status_code": 200,
+    "endpoint_key": "unified_sport_matches",
+    "blocked": true,
+    "expired": false,
+    "empty": false,
+    "invalid_json": false,
+    "http_error": false,
+    "reason": "blocked_payload"
+  },
+  "summary": null
+}

@@ -122,3 +122,30 @@ The generated endpoint map is:
 Output:
 
 - `sandbox/sportradar_http/reports/endpoint_catalog_v2.md`
+
+## Real HTTP Replay Examples
+
+Run the end-to-end Phase 2/3 smoke test:
+
+```bash
+./betbot/bin/python sandbox/sportradar_http/run_http_client_examples.py --seconds 4
+```
+
+This uses browser only for refresh/bootstrap when required, then performs pure
+HTTP replay for:
+
+- fixtures
+- fixture market references / odds-server candidate
+- match markets
+- standings
+- form table
+- team last matches
+- team streaks
+
+Outputs:
+
+- `sandbox/sportradar_http/examples/http_client/success_examples.json`
+- `sandbox/sportradar_http/examples/http_client/blocked_example.json`
+- `sandbox/sportradar_http/examples/http_client/refresh_example.json`
+- `sandbox/sportradar_http/examples/http_client/http_replay_snapshot.json`
+- `sandbox/sportradar_http/reports/http_client_report.md`

@@ -1,0 +1,44 @@
+{
+  "refreshed": true,
+  "token_expiration": "2026-05-27T20:41:04+00:00",
+  "fetch_count": 33,
+  "metrics": {
+    "total_requests": 1,
+    "success_count": 1,
+    "retry_count": 0,
+    "refresh_count": 0,
+    "blocked_count": 0,
+    "expired_count": 0,
+    "empty_count": 0,
+    "invalid_json_count": 0,
+    "http_error_count": 0,
+    "endpoint_timings_ms": {
+      "match_markets": [
+        12643.57
+      ]
+    },
+    "endpoint_timing_summary": {
+      "match_markets": {
+        "count": 1,
+        "min_ms": 12643.57,
+        "max_ms": 12643.57,
+        "avg_ms": 12643.57
+      }
+    }
+  },
+  "summary": {
+    "queryUrl": "match_markets/61624678",
+    "doc_event": "match_markets",
+    "top_level_keys": [
+      "doc",
+      "queryUrl"
+    ],
+    "data_type": "dict",
+    "data_keys": [
+      "markets"
+    ],
+    "data_counts": {
+      "markets": 0
+    }
+  }
+}

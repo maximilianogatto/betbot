@@ -1,0 +1,170 @@
+[
+  {
+    "label": "fixtures",
+    "body_size_bytes": 424426,
+    "summary": {
+      "queryUrl": "unified_sport_matches/1/2026-05-26/0",
+      "doc_event": "unified_sport_matches",
+      "top_level_keys": [
+        "doc",
+        "queryUrl"
+      ],
+      "data_type": "dict",
+      "data_keys": [
+        "sport"
+      ],
+      "data_counts": {
+        "sport": 6
+      }
+    }
+  },
+  {
+    "label": "fixture_markets",
+    "body_size_bytes": 150398,
+    "summary": {
+      "queryUrl": "unified_sport_matches_markets/1/2026-05-26/0",
+      "doc_event": "unified_sport_matches_markets",
+      "top_level_keys": [
+        "doc",
+        "queryUrl"
+      ],
+      "data_type": "dict",
+      "data_keys": [
+        "matches"
+      ],
+      "data_counts": {
+        "matches": 21
+      }
+    }
+  },
+  {
+    "label": "match_odds",
+    "body_size_bytes": 137,
+    "summary": {
+      "queryUrl": "match_markets/61624678",
+      "doc_event": "match_markets",
+      "top_level_keys": [
+        "doc",
+        "queryUrl"
+      ],
+      "data_type": "dict",
+      "data_keys": [
+        "markets"
+      ],
+      "data_counts": {
+        "markets": 0
+      }
+    }
+  },
+  {
+    "label": "standings",
+    "body_size_bytes": 24574,
+    "summary": {
+      "queryUrl": "stats_season_tables/130805",
+      "doc_event": "stats_season_tables",
+      "top_level_keys": [
+        "doc",
+        "queryUrl"
+      ],
+      "data_type": "dict",
+      "data_keys": [
+        "_doc",
+        "_id",
+        "_sid",
+        "_utid",
+        "abbr",
+        "currentseasonid",
+        "end",
+        "friendly",
+        "name",
+        "neutralground",
+        "start",
+        "tables",
+        "year"
+      ],
+      "data_counts": {
+        "start": 6,
+        "end": 6,
+        "tables": 1
+      }
+    }
+  },
+  {
+    "label": "formtable",
+    "body_size_bytes": 54518,
+    "summary": {
+      "queryUrl": "stats_formtable/130805",
+      "doc_event": "stats_formtable",
+      "top_level_keys": [
+        "doc",
+        "queryUrl"
+      ],
+      "data_type": "dict",
+      "data_keys": [
+        "currentround",
+        "losspoints",
+        "matchtype",
+        "season",
+        "tabletype",
+        "teams",
+        "winpoints"
+      ],
+      "data_counts": {
+        "matchtype": 4,
+        "tabletype": 2,
+        "season": 12,
+        "teams": 20
+      }
+    }
+  },
+  {
+    "label": "team_lastx",
+    "body_size_bytes": 7258,
+    "summary": {
+      "queryUrl": "stats_team_lastx/2885/5",
+      "doc_event": "stats_team_lastx",
+      "top_level_keys": [
+        "doc",
+        "queryUrl"
+      ],
+      "data_type": "dict",
+      "data_keys": [
+        "matches",
+        "realcategories",
+        "team",
+        "tournaments",
+        "uniquetournaments"
+      ],
+      "data_counts": {
+        "team": 15,
+        "matches": 5,
+        "tournaments": 1,
+        "uniquetournaments": 1,
+        "realcategories": 1
+      }
+    }
+  },
+  {
+    "label": "team_streaks",
+    "body_size_bytes": 2818,
+    "summary": {
+      "queryUrl": "stats_team_streaks/2885",
+      "doc_event": "stats_team_streaks",
+      "top_level_keys": [
+        "doc",
+        "queryUrl"
+      ],
+      "data_type": "dict",
+      "data_keys": [
+        "lastmatchesform",
+        "streaks",
+        "team"
+      ],
+      "data_counts": {
+        "team": 15,
+        "lastmatchesform": 3,
+        "streaks": 1
+      }
+    }
+  }
+]

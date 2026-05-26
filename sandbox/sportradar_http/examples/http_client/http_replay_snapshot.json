@@ -1,0 +1,366 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-26T19:31:35.827353+00:00",
+  "inputs": {
+    "sport_id": 1,
+    "date": "2026-05-26",
+    "match_id": 61624678,
+    "season_id": 130805,
+    "team_id": 2885
+  },
+  "session": {
+    "token_expiration": "2026-05-27T06:17:04+00:00",
+    "headed": true,
+    "headless": false,
+    "endpoints_seen_at_bootstrap": [
+      "unified_sport_matches",
+      "odds_ukformat",
+      "unified_sport_matches_markets",
+      "config_tree_mini",
+      "sport_matches_prevnext",
+      "stats_sport_matches_prevnext",
+      "event_get",
+      "match_info_statshub",
+      "stats_match_get",
+      "stats_team_nextx",
+      "stats_formtable",
+      "stats_team_lastx",
+      "stats_team_versus",
+      "stats_season_topgoals",
+      "stats_season_topcards",
+      "stats_season_tables",
+      "stats_season_topassists",
+      "stats_season_teamscoringconceding",
+      "stats_team_streaks",
+      "stats_h2h_versus",
+      "stats_season_injuries",
+      "match_markets",
+      "uniqueteam_markets",
+      "match_timelinedelta",
+      "match_details",
+      "match_timeline",
+      "match_info",
+      "stats_match_situation"
+    ],
+    "bootstrap_fetch_count": 41
+  },
+  "http_replay": {
+    "fixtures": {
+      "label": "fixtures",
+      "body_size_bytes": 424426,
+      "summary": {
+        "queryUrl": "unified_sport_matches/1/2026-05-26/0",
+        "doc_event": "unified_sport_matches",
+        "top_level_keys": [
+          "doc",
+          "queryUrl"
+        ],
+        "data_type": "dict",
+        "data_keys": [
+          "sport"
+        ],
+        "data_counts": {
+          "sport": 6
+        }
+      }
+    },
+    "odds": {
+      "sport_fixture_markets": {
+        "label": "fixture_markets",
+        "body_size_bytes": 150398,
+        "summary": {
+          "queryUrl": "unified_sport_matches_markets/1/2026-05-26/0",
+          "doc_event": "unified_sport_matches_markets",
+          "top_level_keys": [
+            "doc",
+            "queryUrl"
+          ],
+          "data_type": "dict",
+          "data_keys": [
+            "matches"
+          ],
+          "data_counts": {
+            "matches": 21
+          }
+        }
+      },
+      "match_markets": {
+        "label": "match_odds",
+        "body_size_bytes": 137,
+        "summary": {
+          "queryUrl": "match_markets/61624678",
+          "doc_event": "match_markets",
+          "top_level_keys": [
+            "doc",
+            "queryUrl"
+          ],
+          "data_type": "dict",
+          "data_keys": [
+            "markets"
+          ],
+          "data_counts": {
+            "markets": 0
+          }
+        }
+      }
+    },
+    "standings": {
+      "label": "standings",
+      "body_size_bytes": 24574,
+      "summary": {
+        "queryUrl": "stats_season_tables/130805",
+        "doc_event": "stats_season_tables",
+        "top_level_keys": [
+          "doc",
+          "queryUrl"
+        ],
+        "data_type": "dict",
+        "data_keys": [
+          "_doc",
+          "_id",
+          "_sid",
+          "_utid",
+          "abbr",
+          "currentseasonid",
+          "end",
+          "friendly",
+          "name",
+          "neutralground",
+          "start",
+          "tables",
+          "year"
+        ],
+        "data_counts": {
+          "start": 6,
+          "end": 6,
+          "tables": 1
+        }
+      }
+    },
+    "stats": {
+      "formtable": {
+        "label": "formtable",
+        "body_size_bytes": 54518,
+        "summary": {
+          "queryUrl": "stats_formtable/130805",
+          "doc_event": "stats_formtable",
+          "top_level_keys": [
+            "doc",
+            "queryUrl"
+          ],
+          "data_type": "dict",
+          "data_keys": [
+            "currentround",
+            "losspoints",
+            "matchtype",
+            "season",
+            "tabletype",
+            "teams",
+            "winpoints"
+          ],
+          "data_counts": {
+            "matchtype": 4,
+            "tabletype": 2,
+            "season": 12,
+            "teams": 20
+          }
+        }
+      },
+      "team_lastx": {
+        "label": "team_lastx",
+        "body_size_bytes": 7258,
+        "summary": {
+          "queryUrl": "stats_team_lastx/2885/5",
+          "doc_event": "stats_team_lastx",
+          "top_level_keys": [
+            "doc",
+            "queryUrl"
+          ],
+          "data_type": "dict",
+          "data_keys": [
+            "matches",
+            "realcategories",
+            "team",
+            "tournaments",
+            "uniquetournaments"
+          ],
+          "data_counts": {
+            "team": 15,
+            "matches": 5,
+            "tournaments": 1,
+            "uniquetournaments": 1,
+            "realcategories": 1
+          }
+        }
+      },
+      "team_streaks": {
+        "label": "team_streaks",
+        "body_size_bytes": 2818,
+        "summary": {
+          "queryUrl": "stats_team_streaks/2885",
+          "doc_event": "stats_team_streaks",
+          "top_level_keys": [
+            "doc",
+            "queryUrl"
+          ],
+          "data_type": "dict",
+          "data_keys": [
+            "lastmatchesform",
+            "streaks",
+            "team"
+          ],
+          "data_counts": {
+            "team": 15,
+            "lastmatchesform": 3,
+            "streaks": 1
+          }
+        }
+      }
+    }
+  },
+  "validation_examples": {
+    "blocked_without_headers": {
+      "url": "https://sh.fn.sportradar.com/bet365/en/America:Montevideo/gismo/unified_sport_matches/1/2026-05-26/0?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status_code": 200,
+      "body_size_bytes": 149,
+      "validation": {
+        "ok": false,
+        "status_code": 200,
+        "endpoint_key": "unified_sport_matches",
+        "blocked": true,
+        "expired": false,
+        "empty": false,
+        "invalid_json": false,
+        "http_error": false,
+        "reason": "blocked_payload"
+      },
+      "summary": null
+    },
+    "refresh_success": {
+      "refreshed": true,
+      "token_expiration": "2026-05-27T20:41:04+00:00",
+      "fetch_count": 33,
+      "metrics": {
+        "total_requests": 1,
+        "success_count": 1,
+        "retry_count": 0,
+        "refresh_count": 0,
+        "blocked_count": 0,
+        "expired_count": 0,
+        "empty_count": 0,
+        "invalid_json_count": 0,
+        "http_error_count": 0,
+        "endpoint_timings_ms": {
+          "match_markets": [
+            12643.57
+          ]
+        },
+        "endpoint_timing_summary": {
+          "match_markets": {
+            "count": 1,
+            "min_ms": 12643.57,
+            "max_ms": 12643.57,
+            "avg_ms": 12643.57
+          }
+        }
+      },
+      "summary": {
+        "queryUrl": "match_markets/61624678",
+        "doc_event": "match_markets",
+        "top_level_keys": [
+          "doc",
+          "queryUrl"
+        ],
+        "data_type": "dict",
+        "data_keys": [
+          "markets"
+        ],
+        "data_counts": {
+          "markets": 0
+        }
+      }
+    }
+  },
+  "metrics": {
+    "total_requests": 7,
+    "success_count": 7,
+    "retry_count": 0,
+    "refresh_count": 0,
+    "blocked_count": 0,
+    "expired_count": 0,
+    "empty_count": 0,
+    "invalid_json_count": 0,
+    "http_error_count": 0,
+    "endpoint_timings_ms": {
+      "unified_sport_matches": [
+        1376.2
+      ],
+      "unified_sport_matches_markets": [
+        2319.68
+      ],
+      "match_markets": [
+        13020.32
+      ],
+      "stats_season_tables": [
+        1146.59
+      ],
+      "stats_formtable": [
+        596.15
+      ],
+      "stats_team_lastx": [
+        677.43
+      ],
+      "stats_team_streaks": [
+        719.99
+      ]
+    },
+    "endpoint_timing_summary": {
+      "unified_sport_matches": {
+        "count": 1,
+        "min_ms": 1376.2,
+        "max_ms": 1376.2,
+        "avg_ms": 1376.2
+      },
+      "unified_sport_matches_markets": {
+        "count": 1,
+        "min_ms": 2319.68,
+        "max_ms": 2319.68,
+        "avg_ms": 2319.68
+      },
+      "match_markets": {
+        "count": 1,
+        "min_ms": 13020.32,
+        "max_ms": 13020.32,
+        "avg_ms": 13020.32
+      },
+      "stats_season_tables": {
+        "count": 1,
+        "min_ms": 1146.59,
+        "max_ms": 1146.59,
+        "avg_ms": 1146.59
+      },
+      "stats_formtable": {
+        "count": 1,
+        "min_ms": 596.15,
+        "max_ms": 596.15,
+        "avg_ms": 596.15
+      },
+      "stats_team_lastx": {
+        "count": 1,
+        "min_ms": 677.43,
+        "max_ms": 677.43,
+        "avg_ms": 677.43
+      },
+      "stats_team_streaks": {
+        "count": 1,
+        "min_ms": 719.99,
+        "max_ms": 719.99,
+        "avg_ms": 719.99
+      }
+    }
+  },
+  "raw_refs": {
+    "session_state": "sandbox/sportradar_http/reports/session_state_headed.json",
+    "report": "sandbox/sportradar_http/reports/http_client_report.md"
+  }
+}
