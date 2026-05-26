@@ -239,3 +239,24 @@ The report explicitly distinguishes:
 
 This matters because ended matches can have full stats and live history while
 returning an empty `match_markets` payload.
+
+## Bot-Ready Adapter
+
+The research-only adapter lives in `bot_ready/` and exposes stable methods that
+can later be wired into BetBot behind a production provider interface:
+
+```python
+from sandbox.sportradar_http.bot_ready import (
+    BotReadyLeagueRequest,
+    BotReadyMatchRequest,
+    SportradarBotReadyProvider,
+)
+
+provider = SportradarBotReadyProvider()
+match_package = provider.get_match_report(BotReadyMatchRequest(match_id=61624678))
+league_package = provider.get_league_snapshot(BotReadyLeagueRequest(sport_id=1, tournament_id=8, season_id=130805))
+live_state = provider.get_live_match_state(BotReadyMatchRequest(match_id=61624678))
+```
+
+These methods still live in sandbox and intentionally do not import `bot/`,
+`core/`, `extractors/`, `storage/`, or the production DB.
