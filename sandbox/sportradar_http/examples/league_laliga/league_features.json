@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "definitions": {
+    "league_home_win_rate": "home result share normalized 0..1; Statshub may provide percent, otherwise count / matches_played",
+    "league_draw_rate": "draw result share normalized 0..1; Statshub may provide percent, otherwise count / matches_played",
+    "league_away_win_rate": "away result share normalized 0..1; Statshub may provide percent, otherwise count / matches_played",
+    "league_goals_per_match": "goals_total / matches_played when available; raw goal average, not normalized",
+    "league_btts_rate": "both teams to score total / matches_played, normalized 0..1",
+    "league_clean_sheet_rate": "clean sheet total / matches_played, normalized 0..1",
+    "league_over25_rate": "over 2.5 goals share from overunder['2.5']; Statshub observed value is percent, normalized 0..1",
+    "season_progress": "current_round / max_rounds, normalized 0..1",
+    "table_compactness_top5_ppm_gap": "points-per-match rank1 minus rank5; raw PPM gap",
+    "average_points_per_match": "mean table points_per_match across teams"
+  },
+  "values": {
+    "league_home_win_rate": 0.4895,
+    "league_draw_rate": 0.2447,
+    "league_away_win_rate": 0.2658,
+    "league_goals_per_match": 2.695,
+    "league_btts_rate": 0.565789,
+    "league_clean_sheet_rate": 0.434211,
+    "league_over25_rate": 0.5,
+    "season_progress": 1.0,
+    "table_compactness_top5_ppm_gap": 0.8948,
+    "average_points_per_match": 1.37764
+  }
+}

@@ -26,6 +26,7 @@ browser bootstrap -> signed token/cookies/headers -> HTTP replay client
 Phase 1 is implemented in `session_manager.py`.
 Phase 2 is implemented in `http_client.py`.
 Phase 3 endpoint wrappers live in `endpoints/`.
+Phase 4 league snapshots/features live in `run_league_pipeline.py`.
 
 ## Run Phase 1 Bootstrap
 
@@ -149,3 +150,45 @@ Outputs:
 - `sandbox/sportradar_http/examples/http_client/refresh_example.json`
 - `sandbox/sportradar_http/examples/http_client/http_replay_snapshot.json`
 - `sandbox/sportradar_http/reports/http_client_report.md`
+
+## League Pipeline
+
+Run a compact league collection using browser only for session bootstrap and
+HTTP replay for the actual data:
+
+```bash
+./betbot/bin/python sandbox/sportradar_http/run_league_pipeline.py \
+  --sport-id 1 \
+  --tournament-id 8 \
+  --season-id 130805 \
+  --out-dir sandbox/sportradar_http/examples/league_laliga
+```
+
+Outputs:
+
+- `league_snapshot.json`
+- `league_features.json`
+- `league_report.md`
+
+The snapshot keeps normalized data and raw references separate. It intentionally
+does not embed full raw payload dumps.
+
+Current league pipeline endpoints:
+
+- `stats_season_leaguesummary`
+- `stats_season_teams2`
+- `stats_season_fixtures2`
+- `stats_season_tables`
+- `stats_formtable`
+- `stats_season_venues`
+- `stats_season_injuries`
+- `stats_season_topgoals`
+- `stats_season_topcards`
+- `stats_season_topassists`
+- sampled `stats_season_teamscoringconceding`
+- sampled `stats_team_streaks`
+
+Feature values are explicitly documented in `league_features.json` and
+`league_report.md`. For example, Statshub league outcome fields such as
+`home_wins`, `draws`, and `away_wins` were observed as percentages, so the
+normalizer stores them as rates in the `0..1` range.
