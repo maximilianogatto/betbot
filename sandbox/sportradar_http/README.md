@@ -260,3 +260,18 @@ live_state = provider.get_live_match_state(BotReadyMatchRequest(match_id=6162467
 
 These methods still live in sandbox and intentionally do not import `bot/`,
 `core/`, `extractors/`, `storage/`, or the production DB.
+
+## Feature Catalog
+
+Generate the feature catalog:
+
+```bash
+./betbot/bin/python sandbox/sportradar_http/build_feature_catalog.py
+```
+
+Output:
+
+- `sandbox/sportradar_http/reports/feature_catalog.md`
+
+The catalog documents formulas, scales, directionality, and which values are
+raw football units versus normalized rates.
