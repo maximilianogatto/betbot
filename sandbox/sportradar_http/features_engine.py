@@ -17,6 +17,31 @@ FEATURE_DEFINITIONS: dict[str, str] = {
 }
 
 
+MATCH_FEATURE_DEFINITIONS: dict[str, str] = {
+    "form_gap": "home recent points minus away recent points over the normalized recent-match window; positive favors home",
+    "table_position_gap": "away table position minus home table position; positive means home is higher in the table",
+    "points_per_match_home": "home team table points / matches played; raw PPM",
+    "points_per_match_away": "away team table points / matches played; raw PPM",
+    "goals_for_avg_home_context": "home team's home-split goals scored average from team scoring payload",
+    "goals_for_avg_away_context": "away team's away-split goals scored average from team scoring payload",
+    "goals_against_avg_home_context": "home team's home-split goals conceded average from team scoring payload",
+    "goals_against_avg_away_context": "away team's away-split goals conceded average from team scoring payload",
+    "attack_strength_home": "mean(home home-split goals_for_avg, away away-split goals_against_avg); raw goals context, not probability",
+    "attack_strength_away": "mean(away away-split goals_for_avg, home home-split goals_against_avg); raw goals context, not probability",
+    "defense_weakness_home": "home team's home-split goals conceded average; higher means weaker defensive context",
+    "defense_weakness_away": "away team's away-split goals conceded average; higher means weaker defensive context",
+    "btts_tendency_index": "mean(home home-split BTTS rate, away away-split BTTS rate), normalized 0..1 when available",
+    "over_tendency_index": "mean attack environments for both sides: attack_strength_home and attack_strength_away; raw expected-goals context",
+    "h2h_sample_size": "number of normalized direct/versus H2H matches",
+    "h2h_home_edge": "(home_team_h2h_wins - away_team_h2h_wins) / h2h_sample_size, range -1..1",
+    "injuries_count_home": "count of normalized missing/doubtful injuries assigned to home team",
+    "injuries_count_away": "count of normalized missing/doubtful injuries assigned to away team",
+    "live_pressure_home": "home dangerous pressure share from match_situation, normalized 0..1",
+    "live_pressure_away": "away dangerous pressure share from match_situation, normalized 0..1",
+    "live_score_state": "categorical score state from live_state/final score",
+}
+
+
 def safe_div(numerator: object, denominator: object) -> float | None:
     try:
         den = float(denominator)  # type: ignore[arg-type]
@@ -61,3 +86,151 @@ def build_league_features(snapshot: dict[str, Any]) -> dict[str, Any]:
         },
     }
     return features
+
+
+def avg_non_null(*values: object) -> float | None:
+    numeric = []
+    for value in values:
+        try:
+            if value is not None:
+                numeric.append(float(value))  # type: ignore[arg-type]
+        except (TypeError, ValueError):
+            continue
+    if not numeric:
+        return None
+    return round(sum(numeric) / len(numeric), 6)
+
+
+def build_match_features(snapshot: dict[str, Any]) -> dict[str, Any]:
+    table = snapshot.get("table_context") if isinstance(snapshot.get("table_context"), dict) else {}
+    rows = table.get("rows") if isinstance(table.get("rows"), list) else []
+    home_uid = (((snapshot.get("metadata") or {}).get("home") or {}).get("uid") if isinstance(snapshot.get("metadata"), dict) else None)
+    away_uid = (((snapshot.get("metadata") or {}).get("away") or {}).get("uid") if isinstance(snapshot.get("metadata"), dict) else None)
+    home_row = _find_row(rows, home_uid)
+    away_row = _find_row(rows, away_uid)
+    team_form = snapshot.get("team_form") if isinstance(snapshot.get("team_form"), dict) else {}
+    team_scoring = snapshot.get("team_scoring") if isinstance(snapshot.get("team_scoring"), dict) else {}
+    h2h = snapshot.get("h2h") if isinstance(snapshot.get("h2h"), dict) else {}
+    injuries = snapshot.get("injuries") if isinstance(snapshot.get("injuries"), dict) else {}
+    live_situation = snapshot.get("live_situation") if isinstance(snapshot.get("live_situation"), dict) else {}
+    live_state = snapshot.get("live_state") if isinstance(snapshot.get("live_state"), dict) else {}
+
+    home_recent_points = _nested(team_form, "home", "recent_points")
+    away_recent_points = _nested(team_form, "away", "recent_points")
+    home_position = _as_float(home_row.get("position"))
+    away_position = _as_float(away_row.get("position"))
+
+    home_goals_for = _nested(team_scoring, "home", "scoring", "goals_scored_avg", "home")
+    away_goals_for = _nested(team_scoring, "away", "scoring", "goals_scored_avg", "away")
+    home_goals_against = _nested(team_scoring, "home", "conceding", "goals_conceded_avg", "home")
+    away_goals_against = _nested(team_scoring, "away", "conceding", "goals_conceded_avg", "away")
+    attack_home = avg_non_null(home_goals_for, away_goals_against)
+    attack_away = avg_non_null(away_goals_for, home_goals_against)
+
+    h2h_summary = h2h.get("summary") if isinstance(h2h.get("summary"), dict) else {}
+    h2h_sample = _as_float(h2h_summary.get("total_matches"))
+    h2h_home_wins = _as_float(h2h_summary.get("home_team_wins"))
+    h2h_away_wins = _as_float(h2h_summary.get("away_team_wins"))
+    pressure_home, pressure_away = _pressure_share(live_situation)
+    score_home = _as_float(live_state.get("score_home"))
+    score_away = _as_float(live_state.get("score_away"))
+
+    values = {
+        "form_gap": _diff(home_recent_points, away_recent_points),
+        "table_position_gap": _diff(away_position, home_position),
+        "points_per_match_home": home_row.get("points_per_match"),
+        "points_per_match_away": away_row.get("points_per_match"),
+        "goals_for_avg_home_context": home_goals_for,
+        "goals_for_avg_away_context": away_goals_for,
+        "goals_against_avg_home_context": home_goals_against,
+        "goals_against_avg_away_context": away_goals_against,
+        "attack_strength_home": attack_home,
+        "attack_strength_away": attack_away,
+        "defense_weakness_home": home_goals_against,
+        "defense_weakness_away": away_goals_against,
+        "btts_tendency_index": clamp01(
+            avg_non_null(
+                _nested(team_scoring, "home", "scoring", "btts_rate", "home"),
+                _nested(team_scoring, "away", "scoring", "btts_rate", "away"),
+            )
+        ),
+        "over_tendency_index": avg_non_null(attack_home, attack_away),
+        "h2h_sample_size": int(h2h_sample) if h2h_sample is not None else None,
+        "h2h_home_edge": _edge(h2h_home_wins, h2h_away_wins, h2h_sample),
+        "injuries_count_home": len(injuries.get("home") or []) if isinstance(injuries.get("home"), list) else None,
+        "injuries_count_away": len(injuries.get("away") or []) if isinstance(injuries.get("away"), list) else None,
+        "live_pressure_home": pressure_home,
+        "live_pressure_away": pressure_away,
+        "live_score_state": _score_state(score_home, score_away),
+    }
+    return {
+        "schema_version": 1,
+        "definitions": MATCH_FEATURE_DEFINITIONS,
+        "values": values,
+    }
+
+
+def _find_row(rows: list[Any], team_uid: object) -> dict[str, Any]:
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        team = row.get("team") if isinstance(row.get("team"), dict) else {}
+        if team.get("uid") == team_uid:
+            return row
+    return {}
+
+
+def _nested(data: dict[str, Any], *keys: str) -> Any:
+    current: Any = data
+    for key in keys:
+        if not isinstance(current, dict):
+            return None
+        current = current.get(key)
+    return current
+
+
+def _as_float(value: object) -> float | None:
+    try:
+        if value is None:
+            return None
+        return float(value)  # type: ignore[arg-type]
+    except (TypeError, ValueError):
+        return None
+
+
+def _diff(left: object, right: object) -> float | None:
+    left_value = _as_float(left)
+    right_value = _as_float(right)
+    if left_value is None or right_value is None:
+        return None
+    return round(left_value - right_value, 6)
+
+
+def _edge(home_wins: float | None, away_wins: float | None, total: float | None) -> float | None:
+    if home_wins is None or away_wins is None or not total:
+        return None
+    return round((home_wins - away_wins) / total, 6)
+
+
+def _pressure_share(live_situation: dict[str, Any]) -> tuple[float | None, float | None]:
+    totals = live_situation.get("totals") if isinstance(live_situation.get("totals"), dict) else {}
+    home = totals.get("home") if isinstance(totals.get("home"), dict) else {}
+    away = totals.get("away") if isinstance(totals.get("away"), dict) else {}
+    home_danger = _as_float(home.get("dangerouscount") or home.get("dangerous"))
+    away_danger = _as_float(away.get("dangerouscount") or away.get("dangerous"))
+    if home_danger is None or away_danger is None:
+        return None, None
+    total = home_danger + away_danger
+    if total <= 0:
+        return None, None
+    return round(home_danger / total, 6), round(away_danger / total, 6)
+
+
+def _score_state(home_score: float | None, away_score: float | None) -> str | None:
+    if home_score is None or away_score is None:
+        return None
+    if home_score > away_score:
+        return "home_leading"
+    if home_score < away_score:
+        return "away_leading"
+    return "draw"

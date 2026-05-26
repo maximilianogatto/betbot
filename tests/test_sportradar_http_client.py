@@ -134,6 +134,46 @@ class SportradarHTTPClientTests(unittest.TestCase):
         self.assertEqual(client.metrics.refresh_count, 1)
         self.assertEqual(client.metrics.success_count, 1)
 
+    def test_blocked_payload_on_last_retry_still_gets_one_refresh_attempt(self) -> None:
+        calls = 0
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            nonlocal calls
+            calls += 1
+            if calls == 1:
+                return httpx.Response(
+                    500,
+                    json={"error": "transient"},
+                    request=request,
+                )
+            if calls == 2:
+                return httpx.Response(
+                    200,
+                    json={"doc": [{"event": "Exception", "data": {"name": "Unauthorized", "code": 403}}]},
+                    request=request,
+                )
+            return httpx.Response(
+                200,
+                json={"queryUrl": "match_markets/61624678", "doc": [{"event": "match_markets", "data": {}}]},
+                request=request,
+            )
+
+        manager = FakeManager()
+        client = SportradarHTTPClient(
+            session_state=manager.state,
+            session_manager=manager,
+            auto_refresh=True,
+            retries=1,
+            transport=httpx.MockTransport(handler),
+        )
+
+        payload = client.get_gismo("match_markets/61624678")
+
+        self.assertEqual(payload["queryUrl"], "match_markets/61624678")
+        self.assertEqual(calls, 3)
+        self.assertEqual(manager.refreshes, 1)
+        self.assertEqual(client.metrics.refresh_count, 1)
+
     def test_empty_and_invalid_json_are_detected(self) -> None:
         responses = [
             httpx.Response(200, text="", request=httpx.Request("GET", "https://x/gismo/match_markets/1")),
@@ -172,4 +212,3 @@ class SportradarHTTPClientTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

@@ -148,12 +148,14 @@ class SportradarHTTPClient:
     ) -> httpx.Response:
         self.maybe_refresh_session()
         last_error: SportradarHTTPError | None = None
-        attempts = self.retries + 1
+        attempts = self.retries + 1 + int(self.auto_refresh and allow_refresh)
+        refreshes_for_request = 0
         for attempt_index in range(attempts):
             response, validation = self._request_once(method, url, expect_json=expect_json, **kwargs)
             if validation.ok:
                 return response
-            if self._should_refresh(validation, allow_refresh=allow_refresh):
+            if self._should_refresh(validation, allow_refresh=allow_refresh) and refreshes_for_request < 1:
+                refreshes_for_request += 1
                 self.metrics.refresh_count += 1
                 self.refresh_session()
                 url = self.refresh_signed_url(url)

@@ -27,6 +27,7 @@ Phase 1 is implemented in `session_manager.py`.
 Phase 2 is implemented in `http_client.py`.
 Phase 3 endpoint wrappers live in `endpoints/`.
 Phase 4 league snapshots/features live in `run_league_pipeline.py`.
+Phase 5 match snapshots/features live in `run_match_pipeline.py`.
 
 ## Run Phase 1 Bootstrap
 
@@ -192,3 +193,49 @@ Feature values are explicitly documented in `league_features.json` and
 `league_report.md`. For example, Statshub league outcome fields such as
 `home_wins`, `draws`, and `away_wins` were observed as percentages, so the
 normalizer stores them as rates in the `0..1` range.
+
+## Match Pipeline
+
+Build a compact match snapshot, feature document, and Markdown report:
+
+```bash
+./betbot/bin/python sandbox/sportradar_http/run_match_pipeline.py \
+  --match-id 61624678 \
+  --out-dir sandbox/sportradar_http/examples/match_61624678
+```
+
+Outputs:
+
+- `match_snapshot.json`
+- `match_features.json`
+- `match_report.md`
+
+Current match pipeline endpoints:
+
+- `match_info_statshub`
+- `stats_match_get`
+- `match_markets`
+- `match_details`
+- `stats_match_tableslice`
+- `stats_match_head2head`
+- `match_timeline`
+- `match_timelinedelta`
+- `stats_match_situation`
+- `stats_team_lastx`
+- `stats_team_nextx`
+- `stats_team_streaks`
+- `stats_season_teamscoringconceding`
+- `stats_season_topgoals`
+- `stats_season_topcards`
+- `stats_season_topassists`
+- `stats_season_injuries`
+- `stats_team_versus`
+- `stats_h2h_versus`
+
+The report explicitly distinguishes:
+
+- `has_odds_endpoint`: `match_markets` responded.
+- `has_priced_odds`: the response contained usable 1X2, handicap, or totals markets.
+
+This matters because ended matches can have full stats and live history while
+returning an empty `match_markets` payload.

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
+import re
 from typing import Any
 
 
@@ -50,6 +51,51 @@ def compact_team(team: object) -> dict[str, Any]:
         "medium_name": team.get("mediumname"),
         "abbr": team.get("abbr"),
         "country": ((team.get("countrycode") or {}).get("name") if isinstance(team.get("countrycode"), dict) else None),
+    }
+
+
+def compact_match(match: object, *, perspective_team_uid: int | None = None) -> dict[str, Any]:
+    if not isinstance(match, dict):
+        return {}
+    teams = match.get("teams") if isinstance(match.get("teams"), dict) else {}
+    result = match.get("result") if isinstance(match.get("result"), dict) else {}
+    home = compact_team(teams.get("home") if isinstance(teams, dict) else None)
+    away = compact_team(teams.get("away") if isinstance(teams, dict) else None)
+    home_score = as_int(result.get("home"))
+    away_score = as_int(result.get("away"))
+    venue = None
+    goals_for = None
+    goals_against = None
+    result_label = None
+    opponent = None
+    if perspective_team_uid is not None:
+        if home.get("uid") == perspective_team_uid:
+            venue = "home"
+            opponent = away
+            goals_for = home_score
+            goals_against = away_score
+        elif away.get("uid") == perspective_team_uid:
+            venue = "away"
+            opponent = home
+            goals_for = away_score
+            goals_against = home_score
+        if goals_for is not None and goals_against is not None:
+            result_label = "W" if goals_for > goals_against else "L" if goals_for < goals_against else "D"
+    return {
+        "match_id": as_int(match.get("_id")),
+        "season_id": as_int(match.get("_seasonid")),
+        "tournament_id": as_int(match.get("_utid")),
+        "round": as_int(match.get("round")),
+        "round_name": ((match.get("roundname") or {}).get("name") if isinstance(match.get("roundname"), dict) else None),
+        "time": compact_time(match.get("time") or match.get("_dt")),
+        "home": home,
+        "away": away,
+        "score": {"home": home_score, "away": away_score, "winner": result.get("winner")},
+        "venue": venue,
+        "opponent": opponent,
+        "result": result_label,
+        "goals_for": goals_for,
+        "goals_against": goals_against,
     }
 
 
@@ -106,6 +152,528 @@ def _percent_or_count_to_rate(value: float | None, played: int, *, outcome_is_pe
     if 0 <= value <= 1:
         return value
     return None
+
+
+def normalize_match_metadata(
+    info_payload: dict[str, Any] | None,
+    snapshot_payload: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    info_data = doc_data(info_payload)
+    snapshot_data = doc_data(snapshot_payload)
+    info_data = info_data if isinstance(info_data, dict) else {}
+    snapshot_data = snapshot_data if isinstance(snapshot_data, dict) else {}
+    match = info_data.get("match") if isinstance(info_data.get("match"), dict) else snapshot_data
+    teams = match.get("teams") if isinstance(match.get("teams"), dict) else {}
+    result = match.get("result") if isinstance(match.get("result"), dict) else {}
+    status = match.get("status") if isinstance(match.get("status"), dict) else {}
+    tournament = info_data.get("tournament") if isinstance(info_data.get("tournament"), dict) else snapshot_data.get("tournament")
+    tournament = tournament if isinstance(tournament, dict) else {}
+    unique_tournament = (
+        info_data.get("uniquetournament")
+        if isinstance(info_data.get("uniquetournament"), dict)
+        else snapshot_data.get("uniquetournament")
+    )
+    unique_tournament = unique_tournament if isinstance(unique_tournament, dict) else {}
+    season = info_data.get("season") if isinstance(info_data.get("season"), dict) else snapshot_data.get("season")
+    season = season if isinstance(season, dict) else {}
+    realcategory = info_data.get("realcategory") if isinstance(info_data.get("realcategory"), dict) else snapshot_data.get("realcategory")
+    realcategory = realcategory if isinstance(realcategory, dict) else {}
+    stadium = info_data.get("stadium") if isinstance(info_data.get("stadium"), dict) else snapshot_data.get("stadium")
+    stadium = stadium if isinstance(stadium, dict) else {}
+    timeinfo = match.get("timeinfo") if isinstance(match.get("timeinfo"), dict) else {}
+    return {
+        "match_id": as_int(match.get("_id")),
+        "sport_id": as_int(match.get("_sid")),
+        "season_id": as_int(match.get("_seasonid")) or as_int(season.get("_id")),
+        "tournament_id": as_int(match.get("_tid")),
+        "unique_tournament_id": as_int(match.get("_utid")) or as_int(unique_tournament.get("_id")),
+        "round": as_int(match.get("round")),
+        "round_name": ((match.get("roundname") or {}).get("name") if isinstance(match.get("roundname"), dict) else None),
+        "kickoff": compact_time(match.get("_dt") or match.get("time")),
+        "home": compact_team(teams.get("home") if isinstance(teams, dict) else None),
+        "away": compact_team(teams.get("away") if isinstance(teams, dict) else None),
+        "score": {
+            "home": as_int(result.get("home")),
+            "away": as_int(result.get("away")),
+            "winner": result.get("winner"),
+        },
+        "status": {
+            "id": as_int(status.get("_id")),
+            "name": status.get("name"),
+            "short_name": status.get("shortName"),
+            "matchstatus": match.get("matchstatus"),
+            "in_livescore": bool(match.get("inlivescore")),
+            "postponed": bool(match.get("postponed")),
+            "cancelled": bool(match.get("cancelled") or match.get("canceled")),
+            "running": _bool_or_none(timeinfo.get("running")),
+            "played_seconds": as_int(timeinfo.get("played")),
+        },
+        "competition": {
+            "name": tournament.get("name") or unique_tournament.get("name"),
+            "tournament_name": tournament.get("name"),
+            "unique_tournament_name": unique_tournament.get("name"),
+            "country": realcategory.get("name"),
+            "season_name": season.get("name"),
+            "season_year": season.get("year") or tournament.get("year"),
+        },
+        "venue": {
+            "id": as_int(stadium.get("_id")),
+            "name": stadium.get("name"),
+            "city": stadium.get("city"),
+            "country": stadium.get("country"),
+            "capacity": as_int(stadium.get("capacity")),
+        },
+        "attendance": as_int(info_data.get("attendance") or snapshot_data.get("attendance")),
+        "coverage": _compact_coverage(match.get("coverage") or info_data.get("statscoverage") or snapshot_data.get("statscoverage")),
+    }
+
+
+def _bool_or_none(value: object) -> bool | None:
+    if value is None:
+        return None
+    return bool(value)
+
+
+def _compact_coverage(value: object) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        return {}
+    keys = (
+        "liveodds",
+        "hasstats",
+        "inlivescore",
+        "deepercoverage",
+        "matchdetails",
+        "lineups",
+        "injuries",
+        "headtohead",
+        "formtable",
+        "leaguetable",
+        "overunder",
+    )
+    return {key: value.get(key) for key in keys if key in value}
+
+
+def normalize_market_text(
+    text: str | None,
+    *,
+    home_name: str | None,
+    away_name: str | None,
+    specifiers: dict[str, Any] | None,
+) -> str | None:
+    normalized = str(text or "").strip()
+    if not normalized:
+        return None
+    normalized = normalized.replace("{$competitor1}", home_name or "home")
+    normalized = normalized.replace("{$competitor2}", away_name or "away")
+    if specifiers:
+        for key, value in specifiers.items():
+            normalized = normalized.replace(f"{{{key}}}", str(value))
+            normalized = normalized.replace(f"{{+{key}}}", str(value))
+            if str(value).startswith("-"):
+                normalized = normalized.replace(f"{{-{key}}}", str(value).removeprefix("-"))
+            else:
+                normalized = normalized.replace(f"{{-{key}}}", f"-{value}")
+    return " ".join(normalized.split())
+
+
+def normalize_match_markets(
+    payload: dict[str, Any] | None,
+    *,
+    home_name: str | None,
+    away_name: str | None,
+) -> dict[str, Any]:
+    data = doc_data(payload)
+    markets = data.get("markets") if isinstance(data, dict) else None
+    if not isinstance(markets, list):
+        markets = []
+    one_x_two: dict[str, Any] = {}
+    handicap_markets: list[dict[str, Any]] = []
+    totals_markets: list[dict[str, Any]] = []
+    other_market_names: list[str] = []
+    for market in markets:
+        if not isinstance(market, dict):
+            continue
+        market_name = str(market.get("name") or "")
+        specifiers = market.get("specifiers") if isinstance(market.get("specifiers"), dict) else {}
+        outcomes = market.get("outcomes") if isinstance(market.get("outcomes"), list) else []
+        simplified_outcomes = []
+        for index, outcome in enumerate(outcomes):
+            if not isinstance(outcome, dict):
+                continue
+            simplified_outcomes.append(
+                {
+                    "name": normalize_market_text(
+                        outcome.get("name"),
+                        home_name=home_name,
+                        away_name=away_name,
+                        specifiers=specifiers,
+                    ),
+                    "odds": as_float(outcome.get("odds")),
+                    "active": bool(outcome.get("active")),
+                    "position": index,
+                }
+            )
+        if market_name.lower() == "1x2" and len(simplified_outcomes) >= 3:
+            one_x_two = {
+                "home": simplified_outcomes[0]["odds"],
+                "draw": simplified_outcomes[1]["odds"],
+                "away": simplified_outcomes[2]["odds"],
+            }
+        elif "handicap" in market_name.lower():
+            handicap_markets.append(
+                {
+                    "market_name": normalize_market_text(
+                        market_name,
+                        home_name=home_name,
+                        away_name=away_name,
+                        specifiers=specifiers,
+                    ),
+                    "line": specifiers.get("hcp"),
+                    "outcomes": simplified_outcomes,
+                }
+            )
+        elif market_name.lower() == "total":
+            totals_markets.append(
+                {
+                    "market_name": "Total",
+                    "line": specifiers.get("total"),
+                    "outcomes": simplified_outcomes,
+                }
+            )
+        else:
+            clean_name = normalize_market_text(
+                market_name,
+                home_name=home_name,
+                away_name=away_name,
+                specifiers=specifiers,
+            )
+            if clean_name:
+                other_market_names.append(clean_name)
+    return {
+        "source": "match_markets" if payload else None,
+        "markets": {
+            "1x2": one_x_two,
+            "handicap": handicap_markets,
+            "totals": totals_markets,
+            "other_market_names": other_market_names[:20],
+            "raw_market_count": len(markets),
+        },
+    }
+
+
+def normalize_match_table_slice(payload: dict[str, Any] | None) -> dict[str, Any]:
+    data = doc_data(payload)
+    if not isinstance(data, dict):
+        return {"rows": []}
+    rows = []
+    for row in data.get("tablerows") or []:
+        if not isinstance(row, dict):
+            continue
+        played = as_int(row.get("total")) or 0
+        points = as_int(row.get("pointsTotal")) or 0
+        rows.append(
+            {
+                "position": as_int(row.get("pos")),
+                "team": compact_team(row.get("team")),
+                "played": played,
+                "points": points,
+                "points_per_match": round(points / played, 4) if played else None,
+                "wins": as_int(row.get("winTotal")) or 0,
+                "draws": as_int(row.get("drawTotal")) or 0,
+                "losses": as_int(row.get("lossTotal")) or 0,
+                "goals_for": as_int(row.get("goalsForTotal")) or 0,
+                "goals_against": as_int(row.get("goalsAgainstTotal")) or 0,
+                "goal_difference": as_int(row.get("goalDiffTotal")) or 0,
+                "home": {
+                    "position": as_int(row.get("posHome")),
+                    "played": as_int(row.get("home")) or 0,
+                    "points": as_int(row.get("pointsHome")) or 0,
+                    "goals_for": as_int(row.get("goalsForHome")) or 0,
+                    "goals_against": as_int(row.get("goalsAgainstHome")) or 0,
+                },
+                "away": {
+                    "position": as_int(row.get("posAway")),
+                    "played": as_int(row.get("away")) or 0,
+                    "points": as_int(row.get("pointsAway")) or 0,
+                    "goals_for": as_int(row.get("goalsForAway")) or 0,
+                    "goals_against": as_int(row.get("goalsAgainstAway")) or 0,
+                },
+            }
+        )
+    return {
+        "table_id": as_int(data.get("_id")),
+        "name": data.get("name"),
+        "season_id": as_int(data.get("seasonid")),
+        "current_round": as_int(data.get("currentround")),
+        "max_rounds": as_int(data.get("maxrounds")),
+        "rows": rows,
+    }
+
+
+def normalize_match_details(payload: dict[str, Any] | None) -> dict[str, Any]:
+    data = doc_data(payload)
+    if not isinstance(data, dict):
+        return {"stats_by_key": {}, "key_stats": {}}
+    values = data.get("values") if isinstance(data.get("values"), dict) else {}
+    stats_by_key: dict[str, dict[str, Any]] = {}
+    for item in values.values():
+        if not isinstance(item, dict):
+            continue
+        name = str(item.get("name") or "")
+        key = _slug_stat_name(name)
+        value = item.get("value") if isinstance(item.get("value"), dict) else {}
+        stats_by_key[key] = {
+            "name": name,
+            "home": as_float(value.get("home")),
+            "away": as_float(value.get("away")),
+        }
+    key_aliases = {
+        "ball_possession": "possession",
+        "goal_attempts": "goal_attempts",
+        "shots_on_target": "shots_on_target",
+        "shots_off_target": "shots_off_target",
+        "shots_blocked": "shots_blocked",
+        "corner_kicks": "corners",
+        "yellow_cards": "yellow_cards",
+        "red_cards": "red_cards",
+        "free_kicks": "free_kicks",
+        "offsides": "offsides",
+        "saves": "saves",
+        "fouls": "fouls",
+    }
+    key_stats = {
+        alias: stats_by_key[key]
+        for key, alias in key_aliases.items()
+        if key in stats_by_key
+    }
+    return {
+        "teams": data.get("teams") if isinstance(data.get("teams"), dict) else {},
+        "key_stats": key_stats,
+        "stats_by_key": stats_by_key,
+        "raw_stat_count": len(stats_by_key),
+    }
+
+
+def _slug_stat_name(name: str) -> str:
+    return re.sub(r"_+", "_", re.sub(r"[^a-z0-9]+", "_", name.lower())).strip("_")
+
+
+def normalize_match_timeline(payload: dict[str, Any] | None, *, max_events: int = 120) -> dict[str, Any]:
+    data = doc_data(payload)
+    if not isinstance(data, dict):
+        return {"events": [], "event_counts": {}, "important_events": []}
+    match = data.get("match") if isinstance(data.get("match"), dict) else {}
+    result = match.get("result") if isinstance(match.get("result"), dict) else {}
+    timeinfo = match.get("timeinfo") if isinstance(match.get("timeinfo"), dict) else {}
+    status = match.get("status") if isinstance(match.get("status"), dict) else {}
+    events = data.get("events") if isinstance(data.get("events"), list) else []
+    compact_events = [_compact_timeline_event(event) for event in events if isinstance(event, dict)]
+    event_counts: dict[str, dict[str, int]] = {}
+    for event in compact_events:
+        event_type = str(event.get("type") or "unknown")
+        team = str(event.get("team") or "neutral")
+        event_counts.setdefault(event_type, {}).setdefault(team, 0)
+        event_counts[event_type][team] += 1
+    important_events = [
+        event
+        for event in compact_events
+        if any(token in str(event.get("type") or "").lower() for token in ("goal", "card", "penalty", "corner"))
+        or any(token in str(event.get("name") or "").lower() for token in ("goal", "card", "penalty", "corner"))
+    ]
+    cards = match.get("cards") if isinstance(match.get("cards"), dict) else {}
+    return {
+        "status": status.get("name"),
+        "period": match.get("p"),
+        "clock": {
+            "played_seconds": as_int(timeinfo.get("played")),
+            "running": _bool_or_none(timeinfo.get("running")),
+            "started_uts": as_int(timeinfo.get("started")),
+            "ended_uts": as_int(timeinfo.get("ended")),
+        },
+        "score_home": as_int(result.get("home")),
+        "score_away": as_int(result.get("away")),
+        "cards": cards,
+        "event_counts": event_counts,
+        "important_events": important_events,
+        "events": compact_events[-max_events:] if max_events else compact_events,
+        "raw_event_count": len(compact_events),
+    }
+
+
+def _compact_timeline_event(event: dict[str, Any]) -> dict[str, Any]:
+    player = event.get("player") if isinstance(event.get("player"), dict) else {}
+    result = event.get("result") if isinstance(event.get("result"), dict) else {}
+    return {
+        "id": event.get("_id"),
+        "type": event.get("type") or event.get("_doctype"),
+        "name": event.get("name"),
+        "time": as_int(event.get("time")),
+        "seconds": as_int(event.get("seconds")),
+        "injurytime": as_int(event.get("injurytime")),
+        "team": event.get("team"),
+        "player_id": as_int(player.get("_id")),
+        "player_name": player.get("name"),
+        "score": {
+            "home": as_int(result.get("home")),
+            "away": as_int(result.get("away")),
+        },
+        "x": as_float(event.get("X")),
+        "y": as_float(event.get("Y")),
+        "uts": as_int(event.get("uts")),
+    }
+
+
+def normalize_match_situation(payload: dict[str, Any] | None, *, max_samples: int = 20) -> dict[str, Any]:
+    data = doc_data(payload)
+    samples = data.get("data") if isinstance(data, dict) else []
+    if not isinstance(samples, list):
+        return {"samples": [], "totals": {}, "latest": None}
+    totals = {
+        "home": {"attack": 0, "dangerous": 0, "attackcount": 0, "dangerouscount": 0},
+        "away": {"attack": 0, "dangerous": 0, "attackcount": 0, "dangerouscount": 0},
+    }
+    compact_samples = []
+    for sample in samples:
+        if not isinstance(sample, dict):
+            continue
+        compact_sample = {"time": as_int(sample.get("time")), "home": {}, "away": {}}
+        for side in ("home", "away"):
+            side_data = sample.get(side) if isinstance(sample.get(side), dict) else {}
+            compact_side = {
+                "attack": as_int(side_data.get("attack")) or 0,
+                "dangerous": as_int(side_data.get("dangerous")) or 0,
+                "attackcount": as_int(side_data.get("attackcount")) or 0,
+                "dangerouscount": as_int(side_data.get("dangerouscount")) or 0,
+            }
+            compact_sample[side] = compact_side
+            for key, value in compact_side.items():
+                totals[side][key] += value
+        compact_samples.append(compact_sample)
+    return {
+        "samples": compact_samples[-max_samples:] if max_samples else compact_samples,
+        "totals": totals,
+        "latest": compact_samples[-1] if compact_samples else None,
+        "raw_sample_count": len(compact_samples),
+    }
+
+
+def normalize_team_recent_payload(
+    payload: dict[str, Any] | None,
+    *,
+    team_uid: int | None,
+    max_matches: int = 10,
+) -> dict[str, Any]:
+    data = doc_data(payload)
+    if not isinstance(data, dict):
+        return {"team": {}, "matches": [], "recent_points": None, "form": []}
+    matches = [
+        compact_match(match, perspective_team_uid=team_uid)
+        for match in (data.get("matches") or [])[:max_matches]
+        if isinstance(match, dict)
+    ]
+    form = [match.get("result") for match in matches if match.get("result")]
+    points = sum(3 if item == "W" else 1 if item == "D" else 0 for item in form)
+    return {
+        "team": compact_team(data.get("team")),
+        "matches": matches,
+        "form": form,
+        "recent_points": points if form else None,
+    }
+
+
+def normalize_team_streaks(payload: dict[str, Any] | None) -> dict[str, Any]:
+    data = doc_data(payload)
+    if not isinstance(data, dict):
+        return {"team": {}, "last_form": {}, "streak_keys": []}
+    lastmatchesform = data.get("lastmatchesform") if isinstance(data.get("lastmatchesform"), dict) else {}
+    streaks = data.get("streaks") if isinstance(data.get("streaks"), dict) else {}
+    return {
+        "team": compact_team(data.get("team")),
+        "last_form": {
+            key: [entry.get("value") for entry in value[:10] if isinstance(entry, dict)]
+            for key, value in lastmatchesform.items()
+            if isinstance(value, list)
+        },
+        "streak_keys": sorted(streaks.keys())[:30],
+    }
+
+
+def normalize_team_scoring(payload: dict[str, Any] | None) -> dict[str, Any]:
+    data = doc_data(payload)
+    if not isinstance(data, dict):
+        return {"team": {}, "matches": {}, "scoring": {}, "conceding": {}}
+    stats = data.get("stats") if isinstance(data.get("stats"), dict) else {}
+    scoring = stats.get("scoring") if isinstance(stats.get("scoring"), dict) else {}
+    conceding = stats.get("conceding") if isinstance(stats.get("conceding"), dict) else {}
+    return {
+        "team": compact_team(data.get("team")),
+        "matches": _split_values(stats.get("totalmatches")),
+        "wins": _split_values(stats.get("totalwins")),
+        "scoring": {
+            "goals_scored": _split_values(scoring.get("goalsscored")),
+            "goals_scored_avg": _split_values(scoring.get("goalsscoredaverage")),
+            "failed_to_score_rate": _split_values(scoring.get("failedtoscoreaverage")),
+            "btts_rate": _split_values(scoring.get("bothteamsscoredaverage")),
+            "first_half_scoring_rate": _split_values(scoring.get("scoringathalftimeaverage")),
+            "minutes_per_goal_scored": _split_values(scoring.get("minutespergoalscored")),
+            "goals_by_minutes": scoring.get("goalsbyminutes") if isinstance(scoring.get("goalsbyminutes"), dict) else {},
+        },
+        "conceding": {
+            "goals_conceded": _split_values(conceding.get("goalsconceded")),
+            "goals_conceded_avg": _split_values(conceding.get("goalsconcededaverage")),
+            "clean_sheet_rate": _split_values(conceding.get("cleansheetsaverage")),
+            "first_half_conceding_rate": _split_values(conceding.get("goalsconcededfirsthalfaverage")),
+            "minutes_per_goal_conceded": _split_values(conceding.get("minutespergoalconceded")),
+            "goals_by_minutes": conceding.get("goalsbyminutes") if isinstance(conceding.get("goalsbyminutes"), dict) else {},
+        },
+    }
+
+
+def _split_values(value: object) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        return {"total": None, "home": None, "away": None}
+    return {
+        "total": as_float(value.get("total")),
+        "home": as_float(value.get("home")),
+        "away": as_float(value.get("away")),
+    }
+
+
+def normalize_h2h_payload(
+    payload: dict[str, Any] | None,
+    *,
+    home_uid: int | None,
+    away_uid: int | None,
+    max_matches: int = 10,
+) -> dict[str, Any]:
+    data = doc_data(payload)
+    if not isinstance(data, dict):
+        return {"matches": [], "summary": {}}
+    matches = [
+        compact_match(match)
+        for match in (data.get("matches") or [])[:max_matches]
+        if isinstance(match, dict)
+    ]
+    summary = {"total_matches": len(matches), "home_team_wins": 0, "away_team_wins": 0, "draws": 0}
+    for match in matches:
+        score = match.get("score") if isinstance(match.get("score"), dict) else {}
+        home = match.get("home") if isinstance(match.get("home"), dict) else {}
+        away = match.get("away") if isinstance(match.get("away"), dict) else {}
+        home_score = as_int(score.get("home"))
+        away_score = as_int(score.get("away"))
+        if home_score is None or away_score is None:
+            continue
+        if home_score == away_score:
+            summary["draws"] += 1
+        elif home_score > away_score and home.get("uid") == home_uid:
+            summary["home_team_wins"] += 1
+        elif home_score < away_score and away.get("uid") == home_uid:
+            summary["home_team_wins"] += 1
+        elif home_score > away_score and home.get("uid") == away_uid:
+            summary["away_team_wins"] += 1
+        elif home_score < away_score and away.get("uid") == away_uid:
+            summary["away_team_wins"] += 1
+    return {"matches": matches, "summary": summary}
 
 
 def normalize_teams(payload: dict[str, Any]) -> list[dict[str, Any]]:
