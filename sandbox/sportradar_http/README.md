@@ -25,6 +25,7 @@ browser bootstrap -> signed token/cookies/headers -> HTTP replay client
 
 Phase 1 is implemented in `session_manager.py`.
 Phase 2 is implemented in `http_client.py`.
+Phase 3 endpoint wrappers live in `endpoints/`.
 
 ## Run Phase 1 Bootstrap
 
@@ -99,3 +100,25 @@ It tracks:
 - retry count
 - refresh count
 - endpoint timing summaries
+
+## Endpoint Wrappers
+
+Use wrappers instead of raw URLs:
+
+```python
+from sandbox.sportradar_http.endpoints.odds import get_match_markets
+from sandbox.sportradar_http.endpoints.standings import get_season_tables
+
+markets = get_match_markets(client, match_id=61624678)
+table = get_season_tables(client, season_id=130805)
+```
+
+The generated endpoint map is:
+
+```bash
+./betbot/bin/python sandbox/sportradar_http/build_endpoint_catalog.py
+```
+
+Output:
+
+- `sandbox/sportradar_http/reports/endpoint_catalog_v2.md`
