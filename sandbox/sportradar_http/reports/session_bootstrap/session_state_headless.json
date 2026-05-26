@@ -1,0 +1,32 @@
+{
+  "generated_at": "2026-05-26T04:49:26.551611+00:00",
+  "headed": false,
+  "headless": true,
+  "bootstrap_urls": [
+    "https://statshub.sportradar.com/bet365/en/sport/1",
+    "https://statshub.sportradar.com/bet365/en/match/61624678"
+  ],
+  "origin": "https://statshub.sportradar.com",
+  "referer": "https://statshub.sportradar.com/",
+  "replay_headers": {
+    "accept": "application/json,text/plain,*/*",
+    "origin": "https://statshub.sportradar.com",
+    "referer": "https://statshub.sportradar.com/",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+  },
+  "cookies": {},
+  "signed_token": null,
+  "sample_signed_url": null,
+  "endpoints_seen": [],
+  "captured_endpoints": [],
+  "document_statuses": {
+    "https://statshub.sportradar.com/bet365/en/sport/1": 403,
+    "https://statshub.sportradar.com/bet365/en/match/61624678": 403
+  },
+  "fetch_count": 0,
+  "blocked_count": 0,
+  "expired_count": 0,
+  "error": null,
+  "is_usable": false,
+  "token_expiration": null
+}

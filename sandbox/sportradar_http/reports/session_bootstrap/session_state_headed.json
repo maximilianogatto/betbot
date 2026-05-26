@@ -1,0 +1,443 @@
+{
+  "generated_at": "2026-05-26T04:49:37.944479+00:00",
+  "headed": true,
+  "headless": false,
+  "bootstrap_urls": [
+    "https://statshub.sportradar.com/bet365/en/sport/1",
+    "https://statshub.sportradar.com/bet365/en/match/61624678"
+  ],
+  "origin": "https://statshub.sportradar.com",
+  "referer": "https://statshub.sportradar.com/",
+  "replay_headers": {
+    "accept": "application/json,text/plain,*/*",
+    "origin": "https://statshub.sportradar.com",
+    "referer": "https://statshub.sportradar.com/",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+  },
+  "cookies": {},
+  "signed_token": {
+    "raw": "exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+    "exp": 1779862624,
+    "expires_at_utc": "2026-05-27T06:17:04+00:00",
+    "acl": "/*",
+    "data_json": {
+      "o": "https://statshub.sportradar.com",
+      "a": "bet365",
+      "act": "origincheck",
+      "osrc": "hostheader"
+    },
+    "hmac": "df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b"
+  },
+  "sample_signed_url": "https://sh.fn.sportradar.com/bet365/en/America:Montevideo/gismo/unified_sport_matches/1/2026-05-26/0?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+  "endpoints_seen": [
+    "unified_sport_matches",
+    "odds_ukformat",
+    "stats_sport_matches_prevnext",
+    "unified_sport_matches_markets",
+    "sport_matches_prevnext",
+    "event_get",
+    "config_tree_mini",
+    "stats_team_nextx",
+    "stats_formtable",
+    "stats_team_lastx",
+    "stats_team_streaks",
+    "match_info_statshub",
+    "stats_season_topgoals",
+    "stats_match_get",
+    "stats_season_tables",
+    "stats_season_topassists",
+    "stats_team_versus",
+    "match_timelinedelta",
+    "stats_season_topcards",
+    "stats_season_teamscoringconceding",
+    "stats_h2h_versus",
+    "match_details",
+    "match_timeline",
+    "stats_season_injuries",
+    "match_markets",
+    "uniqueteam_markets",
+    "match_info",
+    "stats_match_situation"
+  ],
+  "captured_endpoints": [
+    {
+      "endpoint_key": "unified_sport_matches",
+      "url": "https://sh.fn.sportradar.com/bet365/en/America:Montevideo/gismo/unified_sport_matches/1/2026-05-26/0?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 374535,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 6838.66
+    },
+    {
+      "endpoint_key": "odds_ukformat",
+      "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/odds_ukformat/?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 9785,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 6839.26
+    },
+    {
+      "endpoint_key": "stats_sport_matches_prevnext",
+      "url": "https://sh.fn.sportradar.com/common/en/America:Montevideo/gismo/stats_sport_matches_prevnext/1/2026-05-26/0?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 2357,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 6839.4
+    },
+    {
+      "endpoint_key": "unified_sport_matches_markets",
+      "url": "https://sh.fn.sportradar.com/bet365/en/America:Montevideo/gismo/unified_sport_matches_markets/1/2026-05-26/0?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 129937,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 6853.91
+    },
+    {
+      "endpoint_key": "sport_matches_prevnext",
+      "url": "https://sh.fn.sportradar.com/common/en/America:Montevideo/gismo/sport_matches_prevnext/1/2026-05-26/0?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 8420,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 6855.57
+    },
+    {
+      "endpoint_key": "event_get",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/event_get/?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 80296,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 6866.15
+    },
+    {
+      "endpoint_key": "config_tree_mini",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/config_tree_mini/67/0/1?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 985488,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 7208.53
+    },
+    {
+      "endpoint_key": "stats_team_nextx",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_nextx/2818/1?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 2736,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 12937.92
+    },
+    {
+      "endpoint_key": "stats_formtable",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_formtable/130805?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 48337,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 12960.68
+    },
+    {
+      "endpoint_key": "stats_team_lastx",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_lastx/2818/20?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 26646,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13169.05
+    },
+    {
+      "endpoint_key": "stats_team_streaks",
+      "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_team_streaks/2818?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 3178,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13169.2
+    },
+    {
+      "endpoint_key": "stats_team_streaks",
+      "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_team_streaks/2885?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 2507,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13169.3
+    },
+    {
+      "endpoint_key": "match_info_statshub",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_info_statshub/61624678?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 7422,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13184.63
+    },
+    {
+      "endpoint_key": "stats_team_lastx",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_lastx/2885/20?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 23669,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13213.51
+    },
+    {
+      "endpoint_key": "stats_season_topgoals",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topgoals/130805/2818?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 13497,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13221.9
+    },
+    {
+      "endpoint_key": "stats_season_topgoals",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topgoals/130805/2885?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 11595,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13224.08
+    },
+    {
+      "endpoint_key": "stats_match_get",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_match_get/61624678?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 6084,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13229.35
+    },
+    {
+      "endpoint_key": "stats_season_tables",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_tables/130805//?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 21892,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13262.3
+    },
+    {
+      "endpoint_key": "stats_season_topassists",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topassists/130805/2885?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 10322,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13302.68
+    },
+    {
+      "endpoint_key": "stats_team_versus",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_versus/2885/2818/?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 41463,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13304.17
+    },
+    {
+      "endpoint_key": "match_timelinedelta",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_timelinedelta/61624678?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 2496,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13339.87
+    },
+    {
+      "endpoint_key": "stats_team_nextx",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_nextx/2885/1?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 433,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13400.07
+    },
+    {
+      "endpoint_key": "stats_season_topcards",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topcards/130805/2818?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 22389,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13400.71
+    },
+    {
+      "endpoint_key": "stats_season_teamscoringconceding",
+      "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_season_teamscoringconceding/130805/2885/-1?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 3660,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13400.99
+    },
+    {
+      "endpoint_key": "stats_season_topcards",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topcards/130805/2885?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 22429,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13402.09
+    },
+    {
+      "endpoint_key": "stats_h2h_versus",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_h2h_versus/2818/2885/61624678?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 20744,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13402.74
+    },
+    {
+      "endpoint_key": "stats_season_topassists",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topassists/130805/2818?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 12365,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13403.17
+    },
+    {
+      "endpoint_key": "stats_season_teamscoringconceding",
+      "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_season_teamscoringconceding/130805/2818/-1?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 3663,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13403.37
+    },
+    {
+      "endpoint_key": "match_details",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_details/61624678?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 2368,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13403.57
+    },
+    {
+      "endpoint_key": "match_timeline",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_timeline/61624678?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 103686,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13406.53
+    },
+    {
+      "endpoint_key": "stats_season_injuries",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_injuries/130805?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 69256,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13410.72
+    },
+    {
+      "endpoint_key": "match_markets",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_markets/61624678?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 127,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13411.31
+    },
+    {
+      "endpoint_key": "odds_ukformat",
+      "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/odds_ukformat/?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 9785,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13536.24
+    },
+    {
+      "endpoint_key": "uniqueteam_markets",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/uniqueteam_markets/2818?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 120935,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13576.7
+    },
+    {
+      "endpoint_key": "stats_season_tables",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_tables/130805/1/?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 21895,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13759.92
+    },
+    {
+      "endpoint_key": "uniqueteam_markets",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/uniqueteam_markets/2885?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 89043,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13833.87
+    },
+    {
+      "endpoint_key": "event_get",
+      "url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/event_get/?T=exp=1779862624~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=df6a90cc4918a5101bdf6e6f7932e349d2fe3bca7473d1d9d68e721f99f7307b",
+      "status": 200,
+      "body_size_bytes": 87263,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 13838.85
+    },
+    {
+      "endpoint_key": "match_info",
+      "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/match_info/61624678?T=exp=1779857787~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJzdGF0c2h1YiIsImFjdCI6Im9yaWdpbmNoZWNrIiwib3NyYyI6Im9yaWdpbiJ9~hmac=3344b2fa8086814a9029a555638481d750f24366b242b3bcb16a7591e64cbedf",
+      "status": 200,
+      "body_size_bytes": 7413,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 15438.75
+    },
+    {
+      "endpoint_key": "match_timelinedelta",
+      "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/match_timelinedelta/61624678?T=exp=1779857787~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJzdGF0c2h1YiIsImFjdCI6Im9yaWdpbmNoZWNrIiwib3NyYyI6Im9yaWdpbiJ9~hmac=3344b2fa8086814a9029a555638481d750f24366b242b3bcb16a7591e64cbedf",
+      "status": 200,
+      "body_size_bytes": 2496,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 15577.22
+    },
+    {
+      "endpoint_key": "match_timeline",
+      "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/match_timeline/61624678?T=exp=1779857787~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJzdGF0c2h1YiIsImFjdCI6Im9yaWdpbmNoZWNrIiwib3NyYyI6Im9yaWdpbiJ9~hmac=3344b2fa8086814a9029a555638481d750f24366b242b3bcb16a7591e64cbedf",
+      "status": 200,
+      "body_size_bytes": 103686,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 15604.3
+    },
+    {
+      "endpoint_key": "stats_match_situation",
+      "url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_match_situation/61624678?T=exp=1779857787~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJzdGF0c2h1YiIsImFjdCI6Im9yaWdpbmNoZWNrIiwib3NyYyI6Im9yaWdpbiJ9~hmac=3344b2fa8086814a9029a555638481d750f24366b242b3bcb16a7591e64cbedf",
+      "status": 200,
+      "body_size_bytes": 24019,
+      "blocked": false,
+      "expired": false,
+      "elapsed_ms": 15863.22
+    }
+  ],
+  "document_statuses": {
+    "https://statshub.sportradar.com/bet365/en/sport/1": 200,
+    "https://statshub.sportradar.com/bet365/en/match/61624678": 200
+  },
+  "fetch_count": 41,
+  "blocked_count": 0,
+  "expired_count": 0,
+  "error": null,
+  "is_usable": true,
+  "token_expiration": "2026-05-27T06:17:04+00:00"
+}
