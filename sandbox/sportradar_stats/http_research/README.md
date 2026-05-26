@@ -29,6 +29,7 @@ Outputs:
 - `cookies.json`
 - `script_hints.json`
 - `token_analysis.md`
+- `api_feasibility.md` after replay probes
 
 ## Probe HTTP Replay
 
@@ -60,3 +61,8 @@ Outputs:
 - `data` is base64 JSON; observed payloads include origin/client metadata.
 - This sandbox determines whether captured signed URLs can be replayed and
   whether the same signed token survives path/ID mutation.
+- Current evidence favors a browser-bootstrap + HTTP-replay architecture:
+  use the browser to obtain valid signed `/gismo/` URLs, then replay them with
+  HTTP while the token is valid.
+- Minimal replay headers matter. Requests without `origin`/`referer` can return
+  HTTP 200 with a small JSON exception body instead of the useful payload.

@@ -194,6 +194,7 @@ async def capture_statshub(
     requests_seen = 0
     responses_seen = 0
     pending_tasks: set[asyncio.Task[None]] = set()
+    accepting_events = True
 
     async with async_playwright() as playwright:
         context = await build_context(
@@ -255,11 +256,15 @@ async def capture_statshub(
             )
 
         def track_request(request: Request) -> None:
+            if not accepting_events:
+                return
             task = asyncio.create_task(on_request(request))
             pending_tasks.add(task)
             task.add_done_callback(pending_tasks.discard)
 
         def track_response(response: Response) -> None:
+            if not accepting_events:
+                return
             task = asyncio.create_task(on_response(response))
             pending_tasks.add(task)
             task.add_done_callback(pending_tasks.discard)
@@ -273,8 +278,19 @@ async def capture_statshub(
             await asyncio.sleep(seconds)
             await asyncio.sleep(wait_between)
 
+        accepting_events = False
+        page.remove_listener("request", track_request)
+        page.remove_listener("response", track_response)
+        await page.close()
         if pending_tasks:
-            await asyncio.gather(*list(pending_tasks), return_exceptions=True)
+            try:
+                await asyncio.wait_for(
+                    asyncio.gather(*list(pending_tasks), return_exceptions=True),
+                    timeout=8,
+                )
+            except asyncio.TimeoutError:
+                for task in list(pending_tasks):
+                    task.cancel()
         cookies = await context.cookies()
         cookies_path.write_text(json.dumps(cookies, ensure_ascii=False, indent=2), encoding="utf-8")
         await context.close()

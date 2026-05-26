@@ -146,6 +146,37 @@ def render_api_feasibility(
     reusable = int(replay_counts.get("reusable", 0) or 0)
     blocked = int(replay_counts.get("blocked", 0) or 0)
     expired = int(replay_counts.get("signature_expired", 0) or 0)
+    replay_targets = (replay_payload or {}).get("targets") or []
+    reusable_endpoints = [
+        str(target.get("endpoint_key") or "")
+        for target in replay_targets
+        if str(target.get("conclusion") or "").lower() == "http reusable"
+    ]
+    no_header_blocked = 0
+    referer_reusable = 0
+    captured_reusable = 0
+    for target in replay_targets:
+        for attempt in target.get("attempts") or []:
+            label = str(attempt.get("label") or "")
+            outcome = str(attempt.get("outcome") or "")
+            if label in {"no_headers", "user_agent"} and outcome == "blocked":
+                no_header_blocked += 1
+            if label == "referer_origin" and outcome == "reusable":
+                referer_reusable += 1
+            if label.startswith("captured_headers") and outcome == "reusable":
+                captured_reusable += 1
+
+    token_items = (token_payload or {}).get("token_payloads") or []
+    token_summaries: list[str] = []
+    for item in token_items[:5]:
+        token_summaries.append(
+            "exp={exp} expires={expires} acl={acl} data={data}".format(
+                exp=item.get("exp"),
+                expires=item.get("expires_at_utc"),
+                acl=item.get("acl"),
+                data=item.get("data_json"),
+            )
+        )
 
     recommendation = "B) browser bootstrap + HTTP replay"
     if reusable == 0 and (blocked or expired):
@@ -164,6 +195,21 @@ def render_api_feasibility(
         f"- Replay reusable attempts: `{reusable}`",
         f"- Replay blocked attempts: `{blocked}`",
         f"- Replay expired attempts: `{expired}`",
+        f"- Reusable endpoints sampled: `{reusable_endpoints[:25]}`",
+        f"- Attempts blocked without origin/referer: `{no_header_blocked}`",
+        f"- Attempts reusable with minimal origin/referer: `{referer_reusable}`",
+        f"- Attempts reusable with captured headers: `{captured_reusable}`",
+        f"- Token samples: `{token_summaries}`",
+        "",
+        "## HTTP Replay Findings",
+        "",
+        "- Direct document URLs are useful as browser bootstrap pages, not as the main data API.",
+        "- Useful data lives behind `/gismo/<endpoint>/...` URLs signed with `T=exp~acl~data~hmac`.",
+        "- The captured token data points to an origin check for `https://statshub.sportradar.com` and app `bet365`.",
+        "- Replays without `origin`/`referer` returned a small JSON exception body while still using HTTP 200.",
+        "- Replays with `origin: https://statshub.sportradar.com` and `referer: https://statshub.sportradar.com/` returned full JSON payloads.",
+        "- Token mutation tests show the same broad `acl=/*` token can be reused across at least some sibling endpoints while it is valid.",
+        "- A headless browser run can get 403 on the document pages; headed capture produced the full gismo graph in this environment.",
         "",
         "## Options",
         "",
