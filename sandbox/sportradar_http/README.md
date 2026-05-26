@@ -275,3 +275,25 @@ Output:
 
 The catalog documents formulas, scales, directionality, and which values are
 raw football units versus normalized rates.
+
+## Live Probe
+
+Run a controlled live/delta polling probe:
+
+```bash
+./betbot/bin/python sandbox/sportradar_http/run_live_probe.py \
+  --match-id 61624678 \
+  --polls 2 \
+  --interval 1 \
+  --out-dir sandbox/sportradar_http/examples/live_probe_61624678
+```
+
+Outputs:
+
+- `live_probe.ndjson`
+- `live_probe_summary.json`
+- `live_probe_report.md`
+
+The probe stores compact live state documents per poll. It is meant to compare
+`match_timeline`, `match_timelinedelta`, and `stats_match_situation` behavior
+without keeping a browser open.
