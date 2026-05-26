@@ -1,0 +1,41 @@
+Alaves vs Vallecano
+
+- Form: 5.56/10 vs 7.78/10
+- H2H edge: Vallecano (-0.4)
+  - 23/05/26: Alaves 1-2 Vallecano
+  - 14/01/26: Alaves 2-0 Vallecano
+  - 26/10/25: Vallecano 1-0 Alaves
+  - 29/03/25: Alaves 0-2 Vallecano
+  - 26/10/24: Vallecano 1-0 Alaves
+
+- Goals avg scored:
+  - general: Alaves=1.16 | Vallecano=1.08
+  - home/away split: Alaves home=1.32 | Vallecano away=0.89
+- Goals avg conceded:
+  - general: Alaves=1.47 | Vallecano=1.16
+  - split: Alaves home=1.32 | Vallecano away=1.53
+- BTTS: 55%
+- Home strength: 5.21/10
+- Away weakness: 6.11/10
+
+- Last 5:
+  - Alaves: L W W D L W
+    - 23/05/26: Alaves 1-2 Vallecano
+    - 17/05/26: Oviedo 0-1 Alaves
+    - 13/05/26: Alaves 1-0 Barcelona
+    - 09/05/26: Elche 1-1 Alaves
+    - 02/05/26: Alaves 2-4 Bilbao
+  - Vallecano: W W D D W W
+    - 23/05/26: Alaves 1-2 Vallecano
+    - 17/05/26: Vallecano 2-0 Villarreal
+    - 14/05/26: Valencia 1-1 Vallecano
+    - 11/05/26: Vallecano 1-1 Girona
+    - 07/05/26: Strasbourg Alsace 0-1 Vallecano
+- Table: 14th (43 pts, 38P) vs 8th (50 pts, 38P)
+- Top scorer: Alaves: Martinez, Toni (0) | Vallecano: De Frutos, Jorge (0)
+- Injuries: Alaves=1 | Vallecano=2
+- Goal timing expectation:
+  - projected Alaves pressure minute: 62.76
+  - projected Vallecano pressure minute: 73.04
+- Traceability:
+  - Direct H2H sample favors Vallecano; inspect dates before weighting it heavily.

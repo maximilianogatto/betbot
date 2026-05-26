@@ -38,6 +38,7 @@ from sandbox.sportradar_http.endpoints.stats import (
 )
 from sandbox.sportradar_http.features_engine import build_match_features
 from sandbox.sportradar_http.http_client import SportradarHTTPClient
+from sandbox.sportradar_http.match_intelligence import build_match_intelligence
 from sandbox.sportradar_http.normalizers import (
     make_raw_ref,
     normalize_h2h_payload,
@@ -92,15 +93,23 @@ def main() -> int:
     payloads, errors = fetch_match_payloads(client, args)
     snapshot = build_match_snapshot(args=args, payloads=payloads, errors=errors, client=client)
     features = build_match_features(snapshot)
+    intelligence = build_match_intelligence(snapshot, features)
     report = render_match_report(snapshot=snapshot, features=features, metrics=client.metrics_json())
     write_json(args.out_dir / "match_snapshot.json", snapshot)
     write_json(args.out_dir / "match_features.json", features)
+    write_json(args.out_dir / "match_intelligence.json", intelligence)
     (args.out_dir / "match_report.md").write_text(report, encoding="utf-8")
+    (args.out_dir / "match_intelligence_report.md").write_text(
+        intelligence.get("report_summary", "") + "\n",
+        encoding="utf-8",
+    )
     if client.state is not None:
         save_session_state(client.state, args.session_state)
     print(f"Wrote {args.out_dir / 'match_snapshot.json'}")
     print(f"Wrote {args.out_dir / 'match_features.json'}")
+    print(f"Wrote {args.out_dir / 'match_intelligence.json'}")
     print(f"Wrote {args.out_dir / 'match_report.md'}")
+    print(f"Wrote {args.out_dir / 'match_intelligence_report.md'}")
     return 0
 
 

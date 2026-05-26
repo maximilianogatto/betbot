@@ -1,0 +1,715 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-26T21:53:38.845980+00:00",
+  "provider": "sportradar_statshub",
+  "match_id": 61624678,
+  "teams": {
+    "home": {
+      "id": 5123,
+      "uid": 2885,
+      "name": "Alaves",
+      "medium_name": "Deportivo Alaves",
+      "abbr": "ALA",
+      "country": "Spain"
+    },
+    "away": {
+      "id": 5121,
+      "uid": 2818,
+      "name": "Vallecano",
+      "medium_name": "Rayo Vallecano",
+      "abbr": "RVC",
+      "country": "Spain"
+    }
+  },
+  "competition": {
+    "name": "LaLiga",
+    "tournament_name": "LaLiga",
+    "unique_tournament_name": "LaLiga",
+    "country": "Spain",
+    "season_name": "LaLiga 25/26",
+    "season_year": "25/26"
+  },
+  "kickoff_utc": "2026-05-23T19:00:00+00:00",
+  "status": {
+    "id": 100,
+    "name": "Ended",
+    "short_name": "END",
+    "matchstatus": "result",
+    "in_livescore": false,
+    "postponed": false,
+    "cancelled": false,
+    "running": false,
+    "played_seconds": 5695
+  },
+  "score": {
+    "home": 1,
+    "away": 2,
+    "winner": "away"
+  },
+  "form": {
+    "home": {
+      "rating_10": 5.56,
+      "sequence": [
+        "L",
+        "W",
+        "W",
+        "D",
+        "L",
+        "W"
+      ],
+      "recent_points": 10,
+      "last_matches": [
+        {
+          "match_id": 61624678,
+          "date_utc": "2026-05-23T19:00:00+00:00",
+          "date_display": "23/05/26",
+          "home": "Alaves",
+          "away": "Vallecano",
+          "score": "1-2",
+          "scoreline": "Alaves 1-2 Vallecano",
+          "venue": "home",
+          "result": "L",
+          "goals_for": 1,
+          "goals_against": 2
+        },
+        {
+          "match_id": 61624672,
+          "date_utc": "2026-05-17T17:00:00+00:00",
+          "date_display": "17/05/26",
+          "home": "Oviedo",
+          "away": "Alaves",
+          "score": "0-1",
+          "scoreline": "Oviedo 0-1 Alaves",
+          "venue": "away",
+          "result": "W",
+          "goals_for": 1,
+          "goals_against": 0
+        },
+        {
+          "match_id": 61624638,
+          "date_utc": "2026-05-13T19:30:00+00:00",
+          "date_display": "13/05/26",
+          "home": "Alaves",
+          "away": "Barcelona",
+          "score": "1-0",
+          "scoreline": "Alaves 1-0 Barcelona",
+          "venue": "home",
+          "result": "W",
+          "goals_for": 1,
+          "goals_against": 0
+        },
+        {
+          "match_id": 61624628,
+          "date_utc": "2026-05-09T12:00:00+00:00",
+          "date_display": "09/05/26",
+          "home": "Elche",
+          "away": "Alaves",
+          "score": "1-1",
+          "scoreline": "Elche 1-1 Alaves",
+          "venue": "away",
+          "result": "D",
+          "goals_for": 1,
+          "goals_against": 1
+        },
+        {
+          "match_id": 61624598,
+          "date_utc": "2026-05-02T16:30:00+00:00",
+          "date_display": "02/05/26",
+          "home": "Alaves",
+          "away": "Bilbao",
+          "score": "2-4",
+          "scoreline": "Alaves 2-4 Bilbao",
+          "venue": "home",
+          "result": "L",
+          "goals_for": 2,
+          "goals_against": 4
+        }
+      ]
+    },
+    "away": {
+      "rating_10": 7.78,
+      "sequence": [
+        "W",
+        "W",
+        "D",
+        "D",
+        "W",
+        "W"
+      ],
+      "recent_points": 14,
+      "last_matches": [
+        {
+          "match_id": 61624678,
+          "date_utc": "2026-05-23T19:00:00+00:00",
+          "date_display": "23/05/26",
+          "home": "Alaves",
+          "away": "Vallecano",
+          "score": "1-2",
+          "scoreline": "Alaves 1-2 Vallecano",
+          "venue": "away",
+          "result": "W",
+          "goals_for": 2,
+          "goals_against": 1
+        },
+        {
+          "match_id": 61624668,
+          "date_utc": "2026-05-17T17:00:00+00:00",
+          "date_display": "17/05/26",
+          "home": "Vallecano",
+          "away": "Villarreal",
+          "score": "2-0",
+          "scoreline": "Vallecano 2-0 Villarreal",
+          "venue": "home",
+          "result": "W",
+          "goals_for": 2,
+          "goals_against": 0
+        },
+        {
+          "match_id": 61624652,
+          "date_utc": "2026-05-14T17:00:00+00:00",
+          "date_display": "14/05/26",
+          "home": "Valencia",
+          "away": "Vallecano",
+          "score": "1-1",
+          "scoreline": "Valencia 1-1 Vallecano",
+          "venue": "away",
+          "result": "D",
+          "goals_for": 1,
+          "goals_against": 1
+        },
+        {
+          "match_id": 61624636,
+          "date_utc": "2026-05-11T19:00:00+00:00",
+          "date_display": "11/05/26",
+          "home": "Vallecano",
+          "away": "Girona",
+          "score": "1-1",
+          "scoreline": "Vallecano 1-1 Girona",
+          "venue": "home",
+          "result": "D",
+          "goals_for": 1,
+          "goals_against": 1
+        },
+        {
+          "match_id": 69340064,
+          "date_utc": "2026-05-07T19:00:00+00:00",
+          "date_display": "07/05/26",
+          "home": "Strasbourg Alsace",
+          "away": "Vallecano",
+          "score": "0-1",
+          "scoreline": "Strasbourg Alsace 0-1 Vallecano",
+          "venue": "away",
+          "result": "W",
+          "goals_for": 1,
+          "goals_against": 0
+        }
+      ]
+    }
+  },
+  "h2h": {
+    "edge_label": "Vallecano",
+    "edge_value": -0.4,
+    "summary": {
+      "total_matches": 10,
+      "home_team_wins": 3,
+      "away_team_wins": 7,
+      "draws": 0
+    },
+    "recent_matches": [
+      {
+        "match_id": 61624678,
+        "date_utc": "2026-05-23T19:00:00+00:00",
+        "date_display": "23/05/26",
+        "home": "Alaves",
+        "away": "Vallecano",
+        "score": "1-2",
+        "scoreline": "Alaves 1-2 Vallecano",
+        "venue": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      },
+      {
+        "match_id": 67539502,
+        "date_utc": "2026-01-14T20:00:00+00:00",
+        "date_display": "14/01/26",
+        "home": "Alaves",
+        "away": "Vallecano",
+        "score": "2-0",
+        "scoreline": "Alaves 2-0 Vallecano",
+        "venue": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      },
+      {
+        "match_id": 61624126,
+        "date_utc": "2025-10-26T20:00:00+00:00",
+        "date_display": "26/10/25",
+        "home": "Vallecano",
+        "away": "Alaves",
+        "score": "1-0",
+        "scoreline": "Vallecano 1-0 Alaves",
+        "venue": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      },
+      {
+        "match_id": 50852653,
+        "date_utc": "2025-03-29T17:30:00+00:00",
+        "date_display": "29/03/25",
+        "home": "Alaves",
+        "away": "Vallecano",
+        "score": "0-2",
+        "scoreline": "Alaves 0-2 Vallecano",
+        "venue": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      },
+      {
+        "match_id": 50852299,
+        "date_utc": "2024-10-26T14:15:00+00:00",
+        "date_display": "26/10/24",
+        "home": "Vallecano",
+        "away": "Alaves",
+        "score": "1-0",
+        "scoreline": "Vallecano 1-0 Alaves",
+        "venue": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      },
+      {
+        "match_id": 41893455,
+        "date_utc": "2024-03-10T13:00:00+00:00",
+        "date_display": "10/03/24",
+        "home": "Alaves",
+        "away": "Vallecano",
+        "score": "1-0",
+        "scoreline": "Alaves 1-0 Vallecano",
+        "venue": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      },
+      {
+        "match_id": 41892995,
+        "date_utc": "2023-09-15T19:00:00+00:00",
+        "date_display": "15/09/23",
+        "home": "Vallecano",
+        "away": "Alaves",
+        "score": "2-0",
+        "scoreline": "Vallecano 2-0 Alaves",
+        "venue": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      },
+      {
+        "match_id": 27965786,
+        "date_utc": "2022-04-16T14:15:00+00:00",
+        "date_display": "16/04/22",
+        "home": "Alaves",
+        "away": "Vallecano",
+        "score": "1-0",
+        "scoreline": "Alaves 1-0 Vallecano",
+        "venue": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      }
+    ]
+  },
+  "table_context": {
+    "home": {
+      "team": {
+        "id": 5123,
+        "uid": 2885,
+        "name": "Alaves",
+        "medium_name": "Deportivo Alaves",
+        "abbr": "ALA",
+        "country": null
+      },
+      "position": 14,
+      "played": 38,
+      "points": 43,
+      "points_per_match": 1.1316,
+      "goals_for": 44,
+      "goals_against": 56,
+      "goal_difference": -12,
+      "position_display": "14th (43 pts, 38P)"
+    },
+    "away": {
+      "team": {
+        "id": 5121,
+        "uid": 2818,
+        "name": "Vallecano",
+        "medium_name": "Rayo Vallecano",
+        "abbr": "RVC",
+        "country": null
+      },
+      "position": 8,
+      "played": 38,
+      "points": 50,
+      "points_per_match": 1.3158,
+      "goals_for": 41,
+      "goals_against": 44,
+      "goal_difference": -3,
+      "position_display": "8th (50 pts, 38P)"
+    },
+    "summary": {
+      "position_gap": -6.0,
+      "points_gap": -7.0,
+      "goal_difference_gap": -9.0
+    }
+  },
+  "strength_indexes": {
+    "home_attack_strength_raw": 1.421053,
+    "away_attack_strength_raw": 1.105263,
+    "home_strength_10": 5.21,
+    "away_strength_10": 4.15,
+    "home_defense_weakness_10": 5.26,
+    "away_defense_weakness_10": 6.11,
+    "home_advantage_context": {
+      "attack_strength_home": 1.421053,
+      "attack_strength_away": 1.105263,
+      "table_position_gap": -6.0,
+      "form_gap": -4.0
+    }
+  },
+  "injuries": {
+    "home": [
+      {
+        "player_name": "Pacheco, Jon",
+        "status": "Injured",
+        "missing": true,
+        "doubtful": false
+      }
+    ],
+    "away": [
+      {
+        "player_name": "Felipe, Luiz",
+        "status": "Injured",
+        "missing": true,
+        "doubtful": false
+      },
+      {
+        "player_name": "Akhomach, Ilias",
+        "status": "Injured",
+        "missing": true,
+        "doubtful": false
+      }
+    ],
+    "home_count": 1,
+    "away_count": 2
+  },
+  "goal_context": {
+    "goals_avg_scored": {
+      "general": {
+        "home_team": 1.1578947368421053,
+        "away_team": 1.0789473684210527
+      },
+      "home_away_split": {
+        "home_team_home": 1.3157894736842106,
+        "away_team_away": 0.8947368421052632
+      }
+    },
+    "goals_avg_conceded": {
+      "general": {
+        "home_team": 1.4736842105263157,
+        "away_team": 1.1578947368421053
+      },
+      "home_away_split": {
+        "home_team_home": 1.3157894736842106,
+        "away_team_away": 1.5263157894736843
+      }
+    },
+    "btts_rate": 0.552632,
+    "over_tendency_index": 1.263158,
+    "goal_timing_expectation": {
+      "league_average_minute": null,
+      "projected_home_goal_pressure_minute": 62.76,
+      "projected_away_goal_pressure_minute": 73.04
+    }
+  },
+  "players": {
+    "home": {
+      "top_scorer": {
+        "player_id": 547244,
+        "player_name": "Martinez, Toni",
+        "total": 0,
+        "home": null,
+        "away": null,
+        "teams": {
+          "2885": {
+            "active": true,
+            "lastevent": "2026-05-23 19:13:42",
+            "started": 32,
+            "goals": 14,
+            "matches": 37,
+            "penalties": 1,
+            "goal_points": 17,
+            "minutes_played": 2728,
+            "substituted_in": 5,
+            "first_goals": 4,
+            "last_goals": 5,
+            "shirtnumber": "11"
+          }
+        }
+      },
+      "top_cards": {
+        "player_id": 1749365,
+        "player_name": "Parada, Victor",
+        "total": 0,
+        "home": null,
+        "away": null,
+        "teams": {
+          "2885": {
+            "active": true,
+            "lastevent": "2026-05-23 19:33:46",
+            "started": 25,
+            "yellow_cards": 7,
+            "yellowred_cards": 1,
+            "matches": 30,
+            "minutes_played": 2152,
+            "substituted_in": 5,
+            "number_of_cards_1st_half": 4,
+            "number_of_cards_2nd_half": 5,
+            "shirtnumber": "24"
+          }
+        }
+      },
+      "top_assists": {
+        "player_id": 2733402,
+        "player_name": "Hidalgo, Angel",
+        "total": 0,
+        "home": null,
+        "away": null,
+        "teams": {
+          "2885": {
+            "active": true,
+            "lastevent": "2026-05-23 19:13:42",
+            "started": 14,
+            "matches": 16,
+            "assists": 4,
+            "minutes_played": 1292,
+            "substituted_in": 2,
+            "shirtnumber": "7"
+          }
+        }
+      }
+    },
+    "away": {
+      "top_scorer": {
+        "player_id": 1793402,
+        "player_name": "De Frutos, Jorge",
+        "total": 0,
+        "home": null,
+        "away": null,
+        "teams": {
+          "2818": {
+            "active": true,
+            "lastevent": "2026-05-23 20:05:06",
+            "started": 31,
+            "goals": 10,
+            "matches": 36,
+            "penalties": 1,
+            "goal_points": 11,
+            "minutes_played": 2485,
+            "substituted_in": 5,
+            "first_goals": 6,
+            "last_goals": 1,
+            "shirtnumber": "19"
+          }
+        }
+      },
+      "top_cards": {
+        "player_id": 1247646,
+        "player_name": "Ciss, Pathe",
+        "total": 0,
+        "home": null,
+        "away": null,
+        "teams": {
+          "2818": {
+            "active": true,
+            "lastevent": "2026-05-23 20:26:05",
+            "started": 20,
+            "yellow_cards": 9,
+            "red_cards": 2,
+            "matches": 29,
+            "minutes_played": 1995,
+            "substituted_in": 9,
+            "number_of_cards_1st_half": 1,
+            "number_of_cards_2nd_half": 10,
+            "shirtnumber": "6"
+          }
+        }
+      },
+      "top_assists": {
+        "player_id": 345111,
+        "player_name": "Garcia, Alvaro",
+        "total": 0,
+        "home": null,
+        "away": null,
+        "teams": {
+          "2818": {
+            "active": true,
+            "lastevent": "2026-05-23 20:05:06",
+            "started": 23,
+            "matches": 32,
+            "assists": 5,
+            "minutes_played": 2107,
+            "substituted_in": 9,
+            "shirtnumber": "18"
+          }
+        }
+      }
+    }
+  },
+  "traceability": {
+    "direct_h2h": [
+      {
+        "match_id": 61624678,
+        "date_utc": "2026-05-23T19:00:00+00:00",
+        "date_display": "23/05/26",
+        "home": "Alaves",
+        "away": "Vallecano",
+        "score": "1-2",
+        "scoreline": "Alaves 1-2 Vallecano",
+        "venue": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      },
+      {
+        "match_id": 67539502,
+        "date_utc": "2026-01-14T20:00:00+00:00",
+        "date_display": "14/01/26",
+        "home": "Alaves",
+        "away": "Vallecano",
+        "score": "2-0",
+        "scoreline": "Alaves 2-0 Vallecano",
+        "venue": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      },
+      {
+        "match_id": 61624126,
+        "date_utc": "2025-10-26T20:00:00+00:00",
+        "date_display": "26/10/25",
+        "home": "Vallecano",
+        "away": "Alaves",
+        "score": "1-0",
+        "scoreline": "Vallecano 1-0 Alaves",
+        "venue": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      },
+      {
+        "match_id": 50852653,
+        "date_utc": "2025-03-29T17:30:00+00:00",
+        "date_display": "29/03/25",
+        "home": "Alaves",
+        "away": "Vallecano",
+        "score": "0-2",
+        "scoreline": "Alaves 0-2 Vallecano",
+        "venue": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      },
+      {
+        "match_id": 50852299,
+        "date_utc": "2024-10-26T14:15:00+00:00",
+        "date_display": "26/10/24",
+        "home": "Vallecano",
+        "away": "Alaves",
+        "score": "1-0",
+        "scoreline": "Vallecano 1-0 Alaves",
+        "venue": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      },
+      {
+        "match_id": 41893455,
+        "date_utc": "2024-03-10T13:00:00+00:00",
+        "date_display": "10/03/24",
+        "home": "Alaves",
+        "away": "Vallecano",
+        "score": "1-0",
+        "scoreline": "Alaves 1-0 Vallecano",
+        "venue": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      },
+      {
+        "match_id": 41892995,
+        "date_utc": "2023-09-15T19:00:00+00:00",
+        "date_display": "15/09/23",
+        "home": "Vallecano",
+        "away": "Alaves",
+        "score": "2-0",
+        "scoreline": "Vallecano 2-0 Alaves",
+        "venue": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      },
+      {
+        "match_id": 27965786,
+        "date_utc": "2022-04-16T14:15:00+00:00",
+        "date_display": "16/04/22",
+        "home": "Alaves",
+        "away": "Vallecano",
+        "score": "1-0",
+        "scoreline": "Alaves 1-0 Vallecano",
+        "venue": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      }
+    ],
+    "common_opponents": [],
+    "notes": [
+      "Direct H2H sample favors Vallecano; inspect dates before weighting it heavily."
+    ],
+    "home_team": "Alaves",
+    "away_team": "Vallecano"
+  },
+  "live_context": {
+    "score_state": "away_leading",
+    "pressure": {
+      "home": 0.5,
+      "away": 0.5
+    },
+    "timeline_event_count": 192,
+    "status": "Ended"
+  },
+  "feature_quality": {
+    "data_completeness": 1.0,
+    "has_metadata": true,
+    "has_odds_endpoint": true,
+    "has_priced_odds": false,
+    "has_table": true,
+    "has_match_details": true,
+    "has_team_form": true,
+    "has_team_scoring": true,
+    "has_h2h": true,
+    "has_live_state": true,
+    "missing_important_endpoints": []
+  },
+  "metric_notes": {
+    "form_rating_10": "recent_points / max_possible_points * 10",
+    "strength_10": "average of attack context score and inverse defensive weakness score; bounded 0..10",
+    "attack_context": "raw goals context, not probability",
+    "h2h_dates": "historical match evidence must always include dates",
+    "traceability": "common-opponent evidence is context only; it is not a prediction"
+  },
+  "report_summary": "Alaves vs Vallecano\n\n- Form: 5.56/10 vs 7.78/10\n- H2H edge: Vallecano (-0.4)\n  - 23/05/26: Alaves 1-2 Vallecano\n  - 14/01/26: Alaves 2-0 Vallecano\n  - 26/10/25: Vallecano 1-0 Alaves\n  - 29/03/25: Alaves 0-2 Vallecano\n  - 26/10/24: Vallecano 1-0 Alaves\n\n- Goals avg scored:\n  - general: Alaves=1.16 | Vallecano=1.08\n  - home/away split: Alaves home=1.32 | Vallecano away=0.89\n- Goals avg conceded:\n  - general: Alaves=1.47 | Vallecano=1.16\n  - split: Alaves home=1.32 | Vallecano away=1.53\n- BTTS: 55%\n- Home strength: 5.21/10\n- Away weakness: 6.11/10\n\n- Last 5:\n  - Alaves: L W W D L W\n    - 23/05/26: Alaves 1-2 Vallecano\n    - 17/05/26: Oviedo 0-1 Alaves\n    - 13/05/26: Alaves 1-0 Barcelona\n    - 09/05/26: Elche 1-1 Alaves\n    - 02/05/26: Alaves 2-4 Bilbao\n  - Vallecano: W W D D W W\n    - 23/05/26: Alaves 1-2 Vallecano\n    - 17/05/26: Vallecano 2-0 Villarreal\n    - 14/05/26: Valencia 1-1 Vallecano\n    - 11/05/26: Vallecano 1-1 Girona\n    - 07/05/26: Strasbourg Alsace 0-1 Vallecano\n- Table: 14th (43 pts, 38P) vs 8th (50 pts, 38P)\n- Top scorer: Alaves: Martinez, Toni (0) | Vallecano: De Frutos, Jorge (0)\n- Injuries: Alaves=1 | Vallecano=2\n- Goal timing expectation:\n  - projected Alaves pressure minute: 62.76\n  - projected Vallecano pressure minute: 73.04\n- Traceability:\n  - Direct H2H sample favors Vallecano; inspect dates before weighting it heavily."
+}

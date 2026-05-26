@@ -28,6 +28,7 @@ Phase 2 is implemented in `http_client.py`.
 Phase 3 endpoint wrappers live in `endpoints/`.
 Phase 4 league snapshots/features live in `run_league_pipeline.py`.
 Phase 5 match snapshots/features live in `run_match_pipeline.py`.
+The stable bot-ready match intelligence schema lives in `match_intelligence.py`.
 
 ## Run Phase 1 Bootstrap
 
@@ -208,7 +209,9 @@ Outputs:
 
 - `match_snapshot.json`
 - `match_features.json`
+- `match_intelligence.json`
 - `match_report.md`
+- `match_intelligence_report.md`
 
 Current match pipeline endpoints:
 
@@ -239,6 +242,23 @@ The report explicitly distinguishes:
 
 This matters because ended matches can have full stats and live history while
 returning an empty `match_markets` payload.
+
+`match_intelligence.json` is the compact interface intended for future BetBot
+presentation. It keeps Telegram rendering out of the data layer and exposes:
+
+- teams, competition, kickoff, status, and score
+- form ratings with dated last matches
+- H2H edge with dated historical matches
+- table context
+- strength indexes
+- injuries
+- goal context
+- top players
+- traceability evidence
+- a compact `report_summary`
+
+Historical evidence in H2H and traceability always includes dates because stale
+results should not be weighted the same as recent matches.
 
 ## Bot-Ready Adapter
 
