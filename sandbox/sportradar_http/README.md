@@ -24,6 +24,7 @@ browser bootstrap -> signed token/cookies/headers -> HTTP replay client
 ## Current Status
 
 Phase 1 is implemented in `session_manager.py`.
+Phase 2 is implemented in `http_client.py`.
 
 ## Run Phase 1 Bootstrap
 
@@ -55,12 +56,13 @@ Outputs:
 
 ```python
 from sandbox.sportradar_http.session_manager import BootstrapConfig, SportradarSessionManager
+from sandbox.sportradar_http.http_client import SportradarHTTPClient
 
 manager = SportradarSessionManager(BootstrapConfig(headed=True))
 state = manager.refresh_session()
 
-with manager.get_http_session(refresh_if_needed=False) as client:
-    response = client.get(state.sample_signed_url)
+client = SportradarHTTPClient(session_state=state, session_manager=manager)
+payload = client.get_gismo("match_markets/61624678")
 ```
 
 The returned HTTP client is configured with:
@@ -76,3 +78,24 @@ The returned HTTP client is configured with:
 - This phase does not generate or crack signed tokens.
 - Headless bootstrap can be blocked with 403 depending on environment.
 - If the token expires, `refresh_session()` must run browser bootstrap again.
+
+## HTTP Client Behavior
+
+`SportradarHTTPClient` does pure HTTP replay and does not import Playwright.
+It can refresh only through a provided `SportradarSessionManager`.
+
+It detects:
+
+- blocked JSON payloads
+- expired token/signature payloads
+- empty payloads
+- invalid JSON
+- HTTP errors
+
+It tracks:
+
+- request count
+- success/block/expired counts
+- retry count
+- refresh count
+- endpoint timing summaries

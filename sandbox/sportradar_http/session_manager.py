@@ -161,13 +161,19 @@ class SignedToken:
         parsed = parse_signed_t_from_url(url)
         if not parsed:
             return None
+        return signed_token_from_parsed(parsed)
+
+    @classmethod
+    def from_json_dict(cls, payload: dict[str, Any] | None) -> "SignedToken | None":
+        if not isinstance(payload, dict) or not payload.get("raw"):
+            return None
         return cls(
-            raw=str(parsed.get("raw") or ""),
-            exp=parsed.get("exp"),
-            expires_at_utc=parsed.get("expires_at_utc"),
-            acl=parsed.get("acl"),
-            data_json=parsed.get("data_json"),
-            hmac=parsed.get("hmac"),
+            raw=str(payload.get("raw") or ""),
+            exp=_safe_int(payload.get("exp")),
+            expires_at_utc=payload.get("expires_at_utc"),
+            acl=payload.get("acl"),
+            data_json=payload.get("data_json"),
+            hmac=payload.get("hmac"),
         )
 
     def seconds_until_expiration(self, now: datetime | None = None) -> float | None:
@@ -238,6 +244,40 @@ class SportradarSessionState:
         payload["is_usable"] = self.is_usable()
         payload["token_expiration"] = self.token_expiration()
         return payload
+
+    @classmethod
+    def from_json_dict(cls, payload: dict[str, Any]) -> "SportradarSessionState":
+        return cls(
+            generated_at=str(payload.get("generated_at") or utc_now_iso()),
+            headed=bool(payload.get("headed")),
+            headless=bool(payload.get("headless")),
+            bootstrap_urls=[str(item) for item in payload.get("bootstrap_urls") or []],
+            origin=str(payload.get("origin") or DEFAULT_ORIGIN),
+            referer=str(payload.get("referer") or DEFAULT_REFERER),
+            replay_headers={str(k): str(v) for k, v in (payload.get("replay_headers") or {}).items()},
+            cookies={str(k): str(v) for k, v in (payload.get("cookies") or {}).items()},
+            signed_token=SignedToken.from_json_dict(payload.get("signed_token")),
+            sample_signed_url=payload.get("sample_signed_url"),
+            endpoints_seen=[str(item) for item in payload.get("endpoints_seen") or []],
+            captured_endpoints=[
+                CapturedEndpoint(
+                    endpoint_key=str(item.get("endpoint_key") or ""),
+                    url=str(item.get("url") or ""),
+                    status=_safe_int(item.get("status")),
+                    body_size_bytes=_safe_int(item.get("body_size_bytes")) or 0,
+                    blocked=bool(item.get("blocked")),
+                    expired=bool(item.get("expired")),
+                    elapsed_ms=float(item.get("elapsed_ms") or 0),
+                )
+                for item in payload.get("captured_endpoints") or []
+                if isinstance(item, dict)
+            ],
+            document_statuses={str(k): int(v) for k, v in (payload.get("document_statuses") or {}).items()},
+            fetch_count=_safe_int(payload.get("fetch_count")) or 0,
+            blocked_count=_safe_int(payload.get("blocked_count")) or 0,
+            expired_count=_safe_int(payload.get("expired_count")) or 0,
+            error=payload.get("error"),
+        )
 
 
 class SportradarSessionManager:
@@ -410,6 +450,26 @@ def build_replay_headers(request_headers_by_url: dict[str, dict[str, str]] | Non
     return dict(sorted(headers.items()))
 
 
+def signed_token_from_parsed(parsed: dict[str, Any]) -> SignedToken:
+    return SignedToken(
+        raw=str(parsed.get("raw") or ""),
+        exp=_safe_int(parsed.get("exp")),
+        expires_at_utc=parsed.get("expires_at_utc"),
+        acl=parsed.get("acl"),
+        data_json=parsed.get("data_json"),
+        hmac=parsed.get("hmac"),
+    )
+
+
+def load_session_state(path: Path) -> SportradarSessionState:
+    return SportradarSessionState.from_json_dict(json.loads(path.read_text(encoding="utf-8")))
+
+
+def save_session_state(state: SportradarSessionState, path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(state.to_json_dict(), ensure_ascii=False, indent=2), encoding="utf-8")
+
+
 def render_session_bootstrap_report(states: list[SportradarSessionState]) -> str:
     lines = [
         "# Sportradar Session Bootstrap Report",
@@ -524,4 +584,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
