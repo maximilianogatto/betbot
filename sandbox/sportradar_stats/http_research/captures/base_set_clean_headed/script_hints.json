@@ -1,0 +1,5090 @@
+[
+  {
+    "captured_at": "2026-05-26T03:37:52.871873+00:00",
+    "elapsed_ms": 1580.58,
+    "url": "https://statshub.sportradar.com/assets/manifest-4ab9f200.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 295817,
+    "hits": [
+      "T=",
+      "clientFetching",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:52.875186+00:00",
+    "elapsed_ms": 1583.89,
+    "url": "https://statshub.sportradar.com/assets/entry.client-CP-7xNdH.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 188904,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:52.876078+00:00",
+    "elapsed_ms": 1584.78,
+    "url": "https://statshub.sportradar.com/assets/jsx-runtime-u17CrQMm.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 479,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:52.886657+00:00",
+    "elapsed_ms": 1595.36,
+    "url": "https://statshub.sportradar.com/assets/cctx-9hrVtq6f.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 130086,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:52.889202+00:00",
+    "elapsed_ms": 1597.9,
+    "url": "https://statshub.sportradar.com/assets/index-BMSzAbFv.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3697,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:52.889663+00:00",
+    "elapsed_ms": 1598.36,
+    "url": "https://statshub.sportradar.com/assets/log-vS1IiFRP.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 12451,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:52.890456+00:00",
+    "elapsed_ms": 1599.15,
+    "url": "https://statshub.sportradar.com/assets/root-BFx5E5Di.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 60709,
+    "hits": [
+      "T=",
+      "exp=",
+      "data=",
+      "token",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:52.891263+00:00",
+    "elapsed_ms": 1599.96,
+    "url": "https://statshub.sportradar.com/assets/preload-helper-HAdMZFT3.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1142,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:52.951456+00:00",
+    "elapsed_ms": 1660.16,
+    "url": "https://statshub.sportradar.com/assets/sports-BEIbR-MV.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 5142,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:52.970829+00:00",
+    "elapsed_ms": 1679.53,
+    "url": "https://statshub.sportradar.com/assets/queryClient-D1hinhfh.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 11837,
+    "hits": [
+      "T=",
+      "queryKey"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:52.976810+00:00",
+    "elapsed_ms": 1685.52,
+    "url": "https://statshub.sportradar.com/assets/index-B3nvECrx.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 279316,
+    "hits": [
+      "T=",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:52.977732+00:00",
+    "elapsed_ms": 1686.43,
+    "url": "https://statshub.sportradar.com/assets/feeds-kqyLKZ1L.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 32626,
+    "hits": [
+      "gismo",
+      "T=",
+      "data=",
+      "token",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:52.991937+00:00",
+    "elapsed_ms": 1700.64,
+    "url": "https://statshub.sportradar.com/assets/useQuery-CrkIWv18.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 27619,
+    "hits": [
+      "T=",
+      "data=",
+      "queryKey"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:52.992560+00:00",
+    "elapsed_ms": 1701.26,
+    "url": "https://statshub.sportradar.com/assets/index-SHWFpG9X.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 36558,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:52.993360+00:00",
+    "elapsed_ms": 1702.06,
+    "url": "https://statshub.sportradar.com/assets/useGlobalSearchModal-u7FEI-09.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3581,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:52.993994+00:00",
+    "elapsed_ms": 1702.7,
+    "url": "https://statshub.sportradar.com/assets/index-MbJ_g_lc.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2893,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:52.994860+00:00",
+    "elapsed_ms": 1703.56,
+    "url": "https://statshub.sportradar.com/assets/index-CLCyeunt.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 42741,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:52.998474+00:00",
+    "elapsed_ms": 1707.19,
+    "url": "https://statshub.sportradar.com/assets/theme-provider-BCfDGCqo.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1563,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.002472+00:00",
+    "elapsed_ms": 1711.19,
+    "url": "https://statshub.sportradar.com/assets/tooltip-DI9wWIWd.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 8849,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.004100+00:00",
+    "elapsed_ms": 1712.8,
+    "url": "https://statshub.sportradar.com/assets/index-DzTgh3Fp.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 34727,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.015479+00:00",
+    "elapsed_ms": 1724.19,
+    "url": "https://statshub.sportradar.com/assets/searchParams-nq6b4Qj7.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 524,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.036374+00:00",
+    "elapsed_ms": 1745.1,
+    "url": "https://statshub.sportradar.com/assets/utils-CHO1U1pH.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1210,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.051638+00:00",
+    "elapsed_ms": 1760.34,
+    "url": "https://statshub.sportradar.com/assets/bundle-mjs-CtSUGAHZ.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 19929,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.150996+00:00",
+    "elapsed_ms": 1859.71,
+    "url": "https://statshub.sportradar.com/assets/checkboxItem-CwwvPgRx.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4455,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.151609+00:00",
+    "elapsed_ms": 1860.32,
+    "url": "https://statshub.sportradar.com/assets/index-DSuwrbjE.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 5501,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.153103+00:00",
+    "elapsed_ms": 1861.81,
+    "url": "https://statshub.sportradar.com/assets/_root-CCPxQIbV.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 133577,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.153998+00:00",
+    "elapsed_ms": 1862.71,
+    "url": "https://statshub.sportradar.com/assets/index-CUpSl1gb.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 714,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.154914+00:00",
+    "elapsed_ms": 1863.62,
+    "url": "https://statshub.sportradar.com/assets/HideInTerminalMode-1RsxjNdy.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 212,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.155356+00:00",
+    "elapsed_ms": 1864.06,
+    "url": "https://statshub.sportradar.com/assets/notification-9HH8YUpI.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3435,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.156184+00:00",
+    "elapsed_ms": 1864.89,
+    "url": "https://statshub.sportradar.com/assets/index-CrRhl4n3.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1013,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.156594+00:00",
+    "elapsed_ms": 1865.3,
+    "url": "https://statshub.sportradar.com/assets/debounce-Bhc8v5l_.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1301,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.158676+00:00",
+    "elapsed_ms": 1867.39,
+    "url": "https://statshub.sportradar.com/assets/getSelectedItemById-CcdDM0v5.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3493,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.159904+00:00",
+    "elapsed_ms": 1868.61,
+    "url": "https://statshub.sportradar.com/assets/itemContent-OBUpMvFP.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1424,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.160353+00:00",
+    "elapsed_ms": 1869.06,
+    "url": "https://statshub.sportradar.com/assets/popover-DebLU-P5.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 7236,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.160842+00:00",
+    "elapsed_ms": 1869.55,
+    "url": "https://statshub.sportradar.com/assets/usePrevious-Dr-R-612.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 186,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.161335+00:00",
+    "elapsed_ms": 1870.04,
+    "url": "https://statshub.sportradar.com/assets/useNavigationState-Cc1umZs0.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 34789,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.162158+00:00",
+    "elapsed_ms": 1870.87,
+    "url": "https://statshub.sportradar.com/assets/match-sorter.esm-Ba8jnwbX.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 6737,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.178605+00:00",
+    "elapsed_ms": 1887.31,
+    "url": "https://statshub.sportradar.com/assets/clsx-B-dksMZM.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 374,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.190593+00:00",
+    "elapsed_ms": 1899.3,
+    "url": "https://statshub.sportradar.com/assets/isObject--vsEa_js.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 142,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.191084+00:00",
+    "elapsed_ms": 1899.79,
+    "url": "https://statshub.sportradar.com/assets/isObjectLike-BbhGzjrN.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1104,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.192884+00:00",
+    "elapsed_ms": 1901.6,
+    "url": "https://statshub.sportradar.com/assets/toNumber-Bi8TxR4s.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 758,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.201535+00:00",
+    "elapsed_ms": 1910.27,
+    "url": "https://statshub.sportradar.com/assets/isSymbol-Cs8niHAp.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 213,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.202413+00:00",
+    "elapsed_ms": 1911.12,
+    "url": "https://statshub.sportradar.com/assets/createTournamentSafeLinkProps-BQIAzMf9.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1941,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.203548+00:00",
+    "elapsed_ms": 1912.26,
+    "url": "https://statshub.sportradar.com/assets/getSportIdFromUrl-C89YURJG.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 149,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.204004+00:00",
+    "elapsed_ms": 1912.71,
+    "url": "https://statshub.sportradar.com/assets/index-CqCeMipP.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4576,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.204919+00:00",
+    "elapsed_ms": 1913.63,
+    "url": "https://statshub.sportradar.com/assets/matchRadarWrapper-D5MvKprD.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 6879,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.205398+00:00",
+    "elapsed_ms": 1914.11,
+    "url": "https://statshub.sportradar.com/assets/index-BgLtMKHt.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 35261,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.206046+00:00",
+    "elapsed_ms": 1914.76,
+    "url": "https://statshub.sportradar.com/assets/parseMatch-D2YlIx0b.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 27557,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.206526+00:00",
+    "elapsed_ms": 1915.23,
+    "url": "https://statshub.sportradar.com/assets/serverNow-BrfgyQjB.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 91,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.206952+00:00",
+    "elapsed_ms": 1915.66,
+    "url": "https://statshub.sportradar.com/assets/isNumber-C_syycjq.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 275,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.207418+00:00",
+    "elapsed_ms": 1916.13,
+    "url": "https://statshub.sportradar.com/assets/generateMeta-Bfbgru7h.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 565,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.216241+00:00",
+    "elapsed_ms": 1924.96,
+    "url": "https://statshub.sportradar.com/assets/getStageStatus-D7ceGM9E.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1228,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.217425+00:00",
+    "elapsed_ms": 1926.13,
+    "url": "https://statshub.sportradar.com/assets/matchListAccordion-DmI7-DMN.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4527,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.220016+00:00",
+    "elapsed_ms": 1928.72,
+    "url": "https://statshub.sportradar.com/assets/identity-BulHCW4c.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2414,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.220827+00:00",
+    "elapsed_ms": 1929.54,
+    "url": "https://statshub.sportradar.com/assets/_MapCache-pzWZC8bR.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3794,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.221323+00:00",
+    "elapsed_ms": 1930.03,
+    "url": "https://statshub.sportradar.com/assets/matchList-nPRbOhTZ.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4100,
+    "hits": [
+      "T=",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.222344+00:00",
+    "elapsed_ms": 1931.05,
+    "url": "https://statshub.sportradar.com/assets/index-sjjE83xj.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 95254,
+    "hits": [
+      "T=",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.223787+00:00",
+    "elapsed_ms": 1932.5,
+    "url": "https://statshub.sportradar.com/assets/matchListVisibilityWrapper-CUffScYp.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 18734,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.224192+00:00",
+    "elapsed_ms": 1932.9,
+    "url": "https://statshub.sportradar.com/assets/getMatchesWithDeferredOdds-DVui2kRf.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 497,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.224653+00:00",
+    "elapsed_ms": 1933.36,
+    "url": "https://statshub.sportradar.com/assets/_Map-Dhq4yhoZ.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1529,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.225508+00:00",
+    "elapsed_ms": 1934.22,
+    "url": "https://statshub.sportradar.com/assets/constant-BfiDtQIV.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 110,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.236902+00:00",
+    "elapsed_ms": 1945.62,
+    "url": "https://statshub.sportradar.com/assets/isTypedArray-DwAeGphA.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2719,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.237801+00:00",
+    "elapsed_ms": 1946.51,
+    "url": "https://statshub.sportradar.com/assets/extractNonStandardPeriodKeys-CixO1JhG.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 96,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.238219+00:00",
+    "elapsed_ms": 1946.93,
+    "url": "https://statshub.sportradar.com/assets/toDate-SX-ecmdR.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 260,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.239078+00:00",
+    "elapsed_ms": 1947.79,
+    "url": "https://statshub.sportradar.com/assets/button-DT-jRGFv.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 10162,
+    "hits": [
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.239916+00:00",
+    "elapsed_ms": 1948.63,
+    "url": "https://statshub.sportradar.com/assets/matchListRoute-CDXuIZQl.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1455,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.249436+00:00",
+    "elapsed_ms": 1958.15,
+    "url": "https://statshub.sportradar.com/assets/emptyDay-18K5O8zD.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3297,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.249923+00:00",
+    "elapsed_ms": 1958.63,
+    "url": "https://statshub.sportradar.com/assets/sportBreadcrumb-Ba8NoBib.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1441,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.250373+00:00",
+    "elapsed_ms": 1959.08,
+    "url": "https://statshub.sportradar.com/assets/entityBreadcrumbs-DdAK1WcG.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 7258,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.251626+00:00",
+    "elapsed_ms": 1960.33,
+    "url": "https://statshub.sportradar.com/assets/datePicker-vk1WGVoM.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 5759,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.252075+00:00",
+    "elapsed_ms": 1960.78,
+    "url": "https://statshub.sportradar.com/assets/index-gED_PWnb.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 9143,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.895037+00:00",
+    "elapsed_ms": 2603.77,
+    "url": "https://statshub.sportradar.com/assets/index.config-BvBiFzGd.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 5087,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.895648+00:00",
+    "elapsed_ms": 2604.38,
+    "url": "https://statshub.sportradar.com/assets/common.betAssist.config-DVHDPf55.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 15712,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.896107+00:00",
+    "elapsed_ms": 2604.84,
+    "url": "https://statshub.sportradar.com/assets/isAtpRelatedTournament-B2UmwwiS.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 575,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.897935+00:00",
+    "elapsed_ms": 2606.68,
+    "url": "https://statshub.sportradar.com/assets/index-qa5fqdmy.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 16830,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.906732+00:00",
+    "elapsed_ms": 2615.46,
+    "url": "https://statshub.sportradar.com/assets/getPercentage-H-iKpnOn.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 224,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.907206+00:00",
+    "elapsed_ms": 2615.94,
+    "url": "https://statshub.sportradar.com/assets/index-CcrU_IL7.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1291,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.908071+00:00",
+    "elapsed_ms": 2616.8,
+    "url": "https://statshub.sportradar.com/assets/getRoundName-CeWmM9UV.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 240,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.908955+00:00",
+    "elapsed_ms": 2617.69,
+    "url": "https://statshub.sportradar.com/assets/common.headToHead.config-C1eVDh9E.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 9453,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.909384+00:00",
+    "elapsed_ms": 2618.11,
+    "url": "https://statshub.sportradar.com/assets/addYears-D9W7t3wI.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 351,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.909806+00:00",
+    "elapsed_ms": 2618.54,
+    "url": "https://statshub.sportradar.com/assets/winProbability-C6M7kvEB.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1786,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.910320+00:00",
+    "elapsed_ms": 2619.05,
+    "url": "https://statshub.sportradar.com/assets/winProbability-_qIh1qy_.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3329,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:53.910911+00:00",
+    "elapsed_ms": 2619.64,
+    "url": "https://statshub.sportradar.com/assets/common.statistics.config-DMKPAP5t.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 28630,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:54.026959+00:00",
+    "elapsed_ms": 2735.7,
+    "url": "https://statshub.sportradar.com/assets/index-Cd8819r7.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4296,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:54.028576+00:00",
+    "elapsed_ms": 2737.31,
+    "url": "https://statshub.sportradar.com/assets/eventTypeIds-BCOm-FH0.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2820,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:37:54.029080+00:00",
+    "elapsed_ms": 2737.82,
+    "url": "https://statshub.sportradar.com/assets/index-Ci5FuErU.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1344,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.352757+00:00",
+    "elapsed_ms": 9061.71,
+    "url": "https://statshub.sportradar.com/assets/manifest-4ab9f200.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 295817,
+    "hits": [
+      "T=",
+      "clientFetching",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.353343+00:00",
+    "elapsed_ms": 9062.29,
+    "url": "https://statshub.sportradar.com/assets/jsx-runtime-u17CrQMm.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 479,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.353834+00:00",
+    "elapsed_ms": 9062.78,
+    "url": "https://statshub.sportradar.com/assets/index-BMSzAbFv.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3697,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.354733+00:00",
+    "elapsed_ms": 9063.68,
+    "url": "https://statshub.sportradar.com/assets/sports-BEIbR-MV.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 5142,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.355173+00:00",
+    "elapsed_ms": 9064.12,
+    "url": "https://statshub.sportradar.com/assets/preload-helper-HAdMZFT3.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1142,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.355615+00:00",
+    "elapsed_ms": 9064.56,
+    "url": "https://statshub.sportradar.com/assets/log-vS1IiFRP.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 12451,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.356267+00:00",
+    "elapsed_ms": 9065.21,
+    "url": "https://statshub.sportradar.com/assets/feeds-kqyLKZ1L.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 32626,
+    "hits": [
+      "gismo",
+      "T=",
+      "data=",
+      "token",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.357202+00:00",
+    "elapsed_ms": 9066.15,
+    "url": "https://statshub.sportradar.com/assets/root-BFx5E5Di.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 60709,
+    "hits": [
+      "T=",
+      "exp=",
+      "data=",
+      "token",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.357720+00:00",
+    "elapsed_ms": 9066.66,
+    "url": "https://statshub.sportradar.com/assets/queryClient-D1hinhfh.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 11837,
+    "hits": [
+      "T=",
+      "queryKey"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.360884+00:00",
+    "elapsed_ms": 9069.83,
+    "url": "https://statshub.sportradar.com/assets/useQuery-CrkIWv18.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 27619,
+    "hits": [
+      "T=",
+      "data=",
+      "queryKey"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.361476+00:00",
+    "elapsed_ms": 9070.42,
+    "url": "https://statshub.sportradar.com/assets/index-SHWFpG9X.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 36558,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.366843+00:00",
+    "elapsed_ms": 9075.81,
+    "url": "https://statshub.sportradar.com/assets/entry.client-CP-7xNdH.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 188904,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.387423+00:00",
+    "elapsed_ms": 9096.38,
+    "url": "https://statshub.sportradar.com/assets/cctx-9hrVtq6f.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 130086,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.517600+00:00",
+    "elapsed_ms": 9226.58,
+    "url": "https://statshub.sportradar.com/assets/useGlobalSearchModal-u7FEI-09.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3581,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.518549+00:00",
+    "elapsed_ms": 9227.5,
+    "url": "https://statshub.sportradar.com/assets/index-MbJ_g_lc.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2893,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.532602+00:00",
+    "elapsed_ms": 9241.56,
+    "url": "https://statshub.sportradar.com/assets/index-B3nvECrx.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 279316,
+    "hits": [
+      "T=",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.534370+00:00",
+    "elapsed_ms": 9243.33,
+    "url": "https://statshub.sportradar.com/assets/theme-provider-BCfDGCqo.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1563,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.535324+00:00",
+    "elapsed_ms": 9244.28,
+    "url": "https://statshub.sportradar.com/assets/index-CLCyeunt.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 42741,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.567611+00:00",
+    "elapsed_ms": 9276.57,
+    "url": "https://statshub.sportradar.com/assets/index-DzTgh3Fp.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 34727,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.572412+00:00",
+    "elapsed_ms": 9281.37,
+    "url": "https://statshub.sportradar.com/assets/bundle-mjs-CtSUGAHZ.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 19929,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.572920+00:00",
+    "elapsed_ms": 9281.87,
+    "url": "https://statshub.sportradar.com/assets/searchParams-nq6b4Qj7.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 524,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.574062+00:00",
+    "elapsed_ms": 9283.02,
+    "url": "https://statshub.sportradar.com/assets/tooltip-DI9wWIWd.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 8849,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.576723+00:00",
+    "elapsed_ms": 9285.68,
+    "url": "https://statshub.sportradar.com/assets/utils-CHO1U1pH.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1210,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.579431+00:00",
+    "elapsed_ms": 9288.38,
+    "url": "https://statshub.sportradar.com/assets/index-DSuwrbjE.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 5501,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.599628+00:00",
+    "elapsed_ms": 9308.59,
+    "url": "https://statshub.sportradar.com/assets/_root-CCPxQIbV.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 133577,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.600373+00:00",
+    "elapsed_ms": 9309.33,
+    "url": "https://statshub.sportradar.com/assets/checkboxItem-CwwvPgRx.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4455,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.618154+00:00",
+    "elapsed_ms": 9327.11,
+    "url": "https://statshub.sportradar.com/assets/matchRadarWrapper-D5MvKprD.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 6879,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.619786+00:00",
+    "elapsed_ms": 9328.74,
+    "url": "https://statshub.sportradar.com/assets/index-CUpSl1gb.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 714,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.640077+00:00",
+    "elapsed_ms": 9349.03,
+    "url": "https://statshub.sportradar.com/assets/HideInTerminalMode-1RsxjNdy.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 212,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.640616+00:00",
+    "elapsed_ms": 9349.57,
+    "url": "https://statshub.sportradar.com/assets/notification-9HH8YUpI.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3435,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.645024+00:00",
+    "elapsed_ms": 9353.98,
+    "url": "https://statshub.sportradar.com/assets/index-CrRhl4n3.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1013,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.646111+00:00",
+    "elapsed_ms": 9355.07,
+    "url": "https://statshub.sportradar.com/assets/getSelectedItemById-CcdDM0v5.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3493,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.658881+00:00",
+    "elapsed_ms": 9367.84,
+    "url": "https://statshub.sportradar.com/assets/useNavigationState-Cc1umZs0.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 34789,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.668069+00:00",
+    "elapsed_ms": 9377.03,
+    "url": "https://statshub.sportradar.com/assets/itemContent-OBUpMvFP.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1424,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.668558+00:00",
+    "elapsed_ms": 9377.51,
+    "url": "https://statshub.sportradar.com/assets/popover-DebLU-P5.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 7236,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.670028+00:00",
+    "elapsed_ms": 9378.98,
+    "url": "https://statshub.sportradar.com/assets/usePrevious-Dr-R-612.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 186,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.670490+00:00",
+    "elapsed_ms": 9379.44,
+    "url": "https://statshub.sportradar.com/assets/match-sorter.esm-Ba8jnwbX.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 6737,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.673819+00:00",
+    "elapsed_ms": 9382.77,
+    "url": "https://statshub.sportradar.com/assets/debounce-Bhc8v5l_.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1301,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.674241+00:00",
+    "elapsed_ms": 9383.2,
+    "url": "https://statshub.sportradar.com/assets/clsx-B-dksMZM.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 374,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.675067+00:00",
+    "elapsed_ms": 9384.02,
+    "url": "https://statshub.sportradar.com/assets/isObject--vsEa_js.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 142,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.675540+00:00",
+    "elapsed_ms": 9384.5,
+    "url": "https://statshub.sportradar.com/assets/isObjectLike-BbhGzjrN.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1104,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.675993+00:00",
+    "elapsed_ms": 9384.95,
+    "url": "https://statshub.sportradar.com/assets/toNumber-Bi8TxR4s.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 758,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.676422+00:00",
+    "elapsed_ms": 9385.38,
+    "url": "https://statshub.sportradar.com/assets/isSymbol-Cs8niHAp.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 213,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.677229+00:00",
+    "elapsed_ms": 9386.18,
+    "url": "https://statshub.sportradar.com/assets/createTournamentSafeLinkProps-BQIAzMf9.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1941,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.677626+00:00",
+    "elapsed_ms": 9386.58,
+    "url": "https://statshub.sportradar.com/assets/getSportIdFromUrl-C89YURJG.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 149,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.678047+00:00",
+    "elapsed_ms": 9387.0,
+    "url": "https://statshub.sportradar.com/assets/index-CqCeMipP.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4576,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.680342+00:00",
+    "elapsed_ms": 9389.32,
+    "url": "https://statshub.sportradar.com/assets/generateMeta-Bfbgru7h.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 565,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.681422+00:00",
+    "elapsed_ms": 9390.38,
+    "url": "https://statshub.sportradar.com/assets/matchList-nPRbOhTZ.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4100,
+    "hits": [
+      "T=",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.721695+00:00",
+    "elapsed_ms": 9430.66,
+    "url": "https://statshub.sportradar.com/assets/index-sjjE83xj.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 95254,
+    "hits": [
+      "T=",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.731914+00:00",
+    "elapsed_ms": 9440.88,
+    "url": "https://statshub.sportradar.com/assets/index-BgLtMKHt.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 35261,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.734904+00:00",
+    "elapsed_ms": 9443.86,
+    "url": "https://statshub.sportradar.com/assets/parseMatch-D2YlIx0b.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 27557,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.735375+00:00",
+    "elapsed_ms": 9444.33,
+    "url": "https://statshub.sportradar.com/assets/serverNow-BrfgyQjB.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 91,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.736704+00:00",
+    "elapsed_ms": 9445.66,
+    "url": "https://statshub.sportradar.com/assets/getStageStatus-D7ceGM9E.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1228,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.737179+00:00",
+    "elapsed_ms": 9446.14,
+    "url": "https://statshub.sportradar.com/assets/isNumber-C_syycjq.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 275,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.740402+00:00",
+    "elapsed_ms": 9449.36,
+    "url": "https://statshub.sportradar.com/assets/getMatchesWithDeferredOdds-DVui2kRf.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 497,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.740951+00:00",
+    "elapsed_ms": 9449.91,
+    "url": "https://statshub.sportradar.com/assets/matchListAccordion-DmI7-DMN.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4527,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.741620+00:00",
+    "elapsed_ms": 9450.58,
+    "url": "https://statshub.sportradar.com/assets/matchListVisibilityWrapper-CUffScYp.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 18734,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.742051+00:00",
+    "elapsed_ms": 9451.01,
+    "url": "https://statshub.sportradar.com/assets/identity-BulHCW4c.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2414,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.755962+00:00",
+    "elapsed_ms": 9464.93,
+    "url": "https://statshub.sportradar.com/assets/_MapCache-pzWZC8bR.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3794,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.766148+00:00",
+    "elapsed_ms": 9475.11,
+    "url": "https://statshub.sportradar.com/assets/_Map-Dhq4yhoZ.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1529,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.768765+00:00",
+    "elapsed_ms": 9477.73,
+    "url": "https://statshub.sportradar.com/assets/isTypedArray-DwAeGphA.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2719,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.770955+00:00",
+    "elapsed_ms": 9479.91,
+    "url": "https://statshub.sportradar.com/assets/constant-BfiDtQIV.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 110,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.772603+00:00",
+    "elapsed_ms": 9481.56,
+    "url": "https://statshub.sportradar.com/assets/extractNonStandardPeriodKeys-CixO1JhG.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 96,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.775196+00:00",
+    "elapsed_ms": 9484.16,
+    "url": "https://statshub.sportradar.com/assets/index-gED_PWnb.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 9143,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.801906+00:00",
+    "elapsed_ms": 9510.87,
+    "url": "https://statshub.sportradar.com/assets/button-DT-jRGFv.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 10162,
+    "hits": [
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.802380+00:00",
+    "elapsed_ms": 9511.34,
+    "url": "https://statshub.sportradar.com/assets/datePicker-vk1WGVoM.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 5759,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.803593+00:00",
+    "elapsed_ms": 9512.55,
+    "url": "https://statshub.sportradar.com/assets/toDate-SX-ecmdR.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 260,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.806100+00:00",
+    "elapsed_ms": 9515.06,
+    "url": "https://statshub.sportradar.com/assets/emptyDay-18K5O8zD.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3297,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.817821+00:00",
+    "elapsed_ms": 9526.79,
+    "url": "https://statshub.sportradar.com/assets/_tournamentRoot-CKKyS5qn.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 10736,
+    "hits": [
+      "T=",
+      "clientFetching",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.818569+00:00",
+    "elapsed_ms": 9527.53,
+    "url": "https://statshub.sportradar.com/assets/clientFetching-CeFBaqML.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 11055,
+    "hits": [
+      "T=",
+      "data=",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.819012+00:00",
+    "elapsed_ms": 9527.97,
+    "url": "https://statshub.sportradar.com/assets/getSeasonYears-DXwPgj9F.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 709,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.819868+00:00",
+    "elapsed_ms": 9528.83,
+    "url": "https://statshub.sportradar.com/assets/resolveAllPromises-9pDxVV8U.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 697,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.863983+00:00",
+    "elapsed_ms": 9572.95,
+    "url": "https://statshub.sportradar.com/assets/getTournamentCompletion-hj3MKbSo.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 304,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.869821+00:00",
+    "elapsed_ms": 9578.78,
+    "url": "https://statshub.sportradar.com/assets/entityBreadcrumbs-DdAK1WcG.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 7258,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.877990+00:00",
+    "elapsed_ms": 9586.95,
+    "url": "https://statshub.sportradar.com/assets/sportHeaderProgressBar-BI4BQMQb.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 518,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.879126+00:00",
+    "elapsed_ms": 9588.09,
+    "url": "https://statshub.sportradar.com/assets/sportHeaderStatGrid-CXSv1Stn.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1253,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.880257+00:00",
+    "elapsed_ms": 9589.22,
+    "url": "https://statshub.sportradar.com/assets/tournament-CCtMyiUr.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 5006,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.888527+00:00",
+    "elapsed_ms": 9597.49,
+    "url": "https://statshub.sportradar.com/assets/useBreadcrumbNavigation-DD2SIIOS.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3128,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.888974+00:00",
+    "elapsed_ms": 9597.94,
+    "url": "https://statshub.sportradar.com/assets/commonTournamentLoader-BI-OPTCB.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2289,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.889570+00:00",
+    "elapsed_ms": 9598.53,
+    "url": "https://statshub.sportradar.com/assets/index-aefx6Ek1.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2636,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.915358+00:00",
+    "elapsed_ms": 9624.32,
+    "url": "https://statshub.sportradar.com/assets/useFilterSearchParams-DeiTNH9j.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 177,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.916982+00:00",
+    "elapsed_ms": 9625.95,
+    "url": "https://statshub.sportradar.com/assets/index-CxfSnjpi.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2347,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.917502+00:00",
+    "elapsed_ms": 9626.47,
+    "url": "https://statshub.sportradar.com/assets/_getTag-CZ7WTLKf.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1364,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.918055+00:00",
+    "elapsed_ms": 9627.02,
+    "url": "https://statshub.sportradar.com/assets/index-BC663xcE.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2359,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.918927+00:00",
+    "elapsed_ms": 9627.89,
+    "url": "https://statshub.sportradar.com/assets/_overview-Y5H17QL2.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 28869,
+    "hits": [
+      "T=",
+      "clientFetching",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.919661+00:00",
+    "elapsed_ms": 9628.62,
+    "url": "https://statshub.sportradar.com/assets/componentConfigKeys-D2szNzO7.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 6417,
+    "hits": [
+      "T=",
+      "clientFetching",
+      "queryKey"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.920362+00:00",
+    "elapsed_ms": 9629.32,
+    "url": "https://statshub.sportradar.com/assets/index-BapWXki2.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 30858,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.920799+00:00",
+    "elapsed_ms": 9629.76,
+    "url": "https://statshub.sportradar.com/assets/intlNumberFormat-DFhTEaxW.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 180,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.921233+00:00",
+    "elapsed_ms": 9630.19,
+    "url": "https://statshub.sportradar.com/assets/queryKey-DERz8cUQ.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 113,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.921846+00:00",
+    "elapsed_ms": 9630.81,
+    "url": "https://statshub.sportradar.com/assets/index-BdHbYrPS.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 8234,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.922681+00:00",
+    "elapsed_ms": 9631.64,
+    "url": "https://statshub.sportradar.com/assets/index-BlBfhO2-.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 7830,
+    "hits": [
+      "T=",
+      "queryKey"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.923572+00:00",
+    "elapsed_ms": 9632.53,
+    "url": "https://statshub.sportradar.com/assets/filterSingleTournamentMatches-Z_Qqp3oj.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 360,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.924412+00:00",
+    "elapsed_ms": 9633.37,
+    "url": "https://statshub.sportradar.com/assets/index-CBFYwSCr.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 15122,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.925634+00:00",
+    "elapsed_ms": 9634.6,
+    "url": "https://statshub.sportradar.com/assets/isCompletedMatch-Bs5-mTaJ.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 273,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.932185+00:00",
+    "elapsed_ms": 9641.18,
+    "url": "https://statshub.sportradar.com/assets/index-CcJzvKhR.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 7890,
+    "hits": [
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.935964+00:00",
+    "elapsed_ms": 9644.93,
+    "url": "https://statshub.sportradar.com/assets/index-CcrU_IL7.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1291,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.936993+00:00",
+    "elapsed_ms": 9645.96,
+    "url": "https://statshub.sportradar.com/assets/getStatPerMatch-GGqFNRyi.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 669,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.937478+00:00",
+    "elapsed_ms": 9646.44,
+    "url": "https://statshub.sportradar.com/assets/index-B29mo16G.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2880,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.938058+00:00",
+    "elapsed_ms": 9647.02,
+    "url": "https://statshub.sportradar.com/assets/processLastNexMatchesData-Chlk41pz.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 931,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.938769+00:00",
+    "elapsed_ms": 9647.74,
+    "url": "https://statshub.sportradar.com/assets/get-CY91GuTL.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1929,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.940029+00:00",
+    "elapsed_ms": 9649.0,
+    "url": "https://statshub.sportradar.com/assets/getSportTranslationConfig-DctieDFb.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 341,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.943078+00:00",
+    "elapsed_ms": 9652.04,
+    "url": "https://statshub.sportradar.com/assets/useSafeUniqueTeamMarkets-D2jX1UXM.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 513,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.943581+00:00",
+    "elapsed_ms": 9652.55,
+    "url": "https://statshub.sportradar.com/assets/index-DgcALBtd.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2039,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.944651+00:00",
+    "elapsed_ms": 9653.61,
+    "url": "https://statshub.sportradar.com/assets/map-VVvP-opE.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 342,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.950103+00:00",
+    "elapsed_ms": 9659.07,
+    "url": "https://statshub.sportradar.com/assets/orderBy-B0qS6tCj.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 9917,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.950712+00:00",
+    "elapsed_ms": 9659.69,
+    "url": "https://statshub.sportradar.com/assets/toString-DP4afs_C.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 668,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.953227+00:00",
+    "elapsed_ms": 9662.2,
+    "url": "https://statshub.sportradar.com/assets/isEmpty-Z0eS4Ily.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 667,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.955674+00:00",
+    "elapsed_ms": 9664.64,
+    "url": "https://statshub.sportradar.com/assets/getPercentage-H-iKpnOn.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 224,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:00.956286+00:00",
+    "elapsed_ms": 9665.25,
+    "url": "https://statshub.sportradar.com/assets/index-BYIt6qaP.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 10139,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.391171+00:00",
+    "elapsed_ms": 15100.32,
+    "url": "https://statshub.sportradar.com/assets/jsx-runtime-u17CrQMm.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 479,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.393647+00:00",
+    "elapsed_ms": 15102.86,
+    "url": "https://statshub.sportradar.com/assets/manifest-4ab9f200.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 295817,
+    "hits": [
+      "T=",
+      "clientFetching",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.394474+00:00",
+    "elapsed_ms": 15103.62,
+    "url": "https://statshub.sportradar.com/assets/index-BMSzAbFv.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3697,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.395424+00:00",
+    "elapsed_ms": 15104.57,
+    "url": "https://statshub.sportradar.com/assets/log-vS1IiFRP.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 12451,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.395938+00:00",
+    "elapsed_ms": 15105.08,
+    "url": "https://statshub.sportradar.com/assets/sports-BEIbR-MV.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 5142,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.397886+00:00",
+    "elapsed_ms": 15107.04,
+    "url": "https://statshub.sportradar.com/assets/root-BFx5E5Di.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 60709,
+    "hits": [
+      "T=",
+      "exp=",
+      "data=",
+      "token",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.401599+00:00",
+    "elapsed_ms": 15110.75,
+    "url": "https://statshub.sportradar.com/assets/entry.client-CP-7xNdH.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 188904,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.407614+00:00",
+    "elapsed_ms": 15116.77,
+    "url": "https://statshub.sportradar.com/assets/cctx-9hrVtq6f.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 130086,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.408285+00:00",
+    "elapsed_ms": 15117.43,
+    "url": "https://statshub.sportradar.com/assets/preload-helper-HAdMZFT3.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1142,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.409537+00:00",
+    "elapsed_ms": 15118.68,
+    "url": "https://statshub.sportradar.com/assets/feeds-kqyLKZ1L.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 32626,
+    "hits": [
+      "gismo",
+      "T=",
+      "data=",
+      "token",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.410212+00:00",
+    "elapsed_ms": 15119.36,
+    "url": "https://statshub.sportradar.com/assets/queryClient-D1hinhfh.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 11837,
+    "hits": [
+      "T=",
+      "queryKey"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.410811+00:00",
+    "elapsed_ms": 15119.95,
+    "url": "https://statshub.sportradar.com/assets/useQuery-CrkIWv18.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 27619,
+    "hits": [
+      "T=",
+      "data=",
+      "queryKey"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.411489+00:00",
+    "elapsed_ms": 15120.63,
+    "url": "https://statshub.sportradar.com/assets/index-SHWFpG9X.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 36558,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.412020+00:00",
+    "elapsed_ms": 15121.17,
+    "url": "https://statshub.sportradar.com/assets/index-MbJ_g_lc.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2893,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.412485+00:00",
+    "elapsed_ms": 15121.63,
+    "url": "https://statshub.sportradar.com/assets/useGlobalSearchModal-u7FEI-09.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3581,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.455993+00:00",
+    "elapsed_ms": 15165.15,
+    "url": "https://statshub.sportradar.com/assets/index-B3nvECrx.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 279316,
+    "hits": [
+      "T=",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.464499+00:00",
+    "elapsed_ms": 15173.65,
+    "url": "https://statshub.sportradar.com/assets/theme-provider-BCfDGCqo.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1563,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.465792+00:00",
+    "elapsed_ms": 15174.94,
+    "url": "https://statshub.sportradar.com/assets/index-CLCyeunt.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 42741,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.469553+00:00",
+    "elapsed_ms": 15178.7,
+    "url": "https://statshub.sportradar.com/assets/tooltip-DI9wWIWd.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 8849,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.470076+00:00",
+    "elapsed_ms": 15179.22,
+    "url": "https://statshub.sportradar.com/assets/index-DzTgh3Fp.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 34727,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.470568+00:00",
+    "elapsed_ms": 15179.71,
+    "url": "https://statshub.sportradar.com/assets/bundle-mjs-CtSUGAHZ.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 19929,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.487321+00:00",
+    "elapsed_ms": 15196.48,
+    "url": "https://statshub.sportradar.com/assets/utils-CHO1U1pH.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1210,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.491007+00:00",
+    "elapsed_ms": 15200.16,
+    "url": "https://statshub.sportradar.com/assets/searchParams-nq6b4Qj7.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 524,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.494955+00:00",
+    "elapsed_ms": 15204.1,
+    "url": "https://statshub.sportradar.com/assets/checkboxItem-CwwvPgRx.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4455,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.495494+00:00",
+    "elapsed_ms": 15204.64,
+    "url": "https://statshub.sportradar.com/assets/matchRadarWrapper-D5MvKprD.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 6879,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.497445+00:00",
+    "elapsed_ms": 15206.6,
+    "url": "https://statshub.sportradar.com/assets/index-DSuwrbjE.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 5501,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.499882+00:00",
+    "elapsed_ms": 15209.04,
+    "url": "https://statshub.sportradar.com/assets/index-CUpSl1gb.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 714,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.529643+00:00",
+    "elapsed_ms": 15238.8,
+    "url": "https://statshub.sportradar.com/assets/notification-9HH8YUpI.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3435,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.531096+00:00",
+    "elapsed_ms": 15240.25,
+    "url": "https://statshub.sportradar.com/assets/_root-CCPxQIbV.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 133577,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.531826+00:00",
+    "elapsed_ms": 15240.97,
+    "url": "https://statshub.sportradar.com/assets/HideInTerminalMode-1RsxjNdy.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 212,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.532298+00:00",
+    "elapsed_ms": 15241.45,
+    "url": "https://statshub.sportradar.com/assets/index-CrRhl4n3.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1013,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.533254+00:00",
+    "elapsed_ms": 15242.4,
+    "url": "https://statshub.sportradar.com/assets/debounce-Bhc8v5l_.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1301,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.533800+00:00",
+    "elapsed_ms": 15242.95,
+    "url": "https://statshub.sportradar.com/assets/getSelectedItemById-CcdDM0v5.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3493,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.534323+00:00",
+    "elapsed_ms": 15243.47,
+    "url": "https://statshub.sportradar.com/assets/useNavigationState-Cc1umZs0.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 34789,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.535318+00:00",
+    "elapsed_ms": 15244.47,
+    "url": "https://statshub.sportradar.com/assets/itemContent-OBUpMvFP.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1424,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.535945+00:00",
+    "elapsed_ms": 15245.09,
+    "url": "https://statshub.sportradar.com/assets/popover-DebLU-P5.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 7236,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.536355+00:00",
+    "elapsed_ms": 15245.5,
+    "url": "https://statshub.sportradar.com/assets/usePrevious-Dr-R-612.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 186,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.536783+00:00",
+    "elapsed_ms": 15245.93,
+    "url": "https://statshub.sportradar.com/assets/match-sorter.esm-Ba8jnwbX.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 6737,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.538321+00:00",
+    "elapsed_ms": 15247.47,
+    "url": "https://statshub.sportradar.com/assets/clsx-B-dksMZM.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 374,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.539442+00:00",
+    "elapsed_ms": 15248.59,
+    "url": "https://statshub.sportradar.com/assets/isObject--vsEa_js.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 142,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.539829+00:00",
+    "elapsed_ms": 15248.98,
+    "url": "https://statshub.sportradar.com/assets/isObjectLike-BbhGzjrN.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1104,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.540205+00:00",
+    "elapsed_ms": 15249.35,
+    "url": "https://statshub.sportradar.com/assets/toNumber-Bi8TxR4s.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 758,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.540603+00:00",
+    "elapsed_ms": 15249.75,
+    "url": "https://statshub.sportradar.com/assets/isSymbol-Cs8niHAp.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 213,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.541406+00:00",
+    "elapsed_ms": 15250.55,
+    "url": "https://statshub.sportradar.com/assets/createTournamentSafeLinkProps-BQIAzMf9.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1941,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.541809+00:00",
+    "elapsed_ms": 15250.96,
+    "url": "https://statshub.sportradar.com/assets/index-CqCeMipP.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4576,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.543052+00:00",
+    "elapsed_ms": 15252.2,
+    "url": "https://statshub.sportradar.com/assets/generateMeta-Bfbgru7h.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 565,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.543466+00:00",
+    "elapsed_ms": 15252.61,
+    "url": "https://statshub.sportradar.com/assets/matchList-nPRbOhTZ.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4100,
+    "hits": [
+      "T=",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.692871+00:00",
+    "elapsed_ms": 15402.03,
+    "url": "https://statshub.sportradar.com/assets/index-sjjE83xj.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 95254,
+    "hits": [
+      "T=",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.699500+00:00",
+    "elapsed_ms": 15408.66,
+    "url": "https://statshub.sportradar.com/assets/index-BgLtMKHt.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 35261,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.701964+00:00",
+    "elapsed_ms": 15411.13,
+    "url": "https://statshub.sportradar.com/assets/_Map-Dhq4yhoZ.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1529,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.703981+00:00",
+    "elapsed_ms": 15413.14,
+    "url": "https://statshub.sportradar.com/assets/isTypedArray-DwAeGphA.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2719,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.705365+00:00",
+    "elapsed_ms": 15414.52,
+    "url": "https://statshub.sportradar.com/assets/getSportIdFromUrl-C89YURJG.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 149,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.706398+00:00",
+    "elapsed_ms": 15415.55,
+    "url": "https://statshub.sportradar.com/assets/parseMatch-D2YlIx0b.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 27557,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.706826+00:00",
+    "elapsed_ms": 15415.98,
+    "url": "https://statshub.sportradar.com/assets/isNumber-C_syycjq.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 275,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.710752+00:00",
+    "elapsed_ms": 15419.91,
+    "url": "https://statshub.sportradar.com/assets/getStageStatus-D7ceGM9E.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1228,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.711771+00:00",
+    "elapsed_ms": 15420.93,
+    "url": "https://statshub.sportradar.com/assets/matchListAccordion-DmI7-DMN.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4527,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.718029+00:00",
+    "elapsed_ms": 15427.19,
+    "url": "https://statshub.sportradar.com/assets/getMatchesWithDeferredOdds-DVui2kRf.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 497,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.718553+00:00",
+    "elapsed_ms": 15427.71,
+    "url": "https://statshub.sportradar.com/assets/matchListVisibilityWrapper-CUffScYp.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 18734,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.718998+00:00",
+    "elapsed_ms": 15428.15,
+    "url": "https://statshub.sportradar.com/assets/identity-BulHCW4c.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2414,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.719458+00:00",
+    "elapsed_ms": 15428.61,
+    "url": "https://statshub.sportradar.com/assets/_MapCache-pzWZC8bR.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3794,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.722730+00:00",
+    "elapsed_ms": 15431.89,
+    "url": "https://statshub.sportradar.com/assets/constant-BfiDtQIV.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 110,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.724036+00:00",
+    "elapsed_ms": 15433.19,
+    "url": "https://statshub.sportradar.com/assets/extractNonStandardPeriodKeys-CixO1JhG.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 96,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.724498+00:00",
+    "elapsed_ms": 15433.65,
+    "url": "https://statshub.sportradar.com/assets/index-gED_PWnb.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 9143,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.724959+00:00",
+    "elapsed_ms": 15434.11,
+    "url": "https://statshub.sportradar.com/assets/button-DT-jRGFv.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 10162,
+    "hits": [
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.725429+00:00",
+    "elapsed_ms": 15434.58,
+    "url": "https://statshub.sportradar.com/assets/datePicker-vk1WGVoM.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 5759,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.726392+00:00",
+    "elapsed_ms": 15435.55,
+    "url": "https://statshub.sportradar.com/assets/emptyDay-18K5O8zD.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3297,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.727254+00:00",
+    "elapsed_ms": 15436.41,
+    "url": "https://statshub.sportradar.com/assets/_tournamentRoot-CKKyS5qn.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 10736,
+    "hits": [
+      "T=",
+      "clientFetching",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.727717+00:00",
+    "elapsed_ms": 15436.87,
+    "url": "https://statshub.sportradar.com/assets/clientFetching-CeFBaqML.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 11055,
+    "hits": [
+      "T=",
+      "data=",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.728170+00:00",
+    "elapsed_ms": 15437.32,
+    "url": "https://statshub.sportradar.com/assets/getSeasonYears-DXwPgj9F.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 709,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.729192+00:00",
+    "elapsed_ms": 15438.35,
+    "url": "https://statshub.sportradar.com/assets/resolveAllPromises-9pDxVV8U.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 697,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.730324+00:00",
+    "elapsed_ms": 15439.48,
+    "url": "https://statshub.sportradar.com/assets/getTournamentCompletion-hj3MKbSo.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 304,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.737733+00:00",
+    "elapsed_ms": 15446.89,
+    "url": "https://statshub.sportradar.com/assets/sportHeaderProgressBar-BI4BQMQb.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 518,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.738612+00:00",
+    "elapsed_ms": 15447.77,
+    "url": "https://statshub.sportradar.com/assets/useBreadcrumbNavigation-DD2SIIOS.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3128,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.739059+00:00",
+    "elapsed_ms": 15448.21,
+    "url": "https://statshub.sportradar.com/assets/index-aefx6Ek1.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2636,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.739910+00:00",
+    "elapsed_ms": 15449.06,
+    "url": "https://statshub.sportradar.com/assets/useFilterSearchParams-DeiTNH9j.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 177,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.740339+00:00",
+    "elapsed_ms": 15449.49,
+    "url": "https://statshub.sportradar.com/assets/serverNow-BrfgyQjB.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 91,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.740768+00:00",
+    "elapsed_ms": 15449.92,
+    "url": "https://statshub.sportradar.com/assets/toDate-SX-ecmdR.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 260,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.743257+00:00",
+    "elapsed_ms": 15452.41,
+    "url": "https://statshub.sportradar.com/assets/sportHeaderStatGrid-CXSv1Stn.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1253,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.743778+00:00",
+    "elapsed_ms": 15452.94,
+    "url": "https://statshub.sportradar.com/assets/entityBreadcrumbs-DdAK1WcG.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 7258,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.744789+00:00",
+    "elapsed_ms": 15453.94,
+    "url": "https://statshub.sportradar.com/assets/commonTournamentLoader-BI-OPTCB.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2289,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.745632+00:00",
+    "elapsed_ms": 15454.79,
+    "url": "https://statshub.sportradar.com/assets/tournament-CCtMyiUr.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 5006,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.754822+00:00",
+    "elapsed_ms": 15463.98,
+    "url": "https://statshub.sportradar.com/assets/index-BYIt6qaP.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 10139,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.755292+00:00",
+    "elapsed_ms": 15464.45,
+    "url": "https://statshub.sportradar.com/assets/queryKey-DERz8cUQ.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 113,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.755729+00:00",
+    "elapsed_ms": 15464.88,
+    "url": "https://statshub.sportradar.com/assets/index-BlBfhO2-.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 7830,
+    "hits": [
+      "T=",
+      "queryKey"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.756138+00:00",
+    "elapsed_ms": 15465.29,
+    "url": "https://statshub.sportradar.com/assets/useSafeUniqueTeamMarkets-D2jX1UXM.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 513,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.756556+00:00",
+    "elapsed_ms": 15465.71,
+    "url": "https://statshub.sportradar.com/assets/toString-DP4afs_C.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 668,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.756993+00:00",
+    "elapsed_ms": 15466.15,
+    "url": "https://statshub.sportradar.com/assets/get-CY91GuTL.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1929,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.757417+00:00",
+    "elapsed_ms": 15466.57,
+    "url": "https://statshub.sportradar.com/assets/orderBy-B0qS6tCj.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 9917,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.758542+00:00",
+    "elapsed_ms": 15467.7,
+    "url": "https://statshub.sportradar.com/assets/addYears-D9W7t3wI.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 351,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.759864+00:00",
+    "elapsed_ms": 15469.02,
+    "url": "https://statshub.sportradar.com/assets/index-Cu-gCuvA.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 73187,
+    "hits": [
+      "T=",
+      "token"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.760453+00:00",
+    "elapsed_ms": 15469.61,
+    "url": "https://statshub.sportradar.com/assets/index-CxfSnjpi.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2347,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.762573+00:00",
+    "elapsed_ms": 15471.73,
+    "url": "https://statshub.sportradar.com/assets/isEmpty-Z0eS4Ily.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 667,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.764264+00:00",
+    "elapsed_ms": 15473.42,
+    "url": "https://statshub.sportradar.com/assets/_getTag-CZ7WTLKf.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1364,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.764750+00:00",
+    "elapsed_ms": 15473.91,
+    "url": "https://statshub.sportradar.com/assets/index-B29mo16G.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2880,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.765287+00:00",
+    "elapsed_ms": 15474.44,
+    "url": "https://statshub.sportradar.com/assets/_fixtures-B36qtJJS.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 6449,
+    "hits": [
+      "T=",
+      "clientFetching",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.766208+00:00",
+    "elapsed_ms": 15475.36,
+    "url": "https://statshub.sportradar.com/assets/index-BsdeTyqt.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4975,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.767383+00:00",
+    "elapsed_ms": 15476.54,
+    "url": "https://statshub.sportradar.com/assets/index-BpAfcxou.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 34264,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:06.769657+00:00",
+    "elapsed_ms": 15478.81,
+    "url": "https://statshub.sportradar.com/assets/componentConfigKeys-D2szNzO7.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 6417,
+    "hits": [
+      "T=",
+      "clientFetching",
+      "queryKey"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:09.278009+00:00",
+    "elapsed_ms": 17987.25,
+    "url": "https://statshub.sportradar.com/assets/index.config-BvBiFzGd.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 5087,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:09.289696+00:00",
+    "elapsed_ms": 17998.94,
+    "url": "https://statshub.sportradar.com/assets/common.betAssist.config-DVHDPf55.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 15712,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:09.291132+00:00",
+    "elapsed_ms": 18000.37,
+    "url": "https://statshub.sportradar.com/assets/getPercentage-H-iKpnOn.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 224,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:09.293003+00:00",
+    "elapsed_ms": 18002.24,
+    "url": "https://statshub.sportradar.com/assets/index-qa5fqdmy.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 16830,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:09.293893+00:00",
+    "elapsed_ms": 18003.13,
+    "url": "https://statshub.sportradar.com/assets/index-CcrU_IL7.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1291,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:09.294932+00:00",
+    "elapsed_ms": 18004.17,
+    "url": "https://statshub.sportradar.com/assets/getRoundName-CeWmM9UV.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 240,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:09.323403+00:00",
+    "elapsed_ms": 18032.65,
+    "url": "https://statshub.sportradar.com/assets/isAtpRelatedTournament-B2UmwwiS.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 575,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:09.324985+00:00",
+    "elapsed_ms": 18034.23,
+    "url": "https://statshub.sportradar.com/assets/winProbability-C6M7kvEB.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1786,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:09.325838+00:00",
+    "elapsed_ms": 18035.09,
+    "url": "https://statshub.sportradar.com/assets/winProbability-_qIh1qy_.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3329,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:09.327635+00:00",
+    "elapsed_ms": 18036.88,
+    "url": "https://statshub.sportradar.com/assets/index-Ci5FuErU.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1344,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:09.361793+00:00",
+    "elapsed_ms": 18071.04,
+    "url": "https://statshub.sportradar.com/assets/index-Cd8819r7.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4296,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:09.370022+00:00",
+    "elapsed_ms": 18079.26,
+    "url": "https://statshub.sportradar.com/assets/common.headToHead.config-C1eVDh9E.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 9453,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:09.370502+00:00",
+    "elapsed_ms": 18079.74,
+    "url": "https://statshub.sportradar.com/assets/eventTypeIds-BCOm-FH0.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2820,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:09.371560+00:00",
+    "elapsed_ms": 18080.8,
+    "url": "https://statshub.sportradar.com/assets/common.statistics.config-DMKPAP5t.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 28630,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.492275+00:00",
+    "elapsed_ms": 21201.63,
+    "url": "https://statshub.sportradar.com/assets/manifest-4ab9f200.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 295817,
+    "hits": [
+      "T=",
+      "clientFetching",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.492987+00:00",
+    "elapsed_ms": 21202.33,
+    "url": "https://statshub.sportradar.com/assets/jsx-runtime-u17CrQMm.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 479,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.494053+00:00",
+    "elapsed_ms": 21203.4,
+    "url": "https://statshub.sportradar.com/assets/sports-BEIbR-MV.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 5142,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.500010+00:00",
+    "elapsed_ms": 21209.36,
+    "url": "https://statshub.sportradar.com/assets/entry.client-CP-7xNdH.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 188904,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.501950+00:00",
+    "elapsed_ms": 21211.3,
+    "url": "https://statshub.sportradar.com/assets/cctx-9hrVtq6f.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 130086,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.502602+00:00",
+    "elapsed_ms": 21211.95,
+    "url": "https://statshub.sportradar.com/assets/index-BMSzAbFv.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3697,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.503113+00:00",
+    "elapsed_ms": 21212.46,
+    "url": "https://statshub.sportradar.com/assets/log-vS1IiFRP.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 12451,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.503635+00:00",
+    "elapsed_ms": 21212.98,
+    "url": "https://statshub.sportradar.com/assets/preload-helper-HAdMZFT3.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1142,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.504409+00:00",
+    "elapsed_ms": 21213.76,
+    "url": "https://statshub.sportradar.com/assets/root-BFx5E5Di.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 60709,
+    "hits": [
+      "T=",
+      "exp=",
+      "data=",
+      "token",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.547316+00:00",
+    "elapsed_ms": 21256.68,
+    "url": "https://statshub.sportradar.com/assets/index-B3nvECrx.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 279316,
+    "hits": [
+      "T=",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.548833+00:00",
+    "elapsed_ms": 21258.19,
+    "url": "https://statshub.sportradar.com/assets/feeds-kqyLKZ1L.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 32626,
+    "hits": [
+      "gismo",
+      "T=",
+      "data=",
+      "token",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.618405+00:00",
+    "elapsed_ms": 21327.76,
+    "url": "https://statshub.sportradar.com/assets/queryClient-D1hinhfh.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 11837,
+    "hits": [
+      "T=",
+      "queryKey"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.629034+00:00",
+    "elapsed_ms": 21338.39,
+    "url": "https://statshub.sportradar.com/assets/useQuery-CrkIWv18.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 27619,
+    "hits": [
+      "T=",
+      "data=",
+      "queryKey"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.636393+00:00",
+    "elapsed_ms": 21345.76,
+    "url": "https://statshub.sportradar.com/assets/index-SHWFpG9X.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 36558,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.637366+00:00",
+    "elapsed_ms": 21346.72,
+    "url": "https://statshub.sportradar.com/assets/useGlobalSearchModal-u7FEI-09.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3581,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.637860+00:00",
+    "elapsed_ms": 21347.21,
+    "url": "https://statshub.sportradar.com/assets/index-MbJ_g_lc.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2893,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.638404+00:00",
+    "elapsed_ms": 21347.75,
+    "url": "https://statshub.sportradar.com/assets/theme-provider-BCfDGCqo.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1563,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.638974+00:00",
+    "elapsed_ms": 21348.32,
+    "url": "https://statshub.sportradar.com/assets/index-CLCyeunt.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 42741,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.640345+00:00",
+    "elapsed_ms": 21349.7,
+    "url": "https://statshub.sportradar.com/assets/tooltip-DI9wWIWd.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 8849,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.640877+00:00",
+    "elapsed_ms": 21350.23,
+    "url": "https://statshub.sportradar.com/assets/bundle-mjs-CtSUGAHZ.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 19929,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.641611+00:00",
+    "elapsed_ms": 21350.96,
+    "url": "https://statshub.sportradar.com/assets/index-DzTgh3Fp.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 34727,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.642107+00:00",
+    "elapsed_ms": 21351.46,
+    "url": "https://statshub.sportradar.com/assets/searchParams-nq6b4Qj7.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 524,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.642600+00:00",
+    "elapsed_ms": 21351.95,
+    "url": "https://statshub.sportradar.com/assets/utils-CHO1U1pH.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1210,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.663941+00:00",
+    "elapsed_ms": 21373.31,
+    "url": "https://statshub.sportradar.com/assets/checkboxItem-CwwvPgRx.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4455,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.671893+00:00",
+    "elapsed_ms": 21381.25,
+    "url": "https://statshub.sportradar.com/assets/_root-CCPxQIbV.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 133577,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.673177+00:00",
+    "elapsed_ms": 21382.53,
+    "url": "https://statshub.sportradar.com/assets/matchRadarWrapper-D5MvKprD.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 6879,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.683808+00:00",
+    "elapsed_ms": 21393.18,
+    "url": "https://statshub.sportradar.com/assets/index-DSuwrbjE.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 5501,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.699889+00:00",
+    "elapsed_ms": 21409.25,
+    "url": "https://statshub.sportradar.com/assets/index-CUpSl1gb.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 714,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.710180+00:00",
+    "elapsed_ms": 21419.54,
+    "url": "https://statshub.sportradar.com/assets/HideInTerminalMode-1RsxjNdy.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 212,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.716399+00:00",
+    "elapsed_ms": 21425.77,
+    "url": "https://statshub.sportradar.com/assets/index-CrRhl4n3.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1013,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.717633+00:00",
+    "elapsed_ms": 21426.99,
+    "url": "https://statshub.sportradar.com/assets/debounce-Bhc8v5l_.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1301,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.718477+00:00",
+    "elapsed_ms": 21427.84,
+    "url": "https://statshub.sportradar.com/assets/getSelectedItemById-CcdDM0v5.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3493,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.735016+00:00",
+    "elapsed_ms": 21444.38,
+    "url": "https://statshub.sportradar.com/assets/useNavigationState-Cc1umZs0.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 34789,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.737089+00:00",
+    "elapsed_ms": 21446.44,
+    "url": "https://statshub.sportradar.com/assets/itemContent-OBUpMvFP.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1424,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.737664+00:00",
+    "elapsed_ms": 21447.02,
+    "url": "https://statshub.sportradar.com/assets/usePrevious-Dr-R-612.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 186,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.738905+00:00",
+    "elapsed_ms": 21448.26,
+    "url": "https://statshub.sportradar.com/assets/notification-9HH8YUpI.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3435,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.750242+00:00",
+    "elapsed_ms": 21459.6,
+    "url": "https://statshub.sportradar.com/assets/popover-DebLU-P5.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 7236,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.753770+00:00",
+    "elapsed_ms": 21463.12,
+    "url": "https://statshub.sportradar.com/assets/clsx-B-dksMZM.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 374,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.755462+00:00",
+    "elapsed_ms": 21464.82,
+    "url": "https://statshub.sportradar.com/assets/isObject--vsEa_js.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 142,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.755902+00:00",
+    "elapsed_ms": 21465.26,
+    "url": "https://statshub.sportradar.com/assets/toNumber-Bi8TxR4s.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 758,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.756689+00:00",
+    "elapsed_ms": 21466.04,
+    "url": "https://statshub.sportradar.com/assets/isSymbol-Cs8niHAp.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 213,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.766618+00:00",
+    "elapsed_ms": 21475.98,
+    "url": "https://statshub.sportradar.com/assets/isObjectLike-BbhGzjrN.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1104,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.767222+00:00",
+    "elapsed_ms": 21476.58,
+    "url": "https://statshub.sportradar.com/assets/createTournamentSafeLinkProps-BQIAzMf9.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1941,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.769611+00:00",
+    "elapsed_ms": 21478.97,
+    "url": "https://statshub.sportradar.com/assets/getSportIdFromUrl-C89YURJG.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 149,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.781489+00:00",
+    "elapsed_ms": 21490.85,
+    "url": "https://statshub.sportradar.com/assets/_matchRoot-DvqtiKUL.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 47102,
+    "hits": [
+      "T=",
+      "clientFetching",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.786701+00:00",
+    "elapsed_ms": 21496.06,
+    "url": "https://statshub.sportradar.com/assets/clientFetching-CeFBaqML.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 11055,
+    "hits": [
+      "T=",
+      "data=",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.787154+00:00",
+    "elapsed_ms": 21496.51,
+    "url": "https://statshub.sportradar.com/assets/resolveAllPromises-9pDxVV8U.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 697,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.787768+00:00",
+    "elapsed_ms": 21497.12,
+    "url": "https://statshub.sportradar.com/assets/index-BmecbUVt.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3194,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.788287+00:00",
+    "elapsed_ms": 21497.64,
+    "url": "https://statshub.sportradar.com/assets/getLatestMatch-BHWSU_me.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 264,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.811509+00:00",
+    "elapsed_ms": 21520.87,
+    "url": "https://statshub.sportradar.com/assets/parseMatch-D2YlIx0b.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 27557,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.814365+00:00",
+    "elapsed_ms": 21523.73,
+    "url": "https://statshub.sportradar.com/assets/serverNow-BrfgyQjB.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 91,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.815415+00:00",
+    "elapsed_ms": 21524.77,
+    "url": "https://statshub.sportradar.com/assets/getWdlLastMatches-Dyv6QXhW.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1223,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.815953+00:00",
+    "elapsed_ms": 21525.31,
+    "url": "https://statshub.sportradar.com/assets/isNumber-C_syycjq.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 275,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.823422+00:00",
+    "elapsed_ms": 21532.78,
+    "url": "https://statshub.sportradar.com/assets/index-CcrU_IL7.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1291,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.824482+00:00",
+    "elapsed_ms": 21533.85,
+    "url": "https://statshub.sportradar.com/assets/index-CcJzvKhR.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 7890,
+    "hits": [
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.825758+00:00",
+    "elapsed_ms": 21535.11,
+    "url": "https://statshub.sportradar.com/assets/index-CxfSnjpi.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2347,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.826181+00:00",
+    "elapsed_ms": 21535.54,
+    "url": "https://statshub.sportradar.com/assets/isEmpty-Z0eS4Ily.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 667,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.826605+00:00",
+    "elapsed_ms": 21535.96,
+    "url": "https://statshub.sportradar.com/assets/_getTag-CZ7WTLKf.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1364,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.841520+00:00",
+    "elapsed_ms": 21550.88,
+    "url": "https://statshub.sportradar.com/assets/isTypedArray-DwAeGphA.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2719,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.847897+00:00",
+    "elapsed_ms": 21557.26,
+    "url": "https://statshub.sportradar.com/assets/_Map-Dhq4yhoZ.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1529,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.848879+00:00",
+    "elapsed_ms": 21558.23,
+    "url": "https://statshub.sportradar.com/assets/tabs.config-BHY3UqYx.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 328,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.850571+00:00",
+    "elapsed_ms": 21559.93,
+    "url": "https://statshub.sportradar.com/assets/index-DjLAmt8n.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4718,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.909735+00:00",
+    "elapsed_ms": 21619.09,
+    "url": "https://statshub.sportradar.com/assets/index-DtxUTGJo.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 16551,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.911390+00:00",
+    "elapsed_ms": 21620.75,
+    "url": "https://statshub.sportradar.com/assets/match-sorter.esm-Ba8jnwbX.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 6737,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.921006+00:00",
+    "elapsed_ms": 21630.37,
+    "url": "https://statshub.sportradar.com/assets/_matchRoot-C3KTY7a_.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2693,
+    "hits": [
+      "clientFetching",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.923437+00:00",
+    "elapsed_ms": 21632.8,
+    "url": "https://statshub.sportradar.com/assets/isAtpRelatedTournament-B2UmwwiS.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 575,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.925304+00:00",
+    "elapsed_ms": 21634.66,
+    "url": "https://statshub.sportradar.com/assets/entityBreadcrumbs-DdAK1WcG.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 7258,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.926352+00:00",
+    "elapsed_ms": 21635.71,
+    "url": "https://statshub.sportradar.com/assets/getRoundName-CeWmM9UV.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 240,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.939509+00:00",
+    "elapsed_ms": 21648.87,
+    "url": "https://statshub.sportradar.com/assets/index-aefx6Ek1.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2636,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.942296+00:00",
+    "elapsed_ms": 21651.67,
+    "url": "https://statshub.sportradar.com/assets/_overview-CAcMW5G9.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 66318,
+    "hits": [
+      "T=",
+      "clientFetching",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.944067+00:00",
+    "elapsed_ms": 21653.44,
+    "url": "https://statshub.sportradar.com/assets/formatPlayerStat-3aY91fmt.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2943,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.947747+00:00",
+    "elapsed_ms": 21657.12,
+    "url": "https://statshub.sportradar.com/assets/filterSingleTournamentMatches-Z_Qqp3oj.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 360,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.969103+00:00",
+    "elapsed_ms": 21678.48,
+    "url": "https://statshub.sportradar.com/assets/calculateAge-BACmAorE.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 246,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.969977+00:00",
+    "elapsed_ms": 21679.35,
+    "url": "https://statshub.sportradar.com/assets/index-Bo4c0ur2.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 4024,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.971259+00:00",
+    "elapsed_ms": 21680.62,
+    "url": "https://statshub.sportradar.com/assets/tennisGroundIds-oyKTfpRH.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 165,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.975102+00:00",
+    "elapsed_ms": 21684.47,
+    "url": "https://statshub.sportradar.com/assets/componentConfigKeys-D2szNzO7.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 6417,
+    "hits": [
+      "T=",
+      "clientFetching",
+      "queryKey"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:12.991339+00:00",
+    "elapsed_ms": 21700.71,
+    "url": "https://statshub.sportradar.com/assets/getPercentage-H-iKpnOn.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 224,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.034527+00:00",
+    "elapsed_ms": 21743.91,
+    "url": "https://statshub.sportradar.com/assets/index-BapWXki2.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 30858,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.065280+00:00",
+    "elapsed_ms": 21774.65,
+    "url": "https://statshub.sportradar.com/assets/orderBy-B0qS6tCj.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 9917,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.066747+00:00",
+    "elapsed_ms": 21776.12,
+    "url": "https://statshub.sportradar.com/assets/index-Ci5FuErU.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1344,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.068519+00:00",
+    "elapsed_ms": 21777.88,
+    "url": "https://statshub.sportradar.com/assets/useSafeUniqueTeamMarkets-D2jX1UXM.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 513,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.069505+00:00",
+    "elapsed_ms": 21778.87,
+    "url": "https://statshub.sportradar.com/assets/queryKey-DERz8cUQ.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 113,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.115308+00:00",
+    "elapsed_ms": 21824.68,
+    "url": "https://statshub.sportradar.com/assets/getMatchesWithDeferredOdds-DVui2kRf.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 497,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.115882+00:00",
+    "elapsed_ms": 21825.25,
+    "url": "https://statshub.sportradar.com/assets/eventTypeIds-BCOm-FH0.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2820,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.116355+00:00",
+    "elapsed_ms": 21825.72,
+    "url": "https://statshub.sportradar.com/assets/winProbability-_qIh1qy_.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3329,
+    "hits": [
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.117722+00:00",
+    "elapsed_ms": 21827.09,
+    "url": "https://statshub.sportradar.com/assets/getStageStatus-D7ceGM9E.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1228,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.118189+00:00",
+    "elapsed_ms": 21827.56,
+    "url": "https://statshub.sportradar.com/assets/index-BolEcs3Q.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2329,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.120501+00:00",
+    "elapsed_ms": 21829.87,
+    "url": "https://statshub.sportradar.com/assets/identity-BulHCW4c.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2414,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.125132+00:00",
+    "elapsed_ms": 21834.5,
+    "url": "https://statshub.sportradar.com/assets/index-BlBfhO2-.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 7830,
+    "hits": [
+      "T=",
+      "queryKey"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.126451+00:00",
+    "elapsed_ms": 21835.82,
+    "url": "https://statshub.sportradar.com/assets/index-BgLtMKHt.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 35261,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.126956+00:00",
+    "elapsed_ms": 21836.32,
+    "url": "https://statshub.sportradar.com/assets/topPlayerData-Cnme3lvU.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2159,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.127385+00:00",
+    "elapsed_ms": 21836.75,
+    "url": "https://statshub.sportradar.com/assets/intlNumberFormat-DFhTEaxW.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 180,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.127814+00:00",
+    "elapsed_ms": 21837.18,
+    "url": "https://statshub.sportradar.com/assets/extractNonStandardPeriodKeys-CixO1JhG.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 96,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.141457+00:00",
+    "elapsed_ms": 21850.83,
+    "url": "https://statshub.sportradar.com/assets/toString-DP4afs_C.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 668,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.157433+00:00",
+    "elapsed_ms": 21866.8,
+    "url": "https://statshub.sportradar.com/assets/vertical-DRi-0aXT.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 2725,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.157874+00:00",
+    "elapsed_ms": 21867.24,
+    "url": "https://statshub.sportradar.com/assets/getSportTranslationConfig-DctieDFb.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 341,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.163312+00:00",
+    "elapsed_ms": 21872.69,
+    "url": "https://statshub.sportradar.com/assets/index-sjjE83xj.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 95254,
+    "hits": [
+      "T=",
+      "queryKey",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.166359+00:00",
+    "elapsed_ms": 21875.73,
+    "url": "https://statshub.sportradar.com/assets/useTabState-CJI_Vy8T.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 289,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.175757+00:00",
+    "elapsed_ms": 21885.13,
+    "url": "https://statshub.sportradar.com/assets/get-CY91GuTL.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 1929,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:13.177109+00:00",
+    "elapsed_ms": 21886.48,
+    "url": "https://statshub.sportradar.com/assets/_MapCache-pzWZC8bR.js",
+    "status": 200,
+    "content_type": "application/x-javascript",
+    "body_size_bytes": 3794,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.449105+00:00",
+    "elapsed_ms": 23158.52,
+    "url": "https://widgets.sir.sportradar.com/statshub/widgetloader",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 249160,
+    "hits": [
+      "T=",
+      "data=",
+      "token",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.523475+00:00",
+    "elapsed_ms": 23232.9,
+    "url": "https://widgets.sir.sportradar.com/assets/js/entry.react-vendor.dc6dfcdd.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 138729,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.524555+00:00",
+    "elapsed_ms": 23233.97,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.47587.0b3e0b06.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 16597,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.525299+00:00",
+    "elapsed_ms": 23234.72,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.67361.aace5cdb.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 23473,
+    "hits": [
+      "T=",
+      "data=",
+      "token"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.545336+00:00",
+    "elapsed_ms": 23254.76,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.11858.e7bea434.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 138044,
+    "hits": [
+      "T=",
+      "data=",
+      "token",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.617888+00:00",
+    "elapsed_ms": 23327.31,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.60674.967fa3cc.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 402547,
+    "hits": [
+      "T=",
+      "data=",
+      "signature",
+      "token",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.618591+00:00",
+    "elapsed_ms": 23328.01,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.97161.f5b586e0.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 15351,
+    "hits": [
+      "gismo",
+      "T=",
+      "token",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.636047+00:00",
+    "elapsed_ms": 23345.47,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.41535.6a0ef0ad.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 96480,
+    "hits": [
+      "gismo",
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.638148+00:00",
+    "elapsed_ms": 23347.57,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.16686.a55781be.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 17655,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.747317+00:00",
+    "elapsed_ms": 23456.77,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.68060.65deca7e.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 22700,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.830971+00:00",
+    "elapsed_ms": 23540.45,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.77297.928318d6.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 20590,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.869177+00:00",
+    "elapsed_ms": 23578.6,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.63578.1953470e.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 6624,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.872250+00:00",
+    "elapsed_ms": 23581.69,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.match.momentum.ae4f8096.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 44960,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.873794+00:00",
+    "elapsed_ms": 23583.24,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.reactloader.bef593ac.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 4146,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.889902+00:00",
+    "elapsed_ms": 23599.34,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.226.0e5fb960.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 114391,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.901039+00:00",
+    "elapsed_ms": 23610.47,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.83958.dbb85e47.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 27222,
+    "hits": [
+      "T=",
+      "data=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.946400+00:00",
+    "elapsed_ms": 23655.84,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.20876.5108eee2.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 11682,
+    "hits": [
+      "T=",
+      "token",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.947554+00:00",
+    "elapsed_ms": 23656.98,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.91680.2a0a84a1.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 17156,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.961977+00:00",
+    "elapsed_ms": 23671.41,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.65373.8580c17a.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 16604,
+    "hits": [
+      "T=",
+      "data=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:14.978528+00:00",
+    "elapsed_ms": 23687.96,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.26838.4f39570e.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 12290,
+    "hits": [
+      "T=",
+      "feeds"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:15.013640+00:00",
+    "elapsed_ms": 23723.07,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.80016.c96ff42d.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 41892,
+    "hits": [
+      "T=",
+      "token"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:15.075394+00:00",
+    "elapsed_ms": 23784.83,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.match.lmtCompact.c53f2cee.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 16566,
+    "hits": [
+      "T=",
+      "token"
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:15.272990+00:00",
+    "elapsed_ms": 23982.43,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.49182.c8a1a820.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 11977,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:15.313837+00:00",
+    "elapsed_ms": 24023.32,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.49758.2719dcc8.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 16440,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:15.432863+00:00",
+    "elapsed_ms": 24142.31,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.33484.0fbc1168.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 13053,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:15.433614+00:00",
+    "elapsed_ms": 24143.06,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.55889.a9905be3.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 12661,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:15.434255+00:00",
+    "elapsed_ms": 24143.7,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.5202.8304ff22.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 17615,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:15.434737+00:00",
+    "elapsed_ms": 24144.18,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.49862.0e9f3aa7.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 17316,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:15.435275+00:00",
+    "elapsed_ms": 24144.72,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.92043.ae78d9f0.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 16408,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:15.436216+00:00",
+    "elapsed_ms": 24145.66,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.54965.9b26e780.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 16108,
+    "hits": [
+      "T=",
+      "data="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:15.436703+00:00",
+    "elapsed_ms": 24146.15,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.87477.6079fa4a.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 9064,
+    "hits": [
+      "T="
+    ]
+  },
+  {
+    "captured_at": "2026-05-26T03:38:15.439445+00:00",
+    "elapsed_ms": 24148.89,
+    "url": "https://widgets.sir.sportradar.com/assets/js/chunk.match.lmt_sticky_1.9098f22e.js",
+    "status": 200,
+    "content_type": "application/javascript; charset=utf-8",
+    "body_size_bytes": 16589,
+    "hits": [
+      "T="
+    ]
+  }
+]

@@ -1,0 +1,1862 @@
+{
+  "records_count": 74,
+  "endpoint_count": 43,
+  "classification_counts": {
+    "historical": 35,
+    "stats": 31,
+    "league": 26,
+    "match": 21,
+    "sport": 12,
+    "fixtures": 12,
+    "odds": 11,
+    "team": 11,
+    "discovery": 9,
+    "live_state": 9,
+    "players": 9,
+    "prematch": 7,
+    "standings": 7,
+    "form": 6,
+    "timeline": 4,
+    "config": 4,
+    "h2h": 2,
+    "injuries": 1
+  },
+  "endpoints": {
+    "/bet365/en/match/:id": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "document": 1
+      },
+      "classifications": {
+        "match": 1
+      },
+      "hosts": {
+        "statshub.sportradar.com": 1
+      },
+      "example_url": "https://statshub.sportradar.com/bet365/en/match/61624678",
+      "normalized_paths": [
+        "/bet365/en/match/:id"
+      ],
+      "query_urls": [],
+      "has_signed_token": false,
+      "token_data_examples": [],
+      "body_size_min_bytes": 212986,
+      "body_size_max_bytes": 212986,
+      "body_size_avg_bytes": 212986.0,
+      "top_level_keys": []
+    },
+    "/bet365/en/sport/:id": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "document": 1
+      },
+      "classifications": {
+        "sport": 1
+      },
+      "hosts": {
+        "statshub.sportradar.com": 1
+      },
+      "example_url": "https://statshub.sportradar.com/bet365/en/sport/1",
+      "normalized_paths": [
+        "/bet365/en/sport/:id"
+      ],
+      "query_urls": [],
+      "has_signed_token": false,
+      "token_data_examples": [],
+      "body_size_min_bytes": 567930,
+      "body_size_max_bytes": 567930,
+      "body_size_avg_bytes": 567930.0,
+      "top_level_keys": []
+    },
+    "/bet365/en/sport/:id/tournament/:id": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "document": 1
+      },
+      "classifications": {
+        "league": 1,
+        "sport": 1
+      },
+      "hosts": {
+        "statshub.sportradar.com": 1
+      },
+      "example_url": "https://statshub.sportradar.com/bet365/en/sport/1/tournament/8",
+      "normalized_paths": [
+        "/bet365/en/sport/:id/tournament/:id"
+      ],
+      "query_urls": [],
+      "has_signed_token": false,
+      "token_data_examples": [],
+      "body_size_min_bytes": 201830,
+      "body_size_max_bytes": 201830,
+      "body_size_avg_bytes": 201830.0,
+      "top_level_keys": []
+    },
+    "/bet365/en/sport/:id/tournament/:id/fixtures": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "document": 1
+      },
+      "classifications": {
+        "fixtures": 1,
+        "league": 1,
+        "sport": 1
+      },
+      "hosts": {
+        "statshub.sportradar.com": 1
+      },
+      "example_url": "https://statshub.sportradar.com/bet365/en/sport/1/tournament/8/fixtures?view=round",
+      "normalized_paths": [
+        "/bet365/en/sport/:id/tournament/:id/fixtures"
+      ],
+      "query_urls": [],
+      "has_signed_token": false,
+      "token_data_examples": [],
+      "body_size_min_bytes": 165665,
+      "body_size_max_bytes": 165665,
+      "body_size_avg_bytes": 165665.0,
+      "top_level_keys": []
+    },
+    "config_tree_mini": {
+      "count": 3,
+      "statuses": {
+        "200": 3
+      },
+      "resource_types": {
+        "fetch": 3
+      },
+      "classifications": {
+        "discovery": 3,
+        "league": 3,
+        "sport": 3
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 3
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/config_tree_mini/67/0/1?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/config_tree_mini/:id/:id/:id",
+        "/config_tree_mini/:id/:id/:id/:id"
+      ],
+      "query_urls": [
+        "config_tree_mini/67/0/1",
+        "config_tree_mini/67/0/1/32"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 8878,
+      "body_size_max_bytes": 985488,
+      "body_size_avg_bytes": 659951.33,
+      "top_level_keys": [
+        "_doc",
+        "_id",
+        "_sid",
+        "name",
+        "realcategories",
+        "_sk"
+      ]
+    },
+    "event_get": {
+      "count": 4,
+      "statuses": {
+        "200": 4
+      },
+      "resource_types": {
+        "fetch": 4
+      },
+      "classifications": {
+        "live_state": 4,
+        "match": 4
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 4
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/event_get/?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/event_get"
+      ],
+      "query_urls": [
+        "event_get/"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 138755,
+      "body_size_max_bytes": 149649,
+      "body_size_avg_bytes": 141478.5,
+      "top_level_keys": [
+        "_doc",
+        "_doctype",
+        "_id",
+        "_scoutid",
+        "_sid",
+        "_rcid",
+        "_tid",
+        "_dc",
+        "_typeid",
+        "uts",
+        "updated_uts",
+        "type",
+        "matchid",
+        "disabled",
+        "time",
+        "seconds",
+        "injurytime",
+        "team",
+        "name",
+        "updatedate",
+        "period",
+        "status",
+        "match"
+      ]
+    },
+    "livescore_season_fixtures": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "classifications": {
+        "fixtures": 1,
+        "historical": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/livescore_season_fixtures/130805?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/livescore_season_fixtures/:id"
+      ],
+      "query_urls": [
+        "livescore_season_fixtures/130805"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 938316,
+      "body_size_max_bytes": 938316,
+      "body_size_avg_bytes": 938316.0,
+      "top_level_keys": [
+        "matches",
+        "tournaments",
+        "uniquetournaments",
+        "categories",
+        "sports",
+        "venues"
+      ]
+    },
+    "match_details": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "classifications": {
+        "match": 1,
+        "prematch": 1,
+        "stats": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_details/61624678?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/match_details/:id"
+      ],
+      "query_urls": [
+        "match_details/61624678"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 2368,
+      "body_size_max_bytes": 2368,
+      "body_size_avg_bytes": 2368.0,
+      "top_level_keys": [
+        "_doc",
+        "_matchid",
+        "teams",
+        "index",
+        "values",
+        "types"
+      ]
+    },
+    "match_info": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "xhr": 1
+      },
+      "classifications": {
+        "match": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/match_info/61624678?T=exp=1779849147~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJzdGF0c2h1YiIsImFjdCI6Im9yaWdpbmNoZWNrIiwib3NyYyI6Im9yaWdpbiJ9~hmac=669d5a5b34722820beb55b239968aad52d9bf17a3f773e82b19686a6d83202eb",
+      "normalized_paths": [
+        "/match_info/:id"
+      ],
+      "query_urls": [
+        "match_info/61624678"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "statshub",
+          "act": "origincheck",
+          "osrc": "origin"
+        }
+      ],
+      "body_size_min_bytes": 7413,
+      "body_size_max_bytes": 7413,
+      "body_size_avg_bytes": 7413.0,
+      "top_level_keys": [
+        "_doc",
+        "match",
+        "cities",
+        "stadium",
+        "tournament",
+        "uniquetournament",
+        "sport",
+        "realcategory",
+        "season",
+        "referee",
+        "attendance",
+        "manager",
+        "jerseys",
+        "statscoverage"
+      ]
+    },
+    "match_info_statshub": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "classifications": {
+        "match": 1,
+        "prematch": 1,
+        "stats": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_info_statshub/61624678?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/match_info_statshub/:id"
+      ],
+      "query_urls": [
+        "match_info_statshub/61624678"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 7422,
+      "body_size_max_bytes": 7422,
+      "body_size_avg_bytes": 7422.0,
+      "top_level_keys": [
+        "_doc",
+        "match",
+        "cities",
+        "stadium",
+        "tournament",
+        "uniquetournament",
+        "sport",
+        "realcategory",
+        "season",
+        "referee",
+        "attendance",
+        "manager",
+        "jerseys",
+        "statscoverage"
+      ]
+    },
+    "match_markets": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "classifications": {
+        "match": 1,
+        "odds": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_markets/61624678?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/match_markets/:id"
+      ],
+      "query_urls": [
+        "match_markets/61624678"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 127,
+      "body_size_max_bytes": 127,
+      "body_size_avg_bytes": 127.0,
+      "top_level_keys": [
+        "markets"
+      ]
+    },
+    "match_timeline": {
+      "count": 2,
+      "statuses": {
+        "200": 2
+      },
+      "resource_types": {
+        "fetch": 1,
+        "xhr": 1
+      },
+      "classifications": {
+        "live_state": 2,
+        "match": 2,
+        "timeline": 2
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 2
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_timeline/61624678?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/match_timeline/:id"
+      ],
+      "query_urls": [
+        "match_timeline/61624678"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        },
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "statshub",
+          "act": "origincheck",
+          "osrc": "origin"
+        }
+      ],
+      "body_size_min_bytes": 103686,
+      "body_size_max_bytes": 103686,
+      "body_size_avg_bytes": 103686.0,
+      "top_level_keys": [
+        "match",
+        "events"
+      ]
+    },
+    "match_timelinedelta": {
+      "count": 2,
+      "statuses": {
+        "200": 2
+      },
+      "resource_types": {
+        "fetch": 1,
+        "xhr": 1
+      },
+      "classifications": {
+        "live_state": 2,
+        "match": 2,
+        "timeline": 2
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 2
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/match_timelinedelta/61624678?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/match_timelinedelta/:id"
+      ],
+      "query_urls": [
+        "match_timelinedelta/61624678"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        },
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "statshub",
+          "act": "origincheck",
+          "osrc": "origin"
+        }
+      ],
+      "body_size_min_bytes": 2496,
+      "body_size_max_bytes": 2496,
+      "body_size_avg_bytes": 2496.0,
+      "top_level_keys": [
+        "match",
+        "events"
+      ]
+    },
+    "odds_ukformat": {
+      "count": 4,
+      "statuses": {
+        "200": 4
+      },
+      "resource_types": {
+        "fetch": 4
+      },
+      "classifications": {
+        "config": 4,
+        "odds": 4
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 4
+      },
+      "example_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/odds_ukformat/?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/odds_ukformat"
+      ],
+      "query_urls": [
+        "odds_ukformat/"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 9785,
+      "body_size_max_bytes": 9785,
+      "body_size_avg_bytes": 9785.0,
+      "top_level_keys": [
+        "dec",
+        "frac"
+      ]
+    },
+    "season_markets": {
+      "count": 2,
+      "statuses": {
+        "200": 2
+      },
+      "resource_types": {
+        "fetch": 2
+      },
+      "classifications": {
+        "historical": 2,
+        "odds": 2
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 2
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/season_markets/130805?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/season_markets/:id"
+      ],
+      "query_urls": [
+        "season_markets/130805"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 197079,
+      "body_size_max_bytes": 197079,
+      "body_size_avg_bytes": 197079.0,
+      "top_level_keys": [
+        "matches"
+      ]
+    },
+    "sport_matches_prevnext": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "classifications": {
+        "discovery": 1,
+        "fixtures": 1,
+        "match": 1,
+        "sport": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/common/en/America:Montevideo/gismo/sport_matches_prevnext/1/2026-05-26/0?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/sport_matches_prevnext/:id/:date/:id"
+      ],
+      "query_urls": [
+        "sport_matches_prevnext/1/2026-05-26/0"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 8420,
+      "body_size_max_bytes": 8420,
+      "body_size_avg_bytes": 8420.0,
+      "top_level_keys": [
+        "previous",
+        "next",
+        "validCalendarDates"
+      ]
+    },
+    "stats_formtable": {
+      "count": 2,
+      "statuses": {
+        "200": 2
+      },
+      "resource_types": {
+        "fetch": 2
+      },
+      "classifications": {
+        "form": 2,
+        "historical": 2,
+        "league": 2,
+        "standings": 2,
+        "stats": 2
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 2
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_formtable/130805?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_formtable/:id"
+      ],
+      "query_urls": [
+        "stats_formtable/130805"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 48337,
+      "body_size_max_bytes": 48337,
+      "body_size_avg_bytes": 48337.0,
+      "top_level_keys": [
+        "matchtype",
+        "tabletype",
+        "season",
+        "winpoints",
+        "losspoints",
+        "currentround",
+        "teams"
+      ]
+    },
+    "stats_h2h_versus": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "classifications": {
+        "h2h": 1,
+        "stats": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_h2h_versus/2818/2885/61624678?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_h2h_versus/:id/:id/:id"
+      ],
+      "query_urls": [
+        "stats_h2h_versus/2818/2885/61624678"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 20744,
+      "body_size_max_bytes": 20744,
+      "body_size_avg_bytes": 20744.0,
+      "top_level_keys": [
+        "match",
+        "lastmatchesbetweenteams",
+        "lastmatchesbetweenteamsonvenue",
+        "versusmatchstats"
+      ]
+    },
+    "stats_match_get": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "classifications": {
+        "live_state": 1,
+        "match": 1,
+        "prematch": 1,
+        "stats": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_match_get/61624678?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_match_get/:id"
+      ],
+      "query_urls": [
+        "stats_match_get/61624678"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 6084,
+      "body_size_max_bytes": 6084,
+      "body_size_avg_bytes": 6084.0,
+      "top_level_keys": [
+        "_doc",
+        "_doctype",
+        "_id",
+        "_sid",
+        "_rcid",
+        "_tid",
+        "_utid",
+        "round",
+        "week",
+        "teams",
+        "tobeannounced",
+        "postponed",
+        "stadiumid",
+        "walkover",
+        "retired",
+        "comment",
+        "inlivescore",
+        "disqualified",
+        "neutralground",
+        "canceled",
+        "bestof",
+        "periods",
+        "result",
+        "status",
+        "time"
+      ]
+    },
+    "stats_match_situation": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "xhr": 1
+      },
+      "classifications": {
+        "match": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_match_situation/61624678?T=exp=1779849147~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJzdGF0c2h1YiIsImFjdCI6Im9yaWdpbmNoZWNrIiwib3NyYyI6Im9yaWdpbiJ9~hmac=669d5a5b34722820beb55b239968aad52d9bf17a3f773e82b19686a6d83202eb",
+      "normalized_paths": [
+        "/stats_match_situation/:id"
+      ],
+      "query_urls": [
+        "stats_match_situation/61624678"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "statshub",
+          "act": "origincheck",
+          "osrc": "origin"
+        }
+      ],
+      "body_size_min_bytes": 24019,
+      "body_size_max_bytes": 24019,
+      "body_size_avg_bytes": 24019.0,
+      "top_level_keys": [
+        "_doc",
+        "matchid",
+        "data"
+      ]
+    },
+    "stats_season_fixtures2": {
+      "count": 2,
+      "statuses": {
+        "200": 2
+      },
+      "resource_types": {
+        "fetch": 2
+      },
+      "classifications": {
+        "fixtures": 2,
+        "historical": 2
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 2
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_fixtures2/130805?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_season_fixtures2/:id"
+      ],
+      "query_urls": [
+        "stats_season_fixtures2/130805"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 414195,
+      "body_size_max_bytes": 414195,
+      "body_size_avg_bytes": 414195.0,
+      "top_level_keys": [
+        "_id",
+        "_doc",
+        "_utid",
+        "_sid",
+        "name",
+        "abbr",
+        "start",
+        "end",
+        "neutralground",
+        "friendly",
+        "currentseasonid",
+        "year",
+        "matches",
+        "cups",
+        "tables",
+        "tournaments"
+      ]
+    },
+    "stats_season_injuries": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "classifications": {
+        "historical": 1,
+        "injuries": 1,
+        "league": 1,
+        "stats": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_injuries/130805?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_season_injuries/:id"
+      ],
+      "query_urls": [
+        "stats_season_injuries/130805"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 69256,
+      "body_size_max_bytes": 69256,
+      "body_size_avg_bytes": 69256.0,
+      "top_level_keys": [
+        "_doc",
+        "_id",
+        "_tid",
+        "_playerid",
+        "status",
+        "player",
+        "uniqueteam"
+      ]
+    },
+    "stats_season_lastx": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "classifications": {
+        "historical": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_lastx/130805/20?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_season_lastx/:id/:id"
+      ],
+      "query_urls": [
+        "stats_season_lastx/130805/20"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 22171,
+      "body_size_max_bytes": 22171,
+      "body_size_avg_bytes": 22171.0,
+      "top_level_keys": [
+        "season",
+        "matches",
+        "tournaments"
+      ]
+    },
+    "stats_season_leaguesummary": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "classifications": {
+        "historical": 1,
+        "league": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_season_leaguesummary/130805?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_season_leaguesummary/:id"
+      ],
+      "query_urls": [
+        "stats_season_leaguesummary/130805"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 589,
+      "body_size_max_bytes": 589,
+      "body_size_avg_bytes": 589.0,
+      "top_level_keys": [
+        "_doc",
+        "matches",
+        "goals",
+        "overunder",
+        "clean_sheet",
+        "both_teams_to_score",
+        "cards",
+        "goalsbyperiod",
+        "pr_match_stats"
+      ]
+    },
+    "stats_season_meta": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "classifications": {
+        "historical": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_meta/130805?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_season_meta/:id"
+      ],
+      "query_urls": [
+        "stats_season_meta/130805"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 2462,
+      "body_size_max_bytes": 2462,
+      "body_size_avg_bytes": 2462.0,
+      "top_level_keys": [
+        "season",
+        "sport",
+        "realcategory",
+        "tournamentids",
+        "tableids",
+        "cupids",
+        "uniquetournament",
+        "statscoverage"
+      ]
+    },
+    "stats_season_nextx": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "classifications": {
+        "historical": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_nextx/130805/20?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_season_nextx/:id/:id"
+      ],
+      "query_urls": [
+        "stats_season_nextx/130805/20"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 505,
+      "body_size_max_bytes": 505,
+      "body_size_avg_bytes": 505.0,
+      "top_level_keys": [
+        "season"
+      ]
+    },
+    "stats_season_tables": {
+      "count": 5,
+      "statuses": {
+        "200": 5
+      },
+      "resource_types": {
+        "fetch": 5
+      },
+      "classifications": {
+        "historical": 5,
+        "league": 5,
+        "standings": 5,
+        "stats": 5
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 5
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_tables/130805//?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_season_tables/:id",
+        "/stats_season_tables/:id/:id"
+      ],
+      "query_urls": [
+        "stats_season_tables/130805",
+        "stats_season_tables/130805/1"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 21892,
+      "body_size_max_bytes": 21895,
+      "body_size_avg_bytes": 21893.2,
+      "top_level_keys": [
+        "_id",
+        "_doc",
+        "_utid",
+        "_sid",
+        "name",
+        "abbr",
+        "start",
+        "end",
+        "neutralground",
+        "friendly",
+        "currentseasonid",
+        "year",
+        "tables"
+      ]
+    },
+    "stats_season_teams2": {
+      "count": 2,
+      "statuses": {
+        "200": 2
+      },
+      "resource_types": {
+        "fetch": 2
+      },
+      "classifications": {
+        "historical": 2
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 2
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_teams2/130805?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_season_teams2/:id"
+      ],
+      "query_urls": [
+        "stats_season_teams2/130805"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 32785,
+      "body_size_max_bytes": 32785,
+      "body_size_avg_bytes": 32785.0,
+      "top_level_keys": [
+        "season",
+        "teams",
+        "tables"
+      ]
+    },
+    "stats_season_teamscoringconceding": {
+      "count": 2,
+      "statuses": {
+        "200": 2
+      },
+      "resource_types": {
+        "fetch": 2
+      },
+      "classifications": {
+        "historical": 2,
+        "league": 2,
+        "stats": 2,
+        "team": 2
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 2
+      },
+      "example_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_season_teamscoringconceding/130805/2885/-1?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_season_teamscoringconceding/:id/:id/-1"
+      ],
+      "query_urls": [
+        "stats_season_teamscoringconceding/130805/2885/-1",
+        "stats_season_teamscoringconceding/130805/2818/-1"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 3660,
+      "body_size_max_bytes": 3663,
+      "body_size_avg_bytes": 3661.5,
+      "top_level_keys": [
+        "team",
+        "stats"
+      ]
+    },
+    "stats_season_topassists": {
+      "count": 3,
+      "statuses": {
+        "200": 3
+      },
+      "resource_types": {
+        "fetch": 3
+      },
+      "classifications": {
+        "historical": 3,
+        "league": 3,
+        "players": 3,
+        "stats": 3
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 3
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topassists/130805/?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_season_topassists/:id",
+        "/stats_season_topassists/:id/:id"
+      ],
+      "query_urls": [
+        "stats_season_topassists/130805",
+        "stats_season_topassists/130805/2885",
+        "stats_season_topassists/130805/2818"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 10322,
+      "body_size_max_bytes": 231115,
+      "body_size_avg_bytes": 84600.67,
+      "top_level_keys": [
+        "season",
+        "players",
+        "teams"
+      ]
+    },
+    "stats_season_topcards": {
+      "count": 3,
+      "statuses": {
+        "200": 3
+      },
+      "resource_types": {
+        "fetch": 3
+      },
+      "classifications": {
+        "historical": 3,
+        "league": 3,
+        "players": 3,
+        "stats": 3
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 3
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topcards/130805/?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_season_topcards/:id",
+        "/stats_season_topcards/:id/:id"
+      ],
+      "query_urls": [
+        "stats_season_topcards/130805",
+        "stats_season_topcards/130805/2818",
+        "stats_season_topcards/130805/2885"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 22389,
+      "body_size_max_bytes": 423065,
+      "body_size_avg_bytes": 155961.0,
+      "top_level_keys": [
+        "season",
+        "players",
+        "teams"
+      ]
+    },
+    "stats_season_topgoals": {
+      "count": 3,
+      "statuses": {
+        "200": 3
+      },
+      "resource_types": {
+        "fetch": 3
+      },
+      "classifications": {
+        "historical": 3,
+        "league": 3,
+        "players": 3,
+        "stats": 3
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 3
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_topgoals/130805/?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_season_topgoals/:id",
+        "/stats_season_topgoals/:id/:id"
+      ],
+      "query_urls": [
+        "stats_season_topgoals/130805",
+        "stats_season_topgoals/130805/2885",
+        "stats_season_topgoals/130805/2818"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 11595,
+      "body_size_max_bytes": 275720,
+      "body_size_avg_bytes": 100270.67,
+      "top_level_keys": [
+        "season",
+        "players",
+        "teams"
+      ]
+    },
+    "stats_season_uniqueteamstats": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "classifications": {
+        "historical": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_uniqueteamstats/130805?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_season_uniqueteamstats/:id"
+      ],
+      "query_urls": [
+        "stats_season_uniqueteamstats/130805"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 24511,
+      "body_size_max_bytes": 24511,
+      "body_size_avg_bytes": 24511.0,
+      "top_level_keys": [
+        "season",
+        "stats"
+      ]
+    },
+    "stats_season_venues": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "classifications": {
+        "historical": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_season_venues/130805?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_season_venues/:id"
+      ],
+      "query_urls": [
+        "stats_season_venues/130805"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 20376,
+      "body_size_max_bytes": 20376,
+      "body_size_avg_bytes": 20376.0,
+      "top_level_keys": [
+        "season",
+        "stadiums"
+      ]
+    },
+    "stats_sport_matches_prevnext": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "classifications": {
+        "discovery": 1,
+        "fixtures": 1,
+        "match": 1,
+        "sport": 1,
+        "stats": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/common/en/America:Montevideo/gismo/stats_sport_matches_prevnext/1/2026-05-26/0?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_sport_matches_prevnext/:id/:date/:id"
+      ],
+      "query_urls": [
+        "stats_sport_matches_prevnext/1/2026-05-26/0"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 2357,
+      "body_size_max_bytes": 2357,
+      "body_size_avg_bytes": 2357.0,
+      "top_level_keys": [
+        "previous",
+        "next",
+        "validCalendarDates"
+      ]
+    },
+    "stats_team_lastx": {
+      "count": 2,
+      "statuses": {
+        "200": 2
+      },
+      "resource_types": {
+        "fetch": 2
+      },
+      "classifications": {
+        "form": 2,
+        "stats": 2,
+        "team": 2
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 2
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_lastx/2885/20?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_team_lastx/:id/:id"
+      ],
+      "query_urls": [
+        "stats_team_lastx/2885/20",
+        "stats_team_lastx/2818/20"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 23669,
+      "body_size_max_bytes": 26646,
+      "body_size_avg_bytes": 25157.5,
+      "top_level_keys": [
+        "team",
+        "matches",
+        "tournaments",
+        "uniquetournaments",
+        "realcategories"
+      ]
+    },
+    "stats_team_nextx": {
+      "count": 2,
+      "statuses": {
+        "200": 2
+      },
+      "resource_types": {
+        "fetch": 2
+      },
+      "classifications": {
+        "fixtures": 2,
+        "stats": 2,
+        "team": 2
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 2
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_nextx/2885/1?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_team_nextx/:id/:id"
+      ],
+      "query_urls": [
+        "stats_team_nextx/2885/1",
+        "stats_team_nextx/2818/1"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 433,
+      "body_size_max_bytes": 2736,
+      "body_size_avg_bytes": 1584.5,
+      "top_level_keys": [
+        "team",
+        "matches",
+        "tournaments",
+        "uniquetournaments",
+        "realcategories"
+      ]
+    },
+    "stats_team_streaks": {
+      "count": 2,
+      "statuses": {
+        "200": 2
+      },
+      "resource_types": {
+        "fetch": 2
+      },
+      "classifications": {
+        "form": 2,
+        "historical": 2,
+        "stats": 2,
+        "team": 2
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 2
+      },
+      "example_url": "https://sh.fn.sportradar.com/common/en/Etc:UTC/gismo/stats_team_streaks/2885?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_team_streaks/:id"
+      ],
+      "query_urls": [
+        "stats_team_streaks/2885",
+        "stats_team_streaks/2818"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 2507,
+      "body_size_max_bytes": 3178,
+      "body_size_avg_bytes": 2842.5,
+      "top_level_keys": [
+        "team",
+        "lastmatchesform",
+        "streaks",
+        "nextmatches"
+      ]
+    },
+    "stats_team_versus": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "classifications": {
+        "h2h": 1,
+        "stats": 1,
+        "team": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/stats_team_versus/2885/2818/?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/stats_team_versus/:id/:id"
+      ],
+      "query_urls": [
+        "stats_team_versus/2885/2818"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 41463,
+      "body_size_max_bytes": 41463,
+      "body_size_avg_bytes": 41463.0,
+      "top_level_keys": [
+        "livematchid",
+        "matches",
+        "tournaments",
+        "realcategories",
+        "teams",
+        "currentmanagers",
+        "jersey",
+        "next"
+      ]
+    },
+    "unified_sport_matches": {
+      "count": 2,
+      "statuses": {
+        "200": 2
+      },
+      "resource_types": {
+        "fetch": 2
+      },
+      "classifications": {
+        "discovery": 2,
+        "fixtures": 2,
+        "match": 2,
+        "prematch": 2,
+        "sport": 2
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 2
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/America:Montevideo/gismo/unified_sport_matches/1/2026-05-26/0?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/unified_sport_matches/:id/:date/:id"
+      ],
+      "query_urls": [
+        "unified_sport_matches/1/2026-05-26/0"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 374530,
+      "body_size_max_bytes": 374530,
+      "body_size_avg_bytes": 374530.0,
+      "top_level_keys": [
+        "sport"
+      ]
+    },
+    "unified_sport_matches_markets": {
+      "count": 2,
+      "statuses": {
+        "200": 2
+      },
+      "resource_types": {
+        "fetch": 2
+      },
+      "classifications": {
+        "discovery": 2,
+        "fixtures": 2,
+        "match": 2,
+        "odds": 2,
+        "prematch": 2,
+        "sport": 2
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 2
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/America:Montevideo/gismo/unified_sport_matches_markets/1/2026-05-26/0?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/unified_sport_matches_markets/:id/:date/:id"
+      ],
+      "query_urls": [
+        "unified_sport_matches_markets/1/2026-05-26/0"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 129805,
+      "body_size_max_bytes": 129805,
+      "body_size_avg_bytes": 129805.0,
+      "top_level_keys": [
+        "matches"
+      ]
+    },
+    "uniqueteam_markets": {
+      "count": 2,
+      "statuses": {
+        "200": 2
+      },
+      "resource_types": {
+        "fetch": 2
+      },
+      "classifications": {
+        "odds": 2,
+        "team": 2
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 2
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/uniqueteam_markets/2885?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/uniqueteam_markets/:id"
+      ],
+      "query_urls": [
+        "uniqueteam_markets/2885",
+        "uniqueteam_markets/2818"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 89043,
+      "body_size_max_bytes": 120935,
+      "body_size_avg_bytes": 104989.0,
+      "top_level_keys": [
+        "matches"
+      ]
+    },
+    "uniquetournament_seasonswinners": {
+      "count": 1,
+      "statuses": {
+        "200": 1
+      },
+      "resource_types": {
+        "fetch": 1
+      },
+      "classifications": {
+        "historical": 1,
+        "league": 1
+      },
+      "hosts": {
+        "sh.fn.sportradar.com": 1
+      },
+      "example_url": "https://sh.fn.sportradar.com/bet365/en/Etc:UTC/gismo/uniquetournament_seasonswinners/8?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e",
+      "normalized_paths": [
+        "/uniquetournament_seasonswinners/:id"
+      ],
+      "query_urls": [
+        "uniquetournament_seasonswinners/8"
+      ],
+      "has_signed_token": true,
+      "token_data_examples": [
+        {
+          "o": "https://statshub.sportradar.com",
+          "a": "bet365",
+          "act": "origincheck",
+          "osrc": "hostheader"
+        }
+      ],
+      "body_size_min_bytes": 59836,
+      "body_size_max_bytes": 59836,
+      "body_size_avg_bytes": 59836.0,
+      "top_level_keys": [
+        "seasons"
+      ]
+    }
+  }
+}

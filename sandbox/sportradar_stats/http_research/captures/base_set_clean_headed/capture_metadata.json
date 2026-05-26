@@ -1,0 +1,28 @@
+{
+  "generated_at": "2026-05-26T03:38:17.886189+00:00",
+  "urls": [
+    "https://statshub.sportradar.com/bet365/en/sport/1",
+    "https://statshub.sportradar.com/bet365/en/sport/1/tournament/8",
+    "https://statshub.sportradar.com/bet365/en/sport/1/tournament/8/fixtures?view=round",
+    "https://statshub.sportradar.com/bet365/en/match/61624678"
+  ],
+  "seconds": 4.0,
+  "headless": false,
+  "user_data_dir": null,
+  "requests_seen": 880,
+  "responses_seen": 773,
+  "records_count": 74,
+  "endpoint_count": 43,
+  "script_hint_count": 439,
+  "files": {
+    "requests": "/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/sandbox/sportradar_stats/http_research/captures/base_set_clean_headed/requests.ndjson",
+    "responses": "/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/sandbox/sportradar_stats/http_research/captures/base_set_clean_headed/responses.ndjson",
+    "fetch_only": "/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/sandbox/sportradar_stats/http_research/captures/base_set_clean_headed/fetch_only.ndjson",
+    "endpoints_index": "/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/sandbox/sportradar_stats/http_research/captures/base_set_clean_headed/endpoints_index.json",
+    "endpoint_report": "/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/sandbox/sportradar_stats/http_research/captures/base_set_clean_headed/endpoint_report.md",
+    "endpoint_catalog": "/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/sandbox/sportradar_stats/http_research/captures/base_set_clean_headed/endpoint_catalog.md",
+    "cookies": "/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/sandbox/sportradar_stats/http_research/captures/base_set_clean_headed/cookies.json",
+    "script_hints": "/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/sandbox/sportradar_stats/http_research/captures/base_set_clean_headed/script_hints.json",
+    "token_analysis": "/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/sandbox/sportradar_stats/http_research/captures/base_set_clean_headed/token_analysis.md"
+  }
+}

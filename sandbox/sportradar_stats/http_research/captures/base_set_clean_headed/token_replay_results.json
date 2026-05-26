@@ -1,0 +1,59 @@
+{
+  "generated_at": "2026-05-26T03:40:11.719712+00:00",
+  "source": "sandbox/sportradar_stats/http_research/captures/base_set_clean_headed/fetch_only.ndjson",
+  "signed_url_count": 20,
+  "exact_replay_outcomes": {
+    "reusable": 20
+  },
+  "token_payloads": [
+    {
+      "exp": 1779853984,
+      "expires_at_utc": "2026-05-27T03:53:04+00:00",
+      "acl": "/*",
+      "data_json": {
+        "o": "https://statshub.sportradar.com",
+        "a": "bet365",
+        "act": "origincheck",
+        "osrc": "hostheader"
+      },
+      "endpoints": [
+        "sport_matches_prevnext",
+        "config_tree_mini",
+        "unified_sport_matches",
+        "stats_sport_matches_prevnext",
+        "odds_ukformat",
+        "unified_sport_matches_markets",
+        "event_get",
+        "stats_season_tables",
+        "stats_season_teams2",
+        "stats_formtable",
+        "stats_season_leaguesummary",
+        "stats_season_uniqueteamstats",
+        "stats_season_lastx",
+        "stats_season_nextx",
+        "stats_season_venues",
+        "uniquetournament_seasonswinners",
+        "stats_season_fixtures2",
+        "stats_season_topassists",
+        "stats_season_topgoals",
+        "stats_season_topcards"
+      ]
+    }
+  ],
+  "mutation_results": [
+    {
+      "endpoint_key": "unified_sport_matches",
+      "mutated_endpoint": "unified_sport_matches_markets",
+      "status": 200,
+      "outcome": "reusable",
+      "url": "https://sh.fn.sportradar.com/bet365/en/America:Montevideo/gismo/unified_sport_matches_markets/1/2026-05-26/0?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e"
+    },
+    {
+      "endpoint_key": "unified_sport_matches_markets",
+      "mutated_endpoint": "unified_sport_matches",
+      "status": 200,
+      "outcome": "reusable",
+      "url": "https://sh.fn.sportradar.com/bet365/en/America:Montevideo/gismo/unified_sport_matches/1/2026-05-26/0?T=exp=1779853984~acl=/*~data=eyJvIjoiaHR0cHM6Ly9zdGF0c2h1Yi5zcG9ydHJhZGFyLmNvbSIsImEiOiJiZXQzNjUiLCJhY3QiOiJvcmlnaW5jaGVjayIsIm9zcmMiOiJob3N0aGVhZGVyIn0~hmac=6abe6b83b324bf267e0e55357d286d679059119e534e19db1f2b34b70fa2907e"
+    }
+  ]
+}
