@@ -307,13 +307,24 @@ from sandbox.sportradar_http.bot_ready import (
     BotReadyLeagueRequest,
     BotReadyMatchRequest,
     SportradarBotReadyProvider,
+    BotReadyTournamentRequest,
 )
 
 provider = SportradarBotReadyProvider()
+tournament_package = provider.get_tournament_navigation(BotReadyTournamentRequest(sport_id=1, tournament_id=18340))
 match_package = provider.get_match_report(BotReadyMatchRequest(match_id=61624678))
 league_package = provider.get_league_snapshot(BotReadyLeagueRequest(sport_id=1, tournament_id=8, season_id=130805))
 live_state = provider.get_live_match_state(BotReadyMatchRequest(match_id=61624678))
 ```
+
+The intended future UI flow is:
+
+```text
+get_tournament_navigation(tournament_id) -> fixtures[] -> selected match_id -> get_match_report(match_id).intelligence
+```
+
+`get_match_report()` returns both the technical snapshot/features and the
+compact `intelligence` document plus `intelligence_markdown`.
 
 These methods still live in sandbox and intentionally do not import `bot/`,
 `core/`, `extractors/`, `storage/`, or the production DB.

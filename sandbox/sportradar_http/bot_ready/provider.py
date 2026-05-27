@@ -6,14 +6,17 @@ from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 
+from sandbox.sportradar_http.endpoints.discovery import get_config_tree_mini
 from sandbox.sportradar_http.endpoints.live import (
     get_match_situation,
     get_match_timeline,
     get_match_timelinedelta,
 )
 from sandbox.sportradar_http.endpoints.matches import get_match_info, get_match_snapshot
+from sandbox.sportradar_http.endpoints.tournaments import get_tournament_fixtures
 from sandbox.sportradar_http.features_engine import build_league_features, build_match_features
 from sandbox.sportradar_http.http_client import SportradarHTTPClient
+from sandbox.sportradar_http.match_intelligence import build_match_intelligence
 from sandbox.sportradar_http.normalizers import (
     make_raw_ref,
     normalize_match_metadata,
@@ -35,6 +38,12 @@ from sandbox.sportradar_http.session_manager import (
     SportradarSessionManager,
     load_session_state,
     save_session_state,
+)
+from sandbox.sportradar_http.tournament_navigation import (
+    build_tournament_navigation_snapshot,
+    build_tournament_tree,
+    render_tournament_navigation_report,
+    resolve_tournament,
 )
 
 
@@ -66,6 +75,14 @@ class BotReadyLeagueRequest:
     season_id: int | None = None
 
 
+@dataclass(frozen=True, slots=True)
+class BotReadyTournamentRequest:
+    sport_id: int = 1
+    tournament_id: int = 8
+    category_id: int = 67
+    depth: int = 0
+
+
 class SportradarBotReadyProvider:
     """Research-only adapter shaped like a future BetBot provider.
 
@@ -92,6 +109,7 @@ class SportradarBotReadyProvider:
         payloads, errors = fetch_match_payloads(client, args)
         snapshot = build_match_snapshot(args=args, payloads=payloads, errors=errors, client=client)
         features = build_match_features(snapshot)
+        intelligence = build_match_intelligence(snapshot, features)
         report = render_match_report(snapshot=snapshot, features=features, metrics=client.metrics_json())
         self._persist_state(client)
         return {
@@ -99,6 +117,39 @@ class SportradarBotReadyProvider:
             "kind": "match_report",
             "snapshot": snapshot,
             "features": features,
+            "intelligence": intelligence,
+            "report_markdown": report,
+            "intelligence_markdown": intelligence.get("report_summary"),
+            "client_metrics": client.metrics_json(),
+        }
+
+    def get_tournament_navigation(self, request: BotReadyTournamentRequest) -> dict[str, Any]:
+        client = self._client()
+        config_tree = get_config_tree_mini(
+            client,
+            sport_id=request.sport_id,
+            category_id=request.category_id,
+            depth=request.depth,
+        )
+        resolved = resolve_tournament(build_tournament_tree(config_tree), request.tournament_id)
+        fixtures_payload: dict[str, Any] = {}
+        if resolved.get("season_id") is not None:
+            fixtures_payload = get_tournament_fixtures(client, season_id=int(resolved["season_id"]))
+        snapshot = build_tournament_navigation_snapshot(
+            sport_id=request.sport_id,
+            tournament_id=request.tournament_id,
+            config_tree_payload=config_tree,
+            fixtures_payload=fixtures_payload,
+            max_fixtures=self.config.max_fixtures,
+        )
+        snapshot["client_metrics"] = client.metrics_json()
+        report = render_tournament_navigation_report(snapshot)
+        self._persist_state(client)
+        return {
+            "schema_version": 1,
+            "kind": "tournament_navigation",
+            "snapshot": snapshot,
+            "fixtures": snapshot.get("fixtures") or [],
             "report_markdown": report,
             "client_metrics": client.metrics_json(),
         }
