@@ -1,3 +1,21 @@
+"""Bot-ready sandbox adapter for the Sportradar HTTP provider.
+
+Purpose:
+    Expose stable method boundaries that resemble a future production BetBot
+    stats provider without importing `bot/`, `core/`, `extractors/`, `storage/`
+    or writing to the DB.
+
+Public flow:
+    - `get_tournament_navigation()` resolves tournament ids and lists fixtures.
+    - `get_match_report()` builds snapshot, features and `match_intelligence`.
+    - `get_league_snapshot()` builds league-level context.
+    - `get_live_match_state()` builds compact live polling state.
+
+Output contract:
+    Every method returns JSON-serializable dictionaries. Presentation layers
+    should consume these dicts; Telegram rendering should remain separate.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -52,6 +70,17 @@ DEFAULT_SESSION_STATE = Path("sandbox/sportradar_http/reports/session_state_head
 
 @dataclass(frozen=True, slots=True)
 class BotReadyRuntimeConfig:
+    """Runtime knobs for sandbox provider calls.
+
+    Args:
+        session_state_path: Cached bootstrap state path.
+        bootstrap_seconds: Browser wait time when a refresh is required.
+        timeout_seconds: HTTP request timeout.
+        retries: HTTP retry count.
+        lastx/nextx/top_players/max_timeline_events/max_fixtures: output size
+            controls for compact provider responses.
+    """
+
     session_state_path: Path = DEFAULT_SESSION_STATE
     bootstrap_seconds: float = 4.0
     timeout_seconds: float = 25.0
@@ -65,11 +94,15 @@ class BotReadyRuntimeConfig:
 
 @dataclass(frozen=True, slots=True)
 class BotReadyMatchRequest:
+    """Request object for match-level methods."""
+
     match_id: int
 
 
 @dataclass(frozen=True, slots=True)
 class BotReadyLeagueRequest:
+    """Request object for league/season snapshot generation."""
+
     sport_id: int = 1
     tournament_id: int = 8
     season_id: int | None = None
@@ -77,6 +110,12 @@ class BotReadyLeagueRequest:
 
 @dataclass(frozen=True, slots=True)
 class BotReadyTournamentRequest:
+    """Request object for tournament navigation.
+
+    `tournament_id` is the URL-facing Statshub id. The provider resolves it to a
+    concrete current `season_id` before fetching fixtures.
+    """
+
     sport_id: int = 1
     tournament_id: int = 8
     category_id: int = 67
@@ -98,6 +137,8 @@ class SportradarBotReadyProvider:
         )
 
     def get_match_report(self, request: BotReadyMatchRequest) -> dict[str, Any]:
+        """Return match snapshot, features, compact intelligence and reports."""
+
         client = self._client()
         args = SimpleNamespace(
             match_id=request.match_id,
@@ -124,6 +165,8 @@ class SportradarBotReadyProvider:
         }
 
     def get_tournament_navigation(self, request: BotReadyTournamentRequest) -> dict[str, Any]:
+        """Resolve tournament navigation and return compact fixtures."""
+
         client = self._client()
         config_tree = get_config_tree_mini(
             client,
@@ -155,6 +198,8 @@ class SportradarBotReadyProvider:
         }
 
     def get_league_snapshot(self, request: BotReadyLeagueRequest) -> dict[str, Any]:
+        """Return compact league snapshot/features for a known season."""
+
         client = self._client()
         season_id = resolve_season_id(request.tournament_id, request.season_id)
         args = SimpleNamespace(
@@ -177,6 +222,8 @@ class SportradarBotReadyProvider:
         }
 
     def get_live_match_state(self, request: BotReadyMatchRequest) -> dict[str, Any]:
+        """Return compact live-state document for one match id."""
+
         client = self._client()
         payloads: dict[str, dict[str, Any]] = {}
         errors: dict[str, str] = {}
@@ -223,6 +270,8 @@ def build_live_state_document(
     payloads: dict[str, dict[str, Any]],
     errors: dict[str, str],
 ) -> dict[str, Any]:
+    """Build JSON-safe live state from raw live endpoint payloads."""
+
     metadata = normalize_match_metadata(payloads.get("match_info"), payloads.get("match_snapshot"))
     live_state = normalize_match_timeline(payloads.get("match_timeline"), max_events=40)
     live_delta = normalize_match_timeline(payloads.get("match_timelinedelta"), max_events=40)

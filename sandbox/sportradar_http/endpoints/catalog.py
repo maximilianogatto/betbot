@@ -1,3 +1,16 @@
+"""Typed catalog of supported Statshub gismo endpoints.
+
+Purpose:
+    Centralize endpoint names, path templates, required parameters, intended
+    utility, and observed stability. Other modules should call wrappers in
+    `endpoints/*.py` or `call_endpoint()` instead of hardcoding raw URLs.
+
+How it connects:
+    `call_endpoint()` formats an `EndpointSpec` and delegates transport to
+    `SportradarHTTPClient.get_gismo()`. Pipeline scripts then normalize the raw
+    returned JSON with `normalizers.py`.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -6,6 +19,23 @@ from typing import Any
 
 @dataclass(frozen=True, slots=True)
 class EndpointSpec:
+    """Declarative metadata for one `/gismo/` endpoint.
+
+    Args:
+        name: Stable internal endpoint key.
+        path_template: Gismo path with `{param}` placeholders.
+        namespace: URL namespace, usually `bet365` or `common`.
+        timezone: URL timezone segment required by Statshub.
+        params: Required placeholder names for validation/documentation.
+        stability: Observed reliability label.
+        utility: Human-readable business purpose.
+        prematch: True if useful before kickoff.
+        live: True if useful during live polling.
+        expected_payload: Expected payload shape.
+        observed_payload_size: Approximate size from real captures/probes.
+        notes: Operational caveats.
+    """
+
     name: str
     path_template: str
     namespace: str = "bet365"
@@ -20,6 +50,8 @@ class EndpointSpec:
     notes: str = ""
 
     def path(self, **kwargs: Any) -> str:
+        """Format `path_template` with sanitized string values."""
+
         return self.path_template.format(**{key: str(value).strip("/") for key, value in kwargs.items()})
 
 
@@ -298,6 +330,8 @@ ENDPOINT_SPECS: dict[str, EndpointSpec] = {
 
 
 def get_spec(name: str) -> EndpointSpec:
+    """Return a registered endpoint spec by internal name."""
+
     try:
         return ENDPOINT_SPECS[name]
     except KeyError as exc:
@@ -305,6 +339,17 @@ def get_spec(name: str) -> EndpointSpec:
 
 
 def call_endpoint(client: Any, name: str, **kwargs: Any) -> dict[str, Any]:
+    """Format an endpoint spec and execute it through `SportradarHTTPClient`.
+
+    Args:
+        client: Object implementing `get_gismo(endpoint_path, namespace, timezone)`.
+        name: Key in `ENDPOINT_SPECS`.
+        **kwargs: Values required by the spec path template.
+
+    Returns:
+        Raw gismo JSON dictionary.
+    """
+
     spec = get_spec(name)
     return client.get_gismo(
         spec.path(**kwargs),
@@ -314,6 +359,8 @@ def call_endpoint(client: Any, name: str, **kwargs: Any) -> dict[str, Any]:
 
 
 def extract_doc_data(payload: dict[str, Any]) -> object | None:
+    """Extract `payload['doc'][0]['data']` from Statshub's common response shape."""
+
     doc = payload.get("doc")
     if not isinstance(doc, list) or not doc or not isinstance(doc[0], dict):
         return None
@@ -321,6 +368,8 @@ def extract_doc_data(payload: dict[str, Any]) -> object | None:
 
 
 def render_endpoint_catalog_v2() -> str:
+    """Render endpoint metadata as Markdown documentation."""
+
     lines = [
         "# Sportradar Endpoint Catalog v2",
         "",

@@ -1,3 +1,25 @@
+"""Pure HTTP replay client for Statshub `/gismo/` endpoints.
+
+Purpose:
+    Use a previously bootstrapped `SportradarSessionState` to call signed
+    Sportradar/Statshub endpoints without keeping Playwright open.
+
+How it connects:
+    - Receives token/headers/cookies from `session_manager`.
+    - Builds signed URLs for named endpoint paths.
+    - Is consumed by `endpoints/*` wrappers and pipeline scripts.
+
+Key behavior:
+    - validates blocked/expired/empty/invalid-json responses;
+    - retries transient failures;
+    - optionally refreshes the session through `SportradarSessionManager`;
+    - records request metrics and endpoint timings.
+
+Data contract:
+    Public methods return raw gismo JSON dictionaries. Normalization is handled
+    later by `normalizers.py` so this client stays transport-focused.
+"""
+
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
@@ -35,6 +57,8 @@ class RefreshableSessionManager(Protocol):
 
 @dataclass(slots=True)
 class ResponseValidation:
+    """Result of checking one HTTP response for replay usability."""
+
     ok: bool
     status_code: int | None
     endpoint_key: str | None
@@ -48,6 +72,8 @@ class ResponseValidation:
 
 @dataclass(slots=True)
 class RequestMetrics:
+    """Mutable counters and timing buckets for HTTP replay calls."""
+
     total_requests: int = 0
     success_count: int = 0
     retry_count: int = 0
@@ -85,6 +111,8 @@ class RequestMetrics:
 
 
 class SportradarHTTPError(RuntimeError):
+    """Raised when a replay request cannot produce a valid payload."""
+
     def __init__(self, message: str, *, validation: ResponseValidation, url: str) -> None:
         super().__init__(message)
         self.validation = validation
@@ -146,6 +174,20 @@ class SportradarHTTPClient:
         allow_refresh: bool = True,
         **kwargs: Any,
     ) -> httpx.Response:
+        """Execute one HTTP request with validation, retry, and optional refresh.
+
+        Args:
+            method: HTTP method, usually `GET`.
+            url: Fully signed URL. Use `get_gismo()` for endpoint-name based calls.
+            expect_json: When true, non-JSON payloads fail validation.
+            allow_refresh: When true, blocked/expired payloads may trigger a
+                session refresh if a session manager exists.
+            **kwargs: Passed directly to `httpx.Client.request`.
+
+        Returns:
+            The validated `httpx.Response`.
+        """
+
         self.maybe_refresh_session()
         last_error: SportradarHTTPError | None = None
         attempts = self.retries + 1 + int(self.auto_refresh and allow_refresh)
@@ -173,6 +215,8 @@ class SportradarHTTPClient:
         raise last_error
 
     def request_json(self, method: str, url: str, **kwargs: Any) -> dict[str, Any]:
+        """Execute a request and return a JSON object payload."""
+
         response = self.request(method, url, expect_json=True, **kwargs)
         payload = safe_json_loads(response.text)
         if not isinstance(payload, dict):
@@ -189,6 +233,17 @@ class SportradarHTTPClient:
         timezone: str = "Etc:UTC",
         host: str = DEFAULT_GISMO_HOST,
     ) -> dict[str, Any]:
+        """Call a `/gismo/<endpoint_path>` endpoint using the current signed token.
+
+        Args:
+            endpoint_path: Endpoint path without `/gismo/`, for example
+                `match_markets/61624678`.
+            namespace: Usually `bet365`; some endpoints use `common`.
+            language: Statshub language segment.
+            timezone: Statshub timezone segment, for example `Etc:UTC`.
+            host: Gismo host, normally `sh.fn.sportradar.com`.
+        """
+
         url = self.build_gismo_url(
             endpoint_path,
             namespace=namespace,
@@ -199,6 +254,8 @@ class SportradarHTTPClient:
         return self.request_json("GET", url)
 
     def validate_response(self, response: httpx.Response, *, expect_json: bool = True) -> ResponseValidation:
+        """Classify a response as usable, blocked, expired, empty, or invalid."""
+
         body = response.text
         body_json = safe_json_loads(body)
         endpoint_key = extract_gismo_endpoint_key(str(response.url))
@@ -250,6 +307,8 @@ class SportradarHTTPClient:
         return self.state
 
     def refresh_signed_url(self, url: str) -> str:
+        """Replace the `T` query value in an existing gismo URL with the current token."""
+
         if self.state is None or self.state.signed_token is None:
             return url
         parsed = urlparse(url)
@@ -265,6 +324,8 @@ class SportradarHTTPClient:
         timezone: str = "Etc:UTC",
         host: str = DEFAULT_GISMO_HOST,
     ) -> str:
+        """Construct a signed gismo URL from an endpoint path and current token."""
+
         if self.state is None or self.state.signed_token is None:
             if self.auto_refresh:
                 self.refresh_session()
@@ -317,10 +378,14 @@ class SportradarHTTPClient:
         return bool(self.auto_refresh and allow_refresh and (validation.blocked or validation.expired))
 
     def metrics_json(self) -> dict[str, Any]:
+        """Return request counters and endpoint timing summary as JSON-safe dict."""
+
         return self.metrics.summary()
 
 
 def summarize_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    """Return a compact structural summary of a raw gismo payload."""
+
     doc = payload.get("doc")
     first = doc[0] if isinstance(doc, list) and doc and isinstance(doc[0], dict) else {}
     data = first.get("data") if isinstance(first, dict) else None

@@ -1,3 +1,11 @@
+"""Discovery endpoint wrappers.
+
+These functions expose sport/date/tournament-tree navigation without leaking raw
+URL templates to callers. They return raw gismo JSON and are intentionally thin:
+transport is handled by `http_client`, normalization by `normalizers` or
+`tournament_navigation`.
+"""
+
 from __future__ import annotations
 
 from typing import Any
@@ -37,4 +45,3 @@ def get_config_tree_mini(client: Any, *, category_id: int = 67, depth: int = 0, 
     """Return navigation tree metadata for sports/categories/leagues."""
 
     return call_endpoint(client, "config_tree_mini", category_id=category_id, depth=depth, sport_id=sport_id)
-

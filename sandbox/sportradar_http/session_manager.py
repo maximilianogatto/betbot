@@ -1,3 +1,29 @@
+"""Browser bootstrap boundary for Statshub HTTP replay.
+
+Purpose:
+    Statshub `/gismo/` endpoints require a signed `T` query token and browser-like
+    replay headers. This module is the only place in the sandbox that needs
+    Playwright for that task. It opens one or more Statshub pages, listens to
+    network responses, captures a reusable signed URL/token, cookies, and
+    request headers, then serializes a `SportradarSessionState`.
+
+How it connects:
+    `SportradarHTTPClient` consumes `SportradarSessionState` and performs the
+    real data extraction via HTTP. Pipelines should call this module only when
+    there is no usable cached state or the signed token is expired/blocked.
+
+Input data:
+    `BootstrapConfig` with browser mode, URLs, wait times, optional user profile,
+    and resource blocking behavior.
+
+Output data:
+    `SportradarSessionState`, JSON state files, and bootstrap reports.
+
+Safety:
+    This module captures and reuses tokens; it does not generate signatures,
+    bypass protection, or mutate production BetBot state.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -149,6 +175,17 @@ def is_expired_payload(body_json: object | None, body_text: str = "") -> bool:
 
 @dataclass(slots=True)
 class SignedToken:
+    """Decoded representation of the signed `T` query parameter.
+
+    Attributes:
+        raw: Original token string, suitable to append as `?T=<raw>`.
+        exp: Unix expiration timestamp when present.
+        expires_at_utc: ISO UTC representation of `exp`.
+        acl: Token access scope observed in the payload, usually `/*`.
+        data_json: Best-effort decoded token data; may be `None`.
+        hmac: Signature value when the token exposes it as a segment.
+    """
+
     raw: str
     exp: int | None = None
     expires_at_utc: str | None = None
@@ -189,6 +226,20 @@ class SignedToken:
 
 @dataclass(slots=True)
 class BootstrapConfig:
+    """Configuration for one bootstrap run.
+
+    Args:
+        bootstrap_urls: Statshub pages to open. At least one must emit `/gismo/`
+            requests so a signed token can be captured.
+        headed: `True` runs a visible browser. Headed has been more reliable in
+            local research when headless document bootstrap returned 403.
+        seconds_per_url: Wait time after each page load for fetch/XHR calls.
+        wait_between_urls: Small delay between bootstrap pages.
+        user_data_dir: Optional persistent Chromium profile directory.
+        timeout_ms: Playwright navigation/default timeout.
+        block_heavy_resources: Abort images/fonts/media to reduce bootstrap cost.
+    """
+
     bootstrap_urls: tuple[str, ...] = DEFAULT_BOOTSTRAP_URLS
     headed: bool = False
     seconds_per_url: float = 5.0
@@ -204,6 +255,8 @@ class BootstrapConfig:
 
 @dataclass(slots=True)
 class CapturedEndpoint:
+    """Compact evidence for a `/gismo/` response observed during bootstrap."""
+
     endpoint_key: str
     url: str
     status: int | None
@@ -215,6 +268,14 @@ class CapturedEndpoint:
 
 @dataclass(slots=True)
 class SportradarSessionState:
+    """Serializable session context used by HTTP replay.
+
+    This is the handoff object between Playwright bootstrap and pure HTTP replay.
+    It intentionally stores only compact operational state: headers, cookies,
+    signed token metadata, endpoint evidence, document statuses, and error
+    counters. Full response payloads are not embedded here.
+    """
+
     generated_at: str
     headed: bool
     headless: bool
@@ -293,9 +354,18 @@ class SportradarSessionManager:
         self.state: SportradarSessionState | None = None
 
     def token_expiration(self) -> str | None:
+        """Return current token expiration as ISO UTC, or `None` if no token exists."""
+
         return self.state.token_expiration() if self.state else None
 
     def refresh_session(self) -> SportradarSessionState:
+        """Synchronously run browser bootstrap and return fresh replay state.
+
+        Raises:
+            RuntimeError: if called from inside an active event loop. Async code
+                should use `refresh_session_async()`.
+        """
+
         try:
             asyncio.get_running_loop()
         except RuntimeError:
@@ -304,10 +374,21 @@ class SportradarSessionManager:
         raise RuntimeError("Use refresh_session_async() from inside an active event loop.")
 
     async def refresh_session_async(self) -> SportradarSessionState:
+        """Async Playwright bootstrap entrypoint."""
+
         self.state = await bootstrap_sportradar_session(self.config)
         return self.state
 
     def get_http_session(self, *, refresh_if_needed: bool = True) -> httpx.Client:
+        """Build an `httpx.Client` with captured replay headers and cookies.
+
+        Args:
+            refresh_if_needed: Bootstrap a new state when no usable token exists.
+
+        Returns:
+            A caller-owned `httpx.Client`.
+        """
+
         if refresh_if_needed and (self.state is None or not self.state.is_usable()):
             self.refresh_session()
         if self.state is None:
@@ -321,6 +402,8 @@ class SportradarSessionManager:
 
 
 async def bootstrap_sportradar_session(config: BootstrapConfig) -> SportradarSessionState:
+    """Run Playwright bootstrap and capture signed HTTP replay state."""
+
     generated_at = utc_now_iso()
     captured: list[CapturedEndpoint] = []
     document_statuses: dict[str, int] = {}
@@ -437,6 +520,13 @@ async def _route_static_resources(route: Any) -> None:
 
 
 def build_replay_headers(request_headers_by_url: dict[str, dict[str, str]] | None = None) -> dict[str, str]:
+    """Build mandatory headers for HTTP replay.
+
+    `origin` and `referer` are fixed to `https://statshub.sportradar.com`
+    because probes showed payloads are blocked without them. Extra browser
+    headers captured during bootstrap are copied when useful.
+    """
+
     headers = {
         "accept": "application/json,text/plain,*/*",
         "origin": DEFAULT_ORIGIN,
@@ -462,15 +552,21 @@ def signed_token_from_parsed(parsed: dict[str, Any]) -> SignedToken:
 
 
 def load_session_state(path: Path) -> SportradarSessionState:
+    """Load a JSON-serialized `SportradarSessionState` from disk."""
+
     return SportradarSessionState.from_json_dict(json.loads(path.read_text(encoding="utf-8")))
 
 
 def save_session_state(state: SportradarSessionState, path: Path) -> None:
+    """Persist replay state for reuse by later HTTP-only pipeline runs."""
+
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(state.to_json_dict(), ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def render_session_bootstrap_report(states: list[SportradarSessionState]) -> str:
+    """Render headed/headless bootstrap evidence as Markdown."""
+
     lines = [
         "# Sportradar Session Bootstrap Report",
         "",
@@ -514,6 +610,8 @@ def render_session_bootstrap_report(states: list[SportradarSessionState]) -> str
 
 
 def write_session_artifacts(states: list[SportradarSessionState], out_dir: Path) -> None:
+    """Write session state JSON files and a Markdown bootstrap report."""
+
     out_dir.mkdir(parents=True, exist_ok=True)
     for state in states:
         mode = "headed" if state.headed else "headless"

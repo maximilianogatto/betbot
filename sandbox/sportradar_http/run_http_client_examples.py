@@ -1,3 +1,11 @@
+"""End-to-end HTTP replay smoke examples.
+
+This script demonstrates the core architectural claim of the investigation:
+browser bootstrap can be reduced to session/token capture, while useful data
+requests are executed with pure HTTP replay. It writes success, blocked, refresh
+and summary artifacts for evidence.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -31,6 +39,8 @@ DEFAULT_SESSION_STATE = Path("sandbox/sportradar_http/reports/session_state_head
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse CLI args for replay smoke examples."""
+
     parser = argparse.ArgumentParser(description="Run real Sportradar HTTP replay examples.")
     parser.add_argument("--session-state", type=Path, default=DEFAULT_SESSION_STATE)
     parser.add_argument("--out-dir", type=Path, default=Path("sandbox/sportradar_http/examples/http_client"))
@@ -46,6 +56,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    """Run success, blocked-header and optional refresh examples."""
+
     args = parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
     state = ensure_state(args.session_state, seconds=args.seconds)
@@ -86,6 +98,8 @@ def main() -> int:
 
 
 def ensure_state(path: Path, *, seconds: float):
+    """Load usable session state or run bootstrap."""
+
     if path.exists():
         state = load_session_state(path)
         if state.signed_token and not state.signed_token.is_expired():
@@ -97,6 +111,8 @@ def ensure_state(path: Path, *, seconds: float):
 
 
 def run_success_examples(client: SportradarHTTPClient, args: argparse.Namespace) -> list[dict[str, Any]]:
+    """Call representative endpoints and summarize their payload shapes."""
+
     calls = [
         ("fixtures", lambda: get_sport_overview(client, sport_id=args.sport_id, date=args.date)),
         ("fixture_markets", lambda: get_sport_matches_markets(client, sport_id=args.sport_id, date=args.date)),
@@ -121,6 +137,8 @@ def run_success_examples(client: SportradarHTTPClient, args: argparse.Namespace)
 
 
 def run_blocked_example(client: SportradarHTTPClient, sample_signed_url: str | None) -> dict[str, Any]:
+    """Replay a signed URL without required headers to document blocking behavior."""
+
     if not sample_signed_url:
         return {"error": "no sample signed URL available"}
     with httpx.Client(timeout=20.0, follow_redirects=True) as raw_client:
@@ -137,6 +155,8 @@ def run_blocked_example(client: SportradarHTTPClient, sample_signed_url: str | N
 
 
 def run_refresh_example(args: argparse.Namespace) -> dict[str, Any]:
+    """Force a session refresh path and record the result."""
+
     manager = SportradarSessionManager(BootstrapConfig(headed=True, seconds_per_url=args.seconds))
     client = SportradarHTTPClient.with_bootstrap(manager, retries=1, debug=True)
     payload = get_match_markets(client, match_id=args.match_id)
@@ -158,6 +178,8 @@ def build_http_replay_snapshot(
     refresh_example: dict[str, Any] | None,
     metrics: dict[str, Any],
 ) -> dict[str, Any]:
+    """Combine example results and metrics into one compact JSON snapshot."""
+
     by_label = {str(item.get("label")): item for item in success_examples}
     return {
         "schema_version": 1,
@@ -209,6 +231,8 @@ def render_http_client_report(
     refresh_example: dict[str, Any] | None,
     metrics: dict[str, Any],
 ) -> str:
+    """Render the HTTP replay evidence report."""
+
     lines = [
         "# Sportradar HTTP Client Report",
         "",

@@ -1,3 +1,5 @@
+"""Generate Markdown documentation for derived feature definitions."""
+
 from __future__ import annotations
 
 import argparse
@@ -16,12 +18,16 @@ DEFAULT_OUT = Path("sandbox/sportradar_http/reports/feature_catalog.md")
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse output path for the generated feature catalog."""
+
     parser = argparse.ArgumentParser(description="Generate Sportradar feature catalog documentation.")
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
     return parser.parse_args()
 
 
 def render_feature_catalog() -> str:
+    """Render feature definitions and interpretation notes as Markdown."""
+
     lines = [
         "# Sportradar Feature Catalog",
         "",
@@ -61,6 +67,8 @@ def render_feature_catalog() -> str:
 
 
 def main() -> int:
+    """Write the generated feature catalog to disk."""
+
     args = parse_args()
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(render_feature_catalog(), encoding="utf-8")

@@ -1,3 +1,15 @@
+"""CLI and builder for compact league snapshots/features.
+
+Flow:
+    season_id -> raw season endpoints -> normalized league_snapshot.json ->
+    league_features.json -> league_report.md.
+
+This pipeline is useful for season-level datasets and context around a match.
+Tournament-to-season discovery is intentionally handled by
+`run_tournament_navigation.py`; this script expects an explicit or known
+`season_id`.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -54,6 +66,8 @@ DEFAULT_SESSION_STATE = Path("sandbox/sportradar_http/reports/session_state_head
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse CLI args for one league/season collection run."""
+
     parser = argparse.ArgumentParser(description="Build a compact Sportradar league snapshot/features/report.")
     parser.add_argument("--sport-id", type=int, default=1)
     parser.add_argument("--tournament-id", type=int, default=8)
@@ -67,6 +81,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    """Fetch league payloads, normalize snapshot/features and write artifacts."""
+
     args = parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
     season_id = resolve_season_id(args.tournament_id, args.season_id)
@@ -86,6 +102,8 @@ def main() -> int:
 
 
 def resolve_season_id(tournament_id: int, season_id: int | None) -> int:
+    """Resolve a season id from explicit input or the small observed fallback map."""
+
     if season_id is not None:
         return season_id
     if tournament_id in KNOWN_CURRENT_SEASONS:
@@ -94,6 +112,8 @@ def resolve_season_id(tournament_id: int, season_id: int | None) -> int:
 
 
 def ensure_state(path: Path, *, seconds: float):
+    """Load cached replay state or bootstrap a new one."""
+
     if path.exists():
         state = load_session_state(path)
         if state.signed_token and not state.signed_token.is_expired():
@@ -105,6 +125,8 @@ def ensure_state(path: Path, *, seconds: float):
 
 
 def fetch_league_payloads(client: SportradarHTTPClient, *, season_id: int) -> dict[str, dict[str, Any]]:
+    """Fetch raw league/season payloads required by the league pipeline."""
+
     calls: dict[str, Callable[[], dict[str, Any]]] = {
         "league_summary": lambda: get_tournament_info(client, season_id=season_id),
         "teams": lambda: get_tournament_teams(client, season_id=season_id),
@@ -130,6 +152,8 @@ def build_league_snapshot(
     payloads: dict[str, dict[str, Any]],
     client: SportradarHTTPClient,
 ) -> dict[str, Any]:
+    """Normalize raw league payloads into a compact league snapshot."""
+
     standings = normalize_standings(payloads["standings"])
     teams = normalize_teams(payloads["teams"])
     first_table = (standings.get("tables") or [{}])[0]
@@ -187,6 +211,8 @@ def build_league_snapshot(
 
 
 def render_league_report(*, snapshot: dict[str, Any], features: dict[str, Any], metrics: dict[str, Any]) -> str:
+    """Render a Markdown league report for inspection."""
+
     summary = snapshot.get("league_summary") or {}
     standings = snapshot.get("standings") or {}
     first_table = (standings.get("tables") or [{}])[0]
@@ -257,4 +283,3 @@ def write_json(path: Path, payload: object) -> None:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

@@ -1,3 +1,11 @@
+"""Controlled live polling probe for match timeline endpoints.
+
+Purpose:
+    Investigate live-state behavior without integrating live betting logic into
+    BetBot. The probe polls match metadata, timeline, timelinedelta and situation
+    endpoints, then writes NDJSON records plus a compact summary/report.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -32,6 +40,8 @@ DEFAULT_SESSION_STATE = Path("sandbox/sportradar_http/reports/session_state_head
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse CLI args for match id, poll count and output directory."""
+
     parser = argparse.ArgumentParser(description="Run a compact Sportradar live polling probe.")
     parser.add_argument("--match-id", type=int, default=61624678)
     parser.add_argument("--polls", type=int, default=3)
@@ -44,6 +54,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    """Run repeated live polling and write NDJSON/summary/report artifacts."""
+
     args = parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
     manager = SportradarSessionManager(BootstrapConfig(headed=True, seconds_per_url=args.seconds))
@@ -79,6 +91,8 @@ def main() -> int:
 
 
 def poll_live_once(client: SportradarHTTPClient, *, match_id: int, poll_index: int) -> dict[str, Any]:
+    """Poll live-related endpoints once and return a compact document."""
+
     payloads: dict[str, dict[str, Any]] = {}
     errors: dict[str, str] = {}
     calls = {
@@ -102,6 +116,8 @@ def poll_live_once(client: SportradarHTTPClient, *, match_id: int, poll_index: i
 
 
 def build_live_probe_summary(records: list[dict[str, Any]], *, metrics: dict[str, Any]) -> dict[str, Any]:
+    """Summarize live probe records across polls."""
+
     compact_records = []
     for record in records:
         document = record.get("document") if isinstance(record.get("document"), dict) else {}
@@ -131,6 +147,8 @@ def build_live_probe_summary(records: list[dict[str, Any]], *, metrics: dict[str
 
 
 def render_live_probe_report(summary: dict[str, Any]) -> str:
+    """Render live probe observations as Markdown."""
+
     lines = [
         "# Sportradar Live Probe Report",
         "",

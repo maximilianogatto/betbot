@@ -1,3 +1,12 @@
+"""Thin CLI wrapper for `session_manager.main`.
+
+Kept as a short entrypoint so users can run:
+
+    ./betbot/bin/python sandbox/sportradar_http/bootstrap_session.py
+
+without importing from the package manually.
+"""
+
 from __future__ import annotations
 
 from pathlib import Path

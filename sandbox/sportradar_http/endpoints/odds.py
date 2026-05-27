@@ -1,3 +1,11 @@
+"""Odds/market endpoint wrappers.
+
+`match_markets` is the current odds-provider candidate. It can be useful for
+prematch or live markets when priced payloads are present, but some ended or
+unpriced matches return an empty market structure. Callers must distinguish
+"endpoint responded" from "usable priced odds exist".
+"""
+
 from __future__ import annotations
 
 from typing import Any
@@ -27,4 +35,3 @@ def get_season_markets(client: Any, *, season_id: int) -> dict[str, Any]:
     """Return season market metadata."""
 
     return call_endpoint(client, "season_markets", season_id=season_id)
-

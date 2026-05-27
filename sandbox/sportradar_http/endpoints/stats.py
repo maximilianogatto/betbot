@@ -1,3 +1,10 @@
+"""Historical/team statistics endpoint wrappers.
+
+These endpoints enrich a match with form, streaks, H2H, scoring/conceding,
+injuries and player leaders. They are used by the match and league pipelines to
+build compact analysis documents; they do not perform interpretation themselves.
+"""
+
 from __future__ import annotations
 
 from typing import Any
@@ -75,4 +82,3 @@ def get_top_assists(client: Any, *, season_id: int, team_id: int | str = "") -> 
     """Return top assists for a season or team."""
 
     return call_endpoint(client, "stats_season_topassists", season_id=season_id, team_id=team_id)
-

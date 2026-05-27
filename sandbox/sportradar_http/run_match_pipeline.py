@@ -1,3 +1,17 @@
+"""CLI and builder for match snapshots, features and intelligence.
+
+Flow:
+    1. Ensure an HTTP replay session.
+    2. Fetch raw match/team/season endpoints through endpoint wrappers.
+    3. Normalize raw payloads into `match_snapshot.json`.
+    4. Build numeric/categorical `match_features.json`.
+    5. Build compact bot-ready `match_intelligence.json`.
+    6. Write technical and compact Markdown reports.
+
+This script is still sandbox-only. It does not write production DB rows and does
+not send Telegram messages.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -66,6 +80,8 @@ DEFAULT_SESSION_STATE = Path("sandbox/sportradar_http/reports/session_state_head
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse CLI args controlling match id, bootstrap, output and sample sizes."""
+
     parser = argparse.ArgumentParser(description="Build a compact Sportradar match snapshot/features/report.")
     parser.add_argument("--match-id", type=int, default=61624678)
     parser.add_argument("--session-state", type=Path, default=DEFAULT_SESSION_STATE)
@@ -80,6 +96,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    """Run the full match pipeline and write JSON/Markdown artifacts."""
+
     args = parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
     state, manager = ensure_state(args.session_state, seconds=args.seconds)
@@ -114,6 +132,8 @@ def main() -> int:
 
 
 def ensure_state(path: Path, *, seconds: float) -> tuple[Any, SportradarSessionManager]:
+    """Load cached replay state or run browser bootstrap when needed."""
+
     manager = SportradarSessionManager(BootstrapConfig(headed=True, seconds_per_url=seconds))
     if path.exists():
         state = load_session_state(path)
@@ -128,6 +148,13 @@ def fetch_match_payloads(
     client: SportradarHTTPClient,
     args: argparse.Namespace,
 ) -> tuple[dict[str, dict[str, Any]], dict[str, str]]:
+    """Fetch all required/optional raw payloads for one match.
+
+    Required payloads must succeed because they identify the teams and season.
+    Optional payloads are captured best-effort and surfaced in `errors` so the
+    snapshot can still be built with partial evidence.
+    """
+
     payloads: dict[str, dict[str, Any]] = {}
     errors: dict[str, str] = {}
     required_calls: dict[str, Callable[[], dict[str, Any]]] = {
@@ -211,6 +238,8 @@ def build_match_snapshot(
     errors: dict[str, str],
     client: SportradarHTTPClient,
 ) -> dict[str, Any]:
+    """Normalize raw payloads into the stable match snapshot schema."""
+
     metadata = normalize_match_metadata(payloads.get("match_info"), payloads.get("match_snapshot"))
     home = metadata.get("home") if isinstance(metadata.get("home"), dict) else {}
     away = metadata.get("away") if isinstance(metadata.get("away"), dict) else {}
@@ -292,6 +321,8 @@ def build_match_snapshot(
 
 
 def build_feature_quality(payloads: dict[str, Any], errors: dict[str, str], *, odds: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Summarize which important evidence groups were available."""
+
     important = {
         "match_info",
         "match_snapshot",
@@ -326,6 +357,8 @@ def build_feature_quality(payloads: dict[str, Any], errors: dict[str, str], *, o
 
 
 def render_match_report(*, snapshot: dict[str, Any], features: dict[str, Any], metrics: dict[str, Any]) -> str:
+    """Render the verbose technical match report used for research/debugging."""
+
     metadata = snapshot.get("metadata") or {}
     home = metadata.get("home") or {}
     away = metadata.get("away") or {}
@@ -426,6 +459,8 @@ def render_match_report(*, snapshot: dict[str, Any], features: dict[str, Any], m
 
 
 def write_json(path: Path, payload: object) -> None:
+    """Write pretty JSON using UTF-8."""
+
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 

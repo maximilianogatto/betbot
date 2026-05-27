@@ -1,3 +1,14 @@
+"""CLI for tournament -> fixtures navigation.
+
+Use this script when validating the future BetBot flow:
+
+    tournament_id -> resolved season_id -> fixtures[] -> selected match_id
+
+It performs browser bootstrap only when the cached session state is missing or
+expired, then uses HTTP replay for `config_tree_mini` and
+`stats_season_fixtures2`. Outputs are compact JSON plus a Markdown report.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -30,6 +41,8 @@ DEFAULT_SESSION_STATE = Path("sandbox/sportradar_http/reports/session_state_head
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse CLI arguments for one tournament navigation run."""
+
     parser = argparse.ArgumentParser(description="Resolve Sportradar tournament navigation and fixtures.")
     parser.add_argument("--sport-id", type=int, default=1)
     parser.add_argument("--tournament-id", type=int, required=True)
@@ -44,6 +57,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    """Resolve tournament metadata, fetch fixtures and write artifacts."""
+
     args = parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
     state, manager = ensure_state(args.session_state, seconds=args.seconds)
@@ -86,6 +101,8 @@ def main() -> int:
 
 
 def ensure_state(path: Path, *, seconds: float):
+    """Load cached session state or run headed bootstrap if needed."""
+
     manager = SportradarSessionManager(BootstrapConfig(headed=True, seconds_per_url=seconds))
     if path.exists():
         state = load_session_state(path)
@@ -97,6 +114,8 @@ def ensure_state(path: Path, *, seconds: float):
 
 
 def write_json(path: Path, payload: object) -> None:
+    """Write pretty JSON using UTF-8."""
+
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 

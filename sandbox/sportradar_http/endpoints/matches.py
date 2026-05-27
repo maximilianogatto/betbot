@@ -1,3 +1,11 @@
+"""Match-level endpoint wrappers.
+
+These calls are the base inputs for `run_match_pipeline.py`: metadata,
+snapshot/status, detailed stats, table context and H2H. They return raw gismo
+JSON dictionaries; downstream modules decide which fields are stable enough for
+bot-ready output.
+"""
+
 from __future__ import annotations
 
 from typing import Any
@@ -33,4 +41,3 @@ def get_match_head2head(client: Any, *, match_id: int) -> dict[str, Any]:
     """Return match-specific H2H payload when available."""
 
     return call_endpoint(client, "stats_match_head2head", match_id=match_id)
-

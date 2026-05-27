@@ -1,3 +1,25 @@
+"""Bot-ready match intelligence schema and text report builder.
+
+Purpose:
+    Transform a normalized `match_snapshot` plus derived `match_features` into a
+    compact, stable document that can later be rendered by Telegram without
+    knowing Sportradar internals.
+
+Input data:
+    - `snapshot`: output from `run_match_pipeline.build_match_snapshot`.
+    - `features`: output from `features_engine.build_match_features`.
+
+Output data:
+    A JSON-serializable dict with stable sections:
+        teams, form, h2h, table_context, strength_indexes, injuries,
+        goal_context, players, traceability, live_context, metric_notes, and
+        report_summary.
+
+Important rule:
+    Historical evidence in H2H and traceability always includes dates. Results
+    without temporal context should not be shown as betting context.
+"""
+
 from __future__ import annotations
 
 from datetime import UTC, datetime
@@ -8,6 +30,8 @@ INTELLIGENCE_SCHEMA_VERSION = 1
 
 
 def build_match_intelligence(snapshot: dict[str, Any], features: dict[str, Any]) -> dict[str, Any]:
+    """Build the canonical compact match intelligence document."""
+
     metadata = _dict(snapshot.get("metadata"))
     values = _dict(features.get("values"))
     home = _dict(metadata.get("home"))
@@ -55,6 +79,8 @@ def build_match_intelligence(snapshot: dict[str, Any], features: dict[str, Any])
 
 
 def build_table_context(snapshot: dict[str, Any], *, home_uid: object, away_uid: object) -> dict[str, Any]:
+    """Extract compact table rows for both teams from match table context."""
+
     rows = _nested(snapshot, "table_context", "rows") or []
     home_row = _find_table_row(rows, home_uid)
     away_row = _find_table_row(rows, away_uid)
@@ -66,6 +92,8 @@ def build_table_context(snapshot: dict[str, Any], *, home_uid: object, away_uid:
 
 
 def build_form_section(team_form: dict[str, Any]) -> dict[str, Any]:
+    """Build recent form ratings, W/D/L sequence, and dated last matches."""
+
     home = _dict(team_form.get("home"))
     away = _dict(team_form.get("away"))
     return {
@@ -85,6 +113,8 @@ def build_form_section(team_form: dict[str, Any]) -> dict[str, Any]:
 
 
 def build_h2h_section(h2h: dict[str, Any], *, home_name: str | None, away_name: str | None) -> dict[str, Any]:
+    """Build H2H edge and recent dated direct matches."""
+
     summary = _dict(h2h.get("summary"))
     total = _safe_float(summary.get("total_matches"))
     home_wins = _safe_float(summary.get("home_team_wins"))
@@ -108,6 +138,8 @@ def build_h2h_section(h2h: dict[str, Any], *, home_name: str | None, away_name: 
 
 
 def build_goal_context(team_scoring: dict[str, Any], values: dict[str, Any]) -> dict[str, Any]:
+    """Build goals scored/conceded averages and timing context."""
+
     home = _dict(team_scoring.get("home"))
     away = _dict(team_scoring.get("away"))
     return {
@@ -148,6 +180,8 @@ def build_goal_context(team_scoring: dict[str, Any], values: dict[str, Any]) -> 
 
 
 def build_strength_indexes(values: dict[str, Any]) -> dict[str, Any]:
+    """Convert raw attack/defense context into bounded 0..10 display indexes."""
+
     home_attack = _safe_float(values.get("attack_strength_home"))
     away_attack = _safe_float(values.get("attack_strength_away"))
     home_defense_weakness = _safe_float(values.get("defense_weakness_home"))
@@ -169,6 +203,8 @@ def build_strength_indexes(values: dict[str, Any]) -> dict[str, Any]:
 
 
 def build_injuries_section(injuries: dict[str, Any]) -> dict[str, Any]:
+    """Compact home/away injuries and counts."""
+
     return {
         "home": [_compact_injury(item) for item in (injuries.get("home") or [])[:6]],
         "away": [_compact_injury(item) for item in (injuries.get("away") or [])[:6]],
@@ -178,6 +214,8 @@ def build_injuries_section(injuries: dict[str, Any]) -> dict[str, Any]:
 
 
 def build_players_section(players: dict[str, Any]) -> dict[str, Any]:
+    """Compact top scorer/cards/assists leaders for both teams."""
+
     return {
         "home": _player_side(_dict(players.get("home"))),
         "away": _player_side(_dict(players.get("away"))),
@@ -191,6 +229,8 @@ def build_traceability(
     home_name: str | None,
     away_name: str | None,
 ) -> dict[str, Any]:
+    """Build direct H2H and common-opponent evidence with dated matches."""
+
     home_matches = _nested(team_form, "home", "matches") or []
     away_matches = _nested(team_form, "away", "matches") or []
     common = []
@@ -227,6 +267,8 @@ def build_traceability(
 
 
 def build_live_context(snapshot: dict[str, Any], values: dict[str, Any]) -> dict[str, Any]:
+    """Compact live score/pressure/timeline metadata when available."""
+
     live_state = _dict(snapshot.get("live_state"))
     return {
         "score_state": values.get("live_score_state"),
@@ -240,6 +282,12 @@ def build_live_context(snapshot: dict[str, Any], values: dict[str, Any]) -> dict
 
 
 def render_intelligence_report(intelligence: dict[str, Any]) -> str:
+    """Render a concise Markdown/plain-text report from match intelligence.
+
+    This is presentation-ready but still UI-agnostic: Telegram can send it as
+    text, but no Telegram-specific formatting or APIs are used here.
+    """
+
     home = _nested(intelligence, "teams", "home", "name") or "Home"
     away = _nested(intelligence, "teams", "away", "name") or "Away"
     form = _dict(intelligence.get("form"))
@@ -309,6 +357,8 @@ def render_intelligence_report(intelligence: dict[str, Any]) -> str:
 
 
 def metric_notes() -> dict[str, str]:
+    """Return explicit definitions for derived display metrics."""
+
     return {
         "form_rating_10": "recent_points / max_possible_points * 10",
         "strength_10": "average of attack context score and inverse defensive weakness score; bounded 0..10",

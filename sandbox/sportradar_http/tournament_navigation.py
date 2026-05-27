@@ -1,3 +1,24 @@
+"""Tournament navigation resolver for Statshub.
+
+Purpose:
+    Validate and implement the stable navigation path:
+
+        sport -> country/tournament tree -> current season -> fixtures -> match_id
+
+Input data:
+    `config_tree_mini` raw payload and, when the tournament is resolved, a
+    `stats_season_fixtures2` raw payload.
+
+Output data:
+    `tournament_navigation.json` style dict with resolved tournament metadata,
+    season id, stage rows, compact fixtures, raw refs, and limitations.
+
+Why this exists:
+    Statshub page URLs expose ids such as `/sport/1/tournament/18340`, but most
+    stats endpoints require a `season_id`. This module bridges that difference
+    without scraping HTML.
+"""
+
 from __future__ import annotations
 
 from datetime import UTC, datetime
@@ -83,6 +104,17 @@ def build_tournament_navigation_snapshot(
     fixtures_payload: dict[str, Any] | None,
     max_fixtures: int | None = None,
 ) -> dict[str, Any]:
+    """Build a compact navigation snapshot from raw tree and fixtures payloads.
+
+    Args:
+        sport_id: Sport id from Statshub URLs. Soccer is `1`.
+        tournament_id: URL-facing tournament id to resolve.
+        config_tree_payload: Raw `config_tree_mini` payload.
+        fixtures_payload: Raw `stats_season_fixtures2` payload for the resolved
+            season. May be empty when resolution fails.
+        max_fixtures: Optional cap for compact fixture output.
+    """
+
     tree = build_tournament_tree(config_tree_payload)
     resolved = resolve_tournament(tree, tournament_id)
     fixtures = normalize_fixtures(fixtures_payload or {}, max_items=max_fixtures)
@@ -116,6 +148,8 @@ def build_tournament_navigation_snapshot(
 
 
 def render_tournament_navigation_report(snapshot: dict[str, Any]) -> str:
+    """Render resolved tournament, stages and first fixtures as Markdown."""
+
     resolved = snapshot.get("resolved_tournament") or {}
     primary = resolved.get("primary") or {}
     lines = [

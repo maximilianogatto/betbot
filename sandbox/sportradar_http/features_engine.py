@@ -1,3 +1,25 @@
+"""Feature builders for compact league and match snapshots.
+
+Purpose:
+    Convert normalized snapshots into stable numeric/categorical feature dicts.
+    This module does not predict outcomes. It only derives reproducible features
+    from available evidence and leaves missing values as `None`.
+
+Inputs:
+    - `build_league_features(snapshot)` consumes `league_snapshot.json`.
+    - `build_match_features(snapshot)` consumes `match_snapshot.json`.
+
+Outputs:
+    JSON-serializable dictionaries with:
+        `schema_version`
+        `definitions`
+        `values`
+
+Scale conventions:
+    Rates use `0..1`; goal context metrics stay in football units (goals/match);
+    home-favoring gaps are positive when evidence favors the home team.
+"""
+
 from __future__ import annotations
 
 from typing import Any
@@ -43,6 +65,8 @@ MATCH_FEATURE_DEFINITIONS: dict[str, str] = {
 
 
 def safe_div(numerator: object, denominator: object) -> float | None:
+    """Return rounded `numerator / denominator`, or `None` for invalid/zero input."""
+
     try:
         den = float(denominator)  # type: ignore[arg-type]
         if den == 0:
@@ -53,12 +77,23 @@ def safe_div(numerator: object, denominator: object) -> float | None:
 
 
 def clamp01(value: float | None) -> float | None:
+    """Clamp a numeric rate into the inclusive `0..1` range."""
+
     if value is None:
         return None
     return round(max(0.0, min(1.0, value)), 6)
 
 
 def build_league_features(snapshot: dict[str, Any]) -> dict[str, Any]:
+    """Build league-level feature values from a normalized league snapshot.
+
+    Args:
+        snapshot: Output from `run_league_pipeline.build_league_snapshot`.
+
+    Returns:
+        JSON-safe feature document with definitions and values.
+    """
+
     summary = snapshot.get("league_summary") if isinstance(snapshot.get("league_summary"), dict) else {}
     standings = snapshot.get("standings") if isinstance(snapshot.get("standings"), dict) else {}
     first_table = (standings.get("tables") or [{}])[0] if isinstance(standings.get("tables"), list) else {}
@@ -89,6 +124,8 @@ def build_league_features(snapshot: dict[str, Any]) -> dict[str, Any]:
 
 
 def avg_non_null(*values: object) -> float | None:
+    """Average valid numeric arguments while ignoring `None`/non-numeric values."""
+
     numeric = []
     for value in values:
         try:
@@ -102,6 +139,20 @@ def avg_non_null(*values: object) -> float | None:
 
 
 def build_match_features(snapshot: dict[str, Any]) -> dict[str, Any]:
+    """Build match-level features from a normalized match snapshot.
+
+    Important formulas:
+        `attack_strength_home = mean(home home goals_for_avg,
+        away away goals_against_avg)`.
+
+        `attack_strength_away = mean(away away goals_for_avg,
+        home home goals_against_avg)`.
+
+        `h2h_home_edge = (home_wins - away_wins) / h2h_sample_size`.
+
+    These are context features, not probabilities.
+    """
+
     table = snapshot.get("table_context") if isinstance(snapshot.get("table_context"), dict) else {}
     rows = table.get("rows") if isinstance(table.get("rows"), list) else []
     home_uid = (((snapshot.get("metadata") or {}).get("home") or {}).get("uid") if isinstance(snapshot.get("metadata"), dict) else None)

@@ -1,3 +1,21 @@
+"""Normalization helpers for raw Statshub gismo payloads.
+
+Purpose:
+    Convert large, inconsistent Statshub JSON responses into compact dictionaries
+    with stable keys for downstream feature generation and reporting.
+
+Input convention:
+    Most gismo responses have the shape `{"doc": [{"data": ...}], "queryUrl": ...}`.
+    `doc_data()` extracts that common `data` node. Every normalizer is defensive:
+    missing or malformed payload sections return empty/default structures instead
+    of raising whenever possible.
+
+Output convention:
+    Normalized values are plain JSON-serializable dicts/lists. IDs are converted
+    to `int` when safe, datetimes include `iso_utc`, and full raw payloads are not
+    embedded. Use `make_raw_ref()` for traceability metadata.
+"""
+
 from __future__ import annotations
 
 from datetime import UTC, datetime
@@ -6,6 +24,8 @@ from typing import Any
 
 
 def doc_data(payload: dict[str, Any] | None) -> object | None:
+    """Extract `doc[0].data` from a gismo payload."""
+
     if not isinstance(payload, dict):
         return None
     doc = payload.get("doc")
@@ -29,6 +49,8 @@ def as_float(value: object, default: float | None = None) -> float | None:
 
 
 def compact_time(value: object) -> dict[str, Any] | None:
+    """Normalize Statshub time objects into date/time/tz/uts/iso_utc fields."""
+
     if not isinstance(value, dict):
         return None
     uts = as_int(value.get("uts"))
@@ -42,6 +64,8 @@ def compact_time(value: object) -> dict[str, Any] | None:
 
 
 def compact_team(team: object) -> dict[str, Any]:
+    """Normalize team identity fields used across fixtures, tables and matches."""
+
     if not isinstance(team, dict):
         return {"id": None, "uid": None, "name": None}
     return {
@@ -55,6 +79,15 @@ def compact_team(team: object) -> dict[str, Any]:
 
 
 def compact_match(match: object, *, perspective_team_uid: int | None = None) -> dict[str, Any]:
+    """Normalize a match row with optional team-perspective result fields.
+
+    Args:
+        match: Raw match dict from fixtures/lastx/H2H payloads.
+        perspective_team_uid: When provided, adds `venue`, `opponent`,
+            `goals_for`, `goals_against`, and result `W/D/L` from that team's
+            point of view.
+    """
+
     if not isinstance(match, dict):
         return {}
     teams = match.get("teams") if isinstance(match.get("teams"), dict) else {}
@@ -100,6 +133,8 @@ def compact_match(match: object, *, perspective_team_uid: int | None = None) -> 
 
 
 def normalize_league_summary(payload: dict[str, Any]) -> dict[str, Any]:
+    """Normalize season-level scoring/result summary metrics."""
+
     data = doc_data(payload)
     if not isinstance(data, dict):
         return {}
@@ -158,6 +193,8 @@ def normalize_match_metadata(
     info_payload: dict[str, Any] | None,
     snapshot_payload: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    """Normalize match identity, teams, kickoff, score, competition and coverage."""
+
     info_data = doc_data(info_payload)
     snapshot_data = doc_data(snapshot_payload)
     info_data = info_data if isinstance(info_data, dict) else {}
@@ -282,6 +319,8 @@ def normalize_match_markets(
     home_name: str | None,
     away_name: str | None,
 ) -> dict[str, Any]:
+    """Normalize priced 1X2, handicap and totals markets when present."""
+
     data = doc_data(payload)
     markets = data.get("markets") if isinstance(data, dict) else None
     if not isinstance(markets, list):
@@ -362,6 +401,8 @@ def normalize_match_markets(
 
 
 def normalize_match_table_slice(payload: dict[str, Any] | None) -> dict[str, Any]:
+    """Normalize compact table context for the two teams in one match."""
+
     data = doc_data(payload)
     if not isinstance(data, dict):
         return {"rows": []}
@@ -411,6 +452,8 @@ def normalize_match_table_slice(payload: dict[str, Any] | None) -> dict[str, Any
 
 
 def normalize_match_details(payload: dict[str, Any] | None) -> dict[str, Any]:
+    """Normalize match details/stat rows such as possession, shots and cards."""
+
     data = doc_data(payload)
     if not isinstance(data, dict):
         return {"stats_by_key": {}, "key_stats": {}}
@@ -459,6 +502,8 @@ def _slug_stat_name(name: str) -> str:
 
 
 def normalize_match_timeline(payload: dict[str, Any] | None, *, max_events: int = 120) -> dict[str, Any]:
+    """Normalize full or delta timeline payloads into score/status/events."""
+
     data = doc_data(payload)
     if not isinstance(data, dict):
         return {"events": [], "event_counts": {}, "important_events": []}
@@ -524,6 +569,8 @@ def _compact_timeline_event(event: dict[str, Any]) -> dict[str, Any]:
 
 
 def normalize_match_situation(payload: dict[str, Any] | None, *, max_samples: int = 20) -> dict[str, Any]:
+    """Normalize live pressure/situation samples from `stats_match_situation`."""
+
     data = doc_data(payload)
     samples = data.get("data") if isinstance(data, dict) else []
     if not isinstance(samples, list):
@@ -563,6 +610,8 @@ def normalize_team_recent_payload(
     team_uid: int | None,
     max_matches: int = 10,
 ) -> dict[str, Any]:
+    """Normalize `stats_team_lastx` or `stats_team_nextx` into compact matches."""
+
     data = doc_data(payload)
     if not isinstance(data, dict):
         return {"team": {}, "matches": [], "recent_points": None, "form": []}
@@ -582,6 +631,8 @@ def normalize_team_recent_payload(
 
 
 def normalize_team_streaks(payload: dict[str, Any] | None) -> dict[str, Any]:
+    """Normalize team streak/form keys without embedding verbose raw sections."""
+
     data = doc_data(payload)
     if not isinstance(data, dict):
         return {"team": {}, "last_form": {}, "streak_keys": []}
@@ -599,6 +650,8 @@ def normalize_team_streaks(payload: dict[str, Any] | None) -> dict[str, Any]:
 
 
 def normalize_team_scoring(payload: dict[str, Any] | None) -> dict[str, Any]:
+    """Normalize scoring/conceding split metrics for one team in one season."""
+
     data = doc_data(payload)
     if not isinstance(data, dict):
         return {"team": {}, "matches": {}, "scoring": {}, "conceding": {}}
@@ -646,6 +699,8 @@ def normalize_h2h_payload(
     away_uid: int | None,
     max_matches: int = 10,
 ) -> dict[str, Any]:
+    """Normalize direct H2H matches and compute home/away win summary."""
+
     data = doc_data(payload)
     if not isinstance(data, dict):
         return {"matches": [], "summary": {}}
@@ -677,12 +732,16 @@ def normalize_h2h_payload(
 
 
 def normalize_teams(payload: dict[str, Any]) -> list[dict[str, Any]]:
+    """Normalize season teams."""
+
     data = doc_data(payload)
     teams = data.get("teams") if isinstance(data, dict) else []
     return [compact_team(team) for team in teams or []]
 
 
 def normalize_standings(payload: dict[str, Any]) -> dict[str, Any]:
+    """Normalize standings tables with total/home/away fields."""
+
     data = doc_data(payload)
     if not isinstance(data, dict):
         return {"tables": []}
@@ -744,6 +803,8 @@ def normalize_standings(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def normalize_formtable(payload: dict[str, Any]) -> dict[str, Any]:
+    """Normalize form-table rows and recent W/D/L sequences."""
+
     data = doc_data(payload)
     if not isinstance(data, dict):
         return {"teams": []}
@@ -775,6 +836,8 @@ def normalize_formtable(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def normalize_fixtures(payload: dict[str, Any], *, max_items: int | None = None) -> list[dict[str, Any]]:
+    """Normalize season fixtures into match_id, teams, time, result and status."""
+
     data = doc_data(payload)
     if not isinstance(data, dict):
         return []
@@ -811,6 +874,8 @@ def normalize_fixtures(payload: dict[str, Any], *, max_items: int | None = None)
 
 
 def normalize_player_leaders(payload: dict[str, Any], *, value_key: str = "total", max_items: int = 20) -> list[dict[str, Any]]:
+    """Normalize top goals/cards/assists player leaderboard rows."""
+
     data = doc_data(payload)
     if not isinstance(data, dict):
         return []
@@ -834,6 +899,8 @@ def normalize_player_leaders(payload: dict[str, Any], *, value_key: str = "total
 
 
 def normalize_injuries(payload: dict[str, Any], *, max_items: int = 50) -> list[dict[str, Any]]:
+    """Normalize season injury rows with player/team/status fields."""
+
     data = doc_data(payload)
     injuries = data if isinstance(data, list) else []
     normalized = []
@@ -858,6 +925,8 @@ def normalize_injuries(payload: dict[str, Any], *, max_items: int = 50) -> list[
 
 
 def normalize_venues(payload: dict[str, Any], *, max_items: int = 50) -> list[dict[str, Any]]:
+    """Normalize season venue metadata."""
+
     data = doc_data(payload)
     venues = data.get("venues") if isinstance(data, dict) else []
     normalized = []
@@ -877,6 +946,8 @@ def normalize_venues(payload: dict[str, Any], *, max_items: int = 50) -> list[di
 
 
 def make_raw_ref(endpoint: str, payload: dict[str, Any]) -> dict[str, Any]:
+    """Create compact traceability metadata for a raw endpoint payload."""
+
     data = doc_data(payload)
     encoded = str(payload).encode("utf-8")
     return {
