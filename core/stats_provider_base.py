@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Iterable
 from typing import Any
 
 from core.stats_models import (
@@ -111,6 +112,13 @@ class StatsProviderRegistry:
         """Return metadata for registered providers."""
 
         return [provider.describe_provider() for provider in self._providers]
+
+    def replace_all(self, providers: Iterable[type[StatsProvider] | StatsProvider]) -> None:
+        """Replace the full registry contents with a new ordered provider set."""
+
+        self._providers = []
+        for provider in providers:
+            self.register(provider)
 
 
 stats_provider_registry = StatsProviderRegistry()

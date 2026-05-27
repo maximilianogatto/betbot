@@ -14,7 +14,10 @@ from bot.jobs import (
     stop_resource_monitor,
 )
 from core.registry import extractor_registry
+from core.stats_provider_base import stats_provider_registry
 from extractors import register_default_extractors
+from stats_providers import register_default_stats_providers
+from monitors.stats import StatsService
 from monitors.tracking import TrackingService
 from storage.tracking_repository import SqliteTrackingRepository
 
@@ -24,6 +27,8 @@ def create_application(settings: Settings) -> Application:
 
     extractor_registry.replace_all([])
     registered_extractors = register_default_extractors(extractor_registry, settings=settings)
+    stats_provider_registry.replace_all([])
+    register_default_stats_providers(stats_provider_registry)
     tracking_repository = SqliteTrackingRepository(
         default_change_threshold_percent=settings.tracking_default_change_threshold_percent,
         default_notify_odds_changes=settings.tracking_default_notify_odds_changes,
@@ -37,6 +42,10 @@ def create_application(settings: Settings) -> Application:
         odds_change_confirmation_refreshes=settings.odds_change_confirmation_refreshes,
         odds_flap_window_minutes=settings.odds_flap_window_minutes,
         odds_flap_epsilon=settings.odds_flap_epsilon,
+    )
+    stats_service = StatsService(
+        provider_registry=stats_provider_registry,
+        repository=tracking_repository,
     )
 
     async def post_init(application: Application) -> None:
@@ -71,6 +80,7 @@ def create_application(settings: Settings) -> Application:
     )
 
     application.bot_data["tracking_service"] = tracking_service
+    application.bot_data["stats_service"] = stats_service
 
     register_handlers(application)
     application.add_error_handler(handle_error)
