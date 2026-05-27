@@ -28,6 +28,7 @@ Phase 2 is implemented in `http_client.py`.
 Phase 3 endpoint wrappers live in `endpoints/`.
 Phase 4 league snapshots/features live in `run_league_pipeline.py`.
 Phase 5 match snapshots/features live in `run_match_pipeline.py`.
+Tournament navigation lives in `run_tournament_navigation.py`.
 The stable bot-ready match intelligence schema lives in `match_intelligence.py`.
 
 ## Run Phase 1 Bootstrap
@@ -152,6 +153,42 @@ Outputs:
 - `sandbox/sportradar_http/examples/http_client/refresh_example.json`
 - `sandbox/sportradar_http/examples/http_client/http_replay_snapshot.json`
 - `sandbox/sportradar_http/reports/http_client_report.md`
+
+## Tournament Navigation
+
+Resolve a Statshub tournament URL id into the concrete current season and list
+fixtures:
+
+```bash
+./betbot/bin/python sandbox/sportradar_http/run_tournament_navigation.py \
+  --sport-id 1 \
+  --tournament-id 18340 \
+  --out-dir sandbox/sportradar_http/examples/tournament_18340
+```
+
+Outputs:
+
+- `tournament_navigation.json`
+- `tournament_fixtures.json`
+- `tournament_navigation_report.md`
+
+Validated example:
+
+- `tournament_id=18340` maps to `Australia / South Australia NPL, Women`
+- URL-facing id matched as `unique_tournament_id`
+- current `season_id=138964`
+- fixtures returned by `stats_season_fixtures2`
+
+This is the stable navigation bridge for:
+
+```text
+sport -> tournaments -> season fixtures -> match_id -> match intelligence
+```
+
+To inspect a selected fixture, pass its `match_id` to `run_match_pipeline.py`.
+
+It does not render Telegram. It produces compact JSON that a future BetBot
+provider can consume.
 
 ## League Pipeline
 

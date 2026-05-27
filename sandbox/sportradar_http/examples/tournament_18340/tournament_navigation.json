@@ -1,0 +1,3838 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-27T14:10:39.305507+00:00",
+  "provider": "sportradar_statshub",
+  "scope": "tournament_navigation",
+  "inputs": {
+    "sport_id": 1,
+    "tournament_id": 18340
+  },
+  "tree_summary": {
+    "sports": 1,
+    "countries": 142,
+    "tournaments": 5529
+  },
+  "resolved_tournament": {
+    "requested_tournament_id": 18340,
+    "found": true,
+    "match_kind": "unique_tournament_id",
+    "primary": {
+      "sport_id": 1,
+      "sport_name": "Soccer",
+      "country_id": 34,
+      "country_name": "Australia",
+      "country_code": "au",
+      "tournament_id": 46533,
+      "unique_tournament_id": 18340,
+      "name": "South Australia NPL, Women",
+      "season_id": 138964,
+      "current_season_id": 138964,
+      "is_current_season": true,
+      "round_by_round": true
+    },
+    "stages": [
+      {
+        "sport_id": 1,
+        "sport_name": "Soccer",
+        "country_id": 34,
+        "country_name": "Australia",
+        "country_code": "au",
+        "tournament_id": 46533,
+        "unique_tournament_id": 18340,
+        "name": "South Australia NPL, Women",
+        "season_id": 138964,
+        "current_season_id": 138964,
+        "is_current_season": true,
+        "round_by_round": true
+      },
+      {
+        "sport_id": 1,
+        "sport_name": "Soccer",
+        "country_id": 34,
+        "country_name": "Australia",
+        "country_code": "au",
+        "tournament_id": 86724,
+        "unique_tournament_id": 18340,
+        "name": "South Australia NPL, Women, Final round",
+        "season_id": 127725,
+        "current_season_id": 138964,
+        "is_current_season": false,
+        "round_by_round": true
+      },
+      {
+        "sport_id": 1,
+        "sport_name": "Soccer",
+        "country_id": 34,
+        "country_name": "Australia",
+        "country_code": "au",
+        "tournament_id": 184098,
+        "unique_tournament_id": 18340,
+        "name": "South Australia NPL, Women, Rel/Prom Playoffs",
+        "season_id": null,
+        "current_season_id": 138964,
+        "is_current_season": false,
+        "round_by_round": false
+      }
+    ],
+    "season_id": 138964,
+    "current_season_id": 138964,
+    "unique_tournament_id": 18340,
+    "concrete_tournament_id": 46533
+  },
+  "fixtures": [
+    {
+      "match_id": 68049726,
+      "round": 1,
+      "round_name": 1,
+      "time": {
+        "date": "06/03/26",
+        "time": "07:45",
+        "tz": "UTC",
+        "uts": 1772783100,
+        "iso_utc": "2026-03-06T07:45:00+00:00"
+      },
+      "home": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "away": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "result": {
+        "home": 1,
+        "away": 1,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049730,
+      "round": 1,
+      "round_name": 1,
+      "time": {
+        "date": "06/03/26",
+        "time": "09:45",
+        "tz": "UTC",
+        "uts": 1772790300,
+        "iso_utc": "2026-03-06T09:45:00+00:00"
+      },
+      "home": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "away": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "result": {
+        "home": 2,
+        "away": 1,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049728,
+      "round": 1,
+      "round_name": 1,
+      "time": {
+        "date": "06/03/26",
+        "time": "10:00",
+        "tz": "UTC",
+        "uts": 1772791200,
+        "iso_utc": "2026-03-06T10:00:00+00:00"
+      },
+      "home": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "away": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "result": {
+        "home": 3,
+        "away": 0,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049732,
+      "round": 1,
+      "round_name": 1,
+      "time": {
+        "date": "06/03/26",
+        "time": "10:00",
+        "tz": "UTC",
+        "uts": 1772791200,
+        "iso_utc": "2026-03-06T10:00:00+00:00"
+      },
+      "home": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "away": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "result": {
+        "home": 4,
+        "away": 1,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049734,
+      "round": 1,
+      "round_name": 1,
+      "time": {
+        "date": "07/03/26",
+        "time": "06:00",
+        "tz": "UTC",
+        "uts": 1772863200,
+        "iso_utc": "2026-03-07T06:00:00+00:00"
+      },
+      "home": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "away": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "result": {
+        "home": 0,
+        "away": 4,
+        "winner": "away",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049736,
+      "round": 2,
+      "round_name": 2,
+      "time": {
+        "date": "13/03/26",
+        "time": "07:45",
+        "tz": "UTC",
+        "uts": 1773387900,
+        "iso_utc": "2026-03-13T07:45:00+00:00"
+      },
+      "home": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "away": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "result": {
+        "home": 5,
+        "away": 1,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049738,
+      "round": 2,
+      "round_name": 2,
+      "time": {
+        "date": "14/03/26",
+        "time": "02:30",
+        "tz": "UTC",
+        "uts": 1773455400,
+        "iso_utc": "2026-03-14T02:30:00+00:00"
+      },
+      "home": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "away": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "result": {
+        "home": 2,
+        "away": 1,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049740,
+      "round": 2,
+      "round_name": 2,
+      "time": {
+        "date": "14/03/26",
+        "time": "02:30",
+        "tz": "UTC",
+        "uts": 1773455400,
+        "iso_utc": "2026-03-14T02:30:00+00:00"
+      },
+      "home": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "away": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "result": {
+        "home": 2,
+        "away": 1,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049742,
+      "round": 2,
+      "round_name": 2,
+      "time": {
+        "date": "14/03/26",
+        "time": "04:30",
+        "tz": "UTC",
+        "uts": 1773462600,
+        "iso_utc": "2026-03-14T04:30:00+00:00"
+      },
+      "home": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "away": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "result": {
+        "home": 2,
+        "away": 2,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049744,
+      "round": 2,
+      "round_name": 2,
+      "time": {
+        "date": "14/03/26",
+        "time": "04:30",
+        "tz": "UTC",
+        "uts": 1773462600,
+        "iso_utc": "2026-03-14T04:30:00+00:00"
+      },
+      "home": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "away": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "result": {
+        "home": 3,
+        "away": 2,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049746,
+      "round": 3,
+      "round_name": 3,
+      "time": {
+        "date": "20/03/26",
+        "time": "07:45",
+        "tz": "UTC",
+        "uts": 1773992700,
+        "iso_utc": "2026-03-20T07:45:00+00:00"
+      },
+      "home": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "away": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "result": {
+        "home": 2,
+        "away": 4,
+        "winner": "away",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049748,
+      "round": 3,
+      "round_name": 3,
+      "time": {
+        "date": "20/03/26",
+        "time": "07:45",
+        "tz": "UTC",
+        "uts": 1773992700,
+        "iso_utc": "2026-03-20T07:45:00+00:00"
+      },
+      "home": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "away": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "result": {
+        "home": 2,
+        "away": 1,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049750,
+      "round": 3,
+      "round_name": 3,
+      "time": {
+        "date": "20/03/26",
+        "time": "09:45",
+        "tz": "UTC",
+        "uts": 1773999900,
+        "iso_utc": "2026-03-20T09:45:00+00:00"
+      },
+      "home": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "away": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "result": {
+        "home": 1,
+        "away": 2,
+        "winner": "away",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049752,
+      "round": 3,
+      "round_name": 3,
+      "time": {
+        "date": "21/03/26",
+        "time": "06:00",
+        "tz": "UTC",
+        "uts": 1774072800,
+        "iso_utc": "2026-03-21T06:00:00+00:00"
+      },
+      "home": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "away": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "result": {
+        "home": 2,
+        "away": 5,
+        "winner": "away",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049754,
+      "round": 3,
+      "round_name": 3,
+      "time": {
+        "date": "21/03/26",
+        "time": "06:30",
+        "tz": "UTC",
+        "uts": 1774074600,
+        "iso_utc": "2026-03-21T06:30:00+00:00"
+      },
+      "home": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "away": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "result": {
+        "home": 1,
+        "away": 2,
+        "winner": "away",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049756,
+      "round": 4,
+      "round_name": 4,
+      "time": {
+        "date": "27/03/26",
+        "time": "07:45",
+        "tz": "UTC",
+        "uts": 1774597500,
+        "iso_utc": "2026-03-27T07:45:00+00:00"
+      },
+      "home": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "away": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "result": {
+        "home": 2,
+        "away": 2,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049758,
+      "round": 4,
+      "round_name": 4,
+      "time": {
+        "date": "27/03/26",
+        "time": "09:30",
+        "tz": "UTC",
+        "uts": 1774603800,
+        "iso_utc": "2026-03-27T09:30:00+00:00"
+      },
+      "home": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "away": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "result": {
+        "home": 2,
+        "away": 1,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049760,
+      "round": 4,
+      "round_name": 4,
+      "time": {
+        "date": "27/03/26",
+        "time": "09:45",
+        "tz": "UTC",
+        "uts": 1774604700,
+        "iso_utc": "2026-03-27T09:45:00+00:00"
+      },
+      "home": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "away": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "result": {
+        "home": 2,
+        "away": 0,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049762,
+      "round": 4,
+      "round_name": 4,
+      "time": {
+        "date": "28/03/26",
+        "time": "04:45",
+        "tz": "UTC",
+        "uts": 1774673100,
+        "iso_utc": "2026-03-28T04:45:00+00:00"
+      },
+      "home": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "away": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "result": {
+        "home": 1,
+        "away": 2,
+        "winner": "away",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049764,
+      "round": 4,
+      "round_name": 4,
+      "time": {
+        "date": "28/03/26",
+        "time": "06:15",
+        "tz": "UTC",
+        "uts": 1774678500,
+        "iso_utc": "2026-03-28T06:15:00+00:00"
+      },
+      "home": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "away": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "result": {
+        "home": 3,
+        "away": 1,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049766,
+      "round": 5,
+      "round_name": 5,
+      "time": {
+        "date": "06/04/26",
+        "time": "07:45",
+        "tz": "UTC",
+        "uts": 1775461500,
+        "iso_utc": "2026-04-06T07:45:00+00:00"
+      },
+      "home": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "away": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "result": {
+        "home": 1,
+        "away": 4,
+        "winner": "away",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049768,
+      "round": 5,
+      "round_name": 5,
+      "time": {
+        "date": "10/04/26",
+        "time": "08:45",
+        "tz": "UTC",
+        "uts": 1775810700,
+        "iso_utc": "2026-04-10T08:45:00+00:00"
+      },
+      "home": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "away": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "result": {
+        "home": 1,
+        "away": 0,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049770,
+      "round": 5,
+      "round_name": 5,
+      "time": {
+        "date": "10/04/26",
+        "time": "10:00",
+        "tz": "UTC",
+        "uts": 1775815200,
+        "iso_utc": "2026-04-10T10:00:00+00:00"
+      },
+      "home": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "away": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "result": {
+        "home": 5,
+        "away": 1,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049772,
+      "round": 5,
+      "round_name": 5,
+      "time": {
+        "date": "10/04/26",
+        "time": "10:45",
+        "tz": "UTC",
+        "uts": 1775817900,
+        "iso_utc": "2026-04-10T10:45:00+00:00"
+      },
+      "home": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "away": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "result": {
+        "home": 5,
+        "away": 1,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049774,
+      "round": 5,
+      "round_name": 5,
+      "time": {
+        "date": "10/04/26",
+        "time": "11:00",
+        "tz": "UTC",
+        "uts": 1775818800,
+        "iso_utc": "2026-04-10T11:00:00+00:00"
+      },
+      "home": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "away": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "result": {
+        "home": 4,
+        "away": 0,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049776,
+      "round": 6,
+      "round_name": 6,
+      "time": {
+        "date": "17/04/26",
+        "time": "08:45",
+        "tz": "UTC",
+        "uts": 1776415500,
+        "iso_utc": "2026-04-17T08:45:00+00:00"
+      },
+      "home": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "away": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "result": {
+        "home": 5,
+        "away": 0,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049778,
+      "round": 6,
+      "round_name": 6,
+      "time": {
+        "date": "17/04/26",
+        "time": "10:00",
+        "tz": "UTC",
+        "uts": 1776420000,
+        "iso_utc": "2026-04-17T10:00:00+00:00"
+      },
+      "home": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "away": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "result": {
+        "home": 0,
+        "away": 0,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049780,
+      "round": 6,
+      "round_name": 6,
+      "time": {
+        "date": "17/04/26",
+        "time": "10:45",
+        "tz": "UTC",
+        "uts": 1776422700,
+        "iso_utc": "2026-04-17T10:45:00+00:00"
+      },
+      "home": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "away": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "result": {
+        "home": 1,
+        "away": 1,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049782,
+      "round": 6,
+      "round_name": 6,
+      "time": {
+        "date": "18/04/26",
+        "time": "05:45",
+        "tz": "UTC",
+        "uts": 1776491100,
+        "iso_utc": "2026-04-18T05:45:00+00:00"
+      },
+      "home": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "away": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "result": {
+        "home": 0,
+        "away": 4,
+        "winner": "away",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049784,
+      "round": 6,
+      "round_name": 6,
+      "time": {
+        "date": "18/04/26",
+        "time": "07:00",
+        "tz": "UTC",
+        "uts": 1776495600,
+        "iso_utc": "2026-04-18T07:00:00+00:00"
+      },
+      "home": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "away": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": true,
+        "canceled": true,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049786,
+      "round": 7,
+      "round_name": 7,
+      "time": {
+        "date": "01/05/26",
+        "time": "08:45",
+        "tz": "UTC",
+        "uts": 1777625100,
+        "iso_utc": "2026-05-01T08:45:00+00:00"
+      },
+      "home": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "away": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "result": {
+        "home": 0,
+        "away": 1,
+        "winner": "away",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049788,
+      "round": 7,
+      "round_name": 7,
+      "time": {
+        "date": "01/05/26",
+        "time": "10:45",
+        "tz": "UTC",
+        "uts": 1777632300,
+        "iso_utc": "2026-05-01T10:45:00+00:00"
+      },
+      "home": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "away": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "result": {
+        "home": 1,
+        "away": 5,
+        "winner": "away",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049790,
+      "round": 7,
+      "round_name": 7,
+      "time": {
+        "date": "01/05/26",
+        "time": "11:00",
+        "tz": "UTC",
+        "uts": 1777633200,
+        "iso_utc": "2026-05-01T11:00:00+00:00"
+      },
+      "home": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "away": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "result": {
+        "home": 3,
+        "away": 0,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049792,
+      "round": 7,
+      "round_name": 7,
+      "time": {
+        "date": "02/05/26",
+        "time": "05:30",
+        "tz": "UTC",
+        "uts": 1777699800,
+        "iso_utc": "2026-05-02T05:30:00+00:00"
+      },
+      "home": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "away": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "result": {
+        "home": 2,
+        "away": 3,
+        "winner": "away",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049794,
+      "round": 7,
+      "round_name": 7,
+      "time": {
+        "date": "02/05/26",
+        "time": "05:45",
+        "tz": "UTC",
+        "uts": 1777700700,
+        "iso_utc": "2026-05-02T05:45:00+00:00"
+      },
+      "home": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "away": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "result": {
+        "home": 4,
+        "away": 2,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049796,
+      "round": 8,
+      "round_name": 8,
+      "time": {
+        "date": "08/05/26",
+        "time": "08:45",
+        "tz": "UTC",
+        "uts": 1778229900,
+        "iso_utc": "2026-05-08T08:45:00+00:00"
+      },
+      "home": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "away": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "result": {
+        "home": 3,
+        "away": 1,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049798,
+      "round": 8,
+      "round_name": 8,
+      "time": {
+        "date": "08/05/26",
+        "time": "11:00",
+        "tz": "UTC",
+        "uts": 1778238000,
+        "iso_utc": "2026-05-08T11:00:00+00:00"
+      },
+      "home": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "away": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "result": {
+        "home": 3,
+        "away": 3,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049800,
+      "round": 8,
+      "round_name": 8,
+      "time": {
+        "date": "09/05/26",
+        "time": "03:15",
+        "tz": "UTC",
+        "uts": 1778296500,
+        "iso_utc": "2026-05-09T03:15:00+00:00"
+      },
+      "home": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "away": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "result": {
+        "home": 0,
+        "away": 8,
+        "winner": "away",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049802,
+      "round": 8,
+      "round_name": 8,
+      "time": {
+        "date": "09/05/26",
+        "time": "05:45",
+        "tz": "UTC",
+        "uts": 1778305500,
+        "iso_utc": "2026-05-09T05:45:00+00:00"
+      },
+      "home": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "away": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "result": {
+        "home": 0,
+        "away": 3,
+        "winner": "away",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049804,
+      "round": 8,
+      "round_name": 8,
+      "time": {
+        "date": "09/05/26",
+        "time": "05:45",
+        "tz": "UTC",
+        "uts": 1778305500,
+        "iso_utc": "2026-05-09T05:45:00+00:00"
+      },
+      "home": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "away": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "result": {
+        "home": 0,
+        "away": 2,
+        "winner": "away",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 70696698,
+      "round": 6,
+      "round_name": 6,
+      "time": {
+        "date": "13/05/26",
+        "time": "07:00",
+        "tz": "UTC",
+        "uts": 1778655600,
+        "iso_utc": "2026-05-13T07:00:00+00:00"
+      },
+      "home": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "away": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": true,
+        "canceled": true,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 71247666,
+      "round": 6,
+      "round_name": 6,
+      "time": {
+        "date": "16/05/26",
+        "time": "10:00",
+        "tz": "UTC",
+        "uts": 1778925600,
+        "iso_utc": "2026-05-16T10:00:00+00:00"
+      },
+      "home": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "away": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "result": {
+        "home": 0,
+        "away": 3,
+        "winner": "away",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049806,
+      "round": 9,
+      "round_name": 9,
+      "time": {
+        "date": "22/05/26",
+        "time": "08:45",
+        "tz": "UTC",
+        "uts": 1779439500,
+        "iso_utc": "2026-05-22T08:45:00+00:00"
+      },
+      "home": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "away": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "result": {
+        "home": 2,
+        "away": 2,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049808,
+      "round": 9,
+      "round_name": 9,
+      "time": {
+        "date": "22/05/26",
+        "time": "10:30",
+        "tz": "UTC",
+        "uts": 1779445800,
+        "iso_utc": "2026-05-22T10:30:00+00:00"
+      },
+      "home": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "away": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "result": {
+        "home": 3,
+        "away": 1,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049810,
+      "round": 9,
+      "round_name": 9,
+      "time": {
+        "date": "22/05/26",
+        "time": "10:45",
+        "tz": "UTC",
+        "uts": 1779446700,
+        "iso_utc": "2026-05-22T10:45:00+00:00"
+      },
+      "home": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "away": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "result": {
+        "home": 2,
+        "away": 2,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049812,
+      "round": 9,
+      "round_name": 9,
+      "time": {
+        "date": "22/05/26",
+        "time": "11:00",
+        "tz": "UTC",
+        "uts": 1779447600,
+        "iso_utc": "2026-05-22T11:00:00+00:00"
+      },
+      "home": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "away": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "result": {
+        "home": 9,
+        "away": 0,
+        "winner": "home",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049814,
+      "round": 9,
+      "round_name": 9,
+      "time": {
+        "date": "23/05/26",
+        "time": "07:00",
+        "tz": "UTC",
+        "uts": 1779519600,
+        "iso_utc": "2026-05-23T07:00:00+00:00"
+      },
+      "home": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "away": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "result": {
+        "home": 0,
+        "away": 1,
+        "winner": "away",
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049818,
+      "round": 10,
+      "round_name": 10,
+      "time": {
+        "date": "29/05/26",
+        "time": "10:00",
+        "tz": "UTC",
+        "uts": 1780048800,
+        "iso_utc": "2026-05-29T10:00:00+00:00"
+      },
+      "home": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "away": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049816,
+      "round": 10,
+      "round_name": 10,
+      "time": {
+        "date": "29/05/26",
+        "time": "10:45",
+        "tz": "UTC",
+        "uts": 1780051500,
+        "iso_utc": "2026-05-29T10:45:00+00:00"
+      },
+      "home": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "away": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049820,
+      "round": 10,
+      "round_name": 10,
+      "time": {
+        "date": "30/05/26",
+        "time": "07:00",
+        "tz": "UTC",
+        "uts": 1780124400,
+        "iso_utc": "2026-05-30T07:00:00+00:00"
+      },
+      "home": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "away": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049822,
+      "round": 10,
+      "round_name": 10,
+      "time": {
+        "date": "30/05/26",
+        "time": "08:15",
+        "tz": "UTC",
+        "uts": 1780128900,
+        "iso_utc": "2026-05-30T08:15:00+00:00"
+      },
+      "home": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "away": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049824,
+      "round": 10,
+      "round_name": 10,
+      "time": {
+        "date": "31/05/26",
+        "time": "08:15",
+        "tz": "UTC",
+        "uts": 1780215300,
+        "iso_utc": "2026-05-31T08:15:00+00:00"
+      },
+      "home": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "away": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": true,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049826,
+      "round": 11,
+      "round_name": 11,
+      "time": {
+        "date": "12/06/26",
+        "time": "08:45",
+        "tz": "UTC",
+        "uts": 1781253900,
+        "iso_utc": "2026-06-12T08:45:00+00:00"
+      },
+      "home": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "away": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049828,
+      "round": 11,
+      "round_name": 11,
+      "time": {
+        "date": "13/06/26",
+        "time": "03:30",
+        "tz": "UTC",
+        "uts": 1781321400,
+        "iso_utc": "2026-06-13T03:30:00+00:00"
+      },
+      "home": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "away": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049830,
+      "round": 11,
+      "round_name": 11,
+      "time": {
+        "date": "13/06/26",
+        "time": "03:30",
+        "tz": "UTC",
+        "uts": 1781321400,
+        "iso_utc": "2026-06-13T03:30:00+00:00"
+      },
+      "home": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "away": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049832,
+      "round": 11,
+      "round_name": 11,
+      "time": {
+        "date": "13/06/26",
+        "time": "05:30",
+        "tz": "UTC",
+        "uts": 1781328600,
+        "iso_utc": "2026-06-13T05:30:00+00:00"
+      },
+      "home": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "away": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049834,
+      "round": 11,
+      "round_name": 11,
+      "time": {
+        "date": "13/06/26",
+        "time": "07:30",
+        "tz": "UTC",
+        "uts": 1781335800,
+        "iso_utc": "2026-06-13T07:30:00+00:00"
+      },
+      "home": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "away": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049838,
+      "round": 12,
+      "round_name": 12,
+      "time": {
+        "date": "17/06/26",
+        "time": "10:30",
+        "tz": "UTC",
+        "uts": 1781692200,
+        "iso_utc": "2026-06-17T10:30:00+00:00"
+      },
+      "home": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "away": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049836,
+      "round": 12,
+      "round_name": 12,
+      "time": {
+        "date": "19/06/26",
+        "time": "08:45",
+        "tz": "UTC",
+        "uts": 1781858700,
+        "iso_utc": "2026-06-19T08:45:00+00:00"
+      },
+      "home": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "away": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049840,
+      "round": 12,
+      "round_name": 12,
+      "time": {
+        "date": "19/06/26",
+        "time": "10:45",
+        "tz": "UTC",
+        "uts": 1781865900,
+        "iso_utc": "2026-06-19T10:45:00+00:00"
+      },
+      "home": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "away": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049842,
+      "round": 12,
+      "round_name": 12,
+      "time": {
+        "date": "19/06/26",
+        "time": "11:00",
+        "tz": "UTC",
+        "uts": 1781866800,
+        "iso_utc": "2026-06-19T11:00:00+00:00"
+      },
+      "home": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "away": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049844,
+      "round": 12,
+      "round_name": 12,
+      "time": {
+        "date": "20/06/26",
+        "time": "09:30",
+        "tz": "UTC",
+        "uts": 1781947800,
+        "iso_utc": "2026-06-20T09:30:00+00:00"
+      },
+      "home": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "away": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049848,
+      "round": 13,
+      "round_name": 13,
+      "time": {
+        "date": "26/06/26",
+        "time": "08:45",
+        "tz": "UTC",
+        "uts": 1782463500,
+        "iso_utc": "2026-06-26T08:45:00+00:00"
+      },
+      "home": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "away": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049846,
+      "round": 13,
+      "round_name": 13,
+      "time": {
+        "date": "27/06/26",
+        "time": "03:30",
+        "tz": "UTC",
+        "uts": 1782531000,
+        "iso_utc": "2026-06-27T03:30:00+00:00"
+      },
+      "home": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "away": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049850,
+      "round": 13,
+      "round_name": 13,
+      "time": {
+        "date": "27/06/26",
+        "time": "05:45",
+        "tz": "UTC",
+        "uts": 1782539100,
+        "iso_utc": "2026-06-27T05:45:00+00:00"
+      },
+      "home": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "away": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049852,
+      "round": 13,
+      "round_name": 13,
+      "time": {
+        "date": "27/06/26",
+        "time": "07:30",
+        "tz": "UTC",
+        "uts": 1782545400,
+        "iso_utc": "2026-06-27T07:30:00+00:00"
+      },
+      "home": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "away": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049854,
+      "round": 13,
+      "round_name": 13,
+      "time": {
+        "date": "27/06/26",
+        "time": "07:30",
+        "tz": "UTC",
+        "uts": 1782545400,
+        "iso_utc": "2026-06-27T07:30:00+00:00"
+      },
+      "home": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "away": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049856,
+      "round": 14,
+      "round_name": 14,
+      "time": {
+        "date": "03/07/26",
+        "time": "08:45",
+        "tz": "UTC",
+        "uts": 1783068300,
+        "iso_utc": "2026-07-03T08:45:00+00:00"
+      },
+      "home": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "away": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049858,
+      "round": 14,
+      "round_name": 14,
+      "time": {
+        "date": "03/07/26",
+        "time": "08:45",
+        "tz": "UTC",
+        "uts": 1783068300,
+        "iso_utc": "2026-07-03T08:45:00+00:00"
+      },
+      "home": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "away": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049860,
+      "round": 14,
+      "round_name": 14,
+      "time": {
+        "date": "03/07/26",
+        "time": "10:45",
+        "tz": "UTC",
+        "uts": 1783075500,
+        "iso_utc": "2026-07-03T10:45:00+00:00"
+      },
+      "home": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "away": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049862,
+      "round": 14,
+      "round_name": 14,
+      "time": {
+        "date": "04/07/26",
+        "time": "05:45",
+        "tz": "UTC",
+        "uts": 1783143900,
+        "iso_utc": "2026-07-04T05:45:00+00:00"
+      },
+      "home": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "away": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049864,
+      "round": 14,
+      "round_name": 14,
+      "time": {
+        "date": "04/07/26",
+        "time": "07:00",
+        "tz": "UTC",
+        "uts": 1783148400,
+        "iso_utc": "2026-07-04T07:00:00+00:00"
+      },
+      "home": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "away": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049866,
+      "round": 15,
+      "round_name": 15,
+      "time": {
+        "date": "17/07/26",
+        "time": "11:00",
+        "tz": "UTC",
+        "uts": 1784286000,
+        "iso_utc": "2026-07-17T11:00:00+00:00"
+      },
+      "home": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "away": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049868,
+      "round": 15,
+      "round_name": 15,
+      "time": {
+        "date": "18/07/26",
+        "time": "03:30",
+        "tz": "UTC",
+        "uts": 1784345400,
+        "iso_utc": "2026-07-18T03:30:00+00:00"
+      },
+      "home": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "away": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049870,
+      "round": 15,
+      "round_name": 15,
+      "time": {
+        "date": "18/07/26",
+        "time": "03:30",
+        "tz": "UTC",
+        "uts": 1784345400,
+        "iso_utc": "2026-07-18T03:30:00+00:00"
+      },
+      "home": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "away": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049872,
+      "round": 15,
+      "round_name": 15,
+      "time": {
+        "date": "18/07/26",
+        "time": "05:30",
+        "tz": "UTC",
+        "uts": 1784352600,
+        "iso_utc": "2026-07-18T05:30:00+00:00"
+      },
+      "home": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "away": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049874,
+      "round": 15,
+      "round_name": 15,
+      "time": {
+        "date": "18/07/26",
+        "time": "06:30",
+        "tz": "UTC",
+        "uts": 1784356200,
+        "iso_utc": "2026-07-18T06:30:00+00:00"
+      },
+      "home": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "away": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049876,
+      "round": 16,
+      "round_name": 16,
+      "time": {
+        "date": "24/07/26",
+        "time": "08:45",
+        "tz": "UTC",
+        "uts": 1784882700,
+        "iso_utc": "2026-07-24T08:45:00+00:00"
+      },
+      "home": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "away": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049878,
+      "round": 16,
+      "round_name": 16,
+      "time": {
+        "date": "24/07/26",
+        "time": "10:00",
+        "tz": "UTC",
+        "uts": 1784887200,
+        "iso_utc": "2026-07-24T10:00:00+00:00"
+      },
+      "home": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "away": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049880,
+      "round": 16,
+      "round_name": 16,
+      "time": {
+        "date": "24/07/26",
+        "time": "10:30",
+        "tz": "UTC",
+        "uts": 1784889000,
+        "iso_utc": "2026-07-24T10:30:00+00:00"
+      },
+      "home": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "away": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049882,
+      "round": 16,
+      "round_name": 16,
+      "time": {
+        "date": "24/07/26",
+        "time": "10:45",
+        "tz": "UTC",
+        "uts": 1784889900,
+        "iso_utc": "2026-07-24T10:45:00+00:00"
+      },
+      "home": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "away": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049884,
+      "round": 16,
+      "round_name": 16,
+      "time": {
+        "date": "25/07/26",
+        "time": "07:00",
+        "tz": "UTC",
+        "uts": 1784962800,
+        "iso_utc": "2026-07-25T07:00:00+00:00"
+      },
+      "home": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "away": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049886,
+      "round": 17,
+      "round_name": 17,
+      "time": {
+        "date": "31/07/26",
+        "time": "08:45",
+        "tz": "UTC",
+        "uts": 1785487500,
+        "iso_utc": "2026-07-31T08:45:00+00:00"
+      },
+      "home": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "away": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049888,
+      "round": 17,
+      "round_name": 17,
+      "time": {
+        "date": "31/07/26",
+        "time": "10:30",
+        "tz": "UTC",
+        "uts": 1785493800,
+        "iso_utc": "2026-07-31T10:30:00+00:00"
+      },
+      "home": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "away": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049890,
+      "round": 17,
+      "round_name": 17,
+      "time": {
+        "date": "31/07/26",
+        "time": "11:00",
+        "tz": "UTC",
+        "uts": 1785495600,
+        "iso_utc": "2026-07-31T11:00:00+00:00"
+      },
+      "home": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "away": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049892,
+      "round": 17,
+      "round_name": 17,
+      "time": {
+        "date": "01/08/26",
+        "time": "05:45",
+        "tz": "UTC",
+        "uts": 1785563100,
+        "iso_utc": "2026-08-01T05:45:00+00:00"
+      },
+      "home": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "away": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049894,
+      "round": 17,
+      "round_name": 17,
+      "time": {
+        "date": "01/08/26",
+        "time": "07:00",
+        "tz": "UTC",
+        "uts": 1785567600,
+        "iso_utc": "2026-08-01T07:00:00+00:00"
+      },
+      "home": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "away": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049896,
+      "round": 18,
+      "round_name": 18,
+      "time": {
+        "date": "07/08/26",
+        "time": "10:45",
+        "tz": "UTC",
+        "uts": 1786099500,
+        "iso_utc": "2026-08-07T10:45:00+00:00"
+      },
+      "home": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "away": {
+        "id": 27249467,
+        "uid": 1319578,
+        "name": "Metrostars",
+        "medium_name": "Metrostars",
+        "abbr": "MET",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049898,
+      "round": 18,
+      "round_name": 18,
+      "time": {
+        "date": "07/08/26",
+        "time": "10:45",
+        "tz": "UTC",
+        "uts": 1786099500,
+        "iso_utc": "2026-08-07T10:45:00+00:00"
+      },
+      "home": {
+        "id": 18193530,
+        "uid": 872853,
+        "name": "Modbury Vista",
+        "medium_name": "Modbury Vista",
+        "abbr": "MOD",
+        "country": null
+      },
+      "away": {
+        "id": 14204137,
+        "uid": 872851,
+        "name": "West Torrens Birkalla",
+        "medium_name": "West Torrens Birkalla",
+        "abbr": "WES",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049900,
+      "round": 18,
+      "round_name": 18,
+      "time": {
+        "date": "07/08/26",
+        "time": "10:45",
+        "tz": "UTC",
+        "uts": 1786099500,
+        "iso_utc": "2026-08-07T10:45:00+00:00"
+      },
+      "home": {
+        "id": 10058908,
+        "uid": 538647,
+        "name": "Comets",
+        "medium_name": "Adelaide Comets FC",
+        "abbr": "COM",
+        "country": null
+      },
+      "away": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049902,
+      "round": 18,
+      "round_name": 18,
+      "time": {
+        "date": "07/08/26",
+        "time": "10:45",
+        "tz": "UTC",
+        "uts": 1786099500,
+        "iso_utc": "2026-08-07T10:45:00+00:00"
+      },
+      "home": {
+        "id": 10620351,
+        "uid": 417829,
+        "name": "FFSA NTC",
+        "medium_name": "FFSA NTC",
+        "abbr": "FSA",
+        "country": null
+      },
+      "away": {
+        "id": 8595375,
+        "uid": 270761,
+        "name": "Adelaide Uni",
+        "medium_name": "Adelaide University",
+        "abbr": "ADE",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    },
+    {
+      "match_id": 68049904,
+      "round": 18,
+      "round_name": 18,
+      "time": {
+        "date": "07/08/26",
+        "time": "10:45",
+        "tz": "UTC",
+        "uts": 1786099500,
+        "iso_utc": "2026-08-07T10:45:00+00:00"
+      },
+      "home": {
+        "id": 21409213,
+        "uid": 982893,
+        "name": "Flinders United Wfc",
+        "medium_name": "Flinders United Wfc",
+        "abbr": "FLI",
+        "country": null
+      },
+      "away": {
+        "id": 8594933,
+        "uid": 417823,
+        "name": "West Adelaide",
+        "medium_name": "West Adelaide",
+        "abbr": "WAD",
+        "country": null
+      },
+      "result": {
+        "home": null,
+        "away": null,
+        "winner": null,
+        "period": "nt"
+      },
+      "status": {
+        "postponed": false,
+        "canceled": false,
+        "in_livescore": false,
+        "neutral_ground": false
+      }
+    }
+  ],
+  "fixture_count": 92,
+  "raw_refs": {
+    "config_tree": {
+      "endpoint": "config_tree_mini",
+      "queryUrl": "config_tree_mini/67/0/1",
+      "body_size_estimate_bytes": 1576230,
+      "data_type": "list",
+      "data_keys": null,
+      "data_count": 1
+    },
+    "fixtures": {
+      "endpoint": "stats_season_fixtures2",
+      "queryUrl": "stats_season_fixtures2/138964",
+      "body_size_estimate_bytes": 108960,
+      "data_type": "dict",
+      "data_keys": [
+        "_doc",
+        "_id",
+        "_sid",
+        "_utid",
+        "abbr",
+        "cups",
+        "currentseasonid",
+        "end",
+        "friendly",
+        "matches",
+        "name",
+        "neutralground",
+        "start",
+        "tables",
+        "tournaments",
+        "year"
+      ],
+      "data_count": null
+    }
+  },
+  "limitations": [
+    "Tournament navigation uses config_tree_mini and season fixtures only.",
+    "The URL tournament id can map to a unique tournament id with multiple stage rows.",
+    "The selected season is the row whose season_id matches current_season_id when available."
+  ],
+  "client_metrics": {
+    "total_requests": 2,
+    "success_count": 2,
+    "retry_count": 0,
+    "refresh_count": 0,
+    "blocked_count": 0,
+    "expired_count": 0,
+    "empty_count": 0,
+    "invalid_json_count": 0,
+    "http_error_count": 0,
+    "endpoint_timings_ms": {
+      "config_tree_mini": [
+        925.59
+      ],
+      "stats_season_fixtures2": [
+        688.88
+      ]
+    },
+    "endpoint_timing_summary": {
+      "config_tree_mini": {
+        "count": 1,
+        "min_ms": 925.59,
+        "max_ms": 925.59,
+        "avg_ms": 925.59
+      },
+      "stats_season_fixtures2": {
+        "count": 1,
+        "min_ms": 688.88,
+        "max_ms": 688.88,
+        "avg_ms": 688.88
+      }
+    }
+  }
+}
