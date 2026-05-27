@@ -1,0 +1,2159 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-27T20:28:31.149685+00:00",
+  "provider": "sportradar_statshub",
+  "inputs": {
+    "sport_id": 1,
+    "dates": [
+      "2026-05-27",
+      "2026-05-28",
+      "2026-05-29",
+      "2026-05-30"
+    ]
+  },
+  "results": [
+    {
+      "date": "2026-05-27",
+      "queryUrl": "unified_sport_matches_markets/1/2026-05-27/0",
+      "counts": {
+        "matches_with_market_payload": 23,
+        "matches_with_active_priced_market": 23,
+        "matches_with_1x2": 23,
+        "matches_with_handicap": 23,
+        "matches_with_totals": 23,
+        "live_like_matches": 1
+      },
+      "sample_matches": [
+        {
+          "match_id": 69340066,
+          "country": "International Clubs",
+          "league": "UEFA Conference League, Knockout stage",
+          "home": "Crystal Palace",
+          "away": "Vallecano",
+          "kickoff_utc": null,
+          "status": "2nd half",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 34480,
+          "season_id": 131637,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 10,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.15,
+              "draw": 3.1,
+              "away": 3.8
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075150,
+          "country": "International Clubs",
+          "league": "CONMEBOL Sudamericana, Group B",
+          "home": "Atletico Mineiro",
+          "away": "Puerto Cabello",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 480,
+          "season_id": 138028,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 9,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.333,
+              "draw": 4.75,
+              "away": 11.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075152,
+          "country": "International Clubs",
+          "league": "CONMEBOL Sudamericana, Group B",
+          "home": "Cienciano",
+          "away": "Las Piedras",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 480,
+          "season_id": 138028,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.533,
+              "draw": 4.0,
+              "away": 6.5
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075226,
+          "country": "International Clubs",
+          "league": "CONMEBOL Sudamericana, Group E",
+          "home": "Racing Avellaneda",
+          "away": "Independiente Petrolero",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 480,
+          "season_id": 138028,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 8,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.182,
+              "draw": 7.5,
+              "away": 12.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075228,
+          "country": "International Clubs",
+          "league": "CONMEBOL Sudamericana, Group E",
+          "home": "Caracas",
+          "away": "Botafogo",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 480,
+          "season_id": 138028,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 3.75,
+              "draw": 3.3,
+              "away": 2.05
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075274,
+          "country": "International Clubs",
+          "league": "CONMEBOL Sudamericana, Group G",
+          "home": "Olimpia",
+          "away": "Audax",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 480,
+          "season_id": 138028,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.55,
+              "draw": 4.2,
+              "away": 6.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075276,
+          "country": "International Clubs",
+          "league": "CONMEBOL Sudamericana, Group G",
+          "home": "Vasco da Gama",
+          "away": "Barracas",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 480,
+          "season_id": 138028,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.4,
+              "draw": 4.75,
+              "away": 7.5
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075298,
+          "country": "International Clubs",
+          "league": "CONMEBOL Sudamericana, Group H",
+          "home": "River Plate",
+          "away": "Blooming",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 480,
+          "season_id": 138028,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 9,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.091,
+              "draw": 9.5,
+              "away": 26.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075300,
+          "country": "International Clubs",
+          "league": "CONMEBOL Sudamericana, Group H",
+          "home": "Bragantino",
+          "away": "Carabobo",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 480,
+          "season_id": 138028,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.364,
+              "draw": 4.75,
+              "away": 8.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075716,
+          "country": "International Clubs",
+          "league": "CONMEBOL Libertadores, Group C",
+          "home": "Fluminense",
+          "away": "La Guaira",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 384,
+          "season_id": 137972,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 10,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.167,
+              "draw": 7.5,
+              "away": 13.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075718,
+          "country": "International Clubs",
+          "league": "CONMEBOL Libertadores, Group C",
+          "home": "Bolivar",
+          "away": "Rivadavia",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 384,
+          "season_id": 137972,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.375,
+              "draw": 3.6,
+              "away": 2.8
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075786,
+          "country": "International Clubs",
+          "league": "CONMEBOL Libertadores, Group E",
+          "home": "Penarol",
+          "away": "Independ. Santa Fe",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 384,
+          "season_id": 137972,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.75,
+              "draw": 3.4,
+              "away": 5.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075788,
+          "country": "International Clubs",
+          "league": "CONMEBOL Libertadores, Group E",
+          "home": "Corinthians",
+          "away": "Platense",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 384,
+          "season_id": 137972,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.727,
+              "draw": 3.4,
+              "away": 5.5
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70076110,
+          "country": "International Clubs",
+          "league": "CONMEBOL Libertadores, Group H",
+          "home": "Ind. del Valle",
+          "away": "Rosario",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 384,
+          "season_id": 137972,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.2,
+              "draw": 3.1,
+              "away": 3.5
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70076112,
+          "country": "International Clubs",
+          "league": "CONMEBOL Libertadores, Group H",
+          "home": "Libertad",
+          "away": "UCV",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 384,
+          "season_id": 137972,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.45,
+              "draw": 4.75,
+              "away": 6.25
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 71267616,
+          "country": "Philippines",
+          "league": "Philippines Football League, Championship Round",
+          "home": "Stallion FC",
+          "away": "Cebu FC",
+          "kickoff_utc": null,
+          "status": "Ended",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 1654,
+          "season_id": 134523,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 9,
+          "raw_market_count": 10,
+          "odds": {
+            "1x2": {
+              "home": 2.4,
+              "draw": 3.6,
+              "away": 2.45
+            },
+            "handicap_count": 2,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 71267618,
+          "country": "Philippines",
+          "league": "Philippines Football League, Championship Round",
+          "home": "Davao Aguilas",
+          "away": "Taguig FC",
+          "kickoff_utc": null,
+          "status": "Ended",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 1654,
+          "season_id": 134523,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 10,
+          "raw_market_count": 10,
+          "odds": {
+            "1x2": {
+              "home": 5.25,
+              "draw": 4.75,
+              "away": 1.4
+            },
+            "handicap_count": 2,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 71267620,
+          "country": "Philippines",
+          "league": "Philippines Football League, Championship Round",
+          "home": "Manila Digger FC",
+          "away": "Kaya Iloilo",
+          "kickoff_utc": null,
+          "status": "Ended",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 1654,
+          "season_id": 134523,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 8,
+          "raw_market_count": 10,
+          "odds": {
+            "1x2": {
+              "home": 1.65,
+              "draw": 4.1,
+              "away": 3.7
+            },
+            "handicap_count": 2,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 71284950,
+          "country": "International",
+          "league": "International Matches",
+          "home": "Jamaica",
+          "away": "India",
+          "kickoff_utc": null,
+          "status": "Ended",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 851,
+          "season_id": null,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.38,
+              "draw": 4.1,
+              "away": 8.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 71372276,
+          "country": "Brazil",
+          "league": "Copa do Nordeste, Knockout stage",
+          "home": "ABC",
+          "away": "Vitoria",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 1596,
+          "season_id": 140520,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 3.5,
+              "draw": 3.0,
+              "away": 2.15
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        }
+      ],
+      "total_matches_in_payload": 23
+    },
+    {
+      "date": "2026-05-28",
+      "queryUrl": "unified_sport_matches_markets/1/2026-05-28/0",
+      "counts": {
+        "matches_with_market_payload": 13,
+        "matches_with_active_priced_market": 13,
+        "matches_with_1x2": 13,
+        "matches_with_handicap": 13,
+        "matches_with_totals": 13,
+        "live_like_matches": 0
+      },
+      "sample_matches": [
+        {
+          "match_id": 69829492,
+          "country": "International",
+          "league": "International Matches",
+          "home": "Ireland",
+          "away": "Qatar",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 851,
+          "season_id": null,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.65,
+              "draw": 3.75,
+              "away": 4.5
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075106,
+          "country": "International Clubs",
+          "league": "CONMEBOL Sudamericana, Group A",
+          "home": "America Cali",
+          "away": "Macara",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 480,
+          "season_id": 138028,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.7,
+              "draw": 3.5,
+              "away": 5.5
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075108,
+          "country": "International Clubs",
+          "league": "CONMEBOL Sudamericana, Group A",
+          "home": "Tigre",
+          "away": "Alianza Atletico",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 480,
+          "season_id": 138028,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 9,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.286,
+              "draw": 5.25,
+              "away": 12.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075754,
+          "country": "International Clubs",
+          "league": "CONMEBOL Libertadores, Group D",
+          "home": "Boca Juniors",
+          "away": "Universidad Catolica",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 384,
+          "season_id": 137972,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.4,
+              "draw": 4.1,
+              "away": 10.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075756,
+          "country": "International Clubs",
+          "league": "CONMEBOL Libertadores, Group D",
+          "home": "Cruzeiro",
+          "away": "Barcelona",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 384,
+          "season_id": 137972,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.27,
+              "draw": 5.0,
+              "away": 15.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075876,
+          "country": "International Clubs",
+          "league": "CONMEBOL Libertadores, Group F",
+          "home": "Palmeiras",
+          "away": "Junior",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 384,
+          "season_id": 137972,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 9,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.25,
+              "draw": 5.25,
+              "away": 15.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 70075878,
+          "country": "International Clubs",
+          "league": "CONMEBOL Libertadores, Group F",
+          "home": "Cerro Porteno",
+          "away": "Sporting Cristal",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 384,
+          "season_id": 137972,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.615,
+              "draw": 3.7,
+              "away": 5.75
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 71562582,
+          "country": "Portugal",
+          "league": "Primeira Liga, Relegation/Promotion",
+          "home": "Casa Pia",
+          "away": "Torreense",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 238,
+          "season_id": 131867,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.2,
+              "draw": 3.0,
+              "away": 3.25
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 71704428,
+          "country": "Poland",
+          "league": "1. Liga, Promotion Playoffs",
+          "home": "Glogow",
+          "away": "Lodz",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 229,
+          "season_id": 131695,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 3.0,
+              "draw": 3.4,
+              "away": 2.05
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 71704432,
+          "country": "Poland",
+          "league": "1. Liga, Promotion Playoffs",
+          "home": "Wieczysta Krakow",
+          "away": "Polonia Warszawa",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 229,
+          "season_id": 131695,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.8,
+              "draw": 3.7,
+              "away": 3.4
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 68538268,
+          "country": "Finland",
+          "league": "Ykkonen",
+          "home": "Jazz",
+          "away": "SalPa",
+          "kickoff_utc": "2026-05-28T15:30:00+00:00",
+          "status": null,
+          "result_period": "nt",
+          "in_livescore": true,
+          "tournament_id": 42291,
+          "season_id": 139406,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 3.0,
+              "draw": 3.75,
+              "away": 1.909
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 68538270,
+          "country": "Finland",
+          "league": "Ykkonen",
+          "home": "Jyvaskyla",
+          "away": "Oulun",
+          "kickoff_utc": "2026-05-28T15:30:00+00:00",
+          "status": null,
+          "result_period": "nt",
+          "in_livescore": true,
+          "tournament_id": 42291,
+          "season_id": 139406,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.2,
+              "draw": 3.7,
+              "away": 2.625
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 71401844,
+          "country": "Sweden",
+          "league": "Svenska Cup, Preliminary Round",
+          "home": "Assyriska",
+          "away": "Vasalunds",
+          "kickoff_utc": "2026-05-28T17:30:00+00:00",
+          "status": null,
+          "result_period": "nt",
+          "in_livescore": true,
+          "tournament_id": 80,
+          "season_id": 141744,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 10,
+          "raw_market_count": 10,
+          "odds": {
+            "1x2": {
+              "home": 2.75,
+              "draw": 3.8,
+              "away": 2.05
+            },
+            "handicap_count": 2,
+            "totals_count": 1
+          }
+        }
+      ],
+      "total_matches_in_payload": 13
+    },
+    {
+      "date": "2026-05-29",
+      "queryUrl": "unified_sport_matches_markets/1/2026-05-29/0",
+      "counts": {
+        "matches_with_market_payload": 27,
+        "matches_with_active_priced_market": 27,
+        "matches_with_1x2": 27,
+        "matches_with_handicap": 27,
+        "matches_with_totals": 27,
+        "live_like_matches": 0
+      },
+      "sample_matches": [
+        {
+          "match_id": 66854066,
+          "country": "Ireland",
+          "league": "Premier Division",
+          "home": "Drogheda United",
+          "away": "Waterford",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 192,
+          "season_id": 137994,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.8,
+              "draw": 3.4,
+              "away": 4.1
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 66854068,
+          "country": "Ireland",
+          "league": "Premier Division",
+          "home": "Dundalk",
+          "away": "Derry City",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 192,
+          "season_id": 137994,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.25,
+              "draw": 3.2,
+              "away": 2.9
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 66854070,
+          "country": "Ireland",
+          "league": "Premier Division",
+          "home": "Shelbourne",
+          "away": "Galway Utd",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 192,
+          "season_id": 137994,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.727,
+              "draw": 3.5,
+              "away": 4.5
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 66854072,
+          "country": "Ireland",
+          "league": "Premier Division",
+          "home": "Sligo Rovers",
+          "away": "Bohemians D.",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 192,
+          "season_id": 137994,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 4.5,
+              "draw": 3.4,
+              "away": 1.7
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 66854074,
+          "country": "Ireland",
+          "league": "Premier Division",
+          "home": "Shamrock",
+          "away": "St. Patrick´s",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 192,
+          "season_id": 137994,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.2,
+              "draw": 3.1,
+              "away": 3.1
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67015210,
+          "country": "Norway",
+          "league": "Eliteserien",
+          "home": "Brann",
+          "away": "Sarpsborg",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 20,
+          "season_id": 138092,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.65,
+              "draw": 4.333,
+              "away": 4.5
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67015212,
+          "country": "Norway",
+          "league": "Eliteserien",
+          "home": "Fredrikstad",
+          "away": "Start",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 20,
+          "season_id": 138092,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.8,
+              "draw": 4.0,
+              "away": 4.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67015214,
+          "country": "Norway",
+          "league": "Eliteserien",
+          "home": "KFUM Oslo",
+          "away": "Tromsoe",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 20,
+          "season_id": 138092,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.875,
+              "draw": 3.3,
+              "away": 2.4
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67015220,
+          "country": "Norway",
+          "league": "Eliteserien",
+          "home": "Rosenborg",
+          "away": "Bodoe/Glimt",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 20,
+          "season_id": 138092,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 4.5,
+              "draw": 4.75,
+              "away": 1.571
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67015222,
+          "country": "Norway",
+          "league": "Eliteserien",
+          "home": "Valerenga",
+          "away": "Kristiansund",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 20,
+          "season_id": 138092,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.55,
+              "draw": 4.5,
+              "away": 5.25
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67015224,
+          "country": "Norway",
+          "league": "Eliteserien",
+          "home": "Aalesund",
+          "away": "HamKam",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 20,
+          "season_id": 138092,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 10,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.05,
+              "draw": 3.6,
+              "away": 3.3
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67117704,
+          "country": "Argentina",
+          "league": "Primera B Nacional",
+          "home": "Cordoba",
+          "away": "Ferro Carril Oeste",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 703,
+          "season_id": 138218,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.65,
+              "draw": 2.7,
+              "away": 3.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67118422,
+          "country": "Argentina",
+          "league": "Primera B Nacional",
+          "home": "Jujuy",
+          "away": "Chicago",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 703,
+          "season_id": 138218,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.56,
+              "draw": 3.7,
+              "away": 6.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67126586,
+          "country": "Sweden",
+          "league": "Allsvenskan",
+          "home": "Orgryte",
+          "away": "Elfsborg",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 40,
+          "season_id": 138196,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 3.9,
+              "draw": 3.7,
+              "away": 1.86
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67681888,
+          "country": "Chile",
+          "league": "Primera Division",
+          "home": "U de Concepcion",
+          "away": "Union La Calera",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 27665,
+          "season_id": 137800,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.05,
+              "draw": 3.5,
+              "away": 3.3
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67681894,
+          "country": "Chile",
+          "league": "Primera Division",
+          "home": "Cobresal",
+          "away": "Nublense",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 27665,
+          "season_id": 137800,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.82,
+              "draw": 3.5,
+              "away": 2.25
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 68822944,
+          "country": "Brazil",
+          "league": "Brasileiro Serie B",
+          "home": "Juventude RS",
+          "away": "America FC",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 390,
+          "season_id": 137806,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.86,
+              "draw": 3.3,
+              "away": 4.333
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 68995188,
+          "country": "China",
+          "league": "Chinese Super League",
+          "home": "Liaoning Tieren",
+          "away": "Shanghai Port",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 649,
+          "season_id": 139856,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.32,
+              "draw": 3.7,
+              "away": 2.65
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 71288188,
+          "country": "Cyprus",
+          "league": "Cyprus Cup",
+          "home": "Apollon Limassol",
+          "away": "Pafos",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 315,
+          "season_id": 133296,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.4,
+              "draw": 3.2,
+              "away": 2.75
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 71396964,
+          "country": "Peru",
+          "league": "Liga 1, Apertura",
+          "home": "Atletico Grau",
+          "away": "CD Moquegua",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 406,
+          "season_id": null,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.615,
+              "draw": 3.6,
+              "away": 5.5
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        }
+      ],
+      "total_matches_in_payload": 27
+    },
+    {
+      "date": "2026-05-30",
+      "queryUrl": "unified_sport_matches_markets/1/2026-05-30/0",
+      "counts": {
+        "matches_with_market_payload": 69,
+        "matches_with_active_priced_market": 68,
+        "matches_with_1x2": 69,
+        "matches_with_handicap": 69,
+        "matches_with_totals": 69,
+        "live_like_matches": 1
+      },
+      "sample_matches": [
+        {
+          "match_id": 61623942,
+          "country": "Spain",
+          "league": "LaLiga 2",
+          "home": "Granada",
+          "away": "Gijon",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 54,
+          "season_id": 132048,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.35,
+              "draw": 3.4,
+              "away": 2.75
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 61623948,
+          "country": "Spain",
+          "league": "LaLiga 2",
+          "home": "Ceuta",
+          "away": "Albacete",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 54,
+          "season_id": 132048,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.2,
+              "draw": 3.5,
+              "away": 3.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 61623952,
+          "country": "Spain",
+          "league": "LaLiga 2",
+          "home": "Real Sociedad B",
+          "away": "Cultural Leonesa",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 54,
+          "season_id": 132048,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.3,
+              "draw": 3.4,
+              "away": 2.82
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 66886818,
+          "country": "Brazil",
+          "league": "Brasileiro Serie A",
+          "home": "Flamengo",
+          "away": "Coritiba",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 325,
+          "season_id": 137706,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 10,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.42,
+              "draw": 4.75,
+              "away": 6.25
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 66886822,
+          "country": "Brazil",
+          "league": "Brasileiro Serie A",
+          "home": "Santos",
+          "away": "Vitoria",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 325,
+          "season_id": 137706,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.76,
+              "draw": 3.6,
+              "away": 4.5
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 66886830,
+          "country": "Brazil",
+          "league": "Brasileiro Serie A",
+          "home": "Gremio",
+          "away": "Corinthians",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 325,
+          "season_id": 137706,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.55,
+              "draw": 3.1,
+              "away": 2.85
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 66886832,
+          "country": "Brazil",
+          "league": "Brasileiro Serie A",
+          "home": "Paranaense",
+          "away": "Mirassol",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 325,
+          "season_id": 137706,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.76,
+              "draw": 3.6,
+              "away": 4.5
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 66886834,
+          "country": "Brazil",
+          "league": "Brasileiro Serie A",
+          "home": "Bahia",
+          "away": "Botafogo",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 325,
+          "season_id": 137706,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.86,
+              "draw": 3.6,
+              "away": 4.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67015218,
+          "country": "Norway",
+          "league": "Eliteserien",
+          "home": "Molde",
+          "away": "Sandefjord",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 20,
+          "season_id": 138092,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.6,
+              "draw": 4.2,
+              "away": 5.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67017976,
+          "country": "Norway",
+          "league": "1st Division",
+          "home": "Moss FK",
+          "away": "Stabaek",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 22,
+          "season_id": 138102,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.8,
+              "draw": 4.0,
+              "away": 2.15
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67017978,
+          "country": "Norway",
+          "league": "1st Division",
+          "home": "Odd",
+          "away": "Lyn 1896",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 22,
+          "season_id": 138102,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.667,
+              "draw": 4.1,
+              "away": 4.2
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67091328,
+          "country": "Finland",
+          "league": "Veikkausliiga",
+          "home": "HJK Helsinki",
+          "away": "Mariehamn",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 41,
+          "season_id": 138192,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.2,
+              "draw": 5.75,
+              "away": 11.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67091330,
+          "country": "Finland",
+          "league": "Veikkausliiga",
+          "home": "Gnistan",
+          "away": "Seinajoen",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 41,
+          "season_id": 138192,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.625,
+              "draw": 3.5,
+              "away": 2.3
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67091332,
+          "country": "Finland",
+          "league": "Veikkausliiga",
+          "home": "Kuopion Palloseura",
+          "away": "Inter Turku",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 41,
+          "season_id": 138192,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.375,
+              "draw": 3.25,
+              "away": 2.75
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67091334,
+          "country": "Finland",
+          "league": "Veikkausliiga",
+          "home": "Turun",
+          "away": "Vaasa",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 41,
+          "season_id": 138192,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.8,
+              "draw": 3.25,
+              "away": 2.35
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67091336,
+          "country": "Finland",
+          "league": "Veikkausliiga",
+          "home": "Lahti",
+          "away": "Ilves",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 41,
+          "season_id": 138192,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.45,
+              "draw": 3.4,
+              "away": 2.6
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67117710,
+          "country": "Argentina",
+          "league": "Primera B Nacional",
+          "home": "Defensores",
+          "away": "San Telmo",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 703,
+          "season_id": 138218,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 1.86,
+              "draw": 3.1,
+              "away": 4.5
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67117714,
+          "country": "Argentina",
+          "league": "Primera B Nacional",
+          "home": "Almirante Brown",
+          "away": "Santa Fe",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 703,
+          "season_id": 138218,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.75,
+              "draw": 2.65,
+              "away": 2.85
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67117718,
+          "country": "Argentina",
+          "league": "Primera B Nacional",
+          "home": "Estudiantes",
+          "away": "Godoy Cruz",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 703,
+          "season_id": 138218,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 11,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.7,
+              "draw": 2.65,
+              "away": 3.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        },
+        {
+          "match_id": 67117720,
+          "country": "Argentina",
+          "league": "Primera B Nacional",
+          "home": "All Boys",
+          "away": "Los Andes",
+          "kickoff_utc": null,
+          "status": "Not started",
+          "result_period": null,
+          "in_livescore": false,
+          "tournament_id": 703,
+          "season_id": 138218,
+          "has_active_priced_market": true,
+          "has_1x2": true,
+          "has_handicap": true,
+          "has_totals": true,
+          "active_market_count": 10,
+          "raw_market_count": 11,
+          "odds": {
+            "1x2": {
+              "home": 2.2,
+              "draw": 2.65,
+              "away": 4.0
+            },
+            "handicap_count": 3,
+            "totals_count": 1
+          }
+        }
+      ],
+      "total_matches_in_payload": 69
+    }
+  ],
+  "client_metrics": {
+    "total_requests": 8,
+    "success_count": 8,
+    "retry_count": 0,
+    "refresh_count": 0,
+    "blocked_count": 0,
+    "expired_count": 0,
+    "empty_count": 0,
+    "invalid_json_count": 0,
+    "http_error_count": 0,
+    "endpoint_timings_ms": {
+      "unified_sport_matches": [
+        2459.5,
+        1923.71,
+        2646.38,
+        5139.66
+      ],
+      "unified_sport_matches_markets": [
+        1866.86,
+        1536.26,
+        2107.47,
+        274.76
+      ]
+    },
+    "endpoint_timing_summary": {
+      "unified_sport_matches": {
+        "count": 4,
+        "min_ms": 1923.71,
+        "max_ms": 5139.66,
+        "avg_ms": 3042.31
+      },
+      "unified_sport_matches_markets": {
+        "count": 4,
+        "min_ms": 274.76,
+        "max_ms": 2107.47,
+        "avg_ms": 1446.34
+      }
+    }
+  }
+}

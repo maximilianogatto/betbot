@@ -250,6 +250,60 @@ This is the closest sandbox contract to a future `/track_league` or
 tournament_id -> fixtures -> selected fixture -> match_id -> match intelligence -> compact report
 ```
 
+## Provider Validation
+
+Run a bounded hardening matrix across real tournaments without adding new
+endpoints:
+
+```bash
+./betbot/bin/python sandbox/sportradar_http/run_provider_validation.py \
+  --bootstrap-mode headless \
+  --out-dir sandbox/sportradar_http/examples/provider_validation
+```
+
+Outputs:
+
+- `provider_validation_results.json`
+- `provider_validation_report.md`
+- `packages/<tournament>.json`
+- `packages/<tournament>.md`
+
+This validates:
+
+- tournament id resolution
+- fixture retrieval
+- selected fixture -> match intelligence
+- H2H and traceability date evidence
+- live endpoint response shape
+- whether `match_markets` contains usable priced 1X2/handicap/totals odds
+
+The resolver intentionally prefers `unique_tournament_id` over concrete
+`tournament_id` when the same numeric id appears in multiple fields. Statshub
+URL ids are not globally unique across those fields, so this avoids resolving a
+public `/tournament/<id>` URL to the wrong league.
+
+## Active Market Validation
+
+Validate active priced odds from existing sport/date endpoints:
+
+```bash
+./betbot/bin/python sandbox/sportradar_http/run_active_market_validation.py \
+  --bootstrap-mode headless \
+  --days 4 \
+  --out-dir sandbox/sportradar_http/examples/active_market_validation
+```
+
+Outputs:
+
+- `active_market_validation.json`
+- `active_market_validation_report.md`
+
+This probe joins `unified_sport_matches` with
+`unified_sport_matches_markets` and reports whether real matches have active
+priced 1X2, handicap and totals markets. It is separate from match intelligence
+because tournament fixtures can be valid stats targets while still having no
+active Bet365-priced market at the time of validation.
+
 ## League Pipeline
 
 Run a compact league collection using browser only for session bootstrap and

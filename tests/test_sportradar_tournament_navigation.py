@@ -23,6 +23,16 @@ class SportradarTournamentNavigationTests(unittest.TestCase):
         self.assertEqual(resolved["primary"]["country_name"], "Australia")
         self.assertEqual(len(resolved["stages"]), 2)
 
+    def test_resolve_prefers_unique_tournament_id_when_id_is_ambiguous(self) -> None:
+        tree = build_tournament_tree(_ambiguous_config_tree_fixture())
+        resolved = resolve_tournament(tree, 1260)
+
+        self.assertTrue(resolved["found"])
+        self.assertEqual(resolved["match_kind"], "unique_tournament_id")
+        self.assertEqual(resolved["primary"]["country_name"], "Australia")
+        self.assertEqual(resolved["primary"]["name"], "Capital NPL 1")
+        self.assertEqual(resolved["concrete_tournament_id"], 5000)
+
     def test_snapshot_normalizes_fixtures_and_report_dates(self) -> None:
         snapshot = build_tournament_navigation_snapshot(
             sport_id=1,
@@ -87,6 +97,62 @@ def _config_tree_fixture() -> dict:
             }
         ],
         "queryUrl": "/bet365/en/Etc:UTC/gismo/config_tree_mini/67/0/1",
+    }
+
+
+def _ambiguous_config_tree_fixture() -> dict:
+    return {
+        "doc": [
+            {
+                "data": [
+                    {
+                        "_id": 1,
+                        "_sid": 1,
+                        "name": "Soccer",
+                        "realcategories": [
+                            {
+                                "_id": 10,
+                                "_sid": 1,
+                                "_rcid": 10,
+                                "name": "Lithuania",
+                                "cc": {"a2": "lt", "name": "Lithuania"},
+                                "tournaments": [
+                                    {
+                                        "_id": 1260,
+                                        "_sid": 1,
+                                        "_rcid": 10,
+                                        "_tid": 1260,
+                                        "_utid": 9000,
+                                        "name": "A Lyga",
+                                        "seasonid": 139840,
+                                        "currentseason": 139840,
+                                    }
+                                ],
+                            },
+                            {
+                                "_id": 34,
+                                "_sid": 1,
+                                "_rcid": 34,
+                                "name": "Australia",
+                                "cc": {"a2": "au", "name": "Australia"},
+                                "tournaments": [
+                                    {
+                                        "_id": 5000,
+                                        "_sid": 1,
+                                        "_rcid": 34,
+                                        "_tid": 5000,
+                                        "_utid": 1260,
+                                        "name": "Capital NPL 1",
+                                        "seasonid": 140000,
+                                        "currentseason": 140000,
+                                    }
+                                ],
+                            },
+                        ],
+                    }
+                ]
+            }
+        ]
     }
 
 

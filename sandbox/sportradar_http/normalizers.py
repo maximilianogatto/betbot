@@ -318,6 +318,7 @@ def normalize_match_markets(
     *,
     home_name: str | None,
     away_name: str | None,
+    source: str = "match_markets",
 ) -> dict[str, Any]:
     """Normalize priced 1X2, handicap and totals markets when present."""
 
@@ -389,7 +390,7 @@ def normalize_match_markets(
             if clean_name:
                 other_market_names.append(clean_name)
     return {
-        "source": "match_markets" if payload else None,
+        "source": source if payload else None,
         "markets": {
             "1x2": one_x_two,
             "handicap": handicap_markets,
@@ -398,6 +399,53 @@ def normalize_match_markets(
             "raw_market_count": len(markets),
         },
     }
+
+
+def normalize_sport_match_markets(
+    payload: dict[str, Any] | None,
+    *,
+    match_id: int,
+    home_name: str | None,
+    away_name: str | None,
+) -> dict[str, Any]:
+    """Normalize one match from `unified_sport_matches_markets`.
+
+    The sport/date market endpoint stores matches as a mapping keyed by match id:
+
+    `{matches: {"69340066": {"markets": [...]}}}`.
+
+    This helper converts that shape into the same compact odds contract used by
+    `normalize_match_markets`, so validation can compare the match-level market
+    endpoint with the sport/date market endpoint without duplicating parser
+    logic.
+    """
+
+    data = doc_data(payload)
+    matches = data.get("matches") if isinstance(data, dict) else {}
+    match_data = None
+    if isinstance(matches, dict):
+        match_data = matches.get(str(match_id)) or matches.get(match_id)
+    if not isinstance(match_data, dict):
+        return {
+            "source": "unified_sport_matches_markets" if payload else None,
+            "markets": {
+                "1x2": {},
+                "handicap": [],
+                "totals": [],
+                "other_market_names": [],
+                "raw_market_count": 0,
+            },
+        }
+    synthetic_payload = {
+        "queryUrl": payload.get("queryUrl") if isinstance(payload, dict) else None,
+        "doc": [{"data": {"markets": match_data.get("markets") or []}}],
+    }
+    return normalize_match_markets(
+        synthetic_payload,
+        home_name=home_name,
+        away_name=away_name,
+        source="unified_sport_matches_markets",
+    )
 
 
 def normalize_match_table_slice(payload: dict[str, Any] | None) -> dict[str, Any]:

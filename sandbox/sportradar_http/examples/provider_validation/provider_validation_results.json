@@ -1,0 +1,723 @@
+{
+  "schema_version": 1,
+  "summary": {
+    "targets": 5,
+    "resolved": 5,
+    "with_fixtures": 5,
+    "with_priced_odds": 0,
+    "with_h2h": 5,
+    "with_live_state": 5,
+    "with_dated_h2h": 5,
+    "failed": 0
+  },
+  "results": [
+    {
+      "target": {
+        "tournament_id": 8,
+        "label": "LaLiga",
+        "category": "top"
+      },
+      "resolved": {
+        "found": true,
+        "country": "Spain",
+        "name": "LaLiga",
+        "season_id": 130805,
+        "match_kind": "unique_tournament_id",
+        "fixture_count": 383
+      },
+      "selected_fixture": {
+        "match_id": 61623434,
+        "home": "Girona",
+        "away": "Vallecano",
+        "kickoff_utc": "2025-08-15T17:00:00+00:00",
+        "in_livescore": true
+      },
+      "quality": {
+        "has_metadata": true,
+        "has_priced_odds": false,
+        "has_match_markets_priced_odds": false,
+        "has_fixture_markets_priced_odds": false,
+        "has_odds_endpoint": true,
+        "has_table": true,
+        "has_team_form": true,
+        "has_team_scoring": true,
+        "has_h2h": true,
+        "has_live_state": true,
+        "data_completeness": 1.0,
+        "missing_important_endpoints": []
+      },
+      "odds": {
+        "source": "unified_sport_matches_markets",
+        "one_x_two": false,
+        "handicap_count": 0,
+        "totals_count": 0,
+        "match_markets": {
+          "one_x_two": false,
+          "handicap_count": 0,
+          "totals_count": 0,
+          "raw_market_count": 0
+        },
+        "fixture_markets": {
+          "one_x_two": false,
+          "handicap_count": 0,
+          "totals_count": 0,
+          "raw_market_count": 0,
+          "error": "RuntimeError(\"Sportradar bootstrap failed mode=headless attempted=['headless'] detail={'fetch_count': 0, 'blocked_count': 0, 'expired_count': 0, 'error': None}. Use --bootstrap-mode auto or headed only if a visible fallback is acceptable.\")"
+        }
+      },
+      "live": {
+        "timeline_events": 164,
+        "delta_events": 0,
+        "situation_samples": 106,
+        "status": "Ended"
+      },
+      "report_quality": {
+        "has_report": true,
+        "h2h_has_dates": true,
+        "traceability_has_dates": true,
+        "line_count": 42
+      },
+      "report_summary": "Girona vs Vallecano\n\n- Form: 1.67/10 vs 7.78/10\n- H2H edge: even (0)\n  - 11/05/26: Vallecano 1-1 Girona\n  - 15/08/25: Girona 1-3 Vallecano\n  - 26/01/25: Vallecano 2-1 Girona\n  - 25/09/24: Girona 0-0 Vallecano\n  - 26/02/24: Girona 3-0 Vallecano\n\n- Goals avg scored:\n  - general: Girona=1.03 | Vallecano=1.08\n  - home/away split: Girona home=1.11 | Vallecano away=0.89\n- Goals avg conceded:\n  - general: Girona=1.45 | Vallecano=1.16\n  - split: Girona home=1.42 | Vallecano away=1.53\n- BTTS: 45%\n- Home strength: 4.79/10\n- Away weakness: 6.11/10\n\n- Last 5:\n  - Girona: D L D D L L\n    - 23/05/26: Girona 1-1 Elche\n    - 17/05/26: Atletico 1-0 Girona\n    - 14/05/26: Girona 1-1 Real Sociedad\n    - 11/05/26: Vallecano 1-1 Girona\n    - 01/05/26: Girona 0-1 Mallorca\n  - Vallecano: W W D D W W\n    - 23/05/26: Alaves 1-2 Vallecano\n    - 17/05/26: Vallecano 2-0 Villarreal\n    - 14/05/26: Valencia 1-1 Vallecano\n    - 11/05/26: Vallecano 1-1 Girona\n    - 07/05/26: Strasbourg Alsace 0-1 Vallecano\n- Table: 19th (41 pts, 38P) vs 8th (50 pts, 38P)\n- Top scorer: Girona: Vanat, Vladyslav (0) | Vallecano: De Frutos, Jorge (0)\n- Injuries: Girona=4 | Vallecano=1\n- Goal timing expectation:\n  - projected Girona pressure minute: 62.76\n  - projected Vallecano pressure minute: 66.85\n- Traceability:\n  - Common-opponent evidence exists; use as context, not prediction.\n  - Common opponent Valencia: 25/04/26 Valencia 2-1 Girona; 14/05/26 Valencia 1-1 Vallecano",
+      "warnings": [
+        "no_priced_odds",
+        "fixture_markets_error"
+      ],
+      "package_path": "sandbox/sportradar_http/examples/provider_validation/packages/8_laliga.json",
+      "error": null
+    },
+    {
+      "target": {
+        "tournament_id": 136,
+        "label": "A-League",
+        "category": "top"
+      },
+      "resolved": {
+        "found": true,
+        "country": "Australia",
+        "name": "A-League",
+        "season_id": 134825,
+        "match_kind": "unique_tournament_id",
+        "fixture_count": 169
+      },
+      "selected_fixture": {
+        "match_id": 63684367,
+        "home": "Adelaide",
+        "away": "Sydney FC",
+        "kickoff_utc": "2025-10-17T08:00:00+00:00",
+        "in_livescore": true
+      },
+      "quality": {
+        "has_metadata": true,
+        "has_priced_odds": false,
+        "has_match_markets_priced_odds": false,
+        "has_fixture_markets_priced_odds": false,
+        "has_odds_endpoint": true,
+        "has_table": true,
+        "has_team_form": true,
+        "has_team_scoring": true,
+        "has_h2h": true,
+        "has_live_state": true,
+        "data_completeness": 0.9167,
+        "missing_important_endpoints": [
+          "match_situation"
+        ]
+      },
+      "odds": {
+        "source": "unified_sport_matches_markets",
+        "one_x_two": false,
+        "handicap_count": 0,
+        "totals_count": 0,
+        "match_markets": {
+          "one_x_two": false,
+          "handicap_count": 0,
+          "totals_count": 0,
+          "raw_market_count": 0
+        },
+        "fixture_markets": {
+          "one_x_two": false,
+          "handicap_count": 0,
+          "totals_count": 0,
+          "raw_market_count": 0,
+          "error": "RuntimeError(\"Sportradar bootstrap failed mode=headless attempted=['headless'] detail={'fetch_count': 0, 'blocked_count': 0, 'expired_count': 0, 'error': None}. Use --bootstrap-mode auto or headed only if a visible fallback is acceptable.\")"
+        }
+      },
+      "live": {
+        "timeline_events": 144,
+        "delta_events": 0,
+        "situation_samples": 0,
+        "status": "Ended"
+      },
+      "report_quality": {
+        "has_report": true,
+        "h2h_has_dates": true,
+        "traceability_has_dates": true,
+        "line_count": 45
+      },
+      "report_summary": "Adelaide vs Sydney FC\n\n- Form: 5/10 vs 5/10\n- H2H edge: Sydney FC (-0.1)\n  - 14/02/26: Sydney FC 1-2 Adelaide\n  - 17/10/25: Adelaide 2-1 Sydney FC\n  - 05/04/25: Adelaide 2-3 Sydney FC\n  - 01/02/25: Sydney FC 4-1 Adelaide\n  - 20/12/24: Adelaide 3-3 Sydney FC\n\n- Goals avg scored:\n  - general: Adelaide=1.68 | Sydney FC=1.33\n  - home/away split: Adelaide home=1.79 | Sydney FC away=1.25\n- Goals avg conceded:\n  - general: Adelaide=1.43 | Sydney FC=1\n  - split: Adelaide home=1.43 | Sydney FC away=1\n- BTTS: 45%\n- Home strength: 4.93/10\n- Away weakness: 4/10\n\n- Last 5:\n  - Adelaide: L D W W D D\n    - 15/05/26: Adelaide 0-3 Auckland\n    - 09/05/26: Auckland 1-1 Adelaide\n    - 26/04/26: Melbourne City 1-2 Adelaide\n    - 19/04/26: Adelaide 3-1 Macarthur\n    - 11/04/26: Newcastle 1-1 Adelaide\n  - Sydney FC: L W D W D D\n    - 23/05/26: Auckland 1-0 Sydney FC\n    - 16/05/26: Newcastle 3-5 Sydney FC\n    - 09/05/26: Sydney FC 1-1 Newcastle\n    - 02/05/26: Melbourne Victory 0-1 Sydney FC\n    - 26/04/26: Sydney FC 2-2 Auckland\n- Table: 2nd (43 pts, 26P) vs 5th (39 pts, 26P)\n- Top scorer: Adelaide: Jovanovic, Luka (0) | Sydney FC: Toure, Alhassan (0)\n- Injuries: Adelaide=0 | Sydney FC=0\n- Goal timing expectation:\n  - projected Adelaide pressure minute: 94.69\n  - projected Sydney FC pressure minute: 66.4\n- Traceability:\n  - Direct H2H sample favors Sydney FC; inspect dates before weighting it heavily.\n  - Common-opponent evidence exists; use as context, not prediction.\n  - Common opponent Auckland: 15/05/26 Adelaide 0-3 Auckland; 23/05/26 Auckland 1-0 Sydney FC\n  - Common opponent Auckland: 15/05/26 Adelaide 0-3 Auckland; 26/04/26 Sydney FC 2-2 Auckland\n  - Common opponent Auckland: 09/05/26 Auckland 1-1 Adelaide; 23/05/26 Auckland 1-0 Sydney FC",
+      "warnings": [
+        "no_priced_odds",
+        "fixture_markets_error"
+      ],
+      "package_path": "sandbox/sportradar_http/examples/provider_validation/packages/136_a_league.json",
+      "error": null
+    },
+    {
+      "target": {
+        "tournament_id": 1894,
+        "label": "A-League Women",
+        "category": "women"
+      },
+      "resolved": {
+        "found": true,
+        "country": "Australia",
+        "name": "A-League, Women",
+        "season_id": 135135,
+        "match_kind": "unique_tournament_id",
+        "fixture_count": 127
+      },
+      "selected_fixture": {
+        "match_id": 63684953,
+        "home": "Western Sydney Wanderers",
+        "away": "Perth",
+        "kickoff_utc": "2025-10-31T08:00:00+00:00",
+        "in_livescore": true
+      },
+      "quality": {
+        "has_metadata": true,
+        "has_priced_odds": false,
+        "has_match_markets_priced_odds": false,
+        "has_fixture_markets_priced_odds": false,
+        "has_odds_endpoint": true,
+        "has_table": true,
+        "has_team_form": true,
+        "has_team_scoring": true,
+        "has_h2h": true,
+        "has_live_state": true,
+        "data_completeness": 0.9167,
+        "missing_important_endpoints": [
+          "match_situation"
+        ]
+      },
+      "odds": {
+        "source": "unified_sport_matches_markets",
+        "one_x_two": false,
+        "handicap_count": 0,
+        "totals_count": 0,
+        "match_markets": {
+          "one_x_two": false,
+          "handicap_count": 0,
+          "totals_count": 0,
+          "raw_market_count": 0
+        },
+        "fixture_markets": {
+          "one_x_two": false,
+          "handicap_count": 0,
+          "totals_count": 0,
+          "raw_market_count": 0,
+          "error": "RuntimeError(\"Sportradar bootstrap failed mode=headless attempted=['headless'] detail={'fetch_count': 0, 'blocked_count': 0, 'expired_count': 0, 'error': None}. Use --bootstrap-mode auto or headed only if a visible fallback is acceptable.\")"
+        }
+      },
+      "live": {
+        "timeline_events": 117,
+        "delta_events": 0,
+        "situation_samples": 0,
+        "status": "Ended"
+      },
+      "report_quality": {
+        "has_report": true,
+        "h2h_has_dates": true,
+        "traceability_has_dates": true,
+        "line_count": 44
+      },
+      "report_summary": "Western Sydney Wanderers vs Perth\n\n- Form: 2.22/10 vs 3.89/10\n- H2H edge: even (0)\n  - 09/01/26: Perth 3-1 Western Sydney Wanderers\n  - 31/10/25: Western Sydney Wanderers 1-3 Perth\n  - 22/03/25: Perth 1-0 Western Sydney Wanderers\n  - 20/12/24: Western Sydney Wanderers 1-1 Perth\n  - 16/03/24: Western Sydney Wanderers 1-0 Perth\n\n- Goals avg scored:\n  - general: Western Sydney Wanderers=0.9 | Perth=1\n  - home/away split: Western Sydney Wanderers home=0.7 | Perth away=1.1\n- Goals avg conceded:\n  - general: Western Sydney Wanderers=1.7 | Perth=1.5\n  - split: Western Sydney Wanderers home=1.8 | Perth away=2.3\n- BTTS: 65%\n- Home strength: 4.4/10\n- Away weakness: 9.2/10\n\n- Last 5:\n  - Western Sydney Wanderers: W L L L D L\n    - 29/03/26: Wellington 0-1 Western Sydney Wanderers\n    - 22/03/26: Western Sydney Wanderers 1-2 Melbourne City\n    - 14/03/26: Melbourne Victory 1-0 Western Sydney Wanderers\n    - 21/02/26: Canberra 3-0 Western Sydney Wanderers\n    - 13/02/26: Western Sydney Wanderers 1-1 Newcastle\n  - Perth: L L D L W W\n    - 03/04/26: Perth 0-1 Melbourne Victory\n    - 27/03/26: Brisbane 5-2 Perth\n    - 21/03/26: Perth 0-0 Central Coast\n    - 13/03/26: Adelaide 2-1 Perth\n    - 21/02/26: Newcastle 2-3 Perth\n- Table: 10th (19 pts, 20P) vs 8th (24 pts, 20P)\n- Top scorer: Western Sydney Wanderers: n/a | Perth: n/a\n- Injuries: Western Sydney Wanderers=0 | Perth=0\n- Goal timing expectation:\n  - projected Western Sydney Wanderers pressure minute: 41.3\n  - projected Perth pressure minute: 52.78\n- Traceability:\n  - Common-opponent evidence exists; use as context, not prediction.\n  - Common opponent Melbourne Victory: 14/03/26 Melbourne Victory 1-0 Western Sydney Wanderers; 03/04/26 Perth 0-1 Melbourne Victory\n  - Common opponent Canberra: 21/02/26 Canberra 3-0 Western Sydney Wanderers; 14/02/26 Perth 1-0 Canberra\n  - Common opponent Newcastle: 13/02/26 Western Sydney Wanderers 1-1 Newcastle; 21/02/26 Newcastle 2-3 Perth",
+      "warnings": [
+        "no_priced_odds",
+        "fixture_markets_error"
+      ],
+      "package_path": "sandbox/sportradar_http/examples/provider_validation/packages/1894_a_league_women.json",
+      "error": null
+    },
+    {
+      "target": {
+        "tournament_id": 1260,
+        "label": "Capital NPL 1",
+        "category": "minor"
+      },
+      "resolved": {
+        "found": true,
+        "country": "Australia",
+        "name": "Capital NPL 1",
+        "season_id": 140108,
+        "match_kind": "unique_tournament_id",
+        "fixture_count": 114
+      },
+      "selected_fixture": {
+        "match_id": 69194940,
+        "home": "Brindabella Blues FC",
+        "away": "Canberra Ol.",
+        "kickoff_utc": "2026-05-30T05:00:00+00:00",
+        "in_livescore": true
+      },
+      "quality": {
+        "has_metadata": true,
+        "has_priced_odds": false,
+        "has_match_markets_priced_odds": false,
+        "has_fixture_markets_priced_odds": false,
+        "has_odds_endpoint": true,
+        "has_table": true,
+        "has_team_form": true,
+        "has_team_scoring": true,
+        "has_h2h": true,
+        "has_live_state": true,
+        "data_completeness": 0.9167,
+        "missing_important_endpoints": [
+          "match_situation"
+        ]
+      },
+      "odds": {
+        "source": "unified_sport_matches_markets",
+        "one_x_two": false,
+        "handicap_count": 0,
+        "totals_count": 0,
+        "match_markets": {
+          "one_x_two": false,
+          "handicap_count": 0,
+          "totals_count": 0,
+          "raw_market_count": 0
+        },
+        "fixture_markets": {
+          "one_x_two": false,
+          "handicap_count": 0,
+          "totals_count": 0,
+          "raw_market_count": 0,
+          "error": null
+        }
+      },
+      "live": {
+        "timeline_events": 0,
+        "delta_events": 0,
+        "situation_samples": 0,
+        "status": "Not started"
+      },
+      "report_quality": {
+        "has_report": true,
+        "h2h_has_dates": true,
+        "traceability_has_dates": true,
+        "line_count": 43
+      },
+      "report_summary": "Brindabella Blues FC vs Canberra Ol.\n\n- Form: 1.67/10 vs 2.22/10\n- H2H edge: Canberra Ol. (-0.33)\n  - 12/07/25: Canberra Ol. 0-2 Brindabella Blues FC\n  - 04/06/25: Brindabella Blues FC 1-3 Canberra Ol.\n  - 17/05/25: Brindabella Blues FC 1-2 Canberra Ol.\n\n- Goals avg scored:\n  - general: Brindabella Blues FC=0.62 | Canberra Ol.=2.56\n  - home/away split: Brindabella Blues FC home=0 | Canberra Ol. away=2.5\n- Goals avg conceded:\n  - general: Brindabella Blues FC=3 | Canberra Ol.=3.11\n  - split: Brindabella Blues FC home=2 | Canberra Ol. away=3\n- BTTS: 42%\n- Home strength: 4/10\n- Away weakness: 10/10\n\n- Last 5:\n  - Brindabella Blues FC: L L L W L L\n    - 23/05/26: Tigers 7-0 Brindabella Blues FC\n    - 16/05/26: Tuggeranong 5-1 Brindabella Blues FC\n    - 13/05/26: Brindabella Blues FC 0-1 Canberra Juventus FC\n    - 02/05/26: Canberra White 0-2 Brindabella Blues FC\n    - 24/04/26: O'Connor Knights 2-1 Brindabella Blues FC\n  - Canberra Ol.: D L W L L L\n    - 23/05/26: Canberra Ol. 4-4 Belconnen\n    - 16/05/26: Tigers 3-2 Canberra Ol.\n    - 13/05/26: Canberra Ol. 3-1 O'Connor Knights\n    - 09/05/26: Tuggeranong 6-4 Canberra Ol.\n    - 02/05/26: Queanbeyan City FC 1-0 Canberra Ol.\n- Table: 10th (3 pts, 8P) vs 8th (10 pts, 9P)\n- Top scorer: Brindabella Blues FC: n/a | Canberra Ol.: n/a\n- Injuries: Brindabella Blues FC=0 | Canberra Ol.=0\n- Goal timing expectation:\n  - projected Brindabella Blues FC pressure minute: 30\n  - projected Canberra Ol. pressure minute: 45\n- Traceability:\n  - Direct H2H sample favors Canberra Ol.; inspect dates before weighting it heavily.\n  - Common-opponent evidence exists; use as context, not prediction.\n  - Common opponent Tigers: 23/05/26 Tigers 7-0 Brindabella Blues FC; 16/05/26 Tigers 3-2 Canberra Ol.\n  - Common opponent Tuggeranong: 16/05/26 Tuggeranong 5-1 Brindabella Blues FC; 09/05/26 Tuggeranong 6-4 Canberra Ol.\n  - Common opponent O'Connor Knights: 24/04/26 O'Connor Knights 2-1 Brindabella Blues FC; 13/05/26 Canberra Ol. 3-1 O'Connor Knights",
+      "warnings": [
+        "no_priced_odds"
+      ],
+      "package_path": "sandbox/sportradar_http/examples/provider_validation/packages/1260_capital_npl_1.json",
+      "error": null
+    },
+    {
+      "target": {
+        "tournament_id": 18340,
+        "label": "South Australia NPL Women",
+        "category": "women"
+      },
+      "resolved": {
+        "found": true,
+        "country": "Australia",
+        "name": "South Australia NPL, Women",
+        "season_id": 138964,
+        "match_kind": "unique_tournament_id",
+        "fixture_count": 92
+      },
+      "selected_fixture": {
+        "match_id": 68049818,
+        "home": "Campbelltown City SC",
+        "away": "Salisbury Inter",
+        "kickoff_utc": "2026-05-29T10:00:00+00:00",
+        "in_livescore": true
+      },
+      "quality": {
+        "has_metadata": true,
+        "has_priced_odds": false,
+        "has_match_markets_priced_odds": false,
+        "has_fixture_markets_priced_odds": false,
+        "has_odds_endpoint": true,
+        "has_table": true,
+        "has_team_form": true,
+        "has_team_scoring": true,
+        "has_h2h": true,
+        "has_live_state": true,
+        "data_completeness": 0.9167,
+        "missing_important_endpoints": [
+          "match_situation"
+        ]
+      },
+      "odds": {
+        "source": "unified_sport_matches_markets",
+        "one_x_two": false,
+        "handicap_count": 0,
+        "totals_count": 0,
+        "match_markets": {
+          "one_x_two": false,
+          "handicap_count": 0,
+          "totals_count": 0,
+          "raw_market_count": 0
+        },
+        "fixture_markets": {
+          "one_x_two": false,
+          "handicap_count": 0,
+          "totals_count": 0,
+          "raw_market_count": 0,
+          "error": null
+        }
+      },
+      "live": {
+        "timeline_events": 0,
+        "delta_events": 0,
+        "situation_samples": 0,
+        "status": "Not started"
+      },
+      "report_quality": {
+        "has_report": true,
+        "h2h_has_dates": true,
+        "traceability_has_dates": true,
+        "line_count": 44
+      },
+      "report_summary": "Campbelltown City SC vs Salisbury Inter\n\n- Form: 6.11/10 vs 6.67/10\n- H2H edge: Salisbury Inter (-0.5)\n  - 14/03/26: Salisbury Inter 2-1 Campbelltown City SC\n  - 23/08/25: Salisbury Inter 1-2 Campbelltown City SC\n  - 21/06/25: Campbelltown City SC 1-5 Salisbury Inter\n  - 22/03/25: Salisbury Inter 2-0 Campbelltown City SC\n\n- Goals avg scored:\n  - general: Campbelltown City SC=1.67 | Salisbury Inter=3.33\n  - home/away split: Campbelltown City SC home=2.25 | Salisbury Inter away=4.75\n- Goals avg conceded:\n  - general: Campbelltown City SC=1.78 | Salisbury Inter=1.11\n  - split: Campbelltown City SC home=1.5 | Salisbury Inter away=0.75\n- BTTS: 62%\n- Home strength: 5/10\n- Away weakness: 3/10\n\n- Last 5:\n  - Campbelltown City SC: W D W D W L\n    - 23/05/26: Metrostars 0-1 Campbelltown City SC\n    - 08/05/26: Campbelltown City SC 3-3 Modbury Vista\n    - 02/05/26: Comets 2-3 Campbelltown City SC\n    - 17/04/26: Campbelltown City SC 0-0 Adelaide Uni\n    - 10/04/26: Campbelltown City SC 5-1 Flinders United Wfc\n  - Salisbury Inter: D W W D W D\n    - 22/05/26: Salisbury Inter 2-2 Comets\n    - 09/05/26: Flinders United Wfc 0-8 Salisbury Inter\n    - 01/05/26: FFSA NTC 1-5 Salisbury Inter\n    - 17/04/26: Salisbury Inter 1-1 West Torrens Birkalla\n    - 10/04/26: Salisbury Inter 5-1 Modbury Vista\n- Table: 6th (11 pts, 9P) vs 3rd (18 pts, 9P)\n- Top scorer: Campbelltown City SC: n/a | Salisbury Inter: n/a\n- Injuries: Campbelltown City SC=0 | Salisbury Inter=0\n- Goal timing expectation:\n  - projected Campbelltown City SC pressure minute: 120\n  - projected Salisbury Inter pressure minute: 60\n- Traceability:\n  - Direct H2H sample favors Salisbury Inter; inspect dates before weighting it heavily.\n  - Common-opponent evidence exists; use as context, not prediction.\n  - Common opponent Modbury Vista: 08/05/26 Campbelltown City SC 3-3 Modbury Vista; 10/04/26 Salisbury Inter 5-1 Modbury Vista\n  - Common opponent Comets: 02/05/26 Comets 2-3 Campbelltown City SC; 22/05/26 Salisbury Inter 2-2 Comets\n  - Common opponent Adelaide Uni: 17/04/26 Campbelltown City SC 0-0 Adelaide Uni; 27/03/26 Adelaide Uni 2-2 Salisbury Inter",
+      "warnings": [
+        "no_priced_odds"
+      ],
+      "package_path": "sandbox/sportradar_http/examples/provider_validation/packages/18340_south_australia_npl_women.json",
+      "error": null
+    }
+  ],
+  "client_metrics": {
+    "total_requests": 141,
+    "success_count": 131,
+    "retry_count": 0,
+    "refresh_count": 10,
+    "blocked_count": 10,
+    "expired_count": 0,
+    "empty_count": 0,
+    "invalid_json_count": 0,
+    "http_error_count": 0,
+    "endpoint_timings_ms": {
+      "config_tree_mini": [
+        653.84
+      ],
+      "stats_season_fixtures2": [
+        418.18,
+        411.9,
+        527.25,
+        341.5,
+        184.06
+      ],
+      "unified_sport_matches_markets": [
+        525.01,
+        513.0,
+        664.33,
+        435.87,
+        205.8
+      ],
+      "match_info_statshub": [
+        671.74,
+        791.59,
+        707.23,
+        178.55,
+        261.17
+      ],
+      "stats_match_get": [
+        688.82,
+        445.81,
+        516.55,
+        340.37,
+        299.14
+      ],
+      "match_markets": [
+        504.81,
+        419.66,
+        431.52,
+        208.47,
+        215.82
+      ],
+      "match_details": [
+        800.8,
+        720.82,
+        593.61,
+        596.42,
+        652.53
+      ],
+      "stats_match_tableslice": [
+        631.08,
+        779.84,
+        647.17,
+        364.03,
+        161.17
+      ],
+      "stats_match_head2head": [
+        476.33,
+        655.2,
+        1062.78,
+        481.54,
+        170.37
+      ],
+      "match_timeline": [
+        915.07,
+        702.11,
+        797.84,
+        691.82,
+        596.83
+      ],
+      "match_timelinedelta": [
+        624.68,
+        1163.32,
+        773.4,
+        686.8,
+        648.51
+      ],
+      "stats_match_situation": [
+        1980.25,
+        520.33,
+        821.94,
+        610.27,
+        621.21
+      ],
+      "stats_team_lastx": [
+        631.57,
+        868.08,
+        497.02,
+        351.95,
+        492.78,
+        383.36,
+        234.4,
+        185.67,
+        379.47,
+        289.34
+      ],
+      "stats_team_nextx": [
+        532.93,
+        494.36,
+        464.29,
+        508.48,
+        480.01,
+        498.2,
+        154.6,
+        372.52,
+        203.48,
+        282.02
+      ],
+      "stats_team_streaks": [
+        1106.97,
+        253.99,
+        583.71,
+        458.47,
+        409.18,
+        397.39,
+        181.51,
+        311.78,
+        344.14,
+        285.78
+      ],
+      "stats_season_teamscoringconceding": [
+        608.77,
+        498.12,
+        560.86,
+        579.22,
+        461.55,
+        569.18,
+        174.33,
+        281.1,
+        212.66,
+        251.24
+      ],
+      "stats_season_topgoals": [
+        700.84,
+        761.85,
+        809.83,
+        653.99,
+        548.67,
+        656.31,
+        217.56,
+        182.46,
+        280.27,
+        304.81
+      ],
+      "stats_season_topcards": [
+        693.23,
+        767.34,
+        751.46,
+        804.79,
+        565.37,
+        595.3,
+        290.93,
+        281.91,
+        385.69,
+        275.07
+      ],
+      "stats_season_topassists": [
+        658.78,
+        519.73,
+        803.41,
+        910.02,
+        682.1,
+        748.06,
+        222.88,
+        172.87,
+        326.58,
+        290.29
+      ],
+      "stats_season_injuries": [
+        615.51,
+        595.8,
+        614.91,
+        197.37,
+        287.27
+      ],
+      "stats_team_versus": [
+        593.51,
+        369.3,
+        400.44,
+        250.84,
+        356.14
+      ],
+      "stats_h2h_versus": [
+        480.33,
+        407.98,
+        520.25,
+        669.49,
+        660.46
+      ]
+    },
+    "endpoint_timing_summary": {
+      "config_tree_mini": {
+        "count": 1,
+        "min_ms": 653.84,
+        "max_ms": 653.84,
+        "avg_ms": 653.84
+      },
+      "stats_season_fixtures2": {
+        "count": 5,
+        "min_ms": 184.06,
+        "max_ms": 527.25,
+        "avg_ms": 376.58
+      },
+      "unified_sport_matches_markets": {
+        "count": 5,
+        "min_ms": 205.8,
+        "max_ms": 664.33,
+        "avg_ms": 468.8
+      },
+      "match_info_statshub": {
+        "count": 5,
+        "min_ms": 178.55,
+        "max_ms": 791.59,
+        "avg_ms": 522.06
+      },
+      "stats_match_get": {
+        "count": 5,
+        "min_ms": 299.14,
+        "max_ms": 688.82,
+        "avg_ms": 458.14
+      },
+      "match_markets": {
+        "count": 5,
+        "min_ms": 208.47,
+        "max_ms": 504.81,
+        "avg_ms": 356.06
+      },
+      "match_details": {
+        "count": 5,
+        "min_ms": 593.61,
+        "max_ms": 800.8,
+        "avg_ms": 672.84
+      },
+      "stats_match_tableslice": {
+        "count": 5,
+        "min_ms": 161.17,
+        "max_ms": 779.84,
+        "avg_ms": 516.66
+      },
+      "stats_match_head2head": {
+        "count": 5,
+        "min_ms": 170.37,
+        "max_ms": 1062.78,
+        "avg_ms": 569.24
+      },
+      "match_timeline": {
+        "count": 5,
+        "min_ms": 596.83,
+        "max_ms": 915.07,
+        "avg_ms": 740.73
+      },
+      "match_timelinedelta": {
+        "count": 5,
+        "min_ms": 624.68,
+        "max_ms": 1163.32,
+        "avg_ms": 779.34
+      },
+      "stats_match_situation": {
+        "count": 5,
+        "min_ms": 520.33,
+        "max_ms": 1980.25,
+        "avg_ms": 910.8
+      },
+      "stats_team_lastx": {
+        "count": 10,
+        "min_ms": 185.67,
+        "max_ms": 868.08,
+        "avg_ms": 431.36
+      },
+      "stats_team_nextx": {
+        "count": 10,
+        "min_ms": 154.6,
+        "max_ms": 532.93,
+        "avg_ms": 399.09
+      },
+      "stats_team_streaks": {
+        "count": 10,
+        "min_ms": 181.51,
+        "max_ms": 1106.97,
+        "avg_ms": 433.29
+      },
+      "stats_season_teamscoringconceding": {
+        "count": 10,
+        "min_ms": 174.33,
+        "max_ms": 608.77,
+        "avg_ms": 419.7
+      },
+      "stats_season_topgoals": {
+        "count": 10,
+        "min_ms": 182.46,
+        "max_ms": 809.83,
+        "avg_ms": 511.66
+      },
+      "stats_season_topcards": {
+        "count": 10,
+        "min_ms": 275.07,
+        "max_ms": 804.79,
+        "avg_ms": 541.11
+      },
+      "stats_season_topassists": {
+        "count": 10,
+        "min_ms": 172.87,
+        "max_ms": 910.02,
+        "avg_ms": 533.47
+      },
+      "stats_season_injuries": {
+        "count": 5,
+        "min_ms": 197.37,
+        "max_ms": 615.51,
+        "avg_ms": 462.17
+      },
+      "stats_team_versus": {
+        "count": 5,
+        "min_ms": 250.84,
+        "max_ms": 593.51,
+        "avg_ms": 394.05
+      },
+      "stats_h2h_versus": {
+        "count": 5,
+        "min_ms": 407.98,
+        "max_ms": 669.49,
+        "avg_ms": 547.7
+      }
+    }
+  }
+}

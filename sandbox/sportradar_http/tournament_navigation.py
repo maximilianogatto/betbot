@@ -28,6 +28,12 @@ from sandbox.sportradar_http.normalizers import as_int, doc_data, make_raw_ref, 
 
 
 NAVIGATION_SCHEMA_VERSION = 1
+TOURNAMENT_ID_MATCH_PRIORITY = (
+    "unique_tournament_id",
+    "tournament_id",
+    "season_id",
+    "current_season_id",
+)
 
 
 def build_tournament_tree(config_tree_payload: dict[str, Any]) -> dict[str, Any]:
@@ -68,11 +74,7 @@ def build_tournament_tree(config_tree_payload: dict[str, Any]) -> dict[str, Any]
 def resolve_tournament(tree: dict[str, Any], tournament_id: int) -> dict[str, Any]:
     """Resolve a URL-facing tournament id to the current season and concrete stage rows."""
 
-    candidates = [
-        item
-        for item in tree.get("tournaments") or []
-        if _matches_tournament_id(item, tournament_id)
-    ]
+    candidates, match_kind = _find_tournament_candidates(tree, tournament_id)
     stages = sorted(candidates, key=lambda item: (item.get("season_id") != item.get("current_season_id"), item.get("name") or ""))
     primary = _choose_primary_tournament(stages)
     if not primary:
@@ -86,7 +88,7 @@ def resolve_tournament(tree: dict[str, Any], tournament_id: int) -> dict[str, An
     return {
         "requested_tournament_id": tournament_id,
         "found": True,
-        "match_kind": _match_kind(primary, tournament_id),
+        "match_kind": match_kind,
         "primary": primary,
         "stages": stages,
         "season_id": primary.get("season_id"),
@@ -237,12 +239,28 @@ def _compact_tournament(
 
 
 def _matches_tournament_id(item: dict[str, Any], tournament_id: int) -> bool:
-    return tournament_id in {
-        item.get("tournament_id"),
-        item.get("unique_tournament_id"),
-        item.get("season_id"),
-        item.get("current_season_id"),
-    }
+    return _match_kind(item, tournament_id) is not None
+
+
+def _find_tournament_candidates(tree: dict[str, Any], tournament_id: int) -> tuple[list[dict[str, Any]], str | None]:
+    """Find candidates using URL-id precedence.
+
+    Statshub ids are not globally unique across fields. The same integer can be
+    a concrete `_tid` for one competition and `_utid` for another. Public
+    `/sport/<sport>/tournament/<id>` URLs are URL-facing tournament ids, so this
+    resolver prefers `unique_tournament_id` before falling back to concrete
+    tournament or season ids.
+    """
+
+    grouped: dict[str, list[dict[str, Any]]] = {key: [] for key in TOURNAMENT_ID_MATCH_PRIORITY}
+    for item in tree.get("tournaments") or []:
+        match_kind = _match_kind(item, tournament_id)
+        if match_kind:
+            grouped[match_kind].append(item)
+    for match_kind in TOURNAMENT_ID_MATCH_PRIORITY:
+        if grouped[match_kind]:
+            return grouped[match_kind], match_kind
+    return [], None
 
 
 def _choose_primary_tournament(stages: list[dict[str, Any]]) -> dict[str, Any] | None:
@@ -256,7 +274,7 @@ def _choose_primary_tournament(stages: list[dict[str, Any]]) -> dict[str, Any] |
 
 
 def _match_kind(item: dict[str, Any], tournament_id: int) -> str | None:
-    for key in ("unique_tournament_id", "tournament_id", "season_id", "current_season_id"):
+    for key in TOURNAMENT_ID_MATCH_PRIORITY:
         if item.get(key) == tournament_id:
             return key
     return None

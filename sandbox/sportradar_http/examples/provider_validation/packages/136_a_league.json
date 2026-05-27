@@ -1,0 +1,1172 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-27T20:23:16.756176+00:00",
+  "kind": "tournament_match_report",
+  "provider": "sportradar_statshub",
+  "tournament": {
+    "requested_tournament_id": 136,
+    "unique_tournament_id": 136,
+    "concrete_tournament_id": 144,
+    "season_id": 134825,
+    "name": "A-League",
+    "country": "Australia"
+  },
+  "selected_fixture": {
+    "match_id": 63684367,
+    "round": 1,
+    "round_name": 1,
+    "time": {
+      "date": "17/10/25",
+      "time": "08:00",
+      "tz": "UTC",
+      "uts": 1760688000,
+      "iso_utc": "2025-10-17T08:00:00+00:00"
+    },
+    "home": {
+      "id": 14330,
+      "uid": 2946,
+      "name": "Adelaide",
+      "medium_name": "Adelaide United FC",
+      "abbr": "ADU",
+      "country": null
+    },
+    "away": {
+      "id": 529084,
+      "uid": 5971,
+      "name": "Sydney FC",
+      "medium_name": "Sydney FC",
+      "abbr": "SYD",
+      "country": null
+    },
+    "result": {
+      "home": 2,
+      "away": 1,
+      "winner": "home",
+      "period": "nt"
+    },
+    "status": {
+      "postponed": false,
+      "canceled": false,
+      "in_livescore": true,
+      "neutral_ground": false
+    }
+  },
+  "match_id": 63684367,
+  "match_intelligence": {
+    "schema_version": 1,
+    "generated_at": "2026-05-27T20:23:16.754445+00:00",
+    "provider": "sportradar_statshub",
+    "match_id": 63684367,
+    "teams": {
+      "home": {
+        "id": 14330,
+        "uid": 2946,
+        "name": "Adelaide",
+        "medium_name": "Adelaide United FC",
+        "abbr": "ADU",
+        "country": "Australia"
+      },
+      "away": {
+        "id": 529084,
+        "uid": 5971,
+        "name": "Sydney FC",
+        "medium_name": "Sydney FC",
+        "abbr": "SYD",
+        "country": "Australia"
+      }
+    },
+    "competition": {
+      "name": "A-League",
+      "tournament_name": "A-League",
+      "unique_tournament_name": "A-League",
+      "country": "Australia",
+      "season_name": "A-League 25/26",
+      "season_year": "25/26"
+    },
+    "kickoff_utc": "2025-10-17T08:00:00+00:00",
+    "status": {
+      "id": 100,
+      "name": "Ended",
+      "short_name": "END",
+      "matchstatus": "result",
+      "in_livescore": false,
+      "postponed": false,
+      "cancelled": false,
+      "running": false,
+      "played_seconds": null
+    },
+    "score": {
+      "home": 2,
+      "away": 1,
+      "winner": "home"
+    },
+    "form": {
+      "home": {
+        "rating_10": 5.0,
+        "sequence": [
+          "L",
+          "D",
+          "W",
+          "W",
+          "D",
+          "D"
+        ],
+        "recent_points": 9,
+        "last_matches": [
+          {
+            "match_id": 71240192,
+            "date_utc": "2026-05-15T09:35:00+00:00",
+            "date_display": "15/05/26",
+            "home": "Adelaide",
+            "away": "Auckland",
+            "score": "0-3",
+            "scoreline": "Adelaide 0-3 Auckland",
+            "venue": "home",
+            "result": "L",
+            "goals_for": 0,
+            "goals_against": 3
+          },
+          {
+            "match_id": 71240190,
+            "date_utc": "2026-05-09T06:00:00+00:00",
+            "date_display": "09/05/26",
+            "home": "Auckland",
+            "away": "Adelaide",
+            "score": "1-1",
+            "scoreline": "Auckland 1-1 Adelaide",
+            "venue": "away",
+            "result": "D",
+            "goals_for": 1,
+            "goals_against": 1
+          },
+          {
+            "match_id": 63684745,
+            "date_utc": "2026-04-26T07:30:00+00:00",
+            "date_display": "26/04/26",
+            "home": "Melbourne City",
+            "away": "Adelaide",
+            "score": "1-2",
+            "scoreline": "Melbourne City 1-2 Adelaide",
+            "venue": "away",
+            "result": "W",
+            "goals_for": 2,
+            "goals_against": 1
+          },
+          {
+            "match_id": 63684733,
+            "date_utc": "2026-04-19T05:30:00+00:00",
+            "date_display": "19/04/26",
+            "home": "Adelaide",
+            "away": "Macarthur",
+            "score": "3-1",
+            "scoreline": "Adelaide 3-1 Macarthur",
+            "venue": "home",
+            "result": "W",
+            "goals_for": 3,
+            "goals_against": 1
+          },
+          {
+            "match_id": 63684715,
+            "date_utc": "2026-04-11T07:00:00+00:00",
+            "date_display": "11/04/26",
+            "home": "Newcastle",
+            "away": "Adelaide",
+            "score": "1-1",
+            "scoreline": "Newcastle 1-1 Adelaide",
+            "venue": "away",
+            "result": "D",
+            "goals_for": 1,
+            "goals_against": 1
+          }
+        ]
+      },
+      "away": {
+        "rating_10": 5.0,
+        "sequence": [
+          "L",
+          "W",
+          "D",
+          "W",
+          "D",
+          "D"
+        ],
+        "recent_points": 9,
+        "last_matches": [
+          {
+            "match_id": 71544072,
+            "date_utc": "2026-05-23T08:10:00+00:00",
+            "date_display": "23/05/26",
+            "home": "Auckland",
+            "away": "Sydney FC",
+            "score": "1-0",
+            "scoreline": "Auckland 1-0 Sydney FC",
+            "venue": "away",
+            "result": "L",
+            "goals_for": 0,
+            "goals_against": 1
+          },
+          {
+            "match_id": 71240196,
+            "date_utc": "2026-05-16T09:40:00+00:00",
+            "date_display": "16/05/26",
+            "home": "Newcastle",
+            "away": "Sydney FC",
+            "score": "3-5",
+            "scoreline": "Newcastle 3-5 Sydney FC",
+            "venue": "away",
+            "result": "W",
+            "goals_for": 5,
+            "goals_against": 3
+          },
+          {
+            "match_id": 71240194,
+            "date_utc": "2026-05-09T09:40:00+00:00",
+            "date_display": "09/05/26",
+            "home": "Sydney FC",
+            "away": "Newcastle",
+            "score": "1-1",
+            "scoreline": "Sydney FC 1-1 Newcastle",
+            "venue": "home",
+            "result": "D",
+            "goals_for": 1,
+            "goals_against": 1
+          },
+          {
+            "match_id": 71094074,
+            "date_utc": "2026-05-02T09:40:00+00:00",
+            "date_display": "02/05/26",
+            "home": "Melbourne Victory",
+            "away": "Sydney FC",
+            "score": "0-1",
+            "scoreline": "Melbourne Victory 0-1 Sydney FC",
+            "venue": "away",
+            "result": "W",
+            "goals_for": 1,
+            "goals_against": 0
+          },
+          {
+            "match_id": 63684743,
+            "date_utc": "2026-04-26T05:00:00+00:00",
+            "date_display": "26/04/26",
+            "home": "Sydney FC",
+            "away": "Auckland",
+            "score": "2-2",
+            "scoreline": "Sydney FC 2-2 Auckland",
+            "venue": "home",
+            "result": "D",
+            "goals_for": 2,
+            "goals_against": 2
+          }
+        ]
+      }
+    },
+    "h2h": {
+      "edge_label": "Sydney FC",
+      "edge_value": -0.1,
+      "summary": {
+        "total_matches": 10,
+        "home_team_wins": 3,
+        "away_team_wins": 4,
+        "draws": 3
+      },
+      "recent_matches": [
+        {
+          "match_id": 63684637,
+          "date_utc": "2026-02-14T08:35:00+00:00",
+          "date_display": "14/02/26",
+          "home": "Sydney FC",
+          "away": "Adelaide",
+          "score": "1-2",
+          "scoreline": "Sydney FC 1-2 Adelaide",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 63684367,
+          "date_utc": "2025-10-17T08:00:00+00:00",
+          "date_display": "17/10/25",
+          "home": "Adelaide",
+          "away": "Sydney FC",
+          "score": "2-1",
+          "scoreline": "Adelaide 2-1 Sydney FC",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 52130725,
+          "date_utc": "2025-04-05T08:35:00+00:00",
+          "date_display": "05/04/25",
+          "home": "Adelaide",
+          "away": "Sydney FC",
+          "score": "2-3",
+          "scoreline": "Adelaide 2-3 Sydney FC",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 52130631,
+          "date_utc": "2025-02-01T06:00:00+00:00",
+          "date_display": "01/02/25",
+          "home": "Sydney FC",
+          "away": "Adelaide",
+          "score": "4-1",
+          "scoreline": "Sydney FC 4-1 Adelaide",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 52130533,
+          "date_utc": "2024-12-20T08:35:00+00:00",
+          "date_display": "20/12/24",
+          "home": "Adelaide",
+          "away": "Sydney FC",
+          "score": "3-3",
+          "scoreline": "Adelaide 3-3 Sydney FC",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 43255301,
+          "date_utc": "2024-02-17T07:00:00+00:00",
+          "date_display": "17/02/24",
+          "home": "Sydney FC",
+          "away": "Adelaide",
+          "score": "2-1",
+          "scoreline": "Sydney FC 2-1 Adelaide",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 46716641,
+          "date_utc": "2024-01-13T09:00:00+00:00",
+          "date_display": "13/01/24",
+          "home": "Adelaide",
+          "away": "Sydney FC",
+          "score": "4-3",
+          "scoreline": "Adelaide 4-3 Sydney FC",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 43255147,
+          "date_utc": "2023-11-11T08:45:00+00:00",
+          "date_display": "11/11/23",
+          "home": "Adelaide",
+          "away": "Sydney FC",
+          "score": "1-5",
+          "scoreline": "Adelaide 1-5 Sydney FC",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        }
+      ]
+    },
+    "table_context": {
+      "home": {
+        "team": {
+          "id": 14330,
+          "uid": 2946,
+          "name": "Adelaide",
+          "medium_name": "Adelaide United FC",
+          "abbr": "ADU",
+          "country": null
+        },
+        "position": 2,
+        "played": 26,
+        "points": 43,
+        "points_per_match": 1.6538,
+        "goals_for": 46,
+        "goals_against": 36,
+        "goal_difference": 10,
+        "position_display": "2nd (43 pts, 26P)"
+      },
+      "away": {
+        "team": {
+          "id": 529084,
+          "uid": 5971,
+          "name": "Sydney FC",
+          "medium_name": "Sydney FC",
+          "abbr": "SYD",
+          "country": null
+        },
+        "position": 5,
+        "played": 26,
+        "points": 39,
+        "points_per_match": 1.5,
+        "goals_for": 33,
+        "goals_against": 25,
+        "goal_difference": 8,
+        "position_display": "5th (39 pts, 26P)"
+      },
+      "summary": {
+        "position_gap": 3.0,
+        "points_gap": 4.0,
+        "goal_difference_gap": 2.0
+      }
+    },
+    "strength_indexes": {
+      "home_attack_strength_raw": 1.392857,
+      "away_attack_strength_raw": 1.339286,
+      "home_strength_10": 4.93,
+      "away_strength_10": 5.68,
+      "home_defense_weakness_10": 5.71,
+      "away_defense_weakness_10": 4.0,
+      "home_advantage_context": {
+        "attack_strength_home": 1.392857,
+        "attack_strength_away": 1.339286,
+        "table_position_gap": 3.0,
+        "form_gap": 0.0
+      }
+    },
+    "injuries": {
+      "home": [],
+      "away": [],
+      "home_count": 0,
+      "away_count": 0
+    },
+    "goal_context": {
+      "goals_avg_scored": {
+        "general": {
+          "home_team": 1.6785714285714286,
+          "away_team": 1.3333333333333333
+        },
+        "home_away_split": {
+          "home_team_home": 1.7857142857142858,
+          "away_team_away": 1.25
+        }
+      },
+      "goals_avg_conceded": {
+        "general": {
+          "home_team": 1.4285714285714286,
+          "away_team": 1.0
+        },
+        "home_away_split": {
+          "home_team_home": 1.4285714285714286,
+          "away_team_away": 1.0
+        }
+      },
+      "btts_rate": 0.446429,
+      "over_tendency_index": 1.366071,
+      "goal_timing_expectation": {
+        "league_average_minute": null,
+        "projected_home_goal_pressure_minute": 94.69,
+        "projected_away_goal_pressure_minute": 66.4
+      }
+    },
+    "players": {
+      "home": {
+        "top_scorer": {
+          "player_id": 2415447,
+          "player_name": "Jovanovic, Luka",
+          "total": 0,
+          "home": null,
+          "away": null,
+          "teams": {
+            "2946": {
+              "active": true,
+              "lastevent": "2026-05-15 09:58:37",
+              "started": 21,
+              "goals": 11,
+              "matches": 24,
+              "goal_points": 14,
+              "minutes_played": 1704,
+              "substituted_in": 3,
+              "first_goals": 2,
+              "last_goals": 3,
+              "shirtnumber": "9"
+            }
+          }
+        },
+        "top_cards": {
+          "player_id": 2021043,
+          "player_name": "Madanha, Panashe",
+          "total": 0,
+          "home": null,
+          "away": null,
+          "teams": {
+            "2946": {
+              "active": true,
+              "lastevent": "2026-02-27 10:18:35",
+              "started": 2,
+              "red_cards": 1,
+              "matches": 14,
+              "minutes_played": 324,
+              "substituted_in": 12,
+              "number_of_cards_2nd_half": 1,
+              "shirtnumber": "36"
+            }
+          }
+        },
+        "top_assists": {
+          "player_id": 1720578,
+          "player_name": "Dukuly, Yaya",
+          "total": 0,
+          "home": null,
+          "away": null,
+          "teams": {
+            "2946": {
+              "active": true,
+              "lastevent": "2026-05-15 08:43:58",
+              "started": 24,
+              "matches": 25,
+              "assists": 7,
+              "minutes_played": 1986,
+              "substituted_in": 1,
+              "shirtnumber": "19"
+            }
+          }
+        }
+      },
+      "away": {
+        "top_scorer": {
+          "player_id": 1864900,
+          "player_name": "Toure, Alhassan",
+          "total": 0,
+          "home": null,
+          "away": null,
+          "teams": {
+            "5971": {
+              "active": true,
+              "lastevent": "2026-04-26 06:39:30",
+              "started": 14,
+              "goals": 5,
+              "matches": 20,
+              "goal_points": 6,
+              "minutes_played": 1099,
+              "substituted_in": 6,
+              "first_goals": 1,
+              "shirtnumber": "35"
+            }
+          }
+        },
+        "top_cards": {
+          "player_id": 2484145,
+          "player_name": "Youlley, Rhys",
+          "total": 0,
+          "home": null,
+          "away": null,
+          "teams": {
+            "5971": {
+              "active": true,
+              "lastevent": "2026-05-23 09:48:18",
+              "started": 13,
+              "yellow_cards": 2,
+              "red_cards": 1,
+              "matches": 22,
+              "minutes_played": 1173,
+              "substituted_in": 9,
+              "number_of_cards_1st_half": 2,
+              "number_of_cards_2nd_half": 1,
+              "shirtnumber": "36"
+            }
+          }
+        },
+        "top_assists": {
+          "player_id": 2137290,
+          "player_name": "Quispe, Piero",
+          "total": 0,
+          "home": null,
+          "away": null,
+          "teams": {
+            "5971": {
+              "active": true,
+              "lastevent": "2026-05-23 09:47:49",
+              "started": 28,
+              "matches": 30,
+              "assists": 5,
+              "minutes_played": 2386,
+              "substituted_in": 2,
+              "shirtnumber": "7"
+            }
+          }
+        }
+      }
+    },
+    "traceability": {
+      "direct_h2h": [
+        {
+          "match_id": 63684637,
+          "date_utc": "2026-02-14T08:35:00+00:00",
+          "date_display": "14/02/26",
+          "home": "Sydney FC",
+          "away": "Adelaide",
+          "score": "1-2",
+          "scoreline": "Sydney FC 1-2 Adelaide",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 63684367,
+          "date_utc": "2025-10-17T08:00:00+00:00",
+          "date_display": "17/10/25",
+          "home": "Adelaide",
+          "away": "Sydney FC",
+          "score": "2-1",
+          "scoreline": "Adelaide 2-1 Sydney FC",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 52130725,
+          "date_utc": "2025-04-05T08:35:00+00:00",
+          "date_display": "05/04/25",
+          "home": "Adelaide",
+          "away": "Sydney FC",
+          "score": "2-3",
+          "scoreline": "Adelaide 2-3 Sydney FC",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 52130631,
+          "date_utc": "2025-02-01T06:00:00+00:00",
+          "date_display": "01/02/25",
+          "home": "Sydney FC",
+          "away": "Adelaide",
+          "score": "4-1",
+          "scoreline": "Sydney FC 4-1 Adelaide",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 52130533,
+          "date_utc": "2024-12-20T08:35:00+00:00",
+          "date_display": "20/12/24",
+          "home": "Adelaide",
+          "away": "Sydney FC",
+          "score": "3-3",
+          "scoreline": "Adelaide 3-3 Sydney FC",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 43255301,
+          "date_utc": "2024-02-17T07:00:00+00:00",
+          "date_display": "17/02/24",
+          "home": "Sydney FC",
+          "away": "Adelaide",
+          "score": "2-1",
+          "scoreline": "Sydney FC 2-1 Adelaide",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 46716641,
+          "date_utc": "2024-01-13T09:00:00+00:00",
+          "date_display": "13/01/24",
+          "home": "Adelaide",
+          "away": "Sydney FC",
+          "score": "4-3",
+          "scoreline": "Adelaide 4-3 Sydney FC",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 43255147,
+          "date_utc": "2023-11-11T08:45:00+00:00",
+          "date_display": "11/11/23",
+          "home": "Adelaide",
+          "away": "Sydney FC",
+          "score": "1-5",
+          "scoreline": "Adelaide 1-5 Sydney FC",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        }
+      ],
+      "common_opponents": [
+        {
+          "common_opponent": "Auckland",
+          "home_team_evidence": {
+            "match_id": 71240192,
+            "date_utc": "2026-05-15T09:35:00+00:00",
+            "date_display": "15/05/26",
+            "home": "Adelaide",
+            "away": "Auckland",
+            "score": "0-3",
+            "scoreline": "Adelaide 0-3 Auckland",
+            "venue": "home",
+            "result": "L",
+            "goals_for": 0,
+            "goals_against": 3
+          },
+          "away_team_evidence": {
+            "match_id": 71544072,
+            "date_utc": "2026-05-23T08:10:00+00:00",
+            "date_display": "23/05/26",
+            "home": "Auckland",
+            "away": "Sydney FC",
+            "score": "1-0",
+            "scoreline": "Auckland 1-0 Sydney FC",
+            "venue": "away",
+            "result": "L",
+            "goals_for": 0,
+            "goals_against": 1
+          }
+        },
+        {
+          "common_opponent": "Auckland",
+          "home_team_evidence": {
+            "match_id": 71240192,
+            "date_utc": "2026-05-15T09:35:00+00:00",
+            "date_display": "15/05/26",
+            "home": "Adelaide",
+            "away": "Auckland",
+            "score": "0-3",
+            "scoreline": "Adelaide 0-3 Auckland",
+            "venue": "home",
+            "result": "L",
+            "goals_for": 0,
+            "goals_against": 3
+          },
+          "away_team_evidence": {
+            "match_id": 63684743,
+            "date_utc": "2026-04-26T05:00:00+00:00",
+            "date_display": "26/04/26",
+            "home": "Sydney FC",
+            "away": "Auckland",
+            "score": "2-2",
+            "scoreline": "Sydney FC 2-2 Auckland",
+            "venue": "home",
+            "result": "D",
+            "goals_for": 2,
+            "goals_against": 2
+          }
+        },
+        {
+          "common_opponent": "Auckland",
+          "home_team_evidence": {
+            "match_id": 71240190,
+            "date_utc": "2026-05-09T06:00:00+00:00",
+            "date_display": "09/05/26",
+            "home": "Auckland",
+            "away": "Adelaide",
+            "score": "1-1",
+            "scoreline": "Auckland 1-1 Adelaide",
+            "venue": "away",
+            "result": "D",
+            "goals_for": 1,
+            "goals_against": 1
+          },
+          "away_team_evidence": {
+            "match_id": 71544072,
+            "date_utc": "2026-05-23T08:10:00+00:00",
+            "date_display": "23/05/26",
+            "home": "Auckland",
+            "away": "Sydney FC",
+            "score": "1-0",
+            "scoreline": "Auckland 1-0 Sydney FC",
+            "venue": "away",
+            "result": "L",
+            "goals_for": 0,
+            "goals_against": 1
+          }
+        },
+        {
+          "common_opponent": "Auckland",
+          "home_team_evidence": {
+            "match_id": 71240190,
+            "date_utc": "2026-05-09T06:00:00+00:00",
+            "date_display": "09/05/26",
+            "home": "Auckland",
+            "away": "Adelaide",
+            "score": "1-1",
+            "scoreline": "Auckland 1-1 Adelaide",
+            "venue": "away",
+            "result": "D",
+            "goals_for": 1,
+            "goals_against": 1
+          },
+          "away_team_evidence": {
+            "match_id": 63684743,
+            "date_utc": "2026-04-26T05:00:00+00:00",
+            "date_display": "26/04/26",
+            "home": "Sydney FC",
+            "away": "Auckland",
+            "score": "2-2",
+            "scoreline": "Sydney FC 2-2 Auckland",
+            "venue": "home",
+            "result": "D",
+            "goals_for": 2,
+            "goals_against": 2
+          }
+        },
+        {
+          "common_opponent": "Newcastle",
+          "home_team_evidence": {
+            "match_id": 63684715,
+            "date_utc": "2026-04-11T07:00:00+00:00",
+            "date_display": "11/04/26",
+            "home": "Newcastle",
+            "away": "Adelaide",
+            "score": "1-1",
+            "scoreline": "Newcastle 1-1 Adelaide",
+            "venue": "away",
+            "result": "D",
+            "goals_for": 1,
+            "goals_against": 1
+          },
+          "away_team_evidence": {
+            "match_id": 71240196,
+            "date_utc": "2026-05-16T09:40:00+00:00",
+            "date_display": "16/05/26",
+            "home": "Newcastle",
+            "away": "Sydney FC",
+            "score": "3-5",
+            "scoreline": "Newcastle 3-5 Sydney FC",
+            "venue": "away",
+            "result": "W",
+            "goals_for": 5,
+            "goals_against": 3
+          }
+        },
+        {
+          "common_opponent": "Newcastle",
+          "home_team_evidence": {
+            "match_id": 63684715,
+            "date_utc": "2026-04-11T07:00:00+00:00",
+            "date_display": "11/04/26",
+            "home": "Newcastle",
+            "away": "Adelaide",
+            "score": "1-1",
+            "scoreline": "Newcastle 1-1 Adelaide",
+            "venue": "away",
+            "result": "D",
+            "goals_for": 1,
+            "goals_against": 1
+          },
+          "away_team_evidence": {
+            "match_id": 71240194,
+            "date_utc": "2026-05-09T09:40:00+00:00",
+            "date_display": "09/05/26",
+            "home": "Sydney FC",
+            "away": "Newcastle",
+            "score": "1-1",
+            "scoreline": "Sydney FC 1-1 Newcastle",
+            "venue": "home",
+            "result": "D",
+            "goals_for": 1,
+            "goals_against": 1
+          }
+        }
+      ],
+      "notes": [
+        "Direct H2H sample favors Sydney FC; inspect dates before weighting it heavily.",
+        "Common-opponent evidence exists; use as context, not prediction."
+      ],
+      "home_team": "Adelaide",
+      "away_team": "Sydney FC"
+    },
+    "live_context": {
+      "score_state": "home_leading",
+      "pressure": {
+        "home": null,
+        "away": null
+      },
+      "timeline_event_count": 144,
+      "status": "Ended"
+    },
+    "feature_quality": {
+      "data_completeness": 0.9167,
+      "has_metadata": true,
+      "has_odds_endpoint": true,
+      "has_priced_odds": false,
+      "has_table": true,
+      "has_match_details": true,
+      "has_team_form": true,
+      "has_team_scoring": true,
+      "has_h2h": true,
+      "has_live_state": true,
+      "missing_important_endpoints": [
+        "match_situation"
+      ]
+    },
+    "metric_notes": {
+      "form_rating_10": "recent_points / max_possible_points * 10",
+      "strength_10": "average of attack context score and inverse defensive weakness score; bounded 0..10",
+      "attack_context": "raw goals context, not probability",
+      "h2h_dates": "historical match evidence must always include dates",
+      "traceability": "common-opponent evidence is context only; it is not a prediction"
+    },
+    "report_summary": "Adelaide vs Sydney FC\n\n- Form: 5/10 vs 5/10\n- H2H edge: Sydney FC (-0.1)\n  - 14/02/26: Sydney FC 1-2 Adelaide\n  - 17/10/25: Adelaide 2-1 Sydney FC\n  - 05/04/25: Adelaide 2-3 Sydney FC\n  - 01/02/25: Sydney FC 4-1 Adelaide\n  - 20/12/24: Adelaide 3-3 Sydney FC\n\n- Goals avg scored:\n  - general: Adelaide=1.68 | Sydney FC=1.33\n  - home/away split: Adelaide home=1.79 | Sydney FC away=1.25\n- Goals avg conceded:\n  - general: Adelaide=1.43 | Sydney FC=1\n  - split: Adelaide home=1.43 | Sydney FC away=1\n- BTTS: 45%\n- Home strength: 4.93/10\n- Away weakness: 4/10\n\n- Last 5:\n  - Adelaide: L D W W D D\n    - 15/05/26: Adelaide 0-3 Auckland\n    - 09/05/26: Auckland 1-1 Adelaide\n    - 26/04/26: Melbourne City 1-2 Adelaide\n    - 19/04/26: Adelaide 3-1 Macarthur\n    - 11/04/26: Newcastle 1-1 Adelaide\n  - Sydney FC: L W D W D D\n    - 23/05/26: Auckland 1-0 Sydney FC\n    - 16/05/26: Newcastle 3-5 Sydney FC\n    - 09/05/26: Sydney FC 1-1 Newcastle\n    - 02/05/26: Melbourne Victory 0-1 Sydney FC\n    - 26/04/26: Sydney FC 2-2 Auckland\n- Table: 2nd (43 pts, 26P) vs 5th (39 pts, 26P)\n- Top scorer: Adelaide: Jovanovic, Luka (0) | Sydney FC: Toure, Alhassan (0)\n- Injuries: Adelaide=0 | Sydney FC=0\n- Goal timing expectation:\n  - projected Adelaide pressure minute: 94.69\n  - projected Sydney FC pressure minute: 66.4\n- Traceability:\n  - Direct H2H sample favors Sydney FC; inspect dates before weighting it heavily.\n  - Common-opponent evidence exists; use as context, not prediction.\n  - Common opponent Auckland: 15/05/26 Adelaide 0-3 Auckland; 23/05/26 Auckland 1-0 Sydney FC\n  - Common opponent Auckland: 15/05/26 Adelaide 0-3 Auckland; 26/04/26 Sydney FC 2-2 Auckland\n  - Common opponent Auckland: 09/05/26 Auckland 1-1 Adelaide; 23/05/26 Auckland 1-0 Sydney FC"
+  },
+  "report_summary": "# Sportradar Tournament Match Report\n\n- Tournament: `Australia / A-League`\n- Season id: `134825`\n- Fixture: `Adelaide vs Sydney FC`\n- Match id: `63684367`\n- Kickoff UTC: `2025-10-17T08:00:00+00:00`\n\n## Match Intelligence\n\nAdelaide vs Sydney FC\n\n- Form: 5/10 vs 5/10\n- H2H edge: Sydney FC (-0.1)\n  - 14/02/26: Sydney FC 1-2 Adelaide\n  - 17/10/25: Adelaide 2-1 Sydney FC\n  - 05/04/25: Adelaide 2-3 Sydney FC\n  - 01/02/25: Sydney FC 4-1 Adelaide\n  - 20/12/24: Adelaide 3-3 Sydney FC\n\n- Goals avg scored:\n  - general: Adelaide=1.68 | Sydney FC=1.33\n  - home/away split: Adelaide home=1.79 | Sydney FC away=1.25\n- Goals avg conceded:\n  - general: Adelaide=1.43 | Sydney FC=1\n  - split: Adelaide home=1.43 | Sydney FC away=1\n- BTTS: 45%\n- Home strength: 4.93/10\n- Away weakness: 4/10\n\n- Last 5:\n  - Adelaide: L D W W D D\n    - 15/05/26: Adelaide 0-3 Auckland\n    - 09/05/26: Auckland 1-1 Adelaide\n    - 26/04/26: Melbourne City 1-2 Adelaide\n    - 19/04/26: Adelaide 3-1 Macarthur\n    - 11/04/26: Newcastle 1-1 Adelaide\n  - Sydney FC: L W D W D D\n    - 23/05/26: Auckland 1-0 Sydney FC\n    - 16/05/26: Newcastle 3-5 Sydney FC\n    - 09/05/26: Sydney FC 1-1 Newcastle\n    - 02/05/26: Melbourne Victory 0-1 Sydney FC\n    - 26/04/26: Sydney FC 2-2 Auckland\n- Table: 2nd (43 pts, 26P) vs 5th (39 pts, 26P)\n- Top scorer: Adelaide: Jovanovic, Luka (0) | Sydney FC: Toure, Alhassan (0)\n- Injuries: Adelaide=0 | Sydney FC=0\n- Goal timing expectation:\n  - projected Adelaide pressure minute: 94.69\n  - projected Sydney FC pressure minute: 66.4\n- Traceability:\n  - Direct H2H sample favors Sydney FC; inspect dates before weighting it heavily.\n  - Common-opponent evidence exists; use as context, not prediction.\n  - Common opponent Auckland: 15/05/26 Adelaide 0-3 Auckland; 23/05/26 Auckland 1-0 Sydney FC\n  - Common opponent Auckland: 15/05/26 Adelaide 0-3 Auckland; 26/04/26 Sydney FC 2-2 Auckland\n  - Common opponent Auckland: 09/05/26 Auckland 1-1 Adelaide; 23/05/26 Auckland 1-0 Sydney FC\n",
+  "client_metrics": {
+    "total_requests": 57,
+    "success_count": 53,
+    "retry_count": 0,
+    "refresh_count": 4,
+    "blocked_count": 4,
+    "expired_count": 0,
+    "empty_count": 0,
+    "invalid_json_count": 0,
+    "http_error_count": 0,
+    "endpoint_timings_ms": {
+      "config_tree_mini": [
+        653.84
+      ],
+      "stats_season_fixtures2": [
+        418.18,
+        411.9
+      ],
+      "unified_sport_matches_markets": [
+        525.01,
+        513.0
+      ],
+      "match_info_statshub": [
+        671.74,
+        791.59
+      ],
+      "stats_match_get": [
+        688.82,
+        445.81
+      ],
+      "match_markets": [
+        504.81,
+        419.66
+      ],
+      "match_details": [
+        800.8,
+        720.82
+      ],
+      "stats_match_tableslice": [
+        631.08,
+        779.84
+      ],
+      "stats_match_head2head": [
+        476.33,
+        655.2
+      ],
+      "match_timeline": [
+        915.07,
+        702.11
+      ],
+      "match_timelinedelta": [
+        624.68,
+        1163.32
+      ],
+      "stats_match_situation": [
+        1980.25,
+        520.33
+      ],
+      "stats_team_lastx": [
+        631.57,
+        868.08,
+        497.02,
+        351.95
+      ],
+      "stats_team_nextx": [
+        532.93,
+        494.36,
+        464.29,
+        508.48
+      ],
+      "stats_team_streaks": [
+        1106.97,
+        253.99,
+        583.71,
+        458.47
+      ],
+      "stats_season_teamscoringconceding": [
+        608.77,
+        498.12,
+        560.86,
+        579.22
+      ],
+      "stats_season_topgoals": [
+        700.84,
+        761.85,
+        809.83,
+        653.99
+      ],
+      "stats_season_topcards": [
+        693.23,
+        767.34,
+        751.46,
+        804.79
+      ],
+      "stats_season_topassists": [
+        658.78,
+        519.73,
+        803.41,
+        910.02
+      ],
+      "stats_season_injuries": [
+        615.51,
+        595.8
+      ],
+      "stats_team_versus": [
+        593.51,
+        369.3
+      ],
+      "stats_h2h_versus": [
+        480.33,
+        407.98
+      ]
+    },
+    "endpoint_timing_summary": {
+      "config_tree_mini": {
+        "count": 1,
+        "min_ms": 653.84,
+        "max_ms": 653.84,
+        "avg_ms": 653.84
+      },
+      "stats_season_fixtures2": {
+        "count": 2,
+        "min_ms": 411.9,
+        "max_ms": 418.18,
+        "avg_ms": 415.04
+      },
+      "unified_sport_matches_markets": {
+        "count": 2,
+        "min_ms": 513.0,
+        "max_ms": 525.01,
+        "avg_ms": 519.0
+      },
+      "match_info_statshub": {
+        "count": 2,
+        "min_ms": 671.74,
+        "max_ms": 791.59,
+        "avg_ms": 731.66
+      },
+      "stats_match_get": {
+        "count": 2,
+        "min_ms": 445.81,
+        "max_ms": 688.82,
+        "avg_ms": 567.32
+      },
+      "match_markets": {
+        "count": 2,
+        "min_ms": 419.66,
+        "max_ms": 504.81,
+        "avg_ms": 462.24
+      },
+      "match_details": {
+        "count": 2,
+        "min_ms": 720.82,
+        "max_ms": 800.8,
+        "avg_ms": 760.81
+      },
+      "stats_match_tableslice": {
+        "count": 2,
+        "min_ms": 631.08,
+        "max_ms": 779.84,
+        "avg_ms": 705.46
+      },
+      "stats_match_head2head": {
+        "count": 2,
+        "min_ms": 476.33,
+        "max_ms": 655.2,
+        "avg_ms": 565.76
+      },
+      "match_timeline": {
+        "count": 2,
+        "min_ms": 702.11,
+        "max_ms": 915.07,
+        "avg_ms": 808.59
+      },
+      "match_timelinedelta": {
+        "count": 2,
+        "min_ms": 624.68,
+        "max_ms": 1163.32,
+        "avg_ms": 894.0
+      },
+      "stats_match_situation": {
+        "count": 2,
+        "min_ms": 520.33,
+        "max_ms": 1980.25,
+        "avg_ms": 1250.29
+      },
+      "stats_team_lastx": {
+        "count": 4,
+        "min_ms": 351.95,
+        "max_ms": 868.08,
+        "avg_ms": 587.15
+      },
+      "stats_team_nextx": {
+        "count": 4,
+        "min_ms": 464.29,
+        "max_ms": 532.93,
+        "avg_ms": 500.01
+      },
+      "stats_team_streaks": {
+        "count": 4,
+        "min_ms": 253.99,
+        "max_ms": 1106.97,
+        "avg_ms": 600.79
+      },
+      "stats_season_teamscoringconceding": {
+        "count": 4,
+        "min_ms": 498.12,
+        "max_ms": 608.77,
+        "avg_ms": 561.74
+      },
+      "stats_season_topgoals": {
+        "count": 4,
+        "min_ms": 653.99,
+        "max_ms": 809.83,
+        "avg_ms": 731.63
+      },
+      "stats_season_topcards": {
+        "count": 4,
+        "min_ms": 693.23,
+        "max_ms": 804.79,
+        "avg_ms": 754.21
+      },
+      "stats_season_topassists": {
+        "count": 4,
+        "min_ms": 519.73,
+        "max_ms": 910.02,
+        "avg_ms": 722.99
+      },
+      "stats_season_injuries": {
+        "count": 2,
+        "min_ms": 595.8,
+        "max_ms": 615.51,
+        "avg_ms": 605.65
+      },
+      "stats_team_versus": {
+        "count": 2,
+        "min_ms": 369.3,
+        "max_ms": 593.51,
+        "avg_ms": 481.4
+      },
+      "stats_h2h_versus": {
+        "count": 2,
+        "min_ms": 407.98,
+        "max_ms": 480.33,
+        "avg_ms": 444.15
+      }
+    }
+  }
+}

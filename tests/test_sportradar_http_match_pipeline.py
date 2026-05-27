@@ -11,6 +11,7 @@ from sandbox.sportradar_http.normalizers import (
     normalize_match_situation,
     normalize_match_table_slice,
     normalize_match_timeline,
+    normalize_sport_match_markets,
     normalize_team_recent_payload,
     normalize_team_scoring,
 )
@@ -87,6 +88,42 @@ class SportradarHTTPMatchPipelineTests(unittest.TestCase):
         self.assertEqual(markets["1x2"], {"home": 2.1, "draw": 3.2, "away": 3.5})
         self.assertEqual(markets["handicap"][0]["line"], "-0.25")
         self.assertEqual(markets["totals"][0]["line"], "2.5")
+
+    def test_normalize_sport_match_markets_extracts_one_match(self) -> None:
+        payload = {
+            "queryUrl": "unified_sport_matches_markets/1/2026-05-27/0",
+            "doc": [
+                {
+                    "data": {
+                        "matches": {
+                            "10": {
+                                "markets": [
+                                    {
+                                        "name": "1x2",
+                                        "outcomes": [
+                                            {"name": "{$competitor1}", "odds": 2.15, "active": True},
+                                            {"name": "draw", "odds": 3.1, "active": True},
+                                            {"name": "{$competitor2}", "odds": 3.8, "active": True},
+                                        ],
+                                    },
+                                    {
+                                        "name": "Handicap",
+                                        "specifiers": {"hcp": "-0.25"},
+                                        "outcomes": [{"name": "{$competitor1} ({+hcp})", "odds": 1.8, "active": True}],
+                                    },
+                                ]
+                            }
+                        }
+                    }
+                }
+            ],
+        }
+
+        normalized = normalize_sport_match_markets(payload, match_id=10, home_name="Home", away_name="Away")
+
+        self.assertEqual(normalized["source"], "unified_sport_matches_markets")
+        self.assertEqual(normalized["markets"]["1x2"], {"home": 2.15, "draw": 3.1, "away": 3.8})
+        self.assertEqual(normalized["markets"]["handicap"][0]["line"], "-0.25")
 
     def test_normalize_match_details_and_live_payloads_are_compact(self) -> None:
         details_payload = {
