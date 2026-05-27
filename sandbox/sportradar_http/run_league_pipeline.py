@@ -51,12 +51,7 @@ from sandbox.sportradar_http.normalizers import (
     normalize_teams,
     normalize_venues,
 )
-from sandbox.sportradar_http.session_manager import (
-    BootstrapConfig,
-    SportradarSessionManager,
-    load_session_state,
-    save_session_state,
-)
+from sandbox.sportradar_http.runtime import add_bootstrap_mode_arg, load_or_refresh_session_state
 
 
 KNOWN_CURRENT_SEASONS = {
@@ -77,6 +72,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seconds", type=float, default=4.0)
     parser.add_argument("--top-players", type=int, default=20)
     parser.add_argument("--max-fixtures", type=int, default=500)
+    add_bootstrap_mode_arg(parser)
     return parser.parse_args()
 
 
@@ -86,8 +82,8 @@ def main() -> int:
     args = parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
     season_id = resolve_season_id(args.tournament_id, args.season_id)
-    state = ensure_state(args.session_state, seconds=args.seconds)
-    client = SportradarHTTPClient(session_state=state, auto_refresh=False, retries=1)
+    state, manager = ensure_state(args.session_state, seconds=args.seconds, bootstrap_mode=args.bootstrap_mode)
+    client = SportradarHTTPClient(session_state=state, session_manager=manager, auto_refresh=True, retries=1)
     payloads = fetch_league_payloads(client, season_id=season_id)
     snapshot = build_league_snapshot(args=args, season_id=season_id, payloads=payloads, client=client)
     features = build_league_features(snapshot)
@@ -111,17 +107,10 @@ def resolve_season_id(tournament_id: int, season_id: int | None) -> int:
     raise SystemExit("Pass --season-id. Automatic tournament->season discovery is not implemented yet.")
 
 
-def ensure_state(path: Path, *, seconds: float):
+def ensure_state(path: Path, *, seconds: float, bootstrap_mode: str = "headless"):
     """Load cached replay state or bootstrap a new one."""
 
-    if path.exists():
-        state = load_session_state(path)
-        if state.signed_token and not state.signed_token.is_expired():
-            return state
-    manager = SportradarSessionManager(BootstrapConfig(headed=True, seconds_per_url=seconds))
-    state = manager.refresh_session()
-    save_session_state(state, path)
-    return state
+    return load_or_refresh_session_state(path, seconds=seconds, bootstrap_mode=bootstrap_mode)
 
 
 def fetch_league_payloads(client: SportradarHTTPClient, *, season_id: int) -> dict[str, dict[str, Any]]:

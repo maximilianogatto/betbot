@@ -51,9 +51,8 @@ from sandbox.sportradar_http.run_match_pipeline import (
     fetch_match_payloads,
     render_match_report,
 )
+from sandbox.sportradar_http.runtime import BootstrapMode, BootstrapSessionManager
 from sandbox.sportradar_http.session_manager import (
-    BootstrapConfig,
-    SportradarSessionManager,
     load_session_state,
     save_session_state,
 )
@@ -77,12 +76,15 @@ class BotReadyRuntimeConfig:
         bootstrap_seconds: Browser wait time when a refresh is required.
         timeout_seconds: HTTP request timeout.
         retries: HTTP retry count.
+        bootstrap_mode: `headless` opens no GUI, `headed` opens a visible
+            browser, and `auto` tries headless then headed.
         lastx/nextx/top_players/max_timeline_events/max_fixtures: output size
             controls for compact provider responses.
     """
 
     session_state_path: Path = DEFAULT_SESSION_STATE
     bootstrap_seconds: float = 4.0
+    bootstrap_mode: BootstrapMode = "headless"
     timeout_seconds: float = 25.0
     retries: int = 1
     lastx: int = 8
@@ -132,8 +134,9 @@ class SportradarBotReadyProvider:
 
     def __init__(self, config: BotReadyRuntimeConfig | None = None) -> None:
         self.config = config or BotReadyRuntimeConfig()
-        self.session_manager = SportradarSessionManager(
-            BootstrapConfig(headed=True, seconds_per_url=self.config.bootstrap_seconds)
+        self.session_manager = BootstrapSessionManager(
+            mode=self.config.bootstrap_mode,
+            seconds_per_url=self.config.bootstrap_seconds,
         )
 
     def get_match_report(self, request: BotReadyMatchRequest) -> dict[str, Any]:

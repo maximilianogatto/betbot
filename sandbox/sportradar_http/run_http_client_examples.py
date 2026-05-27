@@ -27,11 +27,10 @@ from sandbox.sportradar_http.endpoints.odds import get_match_markets
 from sandbox.sportradar_http.endpoints.standings import get_formtable, get_season_tables
 from sandbox.sportradar_http.endpoints.stats import get_team_lastx, get_team_streaks
 from sandbox.sportradar_http.http_client import SportradarHTTPClient, summarize_payload
-from sandbox.sportradar_http.session_manager import (
-    BootstrapConfig,
-    SportradarSessionManager,
-    load_session_state,
-    save_session_state,
+from sandbox.sportradar_http.runtime import (
+    BootstrapSessionManager,
+    add_bootstrap_mode_arg,
+    load_or_refresh_session_state,
 )
 
 
@@ -52,6 +51,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--team-id", type=int, default=2885)
     parser.add_argument("--seconds", type=float, default=4.0)
     parser.add_argument("--skip-refresh-example", action="store_true")
+    add_bootstrap_mode_arg(parser)
     return parser.parse_args()
 
 
@@ -60,7 +60,7 @@ def main() -> int:
 
     args = parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    state = ensure_state(args.session_state, seconds=args.seconds)
+    state, manager = ensure_state(args.session_state, seconds=args.seconds, bootstrap_mode=args.bootstrap_mode)
     client = SportradarHTTPClient(session_state=state, auto_refresh=False, retries=1, debug=True)
 
     success_examples = run_success_examples(client, args)
@@ -97,17 +97,10 @@ def main() -> int:
     return 0
 
 
-def ensure_state(path: Path, *, seconds: float):
+def ensure_state(path: Path, *, seconds: float, bootstrap_mode: str = "headless"):
     """Load usable session state or run bootstrap."""
 
-    if path.exists():
-        state = load_session_state(path)
-        if state.signed_token and not state.signed_token.is_expired():
-            return state
-    manager = SportradarSessionManager(BootstrapConfig(headed=True, seconds_per_url=seconds))
-    state = manager.refresh_session()
-    save_session_state(state, path)
-    return state
+    return load_or_refresh_session_state(path, seconds=seconds, bootstrap_mode=bootstrap_mode)
 
 
 def run_success_examples(client: SportradarHTTPClient, args: argparse.Namespace) -> list[dict[str, Any]]:
@@ -157,7 +150,7 @@ def run_blocked_example(client: SportradarHTTPClient, sample_signed_url: str | N
 def run_refresh_example(args: argparse.Namespace) -> dict[str, Any]:
     """Force a session refresh path and record the result."""
 
-    manager = SportradarSessionManager(BootstrapConfig(headed=True, seconds_per_url=args.seconds))
+    manager = BootstrapSessionManager(mode=args.bootstrap_mode, seconds_per_url=args.seconds)
     client = SportradarHTTPClient.with_bootstrap(manager, retries=1, debug=True)
     payload = get_match_markets(client, match_id=args.match_id)
     return {

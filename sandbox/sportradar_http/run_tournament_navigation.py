@@ -23,12 +23,8 @@ if str(PROJECT_ROOT) not in sys.path:
 from sandbox.sportradar_http.endpoints.discovery import get_config_tree_mini
 from sandbox.sportradar_http.endpoints.tournaments import get_tournament_fixtures
 from sandbox.sportradar_http.http_client import SportradarHTTPClient
-from sandbox.sportradar_http.session_manager import (
-    BootstrapConfig,
-    SportradarSessionManager,
-    load_session_state,
-    save_session_state,
-)
+from sandbox.sportradar_http.runtime import add_bootstrap_mode_arg, load_or_refresh_session_state
+from sandbox.sportradar_http.session_manager import save_session_state
 from sandbox.sportradar_http.tournament_navigation import (
     build_tournament_navigation_snapshot,
     build_tournament_tree,
@@ -53,6 +49,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seconds", type=float, default=4.0)
     parser.add_argument("--timeout", type=float, default=25.0)
     parser.add_argument("--max-fixtures", type=int, default=120)
+    add_bootstrap_mode_arg(parser)
     return parser.parse_args()
 
 
@@ -61,7 +58,7 @@ def main() -> int:
 
     args = parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    state, manager = ensure_state(args.session_state, seconds=args.seconds)
+    state, manager = ensure_state(args.session_state, seconds=args.seconds, bootstrap_mode=args.bootstrap_mode)
     client = SportradarHTTPClient(
         session_state=state,
         session_manager=manager,
@@ -100,17 +97,10 @@ def main() -> int:
     return 0
 
 
-def ensure_state(path: Path, *, seconds: float):
-    """Load cached session state or run headed bootstrap if needed."""
+def ensure_state(path: Path, *, seconds: float, bootstrap_mode: str = "headless"):
+    """Load cached session state or run configured bootstrap if needed."""
 
-    manager = SportradarSessionManager(BootstrapConfig(headed=True, seconds_per_url=seconds))
-    if path.exists():
-        state = load_session_state(path)
-        if state.signed_token and not state.signed_token.is_expired():
-            return state, manager
-    state = manager.refresh_session()
-    save_session_state(state, path)
-    return state, manager
+    return load_or_refresh_session_state(path, seconds=seconds, bootstrap_mode=bootstrap_mode)
 
 
 def write_json(path: Path, payload: object) -> None:

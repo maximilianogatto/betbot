@@ -28,12 +28,8 @@ from sandbox.sportradar_http.endpoints.live import (
 )
 from sandbox.sportradar_http.endpoints.matches import get_match_info, get_match_snapshot
 from sandbox.sportradar_http.http_client import SportradarHTTPClient
-from sandbox.sportradar_http.session_manager import (
-    BootstrapConfig,
-    SportradarSessionManager,
-    load_session_state,
-    save_session_state,
-)
+from sandbox.sportradar_http.runtime import add_bootstrap_mode_arg, load_or_refresh_session_state
+from sandbox.sportradar_http.session_manager import save_session_state
 
 
 DEFAULT_SESSION_STATE = Path("sandbox/sportradar_http/reports/session_state_headed.json")
@@ -50,6 +46,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out-dir", type=Path, default=Path("sandbox/sportradar_http/examples/live_probe_61624678"))
     parser.add_argument("--seconds", type=float, default=4.0)
     parser.add_argument("--timeout", type=float, default=20.0)
+    add_bootstrap_mode_arg(parser)
     return parser.parse_args()
 
 
@@ -58,11 +55,11 @@ def main() -> int:
 
     args = parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    manager = SportradarSessionManager(BootstrapConfig(headed=True, seconds_per_url=args.seconds))
-    state = load_session_state(args.session_state) if args.session_state.exists() else None
-    if state is None or state.signed_token is None or state.signed_token.is_expired():
-        state = manager.refresh_session()
-        save_session_state(state, args.session_state)
+    state, manager = load_or_refresh_session_state(
+        args.session_state,
+        seconds=args.seconds,
+        bootstrap_mode=args.bootstrap_mode,
+    )
     client = SportradarHTTPClient(
         session_state=state,
         session_manager=manager,

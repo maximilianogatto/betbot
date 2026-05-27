@@ -68,12 +68,8 @@ from sandbox.sportradar_http.normalizers import (
     normalize_team_scoring,
     normalize_team_streaks,
 )
-from sandbox.sportradar_http.session_manager import (
-    BootstrapConfig,
-    SportradarSessionManager,
-    load_session_state,
-    save_session_state,
-)
+from sandbox.sportradar_http.runtime import add_bootstrap_mode_arg, load_or_refresh_session_state
+from sandbox.sportradar_http.session_manager import save_session_state
 
 
 DEFAULT_SESSION_STATE = Path("sandbox/sportradar_http/reports/session_state_headed.json")
@@ -92,6 +88,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--nextx", type=int, default=2)
     parser.add_argument("--top-players", type=int, default=8)
     parser.add_argument("--max-timeline-events", type=int, default=120)
+    add_bootstrap_mode_arg(parser)
     return parser.parse_args()
 
 
@@ -100,7 +97,7 @@ def main() -> int:
 
     args = parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    state, manager = ensure_state(args.session_state, seconds=args.seconds)
+    state, manager = ensure_state(args.session_state, seconds=args.seconds, bootstrap_mode=args.bootstrap_mode)
     client = SportradarHTTPClient(
         session_state=state,
         session_manager=manager,
@@ -131,17 +128,10 @@ def main() -> int:
     return 0
 
 
-def ensure_state(path: Path, *, seconds: float) -> tuple[Any, SportradarSessionManager]:
+def ensure_state(path: Path, *, seconds: float, bootstrap_mode: str = "headless") -> tuple[Any, Any]:
     """Load cached replay state or run browser bootstrap when needed."""
 
-    manager = SportradarSessionManager(BootstrapConfig(headed=True, seconds_per_url=seconds))
-    if path.exists():
-        state = load_session_state(path)
-        if state.signed_token and not state.signed_token.is_expired():
-            return state, manager
-    state = manager.refresh_session()
-    save_session_state(state, path)
-    return state, manager
+    return load_or_refresh_session_state(path, seconds=seconds, bootstrap_mode=bootstrap_mode)
 
 
 def fetch_match_payloads(
