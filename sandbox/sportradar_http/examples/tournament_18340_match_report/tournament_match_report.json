@@ -1,0 +1,856 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-27T17:01:53.001480+00:00",
+  "kind": "tournament_match_report",
+  "provider": "sportradar_statshub",
+  "tournament": {
+    "requested_tournament_id": 18340,
+    "unique_tournament_id": 18340,
+    "concrete_tournament_id": 46533,
+    "season_id": 138964,
+    "name": "South Australia NPL, Women",
+    "country": "Australia"
+  },
+  "selected_fixture": {
+    "match_id": 68049818,
+    "round": 10,
+    "round_name": 10,
+    "time": {
+      "date": "29/05/26",
+      "time": "10:00",
+      "tz": "UTC",
+      "uts": 1780048800,
+      "iso_utc": "2026-05-29T10:00:00+00:00"
+    },
+    "home": {
+      "id": 9089633,
+      "uid": 399513,
+      "name": "Campbelltown City SC",
+      "medium_name": "Campbelltown City SC",
+      "abbr": "CAM",
+      "country": null
+    },
+    "away": {
+      "id": 9528436,
+      "uid": 417827,
+      "name": "Salisbury Inter",
+      "medium_name": "Salisbury Inter",
+      "abbr": "SAL",
+      "country": null
+    },
+    "result": {
+      "home": null,
+      "away": null,
+      "winner": null,
+      "period": "nt"
+    },
+    "status": {
+      "postponed": false,
+      "canceled": false,
+      "in_livescore": true,
+      "neutral_ground": false
+    }
+  },
+  "match_id": 68049818,
+  "match_intelligence": {
+    "schema_version": 1,
+    "generated_at": "2026-05-27T17:01:53.001378+00:00",
+    "provider": "sportradar_statshub",
+    "match_id": 68049818,
+    "teams": {
+      "home": {
+        "id": 9089633,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": "Australia"
+      },
+      "away": {
+        "id": 9528436,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": "Australia"
+      }
+    },
+    "competition": {
+      "name": "South Australia NPL, Women",
+      "tournament_name": "South Australia NPL, Women",
+      "unique_tournament_name": "South Australia NPL, Women",
+      "country": "Australia",
+      "season_name": "South Australia NPL, Women 2026",
+      "season_year": "2026"
+    },
+    "kickoff_utc": "2026-05-29T10:00:00+00:00",
+    "status": {
+      "id": 0,
+      "name": "Not started",
+      "short_name": "NS",
+      "matchstatus": false,
+      "in_livescore": false,
+      "postponed": false,
+      "cancelled": false,
+      "running": false,
+      "played_seconds": null
+    },
+    "score": {
+      "home": null,
+      "away": null,
+      "winner": null
+    },
+    "form": {
+      "home": {
+        "rating_10": 6.11,
+        "sequence": [
+          "W",
+          "D",
+          "W",
+          "D",
+          "W",
+          "L"
+        ],
+        "recent_points": 11,
+        "last_matches": [
+          {
+            "match_id": 68049814,
+            "date_utc": "2026-05-23T07:00:00+00:00",
+            "date_display": "23/05/26",
+            "home": "Metrostars",
+            "away": "Campbelltown City SC",
+            "score": "0-1",
+            "scoreline": "Metrostars 0-1 Campbelltown City SC",
+            "venue": "away",
+            "result": "W",
+            "goals_for": 1,
+            "goals_against": 0
+          },
+          {
+            "match_id": 68049798,
+            "date_utc": "2026-05-08T11:00:00+00:00",
+            "date_display": "08/05/26",
+            "home": "Campbelltown City SC",
+            "away": "Modbury Vista",
+            "score": "3-3",
+            "scoreline": "Campbelltown City SC 3-3 Modbury Vista",
+            "venue": "home",
+            "result": "D",
+            "goals_for": 3,
+            "goals_against": 3
+          },
+          {
+            "match_id": 68049792,
+            "date_utc": "2026-05-02T05:30:00+00:00",
+            "date_display": "02/05/26",
+            "home": "Comets",
+            "away": "Campbelltown City SC",
+            "score": "2-3",
+            "scoreline": "Comets 2-3 Campbelltown City SC",
+            "venue": "away",
+            "result": "W",
+            "goals_for": 3,
+            "goals_against": 2
+          },
+          {
+            "match_id": 68049778,
+            "date_utc": "2026-04-17T10:00:00+00:00",
+            "date_display": "17/04/26",
+            "home": "Campbelltown City SC",
+            "away": "Adelaide Uni",
+            "score": "0-0",
+            "scoreline": "Campbelltown City SC 0-0 Adelaide Uni",
+            "venue": "home",
+            "result": "D",
+            "goals_for": 0,
+            "goals_against": 0
+          },
+          {
+            "match_id": 68049770,
+            "date_utc": "2026-04-10T10:00:00+00:00",
+            "date_display": "10/04/26",
+            "home": "Campbelltown City SC",
+            "away": "Flinders United Wfc",
+            "score": "5-1",
+            "scoreline": "Campbelltown City SC 5-1 Flinders United Wfc",
+            "venue": "home",
+            "result": "W",
+            "goals_for": 5,
+            "goals_against": 1
+          }
+        ]
+      },
+      "away": {
+        "rating_10": 6.67,
+        "sequence": [
+          "D",
+          "W",
+          "W",
+          "D",
+          "W",
+          "D"
+        ],
+        "recent_points": 12,
+        "last_matches": [
+          {
+            "match_id": 68049806,
+            "date_utc": "2026-05-22T08:45:00+00:00",
+            "date_display": "22/05/26",
+            "home": "Salisbury Inter",
+            "away": "Comets",
+            "score": "2-2",
+            "scoreline": "Salisbury Inter 2-2 Comets",
+            "venue": "home",
+            "result": "D",
+            "goals_for": 2,
+            "goals_against": 2
+          },
+          {
+            "match_id": 68049800,
+            "date_utc": "2026-05-09T03:15:00+00:00",
+            "date_display": "09/05/26",
+            "home": "Flinders United Wfc",
+            "away": "Salisbury Inter",
+            "score": "0-8",
+            "scoreline": "Flinders United Wfc 0-8 Salisbury Inter",
+            "venue": "away",
+            "result": "W",
+            "goals_for": 8,
+            "goals_against": 0
+          },
+          {
+            "match_id": 68049788,
+            "date_utc": "2026-05-01T10:45:00+00:00",
+            "date_display": "01/05/26",
+            "home": "FFSA NTC",
+            "away": "Salisbury Inter",
+            "score": "1-5",
+            "scoreline": "FFSA NTC 1-5 Salisbury Inter",
+            "venue": "away",
+            "result": "W",
+            "goals_for": 5,
+            "goals_against": 1
+          },
+          {
+            "match_id": 68049780,
+            "date_utc": "2026-04-17T10:45:00+00:00",
+            "date_display": "17/04/26",
+            "home": "Salisbury Inter",
+            "away": "West Torrens Birkalla",
+            "score": "1-1",
+            "scoreline": "Salisbury Inter 1-1 West Torrens Birkalla",
+            "venue": "home",
+            "result": "D",
+            "goals_for": 1,
+            "goals_against": 1
+          },
+          {
+            "match_id": 68049772,
+            "date_utc": "2026-04-10T10:45:00+00:00",
+            "date_display": "10/04/26",
+            "home": "Salisbury Inter",
+            "away": "Modbury Vista",
+            "score": "5-1",
+            "scoreline": "Salisbury Inter 5-1 Modbury Vista",
+            "venue": "home",
+            "result": "W",
+            "goals_for": 5,
+            "goals_against": 1
+          }
+        ]
+      }
+    },
+    "h2h": {
+      "edge_label": "Salisbury Inter",
+      "edge_value": -0.5,
+      "summary": {
+        "total_matches": 4,
+        "home_team_wins": 1,
+        "away_team_wins": 3,
+        "draws": 0
+      },
+      "recent_matches": [
+        {
+          "match_id": 68049740,
+          "date_utc": "2026-03-14T02:30:00+00:00",
+          "date_display": "14/03/26",
+          "home": "Salisbury Inter",
+          "away": "Campbelltown City SC",
+          "score": "2-1",
+          "scoreline": "Salisbury Inter 2-1 Campbelltown City SC",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 63075883,
+          "date_utc": "2025-08-23T03:00:00+00:00",
+          "date_display": "23/08/25",
+          "home": "Salisbury Inter",
+          "away": "Campbelltown City SC",
+          "score": "1-2",
+          "scoreline": "Salisbury Inter 1-2 Campbelltown City SC",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 57033565,
+          "date_utc": "2025-06-21T05:00:00+00:00",
+          "date_display": "21/06/25",
+          "home": "Campbelltown City SC",
+          "away": "Salisbury Inter",
+          "score": "1-5",
+          "scoreline": "Campbelltown City SC 1-5 Salisbury Inter",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 57033475,
+          "date_utc": "2025-03-22T04:30:00+00:00",
+          "date_display": "22/03/25",
+          "home": "Salisbury Inter",
+          "away": "Campbelltown City SC",
+          "score": "2-0",
+          "scoreline": "Salisbury Inter 2-0 Campbelltown City SC",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        }
+      ]
+    },
+    "table_context": {
+      "home": {
+        "team": {
+          "id": 9089633,
+          "uid": 399513,
+          "name": "Campbelltown City SC",
+          "medium_name": "Campbelltown City SC",
+          "abbr": "CAM",
+          "country": null
+        },
+        "position": 6,
+        "played": 9,
+        "points": 11,
+        "points_per_match": 1.2222,
+        "goals_for": 15,
+        "goals_against": 16,
+        "goal_difference": -1,
+        "position_display": "6th (11 pts, 9P)"
+      },
+      "away": {
+        "team": {
+          "id": 9528436,
+          "uid": 417827,
+          "name": "Salisbury Inter",
+          "medium_name": "Salisbury Inter",
+          "abbr": "SAL",
+          "country": null
+        },
+        "position": 3,
+        "played": 9,
+        "points": 18,
+        "points_per_match": 2.0,
+        "goals_for": 30,
+        "goals_against": 10,
+        "goal_difference": 20,
+        "position_display": "3rd (18 pts, 9P)"
+      },
+      "summary": {
+        "position_gap": -3.0,
+        "points_gap": -7.0,
+        "goal_difference_gap": -21.0
+      }
+    },
+    "strength_indexes": {
+      "home_attack_strength_raw": 1.5,
+      "away_attack_strength_raw": 3.125,
+      "home_strength_10": 5.0,
+      "away_strength_10": 8.5,
+      "home_defense_weakness_10": 6.0,
+      "away_defense_weakness_10": 3.0,
+      "home_advantage_context": {
+        "attack_strength_home": 1.5,
+        "attack_strength_away": 3.125,
+        "table_position_gap": -3.0,
+        "form_gap": -1.0
+      }
+    },
+    "injuries": {
+      "home": [],
+      "away": [],
+      "home_count": 0,
+      "away_count": 0
+    },
+    "goal_context": {
+      "goals_avg_scored": {
+        "general": {
+          "home_team": 1.6666666666666667,
+          "away_team": 3.3333333333333335
+        },
+        "home_away_split": {
+          "home_team_home": 2.25,
+          "away_team_away": 4.75
+        }
+      },
+      "goals_avg_conceded": {
+        "general": {
+          "home_team": 1.7777777777777777,
+          "away_team": 1.1111111111111112
+        },
+        "home_away_split": {
+          "home_team_home": 1.5,
+          "away_team_away": 0.75
+        }
+      },
+      "btts_rate": 0.625,
+      "over_tendency_index": 2.3125,
+      "goal_timing_expectation": {
+        "league_average_minute": null,
+        "projected_home_goal_pressure_minute": 120.0,
+        "projected_away_goal_pressure_minute": 60.0
+      }
+    },
+    "players": {
+      "home": {
+        "top_scorer": null,
+        "top_cards": null,
+        "top_assists": null
+      },
+      "away": {
+        "top_scorer": null,
+        "top_cards": null,
+        "top_assists": null
+      }
+    },
+    "traceability": {
+      "direct_h2h": [
+        {
+          "match_id": 68049740,
+          "date_utc": "2026-03-14T02:30:00+00:00",
+          "date_display": "14/03/26",
+          "home": "Salisbury Inter",
+          "away": "Campbelltown City SC",
+          "score": "2-1",
+          "scoreline": "Salisbury Inter 2-1 Campbelltown City SC",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 63075883,
+          "date_utc": "2025-08-23T03:00:00+00:00",
+          "date_display": "23/08/25",
+          "home": "Salisbury Inter",
+          "away": "Campbelltown City SC",
+          "score": "1-2",
+          "scoreline": "Salisbury Inter 1-2 Campbelltown City SC",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 57033565,
+          "date_utc": "2025-06-21T05:00:00+00:00",
+          "date_display": "21/06/25",
+          "home": "Campbelltown City SC",
+          "away": "Salisbury Inter",
+          "score": "1-5",
+          "scoreline": "Campbelltown City SC 1-5 Salisbury Inter",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 57033475,
+          "date_utc": "2025-03-22T04:30:00+00:00",
+          "date_display": "22/03/25",
+          "home": "Salisbury Inter",
+          "away": "Campbelltown City SC",
+          "score": "2-0",
+          "scoreline": "Salisbury Inter 2-0 Campbelltown City SC",
+          "venue": null,
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        }
+      ],
+      "common_opponents": [
+        {
+          "common_opponent": "Modbury Vista",
+          "home_team_evidence": {
+            "match_id": 68049798,
+            "date_utc": "2026-05-08T11:00:00+00:00",
+            "date_display": "08/05/26",
+            "home": "Campbelltown City SC",
+            "away": "Modbury Vista",
+            "score": "3-3",
+            "scoreline": "Campbelltown City SC 3-3 Modbury Vista",
+            "venue": "home",
+            "result": "D",
+            "goals_for": 3,
+            "goals_against": 3
+          },
+          "away_team_evidence": {
+            "match_id": 68049772,
+            "date_utc": "2026-04-10T10:45:00+00:00",
+            "date_display": "10/04/26",
+            "home": "Salisbury Inter",
+            "away": "Modbury Vista",
+            "score": "5-1",
+            "scoreline": "Salisbury Inter 5-1 Modbury Vista",
+            "venue": "home",
+            "result": "W",
+            "goals_for": 5,
+            "goals_against": 1
+          }
+        },
+        {
+          "common_opponent": "Comets",
+          "home_team_evidence": {
+            "match_id": 68049792,
+            "date_utc": "2026-05-02T05:30:00+00:00",
+            "date_display": "02/05/26",
+            "home": "Comets",
+            "away": "Campbelltown City SC",
+            "score": "2-3",
+            "scoreline": "Comets 2-3 Campbelltown City SC",
+            "venue": "away",
+            "result": "W",
+            "goals_for": 3,
+            "goals_against": 2
+          },
+          "away_team_evidence": {
+            "match_id": 68049806,
+            "date_utc": "2026-05-22T08:45:00+00:00",
+            "date_display": "22/05/26",
+            "home": "Salisbury Inter",
+            "away": "Comets",
+            "score": "2-2",
+            "scoreline": "Salisbury Inter 2-2 Comets",
+            "venue": "home",
+            "result": "D",
+            "goals_for": 2,
+            "goals_against": 2
+          }
+        },
+        {
+          "common_opponent": "Adelaide Uni",
+          "home_team_evidence": {
+            "match_id": 68049778,
+            "date_utc": "2026-04-17T10:00:00+00:00",
+            "date_display": "17/04/26",
+            "home": "Campbelltown City SC",
+            "away": "Adelaide Uni",
+            "score": "0-0",
+            "scoreline": "Campbelltown City SC 0-0 Adelaide Uni",
+            "venue": "home",
+            "result": "D",
+            "goals_for": 0,
+            "goals_against": 0
+          },
+          "away_team_evidence": {
+            "match_id": 68049756,
+            "date_utc": "2026-03-27T07:45:00+00:00",
+            "date_display": "27/03/26",
+            "home": "Adelaide Uni",
+            "away": "Salisbury Inter",
+            "score": "2-2",
+            "scoreline": "Adelaide Uni 2-2 Salisbury Inter",
+            "venue": "away",
+            "result": "D",
+            "goals_for": 2,
+            "goals_against": 2
+          }
+        },
+        {
+          "common_opponent": "Flinders United Wfc",
+          "home_team_evidence": {
+            "match_id": 68049770,
+            "date_utc": "2026-04-10T10:00:00+00:00",
+            "date_display": "10/04/26",
+            "home": "Campbelltown City SC",
+            "away": "Flinders United Wfc",
+            "score": "5-1",
+            "scoreline": "Campbelltown City SC 5-1 Flinders United Wfc",
+            "venue": "home",
+            "result": "W",
+            "goals_for": 5,
+            "goals_against": 1
+          },
+          "away_team_evidence": {
+            "match_id": 68049800,
+            "date_utc": "2026-05-09T03:15:00+00:00",
+            "date_display": "09/05/26",
+            "home": "Flinders United Wfc",
+            "away": "Salisbury Inter",
+            "score": "0-8",
+            "scoreline": "Flinders United Wfc 0-8 Salisbury Inter",
+            "venue": "away",
+            "result": "W",
+            "goals_for": 8,
+            "goals_against": 0
+          }
+        }
+      ],
+      "notes": [
+        "Direct H2H sample favors Salisbury Inter; inspect dates before weighting it heavily.",
+        "Common-opponent evidence exists; use as context, not prediction."
+      ],
+      "home_team": "Campbelltown City SC",
+      "away_team": "Salisbury Inter"
+    },
+    "live_context": {
+      "score_state": null,
+      "pressure": {
+        "home": null,
+        "away": null
+      },
+      "timeline_event_count": 0,
+      "status": "Not started"
+    },
+    "feature_quality": {
+      "data_completeness": 0.9167,
+      "has_metadata": true,
+      "has_odds_endpoint": true,
+      "has_priced_odds": false,
+      "has_table": true,
+      "has_match_details": true,
+      "has_team_form": true,
+      "has_team_scoring": true,
+      "has_h2h": true,
+      "has_live_state": true,
+      "missing_important_endpoints": [
+        "match_situation"
+      ]
+    },
+    "metric_notes": {
+      "form_rating_10": "recent_points / max_possible_points * 10",
+      "strength_10": "average of attack context score and inverse defensive weakness score; bounded 0..10",
+      "attack_context": "raw goals context, not probability",
+      "h2h_dates": "historical match evidence must always include dates",
+      "traceability": "common-opponent evidence is context only; it is not a prediction"
+    },
+    "report_summary": "Campbelltown City SC vs Salisbury Inter\n\n- Form: 6.11/10 vs 6.67/10\n- H2H edge: Salisbury Inter (-0.5)\n  - 14/03/26: Salisbury Inter 2-1 Campbelltown City SC\n  - 23/08/25: Salisbury Inter 1-2 Campbelltown City SC\n  - 21/06/25: Campbelltown City SC 1-5 Salisbury Inter\n  - 22/03/25: Salisbury Inter 2-0 Campbelltown City SC\n\n- Goals avg scored:\n  - general: Campbelltown City SC=1.67 | Salisbury Inter=3.33\n  - home/away split: Campbelltown City SC home=2.25 | Salisbury Inter away=4.75\n- Goals avg conceded:\n  - general: Campbelltown City SC=1.78 | Salisbury Inter=1.11\n  - split: Campbelltown City SC home=1.5 | Salisbury Inter away=0.75\n- BTTS: 62%\n- Home strength: 5/10\n- Away weakness: 3/10\n\n- Last 5:\n  - Campbelltown City SC: W D W D W L\n    - 23/05/26: Metrostars 0-1 Campbelltown City SC\n    - 08/05/26: Campbelltown City SC 3-3 Modbury Vista\n    - 02/05/26: Comets 2-3 Campbelltown City SC\n    - 17/04/26: Campbelltown City SC 0-0 Adelaide Uni\n    - 10/04/26: Campbelltown City SC 5-1 Flinders United Wfc\n  - Salisbury Inter: D W W D W D\n    - 22/05/26: Salisbury Inter 2-2 Comets\n    - 09/05/26: Flinders United Wfc 0-8 Salisbury Inter\n    - 01/05/26: FFSA NTC 1-5 Salisbury Inter\n    - 17/04/26: Salisbury Inter 1-1 West Torrens Birkalla\n    - 10/04/26: Salisbury Inter 5-1 Modbury Vista\n- Table: 6th (11 pts, 9P) vs 3rd (18 pts, 9P)\n- Top scorer: Campbelltown City SC: n/a | Salisbury Inter: n/a\n- Injuries: Campbelltown City SC=0 | Salisbury Inter=0\n- Goal timing expectation:\n  - projected Campbelltown City SC pressure minute: 120\n  - projected Salisbury Inter pressure minute: 60\n- Traceability:\n  - Direct H2H sample favors Salisbury Inter; inspect dates before weighting it heavily.\n  - Common-opponent evidence exists; use as context, not prediction.\n  - Common opponent Modbury Vista: 08/05/26 Campbelltown City SC 3-3 Modbury Vista; 10/04/26 Salisbury Inter 5-1 Modbury Vista\n  - Common opponent Comets: 02/05/26 Comets 2-3 Campbelltown City SC; 22/05/26 Salisbury Inter 2-2 Comets\n  - Common opponent Adelaide Uni: 17/04/26 Campbelltown City SC 0-0 Adelaide Uni; 27/03/26 Adelaide Uni 2-2 Salisbury Inter"
+  },
+  "report_summary": "# Sportradar Tournament Match Report\n\n- Tournament: `Australia / South Australia NPL, Women`\n- Season id: `138964`\n- Fixture: `Campbelltown City SC vs Salisbury Inter`\n- Match id: `68049818`\n- Kickoff UTC: `2026-05-29T10:00:00+00:00`\n\n## Match Intelligence\n\nCampbelltown City SC vs Salisbury Inter\n\n- Form: 6.11/10 vs 6.67/10\n- H2H edge: Salisbury Inter (-0.5)\n  - 14/03/26: Salisbury Inter 2-1 Campbelltown City SC\n  - 23/08/25: Salisbury Inter 1-2 Campbelltown City SC\n  - 21/06/25: Campbelltown City SC 1-5 Salisbury Inter\n  - 22/03/25: Salisbury Inter 2-0 Campbelltown City SC\n\n- Goals avg scored:\n  - general: Campbelltown City SC=1.67 | Salisbury Inter=3.33\n  - home/away split: Campbelltown City SC home=2.25 | Salisbury Inter away=4.75\n- Goals avg conceded:\n  - general: Campbelltown City SC=1.78 | Salisbury Inter=1.11\n  - split: Campbelltown City SC home=1.5 | Salisbury Inter away=0.75\n- BTTS: 62%\n- Home strength: 5/10\n- Away weakness: 3/10\n\n- Last 5:\n  - Campbelltown City SC: W D W D W L\n    - 23/05/26: Metrostars 0-1 Campbelltown City SC\n    - 08/05/26: Campbelltown City SC 3-3 Modbury Vista\n    - 02/05/26: Comets 2-3 Campbelltown City SC\n    - 17/04/26: Campbelltown City SC 0-0 Adelaide Uni\n    - 10/04/26: Campbelltown City SC 5-1 Flinders United Wfc\n  - Salisbury Inter: D W W D W D\n    - 22/05/26: Salisbury Inter 2-2 Comets\n    - 09/05/26: Flinders United Wfc 0-8 Salisbury Inter\n    - 01/05/26: FFSA NTC 1-5 Salisbury Inter\n    - 17/04/26: Salisbury Inter 1-1 West Torrens Birkalla\n    - 10/04/26: Salisbury Inter 5-1 Modbury Vista\n- Table: 6th (11 pts, 9P) vs 3rd (18 pts, 9P)\n- Top scorer: Campbelltown City SC: n/a | Salisbury Inter: n/a\n- Injuries: Campbelltown City SC=0 | Salisbury Inter=0\n- Goal timing expectation:\n  - projected Campbelltown City SC pressure minute: 120\n  - projected Salisbury Inter pressure minute: 60\n- Traceability:\n  - Direct H2H sample favors Salisbury Inter; inspect dates before weighting it heavily.\n  - Common-opponent evidence exists; use as context, not prediction.\n  - Common opponent Modbury Vista: 08/05/26 Campbelltown City SC 3-3 Modbury Vista; 10/04/26 Salisbury Inter 5-1 Modbury Vista\n  - Common opponent Comets: 02/05/26 Comets 2-3 Campbelltown City SC; 22/05/26 Salisbury Inter 2-2 Comets\n  - Common opponent Adelaide Uni: 17/04/26 Campbelltown City SC 0-0 Adelaide Uni; 27/03/26 Adelaide Uni 2-2 Salisbury Inter\n",
+  "client_metrics": {
+    "total_requests": 28,
+    "success_count": 27,
+    "retry_count": 0,
+    "refresh_count": 1,
+    "blocked_count": 1,
+    "expired_count": 0,
+    "empty_count": 0,
+    "invalid_json_count": 0,
+    "http_error_count": 0,
+    "endpoint_timings_ms": {
+      "config_tree_mini": [
+        1373.69
+      ],
+      "stats_season_fixtures2": [
+        631.95
+      ],
+      "match_info_statshub": [
+        634.54
+      ],
+      "stats_match_get": [
+        633.35
+      ],
+      "match_markets": [
+        617.82
+      ],
+      "match_details": [
+        608.43
+      ],
+      "stats_match_tableslice": [
+        730.36
+      ],
+      "stats_match_head2head": [
+        1029.69
+      ],
+      "match_timeline": [
+        500.24
+      ],
+      "match_timelinedelta": [
+        596.34
+      ],
+      "stats_match_situation": [
+        504.4
+      ],
+      "stats_team_lastx": [
+        624.14,
+        789.66
+      ],
+      "stats_team_nextx": [
+        783.95,
+        700.65
+      ],
+      "stats_team_streaks": [
+        775.08,
+        353.44
+      ],
+      "stats_season_teamscoringconceding": [
+        361.16,
+        424.39
+      ],
+      "stats_season_topgoals": [
+        484.09,
+        590.84
+      ],
+      "stats_season_topcards": [
+        641.55,
+        542.07
+      ],
+      "stats_season_topassists": [
+        575.01,
+        602.2
+      ],
+      "stats_season_injuries": [
+        550.81
+      ],
+      "stats_team_versus": [
+        654.46
+      ],
+      "stats_h2h_versus": [
+        765.89
+      ]
+    },
+    "endpoint_timing_summary": {
+      "config_tree_mini": {
+        "count": 1,
+        "min_ms": 1373.69,
+        "max_ms": 1373.69,
+        "avg_ms": 1373.69
+      },
+      "stats_season_fixtures2": {
+        "count": 1,
+        "min_ms": 631.95,
+        "max_ms": 631.95,
+        "avg_ms": 631.95
+      },
+      "match_info_statshub": {
+        "count": 1,
+        "min_ms": 634.54,
+        "max_ms": 634.54,
+        "avg_ms": 634.54
+      },
+      "stats_match_get": {
+        "count": 1,
+        "min_ms": 633.35,
+        "max_ms": 633.35,
+        "avg_ms": 633.35
+      },
+      "match_markets": {
+        "count": 1,
+        "min_ms": 617.82,
+        "max_ms": 617.82,
+        "avg_ms": 617.82
+      },
+      "match_details": {
+        "count": 1,
+        "min_ms": 608.43,
+        "max_ms": 608.43,
+        "avg_ms": 608.43
+      },
+      "stats_match_tableslice": {
+        "count": 1,
+        "min_ms": 730.36,
+        "max_ms": 730.36,
+        "avg_ms": 730.36
+      },
+      "stats_match_head2head": {
+        "count": 1,
+        "min_ms": 1029.69,
+        "max_ms": 1029.69,
+        "avg_ms": 1029.69
+      },
+      "match_timeline": {
+        "count": 1,
+        "min_ms": 500.24,
+        "max_ms": 500.24,
+        "avg_ms": 500.24
+      },
+      "match_timelinedelta": {
+        "count": 1,
+        "min_ms": 596.34,
+        "max_ms": 596.34,
+        "avg_ms": 596.34
+      },
+      "stats_match_situation": {
+        "count": 1,
+        "min_ms": 504.4,
+        "max_ms": 504.4,
+        "avg_ms": 504.4
+      },
+      "stats_team_lastx": {
+        "count": 2,
+        "min_ms": 624.14,
+        "max_ms": 789.66,
+        "avg_ms": 706.9
+      },
+      "stats_team_nextx": {
+        "count": 2,
+        "min_ms": 700.65,
+        "max_ms": 783.95,
+        "avg_ms": 742.3
+      },
+      "stats_team_streaks": {
+        "count": 2,
+        "min_ms": 353.44,
+        "max_ms": 775.08,
+        "avg_ms": 564.26
+      },
+      "stats_season_teamscoringconceding": {
+        "count": 2,
+        "min_ms": 361.16,
+        "max_ms": 424.39,
+        "avg_ms": 392.77
+      },
+      "stats_season_topgoals": {
+        "count": 2,
+        "min_ms": 484.09,
+        "max_ms": 590.84,
+        "avg_ms": 537.47
+      },
+      "stats_season_topcards": {
+        "count": 2,
+        "min_ms": 542.07,
+        "max_ms": 641.55,
+        "avg_ms": 591.81
+      },
+      "stats_season_topassists": {
+        "count": 2,
+        "min_ms": 575.01,
+        "max_ms": 602.2,
+        "avg_ms": 588.61
+      },
+      "stats_season_injuries": {
+        "count": 1,
+        "min_ms": 550.81,
+        "max_ms": 550.81,
+        "avg_ms": 550.81
+      },
+      "stats_team_versus": {
+        "count": 1,
+        "min_ms": 654.46,
+        "max_ms": 654.46,
+        "avg_ms": 654.46
+      },
+      "stats_h2h_versus": {
+        "count": 1,
+        "min_ms": 765.89,
+        "max_ms": 765.89,
+        "avg_ms": 765.89
+      }
+    }
+  }
+}

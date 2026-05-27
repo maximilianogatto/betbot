@@ -1,0 +1,2114 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-27T17:01:52.999638+00:00",
+  "provider": "sportradar_statshub",
+  "scope": "match",
+  "inputs": {
+    "match_id": 68049818
+  },
+  "metadata": {
+    "match_id": 68049818,
+    "sport_id": 1,
+    "season_id": 138964,
+    "tournament_id": 46533,
+    "unique_tournament_id": 18340,
+    "round": 10,
+    "round_name": 10,
+    "kickoff": {
+      "date": "29/05/26",
+      "time": "10:00",
+      "tz": "UTC",
+      "uts": 1780048800,
+      "iso_utc": "2026-05-29T10:00:00+00:00"
+    },
+    "home": {
+      "id": 9089633,
+      "uid": 399513,
+      "name": "Campbelltown City SC",
+      "medium_name": "Campbelltown City SC",
+      "abbr": "CAM",
+      "country": "Australia"
+    },
+    "away": {
+      "id": 9528436,
+      "uid": 417827,
+      "name": "Salisbury Inter",
+      "medium_name": "Salisbury Inter",
+      "abbr": "SAL",
+      "country": "Australia"
+    },
+    "score": {
+      "home": null,
+      "away": null,
+      "winner": null
+    },
+    "status": {
+      "id": 0,
+      "name": "Not started",
+      "short_name": "NS",
+      "matchstatus": false,
+      "in_livescore": false,
+      "postponed": false,
+      "cancelled": false,
+      "running": false,
+      "played_seconds": null
+    },
+    "competition": {
+      "name": "South Australia NPL, Women",
+      "tournament_name": "South Australia NPL, Women",
+      "unique_tournament_name": "South Australia NPL, Women",
+      "country": "Australia",
+      "season_name": "South Australia NPL, Women 2026",
+      "season_year": "2026"
+    },
+    "venue": {
+      "id": 11398,
+      "name": "Steve Woodcock Sports Centre Main",
+      "city": "Adelaide",
+      "country": "Australia",
+      "capacity": 1000
+    },
+    "attendance": null,
+    "coverage": {
+      "liveodds": true,
+      "hasstats": true,
+      "inlivescore": false,
+      "deepercoverage": false,
+      "injuries": 0
+    }
+  },
+  "odds": {
+    "source": "match_markets",
+    "markets": {
+      "1x2": {},
+      "handicap": [],
+      "totals": [],
+      "other_market_names": [],
+      "raw_market_count": 0
+    }
+  },
+  "table_context": {
+    "table_id": 104398,
+    "name": "South Australia NPL, Women 2026",
+    "season_id": 138964,
+    "current_round": 9,
+    "max_rounds": 18,
+    "rows": [
+      {
+        "position": 3,
+        "team": {
+          "id": 9528436,
+          "uid": 417827,
+          "name": "Salisbury Inter",
+          "medium_name": "Salisbury Inter",
+          "abbr": "SAL",
+          "country": null
+        },
+        "played": 9,
+        "points": 18,
+        "points_per_match": 2.0,
+        "wins": 5,
+        "draws": 3,
+        "losses": 1,
+        "goals_for": 30,
+        "goals_against": 10,
+        "goal_difference": 20,
+        "home": {
+          "position": 4,
+          "played": 5,
+          "points": 8,
+          "goals_for": 11,
+          "goals_against": 7
+        },
+        "away": {
+          "position": 1,
+          "played": 4,
+          "points": 10,
+          "goals_for": 19,
+          "goals_against": 3
+        }
+      },
+      {
+        "position": 6,
+        "team": {
+          "id": 9089633,
+          "uid": 399513,
+          "name": "Campbelltown City SC",
+          "medium_name": "Campbelltown City SC",
+          "abbr": "CAM",
+          "country": null
+        },
+        "played": 9,
+        "points": 11,
+        "points_per_match": 1.2222,
+        "wins": 3,
+        "draws": 2,
+        "losses": 4,
+        "goals_for": 15,
+        "goals_against": 16,
+        "goal_difference": -1,
+        "home": {
+          "position": 6,
+          "played": 4,
+          "points": 5,
+          "goals_for": 9,
+          "goals_against": 6
+        },
+        "away": {
+          "position": 5,
+          "played": 5,
+          "points": 6,
+          "goals_for": 6,
+          "goals_against": 10
+        }
+      }
+    ]
+  },
+  "match_details": {
+    "stats_by_key": {},
+    "key_stats": {}
+  },
+  "team_form": {
+    "home": {
+      "team": {
+        "id": 399513,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "matches": [
+        {
+          "match_id": 68049814,
+          "season_id": 138964,
+          "tournament_id": 18340,
+          "round": 9,
+          "round_name": 9,
+          "time": {
+            "date": "23/05/26",
+            "time": "07:00",
+            "tz": "UTC",
+            "uts": 1779519600,
+            "iso_utc": "2026-05-23T07:00:00+00:00"
+          },
+          "home": {
+            "id": 27249467,
+            "uid": 1319578,
+            "name": "Metrostars",
+            "medium_name": "Metrostars",
+            "abbr": "MET",
+            "country": null
+          },
+          "away": {
+            "id": 9089633,
+            "uid": 399513,
+            "name": "Campbelltown City SC",
+            "medium_name": "Campbelltown City SC",
+            "abbr": "CAM",
+            "country": null
+          },
+          "score": {
+            "home": 0,
+            "away": 1,
+            "winner": "away"
+          },
+          "venue": "away",
+          "opponent": {
+            "id": 27249467,
+            "uid": 1319578,
+            "name": "Metrostars",
+            "medium_name": "Metrostars",
+            "abbr": "MET",
+            "country": null
+          },
+          "result": "W",
+          "goals_for": 1,
+          "goals_against": 0
+        },
+        {
+          "match_id": 68049798,
+          "season_id": 138964,
+          "tournament_id": 18340,
+          "round": 8,
+          "round_name": 8,
+          "time": {
+            "date": "08/05/26",
+            "time": "11:00",
+            "tz": "UTC",
+            "uts": 1778238000,
+            "iso_utc": "2026-05-08T11:00:00+00:00"
+          },
+          "home": {
+            "id": 9089633,
+            "uid": 399513,
+            "name": "Campbelltown City SC",
+            "medium_name": "Campbelltown City SC",
+            "abbr": "CAM",
+            "country": null
+          },
+          "away": {
+            "id": 18193530,
+            "uid": 872853,
+            "name": "Modbury Vista",
+            "medium_name": "Modbury Vista",
+            "abbr": "MOD",
+            "country": null
+          },
+          "score": {
+            "home": 3,
+            "away": 3,
+            "winner": null
+          },
+          "venue": "home",
+          "opponent": {
+            "id": 18193530,
+            "uid": 872853,
+            "name": "Modbury Vista",
+            "medium_name": "Modbury Vista",
+            "abbr": "MOD",
+            "country": null
+          },
+          "result": "D",
+          "goals_for": 3,
+          "goals_against": 3
+        },
+        {
+          "match_id": 68049792,
+          "season_id": 138964,
+          "tournament_id": 18340,
+          "round": 7,
+          "round_name": 7,
+          "time": {
+            "date": "02/05/26",
+            "time": "05:30",
+            "tz": "UTC",
+            "uts": 1777699800,
+            "iso_utc": "2026-05-02T05:30:00+00:00"
+          },
+          "home": {
+            "id": 10058908,
+            "uid": 538647,
+            "name": "Comets",
+            "medium_name": "Adelaide Comets FC",
+            "abbr": "COM",
+            "country": null
+          },
+          "away": {
+            "id": 9089633,
+            "uid": 399513,
+            "name": "Campbelltown City SC",
+            "medium_name": "Campbelltown City SC",
+            "abbr": "CAM",
+            "country": null
+          },
+          "score": {
+            "home": 2,
+            "away": 3,
+            "winner": "away"
+          },
+          "venue": "away",
+          "opponent": {
+            "id": 10058908,
+            "uid": 538647,
+            "name": "Comets",
+            "medium_name": "Adelaide Comets FC",
+            "abbr": "COM",
+            "country": null
+          },
+          "result": "W",
+          "goals_for": 3,
+          "goals_against": 2
+        },
+        {
+          "match_id": 68049778,
+          "season_id": 138964,
+          "tournament_id": 18340,
+          "round": 6,
+          "round_name": 6,
+          "time": {
+            "date": "17/04/26",
+            "time": "10:00",
+            "tz": "UTC",
+            "uts": 1776420000,
+            "iso_utc": "2026-04-17T10:00:00+00:00"
+          },
+          "home": {
+            "id": 9089633,
+            "uid": 399513,
+            "name": "Campbelltown City SC",
+            "medium_name": "Campbelltown City SC",
+            "abbr": "CAM",
+            "country": null
+          },
+          "away": {
+            "id": 8595375,
+            "uid": 270761,
+            "name": "Adelaide Uni",
+            "medium_name": "Adelaide University",
+            "abbr": "ADE",
+            "country": null
+          },
+          "score": {
+            "home": 0,
+            "away": 0,
+            "winner": null
+          },
+          "venue": "home",
+          "opponent": {
+            "id": 8595375,
+            "uid": 270761,
+            "name": "Adelaide Uni",
+            "medium_name": "Adelaide University",
+            "abbr": "ADE",
+            "country": null
+          },
+          "result": "D",
+          "goals_for": 0,
+          "goals_against": 0
+        },
+        {
+          "match_id": 68049770,
+          "season_id": 138964,
+          "tournament_id": 18340,
+          "round": 5,
+          "round_name": 5,
+          "time": {
+            "date": "10/04/26",
+            "time": "10:00",
+            "tz": "UTC",
+            "uts": 1775815200,
+            "iso_utc": "2026-04-10T10:00:00+00:00"
+          },
+          "home": {
+            "id": 9089633,
+            "uid": 399513,
+            "name": "Campbelltown City SC",
+            "medium_name": "Campbelltown City SC",
+            "abbr": "CAM",
+            "country": null
+          },
+          "away": {
+            "id": 21409213,
+            "uid": 982893,
+            "name": "Flinders United Wfc",
+            "medium_name": "Flinders United Wfc",
+            "abbr": "FLI",
+            "country": null
+          },
+          "score": {
+            "home": 5,
+            "away": 1,
+            "winner": "home"
+          },
+          "venue": "home",
+          "opponent": {
+            "id": 21409213,
+            "uid": 982893,
+            "name": "Flinders United Wfc",
+            "medium_name": "Flinders United Wfc",
+            "abbr": "FLI",
+            "country": null
+          },
+          "result": "W",
+          "goals_for": 5,
+          "goals_against": 1
+        },
+        {
+          "match_id": 68049764,
+          "season_id": 138964,
+          "tournament_id": 18340,
+          "round": 4,
+          "round_name": 4,
+          "time": {
+            "date": "28/03/26",
+            "time": "06:15",
+            "tz": "UTC",
+            "uts": 1774678500,
+            "iso_utc": "2026-03-28T06:15:00+00:00"
+          },
+          "home": {
+            "id": 8594933,
+            "uid": 417823,
+            "name": "West Adelaide",
+            "medium_name": "West Adelaide",
+            "abbr": "WAD",
+            "country": null
+          },
+          "away": {
+            "id": 9089633,
+            "uid": 399513,
+            "name": "Campbelltown City SC",
+            "medium_name": "Campbelltown City SC",
+            "abbr": "CAM",
+            "country": null
+          },
+          "score": {
+            "home": 3,
+            "away": 1,
+            "winner": "home"
+          },
+          "venue": "away",
+          "opponent": {
+            "id": 8594933,
+            "uid": 417823,
+            "name": "West Adelaide",
+            "medium_name": "West Adelaide",
+            "abbr": "WAD",
+            "country": null
+          },
+          "result": "L",
+          "goals_for": 1,
+          "goals_against": 3
+        }
+      ],
+      "form": [
+        "W",
+        "D",
+        "W",
+        "D",
+        "W",
+        "L"
+      ],
+      "recent_points": 11
+    },
+    "away": {
+      "team": {
+        "id": 417827,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "matches": [
+        {
+          "match_id": 68049806,
+          "season_id": 138964,
+          "tournament_id": 18340,
+          "round": 9,
+          "round_name": 9,
+          "time": {
+            "date": "22/05/26",
+            "time": "08:45",
+            "tz": "UTC",
+            "uts": 1779439500,
+            "iso_utc": "2026-05-22T08:45:00+00:00"
+          },
+          "home": {
+            "id": 9528436,
+            "uid": 417827,
+            "name": "Salisbury Inter",
+            "medium_name": "Salisbury Inter",
+            "abbr": "SAL",
+            "country": null
+          },
+          "away": {
+            "id": 10058908,
+            "uid": 538647,
+            "name": "Comets",
+            "medium_name": "Adelaide Comets FC",
+            "abbr": "COM",
+            "country": null
+          },
+          "score": {
+            "home": 2,
+            "away": 2,
+            "winner": null
+          },
+          "venue": "home",
+          "opponent": {
+            "id": 10058908,
+            "uid": 538647,
+            "name": "Comets",
+            "medium_name": "Adelaide Comets FC",
+            "abbr": "COM",
+            "country": null
+          },
+          "result": "D",
+          "goals_for": 2,
+          "goals_against": 2
+        },
+        {
+          "match_id": 68049800,
+          "season_id": 138964,
+          "tournament_id": 18340,
+          "round": 8,
+          "round_name": 8,
+          "time": {
+            "date": "09/05/26",
+            "time": "03:15",
+            "tz": "UTC",
+            "uts": 1778296500,
+            "iso_utc": "2026-05-09T03:15:00+00:00"
+          },
+          "home": {
+            "id": 21409213,
+            "uid": 982893,
+            "name": "Flinders United Wfc",
+            "medium_name": "Flinders United Wfc",
+            "abbr": "FLI",
+            "country": null
+          },
+          "away": {
+            "id": 9528436,
+            "uid": 417827,
+            "name": "Salisbury Inter",
+            "medium_name": "Salisbury Inter",
+            "abbr": "SAL",
+            "country": null
+          },
+          "score": {
+            "home": 0,
+            "away": 8,
+            "winner": "away"
+          },
+          "venue": "away",
+          "opponent": {
+            "id": 21409213,
+            "uid": 982893,
+            "name": "Flinders United Wfc",
+            "medium_name": "Flinders United Wfc",
+            "abbr": "FLI",
+            "country": null
+          },
+          "result": "W",
+          "goals_for": 8,
+          "goals_against": 0
+        },
+        {
+          "match_id": 68049788,
+          "season_id": 138964,
+          "tournament_id": 18340,
+          "round": 7,
+          "round_name": 7,
+          "time": {
+            "date": "01/05/26",
+            "time": "10:45",
+            "tz": "UTC",
+            "uts": 1777632300,
+            "iso_utc": "2026-05-01T10:45:00+00:00"
+          },
+          "home": {
+            "id": 10620351,
+            "uid": 417829,
+            "name": "FFSA NTC",
+            "medium_name": "FFSA NTC",
+            "abbr": "FSA",
+            "country": null
+          },
+          "away": {
+            "id": 9528436,
+            "uid": 417827,
+            "name": "Salisbury Inter",
+            "medium_name": "Salisbury Inter",
+            "abbr": "SAL",
+            "country": null
+          },
+          "score": {
+            "home": 1,
+            "away": 5,
+            "winner": "away"
+          },
+          "venue": "away",
+          "opponent": {
+            "id": 10620351,
+            "uid": 417829,
+            "name": "FFSA NTC",
+            "medium_name": "FFSA NTC",
+            "abbr": "FSA",
+            "country": null
+          },
+          "result": "W",
+          "goals_for": 5,
+          "goals_against": 1
+        },
+        {
+          "match_id": 68049780,
+          "season_id": 138964,
+          "tournament_id": 18340,
+          "round": 6,
+          "round_name": 6,
+          "time": {
+            "date": "17/04/26",
+            "time": "10:45",
+            "tz": "UTC",
+            "uts": 1776422700,
+            "iso_utc": "2026-04-17T10:45:00+00:00"
+          },
+          "home": {
+            "id": 9528436,
+            "uid": 417827,
+            "name": "Salisbury Inter",
+            "medium_name": "Salisbury Inter",
+            "abbr": "SAL",
+            "country": null
+          },
+          "away": {
+            "id": 14204137,
+            "uid": 872851,
+            "name": "West Torrens Birkalla",
+            "medium_name": "West Torrens Birkalla",
+            "abbr": "WES",
+            "country": null
+          },
+          "score": {
+            "home": 1,
+            "away": 1,
+            "winner": null
+          },
+          "venue": "home",
+          "opponent": {
+            "id": 14204137,
+            "uid": 872851,
+            "name": "West Torrens Birkalla",
+            "medium_name": "West Torrens Birkalla",
+            "abbr": "WES",
+            "country": null
+          },
+          "result": "D",
+          "goals_for": 1,
+          "goals_against": 1
+        },
+        {
+          "match_id": 68049772,
+          "season_id": 138964,
+          "tournament_id": 18340,
+          "round": 5,
+          "round_name": 5,
+          "time": {
+            "date": "10/04/26",
+            "time": "10:45",
+            "tz": "UTC",
+            "uts": 1775817900,
+            "iso_utc": "2026-04-10T10:45:00+00:00"
+          },
+          "home": {
+            "id": 9528436,
+            "uid": 417827,
+            "name": "Salisbury Inter",
+            "medium_name": "Salisbury Inter",
+            "abbr": "SAL",
+            "country": null
+          },
+          "away": {
+            "id": 18193530,
+            "uid": 872853,
+            "name": "Modbury Vista",
+            "medium_name": "Modbury Vista",
+            "abbr": "MOD",
+            "country": null
+          },
+          "score": {
+            "home": 5,
+            "away": 1,
+            "winner": "home"
+          },
+          "venue": "home",
+          "opponent": {
+            "id": 18193530,
+            "uid": 872853,
+            "name": "Modbury Vista",
+            "medium_name": "Modbury Vista",
+            "abbr": "MOD",
+            "country": null
+          },
+          "result": "W",
+          "goals_for": 5,
+          "goals_against": 1
+        },
+        {
+          "match_id": 68049756,
+          "season_id": 138964,
+          "tournament_id": 18340,
+          "round": 4,
+          "round_name": 4,
+          "time": {
+            "date": "27/03/26",
+            "time": "07:45",
+            "tz": "UTC",
+            "uts": 1774597500,
+            "iso_utc": "2026-03-27T07:45:00+00:00"
+          },
+          "home": {
+            "id": 8595375,
+            "uid": 270761,
+            "name": "Adelaide Uni",
+            "medium_name": "Adelaide University",
+            "abbr": "ADE",
+            "country": null
+          },
+          "away": {
+            "id": 9528436,
+            "uid": 417827,
+            "name": "Salisbury Inter",
+            "medium_name": "Salisbury Inter",
+            "abbr": "SAL",
+            "country": null
+          },
+          "score": {
+            "home": 2,
+            "away": 2,
+            "winner": null
+          },
+          "venue": "away",
+          "opponent": {
+            "id": 8595375,
+            "uid": 270761,
+            "name": "Adelaide Uni",
+            "medium_name": "Adelaide University",
+            "abbr": "ADE",
+            "country": null
+          },
+          "result": "D",
+          "goals_for": 2,
+          "goals_against": 2
+        }
+      ],
+      "form": [
+        "D",
+        "W",
+        "W",
+        "D",
+        "W",
+        "D"
+      ],
+      "recent_points": 12
+    },
+    "home_next": {
+      "team": {
+        "id": 399513,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "matches": [
+        {
+          "match_id": 68049818,
+          "season_id": 138964,
+          "tournament_id": 18340,
+          "round": 10,
+          "round_name": 10,
+          "time": {
+            "date": "29/05/26",
+            "time": "10:00",
+            "tz": "UTC",
+            "uts": 1780048800,
+            "iso_utc": "2026-05-29T10:00:00+00:00"
+          },
+          "home": {
+            "id": 9089633,
+            "uid": 399513,
+            "name": "Campbelltown City SC",
+            "medium_name": "Campbelltown City SC",
+            "abbr": "CAM",
+            "country": null
+          },
+          "away": {
+            "id": 9528436,
+            "uid": 417827,
+            "name": "Salisbury Inter",
+            "medium_name": "Salisbury Inter",
+            "abbr": "SAL",
+            "country": null
+          },
+          "score": {
+            "home": null,
+            "away": null,
+            "winner": null
+          },
+          "venue": "home",
+          "opponent": {
+            "id": 9528436,
+            "uid": 417827,
+            "name": "Salisbury Inter",
+            "medium_name": "Salisbury Inter",
+            "abbr": "SAL",
+            "country": null
+          },
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 68049834,
+          "season_id": 138964,
+          "tournament_id": 18340,
+          "round": 11,
+          "round_name": 11,
+          "time": {
+            "date": "13/06/26",
+            "time": "07:30",
+            "tz": "UTC",
+            "uts": 1781335800,
+            "iso_utc": "2026-06-13T07:30:00+00:00"
+          },
+          "home": {
+            "id": 9089633,
+            "uid": 399513,
+            "name": "Campbelltown City SC",
+            "medium_name": "Campbelltown City SC",
+            "abbr": "CAM",
+            "country": null
+          },
+          "away": {
+            "id": 14204137,
+            "uid": 872851,
+            "name": "West Torrens Birkalla",
+            "medium_name": "West Torrens Birkalla",
+            "abbr": "WES",
+            "country": null
+          },
+          "score": {
+            "home": null,
+            "away": null,
+            "winner": null
+          },
+          "venue": "home",
+          "opponent": {
+            "id": 14204137,
+            "uid": 872851,
+            "name": "West Torrens Birkalla",
+            "medium_name": "West Torrens Birkalla",
+            "abbr": "WES",
+            "country": null
+          },
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        }
+      ],
+      "form": [],
+      "recent_points": null
+    },
+    "away_next": {
+      "team": {
+        "id": 417827,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "matches": [
+        {
+          "match_id": 68049818,
+          "season_id": 138964,
+          "tournament_id": 18340,
+          "round": 10,
+          "round_name": 10,
+          "time": {
+            "date": "29/05/26",
+            "time": "10:00",
+            "tz": "UTC",
+            "uts": 1780048800,
+            "iso_utc": "2026-05-29T10:00:00+00:00"
+          },
+          "home": {
+            "id": 9089633,
+            "uid": 399513,
+            "name": "Campbelltown City SC",
+            "medium_name": "Campbelltown City SC",
+            "abbr": "CAM",
+            "country": null
+          },
+          "away": {
+            "id": 9528436,
+            "uid": 417827,
+            "name": "Salisbury Inter",
+            "medium_name": "Salisbury Inter",
+            "abbr": "SAL",
+            "country": null
+          },
+          "score": {
+            "home": null,
+            "away": null,
+            "winner": null
+          },
+          "venue": "away",
+          "opponent": {
+            "id": 9089633,
+            "uid": 399513,
+            "name": "Campbelltown City SC",
+            "medium_name": "Campbelltown City SC",
+            "abbr": "CAM",
+            "country": null
+          },
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        },
+        {
+          "match_id": 68049830,
+          "season_id": 138964,
+          "tournament_id": 18340,
+          "round": 11,
+          "round_name": 11,
+          "time": {
+            "date": "13/06/26",
+            "time": "03:30",
+            "tz": "UTC",
+            "uts": 1781321400,
+            "iso_utc": "2026-06-13T03:30:00+00:00"
+          },
+          "home": {
+            "id": 9528436,
+            "uid": 417827,
+            "name": "Salisbury Inter",
+            "medium_name": "Salisbury Inter",
+            "abbr": "SAL",
+            "country": null
+          },
+          "away": {
+            "id": 27249467,
+            "uid": 1319578,
+            "name": "Metrostars",
+            "medium_name": "Metrostars",
+            "abbr": "MET",
+            "country": null
+          },
+          "score": {
+            "home": null,
+            "away": null,
+            "winner": null
+          },
+          "venue": "home",
+          "opponent": {
+            "id": 27249467,
+            "uid": 1319578,
+            "name": "Metrostars",
+            "medium_name": "Metrostars",
+            "abbr": "MET",
+            "country": null
+          },
+          "result": null,
+          "goals_for": null,
+          "goals_against": null
+        }
+      ],
+      "form": [],
+      "recent_points": null
+    }
+  },
+  "team_scoring": {
+    "home": {
+      "team": {
+        "id": 399513,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "matches": {
+        "total": 9.0,
+        "home": 4.0,
+        "away": 5.0
+      },
+      "wins": {
+        "total": 3.0,
+        "home": 1.0,
+        "away": 2.0
+      },
+      "scoring": {
+        "goals_scored": {
+          "total": 15.0,
+          "home": 9.0,
+          "away": 6.0
+        },
+        "goals_scored_avg": {
+          "total": 1.6666666666666667,
+          "home": 2.25,
+          "away": 1.2
+        },
+        "failed_to_score_rate": {
+          "total": 0.2222222222222222,
+          "home": 0.25,
+          "away": 0.2
+        },
+        "btts_rate": {
+          "total": 0.6666666666666666,
+          "home": 0.75,
+          "away": 0.6
+        },
+        "first_half_scoring_rate": {
+          "total": 0.5555555555555556,
+          "home": 0.5,
+          "away": 0.6
+        },
+        "minutes_per_goal_scored": {
+          "total": null,
+          "home": null,
+          "away": null
+        },
+        "goals_by_minutes": {}
+      },
+      "conceding": {
+        "goals_conceded": {
+          "total": 16.0,
+          "home": 6.0,
+          "away": 10.0
+        },
+        "goals_conceded_avg": {
+          "total": 1.7777777777777777,
+          "home": 1.5,
+          "away": 2.0
+        },
+        "clean_sheet_rate": {
+          "total": 0.2222222222222222,
+          "home": 0.25,
+          "away": 0.2
+        },
+        "first_half_conceding_rate": {
+          "total": 1.0,
+          "home": 1.0,
+          "away": 1.0
+        },
+        "minutes_per_goal_conceded": {
+          "total": 50.625,
+          "home": 60.0,
+          "away": 45.0
+        },
+        "goals_by_minutes": {}
+      }
+    },
+    "away": {
+      "team": {
+        "id": 417827,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "matches": {
+        "total": 9.0,
+        "home": 5.0,
+        "away": 4.0
+      },
+      "wins": {
+        "total": 5.0,
+        "home": 2.0,
+        "away": 3.0
+      },
+      "scoring": {
+        "goals_scored": {
+          "total": 30.0,
+          "home": 11.0,
+          "away": 19.0
+        },
+        "goals_scored_avg": {
+          "total": 3.3333333333333335,
+          "home": 2.2,
+          "away": 4.75
+        },
+        "failed_to_score_rate": {
+          "total": 0.0,
+          "home": 0.0,
+          "away": 0.0
+        },
+        "btts_rate": {
+          "total": 0.7777777777777778,
+          "home": 1.0,
+          "away": 0.5
+        },
+        "first_half_scoring_rate": {
+          "total": 0.7777777777777778,
+          "home": 0.6,
+          "away": 1.0
+        },
+        "minutes_per_goal_scored": {
+          "total": null,
+          "home": null,
+          "away": null
+        },
+        "goals_by_minutes": {}
+      },
+      "conceding": {
+        "goals_conceded": {
+          "total": 10.0,
+          "home": 7.0,
+          "away": 3.0
+        },
+        "goals_conceded_avg": {
+          "total": 1.1111111111111112,
+          "home": 1.4,
+          "away": 0.75
+        },
+        "clean_sheet_rate": {
+          "total": 0.2222222222222222,
+          "home": 0.0,
+          "away": 0.5
+        },
+        "first_half_conceding_rate": {
+          "total": 0.5555555555555556,
+          "home": 0.8,
+          "away": 0.25
+        },
+        "minutes_per_goal_conceded": {
+          "total": 81.0,
+          "home": 64.28571428571429,
+          "away": 120.0
+        },
+        "goals_by_minutes": {}
+      }
+    }
+  },
+  "team_streaks": {
+    "home": {
+      "team": {
+        "id": 399513,
+        "uid": 399513,
+        "name": "Campbelltown City SC",
+        "medium_name": "Campbelltown City SC",
+        "abbr": "CAM",
+        "country": null
+      },
+      "last_form": {
+        "total": [
+          "W",
+          "D",
+          "W",
+          "D",
+          "W",
+          "L",
+          "L",
+          "L",
+          "L"
+        ],
+        "home": [
+          "D",
+          "D",
+          "W",
+          "L",
+          "W",
+          "W",
+          "L",
+          "W"
+        ],
+        "away": [
+          "W",
+          "W",
+          "L",
+          "L",
+          "L",
+          "L",
+          "W",
+          "W",
+          "W"
+        ]
+      },
+      "streak_keys": [
+        "nodrawing",
+        "nolosing"
+      ]
+    },
+    "away": {
+      "team": {
+        "id": 417827,
+        "uid": 417827,
+        "name": "Salisbury Inter",
+        "medium_name": "Salisbury Inter",
+        "abbr": "SAL",
+        "country": null
+      },
+      "last_form": {
+        "total": [
+          "D",
+          "W",
+          "W",
+          "D",
+          "W",
+          "D",
+          "L",
+          "W",
+          "W"
+        ],
+        "home": [
+          "D",
+          "D",
+          "W",
+          "L",
+          "W",
+          "L",
+          "W",
+          "L",
+          "W"
+        ],
+        "away": [
+          "W",
+          "W",
+          "D",
+          "W",
+          "L",
+          "W",
+          "W",
+          "W",
+          "W"
+        ]
+      },
+      "streak_keys": [
+        "goalsconceded",
+        "goalsscored",
+        "nolosing"
+      ]
+    }
+  },
+  "h2h": {
+    "matches": [
+      {
+        "match_id": 68049740,
+        "season_id": 138964,
+        "tournament_id": 18340,
+        "round": 2,
+        "round_name": 2,
+        "time": {
+          "date": "14/03/26",
+          "time": "02:30",
+          "tz": "UTC",
+          "uts": 1773455400,
+          "iso_utc": "2026-03-14T02:30:00+00:00"
+        },
+        "home": {
+          "id": 9528436,
+          "uid": 417827,
+          "name": "Salisbury Inter",
+          "medium_name": "Salisbury Inter",
+          "abbr": "SAL",
+          "country": null
+        },
+        "away": {
+          "id": 9089633,
+          "uid": 399513,
+          "name": "Campbelltown City SC",
+          "medium_name": "Campbelltown City SC",
+          "abbr": "CAM",
+          "country": null
+        },
+        "score": {
+          "home": 2,
+          "away": 1,
+          "winner": "home"
+        },
+        "venue": null,
+        "opponent": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      },
+      {
+        "match_id": 63075883,
+        "season_id": 127725,
+        "tournament_id": 18340,
+        "round": 2,
+        "round_name": "Semifinals",
+        "time": {
+          "date": "23/08/25",
+          "time": "03:00",
+          "tz": "UTC",
+          "uts": 1755918000,
+          "iso_utc": "2025-08-23T03:00:00+00:00"
+        },
+        "home": {
+          "id": 9528436,
+          "uid": 417827,
+          "name": "Salisbury Inter",
+          "medium_name": "Salisbury Inter",
+          "abbr": "SAL",
+          "country": null
+        },
+        "away": {
+          "id": 9089633,
+          "uid": 399513,
+          "name": "Campbelltown City SC",
+          "medium_name": "Campbelltown City SC",
+          "abbr": "CAM",
+          "country": null
+        },
+        "score": {
+          "home": 1,
+          "away": 2,
+          "winner": "away"
+        },
+        "venue": null,
+        "opponent": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      },
+      {
+        "match_id": 57033565,
+        "season_id": 127725,
+        "tournament_id": 18340,
+        "round": 12,
+        "round_name": 12,
+        "time": {
+          "date": "21/06/25",
+          "time": "05:00",
+          "tz": "UTC",
+          "uts": 1750482000,
+          "iso_utc": "2025-06-21T05:00:00+00:00"
+        },
+        "home": {
+          "id": 9089633,
+          "uid": 399513,
+          "name": "Campbelltown City SC",
+          "medium_name": "Campbelltown City SC",
+          "abbr": "CAM",
+          "country": null
+        },
+        "away": {
+          "id": 9528436,
+          "uid": 417827,
+          "name": "Salisbury Inter",
+          "medium_name": "Salisbury Inter",
+          "abbr": "SAL",
+          "country": null
+        },
+        "score": {
+          "home": 1,
+          "away": 5,
+          "winner": "away"
+        },
+        "venue": null,
+        "opponent": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      },
+      {
+        "match_id": 57033475,
+        "season_id": 127725,
+        "tournament_id": 18340,
+        "round": 3,
+        "round_name": 3,
+        "time": {
+          "date": "22/03/25",
+          "time": "04:30",
+          "tz": "UTC",
+          "uts": 1742617800,
+          "iso_utc": "2025-03-22T04:30:00+00:00"
+        },
+        "home": {
+          "id": 9528436,
+          "uid": 417827,
+          "name": "Salisbury Inter",
+          "medium_name": "Salisbury Inter",
+          "abbr": "SAL",
+          "country": null
+        },
+        "away": {
+          "id": 9089633,
+          "uid": 399513,
+          "name": "Campbelltown City SC",
+          "medium_name": "Campbelltown City SC",
+          "abbr": "CAM",
+          "country": null
+        },
+        "score": {
+          "home": 2,
+          "away": 0,
+          "winner": "home"
+        },
+        "venue": null,
+        "opponent": null,
+        "result": null,
+        "goals_for": null,
+        "goals_against": null
+      }
+    ],
+    "summary": {
+      "total_matches": 4,
+      "home_team_wins": 1,
+      "away_team_wins": 3,
+      "draws": 0
+    }
+  },
+  "injuries": {
+    "home": [],
+    "away": [],
+    "other_count": 0
+  },
+  "players": {
+    "home": {
+      "top_goals": [],
+      "top_cards": [],
+      "top_assists": []
+    },
+    "away": {
+      "top_goals": [],
+      "top_cards": [],
+      "top_assists": []
+    }
+  },
+  "live_state": {
+    "status": "Not started",
+    "period": "0",
+    "clock": {
+      "played_seconds": null,
+      "running": false,
+      "started_uts": null,
+      "ended_uts": null
+    },
+    "score_home": null,
+    "score_away": null,
+    "cards": {},
+    "event_counts": {},
+    "important_events": [],
+    "events": [],
+    "raw_event_count": 0
+  },
+  "live_delta": {
+    "status": "Not started",
+    "period": "0",
+    "clock": {
+      "played_seconds": null,
+      "running": false,
+      "started_uts": null,
+      "ended_uts": null
+    },
+    "score_home": null,
+    "score_away": null,
+    "cards": {},
+    "event_counts": {},
+    "important_events": [],
+    "events": [],
+    "raw_event_count": 0
+  },
+  "live_situation": {
+    "samples": [],
+    "totals": {
+      "home": {
+        "attack": 0,
+        "dangerous": 0,
+        "attackcount": 0,
+        "dangerouscount": 0
+      },
+      "away": {
+        "attack": 0,
+        "dangerous": 0,
+        "attackcount": 0,
+        "dangerouscount": 0
+      }
+    },
+    "latest": null,
+    "raw_sample_count": 0
+  },
+  "feature_quality": {
+    "data_completeness": 0.9167,
+    "has_metadata": true,
+    "has_odds_endpoint": true,
+    "has_priced_odds": false,
+    "has_table": true,
+    "has_match_details": true,
+    "has_team_form": true,
+    "has_team_scoring": true,
+    "has_h2h": true,
+    "has_live_state": true,
+    "missing_important_endpoints": [
+      "match_situation"
+    ]
+  },
+  "raw_refs": {
+    "endpoints_used": [
+      "away_lastx",
+      "away_nextx",
+      "away_scoring",
+      "away_streaks",
+      "away_top_assists",
+      "away_top_cards",
+      "away_top_goals",
+      "h2h_versus",
+      "home_lastx",
+      "home_nextx",
+      "home_scoring",
+      "home_streaks",
+      "home_top_assists",
+      "home_top_cards",
+      "home_top_goals",
+      "match_details",
+      "match_head2head",
+      "match_info",
+      "match_markets",
+      "match_snapshot",
+      "match_table_slice",
+      "match_timeline",
+      "match_timelinedelta",
+      "season_injuries",
+      "team_versus"
+    ],
+    "endpoint_errors": {
+      "match_situation": "RuntimeError(\"Sportradar bootstrap failed mode=headless attempted=['headless'] detail={'fetch_count': 0, 'blocked_count': 0, 'expired_count': 0, 'error': None}. Use --bootstrap-mode auto or headed only if a visible fallback is acceptable.\")"
+    },
+    "source_records": [
+      {
+        "endpoint": "away_lastx",
+        "queryUrl": "stats_team_lastx/417827/6",
+        "body_size_estimate_bytes": 10637,
+        "data_type": "dict",
+        "data_keys": [
+          "matches",
+          "realcategories",
+          "team",
+          "tournaments",
+          "uniquetournaments"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "away_nextx",
+        "queryUrl": "stats_team_nextx/417827/2",
+        "body_size_estimate_bytes": 4571,
+        "data_type": "dict",
+        "data_keys": [
+          "matches",
+          "realcategories",
+          "team",
+          "tournaments",
+          "uniquetournaments"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "away_scoring",
+        "queryUrl": "stats_season_teamscoringconceding/138964/417827/-1",
+        "body_size_estimate_bytes": 2259,
+        "data_type": "dict",
+        "data_keys": [
+          "stats",
+          "team"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "away_streaks",
+        "queryUrl": "stats_team_streaks/417827",
+        "body_size_estimate_bytes": 3533,
+        "data_type": "dict",
+        "data_keys": [
+          "lastmatchesform",
+          "nextmatches",
+          "streaks",
+          "team"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "away_top_assists",
+        "queryUrl": "stats_season_topassists/138964/417827",
+        "body_size_estimate_bytes": 1070,
+        "data_type": "dict",
+        "data_keys": [
+          "players",
+          "season",
+          "teams"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "away_top_cards",
+        "queryUrl": "stats_season_topcards/138964/417827",
+        "body_size_estimate_bytes": 1066,
+        "data_type": "dict",
+        "data_keys": [
+          "players",
+          "season",
+          "teams"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "away_top_goals",
+        "queryUrl": "stats_season_topgoals/138964/417827",
+        "body_size_estimate_bytes": 1066,
+        "data_type": "dict",
+        "data_keys": [
+          "players",
+          "season",
+          "teams"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "h2h_versus",
+        "queryUrl": "stats_h2h_versus/399513/417827/68049818",
+        "body_size_estimate_bytes": 11279,
+        "data_type": "dict",
+        "data_keys": [
+          "lastmatchesbetweenteams",
+          "match",
+          "versusmatchstats"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "home_lastx",
+        "queryUrl": "stats_team_lastx/399513/6",
+        "body_size_estimate_bytes": 8485,
+        "data_type": "dict",
+        "data_keys": [
+          "matches",
+          "realcategories",
+          "team",
+          "tournaments",
+          "uniquetournaments"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "home_nextx",
+        "queryUrl": "stats_team_nextx/399513/2",
+        "body_size_estimate_bytes": 4614,
+        "data_type": "dict",
+        "data_keys": [
+          "matches",
+          "realcategories",
+          "team",
+          "tournaments",
+          "uniquetournaments"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "home_scoring",
+        "queryUrl": "stats_season_teamscoringconceding/138964/399513/-1",
+        "body_size_estimate_bytes": 2295,
+        "data_type": "dict",
+        "data_keys": [
+          "stats",
+          "team"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "home_streaks",
+        "queryUrl": "stats_team_streaks/399513",
+        "body_size_estimate_bytes": 2662,
+        "data_type": "dict",
+        "data_keys": [
+          "lastmatchesform",
+          "nextmatches",
+          "streaks",
+          "team"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "home_top_assists",
+        "queryUrl": "stats_season_topassists/138964/399513",
+        "body_size_estimate_bytes": 1070,
+        "data_type": "dict",
+        "data_keys": [
+          "players",
+          "season",
+          "teams"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "home_top_cards",
+        "queryUrl": "stats_season_topcards/138964/399513",
+        "body_size_estimate_bytes": 1066,
+        "data_type": "dict",
+        "data_keys": [
+          "players",
+          "season",
+          "teams"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "home_top_goals",
+        "queryUrl": "stats_season_topgoals/138964/399513",
+        "body_size_estimate_bytes": 1066,
+        "data_type": "dict",
+        "data_keys": [
+          "players",
+          "season",
+          "teams"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "match_details",
+        "queryUrl": "match_details/68049818",
+        "body_size_estimate_bytes": 122,
+        "data_type": "list",
+        "data_keys": null,
+        "data_count": 0
+      },
+      {
+        "endpoint": "match_head2head",
+        "queryUrl": "stats_match_head2head/68049818",
+        "body_size_estimate_bytes": 610,
+        "data_type": "dict",
+        "data_keys": [
+          "_id",
+          "teams"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "match_info",
+        "queryUrl": "match_info_statshub/68049818",
+        "body_size_estimate_bytes": 5926,
+        "data_type": "dict",
+        "data_keys": [
+          "_doc",
+          "cities",
+          "jerseys",
+          "match",
+          "realcategory",
+          "season",
+          "sport",
+          "stadium",
+          "statscoverage",
+          "tournament",
+          "uniquetournament"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "match_markets",
+        "queryUrl": "match_markets/68049818",
+        "body_size_estimate_bytes": 137,
+        "data_type": "dict",
+        "data_keys": [
+          "markets"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "match_snapshot",
+        "queryUrl": "stats_match_get/68049818",
+        "body_size_estimate_bytes": 4668,
+        "data_type": "dict",
+        "data_keys": [
+          "_doc",
+          "_doctype",
+          "_id",
+          "_rcid",
+          "_seasonid",
+          "_sid",
+          "_tid",
+          "_utid",
+          "bestof",
+          "canceled",
+          "comment",
+          "disqualified",
+          "history",
+          "inlivescore",
+          "jerseys",
+          "neutralground",
+          "numberofperiods",
+          "overtimelength",
+          "periodlength",
+          "periods",
+          "postponed",
+          "realcategory",
+          "result",
+          "retired",
+          "round",
+          "roundname",
+          "season",
+          "sport",
+          "stadium",
+          "stadiumid"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "match_table_slice",
+        "queryUrl": "stats_match_tableslice/68049818",
+        "body_size_estimate_bytes": 3087,
+        "data_type": "dict",
+        "data_keys": [
+          "_doc",
+          "_id",
+          "abbr",
+          "currentround",
+          "groupname",
+          "leaguetypeid",
+          "matchid",
+          "maxrounds",
+          "name",
+          "parenttableid",
+          "parenttableids",
+          "presentationid",
+          "realcategory",
+          "rules",
+          "seasonid",
+          "tablerows",
+          "totalrows",
+          "tournament"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "match_timeline",
+        "queryUrl": "match_timeline/68049818",
+        "body_size_estimate_bytes": 2485,
+        "data_type": "dict",
+        "data_keys": [
+          "events",
+          "match"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "match_timelinedelta",
+        "queryUrl": "match_timelinedelta/68049818",
+        "body_size_estimate_bytes": 2512,
+        "data_type": "dict",
+        "data_keys": [
+          "events",
+          "match"
+        ],
+        "data_count": null
+      },
+      {
+        "endpoint": "season_injuries",
+        "queryUrl": "stats_season_injuries/138964",
+        "body_size_estimate_bytes": 137,
+        "data_type": "list",
+        "data_keys": null,
+        "data_count": 0
+      },
+      {
+        "endpoint": "team_versus",
+        "queryUrl": "stats_team_versus/399513/417827",
+        "body_size_estimate_bytes": 9641,
+        "data_type": "dict",
+        "data_keys": [
+          "currentmanagers",
+          "jersey",
+          "livematchid",
+          "matches",
+          "next",
+          "realcategories",
+          "teams",
+          "tournaments"
+        ],
+        "data_count": null
+      }
+    ]
+  },
+  "client_metrics": {
+    "total_requests": 28,
+    "success_count": 27,
+    "retry_count": 0,
+    "refresh_count": 1,
+    "blocked_count": 1,
+    "expired_count": 0,
+    "empty_count": 0,
+    "invalid_json_count": 0,
+    "http_error_count": 0,
+    "endpoint_timings_ms": {
+      "config_tree_mini": [
+        1373.69
+      ],
+      "stats_season_fixtures2": [
+        631.95
+      ],
+      "match_info_statshub": [
+        634.54
+      ],
+      "stats_match_get": [
+        633.35
+      ],
+      "match_markets": [
+        617.82
+      ],
+      "match_details": [
+        608.43
+      ],
+      "stats_match_tableslice": [
+        730.36
+      ],
+      "stats_match_head2head": [
+        1029.69
+      ],
+      "match_timeline": [
+        500.24
+      ],
+      "match_timelinedelta": [
+        596.34
+      ],
+      "stats_match_situation": [
+        504.4
+      ],
+      "stats_team_lastx": [
+        624.14,
+        789.66
+      ],
+      "stats_team_nextx": [
+        783.95,
+        700.65
+      ],
+      "stats_team_streaks": [
+        775.08,
+        353.44
+      ],
+      "stats_season_teamscoringconceding": [
+        361.16,
+        424.39
+      ],
+      "stats_season_topgoals": [
+        484.09,
+        590.84
+      ],
+      "stats_season_topcards": [
+        641.55,
+        542.07
+      ],
+      "stats_season_topassists": [
+        575.01,
+        602.2
+      ],
+      "stats_season_injuries": [
+        550.81
+      ],
+      "stats_team_versus": [
+        654.46
+      ],
+      "stats_h2h_versus": [
+        765.89
+      ]
+    },
+    "endpoint_timing_summary": {
+      "config_tree_mini": {
+        "count": 1,
+        "min_ms": 1373.69,
+        "max_ms": 1373.69,
+        "avg_ms": 1373.69
+      },
+      "stats_season_fixtures2": {
+        "count": 1,
+        "min_ms": 631.95,
+        "max_ms": 631.95,
+        "avg_ms": 631.95
+      },
+      "match_info_statshub": {
+        "count": 1,
+        "min_ms": 634.54,
+        "max_ms": 634.54,
+        "avg_ms": 634.54
+      },
+      "stats_match_get": {
+        "count": 1,
+        "min_ms": 633.35,
+        "max_ms": 633.35,
+        "avg_ms": 633.35
+      },
+      "match_markets": {
+        "count": 1,
+        "min_ms": 617.82,
+        "max_ms": 617.82,
+        "avg_ms": 617.82
+      },
+      "match_details": {
+        "count": 1,
+        "min_ms": 608.43,
+        "max_ms": 608.43,
+        "avg_ms": 608.43
+      },
+      "stats_match_tableslice": {
+        "count": 1,
+        "min_ms": 730.36,
+        "max_ms": 730.36,
+        "avg_ms": 730.36
+      },
+      "stats_match_head2head": {
+        "count": 1,
+        "min_ms": 1029.69,
+        "max_ms": 1029.69,
+        "avg_ms": 1029.69
+      },
+      "match_timeline": {
+        "count": 1,
+        "min_ms": 500.24,
+        "max_ms": 500.24,
+        "avg_ms": 500.24
+      },
+      "match_timelinedelta": {
+        "count": 1,
+        "min_ms": 596.34,
+        "max_ms": 596.34,
+        "avg_ms": 596.34
+      },
+      "stats_match_situation": {
+        "count": 1,
+        "min_ms": 504.4,
+        "max_ms": 504.4,
+        "avg_ms": 504.4
+      },
+      "stats_team_lastx": {
+        "count": 2,
+        "min_ms": 624.14,
+        "max_ms": 789.66,
+        "avg_ms": 706.9
+      },
+      "stats_team_nextx": {
+        "count": 2,
+        "min_ms": 700.65,
+        "max_ms": 783.95,
+        "avg_ms": 742.3
+      },
+      "stats_team_streaks": {
+        "count": 2,
+        "min_ms": 353.44,
+        "max_ms": 775.08,
+        "avg_ms": 564.26
+      },
+      "stats_season_teamscoringconceding": {
+        "count": 2,
+        "min_ms": 361.16,
+        "max_ms": 424.39,
+        "avg_ms": 392.77
+      },
+      "stats_season_topgoals": {
+        "count": 2,
+        "min_ms": 484.09,
+        "max_ms": 590.84,
+        "avg_ms": 537.47
+      },
+      "stats_season_topcards": {
+        "count": 2,
+        "min_ms": 542.07,
+        "max_ms": 641.55,
+        "avg_ms": 591.81
+      },
+      "stats_season_topassists": {
+        "count": 2,
+        "min_ms": 575.01,
+        "max_ms": 602.2,
+        "avg_ms": 588.61
+      },
+      "stats_season_injuries": {
+        "count": 1,
+        "min_ms": 550.81,
+        "max_ms": 550.81,
+        "avg_ms": 550.81
+      },
+      "stats_team_versus": {
+        "count": 1,
+        "min_ms": 654.46,
+        "max_ms": 654.46,
+        "avg_ms": 654.46
+      },
+      "stats_h2h_versus": {
+        "count": 1,
+        "min_ms": 765.89,
+        "max_ms": 765.89,
+        "avg_ms": 765.89
+      }
+    }
+  },
+  "limitations": [
+    "This is an offline research provider snapshot, not wired into BetBot production.",
+    "Full raw payloads are not embedded; use raw_refs for traceability.",
+    "match_markets can be empty for ended/unpriced matches."
+  ]
+}

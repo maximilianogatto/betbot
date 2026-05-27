@@ -21,6 +21,31 @@ The intended architecture is:
 browser bootstrap -> signed token/cookies/headers -> HTTP replay client
 ```
 
+Bootstrap can run without a graphical browser. The shared default for sandbox
+pipelines is now `headless`:
+
+```bash
+./betbot/bin/python sandbox/sportradar_http/run_tournament_navigation.py \
+  --sport-id 1 \
+  --tournament-id 18340 \
+  --bootstrap-mode headless
+```
+
+Available modes:
+
+- `headless`: no GUI. This is the target mode for server/Railway usage.
+- `headed`: visible Chromium, only for local debugging.
+- `auto`: try headless first, then visible Chromium if headless fails.
+
+You can also set:
+
+```bash
+export SPORTRADAR_BOOTSTRAP_MODE=headless
+```
+
+If headless gets blocked by Statshub, the script fails with a clear message
+unless `--bootstrap-mode auto` or `--bootstrap-mode headed` is selected.
+
 ## Current Status
 
 Phase 1 is implemented in `session_manager.py`.
@@ -60,10 +85,10 @@ Outputs:
 ## Programmatic Use
 
 ```python
-from sandbox.sportradar_http.session_manager import BootstrapConfig, SportradarSessionManager
 from sandbox.sportradar_http.http_client import SportradarHTTPClient
+from sandbox.sportradar_http.runtime import BootstrapSessionManager
 
-manager = SportradarSessionManager(BootstrapConfig(headed=True))
+manager = BootstrapSessionManager(mode="headless")
 state = manager.refresh_session()
 
 client = SportradarHTTPClient(session_state=state, session_manager=manager)
@@ -189,6 +214,41 @@ To inspect a selected fixture, pass its `match_id` to `run_match_pipeline.py`.
 
 It does not render Telegram. It produces compact JSON that a future BetBot
 provider can consume.
+
+## Tournament Match Report
+
+Build the full bot-ready flow in one command:
+
+```bash
+./betbot/bin/python sandbox/sportradar_http/run_tournament_match_report.py \
+  --sport-id 1 \
+  --tournament-id 18340 \
+  --bootstrap-mode headless \
+  --out-dir sandbox/sportradar_http/examples/tournament_18340_match_report
+```
+
+Selection rules:
+
+- `--match-id <id>` selects an exact fixture.
+- `--fixture-index <n>` selects a zero-based fixture position.
+- without either, the script selects the first upcoming unplayed fixture.
+
+Outputs:
+
+- `tournament_navigation.json`
+- `selected_fixture.json`
+- `match_snapshot.json`
+- `match_features.json`
+- `match_intelligence.json`
+- `tournament_match_report.json`
+- `tournament_match_report.md`
+
+This is the closest sandbox contract to a future `/track_league` or
+`/match_stats` bot flow:
+
+```text
+tournament_id -> fixtures -> selected fixture -> match_id -> match intelligence -> compact report
+```
 
 ## League Pipeline
 

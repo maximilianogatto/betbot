@@ -1,0 +1,40 @@
+{
+  "match_id": 68049818,
+  "round": 10,
+  "round_name": 10,
+  "time": {
+    "date": "29/05/26",
+    "time": "10:00",
+    "tz": "UTC",
+    "uts": 1780048800,
+    "iso_utc": "2026-05-29T10:00:00+00:00"
+  },
+  "home": {
+    "id": 9089633,
+    "uid": 399513,
+    "name": "Campbelltown City SC",
+    "medium_name": "Campbelltown City SC",
+    "abbr": "CAM",
+    "country": null
+  },
+  "away": {
+    "id": 9528436,
+    "uid": 417827,
+    "name": "Salisbury Inter",
+    "medium_name": "Salisbury Inter",
+    "abbr": "SAL",
+    "country": null
+  },
+  "result": {
+    "home": null,
+    "away": null,
+    "winner": null,
+    "period": "nt"
+  },
+  "status": {
+    "postponed": false,
+    "canceled": false,
+    "in_livescore": true,
+    "neutral_ground": false
+  }
+}
