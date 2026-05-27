@@ -32,6 +32,8 @@ from storage.mappers import (
     row_to_event_baseline as _row_to_event_baseline,
     row_to_pending_request as _row_to_pending_request,
     row_to_small_change_record as _row_to_small_change_record,
+    row_to_stats_league_link as _row_to_stats_league_link,
+    row_to_stats_match_link as _row_to_stats_match_link,
     row_to_subscription as _row_to_subscription,
     row_to_tracked_competition as _row_to_tracked_competition,
     row_to_tracked_competition_subscription as _row_to_tracked_competition_subscription,
@@ -313,6 +315,38 @@ class ActiveEventRecord:
     @property
     def is_missing(self) -> bool:
         return self.missing_seen_count > 0
+
+
+@dataclass(frozen=True)
+class StatsLeagueLink:
+    """Link one tracked odds competition to one stats provider league."""
+
+    id: int
+    tracked_competition_id: int
+    stats_provider: str
+    stats_league_id: str
+    stats_league_name: str
+    stats_country_name: str | None
+    confidence: float
+    payload_json: str | None
+    created_at: str
+    updated_at: str
+
+
+@dataclass(frozen=True)
+class StatsMatchLinkRecord:
+    """Cache one resolved odds event -> stats provider match identity."""
+
+    id: int
+    active_event_id: int
+    stats_provider: str
+    stats_match_id: str
+    stats_url: str | None
+    confidence: float
+    method: str
+    payload_json: str | None
+    created_at: str
+    updated_at: str
 
 
 @dataclass(frozen=True)
@@ -2084,6 +2118,173 @@ class SqliteTrackingRepository:
             if _is_future_or_unscheduled(record.scheduled_at, now_utc) and not record.is_missing
         ]
 
+    def upsert_stats_league_link(
+        self,
+        tracked_competition_id: int,
+        *,
+        stats_provider: str,
+        stats_league_id: str,
+        stats_league_name: str,
+        stats_country_name: str | None = None,
+        confidence: float = 1.0,
+        payload: dict[str, Any] | None = None,
+    ) -> StatsLeagueLink:
+        """Create or update the stats-provider league linked to a tracked competition."""
+
+        normalized_provider = _normalize_platform(stats_provider)
+        normalized_league_id = stats_league_id.strip()
+        normalized_league_name = stats_league_name.strip()
+        if not normalized_league_id:
+            raise ValueError("stats_league_id must not be empty.")
+        if _is_invalid_label(normalized_league_name):
+            raise ValueError("stats_league_name must not be empty.")
+
+        now_iso = _utc_now_iso()
+        payload_json = _json_dumps(payload)
+
+        with _connect() as connection:
+            _ensure_tracked_competition_exists(connection, tracked_competition_id)
+            connection.execute(
+                """
+                INSERT INTO stats_league_links (
+                    tracked_competition_id,
+                    stats_provider,
+                    stats_league_id,
+                    stats_league_name,
+                    stats_country_name,
+                    confidence,
+                    payload_json,
+                    created_at,
+                    updated_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(tracked_competition_id) DO UPDATE SET
+                    stats_provider = excluded.stats_provider,
+                    stats_league_id = excluded.stats_league_id,
+                    stats_league_name = excluded.stats_league_name,
+                    stats_country_name = excluded.stats_country_name,
+                    confidence = excluded.confidence,
+                    payload_json = excluded.payload_json,
+                    updated_at = excluded.updated_at
+                """,
+                (
+                    tracked_competition_id,
+                    normalized_provider,
+                    normalized_league_id,
+                    normalized_league_name,
+                    _normalize_optional_text(stats_country_name),
+                    float(confidence),
+                    payload_json,
+                    now_iso,
+                    now_iso,
+                ),
+            )
+            row = _fetch_stats_league_link_row(connection, tracked_competition_id)
+
+        if row is None:
+            raise RuntimeError("Stats league link was upserted but could not be reloaded.")
+        return _row_to_stats_league_link(row)
+
+    def get_stats_league_link(self, tracked_competition_id: int) -> StatsLeagueLink | None:
+        """Return the stats-provider league linked to a tracked competition."""
+
+        with _connect() as connection:
+            _ensure_tracked_competition_exists(connection, tracked_competition_id)
+            row = _fetch_stats_league_link_row(connection, tracked_competition_id)
+
+        return _row_to_stats_league_link(row) if row is not None else None
+
+    def delete_stats_league_link(self, tracked_competition_id: int) -> bool:
+        """Delete the stats-provider league link for one tracked competition."""
+
+        with _connect() as connection:
+            _ensure_tracked_competition_exists(connection, tracked_competition_id)
+            cursor = connection.execute(
+                """
+                DELETE FROM stats_league_links
+                WHERE tracked_competition_id = ?
+                """,
+                (tracked_competition_id,),
+            )
+
+        return cursor.rowcount > 0
+
+    def upsert_stats_match_link(
+        self,
+        active_event_id: int,
+        *,
+        stats_provider: str,
+        stats_match_id: str,
+        stats_url: str | None,
+        confidence: float,
+        method: str,
+        payload: dict[str, Any] | None = None,
+    ) -> StatsMatchLinkRecord:
+        """Create or update the resolved stats-provider match for one active event."""
+
+        normalized_provider = _normalize_platform(stats_provider)
+        normalized_match_id = stats_match_id.strip()
+        normalized_method = method.strip()
+        if not normalized_match_id:
+            raise ValueError("stats_match_id must not be empty.")
+        if not normalized_method:
+            raise ValueError("method must not be empty.")
+
+        now_iso = _utc_now_iso()
+        payload_json = _json_dumps(payload)
+
+        with _connect() as connection:
+            _ensure_active_event_exists(connection, active_event_id)
+            connection.execute(
+                """
+                INSERT INTO stats_match_links (
+                    active_event_id,
+                    stats_provider,
+                    stats_match_id,
+                    stats_url,
+                    confidence,
+                    method,
+                    payload_json,
+                    created_at,
+                    updated_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(active_event_id) DO UPDATE SET
+                    stats_provider = excluded.stats_provider,
+                    stats_match_id = excluded.stats_match_id,
+                    stats_url = excluded.stats_url,
+                    confidence = excluded.confidence,
+                    method = excluded.method,
+                    payload_json = excluded.payload_json,
+                    updated_at = excluded.updated_at
+                """,
+                (
+                    active_event_id,
+                    normalized_provider,
+                    normalized_match_id,
+                    _normalize_optional_text(stats_url),
+                    float(confidence),
+                    normalized_method,
+                    payload_json,
+                    now_iso,
+                    now_iso,
+                ),
+            )
+            row = _fetch_stats_match_link_row(connection, active_event_id)
+
+        if row is None:
+            raise RuntimeError("Stats match link was upserted but could not be reloaded.")
+        return _row_to_stats_match_link(row)
+
+    def get_stats_match_link(self, active_event_id: int) -> StatsMatchLinkRecord | None:
+        """Return the cached stats-provider match link for one active event."""
+
+        with _connect() as connection:
+            _ensure_active_event_exists(connection, active_event_id)
+            row = _fetch_stats_match_link_row(connection, active_event_id)
+
+        return _row_to_stats_match_link(row) if row is not None else None
+
     def has_sent_alert(
         self,
         chat_id: int,
@@ -2363,6 +2564,42 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
 
         CREATE INDEX IF NOT EXISTS idx_active_events_tracked_competition
         ON active_events(tracked_competition_id, is_active, scheduled_at);
+
+        CREATE TABLE IF NOT EXISTS stats_league_links (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            tracked_competition_id INTEGER NOT NULL,
+            stats_provider TEXT NOT NULL,
+            stats_league_id TEXT NOT NULL,
+            stats_league_name TEXT NOT NULL,
+            stats_country_name TEXT,
+            confidence REAL NOT NULL DEFAULT 1.0,
+            payload_json TEXT,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            UNIQUE(tracked_competition_id),
+            FOREIGN KEY(tracked_competition_id) REFERENCES tracked_competitions(id) ON DELETE CASCADE
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_stats_league_links_provider
+        ON stats_league_links(stats_provider, stats_league_id);
+
+        CREATE TABLE IF NOT EXISTS stats_match_links (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            active_event_id INTEGER NOT NULL,
+            stats_provider TEXT NOT NULL,
+            stats_match_id TEXT NOT NULL,
+            stats_url TEXT,
+            confidence REAL NOT NULL DEFAULT 0.0,
+            method TEXT NOT NULL,
+            payload_json TEXT,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            UNIQUE(active_event_id),
+            FOREIGN KEY(active_event_id) REFERENCES active_events(id) ON DELETE CASCADE
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_stats_match_links_provider
+        ON stats_match_links(stats_provider, stats_match_id);
 
         CREATE TABLE IF NOT EXISTS user_event_baselines (
             chat_id INTEGER NOT NULL,
@@ -2690,6 +2927,94 @@ def _fetch_active_event_row(
     ).fetchone()
 
 
+def _fetch_active_event_row_by_id(
+    connection: sqlite3.Connection,
+    active_event_id: int,
+) -> sqlite3.Row | None:
+    return connection.execute(
+        """
+        SELECT
+            id,
+            tracked_competition_id,
+            platform,
+            competition_external_id,
+            external_event_id,
+            home,
+            away,
+            scheduled_label_date,
+            scheduled_label_time,
+            scheduled_at,
+            event_url,
+            odds_home,
+            odds_draw,
+            odds_away,
+            markets_json,
+            raw_payload_json,
+            reminder_sent_at,
+            is_active,
+            first_seen_at,
+            last_seen_at,
+            created_at,
+            updated_at
+        FROM active_events
+        WHERE id = ?
+          AND is_active = 1
+        LIMIT 1
+        """,
+        (active_event_id,),
+    ).fetchone()
+
+
+def _fetch_stats_league_link_row(
+    connection: sqlite3.Connection,
+    tracked_competition_id: int,
+) -> sqlite3.Row | None:
+    return connection.execute(
+        """
+        SELECT
+            id,
+            tracked_competition_id,
+            stats_provider,
+            stats_league_id,
+            stats_league_name,
+            stats_country_name,
+            confidence,
+            payload_json,
+            created_at,
+            updated_at
+        FROM stats_league_links
+        WHERE tracked_competition_id = ?
+        LIMIT 1
+        """,
+        (tracked_competition_id,),
+    ).fetchone()
+
+
+def _fetch_stats_match_link_row(
+    connection: sqlite3.Connection,
+    active_event_id: int,
+) -> sqlite3.Row | None:
+    return connection.execute(
+        """
+        SELECT
+            id,
+            active_event_id,
+            stats_provider,
+            stats_match_id,
+            stats_url,
+            confidence,
+            method,
+            payload_json,
+            created_at,
+            updated_at
+        FROM stats_match_links
+        WHERE active_event_id = ?
+        LIMIT 1
+        """,
+        (active_event_id,),
+    ).fetchone()
+
+
 def _fetch_small_change_row_by_id(
     connection: sqlite3.Connection,
     chat_id: int,
@@ -2811,6 +3136,15 @@ def _ensure_tracked_competition_exists(
     row = _fetch_tracked_competition_row(connection, tracked_competition_id)
     if row is None:
         raise ValueError(f"No tracked competition found with id={tracked_competition_id}.")
+
+
+def _ensure_active_event_exists(
+    connection: sqlite3.Connection,
+    active_event_id: int,
+) -> None:
+    row = _fetch_active_event_row_by_id(connection, active_event_id)
+    if row is None:
+        raise ValueError(f"No active event found with id={active_event_id}.")
 
 
 def _ensure_subscription_exists(
@@ -3005,6 +3339,8 @@ __all__ = [
     "PendingCompetitionTrackRequest",
     "SmallChangeRecord",
     "SqliteTrackingRepository",
+    "StatsLeagueLink",
+    "StatsMatchLinkRecord",
     "TrackedCompetition",
     "TrackedCompetitionSubscription",
     "UntrackCompetitionResult",

@@ -13,6 +13,8 @@ if TYPE_CHECKING:
         EventBaseline,
         PendingCompetitionTrackRequest,
         SmallChangeRecord,
+        StatsLeagueLink,
+        StatsMatchLinkRecord,
         TrackedCompetition,
         TrackedCompetitionSubscription,
     )
@@ -190,6 +192,40 @@ def row_to_small_change_record(row: sqlite3.Row) -> "SmallChangeRecord":
     )
 
 
+def row_to_stats_league_link(row: sqlite3.Row) -> "StatsLeagueLink":
+    from storage.tracking_repository import StatsLeagueLink
+
+    return StatsLeagueLink(
+        id=int(row["id"]),
+        tracked_competition_id=int(row["tracked_competition_id"]),
+        stats_provider=str(row["stats_provider"]),
+        stats_league_id=str(row["stats_league_id"]),
+        stats_league_name=str(row["stats_league_name"]),
+        stats_country_name=row_optional_text(row, "stats_country_name"),
+        confidence=float(row["confidence"]),
+        payload_json=row_optional_text(row, "payload_json"),
+        created_at=str(row["created_at"]),
+        updated_at=str(row["updated_at"]),
+    )
+
+
+def row_to_stats_match_link(row: sqlite3.Row) -> "StatsMatchLinkRecord":
+    from storage.tracking_repository import StatsMatchLinkRecord
+
+    return StatsMatchLinkRecord(
+        id=int(row["id"]),
+        active_event_id=int(row["active_event_id"]),
+        stats_provider=str(row["stats_provider"]),
+        stats_match_id=str(row["stats_match_id"]),
+        stats_url=row_optional_text(row, "stats_url"),
+        confidence=float(row["confidence"]),
+        method=str(row["method"]),
+        payload_json=row_optional_text(row, "payload_json"),
+        created_at=str(row["created_at"]),
+        updated_at=str(row["updated_at"]),
+    )
+
+
 def row_optional_text(row: sqlite3.Row, key: str) -> str | None:
     value = row[key]
     if value is None:
@@ -218,6 +254,8 @@ __all__ = [
     "row_to_event_baseline",
     "row_to_pending_request",
     "row_to_small_change_record",
+    "row_to_stats_league_link",
+    "row_to_stats_match_link",
     "row_to_subscription",
     "row_to_tracked_competition",
     "row_to_tracked_competition_subscription",
