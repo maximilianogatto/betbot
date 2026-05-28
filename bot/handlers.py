@@ -933,7 +933,8 @@ async def link_stats_enter_country(update: Update, context: ContextTypes.DEFAULT
         return ENTER_COUNTRY_FOR_LINK_STATS
 
     context.user_data[LINK_STATS_OPTIONS_CONTEXT_KEY] = options
-    await update.message.reply_text(
+    await _reply_text_chunks(
+        update.message,
         _build_stats_league_selection_message(options),
         reply_markup=_build_numeric_keyboard(len(options), "Elegí la liga stats"),
     )

@@ -9,13 +9,14 @@ from bot.handlers import (
     MATCHES_ACTIVE_CONTEXT_KEY,
     MATCHES_SELECTED_TRACK_CONTEXT_KEY,
     SELECT_LEAGUE_FOR_STATS,
+    SELECT_LEAGUE_FOR_LINK_STATS,
     STATS_ACTIVE_CONTEXT_KEY,
     STATS_SELECTED_TRACK_CONTEXT_KEY,
     link_stats_enter_country,
     stats_select_match,
     stats_command,
 )
-from core.stats_models import StatsProviderCapabilities, StatsProviderDescriptor
+from core.stats_models import StatsLeagueOption, StatsProviderCapabilities, StatsProviderDescriptor
 from monitors.models import CommandResult
 from storage.tracking_repository import (
     ActiveEventRecord,
@@ -121,6 +122,40 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(state, -1)
         self.assertIn("SPORTRADAR_BOOTSTRAP_MODE=auto", message.reply_text.await_args.args[0])
+
+    async def test_link_stats_country_splits_large_league_list(self) -> None:
+        options = [
+            StatsLeagueOption(
+                provider="sportradar_statshub",
+                provider_display_name="Sportradar Statshub",
+                country_name="Australia",
+                league_id=str(index),
+                league_name=f"Australia Very Long Stats League Name {index} With Extra Context",
+                season_id=f"season-{index}",
+            )
+            for index in range(80)
+        ]
+        stats_service = SimpleNamespace(search_leagues=AsyncMock(return_value=options))
+        provider = StatsProviderDescriptor(
+            key="sportradar_statshub",
+            display_name="Sportradar Statshub",
+            capabilities=StatsProviderCapabilities(supports_league_discovery=True),
+        )
+        message = SimpleNamespace(text="Australia", reply_text=AsyncMock())
+        context = SimpleNamespace(
+            user_data={
+                LINK_STATS_SELECTED_PROVIDER_CONTEXT_KEY: provider,
+            },
+        )
+        update = SimpleNamespace(message=message)
+
+        with patch("bot.handlers.get_stats_service", return_value=stats_service):
+            state = await link_stats_enter_country(update, context)
+
+        self.assertEqual(state, SELECT_LEAGUE_FOR_LINK_STATS)
+        self.assertGreater(message.reply_text.await_count, 1)
+        for call in message.reply_text.await_args_list:
+            self.assertLessEqual(len(call.args[0]), 3900)
 
 
 def _active_event() -> ActiveEventRecord:
