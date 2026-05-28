@@ -31,6 +31,7 @@ from sandbox.sportradar_http.bot_ready.provider import (
     SportradarBotReadyProvider,
 )
 from sandbox.sportradar_http.endpoints.discovery import get_config_tree_mini
+from sandbox.sportradar_http.runtime import normalize_bootstrap_mode
 from sandbox.sportradar_http.tournament_navigation import build_tournament_tree
 
 
@@ -69,7 +70,8 @@ class SportradarHttpStatsProvider(StatsProvider):
     ) -> None:
         self.sport_id = sport_id
         self.category_id = category_id
-        self._runtime = runtime or SportradarBotReadyProvider(runtime_config)
+        self._runtime_config = runtime_config or _default_runtime_config()
+        self._runtime = runtime or SportradarBotReadyProvider(self._runtime_config)
 
     async def search_leagues(
         self,
@@ -279,6 +281,12 @@ def _extract_match_id(url: str | None) -> str | None:
         return None
     match = _MATCH_URL_RE.search(url)
     return match.group(1) if match else None
+
+
+def _default_runtime_config() -> BotReadyRuntimeConfig:
+    """Build runtime config honoring `SPORTRADAR_BOOTSTRAP_MODE` from `.env`."""
+
+    return BotReadyRuntimeConfig(bootstrap_mode=normalize_bootstrap_mode(None))
 
 
 def _fixture_status(status: dict[str, Any]) -> str | None:

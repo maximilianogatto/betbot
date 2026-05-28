@@ -891,6 +891,27 @@ async def link_stats_enter_country(update: Update, context: ContextTypes.DEFAULT
             country_name=country_name,
             limit=80,
         )
+    except RuntimeError as error:
+        logger.exception(
+            "Stats league discovery failed provider=%s country=%s",
+            selected_provider.key,
+            country_name,
+        )
+        message = str(error)
+        if "Sportradar bootstrap failed" in message:
+            await update.message.reply_text(
+                "No pude renovar la sesión de Sportradar en modo headless.\n\n"
+                "Para usarlo localmente, configurá SPORTRADAR_BOOTSTRAP_MODE=auto en .env "
+                "y reiniciá el bot. Auto prueba headless primero y solo abre navegador visible si Statshub lo bloquea.",
+                reply_markup=ReplyKeyboardRemove(),
+            )
+        else:
+            await update.message.reply_text(
+                "No pude buscar ligas de stats ahora. Probá de nuevo en unos minutos.",
+                reply_markup=ReplyKeyboardRemove(),
+            )
+        _clear_all_selection_context(context)
+        return ConversationHandler.END
     except Exception:
         logger.exception(
             "Stats league discovery failed provider=%s country=%s",

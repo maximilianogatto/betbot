@@ -5,14 +5,17 @@ import unittest
 from unittest.mock import AsyncMock, patch
 
 from bot.handlers import (
+    LINK_STATS_SELECTED_PROVIDER_CONTEXT_KEY,
     MATCHES_ACTIVE_CONTEXT_KEY,
     MATCHES_SELECTED_TRACK_CONTEXT_KEY,
     SELECT_LEAGUE_FOR_STATS,
     STATS_ACTIVE_CONTEXT_KEY,
     STATS_SELECTED_TRACK_CONTEXT_KEY,
+    link_stats_enter_country,
     stats_select_match,
     stats_command,
 )
+from core.stats_models import StatsProviderCapabilities, StatsProviderDescriptor
 from monitors.models import CommandResult
 from storage.tracking_repository import (
     ActiveEventRecord,
@@ -93,6 +96,31 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
             event_number=1,
         )
         self.assertEqual(message.reply_text.await_args_list[1].args, ("Reporte interactivo",))
+
+    async def test_link_stats_country_reports_sportradar_bootstrap_failure(self) -> None:
+        stats_service = SimpleNamespace(
+            search_leagues=AsyncMock(
+                side_effect=RuntimeError("Sportradar bootstrap failed mode=headless")
+            )
+        )
+        provider = StatsProviderDescriptor(
+            key="sportradar_statshub",
+            display_name="Sportradar Statshub",
+            capabilities=StatsProviderCapabilities(supports_league_discovery=True),
+        )
+        message = SimpleNamespace(text="Australia", reply_text=AsyncMock())
+        context = SimpleNamespace(
+            user_data={
+                LINK_STATS_SELECTED_PROVIDER_CONTEXT_KEY: provider,
+            },
+        )
+        update = SimpleNamespace(message=message)
+
+        with patch("bot.handlers.get_stats_service", return_value=stats_service):
+            state = await link_stats_enter_country(update, context)
+
+        self.assertEqual(state, -1)
+        self.assertIn("SPORTRADAR_BOOTSTRAP_MODE=auto", message.reply_text.await_args.args[0])
 
 
 def _active_event() -> ActiveEventRecord:

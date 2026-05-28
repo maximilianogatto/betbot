@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import unittest
+from unittest.mock import patch
 
 from core.stats_models import MatchIdentityCandidate
 from stats_providers.sportradar_http import SportradarHttpStatsProvider
@@ -109,6 +110,12 @@ class SportradarHttpStatsProviderTests(unittest.TestCase):
         self.assertEqual(report.provider, "sportradar_statshub")
         self.assertEqual(report.title, "Sevilla vs Real Madrid")
         self.assertIn("Form", report.markdown)
+
+    def test_default_runtime_config_honors_bootstrap_mode_env(self) -> None:
+        with patch.dict("os.environ", {"SPORTRADAR_BOOTSTRAP_MODE": "auto"}):
+            provider = SportradarHttpStatsProvider(runtime=FakeSportradarRuntime())
+
+        self.assertEqual(provider._runtime_config.bootstrap_mode, "auto")
 
 
 if __name__ == "__main__":
