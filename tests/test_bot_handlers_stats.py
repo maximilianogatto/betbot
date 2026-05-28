@@ -7,6 +7,10 @@ from unittest.mock import AsyncMock, patch
 from bot.handlers import (
     MATCHES_ACTIVE_CONTEXT_KEY,
     MATCHES_SELECTED_TRACK_CONTEXT_KEY,
+    SELECT_LEAGUE_FOR_STATS,
+    STATS_ACTIVE_CONTEXT_KEY,
+    STATS_SELECTED_TRACK_CONTEXT_KEY,
+    stats_select_match,
     stats_command,
 )
 from monitors.models import CommandResult
@@ -19,6 +23,20 @@ from storage.tracking_repository import (
 
 
 class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
+    async def test_stats_without_args_starts_interactive_league_selection(self) -> None:
+        tracked_subscription = _tracked_subscription()
+        tracking_service = SimpleNamespace(list_confirmed_tracks=lambda chat_id: [tracked_subscription])
+        message = SimpleNamespace(text="1", reply_text=AsyncMock())
+        context = SimpleNamespace(args=[], user_data={})
+        update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
+
+        with patch("bot.handlers.get_tracking_service", return_value=tracking_service):
+            state = await stats_command(update, context)
+
+        self.assertEqual(state, SELECT_LEAGUE_FOR_STATS)
+        self.assertIn("stats_tracks", context.user_data)
+        self.assertIn("De qué liga", message.reply_text.await_args.args[0])
+
     async def test_stats_command_uses_stats_service_report(self) -> None:
         match = _active_event()
         tracked_subscription = _tracked_subscription()
@@ -27,7 +45,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
                 return_value=CommandResult(ok=True, message="Reporte stats listo")
             )
         )
-        message = SimpleNamespace(reply_text=AsyncMock())
+        message = SimpleNamespace(text="1", reply_text=AsyncMock())
         context = SimpleNamespace(
             args=["2"],
             user_data={
@@ -47,6 +65,34 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         )
         self.assertEqual(message.reply_text.await_args_list[0].args, ("Generando reporte de stats...",))
         self.assertEqual(message.reply_text.await_args_list[1].args, ("Reporte stats listo",))
+
+    async def test_stats_select_match_generates_report(self) -> None:
+        match = _active_event()
+        tracked_subscription = _tracked_subscription()
+        stats_service = SimpleNamespace(
+            build_match_stats_report=AsyncMock(
+                return_value=CommandResult(ok=True, message="Reporte interactivo")
+            )
+        )
+        message = SimpleNamespace(text="1", reply_text=AsyncMock())
+        context = SimpleNamespace(
+            user_data={
+                STATS_ACTIVE_CONTEXT_KEY: [match],
+                STATS_SELECTED_TRACK_CONTEXT_KEY: tracked_subscription,
+            },
+        )
+        update = SimpleNamespace(message=message)
+
+        with patch("bot.handlers.get_stats_service", return_value=stats_service):
+            state = await stats_select_match(update, context)
+
+        self.assertEqual(state, -1)
+        stats_service.build_match_stats_report.assert_awaited_once_with(
+            tracked_subscription=tracked_subscription,
+            matches=[match],
+            event_number=1,
+        )
+        self.assertEqual(message.reply_text.await_args_list[1].args, ("Reporte interactivo",))
 
 
 def _active_event() -> ActiveEventRecord:
