@@ -17,6 +17,7 @@ tables by providing `platform`, `competition_external_id`, and
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
+from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
 import json
@@ -2470,14 +2471,23 @@ class SqliteTrackingRepository:
         with _connect() as connection:
             _sanitize_tracking_state(connection)
 
-# Connect to the database
-def _connect() -> sqlite3.Connection:
+@contextmanager
+def _connect():
+    """Open a repository connection and always close it after use."""
+
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     connection = sqlite3.connect(DB_FILE_PATH)
-    connection.row_factory = sqlite3.Row
-    connection.execute("PRAGMA foreign_keys = ON")
-    _initialize_schema(connection)
-    return connection
+    try:
+        connection.row_factory = sqlite3.Row
+        connection.execute("PRAGMA foreign_keys = ON")
+        _initialize_schema(connection)
+        yield connection
+        connection.commit()
+    except Exception:
+        connection.rollback()
+        raise
+    finally:
+        connection.close()
 
 # Inizializate database schema
 def _initialize_schema(connection: sqlite3.Connection) -> None:
