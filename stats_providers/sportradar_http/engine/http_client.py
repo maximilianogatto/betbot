@@ -378,7 +378,17 @@ class SportradarHTTPClient:
         return validation.http_error or validation.empty or validation.invalid_json
 
     def _should_refresh(self, validation: ResponseValidation, *, allow_refresh: bool) -> bool:
-        return bool(self.auto_refresh and allow_refresh and (validation.blocked or validation.expired))
+        if not (self.auto_refresh and allow_refresh):
+            return False
+        if not (validation.blocked or validation.expired):
+            return False
+        # Only bootstrap (which can open a browser) when our token is actually
+        # missing or expired. A blocked/expired *payload* on a single endpoint
+        # while the cached token is still valid is an endpoint-specific issue
+        # (e.g. a flaky /common/ feed); re-minting the token would not help and
+        # would needlessly launch Chromium.
+        token = self.state.signed_token if self.state is not None else None
+        return token is None or token.is_expired()
 
     def metrics_json(self) -> dict[str, Any]:
         """Return request counters and endpoint timing summary as JSON-safe dict."""

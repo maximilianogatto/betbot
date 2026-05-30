@@ -19,8 +19,9 @@ from stats_providers.sportradar_http.engine.session_manager import (
 )
 
 
-def make_state(*, token_raw: str = "exp=9999999999~acl=/*~hmac=abc") -> SportradarSessionState:
-    exp = int((datetime.now(UTC) + timedelta(hours=3)).timestamp())
+def make_state(*, token_raw: str = "exp=9999999999~acl=/*~hmac=abc", expired: bool = False) -> SportradarSessionState:
+    delta = timedelta(hours=-1) if expired else timedelta(hours=3)
+    exp = int((datetime.now(UTC) + delta).timestamp())
     return SportradarSessionState(
         generated_at="2026-05-26T00:00:00+00:00",
         headed=True,
@@ -101,38 +102,30 @@ class SportradarHTTPClientTests(unittest.TestCase):
         self.assertTrue(caught.exception.validation.blocked)
         self.assertEqual(client.metrics.blocked_count, 1)
 
-    def test_blocked_payload_refreshes_and_retries(self) -> None:
-        calls = 0
-
+    def test_blocked_payload_with_valid_token_does_not_bootstrap(self) -> None:
+        # The key fix: a blocked body while the cached token is still valid must
+        # NOT trigger a session bootstrap (which can open a browser). It raises.
         def handler(request: httpx.Request) -> httpx.Response:
-            nonlocal calls
-            calls += 1
-            if calls == 1:
-                return httpx.Response(
-                    200,
-                    json={"doc": [{"event": "Exception", "data": {"name": "Unauthorized", "code": 403}}]},
-                    request=request,
-                )
             return httpx.Response(
                 200,
-                json={"queryUrl": "match_markets/61624678", "doc": [{"event": "match_markets", "data": {}}]},
+                json={"doc": [{"event": "Exception", "data": {"name": "Unauthorized", "code": 403}}]},
                 request=request,
             )
 
         manager = FakeManager()
         client = SportradarHTTPClient(
-            session_state=manager.state,
+            session_state=make_state(),  # valid, non-expired token
             session_manager=manager,
             auto_refresh=True,
             transport=httpx.MockTransport(handler),
         )
 
-        payload = client.get_gismo("match_markets/61624678")
+        with self.assertRaises(SportradarHTTPError) as caught:
+            client.get_gismo("match_markets/61624678")
 
-        self.assertEqual(payload["queryUrl"], "match_markets/61624678")
-        self.assertEqual(manager.refreshes, 1)
-        self.assertEqual(client.metrics.refresh_count, 1)
-        self.assertEqual(client.metrics.success_count, 1)
+        self.assertTrue(caught.exception.validation.blocked)
+        self.assertEqual(manager.refreshes, 0)
+        self.assertEqual(client.metrics.refresh_count, 0)
 
     def test_allow_refresh_false_skips_bootstrap_on_blocked_payload(self) -> None:
         # Optional/live endpoints (allow_refresh=False) must never trigger a
@@ -160,24 +153,10 @@ class SportradarHTTPClientTests(unittest.TestCase):
         self.assertEqual(manager.refreshes, 0)
         self.assertEqual(client.metrics.refresh_count, 0)
 
-    def test_blocked_payload_on_last_retry_still_gets_one_refresh_attempt(self) -> None:
-        calls = 0
-
+    def test_expired_token_refreshes_before_request(self) -> None:
+        # An actually-expired cached token is the only thing that should bootstrap:
+        # it is refreshed once up front, then the request proceeds.
         def handler(request: httpx.Request) -> httpx.Response:
-            nonlocal calls
-            calls += 1
-            if calls == 1:
-                return httpx.Response(
-                    500,
-                    json={"error": "transient"},
-                    request=request,
-                )
-            if calls == 2:
-                return httpx.Response(
-                    200,
-                    json={"doc": [{"event": "Exception", "data": {"name": "Unauthorized", "code": 403}}]},
-                    request=request,
-                )
             return httpx.Response(
                 200,
                 json={"queryUrl": "match_markets/61624678", "doc": [{"event": "match_markets", "data": {}}]},
@@ -186,7 +165,35 @@ class SportradarHTTPClientTests(unittest.TestCase):
 
         manager = FakeManager()
         client = SportradarHTTPClient(
-            session_state=manager.state,
+            session_state=make_state(expired=True),
+            session_manager=manager,
+            auto_refresh=True,
+            transport=httpx.MockTransport(handler),
+        )
+
+        payload = client.get_gismo("match_markets/61624678")
+
+        self.assertEqual(payload["queryUrl"], "match_markets/61624678")
+        self.assertEqual(manager.refreshes, 1)
+        self.assertEqual(client.metrics.success_count, 1)
+
+    def test_transient_http_error_retries_without_bootstrap(self) -> None:
+        calls = 0
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            nonlocal calls
+            calls += 1
+            if calls == 1:
+                return httpx.Response(500, json={"error": "transient"}, request=request)
+            return httpx.Response(
+                200,
+                json={"queryUrl": "match_markets/61624678", "doc": [{"event": "match_markets", "data": {}}]},
+                request=request,
+            )
+
+        manager = FakeManager()
+        client = SportradarHTTPClient(
+            session_state=make_state(),  # valid token
             session_manager=manager,
             auto_refresh=True,
             retries=1,
@@ -196,9 +203,8 @@ class SportradarHTTPClientTests(unittest.TestCase):
         payload = client.get_gismo("match_markets/61624678")
 
         self.assertEqual(payload["queryUrl"], "match_markets/61624678")
-        self.assertEqual(calls, 3)
-        self.assertEqual(manager.refreshes, 1)
-        self.assertEqual(client.metrics.refresh_count, 1)
+        self.assertEqual(calls, 2)
+        self.assertEqual(manager.refreshes, 0)
 
     def test_empty_and_invalid_json_are_detected(self) -> None:
         responses = [
