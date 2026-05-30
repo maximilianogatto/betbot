@@ -25,6 +25,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 import json
 import logging
+import threading
 import time
 from typing import Any, Protocol
 from urllib.parse import urlparse, urlunparse
@@ -146,6 +147,9 @@ class SportradarHTTPClient:
         self.debug = debug
         self.metrics = RequestMetrics()
         self._transport = transport
+        # Guards session bootstrap so concurrent requests (parallel match fetch)
+        # never mint more than one token at a time.
+        self._refresh_lock = threading.Lock()
 
     @classmethod
     def with_bootstrap(
@@ -305,8 +309,14 @@ class SportradarHTTPClient:
                 validation=ResponseValidation(False, None, None, reason="refresh_unavailable"),
                 url="",
             )
-        self.state = self.session_manager.refresh_session()
-        logger.info("Sportradar HTTP session refreshed token_expiration=%s", self.state.token_expiration())
+        with self._refresh_lock:
+            # Double-check inside the lock: another thread may have already
+            # refreshed while we waited, so we avoid a second bootstrap.
+            token = self.state.signed_token if self.state is not None else None
+            if token is not None and not token.is_expired():
+                return self.state
+            self.state = self.session_manager.refresh_session()
+            logger.info("Sportradar HTTP session refreshed token_expiration=%s", self.state.token_expiration())
         return self.state
 
     def refresh_signed_url(self, url: str) -> str:
@@ -378,7 +388,17 @@ class SportradarHTTPClient:
         return validation.http_error or validation.empty or validation.invalid_json
 
     def _should_refresh(self, validation: ResponseValidation, *, allow_refresh: bool) -> bool:
-        return bool(self.auto_refresh and allow_refresh and (validation.blocked or validation.expired))
+        if not (self.auto_refresh and allow_refresh):
+            return False
+        if not (validation.blocked or validation.expired):
+            return False
+        # Only bootstrap (which can open a browser) when our token is actually
+        # missing or expired. A blocked/expired *payload* on a single endpoint
+        # while the cached token is still valid is an endpoint-specific issue
+        # (e.g. a flaky /common/ feed); re-minting the token would not help and
+        # would needlessly launch Chromium.
+        token = self.state.signed_token if self.state is not None else None
+        return token is None or token.is_expired()
 
     def metrics_json(self) -> dict[str, Any]:
         """Return request counters and endpoint timing summary as JSON-safe dict."""
