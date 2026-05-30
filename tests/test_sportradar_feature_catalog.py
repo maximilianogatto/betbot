@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from sandbox.sportradar_http.build_feature_catalog import render_feature_catalog
+from sandbox.sportradar_http_research.build_feature_catalog import render_feature_catalog
 
 
 class SportradarFeatureCatalogTests(unittest.TestCase):

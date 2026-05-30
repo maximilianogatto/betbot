@@ -4,7 +4,7 @@ from datetime import UTC, datetime, timedelta
 import json
 import unittest
 
-from sandbox.sportradar_http.session_manager import (
+from stats_providers.sportradar_http.engine.session_manager import (
     BootstrapConfig,
     CapturedEndpoint,
     DEFAULT_ORIGIN,

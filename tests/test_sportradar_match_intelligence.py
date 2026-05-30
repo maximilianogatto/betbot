@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import unittest
 
-from sandbox.sportradar_http.match_intelligence import build_match_intelligence
+from stats_providers.sportradar_http.engine.match_intelligence import build_match_intelligence
 
 
 class SportradarMatchIntelligenceTests(unittest.TestCase):
@@ -26,7 +26,7 @@ class SportradarMatchIntelligenceTests(unittest.TestCase):
         self.assertIn("22/06/24", report)
         self.assertIn("06/03/25", report)
         self.assertIn("12/04/26", report)
-        self.assertIn("Common opponent Team B", report)
+        self.assertIn("🆚 Team B", report)
 
     def test_output_is_json_serializable(self) -> None:
         intelligence = build_match_intelligence(_snapshot_fixture(), _features_fixture())

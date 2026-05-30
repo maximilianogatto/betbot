@@ -5,12 +5,12 @@ import unittest
 
 import httpx
 
-from sandbox.sportradar_http.http_client import (
+from stats_providers.sportradar_http.engine.http_client import (
     SportradarHTTPClient,
     SportradarHTTPError,
     summarize_payload,
 )
-from sandbox.sportradar_http.session_manager import (
+from stats_providers.sportradar_http.engine.session_manager import (
     DEFAULT_ORIGIN,
     DEFAULT_REFERER,
     SignedToken,
@@ -133,6 +133,32 @@ class SportradarHTTPClientTests(unittest.TestCase):
         self.assertEqual(manager.refreshes, 1)
         self.assertEqual(client.metrics.refresh_count, 1)
         self.assertEqual(client.metrics.success_count, 1)
+
+    def test_allow_refresh_false_skips_bootstrap_on_blocked_payload(self) -> None:
+        # Optional/live endpoints (allow_refresh=False) must never trigger a
+        # session bootstrap when the cached token is still valid: that bootstrap
+        # opens a browser and would not help an endpoint-specific block.
+        def handler(request: httpx.Request) -> httpx.Response:
+            return httpx.Response(
+                200,
+                json={"doc": [{"event": "Exception", "data": {"name": "Unauthorized", "code": 403}}]},
+                request=request,
+            )
+
+        manager = FakeManager()
+        client = SportradarHTTPClient(
+            session_state=make_state(),  # valid, non-expired token
+            session_manager=manager,
+            auto_refresh=True,
+            transport=httpx.MockTransport(handler),
+        )
+
+        with self.assertRaises(SportradarHTTPError) as caught:
+            client.get_gismo("stats_match_situation/1", allow_refresh=False)
+
+        self.assertTrue(caught.exception.validation.blocked)
+        self.assertEqual(manager.refreshes, 0)
+        self.assertEqual(client.metrics.refresh_count, 0)
 
     def test_blocked_payload_on_last_retry_still_gets_one_refresh_attempt(self) -> None:
         calls = 0

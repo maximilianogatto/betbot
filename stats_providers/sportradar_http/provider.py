@@ -1,6 +1,6 @@
 """Sportradar/Statshub stats provider adapter.
 
-The heavy lifting still lives in `sandbox/sportradar_http`, where the HTTP
+The heavy lifting still lives in `stats_providers/sportradar_http/engine`, where the HTTP
 bootstrap/replay research is isolated and tested. This adapter is the first
 production-facing seam: it translates sandbox outputs into the generic
 `StatsProvider` contract without touching bot commands or storage.
@@ -24,19 +24,26 @@ from core.stats_models import (
     StatsProviderCapabilities,
 )
 from core.stats_provider_base import StatsProvider
-from sandbox.sportradar_http.bot_ready.provider import (
+from stats_providers.sportradar_http.engine.bot_ready.provider import (
     BotReadyMatchRequest,
     BotReadyRuntimeConfig,
     BotReadyTournamentRequest,
     SportradarBotReadyProvider,
 )
-from sandbox.sportradar_http.endpoints.discovery import get_config_tree_mini
-from sandbox.sportradar_http.runtime import normalize_bootstrap_mode
-from sandbox.sportradar_http.tournament_navigation import build_tournament_tree
+from stats_providers.sportradar_http.engine.endpoints.discovery import get_config_tree_mini
+from stats_providers.sportradar_http.engine.runtime import normalize_bootstrap_mode
+from stats_providers.sportradar_http.engine.tournament_navigation import build_tournament_tree
 
 
 _T = TypeVar("_T")
 _MATCH_URL_RE = re.compile(r"/match/(\d+)")
+
+# Matching thresholds. Names are compared per side (home and away) so the pair
+# itself disambiguates short, repeated names (e.g. two "Canberra" clubs): a wrong
+# fixture fails because its *other* team will not clear the per-side floor.
+_PER_SIDE_FLOOR = 0.50
+_AUTO_COMBINED = 0.78
+_AUTO_GAP = 0.08
 
 
 class SportradarHttpStatsProvider(StatsProvider):
@@ -152,47 +159,116 @@ class SportradarHttpStatsProvider(StatsProvider):
             )
         if not league_id:
             return None
+        ranked = await self.rank_match_candidates(candidate, league_id=league_id)
+        if not ranked:
+            return None
+        best = ranked[0]
+        gap = best.confidence - ranked[1].confidence if len(ranked) > 1 else 1.0
+        # Only auto-link when the top candidate is both strong and unambiguous.
+        # Otherwise the caller should offer the ranked list for manual selection.
+        if best.confidence < _AUTO_COMBINED or gap < _AUTO_GAP:
+            return None
+        return best
+
+    async def rank_match_candidates(
+        self,
+        candidate: MatchIdentityCandidate,
+        *,
+        league_id: str,
+        limit: int = 5,
+    ) -> list[StatsMatchLink]:
+        """Rank league fixtures for an odds event using per-side name scoring.
+
+        A fixture is only a candidate when both the home and away names clear
+        `_PER_SIDE_FLOOR`; the combined score then orders the survivors. Returning
+        a ranked list lets the caller auto-link a confident top or fall back to
+        manual disambiguation when the field is close.
+        """
+
         fixtures = await self.list_fixtures(league_id)
-        best: tuple[float, StatsFixture, dict[str, Any]] | None = None
+        scored: list[tuple[float, StatsFixture, dict[str, Any]]] = []
         for fixture in fixtures:
-            home_similarity = _text_similarity(candidate.home, fixture.home)
-            away_similarity = _text_similarity(candidate.away, fixture.away)
+            home_score = _name_score(candidate.home, fixture.home)
+            away_score = _name_score(candidate.away, fixture.away)
+            if min(home_score, away_score) < _PER_SIDE_FLOOR:
+                continue
             kickoff_delta = _kickoff_delta_minutes(candidate.scheduled_at, fixture.scheduled_at)
             time_score = _time_score(kickoff_delta)
-            score = (home_similarity * 0.45) + (away_similarity * 0.45) + (time_score * 0.10)
+            combined = (home_score * 0.45) + (away_score * 0.45) + (time_score * 0.10)
             details = {
-                "home_similarity": round(home_similarity, 6),
-                "away_similarity": round(away_similarity, 6),
+                "home_similarity": round(home_score, 6),
+                "away_similarity": round(away_score, 6),
                 "kickoff_delta_minutes": kickoff_delta,
                 "time_score": round(time_score, 6),
             }
-            if best is None or score > best[0]:
-                best = (score, fixture, details)
-        if best is None or best[0] < 0.82:
-            return None
-        score, fixture, details = best
-        return StatsMatchLink(
-            provider=self.name,
-            stats_match_id=fixture.match_id,
-            stats_url=fixture.stats_url or self.build_match_url(fixture.match_id),
-            confidence=round(score, 6),
-            method="league_fixture_similarity",
-            home_similarity=details["home_similarity"],
-            away_similarity=details["away_similarity"],
-            kickoff_delta_minutes=details["kickoff_delta_minutes"],
-            raw_payload={
-                "candidate": {
-                    "home": candidate.home,
-                    "away": candidate.away,
-                    "scheduled_at": candidate.scheduled_at,
-                    "league_name": candidate.league_name,
-                    "platform": candidate.platform,
-                    "external_event_id": candidate.external_event_id,
+            scored.append((combined, fixture, details))
+        scored.sort(key=lambda item: item[0], reverse=True)
+        candidate_payload = {
+            "home": candidate.home,
+            "away": candidate.away,
+            "scheduled_at": candidate.scheduled_at,
+            "league_name": candidate.league_name,
+            "platform": candidate.platform,
+            "external_event_id": candidate.external_event_id,
+        }
+        return [
+            StatsMatchLink(
+                provider=self.name,
+                stats_match_id=fixture.match_id,
+                stats_url=fixture.stats_url or self.build_match_url(fixture.match_id),
+                confidence=round(combined, 6),
+                method="league_fixture_similarity",
+                home_similarity=details["home_similarity"],
+                away_similarity=details["away_similarity"],
+                kickoff_delta_minutes=details["kickoff_delta_minutes"],
+                raw_payload={
+                    "candidate": candidate_payload,
+                    "fixture": fixture.raw_payload,
+                    "score_details": details,
+                    "stats_home": fixture.home,
+                    "stats_away": fixture.away,
+                    "stats_scheduled_at": fixture.scheduled_at,
                 },
-                "fixture": fixture.raw_payload,
-                "score_details": details,
-            },
-        )
+            )
+            for combined, fixture, details in scored[:limit]
+        ]
+
+    async def ensure_session_fresh(self, *, min_ttl_seconds: float = 3600.0) -> bool:
+        """Proactively refresh the provider token if it expires within the window.
+
+        Returns True when a browser bootstrap was performed. Safe to call from a
+        background job so the token is minted off the user-facing request path.
+        """
+
+        ensure = getattr(self._runtime, "ensure_fresh_session", None)
+        if not callable(ensure):
+            return False
+        return await self._call(ensure, min_ttl_seconds=min_ttl_seconds)
+
+    async def count_matching_events(
+        self,
+        league_id: str,
+        candidates: list[MatchIdentityCandidate],
+    ) -> int:
+        """Count how many odds events have a plausible fixture in this league.
+
+        Fixtures are fetched once and each candidate is matched with the same
+        per-side floor used by `resolve_match`. Used to validate which of several
+        same-named leagues actually holds the tracked teams.
+        """
+
+        if not candidates:
+            return 0
+        fixtures = await self.list_fixtures(league_id)
+        matched = 0
+        for candidate in candidates:
+            for fixture in fixtures:
+                home_score = _name_score(candidate.home, fixture.home)
+                away_score = _name_score(candidate.away, fixture.away)
+                if min(home_score, away_score) >= _PER_SIDE_FLOOR:
+                    matched += 1
+                    break
+        return matched
 
     async def build_match_report(self, stats_match_id: str) -> MatchStatsReport:
         """Build a compact Telegram-ready report for one Statshub match."""
@@ -330,6 +406,31 @@ def _time_score(delta_minutes: float | None) -> float:
 
 def _text_similarity(left: str, right: str) -> float:
     return SequenceMatcher(a=_normalize_text(left), b=_normalize_text(right)).ratio()
+
+
+def _name_score(left: str, right: str) -> float:
+    """Score two team names, tolerant to one side abbreviating the other.
+
+    Sportradar tends to shorten names ("Newcastle") while sportsbooks pad them
+    ("Newcastle Olympic Warriors"). Character ratio punishes that length gap, so
+    we also measure token containment (are the shorter name's words a subset of
+    the longer's?) and keep whichever signal is stronger.
+    """
+
+    left_norm = _normalize_text(left)
+    right_norm = _normalize_text(right)
+    ratio = SequenceMatcher(a=left_norm, b=right_norm).ratio()
+    left_tokens = set(left_norm.split())
+    right_tokens = set(right_norm.split())
+    if not left_tokens or not right_tokens:
+        return ratio
+    shorter, longer = (
+        (left_tokens, right_tokens)
+        if len(left_tokens) <= len(right_tokens)
+        else (right_tokens, left_tokens)
+    )
+    containment = len(shorter & longer) / len(shorter)
+    return max(ratio, containment)
 
 
 def _normalize_text(value: Any) -> str:

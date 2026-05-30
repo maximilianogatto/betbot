@@ -5,12 +5,12 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from sandbox.sportradar_http.runtime import (
+from stats_providers.sportradar_http.engine.runtime import (
     BootstrapSessionManager,
     load_or_refresh_session_state,
     normalize_bootstrap_mode,
 )
-from sandbox.sportradar_http.session_manager import SignedToken, SportradarSessionState, save_session_state
+from stats_providers.sportradar_http.engine.session_manager import SignedToken, SportradarSessionState, save_session_state
 
 
 class SportradarRuntimeTests(unittest.TestCase):

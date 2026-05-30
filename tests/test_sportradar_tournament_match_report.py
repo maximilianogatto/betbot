@@ -4,7 +4,7 @@ from datetime import UTC, datetime
 import json
 import unittest
 
-from sandbox.sportradar_http.tournament_match_report import (
+from sandbox.sportradar_http_research.tournament_match_report import (
     build_tournament_match_package,
     render_tournament_match_report,
     select_fixture,

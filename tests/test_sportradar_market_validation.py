@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import unittest
 
-from sandbox.sportradar_http.market_validation import (
+from sandbox.sportradar_http_research.market_validation import (
     build_market_validation_report,
     build_sport_match_index,
     summarize_sport_markets,

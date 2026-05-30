@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from sandbox.sportradar_http.run_live_probe import build_live_probe_summary, render_live_probe_report
+from sandbox.sportradar_http_research.run_live_probe import build_live_probe_summary, render_live_probe_report
 
 
 class SportradarLiveProbeTests(unittest.TestCase):

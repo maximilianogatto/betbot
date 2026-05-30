@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import unittest
 
-from sandbox.sportradar_http.endpoints import discovery, live, matches, odds, standings, stats, tournaments
-from sandbox.sportradar_http.endpoints.catalog import ENDPOINT_SPECS, extract_doc_data, render_endpoint_catalog_v2
+from stats_providers.sportradar_http.engine.endpoints import discovery, live, matches, odds, standings, stats, tournaments
+from stats_providers.sportradar_http.engine.endpoints.catalog import ENDPOINT_SPECS, extract_doc_data, render_endpoint_catalog_v2
 
 
 class FakeClient:

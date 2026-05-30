@@ -3,8 +3,8 @@ from __future__ import annotations
 import json
 import unittest
 
-from sandbox.sportradar_http.features_engine import build_match_features
-from sandbox.sportradar_http.normalizers import (
+from stats_providers.sportradar_http.engine.features_engine import build_match_features
+from stats_providers.sportradar_http.engine.normalizers import (
     normalize_match_details,
     normalize_match_markets,
     normalize_match_metadata,
@@ -15,7 +15,7 @@ from sandbox.sportradar_http.normalizers import (
     normalize_team_recent_payload,
     normalize_team_scoring,
 )
-from sandbox.sportradar_http.run_match_pipeline import build_feature_quality
+from stats_providers.sportradar_http.engine.run_match_pipeline import build_feature_quality
 
 
 class SportradarHTTPMatchPipelineTests(unittest.TestCase):

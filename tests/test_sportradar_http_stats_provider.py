@@ -104,6 +104,55 @@ class SportradarHttpStatsProviderTests(unittest.TestCase):
         self.assertEqual(link.method, "league_fixture_similarity")
         self.assertGreaterEqual(link.confidence, 0.9)
 
+    def test_resolve_match_links_abbreviated_provider_name(self) -> None:
+        # Sportradar shortens names; the sportsbook pads them. Per-side token
+        # containment must still link "Sevilla Olympic Warriors" -> "Sevilla".
+        link = asyncio.run(
+            self.provider.resolve_match(
+                MatchIdentityCandidate(
+                    home="Sevilla Olympic Warriors",
+                    away="Real Madrid Reserves",
+                    scheduled_at="2026-05-24T17:00:00+00:00",
+                    league_name="LaLiga",
+                ),
+                league_id="8",
+            )
+        )
+
+        self.assertIsNotNone(link)
+        self.assertEqual(link.stats_match_id, "61624678")
+
+    def test_resolve_match_defers_when_candidates_are_ambiguous(self) -> None:
+        # Two fixtures share the home team and kickoff; the away name decides.
+        self.runtime.fixtures = [
+            {
+                "match_id": 1,
+                "home": {"name": "Newcastle"},
+                "away": {"name": "Sydney"},
+                "time": {"iso_utc": "2026-05-24T17:00:00+00:00"},
+                "status": {"in_livescore": False},
+            },
+            {
+                "match_id": 2,
+                "home": {"name": "Newcastle"},
+                "away": {"name": "Sidney"},
+                "time": {"iso_utc": "2026-05-24T17:00:00+00:00"},
+                "status": {"in_livescore": False},
+            },
+        ]
+        candidate = MatchIdentityCandidate(
+            home="Newcastle United",
+            away="Sydney FC",
+            scheduled_at="2026-05-24T17:00:00+00:00",
+            league_name="LaLiga",
+        )
+
+        link = asyncio.run(self.provider.resolve_match(candidate, league_id="8"))
+        ranked = asyncio.run(self.provider.rank_match_candidates(candidate, league_id="8"))
+
+        self.assertIsNone(link)
+        self.assertGreaterEqual(len(ranked), 2)
+
     def test_build_match_report_returns_compact_report(self) -> None:
         report = asyncio.run(self.provider.build_match_report("61624678"))
 

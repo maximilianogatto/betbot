@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import unittest
 
-from sandbox.sportradar_http.tournament_navigation import (
+from stats_providers.sportradar_http.engine.tournament_navigation import (
     build_tournament_navigation_snapshot,
     build_tournament_tree,
     render_tournament_navigation_report,

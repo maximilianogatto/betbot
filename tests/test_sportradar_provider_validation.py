@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import unittest
 
-from sandbox.sportradar_http.provider_validation import (
+from sandbox.sportradar_http_research.provider_validation import (
     build_validation_result,
     build_validation_summary,
     parse_validation_target,

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import unittest
 
-from sandbox.sportradar_http.features_engine import build_league_features
-from sandbox.sportradar_http.normalizers import (
+from stats_providers.sportradar_http.engine.features_engine import build_league_features
+from stats_providers.sportradar_http.engine.normalizers import (
     normalize_fixtures,
     normalize_formtable,
     normalize_league_summary,

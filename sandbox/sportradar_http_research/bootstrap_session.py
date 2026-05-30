@@ -1,0 +1,23 @@
+"""Thin CLI wrapper for `session_manager.main`.
+
+Kept as a short entrypoint so users can run:
+
+    ./betbot/bin/python stats_providers/sportradar_http/engine/bootstrap_session.py
+
+without importing from the package manually.
+"""
+
+from __future__ import annotations
+
+from pathlib import Path
+import sys
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from stats_providers.sportradar_http.engine.session_manager import main
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
