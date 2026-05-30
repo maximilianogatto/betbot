@@ -2,16 +2,18 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 import unittest
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
 from bot.handlers import (
     LINK_STATS_SELECTED_PROVIDER_CONTEXT_KEY,
+    LINK_STATS_SELECTED_TRACK_CONTEXT_KEY,
     MATCHES_ACTIVE_CONTEXT_KEY,
     MATCHES_SELECTED_TRACK_CONTEXT_KEY,
     SELECT_LEAGUE_FOR_STATS,
     SELECT_LEAGUE_FOR_LINK_STATS,
     STATS_ACTIVE_CONTEXT_KEY,
     STATS_SELECTED_TRACK_CONTEXT_KEY,
+    _extract_statshub_tournament_id,
     link_stats_enter_country,
     stats_select_match,
     stats_command,
@@ -101,6 +103,51 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
             event_number=1,
         )
         self.assertEqual(message.reply_text.await_args_list[1].args, ("Reporte interactivo",))
+
+    def test_extract_statshub_tournament_id(self) -> None:
+        url = "https://statshub.sportradar.com/bet365/es/sport/1/tournament/28743"
+        self.assertEqual(_extract_statshub_tournament_id(url), "28743")
+        self.assertIsNone(_extract_statshub_tournament_id("Estados Unidos"))
+        self.assertIsNone(_extract_statshub_tournament_id("https://statshub.sportradar.com/bet365/en/match/70673280"))
+
+    async def test_link_stats_links_by_statshub_url(self) -> None:
+        option = StatsLeagueOption(
+            provider="sportradar_statshub",
+            provider_display_name="Sportradar Statshub",
+            country_name="USA",
+            league_id="28743",
+            league_name="USL, League Two",
+        )
+        stats_service = SimpleNamespace(
+            describe_league=AsyncMock(return_value=option),
+            link_league=Mock(return_value=CommandResult(ok=True, message="✅ Liga de stats vinculada.")),
+        )
+        provider = StatsProviderDescriptor(
+            key="sportradar_statshub",
+            display_name="Sportradar Statshub",
+            capabilities=StatsProviderCapabilities(supports_league_discovery=True),
+        )
+        message = SimpleNamespace(
+            text="https://statshub.sportradar.com/bet365/es/sport/1/tournament/28743",
+            reply_text=AsyncMock(),
+        )
+        context = SimpleNamespace(
+            user_data={
+                LINK_STATS_SELECTED_PROVIDER_CONTEXT_KEY: provider,
+                LINK_STATS_SELECTED_TRACK_CONTEXT_KEY: _tracked_subscription(),
+            },
+        )
+        update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
+
+        with patch("bot.handlers.get_stats_service", return_value=stats_service):
+            state = await link_stats_enter_country(update, context)
+
+        self.assertEqual(state, -1)
+        stats_service.describe_league.assert_awaited_once_with(
+            provider_key="sportradar_statshub", league_id="28743"
+        )
+        stats_service.link_league.assert_called_once()
+        self.assertIn("vinculada", message.reply_text.await_args.args[0])
 
     async def test_link_stats_country_reports_sportradar_bootstrap_failure(self) -> None:
         stats_service = SimpleNamespace(

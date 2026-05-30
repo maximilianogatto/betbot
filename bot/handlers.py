@@ -91,7 +91,7 @@ HELP_MESSAGE = (
     "/track_url <url> - Extrae una liga de una plataforma soportada y la deja pendiente\n"
     "/confirm_track - Confirma la última liga pendiente\n"
     "/confirm_empty_track - Confirma una liga válida pero vacía\n"
-    "/link_stats - Vincula una liga trackeada con un provider de estadísticas\n"
+    "/link_stats - Vincula una liga trackeada con stats (por país o pegando una URL de Statshub)\n"
     "/stats_links - Lista las ligas vinculadas con stats\n"
     "/list_tracks - Lista las ligas trackeadas\n"
     "/competition_url <n> - Muestra la URL original de una liga trackeada\n"
@@ -817,6 +817,16 @@ async def track_league_select_league(
     return ConversationHandler.END
 
 
+_STATSHUB_TOURNAMENT_RE = re.compile(r"statshub\.sportradar\.com/\S*?/tournament/(\d+)", re.IGNORECASE)
+
+
+def _extract_statshub_tournament_id(text: str) -> str | None:
+    """Extract a Statshub tournament id from a pasted URL, or None if not a URL."""
+
+    match = _STATSHUB_TOURNAMENT_RE.search(text or "")
+    return match.group(1) if match else None
+
+
 async def link_stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Start `/link_stats` odds-track -> stats-league linking."""
 
@@ -929,8 +939,9 @@ async def link_stats_select_provider(update: Update, context: ContextTypes.DEFAU
     await update.message.reply_text(
         (
             f"Provider elegido: {selected_provider.display_name}\n\n"
-            "Escribí el país para buscar ligas de stats.\n"
-            "Ejemplos: Spain, Australia, Argentina, England"
+            "Escribí el país para buscar ligas de stats (ej: Spain, Australia, England)\n"
+            "o pegá una URL de Statshub para vincular directo, por ejemplo:\n"
+            "https://statshub.sportradar.com/bet365/es/sport/1/tournament/28743"
         ),
         reply_markup=ReplyKeyboardRemove(),
     )
@@ -954,13 +965,50 @@ async def link_stats_enter_country(update: Update, context: ContextTypes.DEFAULT
 
     country_name = (update.message.text or "").strip()
     if not country_name:
-        await update.message.reply_text("Escribí un país válido.")
+        await update.message.reply_text("Escribí un país válido o pegá una URL de Statshub.")
         return ENTER_COUNTRY_FOR_LINK_STATS
 
     stats_service = get_stats_service(context)
+    selected_track = context.user_data.get(LINK_STATS_SELECTED_TRACK_CONTEXT_KEY)
+
+    # Direct link by pasted Statshub tournament URL, bypassing country discovery
+    # (which omits some valid tournaments, e.g. USL League Two).
+    tournament_id = _extract_statshub_tournament_id(country_name)
+    if tournament_id is not None:
+        if not isinstance(selected_track, TrackedCompetitionSubscription):
+            await update.message.reply_text(
+                "No encontré la liga de odds seleccionada. Probá de nuevo con /link_stats.",
+                reply_markup=ReplyKeyboardRemove(),
+            )
+            _clear_all_selection_context(context)
+            return ConversationHandler.END
+        await update.message.reply_text(f"Resolviendo torneo de Statshub id={tournament_id}...")
+        try:
+            option = await stats_service.describe_league(
+                provider_key=selected_provider.key,
+                league_id=tournament_id,
+            )
+        except Exception:
+            logger.exception("Stats league describe-by-url failed id=%s", tournament_id)
+            option = None
+        if option is None:
+            await update.message.reply_text(
+                f"No pude resolver el torneo id={tournament_id} en {selected_provider.display_name}.\n"
+                "Verificá la URL de Statshub o probá con el país.",
+                reply_markup=ReplyKeyboardRemove(),
+            )
+            _clear_all_selection_context(context)
+            return ConversationHandler.END
+        result = stats_service.link_league(
+            tracked_competition_id=selected_track.tracked_league.id,
+            option=option,
+        )
+        await update.message.reply_text(result.message, reply_markup=ReplyKeyboardRemove())
+        _clear_all_selection_context(context)
+        return ConversationHandler.END
+
     await update.message.reply_text(f"Buscando ligas de stats en {country_name}...")
 
-    selected_track = context.user_data.get(LINK_STATS_SELECTED_TRACK_CONTEXT_KEY)
     odds_league_name = None
     sample_events: list[MatchIdentityCandidate] = []
     if isinstance(selected_track, TrackedCompetitionSubscription):

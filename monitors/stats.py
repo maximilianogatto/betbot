@@ -154,6 +154,15 @@ class StatsService:
 
         return options
 
+    async def describe_league(self, *, provider_key: str, league_id: str) -> StatsLeagueOption | None:
+        """Resolve a provider-native league id (e.g. from a pasted URL) to an option."""
+
+        provider = self.provider_registry.get(provider_key)
+        describe = getattr(provider, "describe_league", None)
+        if not callable(describe):
+            return None
+        return await describe(league_id)
+
     def link_league(
         self,
         *,

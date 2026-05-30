@@ -136,6 +136,41 @@ class SportradarHttpStatsProvider(StatsProvider):
             return fixtures[:limit]
         return fixtures
 
+    async def describe_league(self, league_id: str) -> StatsLeagueOption | None:
+        """Resolve a Statshub tournament id to a linkable league option.
+
+        Used to link a league directly from a pasted Statshub URL, bypassing the
+        country-based discovery list (which omits some valid tournaments such as
+        USL League Two). Returns None when the id cannot be resolved.
+        """
+
+        try:
+            request = BotReadyTournamentRequest(
+                sport_id=self.sport_id,
+                tournament_id=int(league_id),
+                category_id=self.category_id,
+                depth=0,
+            )
+        except (TypeError, ValueError):
+            return None
+        payload = await self._call(self._runtime.get_tournament_navigation, request)
+        snapshot = payload.get("snapshot") if isinstance(payload, dict) else {}
+        resolved = snapshot.get("resolved_tournament") if isinstance(snapshot, dict) else {}
+        if not isinstance(resolved, dict) or not resolved.get("found"):
+            return None
+        primary = resolved.get("primary") if isinstance(resolved.get("primary"), dict) else {}
+        name = primary.get("name") or f"Tournament {league_id}"
+        return StatsLeagueOption(
+            provider=self.name,
+            provider_display_name=self.display_name,
+            country_name=primary.get("country_name"),
+            league_id=str(league_id),
+            league_name=str(name),
+            season_id=_string_id(primary.get("season_id") or resolved.get("season_id")),
+            source_url=f"https://statshub.sportradar.com/bet365/en/sport/{self.sport_id}/tournament/{league_id}",
+            raw_payload=primary or resolved,
+        )
+
     async def resolve_match(
         self,
         candidate: MatchIdentityCandidate,
