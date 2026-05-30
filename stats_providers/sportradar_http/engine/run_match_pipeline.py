@@ -15,13 +15,34 @@ not send Telegram messages.
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime
 import json
+import os
 from pathlib import Path
 import sys
 from typing import Any, Callable
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+DEFAULT_MATCH_FETCH_CONCURRENCY = 5
+
+
+def _match_fetch_concurrency() -> int:
+    """Resolve the parallel match-fetch cap (env `SPORTRADAR_MATCH_FETCH_CONCURRENCY`).
+
+    A moderate cap (default 5) speeds the report up several-fold while mimicking a
+    real browser's parallel XHRs — gentler on anti-bot filters than either a
+    serial trickle or a 20-request burst — and keeps peak memory bounded.
+    """
+
+    raw = os.getenv("SPORTRADAR_MATCH_FETCH_CONCURRENCY")
+    if raw is None:
+        return DEFAULT_MATCH_FETCH_CONCURRENCY
+    try:
+        return max(1, int(raw))
+    except ValueError:
+        return DEFAULT_MATCH_FETCH_CONCURRENCY
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -213,11 +234,26 @@ def fetch_match_payloads(
             match_id=args.match_id,
         )
 
-    for name, call in optional_calls.items():
-        try:
-            payloads[name] = call()
-        except Exception as exc:  # Research pipeline: keep going and expose endpoint gaps.
-            errors[name] = repr(exc)
+    # Optional calls are independent (they only need match_id + the ids resolved
+    # above), so fetch them with a bounded thread pool. Result/error dict writes
+    # stay on this thread; only the HTTP calls run concurrently.
+    cap = min(_match_fetch_concurrency(), len(optional_calls)) if optional_calls else 1
+    if cap <= 1:
+        for name, call in optional_calls.items():
+            try:
+                payloads[name] = call()
+            except Exception as exc:  # Research pipeline: keep going and expose endpoint gaps.
+                errors[name] = repr(exc)
+        return payloads, errors
+
+    with ThreadPoolExecutor(max_workers=cap, thread_name_prefix="sr-match-fetch") as executor:
+        future_to_name = {executor.submit(call): name for name, call in optional_calls.items()}
+        for future in as_completed(future_to_name):
+            name = future_to_name[future]
+            try:
+                payloads[name] = future.result()
+            except Exception as exc:  # Research pipeline: keep going and expose endpoint gaps.
+                errors[name] = repr(exc)
     return payloads, errors
 
 

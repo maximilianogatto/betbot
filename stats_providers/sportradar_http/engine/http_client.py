@@ -25,6 +25,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 import json
 import logging
+import threading
 import time
 from typing import Any, Protocol
 from urllib.parse import urlparse, urlunparse
@@ -146,6 +147,9 @@ class SportradarHTTPClient:
         self.debug = debug
         self.metrics = RequestMetrics()
         self._transport = transport
+        # Guards session bootstrap so concurrent requests (parallel match fetch)
+        # never mint more than one token at a time.
+        self._refresh_lock = threading.Lock()
 
     @classmethod
     def with_bootstrap(
@@ -305,8 +309,14 @@ class SportradarHTTPClient:
                 validation=ResponseValidation(False, None, None, reason="refresh_unavailable"),
                 url="",
             )
-        self.state = self.session_manager.refresh_session()
-        logger.info("Sportradar HTTP session refreshed token_expiration=%s", self.state.token_expiration())
+        with self._refresh_lock:
+            # Double-check inside the lock: another thread may have already
+            # refreshed while we waited, so we avoid a second bootstrap.
+            token = self.state.signed_token if self.state is not None else None
+            if token is not None and not token.is_expired():
+                return self.state
+            self.state = self.session_manager.refresh_session()
+            logger.info("Sportradar HTTP session refreshed token_expiration=%s", self.state.token_expiration())
         return self.state
 
     def refresh_signed_url(self, url: str) -> str:

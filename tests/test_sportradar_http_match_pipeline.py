@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import threading
+import types
 import unittest
 
 from stats_providers.sportradar_http.engine.features_engine import build_match_features
@@ -15,7 +17,74 @@ from stats_providers.sportradar_http.engine.normalizers import (
     normalize_team_recent_payload,
     normalize_team_scoring,
 )
-from stats_providers.sportradar_http.engine.run_match_pipeline import build_feature_quality
+from stats_providers.sportradar_http.engine.run_match_pipeline import (
+    build_feature_quality,
+    fetch_match_payloads,
+)
+
+
+class _FakeConcurrentClient:
+    """Minimal client recording max concurrency; raises for one endpoint."""
+
+    def __init__(self, *, fail_contains: str | None = None) -> None:
+        self.fail_contains = fail_contains
+        self._active = 0
+        self._lock = threading.Lock()
+        self.max_active = 0
+
+    def get_gismo(self, endpoint_path, *, namespace="bet365", timezone="Etc:UTC", allow_refresh=True):
+        with self._lock:
+            self._active += 1
+            self.max_active = max(self.max_active, self._active)
+        try:
+            import time
+
+            time.sleep(0.02)  # let calls overlap so concurrency is observable
+            if self.fail_contains and self.fail_contains in endpoint_path:
+                raise RuntimeError("boom")
+            # match_info/snapshot carry team uids + season so the full fan-out runs.
+            return {
+                "doc": [
+                    {
+                        "data": {
+                            "match": {
+                                "_id": 10,
+                                "_seasonid": 99,
+                                "teams": {
+                                    "home": {"uid": 1, "name": "Team A"},
+                                    "away": {"uid": 2, "name": "Team B"},
+                                },
+                            }
+                        }
+                    }
+                ]
+            }
+        finally:
+            with self._lock:
+                self._active -= 1
+
+
+class SportradarParallelFetchTests(unittest.TestCase):
+    def test_parallel_fetch_collects_all_and_captures_errors(self) -> None:
+        import os
+
+        client = _FakeConcurrentClient(fail_contains="match_markets")
+        args = types.SimpleNamespace(match_id=10, lastx=8, nextx=2, top_players=8, max_timeline_events=120)
+        os.environ["SPORTRADAR_MATCH_FETCH_CONCURRENCY"] = "5"
+        try:
+            payloads, errors = fetch_match_payloads(client, args)
+        finally:
+            os.environ.pop("SPORTRADAR_MATCH_FETCH_CONCURRENCY", None)
+
+        # Required match info/snapshot present; the failing endpoint is captured.
+        self.assertIn("match_info", payloads)
+        self.assertIn("match_snapshot", payloads)
+        self.assertIn("match_markets", errors)
+        # The team/season fan-out ran (uids + season resolved from match info).
+        self.assertIn("home_lastx", payloads)
+        self.assertIn("away_top_goals", payloads)
+        # Concurrency actually happened (more than one in flight at once).
+        self.assertGreater(client.max_active, 1)
 
 
 class SportradarHTTPMatchPipelineTests(unittest.TestCase):
