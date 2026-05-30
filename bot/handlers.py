@@ -939,8 +939,11 @@ async def link_stats_select_provider(update: Update, context: ContextTypes.DEFAU
     await update.message.reply_text(
         (
             f"Provider elegido: {selected_provider.display_name}\n\n"
-            "Escribí el país para buscar ligas de stats (ej: Spain, Australia, England)\n"
-            "o pegá una URL de Statshub para vincular directo, por ejemplo:\n"
+            "Tenés 2 formas de vincular:\n\n"
+            "1) Escribí el país para buscar (ej: Spain, Australia, England).\n\n"
+            "2) Si la liga no aparece, buscala manualmente en la página de fútbol del proveedor:\n"
+            "https://statshub.sportradar.com/bet365/es/sport/1\n"
+            "abrí la liga y pegá acá su URL, por ejemplo:\n"
             "https://statshub.sportradar.com/bet365/es/sport/1/tournament/28743"
         ),
         reply_markup=ReplyKeyboardRemove(),
@@ -1071,7 +1074,9 @@ async def link_stats_enter_country(update: Update, context: ContextTypes.DEFAULT
     if not options:
         await update.message.reply_text(
             f"No encontré ligas de stats para {country_name} en {selected_provider.display_name}.\n\n"
-            "Probá con otro nombre de país o /cancel.",
+            "Probá con otro nombre de país, o buscala manualmente en:\n"
+            "https://statshub.sportradar.com/bet365/es/sport/1\n"
+            "abrí la liga y pegá acá su URL para vincularla. (/cancel para salir)",
         )
         return ENTER_COUNTRY_FOR_LINK_STATS
 
