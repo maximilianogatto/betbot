@@ -3,10 +3,13 @@ from __future__ import annotations
 import json
 import unittest
 
+from dataclasses import replace
+
 from bot.alerts import (
     build_match_reminder_alert_message,
     format_display_datetime,
     format_kickoff_labels,
+    format_kickoff_text,
     split_telegram_message,
 )
 from storage.tracking_repository import ActiveEventRecord, TrackedCompetition
@@ -64,6 +67,21 @@ def _match_with_markets(markets_payload: dict[str, object] | None) -> ActiveEven
 
 
 class BotAlertsTests(unittest.TestCase):
+    def test_format_kickoff_text_converts_utc_to_display_timezone(self) -> None:
+        # Real bug: kickoff at 23:15 UTC was shown as 23:15 instead of the local
+        # 20:15 (Argentina, UTC-3). Must convert from the offset-aware timestamp.
+        match = replace(
+            _match_with_markets(None),
+            scheduled_at="2026-05-30T23:15:00+00:00",
+            scheduled_label_date="2026-05-30",
+            scheduled_label_time="23:15",
+        )
+
+        text = format_kickoff_text(match)
+
+        self.assertIn("20:15", text)
+        self.assertNotIn("23:15", text)
+
     def test_format_kickoff_labels_uses_short_visible_format(self) -> None:
         self.assertEqual(
             format_kickoff_labels("2026-05-12", "19:00"),
