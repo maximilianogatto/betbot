@@ -8,9 +8,11 @@ from bot.config import Settings
 from bot.error_handler import handle_error
 from bot.handlers import register_handlers
 from bot.jobs import (
+    start_stats_prefetch,
     start_stats_session_refresh,
     start_tracking_monitor,
     start_resource_monitor,
+    stop_stats_prefetch,
     stop_stats_session_refresh,
     stop_tracking_monitor,
     stop_resource_monitor,
@@ -72,10 +74,19 @@ def create_application(settings: Settings) -> Application:
             interval_seconds=1800,
             min_ttl_seconds=5400.0,
         )
+        # Daily prefetch: warm every stats-linked league (overview + reports of its
+        # tracked matches) into the cache so /stats never hits the provider on demand.
+        await start_stats_prefetch(
+            application,
+            enabled=settings.stats_prefetch_enabled,
+            interval_seconds=settings.stats_prefetch_interval_seconds,
+            ttl_seconds=settings.stats_prefetch_ttl_seconds,
+        )
 
     async def post_shutdown(application: Application) -> None:
         """Stop background monitoring when the bot shuts down."""
 
+        await stop_stats_prefetch(application)
         await stop_stats_session_refresh(application)
         await stop_resource_monitor(application)
         await stop_tracking_monitor(application)

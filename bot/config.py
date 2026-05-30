@@ -48,6 +48,9 @@ class Settings:
     monitor_interval_seconds: int = 60
     monitor_log_to_file: bool = False
     monitor_chromium_ram_alert_mb: float = 800.0
+    stats_prefetch_enabled: bool = True
+    stats_prefetch_interval_seconds: int = 86400
+    stats_prefetch_ttl_seconds: float = 90000.0
 
 
 def load_settings() -> Settings:
@@ -196,6 +199,15 @@ def load_settings() -> Settings:
         os.getenv("MONITOR_CHROMIUM_RAM_ALERT_MB", "800"),
         variable_name="MONITOR_CHROMIUM_RAM_ALERT_MB",
     )
+    stats_prefetch_enabled = _parse_bool(os.getenv("STATS_PREFETCH_ENABLED", "true"))
+    stats_prefetch_interval_seconds = _parse_positive_int(
+        os.getenv("STATS_PREFETCH_INTERVAL_SECONDS", "86400"),
+        variable_name="STATS_PREFETCH_INTERVAL_SECONDS",
+    )
+    stats_prefetch_ttl_seconds = _parse_positive_float(
+        os.getenv("STATS_PREFETCH_TTL_SECONDS", "90000"),
+        variable_name="STATS_PREFETCH_TTL_SECONDS",
+    )
 
     if not telegram_bot_token:
         raise ValueError(
@@ -237,6 +249,9 @@ def load_settings() -> Settings:
         monitor_interval_seconds=monitor_interval_seconds,
         monitor_log_to_file=monitor_log_to_file,
         monitor_chromium_ram_alert_mb=monitor_chromium_ram_alert_mb,
+        stats_prefetch_enabled=stats_prefetch_enabled,
+        stats_prefetch_interval_seconds=stats_prefetch_interval_seconds,
+        stats_prefetch_ttl_seconds=stats_prefetch_ttl_seconds,
     )
 
 

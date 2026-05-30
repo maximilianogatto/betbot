@@ -105,6 +105,39 @@ class StatsServiceTests(unittest.TestCase):
         tracking_repository_module.DATA_DIR = self.old_data_dir
         self.tmp.cleanup()
 
+    def test_warm_tracked_leagues_prefetches_and_links(self) -> None:
+        options = asyncio.run(
+            self.service.search_leagues(provider_key="sportradar_statshub", country_name="Spain")
+        )
+        self.service.link_league(
+            tracked_competition_id=self.subscription.tracked_league.id, option=options[0]
+        )
+        self.repository.upsert_active_events(
+            self.subscription.tracked_league.id,
+            [
+                ActiveEventUpsert(
+                    external_event_id="fx-future",
+                    home="Sevilla",
+                    away="Real Madrid",
+                    scheduled_label_date="07/06",
+                    scheduled_label_time="03:00",
+                    scheduled_at="2099-06-07T03:00:00+00:00",
+                    odds_home=2.0,
+                    odds_draw=3.0,
+                    odds_away=3.0,
+                    raw_payload={},
+                )
+            ],
+        )
+        event = self.repository.get_active_events(self.subscription.tracked_league.id, only_future=True)[0]
+
+        summary = asyncio.run(self.service.warm_tracked_leagues(ttl_seconds=1000))
+
+        self.assertGreaterEqual(summary["leagues"], 1)
+        self.assertGreaterEqual(summary["reports"], 1)
+        # The resolved stats match link was persisted during prefetch.
+        self.assertIsNotNone(self.repository.get_stats_match_link(event.id))
+
     def test_link_league_persists_option(self) -> None:
         options = asyncio.run(
             self.service.search_leagues(provider_key="sportradar_statshub", country_name="Spain")

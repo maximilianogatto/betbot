@@ -170,7 +170,13 @@ class SportradarHttpStatsProvider(StatsProvider):
                 break
         return options
 
-    async def list_fixtures(self, league_id: str, *, limit: int | None = None) -> list[StatsFixture]:
+    async def list_fixtures(
+        self,
+        league_id: str,
+        *,
+        limit: int | None = None,
+        cache_ttl: float | None = None,
+    ) -> list[StatsFixture]:
         """List known fixtures for one Statshub tournament id."""
 
         request = BotReadyTournamentRequest(
@@ -180,7 +186,9 @@ class SportradarHttpStatsProvider(StatsProvider):
             depth=0,
         )
         cache_key = f"{self.name}:tournament_nav:{self.sport_id}:{self.category_id}:{league_id}"
-        payload = await self._cached_payload(cache_key, self._runtime.get_tournament_navigation, request)
+        payload = await self._cached_payload(
+            cache_key, self._runtime.get_tournament_navigation, request, ttl_seconds=cache_ttl
+        )
         raw_fixtures = payload.get("fixtures") if isinstance(payload, dict) else []
         fixtures = [self._fixture_from_mapping(league_id, item) for item in raw_fixtures or []]
         fixtures = [fixture for fixture in fixtures if fixture.match_id]
@@ -188,7 +196,7 @@ class SportradarHttpStatsProvider(StatsProvider):
             return fixtures[:limit]
         return fixtures
 
-    async def get_league_overview(self, league_id: str) -> dict[str, Any] | None:
+    async def get_league_overview(self, league_id: str, *, cache_ttl: float | None = None) -> dict[str, Any] | None:
         """Return a cached league overview: standings, fixtures, top scorers, teams.
 
         Combines the (cached) tournament navigation — which resolves the current
@@ -210,6 +218,7 @@ class SportradarHttpStatsProvider(StatsProvider):
                 category_id=self.category_id,
                 depth=0,
             ),
+            ttl_seconds=cache_ttl,
         )
         resolved = {}
         if isinstance(nav, dict):
@@ -226,6 +235,7 @@ class SportradarHttpStatsProvider(StatsProvider):
             snap_key,
             self._runtime.get_league_snapshot,
             BotReadyLeagueRequest(sport_id=self.sport_id, tournament_id=tournament_id, season_id=int(season_id)),
+            ttl_seconds=cache_ttl,
         )
         snapshot = snap_payload.get("snapshot") if isinstance(snap_payload, dict) else {}
         if not isinstance(snapshot, dict):
@@ -411,7 +421,7 @@ class SportradarHttpStatsProvider(StatsProvider):
                     break
         return matched
 
-    async def build_match_report(self, stats_match_id: str) -> MatchStatsReport:
+    async def build_match_report(self, stats_match_id: str, *, cache_ttl: float | None = None) -> MatchStatsReport:
         """Build a compact Telegram-ready report for one Statshub match."""
 
         cache_key = f"{self.name}:match_report:{stats_match_id}"
@@ -419,6 +429,7 @@ class SportradarHttpStatsProvider(StatsProvider):
             cache_key,
             self._runtime.get_match_report,
             BotReadyMatchRequest(match_id=int(stats_match_id)),
+            ttl_seconds=cache_ttl,
         )
         snapshot = payload.get("snapshot") if isinstance(payload, dict) else {}
         intelligence = payload.get("intelligence") if isinstance(payload, dict) else {}

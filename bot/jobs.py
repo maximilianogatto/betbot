@@ -25,6 +25,7 @@ logger = logging.getLogger(__name__)
 TRACKING_MONITOR_TASK_KEY = "tracking_monitor_task"
 RESOURCE_MONITOR_TASK_KEY = "resource_monitor_task"
 STATS_SESSION_TASK_KEY = "stats_session_refresh_task"
+STATS_PREFETCH_TASK_KEY = "stats_prefetch_task"
 TRACKING_SERVICE_KEY = "tracking_service"
 STATS_SERVICE_KEY = "stats_service"
 
@@ -172,6 +173,89 @@ async def stop_stats_session_refresh(application: Application) -> None:
     except asyncio.CancelledError:
         logger.info("Stats session pre-refresh loop stopped.")
     application.bot_data.pop(STATS_SESSION_TASK_KEY, None)
+
+
+async def start_stats_prefetch(
+    application: Application,
+    *,
+    enabled: bool,
+    interval_seconds: int,
+    ttl_seconds: float,
+    initial_delay_seconds: float = 90.0,
+) -> None:
+    """Start the daily stats prefetch loop (warm tracked leagues) if enabled."""
+
+    if not enabled:
+        logger.info("Stats daily prefetch is disabled.")
+        return
+
+    existing_task = application.bot_data.get(STATS_PREFETCH_TASK_KEY)
+    if isinstance(existing_task, asyncio.Task) and not existing_task.done():
+        return
+
+    task = asyncio.create_task(
+        _stats_prefetch_loop(
+            application,
+            interval_seconds=interval_seconds,
+            ttl_seconds=ttl_seconds,
+            initial_delay_seconds=initial_delay_seconds,
+        ),
+        name="stats-prefetch-loop",
+    )
+    application.bot_data[STATS_PREFETCH_TASK_KEY] = task
+    logger.info(
+        "Stats daily prefetch loop started interval_seconds=%s ttl_seconds=%s.",
+        interval_seconds,
+        ttl_seconds,
+    )
+
+
+async def stop_stats_prefetch(application: Application) -> None:
+    """Stop the daily stats prefetch loop if running."""
+
+    task = application.bot_data.get(STATS_PREFETCH_TASK_KEY)
+    if not isinstance(task, asyncio.Task):
+        return
+    task.cancel()
+    try:
+        await task
+    except asyncio.CancelledError:
+        logger.info("Stats daily prefetch loop stopped.")
+    application.bot_data.pop(STATS_PREFETCH_TASK_KEY, None)
+
+
+async def _stats_prefetch_loop(
+    application: Application,
+    *,
+    interval_seconds: int,
+    ttl_seconds: float,
+    initial_delay_seconds: float,
+) -> None:
+    """Warm all stats-linked tracked leagues into the cache once per interval."""
+
+    stats_service = application.bot_data.get(STATS_SERVICE_KEY)
+    if not isinstance(stats_service, StatsService):
+        logger.error("StatsService is not configured; daily prefetch will not run.")
+        return
+
+    if initial_delay_seconds > 0:
+        await asyncio.sleep(initial_delay_seconds)
+
+    while True:
+        try:
+            summary = await stats_service.warm_tracked_leagues(ttl_seconds=ttl_seconds)
+            logger.info(
+                "Stats prefetch cycle finished leagues=%s reports=%s skipped=%s errors=%s",
+                summary.get("leagues"),
+                summary.get("reports"),
+                summary.get("skipped"),
+                summary.get("errors"),
+            )
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            logger.exception("Unhandled error during stats prefetch cycle.")
+        await asyncio.sleep(interval_seconds)
 
 
 async def _stats_session_refresh_loop(

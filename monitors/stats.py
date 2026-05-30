@@ -166,6 +166,85 @@ class StatsService:
             return None
         return await getter(league_id)
 
+    async def warm_tracked_leagues(self, *, ttl_seconds: float = 90000.0) -> dict[str, int]:
+        """Prefetch and cache stats for every stats-linked tracked league (daily job).
+
+        For each linked league: caches the league overview, then resolves and
+        prewarms the match report for each active/upcoming odds event with a long
+        TTL. So `/stats` and `/explore_stats` serve from the DB and the provider is
+        only hit once per day (anti-ban). Ambiguous matches are left for manual /stats.
+        """
+
+        summary = {"leagues": 0, "reports": 0, "skipped": 0, "errors": 0}
+        try:
+            competitions = self.repository.list_globally_active_competitions()
+        except Exception:
+            logger.exception("Prefetch could not list tracked competitions")
+            return summary
+
+        for tracked in competitions:
+            link = self.repository.get_stats_league_link(tracked.id)
+            if link is None:
+                continue
+            try:
+                provider = self.provider_registry.get(link.stats_provider)
+            except ValueError:
+                continue
+            summary["leagues"] += 1
+
+            getter = getattr(provider, "get_league_overview", None)
+            if callable(getter):
+                try:
+                    await getter(link.stats_league_id, cache_ttl=ttl_seconds)
+                except Exception:
+                    logger.exception("Prefetch league overview failed competition=%s", tracked.id)
+                    summary["errors"] += 1
+
+            try:
+                events = self.repository.get_active_events(tracked.id, only_future=True)
+            except Exception:
+                logger.exception("Prefetch could not load active events competition=%s", tracked.id)
+                events = []
+            for event in events:
+                try:
+                    warmed = await self._warm_event_report(provider, link, tracked, event, ttl_seconds)
+                    summary["reports" if warmed else "skipped"] += 1
+                except Exception:
+                    logger.exception("Prefetch report failed event=%s", getattr(event, "id", "?"))
+                    summary["errors"] += 1
+        return summary
+
+    async def _warm_event_report(self, provider, link, tracked, event, ttl_seconds: float) -> bool:
+        """Resolve one odds event to a stats match and prewarm its report. True if warmed."""
+
+        stored = self.repository.get_stats_match_link(event.id)
+        if stored is not None and stored.stats_provider == link.stats_provider:
+            stats_match_id = stored.stats_match_id
+        else:
+            candidate = MatchIdentityCandidate(
+                home=event.home,
+                away=event.away,
+                scheduled_at=event.scheduled_at,
+                league_name=tracked.competition_name,
+                stats_url=event.stats_url,
+                platform=event.platform,
+                external_event_id=event.external_event_id,
+            )
+            resolved = await provider.resolve_match(candidate, league_id=link.stats_league_id)
+            if resolved is None:
+                return False  # ambiguous / no confident match -> leave for manual /stats
+            self._persist_match_link(event.id, resolved)
+            stats_match_id = resolved.stats_match_id
+
+        build = getattr(provider, "build_match_report", None)
+        if not callable(build):
+            return False
+        try:
+            await build(stats_match_id, cache_ttl=ttl_seconds)
+        except TypeError:
+            await build(stats_match_id)
+        return True
+
     async def describe_league(self, *, provider_key: str, league_id: str) -> StatsLeagueOption | None:
         """Resolve a provider-native league id (e.g. from a pasted URL) to an option."""
 
