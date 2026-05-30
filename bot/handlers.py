@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import asyncio
+from difflib import SequenceMatcher
 import logging
+import re
+import unicodedata
 
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.constants import ParseMode
@@ -25,7 +28,7 @@ from bot.alerts import (
 )
 from core.extractor_base import CompetitionUnavailableError, LeagueDiscoveryOption
 from core.models import PlatformDescriptor
-from core.stats_models import StatsLeagueOption, StatsProviderDescriptor
+from core.stats_models import MatchIdentityCandidate, StatsLeagueOption, StatsProviderDescriptor
 from monitoring import format_system_metrics_message, get_system_metrics
 from monitors.stats import StatsService
 from monitors.tracking import CommandResult, TrackingService
@@ -47,6 +50,7 @@ ENTER_COUNTRY_FOR_LINK_STATS = 11
 SELECT_LEAGUE_FOR_LINK_STATS = 12
 SELECT_LEAGUE_FOR_STATS = 13
 SELECT_MATCH_FOR_STATS = 14
+SELECT_STATS_CANDIDATE = 15
 
 MATCHES_TRACKS_CONTEXT_KEY = "matches_tracks"
 MATCHES_ACTIVE_CONTEXT_KEY = "matches_active"
@@ -54,6 +58,9 @@ MATCHES_SELECTED_TRACK_CONTEXT_KEY = "matches_selected_track"
 STATS_TRACKS_CONTEXT_KEY = "stats_tracks"
 STATS_ACTIVE_CONTEXT_KEY = "stats_active"
 STATS_SELECTED_TRACK_CONTEXT_KEY = "stats_selected_track"
+STATS_CANDIDATES_CONTEXT_KEY = "stats_candidates"
+STATS_CANDIDATE_MATCH_CONTEXT_KEY = "stats_candidate_match"
+STATS_CANDIDATE_PROVIDER_CONTEXT_KEY = "stats_candidate_provider"
 UNTRACK_TRACKS_CONTEXT_KEY = "untrack_tracks"
 ODDS_TRACKS_CONTEXT_KEY = "odds_tracks"
 ODDS_ENABLED_CONTEXT_KEY = "odds_enabled"
@@ -85,6 +92,7 @@ HELP_MESSAGE = (
     "/confirm_track - Confirma la última liga pendiente\n"
     "/confirm_empty_track - Confirma una liga válida pero vacía\n"
     "/link_stats - Vincula una liga trackeada con un provider de estadísticas\n"
+    "/stats_links - Lista las ligas vinculadas con stats\n"
     "/list_tracks - Lista las ligas trackeadas\n"
     "/competition_url <n> - Muestra la URL original de una liga trackeada\n"
     "/refresh_tracks - Actualiza partidos y detecta eventos nuevos\n"
@@ -112,6 +120,7 @@ GUIDE_MESSAGE = (
     "2. /track_url <url>\n"
     "3. /confirm_track\n"
     "3b. /link_stats si la plataforma no trae stats directas\n"
+    "3c. /stats_links para revisar vínculos activos\n"
     "4. /list_tracks\n"
     "5. /competition_url <n>\n"
     "6. /matches\n"
@@ -510,10 +519,76 @@ async def stats_select_match(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
     stats_service = get_stats_service(context)
     await update.message.reply_text("Generando reporte de stats...", reply_markup=ReplyKeyboardRemove())
-    result = await stats_service.build_match_stats_report(
+    resolution = await stats_service.resolve_event(
         tracked_subscription=tracked_subscription,
         matches=active_matches,
         event_number=selected_index + 1,
+    )
+
+    if resolution.kind == "choose":
+        context.user_data[STATS_CANDIDATES_CONTEXT_KEY] = list(resolution.candidates)
+        context.user_data[STATS_CANDIDATE_MATCH_CONTEXT_KEY] = active_matches[resolution.event_index]
+        context.user_data[STATS_CANDIDATE_PROVIDER_CONTEXT_KEY] = resolution.provider_key
+        lines = [
+            "No estoy seguro de cuál es el partido de stats. Elegí el correcto:",
+            "",
+        ]
+        for index, candidate in enumerate(resolution.candidates, start=1):
+            lines.append(f"{index} - {candidate.label}")
+        lines.append("")
+        lines.append("Si ninguno corresponde, usá /cancel.")
+        await update.message.reply_text(
+            "\n".join(lines),
+            reply_markup=_build_numeric_keyboard(len(resolution.candidates), "Elegí el partido de stats"),
+        )
+        return SELECT_STATS_CANDIDATE
+
+    await _reply_text_chunks(
+        update.message,
+        (resolution.result.message if resolution.result else "No pude generar el reporte de stats."),
+        reply_markup=ReplyKeyboardRemove(),
+    )
+    _clear_all_selection_context(context)
+    return ConversationHandler.END
+
+
+async def stats_select_candidate(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Persist a manually chosen stats candidate and generate its report."""
+
+    if update.message is None:
+        return ConversationHandler.END
+
+    candidates = context.user_data.get(STATS_CANDIDATES_CONTEXT_KEY)
+    match = context.user_data.get(STATS_CANDIDATE_MATCH_CONTEXT_KEY)
+    provider_key = context.user_data.get(STATS_CANDIDATE_PROVIDER_CONTEXT_KEY)
+
+    if (
+        not isinstance(candidates, list)
+        or not candidates
+        or not isinstance(match, ActiveEventRecord)
+        or not isinstance(provider_key, str)
+    ):
+        await update.message.reply_text(
+            "No encontré la selección de candidatos. Probá de nuevo con /stats.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        _clear_all_selection_context(context)
+        return ConversationHandler.END
+
+    selected_index = _parse_selection_number(update.message.text, len(candidates))
+    if selected_index is None:
+        await update.message.reply_text(
+            "Elegí un número válido de partido de stats.",
+            reply_markup=_build_numeric_keyboard(len(candidates), "Elegí el partido de stats"),
+        )
+        return SELECT_STATS_CANDIDATE
+
+    stats_service = get_stats_service(context)
+    await update.message.reply_text("Generando reporte de stats...", reply_markup=ReplyKeyboardRemove())
+    result = await stats_service.build_report_for_chosen_candidate(
+        match=match,
+        provider_key=provider_key,
+        link=candidates[selected_index].link,
     )
     await _reply_text_chunks(update.message, result.message, reply_markup=ReplyKeyboardRemove())
     _clear_all_selection_context(context)
@@ -885,10 +960,30 @@ async def link_stats_enter_country(update: Update, context: ContextTypes.DEFAULT
     stats_service = get_stats_service(context)
     await update.message.reply_text(f"Buscando ligas de stats en {country_name}...")
 
+    selected_track = context.user_data.get(LINK_STATS_SELECTED_TRACK_CONTEXT_KEY)
+    odds_league_name = None
+    sample_events: list[MatchIdentityCandidate] = []
+    if isinstance(selected_track, TrackedCompetitionSubscription):
+        odds_league_name = selected_track.tracked_league.competition_name
+        if update.effective_chat is not None:
+            try:
+                _, active_events = get_tracking_service(context).get_matches_for_track(
+                    update.effective_chat.id,
+                    selected_track.tracked_league.id,
+                )
+            except ValueError:
+                active_events = []
+            sample_events = [
+                MatchIdentityCandidate(home=event.home, away=event.away, scheduled_at=event.scheduled_at)
+                for event in (active_events or [])[:4]
+            ]
+
     try:
-        options = await stats_service.search_leagues(
+        options = await stats_service.search_and_rank_leagues(
             provider_key=selected_provider.key,
             country_name=country_name,
+            odds_league_name=odds_league_name,
+            sample_events=sample_events,
             limit=80,
         )
     except RuntimeError as error:
@@ -933,9 +1028,12 @@ async def link_stats_enter_country(update: Update, context: ContextTypes.DEFAULT
         return ENTER_COUNTRY_FOR_LINK_STATS
 
     context.user_data[LINK_STATS_OPTIONS_CONTEXT_KEY] = options
+    intro = ""
+    if sample_events:
+        intro = "🔢 Ordenadas por relevancia: la #1 es la que más coincide con tus partidos.\n\n"
     await _reply_text_chunks(
         update.message,
-        _build_stats_league_selection_message(options),
+        intro + _build_stats_league_selection_message(options),
         reply_markup=_build_numeric_keyboard(len(options), "Elegí la liga stats"),
     )
     return SELECT_LEAGUE_FOR_LINK_STATS
@@ -1032,6 +1130,22 @@ async def list_tracks_command(update: Update, context: ContextTypes.DEFAULT_TYPE
 
     tracking_service = get_tracking_service(context)
     result = tracking_service.build_tracks_list_message(update.effective_chat.id)
+
+    await reply_with_result(update, result)
+
+
+async def stats_links_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle `/stats_links` by showing stored odds-league -> stats-league mappings."""
+
+    if update.message is None or update.effective_chat is None:
+        return
+
+    logger.info("Comando /stats_links recibido.")
+
+    tracking_service = get_tracking_service(context)
+    stats_service = get_stats_service(context)
+    tracked_leagues = tracking_service.list_confirmed_tracks(update.effective_chat.id)
+    result = stats_service.build_links_message(tracked_leagues)
 
     await reply_with_result(update, result)
 
@@ -1788,6 +1902,9 @@ def register_handlers(application: Application) -> None:
             SELECT_MATCH_FOR_STATS: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, stats_select_match)
             ],
+            SELECT_STATS_CANDIDATE: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, stats_select_candidate)
+            ],
         },
         fallbacks=[CommandHandler("cancel", cancel_command)],
         name="stats_conversation",
@@ -2012,6 +2129,9 @@ def _clear_all_selection_context(context: ContextTypes.DEFAULT_TYPE) -> None:
     context.user_data.pop(STATS_TRACKS_CONTEXT_KEY, None)
     context.user_data.pop(STATS_ACTIVE_CONTEXT_KEY, None)
     context.user_data.pop(STATS_SELECTED_TRACK_CONTEXT_KEY, None)
+    context.user_data.pop(STATS_CANDIDATES_CONTEXT_KEY, None)
+    context.user_data.pop(STATS_CANDIDATE_MATCH_CONTEXT_KEY, None)
+    context.user_data.pop(STATS_CANDIDATE_PROVIDER_CONTEXT_KEY, None)
     context.user_data.pop(UNTRACK_TRACKS_CONTEXT_KEY, None)
     context.user_data.pop(ODDS_TRACKS_CONTEXT_KEY, None)
     context.user_data.pop(ODDS_ENABLED_CONTEXT_KEY, None)

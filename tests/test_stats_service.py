@@ -114,6 +114,68 @@ class StatsServiceTests(unittest.TestCase):
         self.assertIsNotNone(link)
         self.assertEqual(link.stats_league_id, "8")
 
+    def test_search_and_rank_promotes_league_holding_the_teams(self) -> None:
+        # Two leagues share a name; only one actually contains the tracked teams.
+        class DuplicateLeagueProvider(FakeStatsProvider):
+            async def search_leagues(self, *, country_name, query=None, limit=80):
+                del query, limit
+                return [
+                    StatsLeagueOption(
+                        provider=self.name,
+                        provider_display_name=self.display_name,
+                        country_name=country_name,
+                        league_id="wrong",
+                        league_name="Northern NSW NPL",
+                    ),
+                    StatsLeagueOption(
+                        provider=self.name,
+                        provider_display_name=self.display_name,
+                        country_name=country_name,
+                        league_id="right",
+                        league_name="Northern NSW NPL",
+                    ),
+                ]
+
+            async def list_fixtures(self, league_id, *, limit=None):
+                del limit
+                if league_id != "right":
+                    return []
+                return [
+                    StatsFixture(
+                        provider=self.name,
+                        league_id=league_id,
+                        match_id="1",
+                        home="Maitland",
+                        away="Belmont Swansea",
+                        scheduled_at="2026-05-30T06:30:00+00:00",
+                    )
+                ]
+
+            async def count_matching_events(self, league_id, candidates):
+                fixtures = await self.list_fixtures(league_id)
+                return len(fixtures) and len(candidates) and 1 or 0
+
+        registry = StatsProviderRegistry()
+        registry.register(DuplicateLeagueProvider())
+        service = StatsService(provider_registry=registry, repository=self.repository)
+
+        ordered = asyncio.run(
+            service.search_and_rank_leagues(
+                provider_key="sportradar_statshub",
+                country_name="Australia",
+                odds_league_name="Australia. NPL Northern NSW",
+                sample_events=[
+                    MatchIdentityCandidate(
+                        home="Maitland",
+                        away="Belmont Swansea United",
+                        scheduled_at="2026-05-30T06:30:00+00:00",
+                    )
+                ],
+            )
+        )
+
+        self.assertEqual(ordered[0].league_id, "right")
+
     def test_build_report_uses_direct_stats_url(self) -> None:
         event = self._create_event(raw_payload={"stats_url": "https://s5.sir.sportradar.com/bet365/en/match/61624678"})
 

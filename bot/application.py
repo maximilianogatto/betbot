@@ -8,8 +8,10 @@ from bot.config import Settings
 from bot.error_handler import handle_error
 from bot.handlers import register_handlers
 from bot.jobs import (
+    start_stats_session_refresh,
     start_tracking_monitor,
     start_resource_monitor,
+    stop_stats_session_refresh,
     stop_tracking_monitor,
     stop_resource_monitor,
 )
@@ -62,10 +64,19 @@ def create_application(settings: Settings) -> Application:
             log_to_file=settings.monitor_log_to_file,
             chromium_ram_alert_mb=settings.monitor_chromium_ram_alert_mb,
         )
+        # Mint/refresh the Sportradar token at startup and well before expiry so
+        # the token-bootstrap browser never opens during a user-facing /stats.
+        await start_stats_session_refresh(
+            application,
+            enabled=True,
+            interval_seconds=1800,
+            min_ttl_seconds=5400.0,
+        )
 
     async def post_shutdown(application: Application) -> None:
         """Stop background monitoring when the bot shuts down."""
 
+        await stop_stats_session_refresh(application)
         await stop_resource_monitor(application)
         await stop_tracking_monitor(application)
         for extractor in reversed(registered_extractors):

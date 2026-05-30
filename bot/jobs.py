@@ -17,13 +17,16 @@ from monitoring import (
     get_metric_warnings,
     get_system_metrics,
 )
+from monitors.stats import StatsService
 from monitors.tracking import TrackingService, format_duration
 
 logger = logging.getLogger(__name__)
 
 TRACKING_MONITOR_TASK_KEY = "tracking_monitor_task"
 RESOURCE_MONITOR_TASK_KEY = "resource_monitor_task"
+STATS_SESSION_TASK_KEY = "stats_session_refresh_task"
 TRACKING_SERVICE_KEY = "tracking_service"
+STATS_SERVICE_KEY = "stats_service"
 
 
 async def start_tracking_monitor(application: Application, interval_seconds: int) -> None:
@@ -122,6 +125,77 @@ async def stop_resource_monitor(application: Application) -> None:
         logger.info("Resource monitor loop stopped.")
 
     application.bot_data.pop(RESOURCE_MONITOR_TASK_KEY, None)
+
+
+async def start_stats_session_refresh(
+    application: Application,
+    *,
+    enabled: bool,
+    interval_seconds: int,
+    min_ttl_seconds: float,
+) -> None:
+    """Start the background Sportradar token pre-refresh loop if enabled."""
+
+    if not enabled:
+        logger.info("Stats session pre-refresh is disabled.")
+        return
+
+    existing_task = application.bot_data.get(STATS_SESSION_TASK_KEY)
+    if isinstance(existing_task, asyncio.Task) and not existing_task.done():
+        return
+
+    task = asyncio.create_task(
+        _stats_session_refresh_loop(
+            application,
+            interval_seconds=interval_seconds,
+            min_ttl_seconds=min_ttl_seconds,
+        ),
+        name="stats-session-refresh-loop",
+    )
+    application.bot_data[STATS_SESSION_TASK_KEY] = task
+    logger.info(
+        "Stats session pre-refresh loop started interval_seconds=%s min_ttl_seconds=%s.",
+        interval_seconds,
+        min_ttl_seconds,
+    )
+
+
+async def stop_stats_session_refresh(application: Application) -> None:
+    """Stop the background stats session pre-refresh loop if running."""
+
+    task = application.bot_data.get(STATS_SESSION_TASK_KEY)
+    if not isinstance(task, asyncio.Task):
+        return
+    task.cancel()
+    try:
+        await task
+    except asyncio.CancelledError:
+        logger.info("Stats session pre-refresh loop stopped.")
+    application.bot_data.pop(STATS_SESSION_TASK_KEY, None)
+
+
+async def _stats_session_refresh_loop(
+    application: Application,
+    *,
+    interval_seconds: int,
+    min_ttl_seconds: float,
+) -> None:
+    """Keep the stats provider token fresh so it is never minted during /stats."""
+
+    stats_service = application.bot_data.get(STATS_SERVICE_KEY)
+    if not isinstance(stats_service, StatsService):
+        logger.error("StatsService is not configured; session pre-refresh will not run.")
+        return
+
+    while True:
+        try:
+            # Mint/refresh at startup and well before expiry, off the request path.
+            await stats_service.ensure_provider_sessions_fresh(min_ttl_seconds=min_ttl_seconds)
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            logger.exception("Unhandled error during stats session pre-refresh cycle.")
+        await asyncio.sleep(interval_seconds)
 
 
 async def _tracking_monitor_loop(

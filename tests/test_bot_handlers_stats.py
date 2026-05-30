@@ -18,6 +18,7 @@ from bot.handlers import (
 )
 from core.stats_models import StatsLeagueOption, StatsProviderCapabilities, StatsProviderDescriptor
 from monitors.models import CommandResult
+from monitors.stats import StatsResolution
 from storage.tracking_repository import (
     ActiveEventRecord,
     CompetitionSubscription,
@@ -74,8 +75,11 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         match = _active_event()
         tracked_subscription = _tracked_subscription()
         stats_service = SimpleNamespace(
-            build_match_stats_report=AsyncMock(
-                return_value=CommandResult(ok=True, message="Reporte interactivo")
+            resolve_event=AsyncMock(
+                return_value=StatsResolution(
+                    kind="report",
+                    result=CommandResult(ok=True, message="Reporte interactivo"),
+                )
             )
         )
         message = SimpleNamespace(text="1", reply_text=AsyncMock())
@@ -91,7 +95,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
             state = await stats_select_match(update, context)
 
         self.assertEqual(state, -1)
-        stats_service.build_match_stats_report.assert_awaited_once_with(
+        stats_service.resolve_event.assert_awaited_once_with(
             tracked_subscription=tracked_subscription,
             matches=[match],
             event_number=1,
@@ -100,7 +104,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_link_stats_country_reports_sportradar_bootstrap_failure(self) -> None:
         stats_service = SimpleNamespace(
-            search_leagues=AsyncMock(
+            search_and_rank_leagues=AsyncMock(
                 side_effect=RuntimeError("Sportradar bootstrap failed mode=headless")
             )
         )
@@ -135,7 +139,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
             )
             for index in range(80)
         ]
-        stats_service = SimpleNamespace(search_leagues=AsyncMock(return_value=options))
+        stats_service = SimpleNamespace(search_and_rank_leagues=AsyncMock(return_value=options))
         provider = StatsProviderDescriptor(
             key="sportradar_statshub",
             display_name="Sportradar Statshub",
