@@ -383,19 +383,24 @@ def format_kickoff_text(match: ActiveEventRecord) -> str:
     return "Horario no disponible"
 
 
-def format_kickoff_labels(date_label: str | None, time_label: str | None) -> str:
+def format_kickoff_labels(
+    date_label: str | None,
+    time_label: str | None,
+    *,
+    with_year: bool = False,
+) -> str:
     """Format kickoff labels when only raw date/time strings are available."""
 
     normalized_date = (date_label or "").strip()
     normalized_time = (time_label or "").strip()
 
     if normalized_date and normalized_time:
-        combined = format_display_datetime(f"{normalized_date}T{normalized_time}")
+        combined = format_display_datetime(f"{normalized_date}T{normalized_time}", with_year=with_year)
         if combined is not None:
             return combined
 
     if normalized_date:
-        rendered_date = _format_display_date_label(normalized_date)
+        rendered_date = _format_display_date_label(normalized_date, with_year=with_year)
         if rendered_date is not None:
             return rendered_date
 
@@ -405,8 +410,8 @@ def format_kickoff_labels(date_label: str | None, time_label: str | None) -> str
     return "Horario no disponible"
 
 
-def format_display_datetime(value: datetime | str | None) -> str | None:
-    """Format one date/time value for Telegram as `Mié 13/05 23:00`."""
+def format_display_datetime(value: datetime | str | None, *, with_year: bool = False) -> str | None:
+    """Format one date/time value for Telegram as `Mié 13/05 23:00` (or with year)."""
 
     if value is None:
         return None
@@ -417,11 +422,12 @@ def format_display_datetime(value: datetime | str | None) -> str | None:
 
     localized = parsed.astimezone(DISPLAY_TIMEZONE)
     weekday = SPANISH_WEEKDAY_ABBREVIATIONS[localized.weekday()]
-    return f"{weekday} {localized.strftime('%d/%m %H:%M')}"
+    pattern = "%d/%m/%Y %H:%M" if with_year else "%d/%m %H:%M"
+    return f"{weekday} {localized.strftime(pattern)}"
 
 
-def _format_display_date_label(date_label: str) -> str | None:
-    """Format one plain ISO-style date label without the year."""
+def _format_display_date_label(date_label: str, *, with_year: bool = False) -> str | None:
+    """Format one plain ISO-style date label, optionally including the year."""
 
     if not date_label:
         return None
@@ -433,7 +439,8 @@ def _format_display_date_label(date_label: str) -> str | None:
         return None
 
     weekday = SPANISH_WEEKDAY_ABBREVIATIONS[parsed.weekday()]
-    return f"{weekday} {parsed.strftime('%d/%m')}"
+    pattern = "%d/%m/%Y" if with_year else "%d/%m"
+    return f"{weekday} {parsed.strftime(pattern)}"
 
 
 def _parse_display_datetime(value: datetime | str) -> datetime | None:

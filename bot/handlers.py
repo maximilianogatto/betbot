@@ -24,6 +24,7 @@ from bot.alerts import (
     build_competition_unavailable_warning_message,
     build_little_changes_message,
     build_match_card_message,
+    format_kickoff_labels,
     split_telegram_message,
 )
 from core.extractor_base import CompetitionUnavailableError, LeagueDiscoveryOption
@@ -2132,8 +2133,12 @@ def _build_stats_match_selection_message(
     lines = [f"De qué partido querés generar stats en {tracked_league.tracked_league.league_name}?"]
 
     for index, match in enumerate(matches, start=1):
-        label = " ".join(part for part in (match.scheduled_label_date, match.scheduled_label_time) if part)
-        kickoff = f" | {label}" if label else ""
+        label = format_kickoff_labels(
+            match.scheduled_label_date,
+            match.scheduled_label_time,
+            with_year=True,
+        )
+        kickoff = f" | 🕒 {label}" if label and label != "Horario no disponible" else ""
         lines.append(f"{index} - {match.home} vs {match.away}{kickoff}")
 
     return "\n".join(lines)
