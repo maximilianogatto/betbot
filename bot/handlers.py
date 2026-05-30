@@ -31,7 +31,13 @@ from core.extractor_base import CompetitionUnavailableError, LeagueDiscoveryOpti
 from core.models import PlatformDescriptor
 from core.stats_models import MatchIdentityCandidate, StatsLeagueOption, StatsProviderDescriptor
 from monitoring import format_system_metrics_message, get_system_metrics
-from monitors.stats import StatsService
+from monitors.stats import (
+    StatsService,
+    render_league_fixtures,
+    render_league_table,
+    render_team_row,
+    render_top_scorers,
+)
 from monitors.tracking import CommandResult, TrackingService
 from storage.tracking_repository import ActiveEventRecord, TrackedCompetitionSubscription
 
@@ -52,6 +58,9 @@ SELECT_LEAGUE_FOR_LINK_STATS = 12
 SELECT_LEAGUE_FOR_STATS = 13
 SELECT_MATCH_FOR_STATS = 14
 SELECT_STATS_CANDIDATE = 15
+EXPLORE_SELECT_LEAGUE = 16
+EXPLORE_MENU = 17
+EXPLORE_TEAM_INPUT = 18
 
 MATCHES_TRACKS_CONTEXT_KEY = "matches_tracks"
 MATCHES_ACTIVE_CONTEXT_KEY = "matches_active"
@@ -62,6 +71,8 @@ STATS_SELECTED_TRACK_CONTEXT_KEY = "stats_selected_track"
 STATS_CANDIDATES_CONTEXT_KEY = "stats_candidates"
 STATS_CANDIDATE_MATCH_CONTEXT_KEY = "stats_candidate_match"
 STATS_CANDIDATE_PROVIDER_CONTEXT_KEY = "stats_candidate_provider"
+EXPLORE_TRACKS_CONTEXT_KEY = "explore_tracks"
+EXPLORE_OVERVIEW_CONTEXT_KEY = "explore_overview"
 UNTRACK_TRACKS_CONTEXT_KEY = "untrack_tracks"
 ODDS_TRACKS_CONTEXT_KEY = "odds_tracks"
 ODDS_ENABLED_CONTEXT_KEY = "odds_enabled"
@@ -94,6 +105,7 @@ HELP_MESSAGE = (
     "/confirm_empty_track - Confirma una liga válida pero vacía\n"
     "/link_stats - Vincula una liga trackeada con stats (por país o pegando una URL de Statshub)\n"
     "/stats_links - Lista las ligas vinculadas con stats\n"
+    "/explore_stats - Explora tabla, fixtures y equipos de una liga vinculada\n"
     "/list_tracks - Lista las ligas trackeadas\n"
     "/competition_url <n> - Muestra la URL original de una liga trackeada\n"
     "/refresh_tracks - Actualiza partidos y detecta eventos nuevos\n"
@@ -594,6 +606,180 @@ async def stats_select_candidate(update: Update, context: ContextTypes.DEFAULT_T
     await _reply_text_chunks(update.message, result.message, reply_markup=ReplyKeyboardRemove())
     _clear_all_selection_context(context)
     return ConversationHandler.END
+
+
+def _explore_menu_text(overview: dict) -> str:
+    """Build the navigable explore menu shown after a league is selected."""
+
+    name = overview.get("league_name") or "Liga"
+    return (
+        f"🔎 Explorando: {name}\n\n"
+        "Elegí qué ver:\n"
+        "1 - 📊 Tabla de posiciones\n"
+        "2 - 🗓️ Próximos partidos\n"
+        "3 - 👟 Goleadores\n"
+        "4 - ⚽ Buscar un equipo\n"
+        "5 - 🔗 Link al proveedor\n\n"
+        "/cancel para salir."
+    )
+
+
+async def explore_stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Start `/explore_stats`: navigate stats of a stats-linked tracked league."""
+
+    if update.message is None or update.effective_chat is None:
+        return ConversationHandler.END
+
+    logger.info("Comando /explore_stats recibido.")
+    tracking_service = get_tracking_service(context)
+    stats_service = get_stats_service(context)
+    tracked_leagues = tracking_service.list_confirmed_tracks(update.effective_chat.id)
+
+    linked: list[tuple[TrackedCompetitionSubscription, object]] = []
+    for subscription in tracked_leagues:
+        link = stats_service.repository.get_stats_league_link(subscription.tracked_league.id)
+        if link is not None:
+            linked.append((subscription, link))
+
+    if not linked:
+        await update.message.reply_text(
+            "No tenés ligas con stats vinculadas todavía.\n"
+            "Usá /link_stats para vincular una liga y después /explore_stats.",
+        )
+        return ConversationHandler.END
+
+    context.user_data[EXPLORE_TRACKS_CONTEXT_KEY] = linked
+    lines = ["¿Qué liga querés explorar?"]
+    for index, (subscription, link) in enumerate(linked, start=1):
+        lines.append(
+            f"{index} - {subscription.tracked_league.competition_name} → {link.stats_league_name}"
+        )
+    await update.message.reply_text(
+        "\n".join(lines),
+        reply_markup=_build_numeric_keyboard(len(linked), "Elegí la liga"),
+    )
+    return EXPLORE_SELECT_LEAGUE
+
+
+async def explore_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Load the selected league's cached overview and show the navigation menu."""
+
+    if update.message is None:
+        return ConversationHandler.END
+
+    linked = context.user_data.get(EXPLORE_TRACKS_CONTEXT_KEY)
+    if not isinstance(linked, list) or not linked:
+        await update.message.reply_text(
+            "No encontré la selección de ligas. Probá de nuevo con /explore_stats.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        _clear_all_selection_context(context)
+        return ConversationHandler.END
+
+    selected_index = _parse_selection_number(update.message.text, len(linked))
+    if selected_index is None:
+        await update.message.reply_text(
+            "Elegí un número válido de liga.",
+            reply_markup=_build_numeric_keyboard(len(linked), "Elegí la liga"),
+        )
+        return EXPLORE_SELECT_LEAGUE
+
+    _, link = linked[selected_index]
+    stats_service = get_stats_service(context)
+    await update.message.reply_text("Cargando datos de la liga...", reply_markup=ReplyKeyboardRemove())
+    try:
+        overview = await stats_service.get_league_overview(
+            provider_key=link.stats_provider,
+            league_id=link.stats_league_id,
+        )
+    except Exception:
+        logger.exception("Explore stats overview failed league=%s", link.stats_league_id)
+        overview = None
+    if not overview:
+        await update.message.reply_text(
+            "No pude cargar los datos de esa liga ahora. Probá más tarde.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        _clear_all_selection_context(context)
+        return ConversationHandler.END
+
+    context.user_data[EXPLORE_OVERVIEW_CONTEXT_KEY] = overview
+    await update.message.reply_text(
+        _explore_menu_text(overview),
+        reply_markup=_build_numeric_keyboard(5, "Elegí una opción"),
+    )
+    return EXPLORE_MENU
+
+
+async def explore_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Render the chosen view and keep the explorer menu open."""
+
+    if update.message is None:
+        return ConversationHandler.END
+
+    overview = context.user_data.get(EXPLORE_OVERVIEW_CONTEXT_KEY)
+    if not isinstance(overview, dict):
+        await update.message.reply_text(
+            "Se perdió el contexto. Probá de nuevo con /explore_stats.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        _clear_all_selection_context(context)
+        return ConversationHandler.END
+
+    choice = _parse_selection_number(update.message.text, 5)
+    if choice is None:
+        await update.message.reply_text(
+            _explore_menu_text(overview),
+            reply_markup=_build_numeric_keyboard(5, "Elegí una opción"),
+        )
+        return EXPLORE_MENU
+
+    option = choice + 1
+    if option == 4:
+        await update.message.reply_text(
+            "Escribí el nombre del equipo a buscar:",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        return EXPLORE_TEAM_INPUT
+
+    if option == 1:
+        message = render_league_table(overview)
+    elif option == 2:
+        message = render_league_fixtures(overview)
+    elif option == 3:
+        message = render_top_scorers(overview)
+    else:
+        message = f"🔗 {overview.get('source_url') or 'Sin link disponible.'}"
+
+    await _reply_text_chunks(update.message, message)
+    await update.message.reply_text(
+        _explore_menu_text(overview),
+        reply_markup=_build_numeric_keyboard(5, "Elegí una opción"),
+    )
+    return EXPLORE_MENU
+
+
+async def explore_team_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Show one team's standings row, then return to the explorer menu."""
+
+    if update.message is None:
+        return ConversationHandler.END
+
+    overview = context.user_data.get(EXPLORE_OVERVIEW_CONTEXT_KEY)
+    if not isinstance(overview, dict):
+        await update.message.reply_text(
+            "Se perdió el contexto. Probá de nuevo con /explore_stats.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        _clear_all_selection_context(context)
+        return ConversationHandler.END
+
+    await _reply_text_chunks(update.message, render_team_row(overview, update.message.text or ""))
+    await update.message.reply_text(
+        _explore_menu_text(overview),
+        reply_markup=_build_numeric_keyboard(5, "Elegí una opción"),
+    )
+    return EXPLORE_MENU
 
 
 async def echo_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -1966,6 +2152,25 @@ def register_handlers(application: Application) -> None:
     )
     application.add_handler(stats_conversation)
 
+    explore_stats_conversation = ConversationHandler(
+        entry_points=[CommandHandler("explore_stats", explore_stats_command)],
+        states={
+            EXPLORE_SELECT_LEAGUE: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, explore_select_league)
+            ],
+            EXPLORE_MENU: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, explore_menu)
+            ],
+            EXPLORE_TEAM_INPUT: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, explore_team_input)
+            ],
+        },
+        fallbacks=[CommandHandler("cancel", cancel_command)],
+        name="explore_stats_conversation",
+        persistent=False,
+    )
+    application.add_handler(explore_stats_conversation)
+
     untrack_conversation = ConversationHandler(
         entry_points=[CommandHandler("untrack", untrack_command)],
         states={
@@ -2190,6 +2395,8 @@ def _clear_all_selection_context(context: ContextTypes.DEFAULT_TYPE) -> None:
     context.user_data.pop(STATS_CANDIDATES_CONTEXT_KEY, None)
     context.user_data.pop(STATS_CANDIDATE_MATCH_CONTEXT_KEY, None)
     context.user_data.pop(STATS_CANDIDATE_PROVIDER_CONTEXT_KEY, None)
+    context.user_data.pop(EXPLORE_TRACKS_CONTEXT_KEY, None)
+    context.user_data.pop(EXPLORE_OVERVIEW_CONTEXT_KEY, None)
     context.user_data.pop(UNTRACK_TRACKS_CONTEXT_KEY, None)
     context.user_data.pop(ODDS_TRACKS_CONTEXT_KEY, None)
     context.user_data.pop(ODDS_ENABLED_CONTEXT_KEY, None)

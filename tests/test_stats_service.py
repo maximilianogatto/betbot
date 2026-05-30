@@ -15,7 +15,13 @@ from core.stats_models import (
     StatsProviderCapabilities,
 )
 from core.stats_provider_base import StatsProvider, StatsProviderRegistry
-from monitors.stats import StatsService
+from monitors.stats import (
+    StatsService,
+    render_league_fixtures,
+    render_league_table,
+    render_team_row,
+    render_top_scorers,
+)
 from storage.tracking_repository import ActiveEventUpsert, SqliteTrackingRepository
 
 tracking_repository_module = importlib.import_module("storage.tracking_repository")
@@ -244,6 +250,78 @@ class StatsServiceTests(unittest.TestCase):
             ],
         )
         return self.repository.get_active_events(self.subscription.tracked_league.id, only_future=False)[0]
+
+
+def _overview_fixture() -> dict:
+    return {
+        "league_id": "28743",
+        "season_id": "139904",
+        "league_name": "USL, League Two",
+        "source_url": "https://statshub.sportradar.com/bet365/en/sport/1/tournament/28743",
+        "standings": {
+            "tables": [
+                {
+                    "name": "Chesapeake Division",
+                    "rows": [
+                        {
+                            "position": 1,
+                            "team": {"name": "Virginia Beach United"},
+                            "played": 4,
+                            "points": 8,
+                            "wins": 2,
+                            "draws": 2,
+                            "losses": 0,
+                            "goals_for": 9,
+                            "goals_against": 3,
+                            "goal_difference": 6,
+                            "home": {"points": 4, "goals_for": 5, "goals_against": 1},
+                            "away": {"points": 4, "goals_for": 4, "goals_against": 2},
+                        }
+                    ],
+                }
+            ]
+        },
+        "fixtures": [
+            {
+                "time": {"date": "07/06/26", "time": "03:00", "iso_utc": "2099-06-07T03:00:00+00:00"},
+                "home": {"name": "Charlestown"},
+                "away": {"name": "Cooks Hill United"},
+            },
+            {
+                "time": {"date": "01/01/20", "time": "00:00", "iso_utc": "2020-01-01T00:00:00+00:00"},
+                "home": {"name": "Old"},
+                "away": {"name": "Past"},
+            },
+        ],
+        "teams": [],
+        "top_goals": [],
+    }
+
+
+class StatsExploreRenderTests(unittest.TestCase):
+    def test_table_lists_team_and_link(self) -> None:
+        out = render_league_table(_overview_fixture())
+        self.assertIn("Chesapeake Division", out)
+        self.assertIn("Virginia Beach", out)  # name is column-truncated in the table
+        self.assertIn("statshub.sportradar.com", out)
+
+    def test_fixtures_show_only_future(self) -> None:
+        out = render_league_fixtures(_overview_fixture())
+        self.assertIn("Charlestown vs Cooks Hill United", out)
+        self.assertNotIn("Old vs Past", out)  # past fixture filtered out
+
+    def test_team_row_found_by_fuzzy_name(self) -> None:
+        out = render_team_row(_overview_fixture(), "virginia beach")
+        self.assertIn("Virginia Beach United", out)
+        self.assertIn("8 pts", out)
+
+    def test_team_row_not_found(self) -> None:
+        out = render_team_row(_overview_fixture(), "zzz nonexistent")
+        self.assertIn("No encontré", out)
+
+    def test_top_scorers_empty_is_graceful(self) -> None:
+        out = render_top_scorers(_overview_fixture())
+        self.assertIn("Sin datos de goleadores", out)
 
 
 if __name__ == "__main__":

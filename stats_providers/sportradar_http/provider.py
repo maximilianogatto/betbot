@@ -26,6 +26,7 @@ from core.stats_models import (
 )
 from core.stats_provider_base import StatsProvider
 from stats_providers.sportradar_http.engine.bot_ready.provider import (
+    BotReadyLeagueRequest,
     BotReadyMatchRequest,
     BotReadyRuntimeConfig,
     BotReadyTournamentRequest,
@@ -186,6 +187,60 @@ class SportradarHttpStatsProvider(StatsProvider):
         if limit is not None:
             return fixtures[:limit]
         return fixtures
+
+    async def get_league_overview(self, league_id: str) -> dict[str, Any] | None:
+        """Return a cached league overview: standings, fixtures, top scorers, teams.
+
+        Combines the (cached) tournament navigation — which resolves the current
+        season — with the (cached) league snapshot, so the interactive explorer
+        reads everything from the DB cache instead of re-hitting Statshub.
+        """
+
+        try:
+            tournament_id = int(league_id)
+        except (TypeError, ValueError):
+            return None
+        nav_key = f"{self.name}:tournament_nav:{self.sport_id}:{self.category_id}:{league_id}"
+        nav = await self._cached_payload(
+            nav_key,
+            self._runtime.get_tournament_navigation,
+            BotReadyTournamentRequest(
+                sport_id=self.sport_id,
+                tournament_id=tournament_id,
+                category_id=self.category_id,
+                depth=0,
+            ),
+        )
+        resolved = {}
+        if isinstance(nav, dict):
+            snap = nav.get("snapshot") if isinstance(nav.get("snapshot"), dict) else {}
+            resolved = snap.get("resolved_tournament") if isinstance(snap.get("resolved_tournament"), dict) else {}
+        season_id = resolved.get("season_id")
+        primary = resolved.get("primary") if isinstance(resolved.get("primary"), dict) else {}
+        league_name = primary.get("name") or f"Tournament {league_id}"
+        if season_id is None:
+            return None
+
+        snap_key = f"{self.name}:league_snapshot:{season_id}"
+        snap_payload = await self._cached_payload(
+            snap_key,
+            self._runtime.get_league_snapshot,
+            BotReadyLeagueRequest(sport_id=self.sport_id, tournament_id=tournament_id, season_id=int(season_id)),
+        )
+        snapshot = snap_payload.get("snapshot") if isinstance(snap_payload, dict) else {}
+        if not isinstance(snapshot, dict):
+            return None
+        players = snapshot.get("players") if isinstance(snapshot.get("players"), dict) else {}
+        return {
+            "league_id": str(league_id),
+            "season_id": str(season_id),
+            "league_name": str(league_name),
+            "source_url": f"https://statshub.sportradar.com/bet365/en/sport/{self.sport_id}/tournament/{league_id}",
+            "standings": snapshot.get("standings") or {},
+            "fixtures": snapshot.get("fixtures") or [],
+            "teams": snapshot.get("teams") or [],
+            "top_goals": players.get("top_goals") or [],
+        }
 
     async def describe_league(self, league_id: str) -> StatsLeagueOption | None:
         """Resolve a Statshub tournament id to a linkable league option.

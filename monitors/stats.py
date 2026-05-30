@@ -8,8 +8,11 @@ and returns compact user-facing reports.
 from __future__ import annotations
 
 import logging
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from difflib import SequenceMatcher
 from typing import Any
 
 from core.stats_models import (
@@ -153,6 +156,15 @@ class StatsService:
             options = sorted(options, key=lambda option: validation.get(option.league_id, 0), reverse=True)
 
         return options
+
+    async def get_league_overview(self, *, provider_key: str, league_id: str) -> dict[str, Any] | None:
+        """Return a cached league overview (standings/fixtures/scorers/teams)."""
+
+        provider = self.provider_registry.get(provider_key)
+        getter = getattr(provider, "get_league_overview", None)
+        if not callable(getter):
+            return None
+        return await getter(league_id)
 
     async def describe_league(self, *, provider_key: str, league_id: str) -> StatsLeagueOption | None:
         """Resolve a provider-native league id (e.g. from a pasted URL) to an option."""
@@ -453,6 +465,124 @@ def _league_name_similarity(left: str, right: str) -> float:
         return ratio
     overlap = len(left_tokens & right_tokens) / min(len(left_tokens), len(right_tokens))
     return max(ratio, overlap)
+
+
+def _overview_header(overview: dict[str, Any]) -> str:
+    name = overview.get("league_name") or "Liga"
+    url = overview.get("source_url") or ""
+    season = overview.get("season_id") or ""
+    head = f"🏆 {name}" + (f" · temporada {season}" if season else "")
+    return f"{head}\n🔗 {url}" if url else head
+
+
+def render_league_table(overview: dict[str, Any], *, top_rows: int = 12) -> str:
+    """Render standings (one block per division) compactly: pos team — PJ Pts Dif."""
+
+    standings = overview.get("standings") or {}
+    tables = standings.get("tables") if isinstance(standings, dict) else None
+    lines = [_overview_header(overview), ""]
+    if not tables:
+        lines.append("Sin tabla de posiciones disponible.")
+        return "\n".join(lines)
+    for table in tables:
+        lines.append(f"📊 {table.get('name') or 'Tabla'}")
+        lines.append("  #  Equipo                PJ  Pts  Dif")
+        for row in (table.get("rows") or [])[:top_rows]:
+            team = row.get("team") or {}
+            name = (team.get("name") or "?")[:20]
+            lines.append(
+                f"  {str(row.get('position','')).rjust(2)} {name.ljust(20)} "
+                f"{str(row.get('played','')).rjust(2)} {str(row.get('points','')).rjust(3)} "
+                f"{str(row.get('goal_difference','')).rjust(4)}"
+            )
+        lines.append("")
+    return "\n".join(lines).rstrip()
+
+
+def render_league_fixtures(overview: dict[str, Any], *, limit: int = 15) -> str:
+    """Render upcoming fixtures (future only) sorted by kickoff."""
+
+    fixtures = overview.get("fixtures") or []
+    now = datetime.now(UTC).isoformat()
+    upcoming = []
+    for fixture in fixtures:
+        iso = (fixture.get("time") or {}).get("iso_utc")
+        if iso and iso >= now:
+            upcoming.append((iso, fixture))
+    upcoming.sort(key=lambda item: item[0])
+    lines = [_overview_header(overview), "", "🗓️ Próximos partidos"]
+    if not upcoming:
+        lines.append("No hay partidos futuros cargados.")
+        return "\n".join(lines)
+    for _, fixture in upcoming[:limit]:
+        time_info = fixture.get("time") or {}
+        when = f"{time_info.get('date','')} {time_info.get('time','')}".strip()
+        home = (fixture.get("home") or {}).get("name") or "?"
+        away = (fixture.get("away") or {}).get("name") or "?"
+        lines.append(f"🕒 {when} — {home} vs {away}")
+    return "\n".join(lines)
+
+
+def render_top_scorers(overview: dict[str, Any], *, limit: int = 10) -> str:
+    """Render top scorers, if the provider exposes them for this league."""
+
+    scorers = overview.get("top_goals") or []
+    lines = [_overview_header(overview), "", "👟 Goleadores"]
+    if not scorers:
+        lines.append("Sin datos de goleadores para esta liga.")
+        return "\n".join(lines)
+    for index, scorer in enumerate(scorers[:limit], start=1):
+        player = scorer.get("player") if isinstance(scorer.get("player"), dict) else {}
+        name = scorer.get("player_name") or player.get("name") or "?"
+        goals = scorer.get("goals") or scorer.get("total") or scorer.get("value") or ""
+        team = scorer.get("team_name") or (scorer.get("team") or {}).get("name") or ""
+        team_suffix = f" ({team})" if team else ""
+        lines.append(f"{index}. {name}{team_suffix} — {goals}")
+    return "\n".join(lines)
+
+
+def render_team_row(overview: dict[str, Any], query: str) -> str:
+    """Find a team by fuzzy name across divisions and render its standings row."""
+
+    standings = overview.get("standings") or {}
+    tables = standings.get("tables") if isinstance(standings, dict) else None
+    best = None  # (score, division_name, row)
+    q = _normalize_team_query(query)
+    for table in tables or []:
+        for row in table.get("rows") or []:
+            name = (row.get("team") or {}).get("name") or ""
+            score = _team_match_score(q, _normalize_team_query(name))
+            if best is None or score > best[0]:
+                best = (score, table.get("name") or "", row)
+    if best is None or best[0] < 0.34:
+        return f"No encontré un equipo parecido a “{query}” en esta liga."
+    _, division, row = best
+    team = row.get("team") or {}
+    home = row.get("home") or {}
+    away = row.get("away") or {}
+    lines = [
+        _overview_header(overview),
+        "",
+        f"⚽ {team.get('name') or '?'}  ·  {division}",
+        f"Posición: {row.get('position','?')}  ·  {row.get('points','?')} pts ({row.get('played','?')} PJ)",
+        f"Récord: {row.get('wins','?')}G {row.get('draws','?')}E {row.get('losses','?')}P",
+        f"Goles: {row.get('goals_for','?')} a favor · {row.get('goals_against','?')} en contra (dif {row.get('goal_difference','?')})",
+        f"Local: {home.get('points','?')} pts ({home.get('goals_for','?')}-{home.get('goals_against','?')})"
+        f"  ·  Visitante: {away.get('points','?')} pts ({away.get('goals_for','?')}-{away.get('goals_against','?')})",
+    ]
+    return "\n".join(lines)
+
+
+def _normalize_team_query(value: str) -> str:
+    return re.sub(r"[^a-z0-9 ]+", " ", (value or "").lower()).strip()
+
+
+def _team_match_score(query: str, name: str) -> float:
+    if not query or not name:
+        return 0.0
+    if query in name or name in query:
+        return 0.95
+    return SequenceMatcher(a=query, b=name).ratio()
 
 
 def _candidate_label(link: StatsMatchLink) -> str:
