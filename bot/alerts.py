@@ -366,19 +366,24 @@ def build_little_changes_message(changes: list[SmallChangeRecord]) -> str:
 
 
 def format_kickoff_text(match: ActiveEventRecord) -> str:
-    """Format kickoff text for Telegram output."""
+    """Format kickoff text for Telegram output, in the local display timezone.
 
-    date_label = (match.kickoff_label_date or "").strip()
-    time_label = (match.kickoff_label_time or "").strip()
+    Prefer the offset-aware `kickoff_at` (true UTC) so it converts correctly to
+    DISPLAY_TIMEZONE. The raw date/time labels are naive UTC wall-clock strings;
+    rendering them directly showed the UTC hour (e.g. 23:15) instead of the local
+    hour (20:15 in Argentina). Labels are only a fallback when no timestamp exists.
+    """
 
-    formatted_labels = format_kickoff_labels(date_label, time_label)
-    if formatted_labels != "Horario no disponible":
-        return formatted_labels
-
-    if match.kickoff_at is not None:
+    if match.kickoff_at:
         formatted_kickoff = format_display_datetime(match.kickoff_at)
         if formatted_kickoff is not None:
             return formatted_kickoff
+
+    date_label = (match.kickoff_label_date or "").strip()
+    time_label = (match.kickoff_label_time or "").strip()
+    formatted_labels = format_kickoff_labels(date_label, time_label)
+    if formatted_labels != "Horario no disponible":
+        return formatted_labels
 
     return "Horario no disponible"
 
