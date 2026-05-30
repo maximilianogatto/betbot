@@ -75,9 +75,11 @@ class BrowserHandler:
                 args=list(self.settings.launch_args),
             )
 
-            logger.info(
-                "Persistent browser started: browser=%s max_parallel_pages=%s",
+            logger.warning(
+                "🌐 CHROME ABIERTO | subsistema=extractor(bet365) | browser=%s headless=%s "
+                "max_parallel_pages=%s | motivo=captura de ligas vía Playwright",
                 self.settings.browser_name,
+                self.settings.headless,
                 self.settings.max_parallel_pages,
             )
 

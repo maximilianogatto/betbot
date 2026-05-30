@@ -32,6 +32,7 @@ import base64
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 import json
+import logging
 import tempfile
 import time
 from pathlib import Path
@@ -419,6 +420,12 @@ async def bootstrap_sportradar_session(config: BootstrapConfig) -> SportradarSes
 
     async with async_playwright() as playwright:
         user_data_dir = config.user_data_dir or tempfile.mkdtemp(prefix="sportradar-http-profile-")
+        logging.getLogger(__name__).warning(
+            "🌐 CHROME ABIERTO | subsistema=sportradar | headless=%s | "
+            "motivo=bootstrap/renovación de token Statshub | profile=%s",
+            config.headless,
+            user_data_dir,
+        )
         context = await playwright.chromium.launch_persistent_context(
             user_data_dir,
             headless=config.headless,
