@@ -167,5 +167,60 @@ class SportradarHttpStatsProviderTests(unittest.TestCase):
         self.assertEqual(provider._runtime_config.bootstrap_mode, "auto")
 
 
+class _MemoryCache:
+    def __init__(self) -> None:
+        self.store: dict = {}
+
+    def get_cached_stats_payload(self, cache_key):
+        return self.store.get(cache_key)
+
+    def set_cached_stats_payload(self, cache_key, payload, *, ttl_seconds):
+        self.store[cache_key] = payload
+
+
+class _CountingRuntime(FakeSportradarRuntime):
+    def __init__(self) -> None:
+        super().__init__()
+        self.nav_calls = 0
+
+    def get_tournament_navigation(self, request):
+        self.nav_calls += 1
+        return super().get_tournament_navigation(request)
+
+
+class SportradarStatsCacheTests(unittest.TestCase):
+    def test_list_fixtures_served_from_cache_on_repeat(self) -> None:
+        runtime = _CountingRuntime()
+        cache = _MemoryCache()
+        provider = SportradarHttpStatsProvider(runtime=runtime, payload_cache=cache, cache_ttl_seconds=300)
+
+        first = asyncio.run(provider.list_fixtures("8"))
+        second = asyncio.run(provider.list_fixtures("8"))
+
+        self.assertEqual(len(first), len(second))
+        self.assertEqual(runtime.nav_calls, 1)  # second call served from cache
+        self.assertGreaterEqual(len(cache.store), 1)
+
+    def test_no_cache_calls_runtime_every_time(self) -> None:
+        runtime = _CountingRuntime()
+        provider = SportradarHttpStatsProvider(runtime=runtime, payload_cache=None)
+
+        asyncio.run(provider.list_fixtures("8"))
+        asyncio.run(provider.list_fixtures("8"))
+
+        self.assertEqual(runtime.nav_calls, 2)
+
+    def test_zero_ttl_disables_cache(self) -> None:
+        runtime = _CountingRuntime()
+        cache = _MemoryCache()
+        provider = SportradarHttpStatsProvider(runtime=runtime, payload_cache=cache, cache_ttl_seconds=0)
+
+        asyncio.run(provider.list_fixtures("8"))
+        asyncio.run(provider.list_fixtures("8"))
+
+        self.assertEqual(runtime.nav_calls, 2)
+        self.assertEqual(len(cache.store), 0)
+
+
 if __name__ == "__main__":
     unittest.main()

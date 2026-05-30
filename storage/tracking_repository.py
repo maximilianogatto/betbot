@@ -19,7 +19,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import json
 import logging
 from pathlib import Path
@@ -2195,6 +2195,45 @@ class SqliteTrackingRepository:
 
         return _row_to_stats_league_link(row) if row is not None else None
 
+    def get_cached_stats_payload(self, cache_key: str) -> dict[str, Any] | None:
+        """Return a cached stats payload if present and not expired, else None.
+
+        Backs the anti-ban / latency cache: expensive provider payloads are stored
+        so repeated reads of a tracked league's stats do not hit Sportradar again.
+        """
+
+        now_iso = _utc_now_iso()
+        with _connect() as connection:
+            row = connection.execute(
+                "SELECT payload_json, expires_at FROM stats_payload_cache WHERE cache_key = ?",
+                (cache_key,),
+            ).fetchone()
+        if row is None or str(row["expires_at"]) <= now_iso:
+            return None
+        try:
+            payload = json.loads(row["payload_json"])
+        except (TypeError, ValueError):
+            return None
+        return payload if isinstance(payload, dict) else None
+
+    def set_cached_stats_payload(self, cache_key: str, payload: dict[str, Any], *, ttl_seconds: float) -> None:
+        """Persist a stats payload under cache_key with a TTL (seconds)."""
+
+        fetched = datetime.now(timezone.utc)
+        expires = fetched + timedelta(seconds=max(1.0, float(ttl_seconds)))
+        with _connect() as connection:
+            connection.execute(
+                """
+                INSERT INTO stats_payload_cache (cache_key, payload_json, fetched_at, expires_at)
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT(cache_key) DO UPDATE SET
+                    payload_json = excluded.payload_json,
+                    fetched_at = excluded.fetched_at,
+                    expires_at = excluded.expires_at
+                """,
+                (cache_key, _json_dumps(payload), fetched.isoformat(), expires.isoformat()),
+            )
+
     def delete_stats_league_link(self, tracked_competition_id: int) -> bool:
         """Delete the stats-provider league link for one tracked competition."""
 
@@ -2610,6 +2649,16 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
 
         CREATE INDEX IF NOT EXISTS idx_stats_match_links_provider
         ON stats_match_links(stats_provider, stats_match_id);
+
+        CREATE TABLE IF NOT EXISTS stats_payload_cache (
+            cache_key TEXT PRIMARY KEY,
+            payload_json TEXT NOT NULL,
+            fetched_at TEXT NOT NULL,
+            expires_at TEXT NOT NULL
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_stats_payload_cache_expires
+        ON stats_payload_cache(expires_at);
 
         CREATE TABLE IF NOT EXISTS user_event_baselines (
             chat_id INTEGER NOT NULL,

@@ -11,9 +11,10 @@ from __future__ import annotations
 import asyncio
 from datetime import UTC, datetime
 from difflib import SequenceMatcher
+import os
 import re
 import unicodedata
-from typing import Any, Callable, TypeVar
+from typing import Any, Callable, Protocol, TypeVar
 
 from core.stats_models import (
     MatchIdentityCandidate,
@@ -37,6 +38,26 @@ from stats_providers.sportradar_http.engine.tournament_navigation import build_t
 
 _T = TypeVar("_T")
 _MATCH_URL_RE = re.compile(r"/match/(\d+)")
+
+_DEFAULT_CACHE_TTL_SECONDS = 900.0
+
+
+class StatsPayloadCache(Protocol):
+    """Minimal cache contract the provider needs (satisfied by the SQLite repo)."""
+
+    def get_cached_stats_payload(self, cache_key: str) -> dict[str, Any] | None: ...
+
+    def set_cached_stats_payload(self, cache_key: str, payload: dict[str, Any], *, ttl_seconds: float) -> None: ...
+
+
+def _default_cache_ttl() -> float:
+    raw = os.getenv("SPORTRADAR_CACHE_TTL_SECONDS")
+    if raw is None:
+        return _DEFAULT_CACHE_TTL_SECONDS
+    try:
+        return max(0.0, float(raw))
+    except ValueError:
+        return _DEFAULT_CACHE_TTL_SECONDS
 
 # Matching thresholds. Names are compared per side (home and away) so the pair
 # itself disambiguates short, repeated names (e.g. two "Canberra" clubs): a wrong
@@ -74,11 +95,40 @@ class SportradarHttpStatsProvider(StatsProvider):
         sport_id: int = 1,
         category_id: int = 67,
         runtime_config: BotReadyRuntimeConfig | None = None,
+        payload_cache: StatsPayloadCache | None = None,
+        cache_ttl_seconds: float | None = None,
     ) -> None:
         self.sport_id = sport_id
         self.category_id = category_id
         self._runtime_config = runtime_config or _default_runtime_config()
         self._runtime = runtime or SportradarBotReadyProvider(self._runtime_config)
+        # Optional disk/DB-backed cache for expensive payloads (anti-ban + speed).
+        self._cache = payload_cache
+        self._cache_ttl = cache_ttl_seconds if cache_ttl_seconds is not None else _default_cache_ttl()
+
+    async def _cached_payload(
+        self,
+        cache_key: str,
+        func: Callable[..., Any],
+        *args: Any,
+        ttl_seconds: float | None = None,
+    ) -> Any:
+        """Return a cached payload for `cache_key`, or call `func` and store it.
+
+        Caching is skipped entirely when no cache is wired or the TTL is 0, so the
+        engine stays the single source of truth in tests and live-only flows.
+        """
+
+        ttl = self._cache_ttl if ttl_seconds is None else ttl_seconds
+        if self._cache is None or ttl <= 0:
+            return await self._call(func, *args)
+        cached = await self._call(self._cache.get_cached_stats_payload, cache_key)
+        if isinstance(cached, dict):
+            return cached
+        payload = await self._call(func, *args)
+        if isinstance(payload, dict):
+            await self._call(self._cache.set_cached_stats_payload, cache_key, payload, ttl_seconds=ttl)
+        return payload
 
     async def search_leagues(
         self,
@@ -128,7 +178,8 @@ class SportradarHttpStatsProvider(StatsProvider):
             category_id=self.category_id,
             depth=0,
         )
-        payload = await self._call(self._runtime.get_tournament_navigation, request)
+        cache_key = f"{self.name}:tournament_nav:{self.sport_id}:{self.category_id}:{league_id}"
+        payload = await self._cached_payload(cache_key, self._runtime.get_tournament_navigation, request)
         raw_fixtures = payload.get("fixtures") if isinstance(payload, dict) else []
         fixtures = [self._fixture_from_mapping(league_id, item) for item in raw_fixtures or []]
         fixtures = [fixture for fixture in fixtures if fixture.match_id]
@@ -308,7 +359,12 @@ class SportradarHttpStatsProvider(StatsProvider):
     async def build_match_report(self, stats_match_id: str) -> MatchStatsReport:
         """Build a compact Telegram-ready report for one Statshub match."""
 
-        payload = await self._call(self._runtime.get_match_report, BotReadyMatchRequest(match_id=int(stats_match_id)))
+        cache_key = f"{self.name}:match_report:{stats_match_id}"
+        payload = await self._cached_payload(
+            cache_key,
+            self._runtime.get_match_report,
+            BotReadyMatchRequest(match_id=int(stats_match_id)),
+        )
         snapshot = payload.get("snapshot") if isinstance(payload, dict) else {}
         intelligence = payload.get("intelligence") if isinstance(payload, dict) else {}
         metadata = snapshot.get("metadata") if isinstance(snapshot, dict) else {}
