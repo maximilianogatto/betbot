@@ -7,6 +7,7 @@ from typing import Any
 from core.extractor_base import Extractor
 from core.registry import ExtractorRegistry
 from extractors.bet365 import Bet365Extractor, Bet365ExtractorSettings
+from extractors.betovo_http import BetovoHttpExtractor, betovo_is_configured
 from extractors.bz_http import BzHttpExtractor, bz_is_configured
 from extractors.mystake_http import MystakeHttpExtractor, mystake_is_configured
 from extractors.solcasino_http import SolcasinoHttpExtractor, solcasino_is_configured
@@ -44,6 +45,11 @@ def register_default_extractors(
         BzHttpExtractor, browser_enabled=browser_enabled
     ):
         registered.append(registry.register(BzHttpExtractor()))
+    # Betovo (Altenar) registers once a frontend host + integration are available.
+    if betovo_is_configured() and _should_register_provider(
+        BetovoHttpExtractor, browser_enabled=browser_enabled
+    ):
+        registered.append(registry.register(BetovoHttpExtractor()))
 
     return registered
 

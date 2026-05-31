@@ -25,3 +25,6 @@ sandbox/rainbet/captures/
 
 # BZ research network dumps (regenerate via capture_traffic.py)
 sandbox/bz/captures/
+
+# Betovo research network dumps (regenerate via capture_traffic.py)
+sandbox/betovo/captures/
