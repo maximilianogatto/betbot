@@ -19,6 +19,7 @@ class MystakeHttpSettings:
 
     base_url: str = DEFAULT_BASE_URL
     api_path: str = "/api/prematch"
+    sport_api_path: str = "/api/sport"
     region: str = "as"
     sport_id: int = 1
     language: int = 28
@@ -37,6 +38,10 @@ class MystakeHttpSettings:
     @property
     def prematch_base(self) -> str:
         return f"{self.base_url.rstrip('/')}{self.api_path}"
+
+    @property
+    def sport_base(self) -> str:
+        return f"{self.base_url.rstrip('/')}{self.sport_api_path}"
 
 
 def load_mystake_settings() -> MystakeHttpSettings:

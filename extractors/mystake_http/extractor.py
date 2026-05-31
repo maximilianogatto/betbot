@@ -1,26 +1,35 @@
 """Mystake prematch HTTP extractor.
 
-A league is a Mystake championship id (``ch``). The recommended way to track an
-arbitrary league (incl. non-featured ones) is to paste, via ``/track_url``, the
-``getprematchgameall/...?games=,<ids>`` URL the site fires when viewing that
-league — it carries that league's game ids. The extractor parses those ids,
-fetches their odds (``gameall`` works server-side) and groups them by ``ch``;
-refreshing re-fetches the same ids for fresh odds.
+A league is a Mystake championship id (``ch``). The full directory — every
+sport, country and league (with translated names) plus each league's game ids —
+comes from the header tree (``/api/sport/getheader/<region>``), which is served
+over plain HTTP with no token. That powers ``/track_league`` discovery: browse
+by country, pick a league, done — no URL or manual name needed.
 
 Tracking forms accepted:
-  - a ``getprematchgameall/.../?games=,<ids>`` URL (recommended, any league)
-  - ``mystake:champ:<id>`` -> featured/main-league games via ``getprematchtopgames``
-  - a ``mystake.bet`` URL carrying ``?ch=<id>``
+  - ``/track_league`` discovery (preferred): ``search_leagues`` -> header tree.
+  - ``mystake:champ:<id>`` -> league resolved from the header (name + game ids),
+    falling back to the featured ``getprematchtopgames`` feed.
+  - a ``getprematchgameall/.../?games=,<ids>`` URL (pasted via ``/track_url``);
+    its game ids are fetched directly and the league name is resolved from the
+    header by the dominant ``ch``.
+  - a ``mystake.bet`` URL carrying ``?ch=<id>``.
+
+Odds are fetched via ``getprematchgameall`` (1X2 + Asian handicap + goal line).
 """
 
 from __future__ import annotations
 
+import asyncio
 from collections import Counter
 import re
+import time
+from typing import Any
 from urllib.parse import parse_qs, urlparse
 
-from core.extractor_base import Extractor
+from core.extractor_base import Extractor, LeagueDiscoveryOption
 from core.models import CompetitionExtraction, EventSnapshot, ProviderCapabilities
+from extractors.mystake_http import header as header_module
 from extractors.mystake_http.client import MystakeHttpClient
 from extractors.mystake_http.parser import build_competition_extraction, decode_json_field
 from extractors.mystake_http.settings import MystakeHttpSettings, load_mystake_settings
@@ -37,10 +46,17 @@ class MystakeHttpExtractor(Extractor):
     supported_domains = _SUPPORTED_HOSTS
     supported_capabilities = ("ligas",)
     provider_capabilities = ProviderCapabilities(supports_http=True, supports_browserless=True)
-    supports_league_discovery = False  # finalized once league names/tree are captured
+    supports_league_discovery = True  # via getheader tree (sports -> regions -> champs)
+
+    # The header (~380KB) lists every league; cache it briefly so a refresh
+    # sweep or a discovery search reuses one download instead of one per league.
+    _HEADER_TTL_SECONDS = 300.0
 
     def __init__(self, *, settings: MystakeHttpSettings | None = None) -> None:
         self.settings = settings or load_mystake_settings()
+        self._header_cache: dict[str, Any] | None = None
+        self._header_cached_at = 0.0
+        self._header_lock = asyncio.Lock()
 
     @classmethod
     def can_handle_url(cls, url: str) -> bool:
@@ -62,22 +78,90 @@ class MystakeHttpExtractor(Extractor):
         if game_ids:
             raw = await client.fetch_games(game_ids)
             champ_id = _dominant_champ_id(raw) or "0"
-            return build_competition_extraction(champ_id=champ_id, raw_response=raw, source_url=url)
+            name = await self._resolve_league_name(client, champ_id)
+            return build_competition_extraction(
+                champ_id=champ_id, raw_response=raw, source_url=url, competition_name=name
+            )
 
-        # Fallback: featured leagues by championship id via topgames.
+        # By championship id: resolve the league (name + full game ids) from the
+        # header tree, falling back to the featured topgames feed.
         champ_id = _champ_id_from_url(url)
         if champ_id is None:
             raise ValueError(
                 "Could not determine the Mystake league from the URL. Paste a "
                 "getprematchgameall '?games=,<ids>' URL, or use 'mystake:champ:<id>'."
             )
-        topgames = await client.fetch_topgames()
-        ids = _game_ids_for_champ(topgames, sport_id=self.settings.sport_id, champ_id=champ_id)
+
+        name: str | None = None
+        ids: list[int] = []
+        try:
+            league = header_module.find_champ(
+                await self._get_header(client), champ_id=champ_id, sport_id=self.settings.sport_id
+            )
+        except Exception:  # header is best-effort; fall back to topgames
+            league = None
+        if league is not None:
+            name = league.champ_name
+            ids = list(league.game_ids)
+
+        if not ids:
+            topgames = await client.fetch_topgames()
+            ids = _game_ids_for_champ(topgames, sport_id=self.settings.sport_id, champ_id=champ_id)
+
         raw = await client.fetch_games(ids)
-        return build_competition_extraction(champ_id=champ_id, raw_response=raw, source_url=url)
+        return build_competition_extraction(
+            champ_id=champ_id, raw_response=raw, source_url=url, competition_name=name
+        )
 
     async def extract_match(self, url: str) -> EventSnapshot:
         raise NotImplementedError(f"{self.name} does not support direct match URLs yet.")
+
+    async def search_leagues(
+        self,
+        *,
+        country_name: str,
+        query: str | None = None,
+        limit: int = 80,
+    ) -> list[LeagueDiscoveryOption]:
+        """Discover trackable leagues by country from the header tree."""
+
+        client = MystakeHttpClient(self.settings)
+        tree = await self._get_header(client)
+        return header_module.build_league_options(
+            tree,
+            platform=self.name,
+            platform_display_name=self.display_name,
+            sport_id=self.settings.sport_id,
+            country_name=country_name,
+            query=query,
+            limit=limit,
+        )
+
+    async def _resolve_league_name(self, client: MystakeHttpClient, champ_id: str) -> str | None:
+        """Best-effort: look up the translated league name for a champ id."""
+
+        if not champ_id or champ_id == "0":
+            return None
+        try:
+            league = header_module.find_champ(
+                await self._get_header(client), champ_id=champ_id, sport_id=self.settings.sport_id
+            )
+        except Exception:
+            return None
+        return league.champ_name if league is not None else None
+
+    async def _get_header(self, client: MystakeHttpClient) -> dict[str, Any]:
+        """Return the header tree, served from a short-lived in-process cache."""
+
+        async with self._header_lock:
+            now = time.monotonic()
+            if self._header_cache is not None and (now - self._header_cached_at) < self._HEADER_TTL_SECONDS:
+                return self._header_cache
+            tree = await client.fetch_header()
+            if tree:
+                self._header_cache = tree
+                self._header_cached_at = now
+            return tree
 
     def build_competition_url(self, *, competition_external_id, source_url=None, metadata=None) -> str | None:
         del source_url, metadata

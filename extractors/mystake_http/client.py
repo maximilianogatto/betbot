@@ -53,6 +53,18 @@ class MystakeHttpClient:
         data = await self._get(f"getprematchtopgames/{self.settings.region}")
         return data if isinstance(data, list) else []
 
+    async def fetch_header(self) -> dict[str, Any]:
+        """Return the full navigation tree (sports -> regions -> champs -> games).
+
+        This is the complete prematch directory with translated league names; it
+        powers league discovery without pasting a URL. Served from the ``sport``
+        API path (not ``prematch``).
+        """
+
+        url = f"{self.settings.sport_base}/getheader/{self.settings.region}"
+        data = await self._get_url(url)
+        return data if isinstance(data, dict) else {}
+
     async def fetch_games(self, game_ids: list[int]) -> dict[str, Any]:
         """Return raw game details (with markets + teams) for the given ids."""
 
@@ -64,7 +76,9 @@ class MystakeHttpClient:
         return data if isinstance(data, dict) else {}
 
     async def _get(self, path: str) -> Any:
-        url = f"{self.settings.prematch_base}/{path}"
+        return await self._get_url(f"{self.settings.prematch_base}/{path}")
+
+    async def _get_url(self, url: str) -> Any:
         last_error: Exception | None = None
         for attempt in range(self.settings.max_attempts):
             try:

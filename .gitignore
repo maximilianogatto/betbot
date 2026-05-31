@@ -16,3 +16,6 @@ salida.json
 
 # Sportradar headless bootstrap profile (Akamai cookies cache)
 stats_providers/sportradar_http/engine/reports/chrome_profile/
+
+# Mystake research network dumps (bulky, regenerate via capture_traffic.py)
+sandbox/mystake/research/captures/

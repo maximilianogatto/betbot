@@ -1,12 +1,16 @@
 """Parsing for Mystake prematch payloads into generic domain models.
 
-Payload shape (from research, mystake.bet ``/prematch/getprematch``):
-  - ``game``: JSON string -> list of games. Each game:
-      id, t1/t2 (team ids), st (ISO start), sport, region (= league id),
-      ev (markets dict). Market 448 = 1X2 (pos 1=home, 2=draw, 3=away),
-      537 = Over/Under (pos 81=over, 82=under, h = line). coef = decimal odd.
+Payload shape (mystake.bet ``getprematchgameall/<region>/<lang>/?games=,<ids>``):
+  - ``game``: JSON string -> list of games. Each game: id, ch (= championship /
+    league id), t1/t2 (team ids), st (ISO start), sport, ev (markets dict).
+    Markets used here (``coef`` = decimal odd):
+      * 448 = 1X2          (pos 1=home, 2=draw, 3=away)
+      * 451 = Asian handicap (pos 70=home, 71=away; ``h`` = line)
+      * 537 = Goal line / Over-Under (pos 81=over, 82=under; ``h`` = line)
   - ``teams``: JSON string -> list of {ID, Name}.
   - ``outrights``: JSON string (ignored here).
+
+League names come from the header tree (see ``header.py``), not this payload.
 """
 
 from __future__ import annotations
