@@ -6,7 +6,9 @@ import unittest
 from extractors.mystake_http.extractor import (
     MystakeHttpExtractor,
     _champ_id_from_url,
+    _dominant_champ_id,
     _game_ids_for_champ,
+    _game_ids_from_gameall_url,
 )
 from extractors.mystake_http.parser import build_competition_extraction
 
@@ -85,7 +87,22 @@ class MystakeExtractorTests(unittest.TestCase):
     def test_can_handle_url(self) -> None:
         self.assertTrue(MystakeHttpExtractor.can_handle_url("mystake:champ:258"))
         self.assertTrue(MystakeHttpExtractor.can_handle_url("https://mystake.bet/as/sportsbook/prematch?ch=258"))
+        self.assertTrue(
+            MystakeHttpExtractor.can_handle_url(
+                "https://analytics-sp.googleserv.tech/api/prematch/getprematchgameall/as/28/?games=,72219517"
+            )
+        )
         self.assertFalse(MystakeHttpExtractor.can_handle_url("https://spinbetter.com/x"))
+
+    def test_game_ids_from_gameall_url(self) -> None:
+        url = "https://analytics-sp.googleserv.tech/api/prematch/getprematchgameall/as/28/?games=,72219517,71336881"
+        self.assertEqual(_game_ids_from_gameall_url(url), [72219517, 71336881])
+        self.assertEqual(_game_ids_from_gameall_url("mystake:champ:258"), [])
+
+    def test_dominant_champ_id(self) -> None:
+        self.assertEqual(_dominant_champ_id(_gameall_response()), "258")  # 1 ch=258, 1 ch=15268 -> tie, first
+        single = {"game": json.dumps([{"id": 1, "ch": 10304, "t1": 1, "t2": 2, "ev": {}}]), "teams": "[]"}
+        self.assertEqual(_dominant_champ_id(single), "10304")
 
     def test_champ_id_extraction(self) -> None:
         self.assertEqual(_champ_id_from_url("mystake:champ:258"), "258")
