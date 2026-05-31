@@ -1,8 +1,18 @@
-"""Async HTTP client for the Mystake prematch REST API."""
+"""Async HTTP client for the Mystake prematch REST API.
+
+Endpoints (host like ``https://analytics-sp.<x>.tech/api/prematch``):
+  - ``getprematchtopgames/{region}`` -> featured games grouped by sport,
+    each with its championship (``ch``) and region (``rg``).
+  - ``getprematchgameall/{region}/{language}/?games=,<ids>`` -> game details
+    (markets/odds) + team names.
+
+Both responses are JSON strings that contain escaped JSON (double-encoded).
+"""
 
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 from typing import Any
 
@@ -23,39 +33,45 @@ _HEADERS = {
 }
 
 
+def _decode(payload: Any) -> Any:
+    """Decode a (possibly) double-encoded JSON string response."""
+
+    return json.loads(payload) if isinstance(payload, str) else payload
+
+
 class MystakeHttpClient:
-    """Defensive client for ``/prematch/getprematch``."""
+    """Defensive client for the Mystake prematch endpoints."""
 
     def __init__(self, settings: MystakeHttpSettings) -> None:
         if not settings.base_url:
-            raise ValueError(
-                "MYSTAKE_API_BASE_URL is not configured. Capture the real "
-                "getprematch host from mystake.bet and set it before use."
-            )
+            raise ValueError("MYSTAKE_API_BASE_URL host is not configured.")
         self.settings = settings
 
-    async def fetch_prematch(self, *, game_ids: list[int] | None = None) -> dict[str, Any]:
-        """Fetch the prematch feed for the configured region/sport/language."""
+    async def fetch_topgames(self) -> list[dict[str, Any]]:
+        """Return featured games grouped by sport for the configured region."""
 
-        params: dict[str, Any] = {
-            "region": self.settings.region,
-            "sport": self.settings.sport_id,
-            "language": self.settings.language,
-        }
-        if game_ids:
-            params["games"] = "," + ",".join(str(game_id) for game_id in game_ids)
+        data = await self._get(f"getprematchtopgames/{self.settings.region}")
+        return data if isinstance(data, list) else []
 
-        url = f"{self.settings.base_url}/prematch/getprematch"
+    async def fetch_games(self, game_ids: list[int]) -> dict[str, Any]:
+        """Return raw game details (with markets + teams) for the given ids."""
+
+        if not game_ids:
+            return {"game": "[]", "teams": "[]"}
+        ids = ",".join(str(game_id) for game_id in game_ids)
+        path = f"getprematchgameall/{self.settings.region}/{self.settings.language}/?games=,{ids}"
+        data = await self._get(path)
+        return data if isinstance(data, dict) else {}
+
+    async def _get(self, path: str) -> Any:
+        url = f"{self.settings.prematch_base}/{path}"
         last_error: Exception | None = None
         for attempt in range(self.settings.max_attempts):
             try:
                 async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, headers=_HEADERS) as client:
-                    response = await client.get(url, params=params)
+                    response = await client.get(url)
                     response.raise_for_status()
-                    payload = response.json()
-                if isinstance(payload, dict):
-                    return payload
-                raise ValueError("Mystake getprematch did not return a JSON object.")
+                    return _decode(response.json())
             except Exception as error:  # defensive polling
                 last_error = error
                 if attempt < self.settings.max_attempts - 1:

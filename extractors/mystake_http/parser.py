@@ -111,27 +111,30 @@ def event_snapshot_from_game(
 
 def build_competition_extraction(
     *,
-    region_id: str,
+    champ_id: str,
     raw_response: dict[str, Any],
     source_url: str,
     competition_name: str | None = None,
 ) -> CompetitionExtraction:
-    """Filter a getprematch response to one league (region id) and normalize it."""
+    """Filter a getprematchgameall response to one league (championship id).
+
+    A Mystake league is the championship id (``ch``) carried by each game.
+    """
 
     games = decode_json_field(raw_response.get("game"))
     teams = parse_teams(raw_response.get("teams"))
-    name = competition_name or f"Mystake región {region_id}"
+    name = competition_name or f"Mystake liga {champ_id}"
 
     events: list[EventSnapshot] = []
     for game in games or []:
         if not isinstance(game, dict):
             continue
-        if str(game.get("region")) != str(region_id):
+        if str(game.get("ch")) != str(champ_id):
             continue
         snapshot = event_snapshot_from_game(
             game,
             teams,
-            competition_external_id=str(region_id),
+            competition_external_id=str(champ_id),
             competition_name=name,
             source_url=source_url,
         )
@@ -139,14 +142,14 @@ def build_competition_extraction(
             events.append(snapshot)
 
     return CompetitionExtraction(
-        competition=CompetitionKey(platform=PLATFORM, competition_external_id=str(region_id)),
+        competition=CompetitionKey(platform=PLATFORM, competition_external_id=str(champ_id)),
         competition_name=name,
         source_url=source_url,
         events=events,
         is_empty=not events,
         is_provisional_name=competition_name is None,
         extracted_at=utc_now_iso(),
-        metadata={"region_id": str(region_id)},
+        metadata={"champ_id": str(champ_id)},
         raw_payload={},
     )
 
