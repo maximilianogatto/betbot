@@ -11,8 +11,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 import os
 
-# Captured from rainbet.com (BTRenderer().initialize({... brand_id ...})).
-DEFAULT_API_HOST = "api-g-c7818b61-607.sptpub.com"
+# Captured from rainbet.com: brand_id from BTRenderer().initialize({...}); api_host
+# from its renderer (rainbet.sportsbookcdn.com/bt-renderer.min.js -> api-a-c7818b61-600).
+# Note: rainbet shares the "c7818b61" operator cluster with solcasino, but the
+# brand_id selects rainbet's own (slightly different) catalog.
+DEFAULT_API_HOST = "api-a-c7818b61-600.sptpub.com"
 DEFAULT_BRAND_ID = "2374656571012681728"
 DEFAULT_SITE_ORIGIN = "https://rainbet.com"
 
