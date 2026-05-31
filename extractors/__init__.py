@@ -7,6 +7,7 @@ from typing import Any
 from core.extractor_base import Extractor
 from core.registry import ExtractorRegistry
 from extractors.bet365 import Bet365Extractor, Bet365ExtractorSettings
+from extractors.mystake_http import MystakeHttpExtractor, mystake_is_configured
 from extractors.xbet_http import XBetHttpExtractor
 
 
@@ -26,6 +27,11 @@ def register_default_extractors(
         )
     if _should_register_provider(XBetHttpExtractor, browser_enabled=browser_enabled):
         registered.append(registry.register(XBetHttpExtractor()))
+    # Mystake registers only once a real REST host is configured (MYSTAKE_API_BASE_URL).
+    if mystake_is_configured() and _should_register_provider(
+        MystakeHttpExtractor, browser_enabled=browser_enabled
+    ):
+        registered.append(registry.register(MystakeHttpExtractor()))
 
     return registered
 
