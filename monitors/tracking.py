@@ -122,8 +122,14 @@ class TrackingService:
 
         return extraction
 
-    async def create_pending_track_from_url(self, chat_id: int, url: str) -> CommandResult:
-        """Validate a supported URL, extract metadata, and store a pending request."""
+    async def create_pending_track_from_url(
+        self, chat_id: int, url: str, *, custom_name: str | None = None
+    ) -> CommandResult:
+        """Validate a supported URL, extract metadata, and store a pending request.
+
+        ``custom_name`` overrides the competition name (useful for platforms like
+        Mystake whose API does not expose league names).
+        """
 
         try:
             extraction = await self._extract_league(url)
@@ -190,9 +196,9 @@ class TrackingService:
                 platform=extraction.platform,
                 source_url=extraction.source_url,
                 competition_external_id=extraction.competition_external_id,
-                competition_name=extraction.competition_name,
+                competition_name=(custom_name or extraction.competition_name),
                 requires_empty_confirmation=extraction.is_empty,
-                needs_name_resolution=extraction.is_provisional_name,
+                needs_name_resolution=extraction.is_provisional_name and not custom_name,
                 payload=extraction.raw_payload,
             )
         except ValueError as error:

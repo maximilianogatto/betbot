@@ -149,7 +149,9 @@ GUIDE_MESSAGE = (
 TRACK_URL_USAGE_MESSAGE = (
     "Usá /track_url <url_de_plataforma>.\n"
     "Primero podés usar /platforms para ver las plataformas disponibles\n"
-    "y después pegar la URL de una competencia."
+    "y después pegar la URL de una competencia.\n\n"
+    "Opcional: agregá un nombre con | al final (útil en Mystake):\n"
+    "/track_url <url> | Australia NPL Northern NSW"
 )
 
 SET_CHANGE_PERCENT_USAGE_MESSAGE = (
@@ -811,11 +813,22 @@ async def track_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         await update.message.reply_text(TRACK_URL_USAGE_MESSAGE)
         return
 
-    url = " ".join(context.args).strip()
+    raw = " ".join(context.args).strip()
+    # Optional custom name after a '|' (e.g. for Mystake, whose API has no names):
+    #   /track_url <url> | Australia NPL Northern NSW
+    custom_name: str | None = None
+    if "|" in raw:
+        url_part, _, name_part = raw.partition("|")
+        url = url_part.strip()
+        custom_name = name_part.strip() or None
+    else:
+        url = raw
+
     tracking_service = get_tracking_service(context)
     result = await tracking_service.create_pending_track_from_url(
         chat_id=update.effective_chat.id,
         url=url,
+        custom_name=custom_name,
     )
 
     await reply_with_result(update, result)
