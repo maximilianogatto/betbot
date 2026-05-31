@@ -57,16 +57,61 @@ def _odds_1x2(ev: dict[str, Any]) -> Odds1X2:
     return Odds1X2(home=_as_float(by_pos.get(1)), draw=_as_float(by_pos.get(2)), away=_as_float(by_pos.get(3)))
 
 
-def _over_under(ev: dict[str, Any], *, target: float = 2.5) -> dict[str, Any] | None:
+def _format_line(value: float, *, show_plus: bool = True) -> str:
+    sign = "+" if (value > 0 and show_plus) else ""
+    if float(value).is_integer():
+        return f"{sign}{int(value)}"
+    return f"{sign}{value:g}"
+
+
+def _asian_handicap(ev: dict[str, Any], *, home: str, away: str) -> dict[str, Any] | None:
+    """Map Mystake market 451 (pos 70=home, 71=away; h=line) to the bot's AH shape."""
+
+    market = ev.get("451") if isinstance(ev, dict) else None
+    if not isinstance(market, dict):
+        return None
+
+    def _side(pos: int) -> list[tuple[float, float]]:
+        rows = [
+            (_as_float(e.get("h")), _as_float(e.get("coef")))
+            for e in market.values()
+            if isinstance(e, dict) and e.get("pos") == pos and e.get("h") is not None
+        ]
+        rows = [(line, odds) for line, odds in rows if line is not None and odds is not None]
+        return sorted(rows, key=lambda item: abs(item[0]))  # main line (closest to 0) first
+
+    selections: list[dict[str, Any]] = []
+    home_rows = _side(70)
+    away_rows = _side(71)
+    for line, odds in home_rows[:3]:
+        selections.append({"selection": home, "line": _format_line(line), "odds": odds})
+    for line, odds in away_rows[:3]:
+        selections.append({"selection": away, "line": _format_line(line), "odds": odds})
+    if not (home_rows and away_rows):
+        return None
+    return {"market_id": "mystake_asian_handicap", "market_name": "Asian Handicap", "selections": selections}
+
+
+def _goal_line(ev: dict[str, Any], *, target: float = 2.5) -> dict[str, Any] | None:
+    """Map Mystake market 537 (pos 81=over, 82=under; h=line) to the bot's goal_line shape."""
+
     market = ev.get("537") if isinstance(ev, dict) else None
     if not isinstance(market, dict):
         return None
-    overs = {e["h"]: e.get("coef") for e in market.values() if isinstance(e, dict) and e.get("pos") == 81 and "h" in e}
-    unders = {e["h"]: e.get("coef") for e in market.values() if isinstance(e, dict) and e.get("pos") == 82 and "h" in e}
+    overs = {e["h"]: _as_float(e.get("coef")) for e in market.values() if isinstance(e, dict) and e.get("pos") == 81 and "h" in e}
+    unders = {e["h"]: _as_float(e.get("coef")) for e in market.values() if isinstance(e, dict) and e.get("pos") == 82 and "h" in e}
     if not overs:
         return None
-    line = min(overs.keys(), key=lambda value: abs(value - target))
-    return {"line": line, "over": _as_float(overs.get(line)), "under": _as_float(unders.get(line))}
+    selections: list[dict[str, Any]] = []
+    for line in sorted(overs.keys(), key=lambda value: abs(value - target)):
+        label = _format_line(line, show_plus=False)
+        if overs.get(line) is not None:
+            selections.append({"selection": "Over", "line": label, "odds": overs[line]})
+        if unders.get(line) is not None:
+            selections.append({"selection": "Under", "line": label, "odds": unders[line]})
+    if not selections:
+        return None
+    return {"market_id": "mystake_goal_line", "market_name": "Goal Line", "selections": selections}
 
 
 def event_snapshot_from_game(
@@ -85,10 +130,13 @@ def event_snapshot_from_game(
     ev = game.get("ev") if isinstance(game.get("ev"), dict) else {}
     home = teams.get(game.get("t1")) or f"ID:{game.get('t1')}"
     away = teams.get(game.get("t2")) or f"ID:{game.get('t2')}"
-    over_under = _over_under(ev)
     markets_payload: dict[str, Any] = {}
-    if over_under is not None:
-        markets_payload["over_under"] = over_under
+    asian_handicap = _asian_handicap(ev, home=str(home), away=str(away))
+    if asian_handicap is not None:
+        markets_payload["asian_handicap"] = asian_handicap
+    goal_line = _goal_line(ev)
+    if goal_line is not None:
+        markets_payload["goal_line"] = goal_line
     return EventSnapshot(
         key=EventKey(
             platform=PLATFORM,

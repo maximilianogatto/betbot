@@ -31,6 +31,10 @@ def _gameall_response() -> dict:
                     "x": {"pos": 81, "h": 2.5, "coef": 1.42},
                     "y": {"pos": 82, "h": 2.5, "coef": 2.80},
                 },
+                "451": {
+                    "a": {"pos": 70, "h": -0.5, "coef": 1.90},
+                    "b": {"pos": 71, "h": 0.5, "coef": 1.95},
+                },
             },
         },
         {  # different championship -> excluded
@@ -74,7 +78,13 @@ class MystakeParserTests(unittest.TestCase):
         self.assertEqual(event.away, "Iceland")
         self.assertEqual(event.odds_1x2.home, 1.20)
         self.assertEqual(event.odds_1x2.away, 13.11)
-        self.assertEqual(event.markets_payload["over_under"]["line"], 2.5)
+        # Goal line (market 537) and Asian handicap (market 451) in the bot's shape.
+        gl = event.markets_payload["goal_line"]["selections"]
+        self.assertEqual(gl[0]["selection"], "Over")
+        self.assertEqual(gl[0]["line"], "2.5")
+        ah = event.markets_payload["asian_handicap"]["selections"]
+        sel_names = {s["selection"] for s in ah}
+        self.assertEqual(sel_names, {"Japan", "Iceland"})
 
     def test_empty_for_unknown_championship(self) -> None:
         extraction = build_competition_extraction(
