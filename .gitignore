@@ -19,3 +19,6 @@ stats_providers/sportradar_http/engine/reports/chrome_profile/
 
 # Mystake research network dumps (bulky, regenerate via capture_traffic.py)
 sandbox/mystake/research/captures/
+
+# Rainbet research network dumps (regenerate via capture_brand.py)
+sandbox/rainbet/captures/

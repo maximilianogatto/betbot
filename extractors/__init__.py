@@ -8,6 +8,7 @@ from core.extractor_base import Extractor
 from core.registry import ExtractorRegistry
 from extractors.bet365 import Bet365Extractor, Bet365ExtractorSettings
 from extractors.mystake_http import MystakeHttpExtractor, mystake_is_configured
+from extractors.rainbet_http import RainbetHttpExtractor, rainbet_is_configured
 from extractors.xbet_http import XBetHttpExtractor
 
 
@@ -32,6 +33,11 @@ def register_default_extractors(
         MystakeHttpExtractor, browser_enabled=browser_enabled
     ):
         registered.append(registry.register(MystakeHttpExtractor()))
+    # Rainbet (Betby/sptpub) registers once a brand id + api host are available.
+    if rainbet_is_configured() and _should_register_provider(
+        RainbetHttpExtractor, browser_enabled=browser_enabled
+    ):
+        registered.append(registry.register(RainbetHttpExtractor()))
 
     return registered
 
