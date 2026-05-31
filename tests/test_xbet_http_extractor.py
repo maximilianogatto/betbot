@@ -233,7 +233,7 @@ class XBetHttpExtractorTests(unittest.TestCase):
         # Only browserless HTTP providers remain when the browser is disabled.
         self.assertEqual(
             platforms,
-            {"1xbet_http", "mystake_http", "solcasino_http", "bz_http", "betovo_http"},
+            {"1xbet_http", "mystake_http", "solcasino_http", "bz_http", "betovo_http", "betwarrior_http"},
         )
 
 

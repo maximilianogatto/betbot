@@ -28,3 +28,6 @@ sandbox/bz/captures/
 
 # Betovo research network dumps (regenerate via capture_traffic.py)
 sandbox/betovo/captures/
+
+# BetWarrior research network dumps (regenerate via capture_traffic.py)
+sandbox/betwarrior/captures/
