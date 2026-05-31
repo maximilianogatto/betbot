@@ -1,4 +1,4 @@
-"""Async HTTP client for the Rainbet/Betby (sptpub) prematch snapshot feed.
+"""Async HTTP client for the Solcasino/Betby (sptpub) prematch snapshot feed.
 
 Flow (all plain HTTP, no token):
   1. GET ``.../<lang>/0`` -> a manifest with ``version``, ``top_events_versions``
@@ -16,17 +16,17 @@ from typing import Any
 
 import httpx
 
-from extractors.rainbet_http.settings import RainbetHttpSettings
+from extractors.solcasino_http.settings import SolcasinoHttpSettings
 
 logger = logging.getLogger(__name__)
 
 
-class RainbetHttpClient:
+class SolcasinoHttpClient:
     """Defensive async client for the Betby sptpub snapshot endpoints."""
 
-    def __init__(self, settings: RainbetHttpSettings) -> None:
+    def __init__(self, settings: SolcasinoHttpSettings) -> None:
         if not settings.api_host or not settings.brand_id:
-            raise ValueError("Rainbet api_host/brand_id are not configured.")
+            raise ValueError("Solcasino api_host/brand_id are not configured.")
         self.settings = settings
 
     @property

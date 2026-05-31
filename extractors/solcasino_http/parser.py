@@ -33,7 +33,7 @@ from core.models import (
     utc_now_iso,
 )
 
-PLATFORM = "rainbet_http"
+PLATFORM = "solcasino_http"
 
 
 def _coerce_float(value: Any) -> float | None:
@@ -168,7 +168,7 @@ def build_competition_extraction(
     tournaments = snapshot.get("tournaments") or {}
     tournament = tournaments.get(str(tournament_id)) if isinstance(tournaments, dict) else None
     tournament = tournament if isinstance(tournament, dict) else {}
-    resolved_name = competition_name or tournament.get("name") or f"Rainbet liga {tournament_id}"
+    resolved_name = competition_name or tournament.get("name") or f"Solcasino liga {tournament_id}"
 
     events: list[EventSnapshot] = []
     for event_id, event in (snapshot.get("events") or {}).items():

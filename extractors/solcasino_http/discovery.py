@@ -94,7 +94,7 @@ def build_league_options(
                 country_name=str(country),
                 league_id=str(tour_id),
                 league_name=league_name,
-                source_url=f"rainbet:tournament:{tour_id}",
+                source_url=f"solcasino:tournament:{tour_id}",
                 games_count=match_count,
                 raw_payload={"source": "betby_snapshot", "tournament_id": str(tour_id)},
             )

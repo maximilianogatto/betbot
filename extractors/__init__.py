@@ -9,7 +9,7 @@ from core.registry import ExtractorRegistry
 from extractors.bet365 import Bet365Extractor, Bet365ExtractorSettings
 from extractors.bz_http import BzHttpExtractor, bz_is_configured
 from extractors.mystake_http import MystakeHttpExtractor, mystake_is_configured
-from extractors.rainbet_http import RainbetHttpExtractor, rainbet_is_configured
+from extractors.solcasino_http import SolcasinoHttpExtractor, solcasino_is_configured
 from extractors.xbet_http import XBetHttpExtractor
 
 
@@ -34,11 +34,11 @@ def register_default_extractors(
         MystakeHttpExtractor, browser_enabled=browser_enabled
     ):
         registered.append(registry.register(MystakeHttpExtractor()))
-    # Rainbet (Betby/sptpub) registers once a brand id + api host are available.
-    if rainbet_is_configured() and _should_register_provider(
-        RainbetHttpExtractor, browser_enabled=browser_enabled
+    # Solcasino (Betby/sptpub) registers once a brand id + api host are available.
+    if solcasino_is_configured() and _should_register_provider(
+        SolcasinoHttpExtractor, browser_enabled=browser_enabled
     ):
-        registered.append(registry.register(RainbetHttpExtractor()))
+        registered.append(registry.register(SolcasinoHttpExtractor()))
     # BZ (m.bz.com, Sportradar-id sportsbook) registers once a base URL exists.
     if bz_is_configured() and _should_register_provider(
         BzHttpExtractor, browser_enabled=browser_enabled
