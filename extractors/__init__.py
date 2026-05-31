@@ -7,6 +7,7 @@ from typing import Any
 from core.extractor_base import Extractor
 from core.registry import ExtractorRegistry
 from extractors.bet365 import Bet365Extractor, Bet365ExtractorSettings
+from extractors.bz_http import BzHttpExtractor, bz_is_configured
 from extractors.mystake_http import MystakeHttpExtractor, mystake_is_configured
 from extractors.rainbet_http import RainbetHttpExtractor, rainbet_is_configured
 from extractors.xbet_http import XBetHttpExtractor
@@ -38,6 +39,11 @@ def register_default_extractors(
         RainbetHttpExtractor, browser_enabled=browser_enabled
     ):
         registered.append(registry.register(RainbetHttpExtractor()))
+    # BZ (m.bz.com, Sportradar-id sportsbook) registers once a base URL exists.
+    if bz_is_configured() and _should_register_provider(
+        BzHttpExtractor, browser_enabled=browser_enabled
+    ):
+        registered.append(registry.register(BzHttpExtractor()))
 
     return registered
 

@@ -22,3 +22,6 @@ sandbox/mystake/research/captures/
 
 # Rainbet research network dumps (regenerate via capture_brand.py)
 sandbox/rainbet/captures/
+
+# BZ research network dumps (regenerate via capture_traffic.py)
+sandbox/bz/captures/

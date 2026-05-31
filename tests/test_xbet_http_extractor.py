@@ -231,7 +231,7 @@ class XBetHttpExtractorTests(unittest.TestCase):
 
         platforms = {platform.key for platform in registry.list_platforms()}
         # Only browserless HTTP providers remain when the browser is disabled.
-        self.assertEqual(platforms, {"1xbet_http", "mystake_http", "rainbet_http"})
+        self.assertEqual(platforms, {"1xbet_http", "mystake_http", "rainbet_http", "bz_http"})
 
 
 class XBetHttpExtractionTests(unittest.IsolatedAsyncioTestCase):
