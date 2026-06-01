@@ -88,36 +88,40 @@ def _build_bet365_settings(settings: Any | None) -> Bet365ExtractorSettings | No
     if settings is None:
         return None
 
+    defaults = Bet365ExtractorSettings()
+
     return Bet365ExtractorSettings(
-        max_parallel_competitions=int(getattr(settings, "extractor_max_parallel_competitions")),
-        max_parallel_pages=int(getattr(settings, "extractor_max_parallel_pages")),
-        max_parallel_event_pages=int(getattr(settings, "extractor_max_parallel_event_pages")),
-        page_reuse_enabled=bool(getattr(settings, "extractor_page_reuse_enabled")),
+        max_parallel_competitions=int(getattr(settings, "extractor_max_parallel_competitions", defaults.max_parallel_competitions)),
+        max_parallel_pages=int(getattr(settings, "extractor_max_parallel_pages", defaults.max_parallel_pages)),
+        max_parallel_event_pages=int(getattr(settings, "extractor_max_parallel_event_pages", defaults.max_parallel_event_pages)),
+        page_reuse_enabled=bool(getattr(settings, "extractor_page_reuse_enabled", defaults.page_reuse_enabled)),
         browser_restart_after_n_refreshes=getattr(
             settings,
             "extractor_browser_restart_after_n_refreshes",
+            defaults.browser_restart_after_n_refreshes,
         ),
         browser_restart_idle_ttl_seconds=getattr(
             settings,
             "extractor_browser_restart_idle_ttl_seconds",
+            defaults.browser_restart_idle_ttl_seconds,
         ),
-        page_load_timeout_ms=int(getattr(settings, "extractor_page_load_timeout_ms")),
-        post_load_wait_ms=int(getattr(settings, "extractor_post_load_wait_ms")),
-        headless=bool(getattr(settings, "extractor_headless")),
-        capture_wait_timeout_ms=int(getattr(settings, "extractor_capture_wait_timeout_ms")),
-        capture_stable_ms=int(getattr(settings, "extractor_capture_stable_ms")),
-        capture_attempts=int(getattr(settings, "extractor_capture_attempts")),
+        page_load_timeout_ms=int(getattr(settings, "extractor_page_load_timeout_ms", defaults.page_load_timeout_ms)),
+        post_load_wait_ms=int(getattr(settings, "extractor_post_load_wait_ms", defaults.post_load_wait_ms)),
+        headless=bool(getattr(settings, "extractor_headless", defaults.headless)),
+        capture_wait_timeout_ms=int(getattr(settings, "extractor_capture_wait_timeout_ms", defaults.capture_wait_timeout_ms)),
+        capture_stable_ms=int(getattr(settings, "extractor_capture_stable_ms", defaults.capture_stable_ms)),
+        capture_attempts=int(getattr(settings, "extractor_capture_attempts", defaults.capture_attempts)),
         event_capture_wait_timeout_ms=int(
-            getattr(settings, "extractor_event_capture_wait_timeout_ms")
+            getattr(settings, "extractor_event_capture_wait_timeout_ms", defaults.event_capture_wait_timeout_ms)
         ),
-        event_capture_stable_ms=int(getattr(settings, "extractor_event_capture_stable_ms")),
-        event_capture_attempts=int(getattr(settings, "extractor_event_capture_attempts")),
-        save_debug_payloads=bool(getattr(settings, "extractor_save_debug_payloads")),
-        debug_payload_dir=getattr(settings, "extractor_debug_payload_dir"),
+        event_capture_stable_ms=int(getattr(settings, "extractor_event_capture_stable_ms", defaults.event_capture_stable_ms)),
+        event_capture_attempts=int(getattr(settings, "extractor_event_capture_attempts", defaults.event_capture_attempts)),
+        save_debug_payloads=bool(getattr(settings, "extractor_save_debug_payloads", defaults.save_debug_payloads)),
+        debug_payload_dir=getattr(settings, "extractor_debug_payload_dir", defaults.debug_payload_dir),
         extract_alternative_markets=bool(
-            getattr(settings, "extractor_extract_alternative_markets")
+            getattr(settings, "extractor_extract_alternative_markets", defaults.extract_alternative_markets)
         ),
-        allow_legacy_fallback=bool(getattr(settings, "bet365_allow_legacy_fallback")),
+        allow_legacy_fallback=bool(getattr(settings, "bet365_allow_legacy_fallback", defaults.allow_legacy_fallback)),
     )
 
 

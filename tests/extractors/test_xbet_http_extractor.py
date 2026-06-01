@@ -219,7 +219,7 @@ class XBetHttpExtractorTests(unittest.TestCase):
                 supports_browserless=True,
             ),
         )
-        self.assertFalse(platforms["bet365"].capabilities.supports_browserless)
+        self.assertTrue(platforms["bet365"].capabilities.supports_browserless)
         self.assertTrue(platforms["bet365"].capabilities.supports_deep_markets)
 
     def test_default_registry_can_disable_browser_providers(self) -> None:
@@ -241,6 +241,7 @@ class XBetHttpExtractorTests(unittest.TestCase):
                 "betovo_http",
                 "betwarrior_http",
                 "mrpunter_http",
+                "bet365",
             },
         )
 
