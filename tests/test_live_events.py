@@ -6,6 +6,40 @@ from extractors.betovo_http.parser import live_events_from_livenow
 from extractors.betwarrior_http.parser import live_events_from_open
 from extractors.bz_http.parser import live_events_from_search
 from extractors.solcasino_http.parser import live_events_from_snapshot
+from extractors.xbet_http.parser import live_events_from_1x2_vzip
+
+
+class XBetLiveTests(unittest.TestCase):
+    def test_1x2_vzip_maps_inplay_and_filters_virtual_and_prematch(self) -> None:
+        payload = {
+            "Value": [
+                {  # real, in-play
+                    "I": 100, "O1": "Alto Zambeze", "O2": "Kalandula", "L": "Angola. Liga Bantu", "CN": "Angola",
+                    "SC": {"FS": {"S1": 2, "S2": 3}, "I": "", "SLS": "76 minutos", "CP": 2},
+                    "E": [{"T": 1, "C": 1.17}, {"T": 2, "C": 5.31}, {"T": 3, "C": 19.7}],
+                },
+                {  # prematch (in live feed but not kicked off) -> excluded
+                    "I": 101, "O1": "A", "O2": "B", "L": "China. Liga", "CN": "China",
+                    "SC": {"FS": {}, "I": "Apuestas prepartido", "SLS": "Comienza en 1 minutos"},
+                    "E": [],
+                },
+                {  # virtual -> flagged is_soccer False
+                    "I": 102, "O1": "X (sim)", "O2": "Y (sim)", "L": "Short Football 5x5", "CN": "Mundo",
+                    "SC": {"FS": {"S1": 0, "S2": 0}, "I": "", "SLS": "3 minutos"},
+                    "E": [],
+                },
+            ]
+        }
+        live = live_events_from_1x2_vzip(payload)
+        self.assertEqual(len(live), 2)  # prematch excluded
+        real = [e for e in live if e.is_soccer]
+        self.assertEqual(len(real), 1)
+        e = real[0]
+        self.assertEqual((e.home, e.away), ("Alto Zambeze", "Kalandula"))
+        self.assertEqual((e.home_score, e.away_score), (2, 3))
+        self.assertEqual(e.minute, "76 minutos")
+        self.assertEqual(e.odds_1x2.home, 1.17)
+        self.assertEqual(e.odds_1x2.away, 19.7)
 
 
 class KambiLiveTests(unittest.TestCase):

@@ -13,6 +13,12 @@ class XBetHttpSettings:
     language: str = "es"
     sport_id: str = "1"
     discovery_country_group: str = "14"
+    # Live (LiveFeed) routing params, captured from the live football page.
+    live_gr: str = "2025"
+    live_country: str = "14"
+    live_mode: str = "4"
+    live_cfview: str = "2"
+    live_count: int = 100
     timeout_seconds: float = 20.0
     max_attempts: int = 2
     retry_backoff_seconds: float = 0.75

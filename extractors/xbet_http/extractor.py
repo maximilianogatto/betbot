@@ -9,12 +9,13 @@ from urllib.parse import parse_qs, urlparse
 
 from core.extractor_base import Extractor
 from core.extractor_base import LeagueDiscoveryOption
-from core.models import CompetitionExtraction, EventSnapshot, ProviderCapabilities
+from core.models import CompetitionExtraction, EventSnapshot, LiveEventSnapshot, ProviderCapabilities
 from extractors.xbet_http.client import (
     XBetHttpClient,
     base_url_from_linefeed_url,
     build_champ_url,
     build_game_url,
+    build_live_1x2_url,
     build_sports_short_url,
     extract_champ_id,
     normalize_linefeed_base_url,
@@ -22,6 +23,7 @@ from extractors.xbet_http.client import (
 from extractors.xbet_http.discovery import build_league_options_from_sports_short
 from extractors.xbet_http.parser import (
     enrich_event_snapshot_with_game_detail,
+    live_events_from_1x2_vzip,
     parse_champ_zip_payload,
 )
 from extractors.xbet_http.settings import XBetHttpSettings
@@ -47,6 +49,9 @@ class XBetChampClient(Protocol):
     async def fetch_sports_short_zip(self, url: str) -> dict[str, Any]:
         """Fetch one GetSportsShortZip envelope."""
 
+    async def fetch_live_1x2_zip(self, url: str) -> dict[str, Any]:
+        """Fetch one LiveFeed Get1x2_VZip envelope."""
+
 
 class XBetHttpExtractor(Extractor):
     """Expose 1xBet/SpinBetter prematch LineFeed data through the common interface."""
@@ -57,11 +62,12 @@ class XBetHttpExtractor(Extractor):
     supported_capabilities = ("ligas", "eventos 1X2", "handicap", "totales")
     provider_capabilities = ProviderCapabilities(
         supports_http=True,
-        supports_live=False,
+        supports_live=True,
         supports_deep_markets=True,
         supports_browserless=True,
     )
     supports_league_discovery = True
+    supports_live_detection = True  # via LiveFeed Get1x2_VZip
 
     def __init__(
         self,
@@ -111,6 +117,20 @@ class XBetHttpExtractor(Extractor):
 
     async def extract_match(self, url: str) -> EventSnapshot:
         raise NotImplementedError("1xBet HTTP match extraction is not implemented yet.")
+
+    async def list_live_events(self) -> list[LiveEventSnapshot]:
+        url = build_live_1x2_url(
+            base_url=self.settings.base_url,
+            sport_id=self.settings.sport_id,
+            language=self.settings.language,
+            gr=self.settings.live_gr,
+            country=self.settings.live_country,
+            mode=self.settings.live_mode,
+            cfview=self.settings.live_cfview,
+            count=self.settings.live_count,
+        )
+        payload = await self._client.fetch_live_1x2_zip(url)
+        return live_events_from_1x2_vzip(payload)
 
     async def search_leagues(
         self,

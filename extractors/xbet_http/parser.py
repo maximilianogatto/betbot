@@ -7,8 +7,17 @@ from dataclasses import replace
 from datetime import UTC, datetime
 from typing import Any
 
+import re
+
 from core.extractor_base import CompetitionUnavailableError
-from core.models import CompetitionExtraction, CompetitionKey, EventKey, EventSnapshot, Odds1X2
+from core.models import (
+    CompetitionExtraction,
+    CompetitionKey,
+    EventKey,
+    EventSnapshot,
+    LiveEventSnapshot,
+    Odds1X2,
+)
 from core.models import utc_now_iso
 from extractors.xbet_http.models import XBetFixture, XBetLeagueSnapshot
 
@@ -18,6 +27,65 @@ HANDICAP_HOME_TYPE = 7
 HANDICAP_AWAY_TYPE = 8
 TOTAL_OVER_TYPE = 9
 TOTAL_UNDER_TYPE = 10
+
+# Virtual / simulated "football" leagues to exclude from real-soccer live detection.
+_VIRTUAL_LEAGUE_RE = re.compile(
+    r"(short football|f[uú]tbol corto|cyber|\bfifa\b|volta|\blfl\b|e-?football|esoccer|"
+    r"student league|\d+x\d+|daily league|battle)",
+    re.IGNORECASE,
+)
+
+
+def live_events_from_1x2_vzip(payload: dict[str, Any]) -> list[LiveEventSnapshot]:
+    """Map a LiveFeed Get1x2_VZip response to in-play soccer live snapshots."""
+
+    live: list[LiveEventSnapshot] = []
+    for event in payload.get("Value") or []:
+        if not isinstance(event, dict):
+            continue
+        home = str(event.get("O1") or "").strip()
+        away = str(event.get("O2") or "").strip()
+        event_id = event.get("I")
+        if not home or not away or event_id is None:
+            continue
+
+        sc = event.get("SC") if isinstance(event.get("SC"), dict) else {}
+        status_text = str(sc.get("I") or "")
+        sls = str(sc.get("SLS") or "")
+        # Skip events that are in the live feed but have not actually kicked off.
+        if status_text == "Apuestas prepartido" or sls.lower().startswith("comienza"):
+            continue
+
+        full_score = sc.get("FS") if isinstance(sc.get("FS"), dict) else {}
+        league = event.get("L") or event.get("LE")
+        odds_1x2, _ = _extract_markets(event, home=home, away=away)
+
+        live.append(
+            LiveEventSnapshot(
+                platform=PLATFORM,
+                external_event_id=str(event_id),
+                home=home,
+                away=away,
+                competition_name=league,
+                country_name=event.get("CN"),
+                minute=sls or status_text or None,
+                home_score=_coerce_int(full_score.get("S1")),
+                away_score=_coerce_int(full_score.get("S2")),
+                odds_1x2=odds_1x2,
+                source_url=f"https://spinbetter.com/service-api/LineFeed/GetGameZip?id={event_id}",
+                is_soccer=not bool(_VIRTUAL_LEAGUE_RE.search(str(league or ""))),
+                extracted_at=utc_now_iso(),
+                raw_payload={"sport_id": event.get("SI"), "current_period": sc.get("CP")},
+            )
+        )
+    return live
+
+
+def _coerce_int(value: Any) -> int | None:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
 
 
 def parse_champ_zip_payload(
