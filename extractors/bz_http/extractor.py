@@ -22,10 +22,10 @@ from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
 
 from core.extractor_base import Extractor, LeagueDiscoveryOption
-from core.models import CompetitionExtraction, EventSnapshot, ProviderCapabilities
+from core.models import CompetitionExtraction, EventSnapshot, LiveEventSnapshot, ProviderCapabilities
 from extractors.bz_http import discovery as discovery_module
 from extractors.bz_http.client import BzHttpClient
-from extractors.bz_http.parser import build_competition_extraction, find_tournament
+from extractors.bz_http.parser import build_competition_extraction, find_tournament, live_events_from_search
 from extractors.bz_http.settings import BzHttpSettings, load_bz_settings
 
 _SUPPORTED_HOSTS = ("bz.com",)
@@ -42,6 +42,7 @@ class BzHttpExtractor(Extractor):
     supported_capabilities = ("ligas",)
     provider_capabilities = ProviderCapabilities(supports_http=True, supports_browserless=True)
     supports_league_discovery = True  # via the match/search feed
+    supports_live_detection = True  # via statusList=1 search
 
     # The match/search feed lists every prematch tournament; cache it briefly so a
     # refresh sweep / discovery search reuses one download.
@@ -93,6 +94,11 @@ class BzHttpExtractor(Extractor):
 
     async def extract_match(self, url: str) -> EventSnapshot:
         raise NotImplementedError(f"{self.name} does not support direct match URLs yet.")
+
+    async def list_live_events(self) -> list[LiveEventSnapshot]:
+        client = BzHttpClient(self.settings)
+        search_data = await client.fetch_live_search()
+        return live_events_from_search(search_data)
 
     async def search_leagues(
         self,

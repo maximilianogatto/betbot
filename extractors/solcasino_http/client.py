@@ -43,12 +43,15 @@ class SolcasinoHttpClient:
             ),
         }
 
-    async def fetch_snapshot(self) -> dict[str, Any]:
-        """Fetch the version manifest, then all chunks, merged into one snapshot."""
+    async def fetch_snapshot(self, *, feed: str | None = None) -> dict[str, Any]:
+        """Fetch the version manifest, then all chunks, merged into one snapshot.
+
+        ``feed`` overrides the configured feed (use ``"live"`` for in-play).
+        """
 
         merged = _empty_snapshot()
         async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, follow_redirects=True) as client:
-            manifest = await self._get(client, self.settings.feed_url(0))
+            manifest = await self._get(client, self.settings.feed_url(0, feed=feed))
             versions = _versions_from_manifest(manifest)
 
             # Some manifests already carry the data inline (no separate chunks).
@@ -57,7 +60,7 @@ class SolcasinoHttpClient:
                 return merged
 
             for version in versions:
-                chunk = await self._get(client, self.settings.feed_url(version))
+                chunk = await self._get(client, self.settings.feed_url(version, feed=feed))
                 _deep_merge(merged, chunk)
         return merged
 

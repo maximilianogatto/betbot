@@ -131,6 +131,30 @@ class CompetitionExtraction:
         return self.competition.competition_external_id
 
 
+@dataclass(frozen=True)
+class LiveEventSnapshot:
+    """One currently in-play event, as reported by a platform's live feed.
+
+    Used by the live-watch poller to detect when a watched fixture goes live.
+    """
+
+    platform: str
+    external_event_id: str
+    home: str
+    away: str
+    competition_name: str | None = None
+    country_name: str | None = None
+    minute: str | None = None  # human label, e.g. "12'", "HT", "2ª parte"
+    home_score: int | None = None
+    away_score: int | None = None
+    scheduled_at: str | None = None
+    odds_1x2: Odds1X2 | None = None
+    source_url: str | None = None
+    is_soccer: bool = True  # False for eSports football and similar virtual feeds
+    extracted_at: str = ""
+    raw_payload: dict[str, Any] = field(default_factory=dict)
+
+
 def utc_now_iso() -> str:
     """Return the current UTC timestamp in ISO format."""
 
@@ -153,6 +177,7 @@ __all__ = [
     "CompetitionKey",
     "EventKey",
     "EventSnapshot",
+    "LiveEventSnapshot",
     "Odds1X2",
     "PlatformDescriptor",
     "ProviderCapabilities",

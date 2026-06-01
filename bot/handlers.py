@@ -8,7 +8,7 @@ import logging
 import re
 import unicodedata
 
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
+from telegram import Message, ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.constants import ParseMode
 from telegram.ext import (
     Application,
@@ -207,6 +207,261 @@ def get_stats_service(context: ContextTypes.DEFAULT_TYPE) -> StatsService:
         raise RuntimeError("StatsService no está configurado en la aplicación.")
 
     return stats_service
+
+
+def get_live_watch_service(context: ContextTypes.DEFAULT_TYPE):
+    """Retrieve the shared live-watch service from the application."""
+
+    from monitors.live_watch import LiveWatchService
+
+    service = context.application.bot_data.get("live_watch_service")
+    if not isinstance(service, LiveWatchService):
+        raise RuntimeError("LiveWatchService no está configurado en la aplicación.")
+    return service
+
+
+async def watch_live_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Add fixtures to the live-watch list (one match per line, bulk paste or photo)."""
+
+    if update.message is None or update.effective_chat is None:
+        return
+
+    # Check if this is a photo command
+    if update.message.photo:
+        await watch_live_photo_handler(update, context)
+        return
+
+    # Check if this is a reply to a photo message
+    if update.message.reply_to_message and update.message.reply_to_message.photo:
+        await watch_live_photo_handler(update, context, message_with_photo=update.message.reply_to_message)
+        return
+
+    raw = update.message.text or ""
+    # Strip the leading "/watch_live" command token, keep the rest (multiline).
+    body = raw.split(None, 1)[1] if len(raw.split(None, 1)) > 1 else ""
+    lines = [line for line in body.splitlines() if line.strip()]
+    if not lines:
+        await update.message.reply_text(
+            "📋 Pegá tu fixture, un partido por renglón. Ejemplos:\n"
+            "/watch_live\n"
+            "Murdoch - East Perth\n"
+            "Australia Occidental | Subiaco - UWA\n"
+            "Poli Iasi vs Otelul\n\n"
+            "O subí una foto de tu fixture escribiendo /watch_live como epígrafe/comentario, o respondé /watch_live a una foto ya enviada.\n\n"
+            "Cuando alguno salga en vivo en cualquier casa, te aviso.\n"
+            "Ver lista: /watching · Borrar: /unwatch <id> (o /unwatch all)"
+        )
+        return
+
+    service = get_live_watch_service(context)
+    added = service.add_fixture_lines(update.effective_chat.id, lines)
+    skipped = len(lines) - len(added)
+    if not added:
+        await update.message.reply_text(
+            "No pude leer ningún partido. Usá 'Local - Visitante' (uno por renglón)."
+        )
+        return
+    msg = [f"👁️ Vigilando {len(added)} partido(s) para avisarte cuando salgan en vivo:"]
+    for entry in added:
+        hint = f" [{entry.league_hint}]" if entry.league_hint else ""
+        msg.append(f"  #{entry.id} · {entry.home} vs {entry.away}{hint}")
+    if skipped:
+        msg.append(f"\n({skipped} renglón(es) no los pude interpretar.)")
+    await _reply_text_chunks(update.message, "\n".join(msg))
+
+
+async def watch_live_photo_handler(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE,
+    *,
+    message_with_photo: Message | None = None
+) -> None:
+    """Handle photo messages sent with /watch_live as a caption or as a reply."""
+
+    import httpx
+    import os
+
+    if update.message is None or update.effective_chat is None:
+        return
+
+    msg_to_read = message_with_photo or update.message
+
+    if not msg_to_read.photo:
+        await update.message.reply_text("❌ No se detectó ninguna imagen.")
+        return
+
+    loading_msg = await update.message.reply_text(
+        "⏳ Leyendo fixture desde la imagen usando OCR de alta precisión..."
+    )
+
+    try:
+        photo = msg_to_read.photo[-1]
+        file = await photo.get_file()
+        photo_bytes = await file.download_as_bytearray()
+
+        api_key = os.getenv("OCR_SPACE_API_KEY", "helloworld")
+
+        async with httpx.AsyncClient() as client:
+            files = {"file": ("image.jpg", bytes(photo_bytes), "image/jpeg")}
+            data = {
+                "apikey": api_key,
+                "language": "spa",
+                "isTable": True,
+            }
+            response = await client.post(
+                "https://api.ocr.space/parse/image",
+                files=files,
+                data=data,
+                timeout=30.0
+            )
+
+        if response.status_code != 200:
+            await loading_msg.edit_text(
+                f"❌ Error de red con el servicio de OCR (HTTP {response.status_code})."
+            )
+            return
+
+        res = response.json()
+        if res.get("IsErroredOnProcessing") or "ParsedResults" not in res:
+            error_msg = res.get("ErrorMessage") or "Error desconocido en el procesamiento de la imagen."
+            await loading_msg.edit_text(f"❌ Error del servicio OCR: {error_msg}")
+            return
+
+        parsed_text = res["ParsedResults"][0].get("ParsedText", "")
+        if not parsed_text.strip():
+            await loading_msg.edit_text(
+                "⚠️ No pude extraer ningún texto de la imagen. Asegurate de que la imagen sea nítida y legible."
+            )
+            return
+
+        lines_to_add: list[str] = []
+        fixture_separators = (" - ", " – ", " vs. ", " vs ", " v ", " x ")
+
+        for row in parsed_text.splitlines():
+            if not row.strip():
+                continue
+            columns = [col.strip() for col in row.split("\t") if col.strip()]
+            if not columns:
+                continue
+
+            match_col_idx = -1
+            for idx, col in enumerate(columns):
+                if any(sep in col for sep in fixture_separators):
+                    match_col_idx = idx
+                    break
+
+            if match_col_idx != -1:
+                match_text = columns[match_col_idx]
+                league_hint = None
+                note = None
+
+                if match_col_idx > 0:
+                    hint_candidate = columns[match_col_idx - 1]
+                    if not any(header in hint_candidate.lower() for header in ("horario", "competicion", "partido", "detalle")):
+                        if not (":" in hint_candidate and len(hint_candidate) <= 6):
+                            league_hint = hint_candidate
+
+                if match_col_idx + 1 < len(columns):
+                    note_candidate = columns[match_col_idx + 1]
+                    if not any(header in note_candidate.lower() for header in ("detalle", "note")):
+                        note = note_candidate
+
+                line = ""
+                if league_hint:
+                    line += f"{league_hint} | "
+                line += match_text
+                if note:
+                    line += f" ({note})"
+                lines_to_add.append(line)
+
+        if not lines_to_add:
+            await loading_msg.edit_text(
+                "⚠️ No encontré ningún partido formateado (tipo 'Local - Visitante') en la tabla. "
+                "Asegurate de que las columnas de la tabla estén bien definidas y alineadas."
+            )
+            return
+
+        service = get_live_watch_service(context)
+        added = service.add_fixture_lines(update.effective_chat.id, lines_to_add)
+
+        if not added:
+            await loading_msg.edit_text(
+                "❌ Se detectaron partidos pero no se pudieron registrar en tu vigilancia."
+            )
+            return
+
+        msg = [f"📸 ¡Imagen leída! Vigilando {len(added)} partido(s) extraídos del fixture:"]
+        for entry in added:
+            hint = f" [{entry.league_hint}]" if entry.league_hint else ""
+            msg.append(f"  #{entry.id} · {entry.home} vs {entry.away}{hint}")
+
+        await loading_msg.delete()
+        await _reply_text_chunks(update.message, "\n".join(msg))
+
+    except Exception as e:
+        logger.exception("Error procesando foto de fixture")
+        await loading_msg.edit_text(f"❌ Error procesando la imagen: {str(e)}")
+
+
+async def photo_guidance_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Guide the user when they send a photo without any command."""
+
+    del context
+    if update.message is None:
+        return
+
+    await update.message.reply_text(
+        "📸 Recibí tu imagen.\n\n"
+        "Si esta imagen contiene una tabla de fixture y querés que vigile los partidos en vivo, "
+        "subila de nuevo agregando como epígrafe/comentario el comando `/watch_live`."
+    )
+
+
+async def watching_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """List the chat's active live-watch fixtures."""
+
+    if update.message is None or update.effective_chat is None:
+        return
+    service = get_live_watch_service(context)
+    watching = service.list_watches(update.effective_chat.id, status="watching")
+    fired = service.list_watches(update.effective_chat.id, status="fired")
+    if not watching and not fired:
+        await update.message.reply_text(
+            "No tenés partidos en vigilancia. Cargá con /watch_live (uno por renglón)."
+        )
+        return
+    lines: list[str] = []
+    if watching:
+        lines.append(f"👁️ En vigilancia ({len(watching)}):")
+        for e in watching:
+            hint = f" [{e.league_hint}]" if e.league_hint else ""
+            lines.append(f"  #{e.id} · {e.home} vs {e.away}{hint}")
+    if fired:
+        lines.append(f"\n🔴 Ya salieron en vivo ({len(fired)}):")
+        for e in fired:
+            where = (e.matched_platform or "").replace("_http", "")
+            lines.append(f"  #{e.id} · {e.home} vs {e.away} → {where} {e.matched_minute or ''}".rstrip())
+    lines.append("\nBorrar: /unwatch <id> · /unwatch all")
+    await _reply_text_chunks(update.message, "\n".join(lines))
+
+
+async def unwatch_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Remove one (or all) live-watch fixtures for the chat."""
+
+    if update.message is None or update.effective_chat is None:
+        return
+    service = get_live_watch_service(context)
+    chat_id = update.effective_chat.id
+    arg = (context.args[0].strip().lower() if context.args else "")
+    if arg in ("all", "todo", "todos"):
+        removed = service.clear_watches(chat_id)
+        await update.message.reply_text(f"🗑️ Borré {removed} partido(s) de la vigilancia.")
+        return
+    if not arg.isdigit():
+        await update.message.reply_text("Usá /unwatch <id> (mirá los ids con /watching) o /unwatch all.")
+        return
+    ok = service.remove_watch(chat_id, int(arg))
+    await update.message.reply_text("🗑️ Borrado." if ok else "No encontré ese id en tu vigilancia.")
 
 
 async def reply_with_result(update: Update, result: CommandResult) -> None:
@@ -2088,6 +2343,9 @@ def register_handlers(application: Application) -> None:
     application.add_handler(
         CommandHandler("confirm_all_little_changes", confirm_all_little_changes_command)
     )
+    application.add_handler(CommandHandler("watch_live", watch_live_command))
+    application.add_handler(CommandHandler("watching", watching_command))
+    application.add_handler(CommandHandler("unwatch", unwatch_command))
 
     track_league_conversation = ConversationHandler(
         entry_points=[CommandHandler(["track_league", "tracl_league"], track_league_command)],
@@ -2227,6 +2485,7 @@ def register_handlers(application: Application) -> None:
     application.add_handler(change_percent_conversation)
 
     application.add_handler(CommandHandler("cancel", cancel_command))
+    application.add_handler(MessageHandler(filters.PHOTO & ~filters.COMMAND, photo_guidance_handler))
     application.add_handler(MessageHandler(filters.COMMAND, unknown_command))
 
 

@@ -21,11 +21,65 @@ from core.models import (
     CompetitionKey,
     EventKey,
     EventSnapshot,
+    LiveEventSnapshot,
     Odds1X2,
     utc_now_iso,
 )
 
 PLATFORM = "betwarrior_http"
+
+
+def _int(value: Any) -> int | None:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def live_events_from_open(payload: dict[str, Any]) -> list[LiveEventSnapshot]:
+    """Map Kambi ``event/live/open.json`` to live snapshots (soccer only)."""
+
+    live: list[LiveEventSnapshot] = []
+    for item in payload.get("liveEvents") or []:
+        if not isinstance(item, dict):
+            continue
+        event = item.get("event") or {}
+        path = event.get("path") or []
+        if not (path and path[0].get("termKey") == "football"):
+            continue
+        home = str(event.get("homeName") or "").strip()
+        away = str(event.get("awayName") or "").strip()
+        if not home or not away:
+            continue
+        is_soccer = not any("esport" in str(p.get("termKey", "")).lower() for p in path)
+        country = path[-2].get("name") if len(path) >= 2 else None
+        live_data = item.get("liveData") or {}
+        clock = live_data.get("matchClock") or {}
+        score = live_data.get("score") or {}
+        minute = None
+        if clock.get("minute") is not None:
+            minute = f"{clock.get('minute')}'"
+            if clock.get("period"):
+                minute = f"{clock.get('period')} {minute}"
+        live.append(
+            LiveEventSnapshot(
+                platform=PLATFORM,
+                external_event_id=str(event.get("id")),
+                home=home,
+                away=away,
+                competition_name=event.get("group"),
+                country_name=country,
+                minute=minute,
+                home_score=_int(score.get("home")),
+                away_score=_int(score.get("away")),
+                scheduled_at=_kickoff_iso(event.get("start")),
+                source_url=f"betwarrior:group:{event.get('groupId')}",
+                is_soccer=is_soccer,
+                extracted_at=utc_now_iso(),
+                raw_payload={"state": event.get("state")},
+            )
+        )
+    return live
 
 
 def _odds(value: Any) -> float | None:

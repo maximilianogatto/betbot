@@ -19,11 +19,58 @@ from core.models import (
     CompetitionKey,
     EventKey,
     EventSnapshot,
+    LiveEventSnapshot,
     Odds1X2,
     utc_now_iso,
 )
 
 PLATFORM = "bz_http"
+
+
+def live_events_from_search(search_data: list[dict[str, Any]]) -> list[LiveEventSnapshot]:
+    """Map a BZ statusList=1 search (tournaments -> live matches) to live snapshots."""
+
+    live: list[LiveEventSnapshot] = []
+    for tournament in search_data or []:
+        if not isinstance(tournament, dict):
+            continue
+        country = tournament.get("categoryName")
+        league = tournament.get("name")
+        external_id = _normalize_tournament_id(tournament.get("id"))
+        for match in tournament.get("matches") or []:
+            if not isinstance(match, dict):
+                continue
+            home = str(match.get("homeName") or "").strip()
+            away = str(match.get("awayName") or "").strip()
+            if not home or not away:
+                continue
+            ses = match.get("sportEventStatus") or {}
+            live.append(
+                LiveEventSnapshot(
+                    platform=PLATFORM,
+                    external_event_id=str(match.get("id")),
+                    home=home,
+                    away=away,
+                    competition_name=league,
+                    country_name=country,
+                    minute=match.get("matchStatusName") or match.get("statusName"),
+                    home_score=_int(ses.get("homeScore")) if isinstance(ses, dict) else None,
+                    away_score=_int(ses.get("awayScore")) if isinstance(ses, dict) else None,
+                    scheduled_at=_kickoff_iso(match.get("scheduledTime")),
+                    source_url=f"bz:tournament:{external_id}",
+                    is_soccer=True,
+                    extracted_at=utc_now_iso(),
+                    raw_payload={"sr_match_id": str(match.get("id")), "matchStatus": match.get("matchStatus")},
+                )
+            )
+    return live
+
+
+def _int(value: Any) -> int | None:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
 
 
 def _coerce_float(value: Any) -> float | None:

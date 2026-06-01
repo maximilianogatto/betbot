@@ -21,10 +21,10 @@ from typing import Any
 from urllib.parse import parse_qs, urlparse
 
 from core.extractor_base import Extractor, LeagueDiscoveryOption
-from core.models import CompetitionExtraction, EventSnapshot, ProviderCapabilities
+from core.models import CompetitionExtraction, EventSnapshot, LiveEventSnapshot, ProviderCapabilities
 from extractors.betovo_http import discovery as discovery_module
 from extractors.betovo_http.client import BetovoHttpClient
-from extractors.betovo_http.parser import build_competition_extraction
+from extractors.betovo_http.parser import build_competition_extraction, live_events_from_livenow
 from extractors.betovo_http.settings import BetovoHttpSettings, load_betovo_settings
 
 _SUPPORTED_HOSTS = ("betovo848425.com", "betovo.com")
@@ -40,6 +40,7 @@ class BetovoHttpExtractor(Extractor):
     supported_capabilities = ("ligas",)
     provider_capabilities = ProviderCapabilities(supports_http=True, supports_browserless=True)
     supports_league_discovery = True  # via the Altenar GetEvents feed
+    supports_live_detection = True  # via GetLivenow
 
     # The GetEvents feed lists every prematch league; cache it briefly so a refresh
     # sweep / discovery search reuses one download.
@@ -83,6 +84,11 @@ class BetovoHttpExtractor(Extractor):
 
     async def extract_match(self, url: str) -> EventSnapshot:
         raise NotImplementedError(f"{self.name} does not support direct match URLs yet.")
+
+    async def list_live_events(self) -> list[LiveEventSnapshot]:
+        client = BetovoHttpClient(self.settings)
+        payload = await client.fetch_livenow()
+        return live_events_from_livenow(payload)
 
     async def search_leagues(
         self,

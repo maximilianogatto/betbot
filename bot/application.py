@@ -8,10 +8,12 @@ from bot.config import Settings
 from bot.error_handler import handle_error
 from bot.handlers import register_handlers
 from bot.jobs import (
+    start_live_watch_monitor,
     start_stats_prefetch,
     start_stats_session_refresh,
     start_tracking_monitor,
     start_resource_monitor,
+    stop_live_watch_monitor,
     stop_stats_prefetch,
     stop_stats_session_refresh,
     stop_tracking_monitor,
@@ -21,6 +23,7 @@ from core.registry import extractor_registry
 from core.stats_provider_base import stats_provider_registry
 from extractors import register_default_extractors
 from stats_providers import register_default_stats_providers
+from monitors.live_watch import LiveWatchService
 from monitors.stats import StatsService
 from monitors.tracking import TrackingService
 from storage.tracking_repository import SqliteTrackingRepository
@@ -49,6 +52,10 @@ def create_application(settings: Settings) -> Application:
     )
     stats_service = StatsService(
         provider_registry=stats_provider_registry,
+        repository=tracking_repository,
+    )
+    live_watch_service = LiveWatchService(
+        extractor_registry=extractor_registry,
         repository=tracking_repository,
     )
 
@@ -82,10 +89,17 @@ def create_application(settings: Settings) -> Application:
             interval_seconds=settings.stats_prefetch_interval_seconds,
             ttl_seconds=settings.stats_prefetch_ttl_seconds,
         )
+        # Poll live feeds and alert when a watched fixture goes in-play.
+        await start_live_watch_monitor(
+            application,
+            enabled=settings.live_watch_enabled,
+            interval_seconds=settings.live_watch_interval_seconds,
+        )
 
     async def post_shutdown(application: Application) -> None:
         """Stop background monitoring when the bot shuts down."""
 
+        await stop_live_watch_monitor(application)
         await stop_stats_prefetch(application)
         await stop_stats_session_refresh(application)
         await stop_resource_monitor(application)
@@ -103,6 +117,7 @@ def create_application(settings: Settings) -> Application:
 
     application.bot_data["tracking_service"] = tracking_service
     application.bot_data["stats_service"] = stats_service
+    application.bot_data["live_watch_service"] = live_watch_service
 
     register_handlers(application)
     application.add_error_handler(handle_error)

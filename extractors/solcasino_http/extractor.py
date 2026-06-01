@@ -22,10 +22,10 @@ from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
 
 from core.extractor_base import Extractor, LeagueDiscoveryOption
-from core.models import CompetitionExtraction, EventSnapshot, ProviderCapabilities
+from core.models import CompetitionExtraction, EventSnapshot, LiveEventSnapshot, ProviderCapabilities
 from extractors.solcasino_http import discovery as discovery_module
 from extractors.solcasino_http.client import SolcasinoHttpClient
-from extractors.solcasino_http.parser import build_competition_extraction
+from extractors.solcasino_http.parser import build_competition_extraction, live_events_from_snapshot
 from extractors.solcasino_http.settings import SolcasinoHttpSettings, load_solcasino_settings
 
 _SUPPORTED_HOSTS = ("solcasino.io", "sptpub.com")
@@ -42,6 +42,7 @@ class SolcasinoHttpExtractor(Extractor):
     supported_capabilities = ("ligas",)
     provider_capabilities = ProviderCapabilities(supports_http=True, supports_browserless=True)
     supports_league_discovery = True  # via the merged Betby snapshot
+    supports_live_detection = True  # via the Betby live feed
 
     # The snapshot (~hundreds of KB across a few chunks) lists every league; cache
     # it briefly so a refresh sweep / discovery search reuses one download.
@@ -79,6 +80,11 @@ class SolcasinoHttpExtractor(Extractor):
 
     async def extract_match(self, url: str) -> EventSnapshot:
         raise NotImplementedError(f"{self.name} does not support direct match URLs yet.")
+
+    async def list_live_events(self) -> list[LiveEventSnapshot]:
+        client = SolcasinoHttpClient(self.settings)
+        snapshot = await client.fetch_snapshot(feed="live")
+        return live_events_from_snapshot(snapshot, sport_id=self.settings.sport_id)
 
     async def search_leagues(
         self,

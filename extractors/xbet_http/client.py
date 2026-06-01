@@ -80,6 +80,36 @@ def build_sports_short_url(
     return f"{normalize_linefeed_base_url(base_url)}/GetSportsShortZip?{query}"
 
 
+def build_live_1x2_url(
+    *,
+    base_url: str,
+    sport_id: str,
+    language: str,
+    gr: str,
+    country: str,
+    mode: str,
+    cfview: str,
+    count: int,
+) -> str:
+    """Build the LiveFeed Get1x2_VZip URL (currently in-play events for a sport)."""
+
+    live_base = normalize_linefeed_base_url(base_url).replace("/LineFeed", "/LiveFeed")
+    query = urlencode(
+        {
+            "sports": sport_id,
+            "count": str(count),
+            "lng": language,
+            "gr": gr,
+            "cfview": cfview,
+            "mode": mode,
+            "country": country,
+            "virtualSports": "true",
+            "noFilterBlockEvent": "true",
+        }
+    )
+    return f"{live_base}/Get1x2_VZip?{query}"
+
+
 def base_url_from_linefeed_url(url: str) -> str:
     parsed = urlparse(url)
     path = parsed.path
@@ -104,6 +134,9 @@ class XBetHttpClient:
         return await self._fetch_json(url)
 
     async def fetch_sports_short_zip(self, url: str) -> dict[str, Any]:
+        return await self._fetch_json(url)
+
+    async def fetch_live_1x2_zip(self, url: str) -> dict[str, Any]:
         return await self._fetch_json(url)
 
     async def _fetch_json(self, url: str) -> dict[str, Any]:

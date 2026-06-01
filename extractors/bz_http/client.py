@@ -55,6 +55,17 @@ class BzHttpClient:
             data = await self._get(client, path)
         return data if isinstance(data, list) else []
 
+    async def fetch_live_search(self) -> list[dict[str, Any]]:
+        """Return tournaments grouped with their LIVE matches (statusList=1)."""
+
+        path = (
+            f"sports/match/search?statusList=1"
+            f"&sportId={self.settings.sport_id}&pageSize={self.settings.page_size}&marketMode=0"
+        )
+        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, headers=self._headers) as client:
+            data = await self._get(client, path)
+        return data if isinstance(data, list) else []
+
     async def fetch_match_odds(self, match_id: str) -> list[dict[str, Any]]:
         """Return the full market tabs for one match id."""
 
