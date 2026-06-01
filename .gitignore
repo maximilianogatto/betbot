@@ -31,3 +31,6 @@ sandbox/betovo/captures/
 
 # BetWarrior research network dumps (regenerate via capture_traffic.py)
 sandbox/betwarrior/captures/
+
+# MrPunter research network dumps
+sandbox/mrpunter/captures/
