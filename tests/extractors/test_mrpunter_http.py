@@ -93,8 +93,7 @@ class MrPunterParserTests(unittest.TestCase):
         gl = e.markets_payload["goal_line"]["selections"]
         self.assertEqual(gl[0], {"selection": "Over", "line": "2.5", "odds": 1.99})
         self.assertEqual(gl[1], {"selection": "Under", "line": "2.5", "odds": 1.68})
-        # closed 0-price line excluded
-        self.assertNotIn("0.5", [s["line"] for s in gl])
+        self.assertNotIn("0.5", [s["line"] for s in gl])  # closed 0-price line excluded
         self.assertTrue(e.scheduled_at.startswith("2026-08-12"))
 
     def test_live_maps_soccer_and_flags_virtual(self) -> None:
@@ -158,7 +157,6 @@ class MrPunterMiscTests(unittest.TestCase):
         self.assertFalse(MrPunterHttpExtractor.can_handle_url("https://m.bz.com/x"))
 
     def test_extract_tokens_from_html(self) -> None:
-        # Two JWTs: one with customerType (auth), one with expiredDate (session).
         import base64, json
 
         def jwt(payload: dict) -> str:
@@ -168,9 +166,7 @@ class MrPunterMiscTests(unittest.TestCase):
         auth = jwt({"customerType": "anon", "languageCode": "es"})
         sess = jwt({"customerId": -1, "expiredDate": 123, "iat": 1})
         html = f'<script>window.__INITIAL_STATE__={{"a":"{auth}","s":"{sess}"}}</script>'
-        tokens = extract_tokens_from_html(html)
-        self.assertIsNotNone(tokens)
-        self.assertEqual(tokens, (auth, sess))
+        self.assertEqual(extract_tokens_from_html(html), (auth, sess))
 
 
 if __name__ == "__main__":

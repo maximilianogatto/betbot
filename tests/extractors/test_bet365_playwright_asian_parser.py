@@ -11,7 +11,7 @@ from extractors.bet365.playwright_asian import (
 )
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 LEAGUE_FIXTURE = PROJECT_ROOT / "sandbox" / "bet365" / "bet365_capture_20260512-122415" / "raw_league.txt"
 ASIAN_FIXTURE = (
     PROJECT_ROOT / "sandbox" / "bet365" / "bet365_capture_20260512-122415" / "raw_asian_193003460.txt"

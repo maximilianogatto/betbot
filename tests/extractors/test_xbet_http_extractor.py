@@ -214,7 +214,7 @@ class XBetHttpExtractorTests(unittest.TestCase):
             platforms["1xbet_http"].capabilities,
             ProviderCapabilities(
                 supports_http=True,
-                supports_live=False,
+                supports_live=True,
                 supports_deep_markets=True,
                 supports_browserless=True,
             ),
@@ -233,7 +233,15 @@ class XBetHttpExtractorTests(unittest.TestCase):
         # Only browserless HTTP providers remain when the browser is disabled.
         self.assertEqual(
             platforms,
-            {"1xbet_http", "mystake_http", "solcasino_http", "bz_http", "betovo_http", "betwarrior_http"},
+            {
+                "1xbet_http",
+                "mystake_http",
+                "solcasino_http",
+                "bz_http",
+                "betovo_http",
+                "betwarrior_http",
+                "mrpunter_http",
+            },
         )
 
 
