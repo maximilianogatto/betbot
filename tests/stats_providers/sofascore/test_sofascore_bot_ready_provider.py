@@ -5,9 +5,9 @@ import json
 import unittest
 
 from core.stats_models import MatchIdentityCandidate
-from sandbox.sofascore_http.bot_ready import SofaScoreBotReadyStatsProvider
-from sandbox.sofascore_http.reporting import render_match_report
-from sandbox.sofascore_http.validate_bot_ready import run_validation
+from stats_providers.sofascore_http import SofaScoreBotReadyStatsProvider
+from stats_providers.sofascore_http.reporting import render_match_report
+from stats_providers.sofascore_http.validate_bot_ready import run_validation
 
 
 class FakeSofaScoreClient:
