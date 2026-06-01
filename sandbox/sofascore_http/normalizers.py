@@ -51,6 +51,63 @@ def normalize_fixture(event: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def normalize_fixture_overview(event: dict[str, Any]) -> dict[str, Any]:
+    """Normalize one fixture into the generic league-overview shape."""
+
+    fixture = normalize_fixture(event)
+    start_time = fixture["start_time_utc"] or ""
+    return {
+        "match_id": fixture["match_id"],
+        "home": {"name": fixture["home"], "id": fixture["home_id"]},
+        "away": {"name": fixture["away"], "id": fixture["away_id"]},
+        "time": {
+            "iso_utc": fixture["start_time_utc"],
+            "date": start_time[:10],
+            "time": start_time[11:16] if len(start_time) >= 16 else "",
+        },
+        "status": fixture["status"],
+    }
+
+
+def normalize_standings(tables: list[dict[str, Any]]) -> dict[str, Any]:
+    """Normalize SofaScore standings into BetBot's compact league table shape."""
+
+    normalized_tables: list[dict[str, Any]] = []
+    for table in tables:
+        if not isinstance(table, dict):
+            continue
+        rows: list[dict[str, Any]] = []
+        for item in table.get("rows") or []:
+            if not isinstance(item, dict):
+                continue
+            team = item.get("team") if isinstance(item.get("team"), dict) else {}
+            rows.append(
+                {
+                    "position": item.get("position"),
+                    "played": item.get("matches"),
+                    "points": item.get("points"),
+                    "goal_difference": item.get("scoreDiffFormatted"),
+                    "goals_for": item.get("scoresFor"),
+                    "goals_against": item.get("scoresAgainst"),
+                    "wins": item.get("wins"),
+                    "draws": item.get("draws"),
+                    "losses": item.get("losses"),
+                    "team": {
+                        "id": _string_id(team.get("id")),
+                        "name": team.get("name"),
+                    },
+                }
+            )
+        normalized_tables.append(
+            {
+                "name": table.get("name") or "Tabla",
+                "type": table.get("type"),
+                "rows": rows,
+            }
+        )
+    return {"tables": normalized_tables}
+
+
 def normalize_1x2_odds(payload: dict[str, Any]) -> dict[str, float | None]:
     """Extract decimal 1X2 odds from SofaScore's provider-specific markets."""
 
@@ -241,5 +298,7 @@ __all__ = [
     "normalize_incident",
     "normalize_1x2_odds",
     "normalize_fixture",
+    "normalize_fixture_overview",
     "normalize_league_option",
+    "normalize_standings",
 ]
