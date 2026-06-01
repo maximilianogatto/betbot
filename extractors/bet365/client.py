@@ -89,8 +89,12 @@ def visual_url_to_pd(url: str) -> str | None:
 class Bet365HttpClient:
     """Unified HTTP-first client for Bet365 soccer data."""
 
+    _playwright_lock: asyncio.Lock | None = None
+
     def __init__(self, settings: Bet365ExtractorSettings | None = None) -> None:
         self.settings = settings or Bet365ExtractorSettings()
+        if Bet365HttpClient._playwright_lock is None:
+            Bet365HttpClient._playwright_lock = asyncio.Lock()
 
     async def fetch_allsportsmenu(self, host: str, pd: str = "#AL#R^1#") -> str:
         """Fetch the left navigation menu over plain HTTP with on-demand Playwright fallback."""
@@ -121,41 +125,44 @@ class Bet365HttpClient:
         # On-demand Playwright fallback!
         from playwright.async_api import async_playwright
         logger.info("Spawning temporary Playwright instance to fetch allsportsmenu...")
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(
-                headless=self.settings.headless,
-                args=["--disable-blink-features=AutomationControlled", "--no-sandbox"]
-            )
-            context = await browser.new_context(
-                user_agent=DEFAULT_USER_AGENT,
-                locale="es-AR" if "bet.ar" in host else "es-ES",
-            )
-            page = await context.new_page()
-            
-            captured_menu = ""
-            async def handle_response(response):
-                nonlocal captured_menu
-                if "allsportsmenu" in response.url:
-                    try:
-                        captured_menu = await response.text()
-                    except Exception:
-                        pass
-            page.on("response", handle_response)
-            
-            await page.goto(f"https://{host}/", wait_until="load", timeout=30000)
-            await page.wait_for_function("() => window.ns_datalib_net && window.ns_datalib_net.Loader && window.Locator", timeout=30000)
-            
-            # Wait a moment for menu response to trigger
-            for _ in range(12):
-                await page.wait_for_timeout(250)
+        async with self._playwright_lock:
+            async with async_playwright() as p:
+                browser = await p.chromium.launch(
+                    headless=self.settings.headless,
+                    args=["--disable-blink-features=AutomationControlled", "--no-sandbox"]
+                )
+                context = await browser.new_context(
+                    viewport={"width": 1280, "height": 900},
+                    user_agent=DEFAULT_USER_AGENT,
+                    locale="es-AR" if "bet.ar" in host else "es-ES",
+                    timezone_id="America/Argentina/Buenos_Aires" if "bet.ar" in host else "Europe/Madrid",
+                )
+                page = await context.new_page()
+                
+                captured_menu = ""
+                async def handle_response(response):
+                    nonlocal captured_menu
+                    if "allsportsmenu" in response.url:
+                        try:
+                            captured_menu = await response.text()
+                        except Exception:
+                            pass
+                page.on("response", handle_response)
+                
+                await page.goto(f"https://{host}/", wait_until="load", timeout=30000)
+                await page.wait_for_function("() => window.ns_datalib_net && window.ns_datalib_net.Loader && window.Locator", timeout=30000)
+                
+                # Wait a moment for menu response to trigger
+                for _ in range(12):
+                    await page.wait_for_timeout(250)
+                    if captured_menu:
+                        break
+                        
+                await context.close()
+                await browser.close()
+                
                 if captured_menu:
-                    break
-                    
-            await context.close()
-            await browser.close()
-            
-            if captured_menu:
-                return captured_menu
+                    return captured_menu
                 
         raise RuntimeError("Failed to fetch allsportsmenu from both plain HTTP and Playwright fallback.")
 
@@ -202,145 +209,148 @@ class Bet365HttpClient:
         matches_list = []
         
         logger.info("Spawning temporary Playwright instance on-demand...")
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(
-                headless=self.settings.headless,
-                args=["--disable-blink-features=AutomationControlled", "--no-sandbox"]
-            )
-            context = await browser.new_context(
-                user_agent=DEFAULT_USER_AGENT,
-                locale="es-AR" if "bet.ar" in host else "es-ES",
-            )
-            page = await context.new_page()
-            
-            # Go to base soccer page to bootstrap datalib loader with retry
-            ready = False
-            for attempt in range(2):
-                try:
-                    await page.goto(f"https://{host}/#/AS/B1/", wait_until="load", timeout=20000)
-                    await page.wait_for_function(
-                        "() => window.ns_datalib_net && window.ns_datalib_net.Loader && window.Locator",
-                        timeout=15000
-                    )
-                    ready = True
-                    break
-                except Exception as e:
-                    logger.warning("Page bootstrap attempt %d failed: %s. Retrying...", attempt + 1, e)
+        async with self._playwright_lock:
+            async with async_playwright() as p:
+                browser = await p.chromium.launch(
+                    headless=self.settings.headless,
+                    args=["--disable-blink-features=AutomationControlled", "--no-sandbox"]
+                )
+                context = await browser.new_context(
+                    viewport={"width": 1280, "height": 900},
+                    user_agent=DEFAULT_USER_AGENT,
+                    locale="es-AR" if "bet.ar" in host else "es-ES",
+                    timezone_id="America/Argentina/Buenos_Aires" if "bet.ar" in host else "Europe/Madrid",
+                )
+                page = await context.new_page()
+                
+                # Go to base soccer page to bootstrap datalib loader with retry
+                ready = False
+                for attempt in range(2):
                     try:
-                        await page.reload(wait_until="load", timeout=20000)
+                        await page.goto(f"https://{host}/#/AS/B1/", wait_until="load", timeout=20000)
                         await page.wait_for_function(
                             "() => window.ns_datalib_net && window.ns_datalib_net.Loader && window.Locator",
                             timeout=15000
                         )
                         ready = True
                         break
-                    except Exception as reload_err:
-                        logger.warning("Page reload attempt %d failed: %s", attempt + 1, reload_err)
-            
-            if not ready:
-                # Last resort fallback: wait a moment and proceed anyway
-                logger.info("Page bootstrap failed to confirm loader; proceeding with best-effort wait")
-                await page.goto(f"https://{host}/#/AS/B1/", wait_until="domcontentloaded", timeout=20000)
-                await page.wait_for_timeout(3000)
-            
-            # Client-side route to the tournament to update routing state
-            fragment = urlparse(normalized_url).fragment.strip("/")
-            if fragment:
-                await page.evaluate(f"() => window.location.hash = '/{fragment}/'")
-                await page.wait_for_timeout(2000)
-            
-            # Extract cookies and Guid after client-side routing is complete
-            playwright_cookies = await context.cookies()
-            cookies_dict = {c["name"]: c["value"] for c in playwright_cookies}
-            guid = await page.evaluate("() => window.Locator.Guid")
-            
-            # Generate Token for the league markets URL
-            js_code = """
-            async (url) => {
-                return new Promise((resolve) => {
-                    const loader = new window.ns_datalib_net.Loader();
-                    loader.url = url;
-                    loader.options = { method: "GET" };
-                    const tid = setTimeout(() => resolve(null), 4000);
-                    loader.xcft((term, token) => {
-                        clearTimeout(tid);
-                        resolve(term);
+                    except Exception as e:
+                        logger.warning("Page bootstrap attempt %d failed: %s. Retrying...", attempt + 1, e)
+                        try:
+                            await page.reload(wait_until="load", timeout=20000)
+                            await page.wait_for_function(
+                                "() => window.ns_datalib_net && window.ns_datalib_net.Loader && window.Locator",
+                                timeout=15000
+                            )
+                            ready = True
+                            break
+                        except Exception as reload_err:
+                            logger.warning("Page reload attempt %d failed: %s", attempt + 1, reload_err)
+                
+                if not ready:
+                    # Last resort fallback: wait a moment and proceed anyway
+                    logger.info("Page bootstrap failed to confirm loader; proceeding with best-effort wait")
+                    await page.goto(f"https://{host}/#/AS/B1/", wait_until="domcontentloaded", timeout=20000)
+                    await page.wait_for_timeout(3000)
+                
+                # Client-side route to the tournament to update routing state
+                fragment = urlparse(normalized_url).fragment.strip("/")
+                if fragment:
+                    await page.evaluate(f"() => window.location.hash = '/{fragment}/'")
+                    await page.wait_for_timeout(2000)
+                
+                # Extract cookies and Guid after client-side routing is complete
+                playwright_cookies = await context.cookies()
+                cookies_dict = {c["name"]: c["value"] for c in playwright_cookies}
+                guid = await page.evaluate("() => window.Locator.Guid")
+                
+                # Generate Token for the league markets URL
+                js_code = """
+                async (url) => {
+                    return new Promise((resolve) => {
+                        const loader = new window.ns_datalib_net.Loader();
+                        loader.url = url;
+                        loader.options = { method: "GET" };
+                        const tid = setTimeout(() => resolve(null), 4000);
+                        loader.xcft((term, token) => {
+                            clearTimeout(tid);
+                            resolve(term);
+                        });
                     });
-                });
-            }
-            """
-            league_token = await page.evaluate(js_code, markets_api_url)
-            if not league_token:
-                await context.close()
-                await browser.close()
-                raise CompetitionUnavailableError(
-                    "Timed out generating token for league.",
-                    platform="bet365",
-                    source_url=normalized_url,
-                )
-            
-            # 3. Fetch league binary data browser-less
-            cookie_header = "; ".join([f"{k}={v}" for k, v in cookies_dict.items()])
-            headers = {
-                "User-Agent": DEFAULT_USER_AGENT,
-                "Accept": "*/*",
-                "Accept-Language": "es-AR,es;q=0.9,en;q=0.8",
-                "Referer": f"https://{host}/",
-                "Origin": f"https://{host}",
-                "X-Net-Sync-Term": league_token,
-                "X-Request-Id": guid,
-                "Cookie": cookie_header,
-                "sec-fetch-dest": "empty",
-                "sec-fetch-mode": "cors",
-                "sec-fetch-site": "same-origin",
-            }
-            
-            async with AsyncSession(impersonate="chrome120", timeout=20) as session:
-                r = await session.get(markets_api_url, headers=headers)
-                logger.info("Markets fetch result - HTTP %d, length=%d, X-Net-Sync-Term=%s, X-Request-Id=%s", r.status_code, len(r.content or b""), league_token, guid)
-                if r.status_code != 200 or not r.content:
+                }
+                """
+                league_token = await page.evaluate(js_code, markets_api_url)
+                if not league_token:
                     await context.close()
                     await browser.close()
                     raise CompetitionUnavailableError(
-                        f"Bet365 league markets payload returned empty content (status={r.status_code}, len={len(r.content or b'')}).",
+                        "Timed out generating token for league.",
                         platform="bet365",
                         source_url=normalized_url,
                     )
                 
-                parsed_league = parse_league_payload(r.content.decode("utf-8", errors="replace"), host=host)
-                matches_list = parsed_league.get("matches", [])
+                # 3. Fetch league binary data browser-less
+                cookie_header = "; ".join([f"{k}={v}" for k, v in cookies_dict.items()])
+                headers = {
+                    "User-Agent": DEFAULT_USER_AGENT,
+                    "Accept": "*/*",
+                    "Accept-Language": "es-AR,es;q=0.9,en;q=0.8",
+                    "Referer": f"https://{host}/",
+                    "Origin": f"https://{host}",
+                    "X-Net-Sync-Term": league_token,
+                    "X-Request-Id": guid,
+                    "Cookie": cookie_header,
+                    "sec-fetch-dest": "empty",
+                    "sec-fetch-mode": "cors",
+                    "sec-fetch-site": "same-origin",
+                }
                 
-            # 4. Construct Coupon URLs and generate tokens concurrently in JavaScript
-            if matches_list:
-                coupon_urls = [
-                    f"https://{host}/matchbettingcontentapi/coupon?lid={lid}&zid=0&pd={quote('#AC#B1#C1#D8#E' + m['fixture_id'] + '#F3#I3#', safe='')}&cid={cid}&cgid={cgid}&ctid={ctid}"
-                    for m in matches_list
-                ]
-                
-                js_batch_code = """
-                async (urls) => {
-                    const promises = urls.map(url => {
-                        return new Promise((resolve) => {
-                            const loader = new window.ns_datalib_net.Loader();
-                            loader.url = url;
-                            loader.options = { method: "GET" };
-                            const tid = setTimeout(() => resolve({ url, term: null }), 4000);
-                            loader.xcft((term, token) => {
-                                clearTimeout(tid);
-                                resolve({ url, term });
+                async with AsyncSession(impersonate="chrome120", timeout=20) as session:
+                    r = await session.get(markets_api_url, headers=headers)
+                    logger.info("Markets fetch result - HTTP %d, length=%d, X-Net-Sync-Term=%s, X-Request-Id=%s", r.status_code, len(r.content or b""), league_token, guid)
+                    if r.status_code != 200 or not r.content:
+                        await context.close()
+                        await browser.close()
+                        raise CompetitionUnavailableError(
+                            f"Bet365 league markets payload returned empty content (status={r.status_code}, len={len(r.content or b'')}).",
+                            platform="bet365",
+                            source_url=normalized_url,
+                        )
+                    
+                    parsed_league = parse_league_payload(r.content.decode("utf-8", errors="replace"), host=host)
+                    matches_list = parsed_league.get("matches", [])
+                    
+                # 4. Construct Coupon URLs and generate tokens concurrently in JavaScript
+                if matches_list:
+                    coupon_urls = [
+                        f"https://{host}/matchbettingcontentapi/coupon?lid={lid}&zid=0&pd={quote('#AC#B1#C1#D8#E' + m['fixture_id'] + '#F3#I3#', safe='')}&cid={cid}&cgid={cgid}&ctid={ctid}"
+                        for m in matches_list
+                    ]
+                    
+                    js_batch_code = """
+                    async (urls) => {
+                        const promises = urls.map(url => {
+                            return new Promise((resolve) => {
+                                const loader = new window.ns_datalib_net.Loader();
+                                loader.url = url;
+                                loader.options = { method: "GET" };
+                                const tid = setTimeout(() => resolve({ url, term: null }), 4000);
+                                loader.xcft((term, token) => {
+                                    clearTimeout(tid);
+                                    resolve({ url, term });
+                                });
                             });
                         });
-                    });
-                    return Promise.all(promises);
-                }
-                """
-                results = await page.evaluate(js_batch_code, coupon_urls)
-                for res in results:
-                    if res and res.get("term"):
-                        coupon_tokens[res["url"]] = res["term"]
-            
-            await context.close()
-            await browser.close()
+                        return Promise.all(promises);
+                    }
+                    """
+                    results = await page.evaluate(js_batch_code, coupon_urls)
+                    for res in results:
+                        if res and res.get("term"):
+                            coupon_tokens[res["url"]] = res["term"]
+                
+                await context.close()
+                await browser.close()
             
         logger.info("Temporary Playwright instance closed. Spawning parallel HTTP calls...")
         
