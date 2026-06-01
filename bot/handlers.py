@@ -8,7 +8,7 @@ import logging
 import re
 import unicodedata
 
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
+from telegram import Message, ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.constants import ParseMode
 from telegram.ext import (
     Application,
@@ -235,6 +235,11 @@ async def watch_live_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
         await watch_live_photo_handler(update, context)
         return
 
+    # Check if this is a reply to a photo message
+    if update.message.reply_to_message and update.message.reply_to_message.photo:
+        await watch_live_photo_handler(update, context, message_with_photo=update.message.reply_to_message)
+        return
+
     raw = update.message.text or ""
     # Strip the leading "/watch_live" command token, keep the rest (multiline).
     body = raw.split(None, 1)[1] if len(raw.split(None, 1)) > 1 else ""
@@ -246,7 +251,7 @@ async def watch_live_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
             "Murdoch - East Perth\n"
             "Australia Occidental | Subiaco - UWA\n"
             "Poli Iasi vs Otelul\n\n"
-            "O subí una foto de tu fixture escribiendo /watch_live como epígrafe/comentario.\n\n"
+            "O subí una foto de tu fixture escribiendo /watch_live como epígrafe/comentario, o respondé /watch_live a una foto ya enviada.\n\n"
             "Cuando alguno salga en vivo en cualquier casa, te aviso.\n"
             "Ver lista: /watching · Borrar: /unwatch <id> (o /unwatch all)"
         )
@@ -269,8 +274,13 @@ async def watch_live_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await _reply_text_chunks(update.message, "\n".join(msg))
 
 
-async def watch_live_photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle photo messages sent with /watch_live as a caption."""
+async def watch_live_photo_handler(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE,
+    *,
+    message_with_photo: Message | None = None
+) -> None:
+    """Handle photo messages sent with /watch_live as a caption or as a reply."""
 
     import httpx
     import os
@@ -278,7 +288,9 @@ async def watch_live_photo_handler(update: Update, context: ContextTypes.DEFAULT
     if update.message is None or update.effective_chat is None:
         return
 
-    if not update.message.photo:
+    msg_to_read = message_with_photo or update.message
+
+    if not msg_to_read.photo:
         await update.message.reply_text("❌ No se detectó ninguna imagen.")
         return
 
@@ -287,7 +299,7 @@ async def watch_live_photo_handler(update: Update, context: ContextTypes.DEFAULT
     )
 
     try:
-        photo = update.message.photo[-1]
+        photo = msg_to_read.photo[-1]
         file = await photo.get_file()
         photo_bytes = await file.download_as_bytearray()
 

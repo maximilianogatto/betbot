@@ -27,7 +27,7 @@ def _live_watch_entry(entry_id: int, home: str, away: str, status: str = "watchi
 
 class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
     async def test_watch_live_without_lines_replies_usage(self) -> None:
-        message = SimpleNamespace(text="/watch_live", photo=None, reply_text=AsyncMock())
+        message = SimpleNamespace(text="/watch_live", photo=None, reply_to_message=None, reply_text=AsyncMock())
         context = SimpleNamespace(args=[], user_data={})
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
@@ -47,6 +47,7 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         message = SimpleNamespace(
             text="/watch_live\nAustralia | Banyule - Bundoora\nSubiaco vs UWA\nInvalidLineNoSeparator",
             photo=None,
+            reply_to_message=None,
             reply_text=AsyncMock(),
         )
         bot = SimpleNamespace(send_message=AsyncMock())
@@ -203,6 +204,7 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
 
         message = SimpleNamespace(
             photo=[mock_photo_size],
+            reply_to_message=None,
             reply_text=AsyncMock(return_value=SimpleNamespace(edit_text=AsyncMock(), delete=AsyncMock())),
             delete=AsyncMock(),
         )
@@ -232,6 +234,65 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
 
         message.reply_text.assert_awaited_once()
         self.assertIn("Recibí tu imagen", message.reply_text.await_args.args[0])
+
+    async def test_watch_live_reply_to_photo_command(self) -> None:
+        # Mock photo size
+        mock_photo_size = SimpleNamespace(
+            file_id="photo-456",
+            get_file=AsyncMock(
+                return_value=SimpleNamespace(
+                    download_as_bytearray=AsyncMock(return_value=bytearray(b"dummy2"))
+                )
+            )
+        )
+
+        # Mock ocr.space response
+        ocr_response = {
+            "IsErroredOnProcessing": False,
+            "ParsedResults": [
+                {
+                    "ParsedText": "200\tAustralia Victorian (F)\tBanyule - Bundoora\tVisitantes +3/4\t"
+                }
+            ]
+        }
+
+        # Mock httpx AsyncClient
+        mock_client = AsyncMock()
+        mock_client.__aenter__.return_value = mock_client
+        mock_client.post.return_value = SimpleNamespace(
+            status_code=200, json=lambda: ocr_response
+        )
+
+        added_entries = [_live_watch_entry(1, "Banyule", "Bundoora")]
+        live_watch_service = SimpleNamespace(
+            add_fixture_lines=Mock(return_value=added_entries)
+        )
+
+        replied_message = SimpleNamespace(
+            photo=[mock_photo_size],
+        )
+
+        message = SimpleNamespace(
+            photo=None,
+            reply_to_message=replied_message,
+            reply_text=AsyncMock(return_value=SimpleNamespace(edit_text=AsyncMock(), delete=AsyncMock())),
+            delete=AsyncMock(),
+        )
+
+        bot = SimpleNamespace(send_message=AsyncMock())
+        application = SimpleNamespace(bot_data={"live_watch_service": live_watch_service})
+        context = SimpleNamespace(application=application, bot=bot, args=[], user_data={})
+        update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
+
+        with (
+            patch("bot.handlers.get_live_watch_service", return_value=live_watch_service),
+            patch("httpx.AsyncClient", return_value=mock_client),
+            patch("bot.handlers._reply_text_chunks", new_callable=AsyncMock) as mock_reply_chunks
+        ):
+            await watch_live_command(update, context)
+
+        mock_reply_chunks.assert_awaited_once()
+        self.assertIn("Banyule vs Bundoora", mock_reply_chunks.await_args[0][1])
 
 
 if __name__ == "__main__":
