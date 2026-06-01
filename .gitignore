@@ -34,3 +34,7 @@ sandbox/betwarrior/captures/
 
 # MrPunter research network dumps
 sandbox/mrpunter/captures/
+
+# Local Playwright CLI state and SofaScore research dumps
+.playwright-cli/
+sandbox/sofascore_http/captures/
