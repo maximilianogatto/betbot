@@ -86,6 +86,12 @@ class BotReadyRuntimeConfig:
     bootstrap_profile_dir: Path = Path("stats_providers/sportradar_http/engine/reports/chrome_profile")
     bootstrap_seconds: float = 4.0
     bootstrap_mode: BootstrapMode = "headless"
+    # The background/startup token pre-refresh stays headless-only so it NEVER
+    # opens a visible window at boot. A visible (headed) fallback is reserved for
+    # the on-demand path (a real /stats call) when `bootstrap_mode` allows it; a
+    # successful headed run warms the shared profile so later headless refreshes
+    # reuse its Akamai cookies and stay invisible.
+    background_bootstrap_mode: BootstrapMode = "headless"
     timeout_seconds: float = 25.0
     retries: int = 1
     lastx: int = 8
@@ -142,6 +148,14 @@ class SportradarBotReadyProvider:
         profile_dir.mkdir(parents=True, exist_ok=True)
         self.session_manager = BootstrapSessionManager(
             mode=self.config.bootstrap_mode,
+            seconds_per_url=self.config.bootstrap_seconds,
+            user_data_dir=str(profile_dir),
+        )
+        # Separate manager for the background/startup pre-refresh: headless-only so
+        # it never opens a visible window at boot. Shares the same Chromium profile,
+        # so a one-time headed on-demand run warms cookies this one can reuse.
+        self._background_session_manager = BootstrapSessionManager(
+            mode=self.config.background_bootstrap_mode,
             seconds_per_url=self.config.bootstrap_seconds,
             user_data_dir=str(profile_dir),
         )
@@ -270,7 +284,10 @@ class SportradarBotReadyProvider:
             seconds_left = token.seconds_until_expiration()
             if seconds_left is not None and seconds_left >= min_ttl_seconds:
                 return False
-        state = self.session_manager.refresh_session()
+        # Background refresh is headless-only: if Akamai blocks headless it raises
+        # (caught by the caller) and no visible window opens at startup — the token
+        # is then minted on-demand during the next real /stats call.
+        state = self._background_session_manager.refresh_session()
         save_session_state(state, self.config.session_state_path)
         return True
 

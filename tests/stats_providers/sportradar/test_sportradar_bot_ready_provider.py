@@ -32,7 +32,10 @@ class SportradarSessionPreRefreshTests(unittest.TestCase):
             return "NEW_STATE"
 
         fake_manager.refresh_session = refresh
+        # ensure_fresh_session (the background/startup pre-refresh) uses the
+        # headless-only background manager; patch both so the fake is exercised.
         provider.session_manager = fake_manager
+        provider._background_session_manager = fake_manager
         return provider, fake_manager
 
     def test_ensure_fresh_session_skips_when_token_has_ttl(self) -> None:
