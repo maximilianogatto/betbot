@@ -13,6 +13,7 @@ from core.stats_provider_base import StatsProviderRegistry, stats_provider_regis
 from stats_providers.sportradar_http import SportradarHttpStatsProvider
 from stats_providers.palloliitto.provider import PalloliittoStatsProvider
 from stats_providers.sofascore_http import SofaScoreHttpStatsProvider
+from stats_providers.flashscore_http import FlashscoreHttpStatsProvider
 
 
 def register_default_stats_providers(
@@ -38,6 +39,9 @@ def register_default_stats_providers(
     # SofaScore (HTTP-only via curl_cffi). Disable with SOFASCORE_ENABLED=false.
     if os.getenv("SOFASCORE_ENABLED", "true").strip().lower() not in {"false", "0", "no"}:
         target.register(SofaScoreHttpStatsProvider(payload_cache=cache))
+    # Flashscore (HTTP-only via static x-fsign; broadest league coverage).
+    if os.getenv("FLASHSCORE_ENABLED", "true").strip().lower() not in {"false", "0", "no"}:
+        target.register(FlashscoreHttpStatsProvider(payload_cache=cache))
     return target
 
 
@@ -45,5 +49,6 @@ __all__ = [
     "SportradarHttpStatsProvider",
     "PalloliittoStatsProvider",
     "SofaScoreHttpStatsProvider",
+    "FlashscoreHttpStatsProvider",
     "register_default_stats_providers",
 ]
