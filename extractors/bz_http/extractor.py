@@ -43,6 +43,7 @@ class BzHttpExtractor(Extractor):
     provider_capabilities = ProviderCapabilities(supports_http=True, supports_browserless=True)
     supports_league_discovery = True  # via the match/search feed
     supports_live_detection = True  # via statusList=1 search
+    supports_prematch_listing = True  # via statusList=0 search
 
     # The match/search feed lists every prematch tournament; cache it briefly so a
     # refresh sweep / discovery search reuses one download.
@@ -98,6 +99,11 @@ class BzHttpExtractor(Extractor):
     async def list_live_events(self) -> list[LiveEventSnapshot]:
         client = BzHttpClient(self.settings)
         search_data = await client.fetch_live_search()
+        return live_events_from_search(search_data)
+
+    async def list_prematch_events(self) -> list[LiveEventSnapshot]:
+        client = BzHttpClient(self.settings)
+        search_data = await client.fetch_match_search()  # statusList=0 (not started)
         return live_events_from_search(search_data)
 
     async def search_leagues(

@@ -25,7 +25,11 @@ from core.extractor_base import Extractor, LeagueDiscoveryOption
 from core.models import CompetitionExtraction, EventSnapshot, LiveEventSnapshot, ProviderCapabilities
 from extractors.solcasino_http import discovery as discovery_module
 from extractors.solcasino_http.client import SolcasinoHttpClient
-from extractors.solcasino_http.parser import build_competition_extraction, live_events_from_snapshot
+from extractors.solcasino_http.parser import (
+    build_competition_extraction,
+    live_events_from_snapshot,
+    prematch_events_from_snapshot,
+)
 from extractors.solcasino_http.settings import SolcasinoHttpSettings, load_solcasino_settings
 
 _SUPPORTED_HOSTS = ("solcasino.io", "sptpub.com")
@@ -43,6 +47,7 @@ class SolcasinoHttpExtractor(Extractor):
     provider_capabilities = ProviderCapabilities(supports_http=True, supports_browserless=True)
     supports_league_discovery = True  # via the merged Betby snapshot
     supports_live_detection = True  # via the Betby live feed
+    supports_prematch_listing = True  # via the merged Betby prematch snapshot
 
     # The snapshot (~hundreds of KB across a few chunks) lists every league; cache
     # it briefly so a refresh sweep / discovery search reuses one download.
@@ -85,6 +90,11 @@ class SolcasinoHttpExtractor(Extractor):
         client = SolcasinoHttpClient(self.settings)
         snapshot = await client.fetch_snapshot(feed="live")
         return live_events_from_snapshot(snapshot, sport_id=self.settings.sport_id)
+
+    async def list_prematch_events(self) -> list[LiveEventSnapshot]:
+        client = SolcasinoHttpClient(self.settings)
+        snapshot = await self._get_snapshot(client)  # cached prematch snapshot
+        return prematch_events_from_snapshot(snapshot, sport_id=self.settings.sport_id)
 
     async def search_leagues(
         self,

@@ -10,11 +10,13 @@ misprice. Matching is per-side: both home and away must clear a similarity floor
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from difflib import SequenceMatcher
 import logging
 import re
 import unicodedata
 from typing import Iterable
+from zoneinfo import ZoneInfo
 
 from core.extractor_base import Extractor
 from core.models import LiveEventSnapshot
@@ -67,11 +69,12 @@ def match_score(entry: LiveWatchEntry, event: LiveEventSnapshot) -> float:
 
 @dataclass(frozen=True)
 class LiveWatchHit:
-    """A watch entry that just matched a live event."""
+    """A watch entry that just matched an event (live or prematch)."""
 
     entry: LiveWatchEntry
     event: LiveEventSnapshot
     score: float
+    phase: str = "live"  # "live" (in-play, terminal) | "pre" (listed prematch, one-shot)
 
 
 class LiveWatchService:
@@ -85,6 +88,11 @@ class LiveWatchService:
     ) -> None:
         self.extractor_registry = extractor_registry or global_extractor_registry
         self.repository = repository or default_tracking_repository
+        # Prematch changes slowly; cache it so the (fast) live poll doesn't re-pull
+        # the whole-day lists every cycle (lighter for a VPS).
+        self._prematch_cache: list[LiveEventSnapshot] | None = None
+        self._prematch_cached_at = 0.0
+        self._prematch_ttl_seconds = 120.0
 
     # ----- watchlist management (used by the bot commands) -----
 
@@ -102,10 +110,15 @@ class LiveWatchService:
             parsed = parse_fixture_line(raw)
             if parsed is None:
                 continue
-            league_hint, home, away = parsed
+            league_hint, home, away, kickoff_at = parsed
             added.append(
                 self.repository.add_live_watch(
-                    chat_id, home=home, away=away, league_hint=league_hint, note=raw.strip()
+                    chat_id,
+                    home=home,
+                    away=away,
+                    league_hint=league_hint,
+                    note=raw.strip(),
+                    kickoff_at=kickoff_at,
                 )
             )
         return added
@@ -122,7 +135,10 @@ class LiveWatchService:
     # ----- polling -----
 
     def _live_extractors(self) -> list[Extractor]:
-        return [e for e in self.extractor_registry.list_registered() if e.supports_live_detection]
+        return [e for e in self.extractor_registry.list_registered() if getattr(e, "supports_live_detection", False)]
+
+    def _prematch_extractors(self) -> list[Extractor]:
+        return [e for e in self.extractor_registry.list_registered() if getattr(e, "supports_prematch_listing", False)]
 
     async def collect_live_events(self) -> list[LiveEventSnapshot]:
         """Gather in-play soccer events from every live-capable extractor."""
@@ -135,37 +151,97 @@ class LiveWatchService:
                 logger.exception("Live fetch failed platform=%s", extractor.name)
         return events
 
-    async def poll_once(self) -> list[LiveWatchHit]:
-        """Match active watches against current live events; mark hits fired."""
+    async def collect_prematch_events(self) -> list[LiveEventSnapshot]:
+        """Gather currently-listed prematch soccer events (cached ~120s)."""
 
+        import time as _time
+
+        now = _time.monotonic()
+        if self._prematch_cache is not None and (now - self._prematch_cached_at) < self._prematch_ttl_seconds:
+            return self._prematch_cache
+        events: list[LiveEventSnapshot] = []
+        for extractor in self._prematch_extractors():
+            try:
+                events.extend(await extractor.list_prematch_events())
+            except Exception:
+                logger.exception("Prematch fetch failed platform=%s", extractor.name)
+        if events:
+            self._prematch_cache = events
+            self._prematch_cached_at = now
+        return events
+
+    @staticmethod
+    def _best_match(entry: LiveWatchEntry, events: list[LiveEventSnapshot]) -> tuple[float, LiveEventSnapshot] | None:
+        best: tuple[float, LiveEventSnapshot] | None = None
+        for event in events:
+            score = match_score(entry, event)
+            if score >= COMBINED_FLOOR and (best is None or score > best[0]):
+                best = (score, event)
+        return best
+
+    async def poll_once(self) -> list[LiveWatchHit]:
+        """Detect watched fixtures going live (terminal) or being listed in prematch.
+
+        - A live match fires a one-shot LIVE alert and ends the watch.
+        - A prematch listing fires a one-shot PRE alert (per book) without ending
+          the watch — the entry keeps waiting to go live.
+        Expired entries are pruned first.
+        """
+
+        self.purge_expired()
         watches = self.repository.list_all_active_live_watches()
         if not watches:
             return []
+
         live_events = await self.collect_live_events()
-        if not live_events:
+        prematch_events = await self.collect_prematch_events()
+        if not live_events and not prematch_events:
             return []
 
         hits: list[LiveWatchHit] = []
         for entry in watches:
-            best: tuple[float, LiveEventSnapshot] | None = None
-            for event in live_events:
-                score = match_score(entry, event)
-                if score >= COMBINED_FLOOR and (best is None or score > best[0]):
-                    best = (score, event)
-            if best is None:
+            live_best = self._best_match(entry, live_events) if live_events else None
+            if live_best is not None:
+                score, event = live_best
+                self.repository.mark_live_watch_fired(
+                    entry.id, platform=event.platform, event_id=event.external_event_id, minute=event.minute
+                )
+                hits.append(LiveWatchHit(entry=entry, event=event, score=score, phase="live"))
                 continue
-            score, event = best
-            self.repository.mark_live_watch_fired(
-                entry.id, platform=event.platform, event_id=event.external_event_id, minute=event.minute
+            # Not live: surface a one-shot prematch listing (only once per entry).
+            if entry.prematch_seen_at:
+                continue
+            pre_best = self._best_match(entry, prematch_events) if prematch_events else None
+            if pre_best is None:
+                continue
+            score, event = pre_best
+            self.repository.mark_live_watch_prematch_seen(
+                entry.id, platform=event.platform, event_id=event.external_event_id
             )
-            hits.append(LiveWatchHit(entry=entry, event=event, score=score))
+            hits.append(LiveWatchHit(entry=entry, event=event, score=score, phase="pre"))
         return hits
+
+    def purge_expired(self) -> int:
+        """Delete watch entries whose time has passed (kickoff+grace, or stale)."""
+
+        return self.repository.purge_expired_live_watches()
 
 
 def render_live_hit(hit: LiveWatchHit) -> str:
-    """Build the Telegram alert text for a fixture that just went live."""
+    """Build the Telegram alert for a watched fixture (live or prematch listing)."""
 
     event = hit.event
+    book = event.platform.replace("_http", "")
+    if hit.phase == "pre":
+        lines = ["📋 LISTADO EN PRE — apareció tu partido", f"⚽ {event.home} vs {event.away}"]
+        league_bits = " · ".join(b for b in (event.country_name, event.competition_name) if b)
+        if league_bits:
+            lines.append(f"🏆 {league_bits}")
+        lines.append(f"🏦 ya está en {book} (prematch) — sigo vigilando para el vivo")
+        if hit.entry.note and hit.entry.note.strip() not in (f"{event.home} - {event.away}",):
+            lines.append(f"📝 {hit.entry.note.strip()}")
+        return "\n".join(lines)
+
     lines = ["🔴 EN VIVO — salió tu partido", f"⚽ {event.home} vs {event.away}"]
     league_bits = " · ".join(b for b in (event.country_name, event.competition_name) if b)
     if league_bits:
@@ -177,21 +253,43 @@ def render_live_hit(hit: LiveWatchHit) -> str:
     if event.odds_1x2 and any(v is not None for v in (event.odds_1x2.home, event.odds_1x2.draw, event.odds_1x2.away)):
         o = event.odds_1x2
         lines.append(f"💰 1X2: {o.home} / {o.draw} / {o.away}")
-    lines.append(f"🏦 {event.platform.replace('_http', '')}")
+    lines.append(f"🏦 {book}")
     if hit.entry.note and hit.entry.note.strip() not in (f"{event.home} - {event.away}",):
         lines.append(f"📝 {hit.entry.note.strip()}")
     return "\n".join(lines)
 
 
 _FIXTURE_SEPARATORS = (" - ", " – ", " vs. ", " vs ", " v ", " x ")
+# Optional leading "HH:MM" (Argentina local time), e.g. "21:00 Olympia - Ballard".
+_LEADING_TIME_RE = re.compile(r"^\s*(\d{1,2})[:.](\d{2})\s+(.*)$")
+_ARG_TZ = ZoneInfo("America/Argentina/Buenos_Aires")
 
 
-def parse_fixture_line(raw: str) -> tuple[str | None, str, str] | None:
-    """Parse one fixture line into (league_hint, home, away), or None if unusable."""
+def _kickoff_from_arg_time(hour: int, minute: int) -> str | None:
+    """Build today's (Argentina) kickoff as a UTC ISO timestamp."""
+
+    if not (0 <= hour < 24 and 0 <= minute < 60):
+        return None
+    now_arg = datetime.now(_ARG_TZ)
+    kickoff = now_arg.replace(hour=hour, minute=minute, second=0, microsecond=0)
+    return kickoff.astimezone(timezone.utc).isoformat()
+
+
+def parse_fixture_line(raw: str) -> tuple[str | None, str, str, str | None] | None:
+    """Parse one fixture line into (league_hint, home, away, kickoff_utc) or None.
+
+    Accepts an optional leading ``HH:MM`` (Argentina time) and an optional
+    ``League | Home - Away`` prefix. Separators: ' - ', ' vs ', ' vs. ', etc.
+    """
 
     text = (raw or "").strip()
     if not text:
         return None
+    kickoff_at: str | None = None
+    time_match = _LEADING_TIME_RE.match(text)
+    if time_match:
+        kickoff_at = _kickoff_from_arg_time(int(time_match.group(1)), int(time_match.group(2)))
+        text = time_match.group(3).strip()
     league_hint: str | None = None
     if "|" in text:
         head, _, tail = text.partition("|")
@@ -201,5 +299,5 @@ def parse_fixture_line(raw: str) -> tuple[str | None, str, str] | None:
             home, _, away = text.partition(sep)
             home, away = home.strip(), away.strip()
             if home and away:
-                return league_hint, home, away
+                return league_hint, home, away, kickoff_at
     return None

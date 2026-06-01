@@ -26,21 +26,26 @@ class LiveWatchUnitTests(unittest.TestCase):
         self.assertIsNone(parse_fixture_line("   "))
         self.assertIsNone(parse_fixture_line("SingleTeamNameNoSeparator"))
 
-        # Simple hyphen
+        # Simple hyphen (4-tuple: league_hint, home, away, kickoff_utc)
         p1 = parse_fixture_line("Murdoch - East Perth")
-        self.assertEqual(p1, (None, "Murdoch", "East Perth"))
+        self.assertEqual(p1, (None, "Murdoch", "East Perth", None))
 
         # VS separator
         p2 = parse_fixture_line("Poli Iasi vs Otelul")
-        self.assertEqual(p2, (None, "Poli Iasi", "Otelul"))
+        self.assertEqual(p2, (None, "Poli Iasi", "Otelul", None))
 
         # League hint with pipe
         p3 = parse_fixture_line("Australia Occidental | Subiaco - UWA")
-        self.assertEqual(p3, ("Australia Occidental", "Subiaco", "UWA"))
+        self.assertEqual(p3, ("Australia Occidental", "Subiaco", "UWA", None))
 
         # Extra whitespace
         p4 = parse_fixture_line("  League A  |   Team X   vs.   Team Y  ")
-        self.assertEqual(p4, ("League A", "Team X", "Team Y"))
+        self.assertEqual(p4, ("League A", "Team X", "Team Y", None))
+
+        # Leading Argentina time -> kickoff captured (UTC ISO), stripped from names
+        p5 = parse_fixture_line("21:00 Olympia - Ballard")
+        self.assertEqual(p5[:3], (None, "Olympia", "Ballard"))
+        self.assertIsNotNone(p5[3])
 
     def test_name_similarity(self) -> None:
         # High similarity for exact names (case-insensitive, normalized)
@@ -226,6 +231,69 @@ class LiveWatchServiceTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("5'  |  1-0", alert_msg)
         self.assertIn("1.85 / 3.4 / 3.8", alert_msg)
         self.assertIn("betovo", alert_msg)
+
+
+class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):
+    def setUp(self) -> None:
+        self.old_db_path = tracking_repository_module.DB_FILE_PATH
+        self.old_data_dir = tracking_repository_module.DATA_DIR
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        tracking_repository_module.DATA_DIR = Path(self.tmp_dir.name)
+        tracking_repository_module.DB_FILE_PATH = Path(self.tmp_dir.name) / "tracking.sqlite3"
+        self.repository = SqliteTrackingRepository()
+
+    def tearDown(self) -> None:
+        self.tmp_dir.cleanup()
+        tracking_repository_module.DB_FILE_PATH = self.old_db_path
+        tracking_repository_module.DATA_DIR = self.old_data_dir
+
+    async def test_prematch_listing_fires_pre_once_and_keeps_watching(self) -> None:
+        service = LiveWatchService(repository=self.repository)
+        service.add_fixture_lines(7, ["USL League Two | Olympia - Ballard"])
+
+        pre_extractor = SimpleNamespace(
+            name="solcasino_http",
+            supports_live_detection=False,
+            supports_prematch_listing=True,
+            list_live_events=AsyncMock(return_value=[]),
+            list_prematch_events=AsyncMock(
+                return_value=[
+                    LiveEventSnapshot(
+                        platform="solcasino_http", external_event_id="p1", is_soccer=True,
+                        home="Olympia FC", away="Ballard FC SC", country_name="USA",
+                        competition_name="USL League Two", minute=None,
+                    )
+                ]
+            ),
+        )
+        service.extractor_registry = SimpleNamespace(list_registered=lambda: [pre_extractor])
+
+        hits = await service.poll_once()
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(hits[0].phase, "pre")
+        msg = render_live_hit(hits[0])
+        self.assertIn("LISTADO EN PRE", msg)
+        # one-shot: still watching, not re-alerted
+        active = self.repository.list_all_active_live_watches()
+        self.assertEqual(len(active), 1)
+        self.assertIsNotNone(active[0].prematch_seen_at)
+        self.assertEqual(len(await service.poll_once()), 0)
+
+    def test_purge_expired_removes_past_kickoff_and_stale(self) -> None:
+        import datetime as _dt
+
+        chat = 5
+        # Past kickoff -> purged
+        past = (_dt.datetime.now(_dt.timezone.utc) - _dt.timedelta(hours=5)).isoformat()
+        self.repository.add_live_watch(chat, home="A", away="B", kickoff_at=past)
+        # Future kickoff -> kept
+        future = (_dt.datetime.now(_dt.timezone.utc) + _dt.timedelta(hours=5)).isoformat()
+        keep = self.repository.add_live_watch(chat, home="C", away="D", kickoff_at=future)
+
+        removed = self.repository.purge_expired_live_watches()
+        self.assertEqual(removed, 1)
+        remaining = self.repository.list_live_watches(chat)
+        self.assertEqual([w.id for w in remaining], [keep.id])
 
 
 if __name__ == "__main__":
