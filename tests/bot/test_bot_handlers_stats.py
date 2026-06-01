@@ -5,6 +5,10 @@ import unittest
 from unittest.mock import AsyncMock, Mock, patch
 
 from bot.handlers import (
+    EXPLORE_FIXTURES_CONTEXT_KEY,
+    EXPLORE_MENU,
+    EXPLORE_SELECTED_LEAGUE_CONTEXT_KEY,
+    SELECT_LEAGUE_FOR_TRACK_STATS,
     LINK_STATS_SELECTED_PROVIDER_CONTEXT_KEY,
     LINK_STATS_SELECTED_TRACK_CONTEXT_KEY,
     MATCHES_ACTIVE_CONTEXT_KEY,
@@ -14,13 +18,16 @@ from bot.handlers import (
     STATS_ACTIVE_CONTEXT_KEY,
     STATS_SELECTED_TRACK_CONTEXT_KEY,
     _extract_statshub_tournament_id,
+    explore_select_fixture,
     link_stats_enter_country,
     stats_select_match,
     stats_command,
+    track_stats_enter_country,
+    track_stats_select_league,
 )
-from core.stats_models import StatsLeagueOption, StatsProviderCapabilities, StatsProviderDescriptor
+from core.stats_models import StatsFixture, StatsLeagueOption, StatsProviderCapabilities, StatsProviderDescriptor
 from monitors.models import CommandResult
-from monitors.stats import StatsResolution
+from monitors.stats import ExplorableStatsLeague, StatsResolution
 from storage.tracking_repository import (
     ActiveEventRecord,
     CompetitionSubscription,
@@ -207,6 +214,80 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         self.assertGreater(message.reply_text.await_count, 1)
         for call in message.reply_text.await_args_list:
             self.assertLessEqual(len(call.args[0]), 3900)
+
+    async def test_track_stats_discovers_and_persists_standalone_league(self) -> None:
+        option = StatsLeagueOption(
+            provider="footystats_http",
+            provider_display_name="FootyStats HTTP",
+            country_name="Australia",
+            league_id="australia/northern-nsw-npl",
+            league_name="Northern NSW NPL",
+        )
+        stats_service = SimpleNamespace(
+            search_leagues=AsyncMock(return_value=[option]),
+            track_stats_league=Mock(return_value=CommandResult(ok=True, message="✅ Liga agregada")),
+        )
+        provider = StatsProviderDescriptor(
+            key="footystats_http",
+            display_name="FootyStats HTTP",
+            capabilities=StatsProviderCapabilities(supports_league_discovery=True),
+        )
+        message = SimpleNamespace(text="Australia", reply_text=AsyncMock())
+        context = SimpleNamespace(
+            user_data={"track_stats_selected_provider": provider},
+        )
+        update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
+
+        with patch("bot.handlers.get_stats_service", return_value=stats_service):
+            state = await track_stats_enter_country(update, context)
+
+        self.assertEqual(state, SELECT_LEAGUE_FOR_TRACK_STATS)
+        self.assertIn("track_stats_options", context.user_data)
+
+        message.text = "1"
+        with patch("bot.handlers.get_stats_service", return_value=stats_service):
+            state = await track_stats_select_league(update, context)
+
+        self.assertEqual(state, -1)
+        stats_service.track_stats_league.assert_called_once_with(chat_id=123, option=option)
+
+    async def test_explore_fixture_builds_direct_report(self) -> None:
+        fixture = StatsFixture(
+            provider="footystats_http",
+            league_id="australia/northern-nsw-npl",
+            match_id="8439330",
+            home="Valentine",
+            away="Maitland",
+            scheduled_at="2026-06-20T03:50:00+00:00",
+        )
+        stats_service = SimpleNamespace(
+            build_direct_match_report=AsyncMock(return_value=CommandResult(ok=True, message="Reporte directo"))
+        )
+        message = SimpleNamespace(text="1", reply_text=AsyncMock())
+        context = SimpleNamespace(
+            user_data={
+                EXPLORE_FIXTURES_CONTEXT_KEY: [fixture],
+                EXPLORE_SELECTED_LEAGUE_CONTEXT_KEY: ExplorableStatsLeague(
+                    provider_key="footystats_http",
+                    league_id="australia/northern-nsw-npl",
+                    league_name="Northern NSW NPL",
+                    country_name="Australia",
+                    label="Northern NSW NPL",
+                ),
+                "explore_overview": {"league_name": "Northern NSW NPL"},
+            }
+        )
+        update = SimpleNamespace(message=message)
+
+        with patch("bot.handlers.get_stats_service", return_value=stats_service):
+            state = await explore_select_fixture(update, context)
+
+        self.assertEqual(state, EXPLORE_MENU)
+        stats_service.build_direct_match_report.assert_awaited_once_with(
+            provider_key="footystats_http",
+            stats_match_id="8439330",
+        )
+        self.assertIn("Reporte directo", message.reply_text.await_args_list[1].args[0])
 
 
 def _active_event() -> ActiveEventRecord:

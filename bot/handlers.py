@@ -33,6 +33,7 @@ from core.models import PlatformDescriptor
 from core.stats_models import MatchIdentityCandidate, StatsLeagueOption, StatsProviderDescriptor
 from monitoring import format_system_metrics_message, get_system_metrics
 from monitors.stats import (
+    ExplorableStatsLeague,
     StatsService,
     render_league_fixtures,
     render_league_table,
@@ -62,6 +63,10 @@ SELECT_STATS_CANDIDATE = 15
 EXPLORE_SELECT_LEAGUE = 16
 EXPLORE_MENU = 17
 EXPLORE_TEAM_INPUT = 18
+SELECT_PROVIDER_FOR_TRACK_STATS = 19
+ENTER_COUNTRY_FOR_TRACK_STATS = 20
+SELECT_LEAGUE_FOR_TRACK_STATS = 21
+EXPLORE_SELECT_FIXTURE = 22
 
 MATCHES_TRACKS_CONTEXT_KEY = "matches_tracks"
 MATCHES_ACTIVE_CONTEXT_KEY = "matches_active"
@@ -74,6 +79,8 @@ STATS_CANDIDATE_MATCH_CONTEXT_KEY = "stats_candidate_match"
 STATS_CANDIDATE_PROVIDER_CONTEXT_KEY = "stats_candidate_provider"
 EXPLORE_TRACKS_CONTEXT_KEY = "explore_tracks"
 EXPLORE_OVERVIEW_CONTEXT_KEY = "explore_overview"
+EXPLORE_SELECTED_LEAGUE_CONTEXT_KEY = "explore_selected_league"
+EXPLORE_FIXTURES_CONTEXT_KEY = "explore_fixtures"
 UNTRACK_TRACKS_CONTEXT_KEY = "untrack_tracks"
 ODDS_TRACKS_CONTEXT_KEY = "odds_tracks"
 ODDS_ENABLED_CONTEXT_KEY = "odds_enabled"
@@ -87,6 +94,9 @@ LINK_STATS_SELECTED_TRACK_CONTEXT_KEY = "link_stats_selected_track"
 LINK_STATS_PROVIDERS_CONTEXT_KEY = "link_stats_providers"
 LINK_STATS_SELECTED_PROVIDER_CONTEXT_KEY = "link_stats_selected_provider"
 LINK_STATS_OPTIONS_CONTEXT_KEY = "link_stats_options"
+TRACK_STATS_PROVIDERS_CONTEXT_KEY = "track_stats_providers"
+TRACK_STATS_SELECTED_PROVIDER_CONTEXT_KEY = "track_stats_selected_provider"
+TRACK_STATS_OPTIONS_CONTEXT_KEY = "track_stats_options"
 MANUAL_REFRESH_TASK_KEY = "manual_refresh_task"
 
 HELP_MESSAGE = (
@@ -106,7 +116,9 @@ HELP_MESSAGE = (
     "/confirm_empty_track - Confirma una liga válida pero vacía\n"
     "/link_stats - Vincula una liga trackeada con stats (por país o pegando una URL de Statshub)\n"
     "/stats_links - Lista las ligas vinculadas con stats\n"
-    "/explore_stats - Explora tabla, fixtures y equipos de una liga vinculada\n"
+    "/track_stats - Agrega una liga solo para stats y cache diario\n"
+    "/stats_tracks - Lista las ligas seguidas solo para stats\n"
+    "/explore_stats - Explora tabla, fixtures, equipos y reportes de stats\n"
     "/list_tracks - Lista las ligas trackeadas\n"
     "/competition_url <n> - Muestra la URL original de una liga trackeada\n"
     "/refresh_tracks - Actualiza partidos y detecta eventos nuevos\n"
@@ -135,6 +147,7 @@ GUIDE_MESSAGE = (
     "3. /confirm_track\n"
     "3b. /link_stats si la plataforma no trae stats directas\n"
     "3c. /stats_links para revisar vínculos activos\n"
+    "3d. /track_stats para seguir una liga aunque no tenga colector de odds\n"
     "4. /list_tracks\n"
     "5. /competition_url <n>\n"
     "6. /matches\n"
@@ -877,7 +890,8 @@ def _explore_menu_text(overview: dict) -> str:
         "2 - 🗓️ Próximos partidos\n"
         "3 - 👟 Goleadores\n"
         "4 - ⚽ Buscar un equipo\n"
-        "5 - 🔗 Link al proveedor\n\n"
+        "5 - 🔗 Link al proveedor\n"
+        "6 - 📋 Elegir partido y generar reporte\n\n"
         "/cancel para salir."
     )
 
@@ -893,25 +907,22 @@ async def explore_stats_command(update: Update, context: ContextTypes.DEFAULT_TY
     stats_service = get_stats_service(context)
     tracked_leagues = tracking_service.list_confirmed_tracks(update.effective_chat.id)
 
-    linked: list[tuple[TrackedCompetitionSubscription, object]] = []
-    for subscription in tracked_leagues:
-        link = stats_service.repository.get_stats_league_link(subscription.tracked_league.id)
-        if link is not None:
-            linked.append((subscription, link))
+    linked = stats_service.list_explorable_leagues(
+        chat_id=update.effective_chat.id,
+        tracked_subscriptions=tracked_leagues,
+    )
 
     if not linked:
         await update.message.reply_text(
-            "No tenés ligas con stats vinculadas todavía.\n"
-            "Usá /link_stats para vincular una liga y después /explore_stats.",
+            "No tenés ligas de stats configuradas todavía.\n"
+            "Usá /link_stats para vincular odds o /track_stats para seguir una liga solo de stats.",
         )
         return ConversationHandler.END
 
     context.user_data[EXPLORE_TRACKS_CONTEXT_KEY] = linked
     lines = ["¿Qué liga querés explorar?"]
-    for index, (subscription, link) in enumerate(linked, start=1):
-        lines.append(
-            f"{index} - {subscription.tracked_league.competition_name} → {link.stats_league_name}"
-        )
+    for index, league in enumerate(linked, start=1):
+        lines.append(f"{index} - {league.label}")
     await update.message.reply_text(
         "\n".join(lines),
         reply_markup=_build_numeric_keyboard(len(linked), "Elegí la liga"),
@@ -942,16 +953,19 @@ async def explore_select_league(update: Update, context: ContextTypes.DEFAULT_TY
         )
         return EXPLORE_SELECT_LEAGUE
 
-    _, link = linked[selected_index]
+    league = linked[selected_index]
+    if not isinstance(league, ExplorableStatsLeague):
+        await update.message.reply_text("La liga seleccionada no es válida.")
+        return ConversationHandler.END
     stats_service = get_stats_service(context)
     await update.message.reply_text("Cargando datos de la liga...", reply_markup=ReplyKeyboardRemove())
     try:
         overview = await stats_service.get_league_overview(
-            provider_key=link.stats_provider,
-            league_id=link.stats_league_id,
+            provider_key=league.provider_key,
+            league_id=league.league_id,
         )
     except Exception:
-        logger.exception("Explore stats overview failed league=%s", link.stats_league_id)
+        logger.exception("Explore stats overview failed league=%s", league.league_id)
         overview = None
     if not overview:
         await update.message.reply_text(
@@ -962,9 +976,10 @@ async def explore_select_league(update: Update, context: ContextTypes.DEFAULT_TY
         return ConversationHandler.END
 
     context.user_data[EXPLORE_OVERVIEW_CONTEXT_KEY] = overview
+    context.user_data[EXPLORE_SELECTED_LEAGUE_CONTEXT_KEY] = league
     await update.message.reply_text(
         _explore_menu_text(overview),
-        reply_markup=_build_numeric_keyboard(5, "Elegí una opción"),
+        reply_markup=_build_numeric_keyboard(6, "Elegí una opción"),
     )
     return EXPLORE_MENU
 
@@ -984,11 +999,11 @@ async def explore_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    choice = _parse_selection_number(update.message.text, 5)
+    choice = _parse_selection_number(update.message.text, 6)
     if choice is None:
         await update.message.reply_text(
             _explore_menu_text(overview),
-            reply_markup=_build_numeric_keyboard(5, "Elegí una opción"),
+            reply_markup=_build_numeric_keyboard(6, "Elegí una opción"),
         )
         return EXPLORE_MENU
 
@@ -999,6 +1014,31 @@ async def explore_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
             reply_markup=ReplyKeyboardRemove(),
         )
         return EXPLORE_TEAM_INPUT
+
+    if option == 6:
+        league = context.user_data.get(EXPLORE_SELECTED_LEAGUE_CONTEXT_KEY)
+        if not isinstance(league, ExplorableStatsLeague):
+            await update.message.reply_text("Se perdió la liga seleccionada. Probá de nuevo con /explore_stats.")
+            return ConversationHandler.END
+        try:
+            fixtures = await get_stats_service(context).list_fixtures(
+                provider_key=league.provider_key,
+                league_id=league.league_id,
+                limit=30,
+            )
+        except Exception:
+            logger.exception("Explore fixture list failed provider=%s league=%s", league.provider_key, league.league_id)
+            fixtures = []
+        if not fixtures:
+            await update.message.reply_text("No hay partidos disponibles para generar reporte.")
+            return EXPLORE_MENU
+        context.user_data[EXPLORE_FIXTURES_CONTEXT_KEY] = fixtures
+        await _reply_text_chunks(
+            update.message,
+            _build_provider_fixture_selection_message(fixtures),
+            reply_markup=_build_numeric_keyboard(len(fixtures), "Elegí el partido"),
+        )
+        return EXPLORE_SELECT_FIXTURE
 
     if option == 1:
         message = render_league_table(overview)
@@ -1012,7 +1052,7 @@ async def explore_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     await _reply_text_chunks(update.message, message)
     await update.message.reply_text(
         _explore_menu_text(overview),
-        reply_markup=_build_numeric_keyboard(5, "Elegí una opción"),
+        reply_markup=_build_numeric_keyboard(6, "Elegí una opción"),
     )
     return EXPLORE_MENU
 
@@ -1035,7 +1075,41 @@ async def explore_team_input(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await _reply_text_chunks(update.message, render_team_row(overview, update.message.text or ""))
     await update.message.reply_text(
         _explore_menu_text(overview),
-        reply_markup=_build_numeric_keyboard(5, "Elegí una opción"),
+        reply_markup=_build_numeric_keyboard(6, "Elegí una opción"),
+    )
+    return EXPLORE_MENU
+
+
+async def explore_select_fixture(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Generate a provider-native match report from `/explore_stats`."""
+
+    if update.message is None:
+        return ConversationHandler.END
+    fixtures = context.user_data.get(EXPLORE_FIXTURES_CONTEXT_KEY)
+    league = context.user_data.get(EXPLORE_SELECTED_LEAGUE_CONTEXT_KEY)
+    if not isinstance(fixtures, list) or not fixtures or not isinstance(league, ExplorableStatsLeague):
+        await update.message.reply_text("Se perdió la selección. Probá de nuevo con /explore_stats.")
+        return ConversationHandler.END
+    selected_index = _parse_selection_number(update.message.text, len(fixtures))
+    if selected_index is None:
+        await update.message.reply_text(
+            "Elegí un número válido de partido.",
+            reply_markup=_build_numeric_keyboard(len(fixtures), "Elegí el partido"),
+        )
+        return EXPLORE_SELECT_FIXTURE
+    fixture = fixtures[selected_index]
+    await update.message.reply_text("Generando reporte de stats...", reply_markup=ReplyKeyboardRemove())
+    result = await get_stats_service(context).build_direct_match_report(
+        provider_key=league.provider_key,
+        stats_match_id=fixture.match_id,
+    )
+    await _reply_text_chunks(update.message, result.message)
+    overview = context.user_data.get(EXPLORE_OVERVIEW_CONTEXT_KEY)
+    if not isinstance(overview, dict):
+        return ConversationHandler.END
+    await update.message.reply_text(
+        _explore_menu_text(overview),
+        reply_markup=_build_numeric_keyboard(6, "Elegí una opción"),
     )
     return EXPLORE_MENU
 
@@ -1281,6 +1355,158 @@ def _extract_statshub_tournament_id(text: str) -> str | None:
 
     match = _STATSHUB_TOURNAMENT_RE.search(text or "")
     return match.group(1) if match else None
+
+
+async def track_stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Start `/track_stats`: follow a provider-native stats league independently."""
+
+    if update.message is None:
+        return ConversationHandler.END
+
+    providers = get_stats_service(context).list_providers()
+    if not providers:
+        await update.message.reply_text(
+            "No hay providers de stats con discovery habilitado.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        return ConversationHandler.END
+    context.user_data[TRACK_STATS_PROVIDERS_CONTEXT_KEY] = providers
+    await update.message.reply_text(
+        _build_stats_provider_selection_message(providers),
+        reply_markup=_build_numeric_keyboard(len(providers), "Elegí provider de stats"),
+    )
+    return SELECT_PROVIDER_FOR_TRACK_STATS
+
+
+async def track_stats_select_provider(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Select the provider used by `/track_stats`."""
+
+    if update.message is None:
+        return ConversationHandler.END
+    providers = context.user_data.get(TRACK_STATS_PROVIDERS_CONTEXT_KEY)
+    if not isinstance(providers, list) or not providers:
+        await update.message.reply_text("No encontré la selección de providers. Probá de nuevo con /track_stats.")
+        return ConversationHandler.END
+    selected_index = _parse_selection_number(update.message.text, len(providers))
+    if selected_index is None:
+        await update.message.reply_text(
+            "Elegí un número válido de provider.",
+            reply_markup=_build_numeric_keyboard(len(providers), "Elegí provider"),
+        )
+        return SELECT_PROVIDER_FOR_TRACK_STATS
+    selected_provider = providers[selected_index]
+    if not isinstance(selected_provider, StatsProviderDescriptor):
+        await update.message.reply_text("El provider seleccionado no es válido.")
+        return ConversationHandler.END
+    context.user_data[TRACK_STATS_SELECTED_PROVIDER_CONTEXT_KEY] = selected_provider
+    await update.message.reply_text(
+        (
+            f"Provider elegido: {selected_provider.display_name}\n\n"
+            "Escribí el país para buscar ligas de stats.\n"
+            "Ejemplos: Spain, Australia, Argentina, England.\n\n"
+            "Para Sportradar también podés pegar directamente una URL de torneo."
+        ),
+        reply_markup=ReplyKeyboardRemove(),
+    )
+    return ENTER_COUNTRY_FOR_TRACK_STATS
+
+
+async def track_stats_enter_country(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Discover standalone stats leagues after receiving a country or Statshub URL."""
+
+    if update.message is None or update.effective_chat is None:
+        return ConversationHandler.END
+    selected_provider = context.user_data.get(TRACK_STATS_SELECTED_PROVIDER_CONTEXT_KEY)
+    if not isinstance(selected_provider, StatsProviderDescriptor):
+        await update.message.reply_text("No encontré el provider seleccionado. Probá de nuevo con /track_stats.")
+        return ConversationHandler.END
+    country_name = (update.message.text or "").strip()
+    if not country_name:
+        await update.message.reply_text("Escribí un país válido.")
+        return ENTER_COUNTRY_FOR_TRACK_STATS
+
+    stats_service = get_stats_service(context)
+    tournament_id = _extract_statshub_tournament_id(country_name)
+    if tournament_id is not None:
+        await update.message.reply_text(f"Resolviendo torneo de Statshub id={tournament_id}...")
+        try:
+            option = await stats_service.describe_league(
+                provider_key=selected_provider.key,
+                league_id=tournament_id,
+            )
+        except Exception:
+            logger.exception("Standalone stats league describe-by-url failed id=%s", tournament_id)
+            option = None
+        if option is None:
+            await update.message.reply_text("No pude resolver esa URL de torneo.", reply_markup=ReplyKeyboardRemove())
+            _clear_all_selection_context(context)
+            return ConversationHandler.END
+        result = stats_service.track_stats_league(chat_id=update.effective_chat.id, option=option)
+        await _reply_text_chunks(update.message, result.message, reply_markup=ReplyKeyboardRemove())
+        _clear_all_selection_context(context)
+        return ConversationHandler.END
+
+    await update.message.reply_text(f"Buscando ligas de stats en {country_name}...")
+    try:
+        options = await stats_service.search_leagues(
+            provider_key=selected_provider.key,
+            country_name=country_name,
+            limit=80,
+        )
+    except Exception:
+        logger.exception(
+            "Standalone stats league discovery failed provider=%s country=%s",
+            selected_provider.key,
+            country_name,
+        )
+        await update.message.reply_text(
+            "No pude buscar ligas de stats ahora. Probá de nuevo en unos minutos.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        _clear_all_selection_context(context)
+        return ConversationHandler.END
+    if not options:
+        await update.message.reply_text(
+            f"No encontré ligas de stats para {country_name} en {selected_provider.display_name}.\n"
+            "Probá con otro país o /cancel para salir.",
+        )
+        return ENTER_COUNTRY_FOR_TRACK_STATS
+    context.user_data[TRACK_STATS_OPTIONS_CONTEXT_KEY] = options
+    await _reply_text_chunks(
+        update.message,
+        _build_stats_league_selection_message(options, prompt="Elegí la liga de stats a seguir:"),
+        reply_markup=_build_numeric_keyboard(len(options), "Elegí la liga stats"),
+    )
+    return SELECT_LEAGUE_FOR_TRACK_STATS
+
+
+async def track_stats_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Persist one standalone provider-native stats league."""
+
+    if update.message is None or update.effective_chat is None:
+        return ConversationHandler.END
+    options = context.user_data.get(TRACK_STATS_OPTIONS_CONTEXT_KEY)
+    if not isinstance(options, list) or not options:
+        await update.message.reply_text("No encontré la selección de ligas stats. Probá de nuevo con /track_stats.")
+        return ConversationHandler.END
+    selected_index = _parse_selection_number(update.message.text, len(options))
+    if selected_index is None:
+        await update.message.reply_text(
+            "Elegí un número válido de liga stats.",
+            reply_markup=_build_numeric_keyboard(len(options), "Elegí la liga stats"),
+        )
+        return SELECT_LEAGUE_FOR_TRACK_STATS
+    selected_option = options[selected_index]
+    if not isinstance(selected_option, StatsLeagueOption):
+        await update.message.reply_text("La liga stats seleccionada no es válida.")
+        return ConversationHandler.END
+    result = get_stats_service(context).track_stats_league(
+        chat_id=update.effective_chat.id,
+        option=selected_option,
+    )
+    await _reply_text_chunks(update.message, result.message, reply_markup=ReplyKeyboardRemove())
+    _clear_all_selection_context(context)
+    return ConversationHandler.END
 
 
 async def link_stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -1656,6 +1882,17 @@ async def stats_links_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     tracked_leagues = tracking_service.list_confirmed_tracks(update.effective_chat.id)
     result = stats_service.build_links_message(tracked_leagues)
 
+    await reply_with_result(update, result)
+
+
+async def stats_tracks_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle `/stats_tracks` by listing standalone stats league subscriptions."""
+
+    if update.message is None or update.effective_chat is None:
+        return
+
+    logger.info("Comando /stats_tracks recibido.")
+    result = get_stats_service(context).build_stats_tracks_message(chat_id=update.effective_chat.id)
     await reply_with_result(update, result)
 
 
@@ -2344,6 +2581,8 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("confirm_track", confirm_track_command))
     application.add_handler(CommandHandler("confirm_empty_track", confirm_empty_track_command))
     application.add_handler(CommandHandler("list_tracks", list_tracks_command))
+    application.add_handler(CommandHandler("stats_links", stats_links_command))
+    application.add_handler(CommandHandler("stats_tracks", stats_tracks_command))
     application.add_handler(CommandHandler("competition_url", competition_url_command))
     application.add_handler(CommandHandler("refresh_tracks", refresh_tracks_command))
     application.add_handler(CommandHandler("update_track_url", update_track_url_command))
@@ -2398,6 +2637,25 @@ def register_handlers(application: Application) -> None:
     )
     application.add_handler(link_stats_conversation)
 
+    track_stats_conversation = ConversationHandler(
+        entry_points=[CommandHandler("track_stats", track_stats_command)],
+        states={
+            SELECT_PROVIDER_FOR_TRACK_STATS: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, track_stats_select_provider)
+            ],
+            ENTER_COUNTRY_FOR_TRACK_STATS: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, track_stats_enter_country)
+            ],
+            SELECT_LEAGUE_FOR_TRACK_STATS: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, track_stats_select_league)
+            ],
+        },
+        fallbacks=[CommandHandler("cancel", cancel_command)],
+        name="track_stats_conversation",
+        persistent=False,
+    )
+    application.add_handler(track_stats_conversation)
+
     matches_conversation = ConversationHandler(
         entry_points=[CommandHandler("matches", matches_command)],
         states={
@@ -2444,6 +2702,9 @@ def register_handlers(application: Application) -> None:
             ],
             EXPLORE_TEAM_INPUT: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, explore_team_input)
+            ],
+            EXPLORE_SELECT_FIXTURE: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, explore_select_fixture)
             ],
         },
         fallbacks=[CommandHandler("cancel", cancel_command)],
@@ -2583,16 +2844,32 @@ def _build_discovered_league_selection_message(options: list[LeagueDiscoveryOpti
     return "\n".join(lines)
 
 
-def _build_stats_league_selection_message(options: list[StatsLeagueOption]) -> str:
-    """Build the stats league prompt for `/link_stats`."""
+def _build_stats_league_selection_message(
+    options: list[StatsLeagueOption],
+    *,
+    prompt: str = "Elegí la liga de stats a vincular:",
+) -> str:
+    """Build a stats-league prompt for linking or standalone tracking."""
 
-    lines = ["Elegí la liga de stats a vincular:"]
+    lines = [prompt]
 
     for index, option in enumerate(options, start=1):
         season = f" | season={option.season_id}" if option.season_id else ""
         country = f" | {option.country_name}" if option.country_name else ""
         lines.append(f"{index} - {option.league_name}{country} | id={option.league_id}{season}")
 
+    return "\n".join(lines)
+
+
+def _build_provider_fixture_selection_message(fixtures: list) -> str:
+    """Build the provider-native fixture prompt used by `/explore_stats`."""
+
+    lines = ["Elegí el partido para generar reporte:"]
+    for index, fixture in enumerate(fixtures, start=1):
+        when = ""
+        if isinstance(fixture.scheduled_at, str) and len(fixture.scheduled_at) >= 16:
+            when = f" | {fixture.scheduled_at[8:10]}/{fixture.scheduled_at[5:7]} {fixture.scheduled_at[11:16]}"
+        lines.append(f"{index} - {fixture.home} vs {fixture.away}{when}")
     return "\n".join(lines)
 
 
@@ -2679,6 +2956,8 @@ def _clear_all_selection_context(context: ContextTypes.DEFAULT_TYPE) -> None:
     context.user_data.pop(STATS_CANDIDATE_PROVIDER_CONTEXT_KEY, None)
     context.user_data.pop(EXPLORE_TRACKS_CONTEXT_KEY, None)
     context.user_data.pop(EXPLORE_OVERVIEW_CONTEXT_KEY, None)
+    context.user_data.pop(EXPLORE_SELECTED_LEAGUE_CONTEXT_KEY, None)
+    context.user_data.pop(EXPLORE_FIXTURES_CONTEXT_KEY, None)
     context.user_data.pop(UNTRACK_TRACKS_CONTEXT_KEY, None)
     context.user_data.pop(ODDS_TRACKS_CONTEXT_KEY, None)
     context.user_data.pop(ODDS_ENABLED_CONTEXT_KEY, None)
@@ -2689,8 +2968,12 @@ def _clear_all_selection_context(context: ContextTypes.DEFAULT_TYPE) -> None:
     context.user_data.pop(TRACK_LEAGUE_OPTIONS_CONTEXT_KEY, None)
     context.user_data.pop(LINK_STATS_TRACKS_CONTEXT_KEY, None)
     context.user_data.pop(LINK_STATS_SELECTED_TRACK_CONTEXT_KEY, None)
+    context.user_data.pop(LINK_STATS_PROVIDERS_CONTEXT_KEY, None)
     context.user_data.pop(LINK_STATS_SELECTED_PROVIDER_CONTEXT_KEY, None)
     context.user_data.pop(LINK_STATS_OPTIONS_CONTEXT_KEY, None)
+    context.user_data.pop(TRACK_STATS_PROVIDERS_CONTEXT_KEY, None)
+    context.user_data.pop(TRACK_STATS_SELECTED_PROVIDER_CONTEXT_KEY, None)
+    context.user_data.pop(TRACK_STATS_OPTIONS_CONTEXT_KEY, None)
 
 
 def _resolve_fin_league(code: str) -> tuple[str, str] | None:
@@ -3182,4 +3465,3 @@ async def fin_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     )
 
     await update.message.reply_text(help_text, parse_mode="Markdown")
-

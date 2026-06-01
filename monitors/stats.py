@@ -179,6 +179,18 @@ class StatsService:
             return None
         return await getter(league_id)
 
+    async def list_fixtures(
+        self,
+        *,
+        provider_key: str,
+        league_id: str,
+        limit: int | None = 30,
+    ):
+        """List provider-native fixtures without requiring an odds league link."""
+
+        provider = self.provider_registry.get(provider_key)
+        return await provider.list_fixtures(league_id, limit=limit)
+
     async def warm_tracked_leagues(self, *, ttl_seconds: float = 90000.0) -> dict[str, int]:
         """Prefetch and cache stats for every stats-linked tracked league (daily job).
 
