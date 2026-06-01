@@ -38,3 +38,6 @@ sandbox/mrpunter/captures/
 # Local Playwright CLI state and SofaScore research dumps
 .playwright-cli/
 sandbox/sofascore_http/captures/
+
+# FootyStats research network dumps (regenerate via capture_traffic.py)
+sandbox/footystats_http/captures/
