@@ -51,6 +51,8 @@ class Settings:
     stats_prefetch_enabled: bool = True
     stats_prefetch_interval_seconds: int = 86400
     stats_prefetch_ttl_seconds: float = 90000.0
+    live_watch_enabled: bool = True
+    live_watch_interval_seconds: int = 30
 
 
 def load_settings() -> Settings:
@@ -208,6 +210,11 @@ def load_settings() -> Settings:
         os.getenv("STATS_PREFETCH_TTL_SECONDS", "90000"),
         variable_name="STATS_PREFETCH_TTL_SECONDS",
     )
+    live_watch_enabled = _parse_bool(os.getenv("LIVE_WATCH_ENABLED", "true"))
+    live_watch_interval_seconds = _parse_positive_int(
+        os.getenv("LIVE_WATCH_INTERVAL_SECONDS", "30"),
+        variable_name="LIVE_WATCH_INTERVAL_SECONDS",
+    )
 
     if not telegram_bot_token:
         raise ValueError(
@@ -251,6 +258,8 @@ def load_settings() -> Settings:
         monitor_chromium_ram_alert_mb=monitor_chromium_ram_alert_mb,
         stats_prefetch_enabled=stats_prefetch_enabled,
         stats_prefetch_interval_seconds=stats_prefetch_interval_seconds,
+        live_watch_enabled=live_watch_enabled,
+        live_watch_interval_seconds=live_watch_interval_seconds,
         stats_prefetch_ttl_seconds=stats_prefetch_ttl_seconds,
     )
 

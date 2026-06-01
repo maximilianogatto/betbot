@@ -50,6 +50,24 @@ DEFAULT_NOTIFY_ODDS_CHANGES = True
 
 
 @dataclass(frozen=True)
+class LiveWatchEntry:
+    """One fixture the user wants to be alerted about when it goes live."""
+
+    id: int
+    chat_id: int
+    home: str
+    away: str
+    league_hint: str | None
+    note: str | None
+    status: str  # 'watching' | 'fired'
+    matched_platform: str | None
+    matched_event_id: str | None
+    matched_minute: str | None
+    created_at: str
+    fired_at: str | None
+
+
+@dataclass(frozen=True)
 class PendingCompetitionTrackRequest:
     """Represent one unresolved track request for a Telegram chat."""
 
@@ -2234,6 +2252,101 @@ class SqliteTrackingRepository:
                 (cache_key, _json_dumps(payload), fetched.isoformat(), expires.isoformat()),
             )
 
+    # ----- live watch -----
+
+    def add_live_watch(
+        self,
+        chat_id: int,
+        *,
+        home: str,
+        away: str,
+        league_hint: str | None = None,
+        note: str | None = None,
+    ) -> LiveWatchEntry:
+        """Add a fixture to a chat's live-watch list (status 'watching')."""
+
+        now_iso = _utc_now_iso()
+        with _connect() as connection:
+            cursor = connection.execute(
+                """
+                INSERT INTO live_watch_entries (chat_id, home, away, league_hint, note, status, created_at)
+                VALUES (?, ?, ?, ?, ?, 'watching', ?)
+                """,
+                (chat_id, home.strip(), away.strip(), (league_hint or None), (note or None), now_iso),
+            )
+            row = connection.execute(
+                "SELECT * FROM live_watch_entries WHERE id = ?", (cursor.lastrowid,)
+            ).fetchone()
+        return _row_to_live_watch(row)
+
+    def list_live_watches(self, chat_id: int, *, status: str | None = None) -> list[LiveWatchEntry]:
+        """Return a chat's live-watch entries, optionally filtered by status."""
+
+        with _connect() as connection:
+            if status:
+                rows = connection.execute(
+                    "SELECT * FROM live_watch_entries WHERE chat_id = ? AND status = ? ORDER BY id",
+                    (chat_id, status),
+                ).fetchall()
+            else:
+                rows = connection.execute(
+                    "SELECT * FROM live_watch_entries WHERE chat_id = ? ORDER BY id", (chat_id,)
+                ).fetchall()
+        return [_row_to_live_watch(row) for row in rows]
+
+    def list_all_active_live_watches(self) -> list[LiveWatchEntry]:
+        """Return every still-watching entry across all chats (for the poller)."""
+
+        with _connect() as connection:
+            rows = connection.execute(
+                "SELECT * FROM live_watch_entries WHERE status = 'watching' ORDER BY chat_id, id"
+            ).fetchall()
+        return [_row_to_live_watch(row) for row in rows]
+
+    def mark_live_watch_fired(
+        self,
+        watch_id: int,
+        *,
+        platform: str,
+        event_id: str,
+        minute: str | None,
+    ) -> None:
+        """Mark a watch entry as fired so it is not alerted again."""
+
+        with _connect() as connection:
+            connection.execute(
+                """
+                UPDATE live_watch_entries
+                SET status = 'fired', matched_platform = ?, matched_event_id = ?,
+                    matched_minute = ?, fired_at = ?
+                WHERE id = ?
+                """,
+                (platform, event_id, minute, _utc_now_iso(), watch_id),
+            )
+
+    def remove_live_watch(self, chat_id: int, watch_id: int) -> bool:
+        """Delete one live-watch entry for a chat. Returns True if removed."""
+
+        with _connect() as connection:
+            cursor = connection.execute(
+                "DELETE FROM live_watch_entries WHERE id = ? AND chat_id = ?", (watch_id, chat_id)
+            )
+        return cursor.rowcount > 0
+
+    def clear_live_watches(self, chat_id: int, *, status: str | None = None) -> int:
+        """Delete a chat's live-watch entries (optionally by status). Returns count."""
+
+        with _connect() as connection:
+            if status:
+                cursor = connection.execute(
+                    "DELETE FROM live_watch_entries WHERE chat_id = ? AND status = ?", (chat_id, status)
+                )
+            else:
+                cursor = connection.execute(
+                    "DELETE FROM live_watch_entries WHERE chat_id = ?", (chat_id,)
+                )
+        return cursor.rowcount
+
     def delete_stats_league_link(self, tracked_competition_id: int) -> bool:
         """Delete the stats-provider league link for one tracked competition."""
 
@@ -2706,6 +2819,24 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
             UNIQUE(chat_id, active_event_id, alert_type),
             FOREIGN KEY(active_event_id) REFERENCES active_events(id) ON DELETE CASCADE
         );
+
+        CREATE TABLE IF NOT EXISTS live_watch_entries (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            chat_id INTEGER NOT NULL,
+            home TEXT NOT NULL,
+            away TEXT NOT NULL,
+            league_hint TEXT,
+            note TEXT,
+            status TEXT NOT NULL DEFAULT 'watching',
+            matched_platform TEXT,
+            matched_event_id TEXT,
+            matched_minute TEXT,
+            created_at TEXT NOT NULL,
+            fired_at TEXT
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_live_watch_chat_status
+        ON live_watch_entries(chat_id, status);
         """
     )
     _ensure_column(
@@ -3385,6 +3516,23 @@ def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _row_to_live_watch(row: sqlite3.Row) -> LiveWatchEntry:
+    return LiveWatchEntry(
+        id=int(row["id"]),
+        chat_id=int(row["chat_id"]),
+        home=row["home"],
+        away=row["away"],
+        league_hint=row["league_hint"],
+        note=row["note"],
+        status=row["status"],
+        matched_platform=row["matched_platform"],
+        matched_event_id=row["matched_event_id"],
+        matched_minute=row["matched_minute"],
+        created_at=row["created_at"],
+        fired_at=row["fired_at"],
+    )
+
+
 tracking_repository = SqliteTrackingRepository()
 
 
@@ -3395,6 +3543,7 @@ __all__ = [
     "ConfirmedCompetitionTrackRequest",
     "DB_FILE_PATH",
     "EventBaseline",
+    "LiveWatchEntry",
     "PendingCompetitionTrackRequest",
     "SmallChangeRecord",
     "SqliteTrackingRepository",

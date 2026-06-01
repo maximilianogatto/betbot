@@ -17,6 +17,7 @@ from monitoring import (
     get_metric_warnings,
     get_system_metrics,
 )
+from monitors.live_watch import LiveWatchService, render_live_hit
 from monitors.stats import StatsService
 from monitors.tracking import TrackingService, format_duration
 
@@ -26,8 +27,75 @@ TRACKING_MONITOR_TASK_KEY = "tracking_monitor_task"
 RESOURCE_MONITOR_TASK_KEY = "resource_monitor_task"
 STATS_SESSION_TASK_KEY = "stats_session_refresh_task"
 STATS_PREFETCH_TASK_KEY = "stats_prefetch_task"
+LIVE_WATCH_TASK_KEY = "live_watch_task"
 TRACKING_SERVICE_KEY = "tracking_service"
 STATS_SERVICE_KEY = "stats_service"
+LIVE_WATCH_SERVICE_KEY = "live_watch_service"
+
+
+async def start_live_watch_monitor(
+    application: Application,
+    *,
+    enabled: bool = True,
+    interval_seconds: int = 30,
+) -> None:
+    """Start the live-watch poller loop (detect watched fixtures going in-play)."""
+
+    if not enabled:
+        logger.info("Live-watch monitor is disabled.")
+        return
+
+    existing_task = application.bot_data.get(LIVE_WATCH_TASK_KEY)
+    if isinstance(existing_task, asyncio.Task) and not existing_task.done():
+        return
+
+    task = asyncio.create_task(
+        _live_watch_loop(application, interval_seconds=interval_seconds),
+        name="live-watch-loop",
+    )
+    application.bot_data[LIVE_WATCH_TASK_KEY] = task
+    logger.info("Live-watch monitor loop started with interval_seconds=%s.", interval_seconds)
+
+
+async def stop_live_watch_monitor(application: Application) -> None:
+    """Stop the live-watch poller loop if running."""
+
+    task = application.bot_data.get(LIVE_WATCH_TASK_KEY)
+    if not isinstance(task, asyncio.Task):
+        return
+    task.cancel()
+    try:
+        await task
+    except asyncio.CancelledError:
+        logger.info("Live-watch monitor loop stopped.")
+    application.bot_data.pop(LIVE_WATCH_TASK_KEY, None)
+
+
+async def _live_watch_loop(application: Application, *, interval_seconds: int) -> None:
+    """Poll live feeds and alert each chat when a watched fixture goes in-play."""
+
+    service = application.bot_data.get(LIVE_WATCH_SERVICE_KEY)
+    if not isinstance(service, LiveWatchService):
+        logger.error("LiveWatchService is not configured; live-watch loop will not run.")
+        return
+
+    while True:
+        try:
+            hits = await service.poll_once()
+            for hit in hits:
+                try:
+                    await application.bot.send_message(
+                        chat_id=hit.entry.chat_id, text=render_live_hit(hit)
+                    )
+                except Exception:
+                    logger.exception("Failed to send live-watch alert chat_id=%s", hit.entry.chat_id)
+            if hits:
+                logger.info("Live-watch cycle fired %s alert(s).", len(hits))
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            logger.exception("Unhandled error during live-watch cycle.")
+        await asyncio.sleep(interval_seconds)
 
 
 async def start_tracking_monitor(application: Application, interval_seconds: int) -> None:
