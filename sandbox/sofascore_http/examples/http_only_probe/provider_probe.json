@@ -1,0 +1,1230 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-06-01T15:57:36.372849+00:00",
+  "transport": "curl_cffi_http_only",
+  "browser_required": false,
+  "inputs": {
+    "date": "2026-06-01",
+    "category_id": 34,
+    "event_id": 16200011
+  },
+  "counts": {
+    "football_categories": 296,
+    "category_tournaments": 68,
+    "scheduled_events": 200,
+    "live_events": 27
+  },
+  "category_tournaments": [
+    {
+      "league_id": "136",
+      "league_name": "A-League Men",
+      "slug": "a-league-men",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "1894",
+      "league_name": "A-League Women",
+      "slug": "a-league-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "1786",
+      "league_name": "Australia Cup",
+      "slug": "australia-cup",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "1260",
+      "league_name": "NPL Capital Football",
+      "slug": "npl-capital-football",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "1274",
+      "league_name": "NPL New South Wales",
+      "slug": "npl-new-south-wales",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "1638",
+      "league_name": "NPL Northern New South Wales",
+      "slug": "npl-northern-new-south-wales",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "1268",
+      "league_name": "NPL Queensland",
+      "slug": "npl-queensland",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "10476",
+      "league_name": "NPL Queensland Women",
+      "slug": "npl-queensland-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "1258",
+      "league_name": "NPL South Australia",
+      "slug": "npl-south-australia",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "14723",
+      "league_name": "NPL South Australia Women",
+      "slug": "npl-south-australia-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "1626",
+      "league_name": "NPL Tasmania",
+      "slug": "npl-tasmania",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "1275",
+      "league_name": "NPL Victoria Men",
+      "slug": "npl-victoria",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "1270",
+      "league_name": "NPL Western Australia",
+      "slug": "npl-western-australia",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "10443",
+      "league_name": "NPL Victoria Women ",
+      "slug": "victoria-premier-league-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "20161",
+      "league_name": "VPL 1",
+      "slug": "npl-2-victoria",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "21996",
+      "league_name": "Queensland Premier League 1",
+      "slug": "queensland-premier-league-1",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "24641",
+      "league_name": "NSW League Two",
+      "slug": "nsw-league-two",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "24649",
+      "league_name": "NSW U20 Premier League",
+      "slug": "nsw-u20-premier-league",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "24883",
+      "league_name": "Queensland Kappa Pro Series",
+      "slug": "queensland-kappa-pro-series",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "24907",
+      "league_name": "NPL Victoria U23",
+      "slug": "npl-victoria-u23",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "25509",
+      "league_name": "NPL Northern Territory ",
+      "slug": "npl-northern-territory",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "26015",
+      "league_name": "NSW League One",
+      "slug": "nsw-league-one",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "26016",
+      "league_name": "South Australia State League 1",
+      "slug": "south-australia-state-league-1",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "26017",
+      "league_name": "Capital Premier League",
+      "slug": "capital-premier-league",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "26020",
+      "league_name": "Western Australia State League 1",
+      "slug": "western-australia-state-league-1",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "26382",
+      "league_name": "Queensland Premier League 2",
+      "slug": "queensland-premier-league-2",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "26387",
+      "league_name": "Western Australia NPL, Women",
+      "slug": "western-australia-npl-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "26388",
+      "league_name": "NSW NPL, Women",
+      "slug": "nsw-npl-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "29010",
+      "league_name": "Australian Championship",
+      "slug": "australian-championship",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "31961",
+      "league_name": "NSW League One, Women ",
+      "slug": "nsw-league-one-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "31969",
+      "league_name": "NSW U20 League One ",
+      "slug": "nsw-u20-league-one",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "31970",
+      "league_name": "NSW U23 NPL, Women ",
+      "slug": "nsw-u23-npl-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "31971",
+      "league_name": "NSW U23 League One, Women ",
+      "slug": "nsw-u23-league-one-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32703",
+      "league_name": "Capital NPL, Women",
+      "slug": "capital-npl-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "35056",
+      "league_name": "FV Greater Ballarat League 3",
+      "slug": "fv-greater-ballarat-league-3",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "25989",
+      "league_name": "Football West State League 1",
+      "slug": "football-west-state-league-1",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32827",
+      "league_name": "Hahn Australia Cup Western Australia Preliminary Rounds",
+      "slug": "hahn-australia-cup-western-australia-preliminary-rounds",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32702",
+      "league_name": "NPL Capital U23",
+      "slug": "npl-capital-u23",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32066",
+      "league_name": "NPL South Australia, Reserves ",
+      "slug": "npl-south-australia-reserves",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32146",
+      "league_name": "NPL U20 Victoria, Women",
+      "slug": "npl-u20-victoria-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "25411",
+      "league_name": "NSW NPL Women's",
+      "slug": "nsw-npl-womens",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32022",
+      "league_name": "Northern NSW League One, Reserves ",
+      "slug": "northern-nsw-league-one-reserves",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32023",
+      "league_name": "Northern NSW League One, Reserves, Women",
+      "slug": "northern-nsw-league-one-reserves-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32024",
+      "league_name": "Northern NSW NPL , Women",
+      "slug": "northern-nsw-npl",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32025",
+      "league_name": "Northern NSW NPL, Reserves ",
+      "slug": "northern-nsw-npl-reserves",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "34072",
+      "league_name": "Northern Territory Division 3 ",
+      "slug": "northern-territory-division-3",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "34076",
+      "league_name": "Northern Territory Premier League U23, Women",
+      "slug": "northern-territory-premier-league-u23-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "34074",
+      "league_name": "Northern Territory Premier League, Reserves ",
+      "slug": "northern-territory-premier-league-reserves",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "33650",
+      "league_name": "Northern Territory Premier League, Women",
+      "slug": "northern-territory-premier-league-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "31978",
+      "league_name": "Queensland Kappa Pro Series Women",
+      "slug": "queensland-kappa-pro-series-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32026",
+      "league_name": "Queensland Premier League 1, Women ",
+      "slug": "queensland-premier-league-1-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32027",
+      "league_name": "Queensland Premier League 3 Metro ",
+      "slug": "queensland-premier-league-3-metro",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "35059",
+      "league_name": "SGFA All Age E's",
+      "slug": "sgfa-all-age-es",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32101",
+      "league_name": "South Australia NPL, Reserves, Women ",
+      "slug": "south-australia-npl-reserves-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32102",
+      "league_name": "South Australia State League 1, Reserves ",
+      "slug": "south-australia-state-league-1-reserves",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32070",
+      "league_name": "South Australia State League 2",
+      "slug": "south-australia-state-league-2",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32103",
+      "league_name": "South Australia State League 2, Reserves ",
+      "slug": "south-australia-state-league-2-reserves",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32069",
+      "league_name": "South Australia State League, Women ",
+      "slug": "south-australia-state-league-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "34692",
+      "league_name": "State League 6 South-East",
+      "slug": "state-league-6-south-east",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32356",
+      "league_name": "Tasmania Super League, Women ",
+      "slug": "tasmania-super-league-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32518",
+      "league_name": "U23 NPL Western Australia ",
+      "slug": "u23-npl-western-australia",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32028",
+      "league_name": "U23 Queensland NPL ",
+      "slug": "u23-queensland-npl",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32029",
+      "league_name": "U23 Queensland Premier League 1 ",
+      "slug": "u23-queensland-premier-league-1",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32147",
+      "league_name": "U23 Victoria Premier League 1",
+      "slug": "u23-victoria-premier-league-1",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "26953",
+      "league_name": "U23 Victorian Premier League 2",
+      "slug": "u23-victoria-premier-league-2",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32145",
+      "league_name": "Victoria Premier League, Women ",
+      "slug": "victoria-premier-league-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32826",
+      "league_name": "West Australia - State League Div 2 Reserves",
+      "slug": "west-australia-state-league-div-2-reserves",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    },
+    {
+      "league_id": "32030",
+      "league_name": "Western Australia NPL Night Series, Women ",
+      "slug": "western-australia-npl-night-series-women",
+      "country_id": "34",
+      "country_name": "Australia",
+      "sport": "football",
+      "has_performance_graph": false,
+      "has_player_statistics": false
+    }
+  ],
+  "scheduled_event_samples": [
+    {
+      "match_id": "15235584",
+      "custom_id": "qOsZO",
+      "slug": "red-bull-bragantino-internacional",
+      "home": "Red Bull Bragantino",
+      "home_id": "1999",
+      "away": "Internacional",
+      "away_id": "1966",
+      "start_time_utc": "2026-05-31T14:00:00+00:00",
+      "status": "finished",
+      "status_description": "Ended",
+      "league_id": "325",
+      "league_name": "Brasileirão Betano",
+      "season_id": "87678",
+      "score_home": 3,
+      "score_away": 1
+    },
+    {
+      "match_id": "15235581",
+      "custom_id": "nOsVLi",
+      "slug": "chapecoense-palmeiras",
+      "home": "Palmeiras",
+      "home_id": "1963",
+      "away": "Chapecoense",
+      "away_id": "21845",
+      "start_time_utc": "2026-05-31T19:00:00+00:00",
+      "status": "finished",
+      "status_description": "Ended",
+      "league_id": "325",
+      "league_name": "Brasileirão Betano",
+      "season_id": "87678",
+      "score_home": 1,
+      "score_away": 0
+    },
+    {
+      "match_id": "15235590",
+      "custom_id": "zOsCO",
+      "slug": "atletico-mineiro-vasco-da-gama",
+      "home": "Vasco da Gama",
+      "home_id": "1974",
+      "away": "Atlético Mineiro",
+      "away_id": "1977",
+      "start_time_utc": "2026-05-31T19:00:00+00:00",
+      "status": "finished",
+      "status_description": "Ended",
+      "league_id": "325",
+      "league_name": "Brasileirão Betano",
+      "season_id": "87678",
+      "score_home": 0,
+      "score_away": 1
+    },
+    {
+      "match_id": "15235586",
+      "custom_id": "eOslO",
+      "slug": "fluminense-cruzeiro",
+      "home": "Cruzeiro",
+      "home_id": "1954",
+      "away": "Fluminense",
+      "away_id": "1961",
+      "start_time_utc": "2026-05-31T23:30:00+00:00",
+      "status": "finished",
+      "status_description": "Ended",
+      "league_id": "325",
+      "league_name": "Brasileirão Betano",
+      "season_id": "87678",
+      "score_home": 1,
+      "score_away": 1
+    },
+    {
+      "match_id": "15237974",
+      "custom_id": "GOsmP",
+      "slug": "remo-sao-paulo",
+      "home": "Remo",
+      "home_id": "2012",
+      "away": "São Paulo",
+      "away_id": "1981",
+      "start_time_utc": "2026-05-31T23:30:00+00:00",
+      "status": "finished",
+      "status_description": "Ended",
+      "league_id": "325",
+      "league_name": "Brasileirão Betano",
+      "season_id": "87678",
+      "score_home": 1,
+      "score_away": 0
+    },
+    {
+      "match_id": "16237643",
+      "custom_id": "Phbsdib",
+      "slug": "kaa-gent-krc-genk",
+      "home": "KAA Gent",
+      "home_id": "2903",
+      "away": "KRC Genk",
+      "away_id": "2890",
+      "start_time_utc": "2026-05-31T16:30:00+00:00",
+      "status": "finished",
+      "status_description": "AP",
+      "league_id": "38",
+      "league_name": "Pro League",
+      "season_id": "77040",
+      "score_home": 6,
+      "score_away": 5
+    },
+    {
+      "match_id": "14083406",
+      "custom_id": "Ggbsihb",
+      "slug": "almeria-real-valladolid",
+      "home": "Almería",
+      "home_id": "2858",
+      "away": "Real Valladolid",
+      "away_id": "2831",
+      "start_time_utc": "2026-05-31T16:30:00+00:00",
+      "status": "finished",
+      "status_description": "Ended",
+      "league_id": "54",
+      "league_name": "LaLiga 2",
+      "season_id": "77558",
+      "score_home": 1,
+      "score_away": 0
+    },
+    {
+      "match_id": "14081785",
+      "custom_id": "ehbswXEc",
+      "slug": "fc-andorra-burgos-club-de-futbol",
+      "home": "Burgos Club de Fútbol",
+      "home_id": "2854",
+      "away": "FC Andorra",
+      "away_id": "324871",
+      "start_time_utc": "2026-05-31T16:30:00+00:00",
+      "status": "finished",
+      "status_description": "Ended",
+      "league_id": "54",
+      "league_name": "LaLiga 2",
+      "season_id": "77558",
+      "score_home": 1,
+      "score_away": 0
+    },
+    {
+      "match_id": "14081784",
+      "custom_id": "Ogbsrbc",
+      "slug": "cd-castellon-eibar",
+      "home": "CD Castellón",
+      "home_id": "5067",
+      "away": "Eibar",
+      "away_id": "2839",
+      "start_time_utc": "2026-05-31T16:30:00+00:00",
+      "status": "finished",
+      "status_description": "Ended",
+      "league_id": "54",
+      "league_name": "LaLiga 2",
+      "season_id": "77558",
+      "score_home": 2,
+      "score_away": 1
+    },
+    {
+      "match_id": "14083395",
+      "custom_id": "HgbsCGc",
+      "slug": "las-palmas-deportivo-de-la-coruna",
+      "home": "Deportivo de La Coruña",
+      "home_id": "2832",
+      "away": "Las Palmas",
+      "away_id": "6577",
+      "start_time_utc": "2026-05-31T16:30:00+00:00",
+      "status": "finished",
+      "status_description": "Ended",
+      "league_id": "54",
+      "league_name": "LaLiga 2",
+      "season_id": "77558",
+      "score_home": 1,
+      "score_away": 2
+    }
+  ],
+  "live_event_samples": [
+    {
+      "match_id": "16263957",
+      "custom_id": "jAUbsOzEd",
+      "slug": "deportivo-liniers-reserves-villa-san-carlos-reserve",
+      "home": "Villa San Carlos Reserve",
+      "home_id": "236259",
+      "away": "Deportivo Liniers Reserves",
+      "away_id": "448739",
+      "start_time_utc": "2026-06-01T14:00:00+00:00",
+      "status": "inprogress",
+      "status_description": "2nd half",
+      "league_id": "62405",
+      "league_name": "Camp. De Reser De Primera Division B Metropolitana",
+      "season_id": null,
+      "score_home": 0,
+      "score_away": 0
+    },
+    {
+      "match_id": "16263955",
+      "custom_id": "ALbdsndNd",
+      "slug": "real-pilar-reserve-san-martin-de-burzaco-reserve",
+      "home": "San Martin de Burzaco Reserve",
+      "home_id": "379325",
+      "away": "Real Pilar Reserve",
+      "away_id": "470163",
+      "start_time_utc": "2026-06-01T15:00:00+00:00",
+      "status": "inprogress",
+      "status_description": "1st half",
+      "league_id": "62394",
+      "league_name": "Camp. De Reserva De Primera Division B National",
+      "season_id": null,
+      "score_home": 0,
+      "score_away": 1
+    },
+    {
+      "match_id": "16194463",
+      "custom_id": "gjEbsCndc",
+      "slug": "dinamo-2-minsk-molodechno-2018",
+      "home": "Molodechno-2018",
+      "home_id": "197956",
+      "away": "Dinamo-2 Minsk",
+      "away_id": "258177",
+      "start_time_utc": "2026-06-01T15:00:00+00:00",
+      "status": "inprogress",
+      "status_description": "Halftime",
+      "league_id": "776",
+      "league_name": "Pershaya Liga",
+      "season_id": "91910",
+      "score_home": 0,
+      "score_away": 1
+    },
+    {
+      "match_id": "16194466",
+      "custom_id": "YqkslTcd",
+      "slug": "niva-dolbizno-volna-pinsk",
+      "home": "Volna Pinsk",
+      "home_id": "25848",
+      "away": "Niva Dolbizno",
+      "away_id": "382161",
+      "start_time_utc": "2026-06-01T15:00:00+00:00",
+      "status": "inprogress",
+      "status_description": "Halftime",
+      "league_id": "776",
+      "league_name": "Pershaya Liga",
+      "season_id": "91910",
+      "score_home": 1,
+      "score_away": 0
+    },
+    {
+      "match_id": "15998682",
+      "custom_id": "CbrsTIkc",
+      "slug": "as-fortuna-canon-yaounde",
+      "home": "AS Fortuna",
+      "home_id": "276693",
+      "away": "Canon Yaoundé",
+      "away_id": "42577",
+      "start_time_utc": "2026-06-01T14:30:00+00:00",
+      "status": "inprogress",
+      "status_description": "2nd half",
+      "league_id": "1006",
+      "league_name": "Elite One",
+      "season_id": "88526",
+      "score_home": 0,
+      "score_away": 1
+    },
+    {
+      "match_id": "16260243",
+      "custom_id": "aupdsyQvj",
+      "slug": "as-dibamba-lekie-filles-fc",
+      "home": "AS Dibamba",
+      "home_id": "1177073",
+      "away": "Lekie Filles FC",
+      "away_id": "413450",
+      "start_time_utc": "2026-06-01T13:00:00+00:00",
+      "status": "inprogress",
+      "status_description": "2nd half",
+      "league_id": "71977",
+      "league_name": "National Championship, Women",
+      "season_id": null,
+      "score_home": 1,
+      "score_away": 3
+    },
+    {
+      "match_id": "16256473",
+      "custom_id": "JiFgsMiFg",
+      "slug": "dubec-trnovcica-veterani-polet-sk-veterani",
+      "home": "Dubec Trnovčica - Veterani",
+      "home_id": "825437",
+      "away": "Polet (SK) - Veterani",
+      "away_id": "825434",
+      "start_time_utc": "2026-06-01T15:00:00+00:00",
+      "status": "inprogress",
+      "status_description": "Started",
+      "league_id": "23255",
+      "league_name": "Zagrebačka liga veterana - Premier Liga",
+      "season_id": "81349",
+      "score_home": 0,
+      "score_away": 0
+    },
+    {
+      "match_id": "16256593",
+      "custom_id": "wqiesPpYi",
+      "slug": "trnje-z-vnk-optimist-veterani",
+      "home": "VNK Optimist - Veterani",
+      "home_id": "520821",
+      "away": "Trnje (Z)",
+      "away_id": "1120790",
+      "start_time_utc": "2026-06-01T15:45:00+00:00",
+      "status": "inprogress",
+      "status_description": "Started",
+      "league_id": "22545",
+      "league_name": "Zagrebačka liga veterana - 1. liga",
+      "season_id": "81350",
+      "score_home": 0,
+      "score_away": 0
+    },
+    {
+      "match_id": "16256600",
+      "custom_id": "fhFgsWpYi",
+      "slug": "vnk-dinamo-zagreb-sesvetski-kraljevec-veterani",
+      "home": "Sesvetski Kraljevec - Veterani",
+      "home_id": "825355",
+      "away": "VNK Dinamo Zagreb",
+      "away_id": "1120796",
+      "start_time_utc": "2026-06-01T15:00:00+00:00",
+      "status": "inprogress",
+      "status_description": "Started",
+      "league_id": "22545",
+      "league_name": "Zagrebačka liga veterana - 1. liga",
+      "season_id": "81350",
+      "score_home": 0,
+      "score_away": 0
+    },
+    {
+      "match_id": "16256622",
+      "custom_id": "aqYisbqYi",
+      "slug": "vnk-usora-vnk-ivanja-reka",
+      "home": "VNK Usora",
+      "home_id": "1120801",
+      "away": "VNK Ivanja Reka",
+      "away_id": "1120800",
+      "start_time_utc": "2026-06-01T14:30:00+00:00",
+      "status": "inprogress",
+      "status_description": "Started",
+      "league_id": "22546",
+      "league_name": "Zagrebačka liga veterana - 2. liga",
+      "season_id": "81351",
+      "score_home": 0,
+      "score_away": 0
+    }
+  ],
+  "match_snapshot": {
+    "schema_version": 1,
+    "provider": "sofascore_http_research",
+    "match": {
+      "match_id": "16200011",
+      "custom_id": "kwrstnZc",
+      "slug": "zed-fc-al-masry",
+      "home": "Al-Masry",
+      "home_id": "43560",
+      "away": "ZED FC",
+      "away_id": "373168",
+      "start_time_utc": "2026-06-01T14:00:00+00:00",
+      "status": "inprogress",
+      "status_description": "2nd half",
+      "league_id": "18491",
+      "league_name": "Egyptian League Cup",
+      "season_id": "85252",
+      "score_home": 1,
+      "score_away": 0
+    },
+    "live_state": {
+      "status": "inprogress",
+      "description": "2nd half",
+      "score_home": 1,
+      "score_away": 0,
+      "clock": {
+        "periodLength": 2700,
+        "overtimeLength": 900,
+        "totalPeriodCount": 2,
+        "currentPeriodStartTimestamp": 1780326829,
+        "initial": 2700,
+        "max": 5400,
+        "extra": 540
+      },
+      "statistics": {
+        "Ball possession": {
+          "home": "63%",
+          "away": "37%"
+        },
+        "Corner kicks": {
+          "home": "1",
+          "away": "2"
+        },
+        "Yellow cards": {
+          "home": "0",
+          "away": "1"
+        },
+        "Red cards": {
+          "home": "0",
+          "away": "0"
+        },
+        "Shots on target": {
+          "home": "7",
+          "away": "1"
+        },
+        "Shots off target": {
+          "home": "14",
+          "away": "2"
+        }
+      },
+      "incidents": [
+        {
+          "incidentType": "period",
+          "time": 90,
+          "addedTime": 999,
+          "isLive": true,
+          "homeScore": 1,
+          "awayScore": 0,
+          "text": "Second half"
+        },
+        {
+          "id": 126373118,
+          "incidentType": "substitution",
+          "incidentClass": "regular",
+          "time": 65,
+          "isHome": false,
+          "player_in": {
+            "id": "1393732",
+            "name": "Rafaat Khalil"
+          },
+          "player_out": {
+            "id": "1109002",
+            "name": "Ahmed Atef"
+          }
+        },
+        {
+          "id": 126373117,
+          "incidentType": "substitution",
+          "incidentClass": "regular",
+          "time": 65,
+          "isHome": true,
+          "player_in": {
+            "id": "918920",
+            "name": "Salah Mohsen"
+          },
+          "player_out": {
+            "id": "1218753",
+            "name": "Mounder Temine"
+          }
+        },
+        {
+          "id": 126373116,
+          "incidentType": "substitution",
+          "incidentClass": "regular",
+          "time": 65,
+          "isHome": true,
+          "player_in": {
+            "id": "1400635",
+            "name": "Omar El Saaiy"
+          },
+          "player_out": {
+            "id": "895534",
+            "name": "Mohamed El Shamy"
+          }
+        },
+        {
+          "incidentType": "period",
+          "time": 45,
+          "addedTime": 999,
+          "isLive": false,
+          "homeScore": 1,
+          "awayScore": 0,
+          "text": "HT"
+        },
+        {
+          "id": 350557556,
+          "incidentType": "goal",
+          "incidentClass": "regular",
+          "time": 44,
+          "isHome": true,
+          "homeScore": 1,
+          "awayScore": 0,
+          "player": {
+            "id": "1218753",
+            "name": "Mounder Temine"
+          }
+        },
+        {
+          "id": 125255706,
+          "incidentType": "card",
+          "incidentClass": "yellow",
+          "time": 17,
+          "isHome": false,
+          "player": {
+            "id": "1615327",
+            "name": "Ziad Tarek"
+          }
+        }
+      ]
+    },
+    "lineups": {
+      "confirmed": true,
+      "home_count": 20,
+      "away_count": 20
+    },
+    "h2h": {
+      "teamDuel": {
+        "homeWins": 2,
+        "awayWins": 3,
+        "draws": 5
+      },
+      "managerDuel": null
+    },
+    "win_probability": {
+      "homeWin": 49,
+      "awayWin": 19,
+      "draw": 32
+    },
+    "odds": {
+      "source": "event_odds_provider_1",
+      "market_count": 2,
+      "1x2": {
+        "home": 1.035714,
+        "draw": 13.0,
+        "away": 67.0
+      }
+    },
+    "coverage": {
+      "has_event": true,
+      "has_statistics": true,
+      "has_incidents": true,
+      "has_lineups": true,
+      "has_h2h": true,
+      "has_win_probability": true,
+      "has_odds": true
+    }
+  }
+}
