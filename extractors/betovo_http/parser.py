@@ -23,11 +23,57 @@ from core.models import (
     CompetitionKey,
     EventKey,
     EventSnapshot,
+    LiveEventSnapshot,
     Odds1X2,
     utc_now_iso,
 )
 
 PLATFORM = "betovo_http"
+
+
+def live_events_from_livenow(payload: dict[str, Any]) -> list[LiveEventSnapshot]:
+    """Map Altenar ``GetLivenow`` to live snapshots (real-country soccer flagged)."""
+
+    champs = _index_by_id(payload.get("champs"))
+    categories = _index_by_id(payload.get("categories"))
+    live: list[LiveEventSnapshot] = []
+    for event in payload.get("events") or []:
+        if not isinstance(event, dict):
+            continue
+        name = str(event.get("name") or "")
+        home, _, away = name.partition(" vs. ")
+        home, away = home.strip(), away.strip()
+        if not home or not away:
+            continue
+        category = categories.get(event.get("catId")) or {}
+        champ = champs.get(event.get("champId")) or {}
+        score = event.get("score") if isinstance(event.get("score"), list) else [None, None]
+        live.append(
+            LiveEventSnapshot(
+                platform=PLATFORM,
+                external_event_id=str(event.get("id")),
+                home=home,
+                away=away,
+                competition_name=champ.get("name"),
+                country_name=category.get("name"),
+                minute=event.get("liveTime") if event.get("liveTime") not in (None, "Not started") else event.get("ls"),
+                home_score=_int(score[0]) if len(score) > 0 else None,
+                away_score=_int(score[1]) if len(score) > 1 else None,
+                scheduled_at=_kickoff_iso(event.get("startDate")),
+                source_url=f"betovo:champ:{event.get('champId')}",
+                is_soccer=bool(category.get("iso")),
+                extracted_at=utc_now_iso(),
+                raw_payload={"status": event.get("status"), "sr_match_id": _sr_id(event.get("extId"))},
+            )
+        )
+    return live
+
+
+def _int(value: Any) -> int | None:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
 
 _LINE_IN_NAME_RE = re.compile(r"\(([+-]?\d+(?:\.\d+)?)\)")
 _SR_ID_RE = re.compile(r"((?:sr|ar|od):match:\d+)", re.IGNORECASE)

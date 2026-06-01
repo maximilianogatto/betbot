@@ -44,9 +44,9 @@ class SolcasinoHttpSettings:
         if self.retry_backoff_seconds < 0:
             raise ValueError("retry_backoff_seconds must not be negative.")
 
-    def feed_url(self, version: int | str = 0) -> str:
+    def feed_url(self, version: int | str = 0, *, feed: str | None = None) -> str:
         return (
-            f"https://{self.api_host}/api/v4/{self.feed}/brand/"
+            f"https://{self.api_host}/api/v4/{feed or self.feed}/brand/"
             f"{self.brand_id}/{self.language}/{version}"
         )
 

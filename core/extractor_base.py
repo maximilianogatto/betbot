@@ -9,6 +9,7 @@ from typing import Any
 from core.models import (
     CompetitionExtraction,
     EventSnapshot,
+    LiveEventSnapshot,
     PlatformDescriptor,
     ProviderCapabilities,
     platform_display_name,
@@ -76,6 +77,7 @@ class Extractor(ABC):
     provider_capabilities: ProviderCapabilities = ProviderCapabilities()
     implemented: bool = True
     supports_league_discovery: bool = False
+    supports_live_detection: bool = False
 
     @classmethod
     @abstractmethod
@@ -112,6 +114,15 @@ class Extractor(ABC):
 
         del country_name, query, limit
         raise NotImplementedError(f"{self.name} does not support league discovery.")
+
+    async def list_live_events(self) -> list["LiveEventSnapshot"]:
+        """Return the platform's currently in-play soccer events.
+
+        Used by the live-watch poller to detect when a watched fixture goes live.
+        Platforms that cannot expose live over plain HTTP leave this unimplemented.
+        """
+
+        raise NotImplementedError(f"{self.name} does not support live detection.")
 
     def build_competition_url(
         self,

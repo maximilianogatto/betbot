@@ -51,6 +51,14 @@ class BetovoHttpClient:
             data = await self._get(client, "widget/GetEvents", params)
         return data if isinstance(data, dict) else {}
 
+    async def fetch_livenow(self) -> dict[str, Any]:
+        """Return all currently in-play events for the configured sport."""
+
+        params = {**self.settings.common_params, "sportId": str(self.settings.sport_id), "eventCount": "0"}
+        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, headers=self._headers) as client:
+            data = await self._get(client, "widget/GetLivenow", params)
+        return data if isinstance(data, dict) else {}
+
     async def fetch_event_details(self, event_id: str | int) -> dict[str, Any]:
         """Return the full market list for one event id."""
 

@@ -29,11 +29,51 @@ from core.models import (
     CompetitionKey,
     EventKey,
     EventSnapshot,
+    LiveEventSnapshot,
     Odds1X2,
     utc_now_iso,
 )
 
 PLATFORM = "solcasino_http"
+
+
+def live_events_from_snapshot(snapshot: dict[str, Any], *, sport_id: str = "1") -> list[LiveEventSnapshot]:
+    """Map a merged Betby LIVE snapshot to in-play soccer live snapshots."""
+
+    tournaments = snapshot.get("tournaments") or {}
+    categories = snapshot.get("categories") or {}
+    live: list[LiveEventSnapshot] = []
+    for event_id, event in (snapshot.get("events") or {}).items():
+        if not isinstance(event, dict):
+            continue
+        desc = event.get("desc") or {}
+        if desc.get("type") != "match" or str(desc.get("sport")) != str(sport_id):
+            continue
+        competitors = desc.get("competitors") or []
+        if len(competitors) < 2:
+            continue
+        state = event.get("state") if isinstance(event.get("state"), dict) else {}
+        clock = state.get("clock") if isinstance(state.get("clock"), dict) else {}
+        if not (clock or state.get("status") == 1):  # in-play only
+            continue
+        tournament = tournaments.get(str(desc.get("tournament"))) or {}
+        category = categories.get(str(tournament.get("category_id"))) or {}
+        live.append(
+            LiveEventSnapshot(
+                platform=PLATFORM,
+                external_event_id=str(event_id),
+                home=str(competitors[0].get("name") or "").strip(),
+                away=str(competitors[1].get("name") or "").strip(),
+                competition_name=tournament.get("name"),
+                country_name=category.get("name"),
+                minute=str(clock.get("match_time")) if clock.get("match_time") is not None else None,
+                source_url=f"solcasino:tournament:{desc.get('tournament')}",
+                is_soccer=True,
+                extracted_at=utc_now_iso(),
+                raw_payload={"status": state.get("status"), "match_status": state.get("match_status")},
+            )
+        )
+    return live
 
 
 def _coerce_float(value: Any) -> float | None:

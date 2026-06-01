@@ -54,6 +54,13 @@ class BetWarriorHttpClient:
             data = await self._get(client, f"betoffer/group/{group_id}.json", self.settings.common_params)
         return data if isinstance(data, dict) else {}
 
+    async def fetch_live_open(self) -> dict[str, Any]:
+        """Return all currently in-play events (with score + match clock)."""
+
+        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, headers=self._headers) as client:
+            data = await self._get(client, "event/live/open.json", self.settings.common_params)
+        return data if isinstance(data, dict) else {}
+
     async def _get(self, client: httpx.AsyncClient, path: str, params: dict[str, str]) -> Any:
         url = f"{self.settings.api_base}/{path}"
         last_error: Exception | None = None
