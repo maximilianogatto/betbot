@@ -214,7 +214,7 @@ class XBetHttpExtractorTests(unittest.TestCase):
             platforms["1xbet_http"].capabilities,
             ProviderCapabilities(
                 supports_http=True,
-                supports_live=True,
+                supports_live=False,
                 supports_deep_markets=True,
                 supports_browserless=True,
             ),

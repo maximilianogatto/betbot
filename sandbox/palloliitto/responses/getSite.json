@@ -1,0 +1,364 @@
+{
+  "call": {
+    "parameters": {},
+    "logged_in": false,
+    "method": "getSite",
+    "status": "ok",
+    "stamp": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzgwMzgyMTY1fQ.PsoEsTf6PaOc6KD4a60zeLbfV0sRyY4K5YZiTTFzdyQ",
+    "result_time": 4.428,
+    "apilevel": "1",
+    "time_stamp": 1780295765
+  },
+  "ads": [
+    {
+      "ad_id": "156171",
+      "ad_placement": "1",
+      "ad_text": "mobile",
+      "ad_url": "https://kauppa.palloliitto.fi/pages/yksinkertaisesti-suomalaista?utm_source=TulospalveluSPL_ylabanneri&utm_medium=referral-internal&utm_campaign=Pelipaita2026",
+      "href": "https://kauppa.palloliitto.fi/pages/yksinkertaisesti-suomalaista?utm_source=TulospalveluSPL_ylabanneri&utm_medium=referral-internal&utm_campaign=Pelipaita2026",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1778646877-spl61-1920x320_uusipelipaita.jpg?w=640",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1778646877-spl61-1920x320_uusipelipaita.jpg?w=640",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1778646877-spl61-1920x320_uusipelipaita.jpg?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1778646877-spl61-1920x320_uusipelipaita.jpg?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1778646877-spl61-1920x320_uusipelipaita.jpg?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1778646877-spl61-1920x320_uusipelipaita.jpg?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156172",
+      "ad_placement": "1",
+      "ad_text": "desktop",
+      "ad_url": "https://kauppa.palloliitto.fi/pages/yksinkertaisesti-suomalaista?utm_source=TulospalveluSPL_ylabanneri&utm_medium=referral-internal&utm_campaign=Pelipaita2026",
+      "href": "https://kauppa.palloliitto.fi/pages/yksinkertaisesti-suomalaista?utm_source=TulospalveluSPL_ylabanneri&utm_medium=referral-internal&utm_campaign=Pelipaita2026",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1778646872-spl61-1920x108_uusipelipaita.jpg?w=1180",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1778646872-spl61-1920x108_uusipelipaita.jpg?w=1180",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1778646872-spl61-1920x108_uusipelipaita.jpg?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1778646872-spl61-1920x108_uusipelipaita.jpg?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1778646872-spl61-1920x108_uusipelipaita.jpg?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1778646872-spl61-1920x108_uusipelipaita.jpg?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156047",
+      "ad_placement": "1",
+      "ad_text": "mobile",
+      "ad_url": "https://www.lippu.fi/artist/helmarit/helmarit-suomi-portugali-mm-karsintaottelu-3836716/?utm_source=TulospalveluSPL_ylabanneri&utm_medium=referral-internal&utm_campaign=FINPOR_MM2027",
+      "href": "https://www.lippu.fi/artist/helmarit/helmarit-suomi-portugali-mm-karsintaottelu-3836716/?utm_source=TulospalveluSPL_ylabanneri&utm_medium=referral-internal&utm_campaign=FINPOR_MM2027",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1772706692-spl-ylabanneri-helmarit_finpor_1920x320px-kopio.png?w=640",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1772706692-spl-ylabanneri-helmarit_finpor_1920x320px-kopio.png?w=640",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1772706692-spl-ylabanneri-helmarit_finpor_1920x320px-kopio.png?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1772706692-spl-ylabanneri-helmarit_finpor_1920x320px-kopio.png?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1772706692-spl-ylabanneri-helmarit_finpor_1920x320px-kopio.png?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1772706692-spl-ylabanneri-helmarit_finpor_1920x320px-kopio.png?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156048",
+      "ad_placement": "1",
+      "ad_text": "desktop",
+      "ad_url": "https://www.lippu.fi/artist/helmarit/helmarit-suomi-portugali-mm-karsintaottelu-3836716/?utm_source=TulospalveluSPL_ylabanneri&utm_medium=referral-internal&utm_campaign=FINPOR_MM2027",
+      "href": "https://www.lippu.fi/artist/helmarit/helmarit-suomi-portugali-mm-karsintaottelu-3836716/?utm_source=TulospalveluSPL_ylabanneri&utm_medium=referral-internal&utm_campaign=FINPOR_MM2027",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1772706688-spl-ylabanneri-helmarit_finpor_1920x108px-kopio.png?w=1180",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1772706688-spl-ylabanneri-helmarit_finpor_1920x108px-kopio.png?w=1180",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1772706688-spl-ylabanneri-helmarit_finpor_1920x108px-kopio.png?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1772706688-spl-ylabanneri-helmarit_finpor_1920x108px-kopio.png?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1772706688-spl-ylabanneri-helmarit_finpor_1920x108px-kopio.png?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1772706688-spl-ylabanneri-helmarit_finpor_1920x108px-kopio.png?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156144",
+      "ad_placement": "1",
+      "ad_text": "mobile",
+      "ad_url": "https://www.lippu.fi/event/pikkuhuuhkajat-tammelan-stadion-21513895/?utm_source=TulospalveluSPL_ylabanneri&utm_medium=referral-internal&utm_campaign=U21EURO-karsinnat",
+      "href": "https://www.lippu.fi/event/pikkuhuuhkajat-tammelan-stadion-21513895/?utm_source=TulospalveluSPL_ylabanneri&utm_medium=referral-internal&utm_campaign=U21EURO-karsinnat",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1774959622-spl-ylabanneri_u21_1920x320px-finesp-kopio.png?w=640",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1774959622-spl-ylabanneri_u21_1920x320px-finesp-kopio.png?w=640",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1774959622-spl-ylabanneri_u21_1920x320px-finesp-kopio.png?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1774959622-spl-ylabanneri_u21_1920x320px-finesp-kopio.png?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1774959622-spl-ylabanneri_u21_1920x320px-finesp-kopio.png?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1774959622-spl-ylabanneri_u21_1920x320px-finesp-kopio.png?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156145",
+      "ad_placement": "1",
+      "ad_text": "desktop",
+      "ad_url": "https://www.lippu.fi/event/pikkuhuuhkajat-tammelan-stadion-21513895/?utm_source=TulospalveluSPL_ylabanneri&utm_medium=referral-internal&utm_campaign=U21EURO-karsinnat",
+      "href": "https://www.lippu.fi/event/pikkuhuuhkajat-tammelan-stadion-21513895/?utm_source=TulospalveluSPL_ylabanneri&utm_medium=referral-internal&utm_campaign=U21EURO-karsinnat",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1774959614-spl-ylabanneri_u21_1920x108px-finesp-kopio.png?w=1180",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1774959614-spl-ylabanneri_u21_1920x108px-finesp-kopio.png?w=1180",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1774959614-spl-ylabanneri_u21_1920x108px-finesp-kopio.png?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1774959614-spl-ylabanneri_u21_1920x108px-finesp-kopio.png?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1774959614-spl-ylabanneri_u21_1920x108px-finesp-kopio.png?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1774959614-spl-ylabanneri_u21_1920x108px-finesp-kopio.png?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "2051",
+      "ad_placement": "3",
+      "ad_text": "mobile",
+      "ad_url": "https://elisa.fi/62/?",
+      "href": "https://elisa.fi/62/?",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1688111529-1920x552_mobiili.png?w=640",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1688111529-1920x552_mobiili.png?w=640",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1688111529-1920x552_mobiili.png?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1688111529-1920x552_mobiili.png?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1688111529-1920x552_mobiili.png?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1688111529-1920x552_mobiili.png?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "2052",
+      "ad_placement": "3",
+      "ad_text": "desktop",
+      "ad_url": "https://elisa.fi/62/?",
+      "href": "https://elisa.fi/62/?",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1688111520-1920x248_desktop.png?w=1180",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1688111520-1920x248_desktop.png?w=1180",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1688111520-1920x248_desktop.png?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1688111520-1920x248_desktop.png?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1688111520-1920x248_desktop.png?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1688111520-1920x248_desktop.png?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "155484",
+      "ad_placement": "3",
+      "ad_text": "mobile",
+      "ad_url": "https://www.posti.fi/fi?",
+      "href": "https://www.posti.fi/fi?",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1724060063-posti_banner_final_2024_hf_1920-x-552.jpg?w=640",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1724060063-posti_banner_final_2024_hf_1920-x-552.jpg?w=640",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1724060063-posti_banner_final_2024_hf_1920-x-552.jpg?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1724060063-posti_banner_final_2024_hf_1920-x-552.jpg?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1724060063-posti_banner_final_2024_hf_1920-x-552.jpg?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1724060063-posti_banner_final_2024_hf_1920-x-552.jpg?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "155485",
+      "ad_placement": "3",
+      "ad_text": "desktop",
+      "ad_url": "https://www.posti.fi/fi?",
+      "href": "https://www.posti.fi/fi?",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1724060054-posti_banner_final_2024_hf_1920-x-248.jpg?w=1180",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1724060054-posti_banner_final_2024_hf_1920-x-248.jpg?w=1180",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1724060054-posti_banner_final_2024_hf_1920-x-248.jpg?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1724060054-posti_banner_final_2024_hf_1920-x-248.jpg?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1724060054-posti_banner_final_2024_hf_1920-x-248.jpg?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1724060054-posti_banner_final_2024_hf_1920-x-248.jpg?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "1445",
+      "ad_placement": "3",
+      "ad_text": "mobile",
+      "ad_url": "https://www.motonet.fi/?",
+      "href": "https://www.motonet.fi/?",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1764245090-251127_brandbanner_palloliitto_1920x552.jpg?w=640",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1764245090-251127_brandbanner_palloliitto_1920x552.jpg?w=640",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1764245090-251127_brandbanner_palloliitto_1920x552.jpg?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1764245090-251127_brandbanner_palloliitto_1920x552.jpg?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1764245090-251127_brandbanner_palloliitto_1920x552.jpg?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1764245090-251127_brandbanner_palloliitto_1920x552.jpg?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "1494",
+      "ad_placement": "3",
+      "ad_text": "desktop",
+      "ad_url": "https://www.motonet.fi/?",
+      "href": "https://www.motonet.fi/?",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1764244929-251127_brandbanner_palloliitto_1920x248_2.jpg?w=1180",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1764244929-251127_brandbanner_palloliitto_1920x248_2.jpg?w=1180",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1764244929-251127_brandbanner_palloliitto_1920x248_2.jpg?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1764244929-251127_brandbanner_palloliitto_1920x248_2.jpg?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1764244929-251127_brandbanner_palloliitto_1920x248_2.jpg?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1764244929-251127_brandbanner_palloliitto_1920x248_2.jpg?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "155361",
+      "ad_placement": "3",
+      "ad_text": "mobile",
+      "ad_url": "https://www.k-ryhma.fi/liikeonlaake?",
+      "href": "https://www.k-ryhma.fi/liikeonlaake?",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1710762811-uutiskirje-032024_k-ryhma_liike-on-laake_verkkobanneri_1920x552.jpg?w=640",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1710762811-uutiskirje-032024_k-ryhma_liike-on-laake_verkkobanneri_1920x552.jpg?w=640",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1710762811-uutiskirje-032024_k-ryhma_liike-on-laake_verkkobanneri_1920x552.jpg?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1710762811-uutiskirje-032024_k-ryhma_liike-on-laake_verkkobanneri_1920x552.jpg?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1710762811-uutiskirje-032024_k-ryhma_liike-on-laake_verkkobanneri_1920x552.jpg?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1710762811-uutiskirje-032024_k-ryhma_liike-on-laake_verkkobanneri_1920x552.jpg?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "155362",
+      "ad_placement": "3",
+      "ad_text": "desktop",
+      "ad_url": "https://www.k-ryhma.fi/liikeonlaake?",
+      "href": "https://www.k-ryhma.fi/liikeonlaake?",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1710762797-uutiskirje-032024_k-ryhma_liike-on-laake_verkkobanneri_1920x248.jpg?w=1180",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1710762797-uutiskirje-032024_k-ryhma_liike-on-laake_verkkobanneri_1920x248.jpg?w=1180",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1710762797-uutiskirje-032024_k-ryhma_liike-on-laake_verkkobanneri_1920x248.jpg?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1710762797-uutiskirje-032024_k-ryhma_liike-on-laake_verkkobanneri_1920x248.jpg?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1710762797-uutiskirje-032024_k-ryhma_liike-on-laake_verkkobanneri_1920x248.jpg?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1710762797-uutiskirje-032024_k-ryhma_liike-on-laake_verkkobanneri_1920x248.jpg?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156196",
+      "ad_placement": "4",
+      "ad_text": "mobile",
+      "ad_url": "https://kauppa.palloliitto.fi/pages/yksinkertaisesti-suomalaista?utm_source=TulospalveluSPL_alabanneri&utm_medium=referral-internal&utm_campaign=Pelipaita2026",
+      "href": "https://kauppa.palloliitto.fi/pages/yksinkertaisesti-suomalaista?utm_source=TulospalveluSPL_alabanneri&utm_medium=referral-internal&utm_campaign=Pelipaita2026",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1778646986-spl61-1920x552_uusipelipaita.jpg?w=640",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1778646986-spl61-1920x552_uusipelipaita.jpg?w=640",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1778646986-spl61-1920x552_uusipelipaita.jpg?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1778646986-spl61-1920x552_uusipelipaita.jpg?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1778646986-spl61-1920x552_uusipelipaita.jpg?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1778646986-spl61-1920x552_uusipelipaita.jpg?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156073",
+      "ad_placement": "4",
+      "ad_text": "mobile",
+      "ad_url": "https://www.lippu.fi/artist/helmarit/?utm_source=TulospalveluSPL_alabanneri&utm_medium=referral-internal&utm_campaign=MM2027",
+      "href": "https://www.lippu.fi/artist/helmarit/?utm_source=TulospalveluSPL_alabanneri&utm_medium=referral-internal&utm_campaign=MM2027",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1772706876-spl-banneri-helmarit-finpor_920-x-552-kopio.png?w=640",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1772706876-spl-banneri-helmarit-finpor_920-x-552-kopio.png?w=640",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1772706876-spl-banneri-helmarit-finpor_920-x-552-kopio.png?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1772706876-spl-banneri-helmarit-finpor_920-x-552-kopio.png?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1772706876-spl-banneri-helmarit-finpor_920-x-552-kopio.png?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1772706876-spl-banneri-helmarit-finpor_920-x-552-kopio.png?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156203",
+      "ad_placement": "5",
+      "ad_text": "mobile",
+      "ad_url": "https://www.volkswagen.fi/fi/mallit/id-polo.html?",
+      "href": "https://www.volkswagen.fi/fi/mallit/id-polo.html?",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1779095277-1920x552vw_verkkosivubanneri_idpolo.jpg?w=640",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1779095277-1920x552vw_verkkosivubanneri_idpolo.jpg?w=640",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1779095277-1920x552vw_verkkosivubanneri_idpolo.jpg?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1779095277-1920x552vw_verkkosivubanneri_idpolo.jpg?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1779095277-1920x552vw_verkkosivubanneri_idpolo.jpg?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1779095277-1920x552vw_verkkosivubanneri_idpolo.jpg?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156207",
+      "ad_placement": "5",
+      "ad_text": "mobile",
+      "ad_url": "https://eerikkila.fi/urheilu/jalkapallo/jalkapallokoulu/?",
+      "href": "https://eerikkila.fi/urheilu/jalkapallo/jalkapallokoulu/?",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1779267253-1920-x-552.jpg?w=640",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1779267253-1920-x-552.jpg?w=640",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1779267253-1920-x-552.jpg?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1779267253-1920-x-552.jpg?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1779267253-1920-x-552.jpg?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1779267253-1920-x-552.jpg?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156211",
+      "ad_placement": "5",
+      "ad_text": "mobile",
+      "ad_url": "https://www.motonet.fi/kampanjat/roadshow?utm_source=palloliitto&utm_medium=banneri&utm_campaign=roadshow",
+      "href": "https://www.motonet.fi/kampanjat/roadshow?utm_source=palloliitto&utm_medium=banneri&utm_campaign=roadshow",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1779445148-motonet_roadshow_palloliitto_1920x552px.jpg?w=640",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1779445148-motonet_roadshow_palloliitto_1920x552px.jpg?w=640",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1779445148-motonet_roadshow_palloliitto_1920x552px.jpg?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1779445148-motonet_roadshow_palloliitto_1920x552px.jpg?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1779445148-motonet_roadshow_palloliitto_1920x552px.jpg?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1779445148-motonet_roadshow_palloliitto_1920x552px.jpg?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156152",
+      "ad_placement": "5",
+      "ad_text": "mobile",
+      "ad_url": "https://www.k-ryhma.fi/liikeonlaake/tapahtumat?",
+      "href": "https://www.k-ryhma.fi/liikeonlaake/tapahtumat?",
+      "ad_img": "https://cdn.torneopal.net/palloliitto-assets/1774008110-liike-on-laake-banneri-2026-palloliitto-1920x552-2.jpg?w=640",
+      "img": "https://cdn.torneopal.net/palloliitto-assets/1774008110-liike-on-laake-banneri-2026-palloliitto-1920x552-2.jpg?w=640",
+      "srcset": "https://cdn.torneopal.net/palloliitto-assets/1774008110-liike-on-laake-banneri-2026-palloliitto-1920x552-2.jpg?dpr=0.25&fm=webp 480w,https://cdn.torneopal.net/palloliitto-assets/1774008110-liike-on-laake-banneri-2026-palloliitto-1920x552-2.jpg?dpr=0.5&fm=webp 960w,https://cdn.torneopal.net/palloliitto-assets/1774008110-liike-on-laake-banneri-2026-palloliitto-1920x552-2.jpg?dpr=0.75&fm=webp 1440w,https://cdn.torneopal.net/palloliitto-assets/1774008110-liike-on-laake-banneri-2026-palloliitto-1920x552-2.jpg?fm=webp 1920w",
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156147",
+      "ad_placement": "61",
+      "ad_text": "Koe Helmareiden kesäilta Tampereella TI 9.6. klo 20 vs. Portugali - OSTA LIPUT! >>",
+      "ad_url": "https://www.lippu.fi/artist/helmarit/?",
+      "href": "https://www.lippu.fi/artist/helmarit/?",
+      "ad_img": "",
+      "img": "",
+      "srcset": null,
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156004",
+      "ad_placement": "99",
+      "ad_text": "Suomi Kotipelipaita 2025/26|89,90 – 119,90",
+      "ad_url": "https://kauppa.palloliitto.fi/products/suomi-kotipelipaita-2025-26?utm_source=Tulospalvelu&utm_medium=referral-internal",
+      "href": "https://kauppa.palloliitto.fi/products/suomi-kotipelipaita-2025-26?utm_source=Tulospalvelu&utm_medium=referral-internal",
+      "ad_img": "https://cdn.shopify.com/s/files/1/0552/9331/3232/files/kotipelipaita_400x.jpg?v=1748406591",
+      "img": "https://cdn.shopify.com/s/files/1/0552/9331/3232/files/kotipelipaita_400x.jpg?v=1748406591",
+      "srcset": null,
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156005",
+      "ad_placement": "99",
+      "ad_text": "Suomi Vieraspelipaita 2025/26|89,90 – 119,90",
+      "ad_url": "https://kauppa.palloliitto.fi/products/suomi-vieraspelipaita-2025-26?utm_source=Tulospalvelu&utm_medium=referral-internal",
+      "href": "https://kauppa.palloliitto.fi/products/suomi-vieraspelipaita-2025-26?utm_source=Tulospalvelu&utm_medium=referral-internal",
+      "ad_img": "https://cdn.shopify.com/s/files/1/0552/9331/3232/files/Vapor1_95efc079-32c8-45dd-a46e-00136b343dbe_400x.jpg?v=1762933049",
+      "img": "https://cdn.shopify.com/s/files/1/0552/9331/3232/files/Vapor1_95efc079-32c8-45dd-a46e-00136b343dbe_400x.jpg?v=1762933049",
+      "srcset": null,
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156006",
+      "ad_placement": "99",
+      "ad_text": "Maajoukkue huppari, By Klaus Haapaniemi|79,90 – 94,90",
+      "ad_url": "https://kauppa.palloliitto.fi/products/maajoukkue-huppari-by-klaus-haapaniemi?utm_source=Tulospalvelu&utm_medium=referral-internal",
+      "href": "https://kauppa.palloliitto.fi/products/maajoukkue-huppari-by-klaus-haapaniemi?utm_source=Tulospalvelu&utm_medium=referral-internal",
+      "ad_img": "https://cdn.shopify.com/s/files/1/0552/9331/3232/files/Huppari_nauhat_rusetilla_Front_400x.jpg?v=1762261293",
+      "img": "https://cdn.shopify.com/s/files/1/0552/9331/3232/files/Huppari_nauhat_rusetilla_Front_400x.jpg?v=1762261293",
+      "srcset": null,
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156007",
+      "ad_placement": "99",
+      "ad_text": "Maajoukkue puuvilla fanipaita 2.0|39,90",
+      "ad_url": "https://kauppa.palloliitto.fi/products/maajoukkue-puuvilla-fanipaita-2-0?utm_source=Tulospalvelu&utm_medium=referral-internal",
+      "href": "https://kauppa.palloliitto.fi/products/maajoukkue-puuvilla-fanipaita-2-0?utm_source=Tulospalvelu&utm_medium=referral-internal",
+      "ad_img": "https://cdn.shopify.com/s/files/1/0552/9331/3232/files/Puuvillafanipaita2.0front_62dcf2e1-f471-4a53-bc7e-55596f7c09e9_400x.jpg?v=1714041775",
+      "img": "https://cdn.shopify.com/s/files/1/0552/9331/3232/files/Puuvillafanipaita2.0front_62dcf2e1-f471-4a53-bc7e-55596f7c09e9_400x.jpg?v=1714041775",
+      "srcset": null,
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156008",
+      "ad_placement": "99",
+      "ad_text": "Maajoukkue t-paita, By Klaus Haapaniemi|44,90",
+      "ad_url": "https://kauppa.palloliitto.fi/products/maajoukkue-t-paita-by-klaus-haapaniemi?utm_source=Tulospalvelu&utm_medium=referral-internal",
+      "href": "https://kauppa.palloliitto.fi/products/maajoukkue-t-paita-by-klaus-haapaniemi?utm_source=Tulospalvelu&utm_medium=referral-internal",
+      "ad_img": "https://cdn.shopify.com/s/files/1/0552/9331/3232/files/T-paitaKlausH_9cc18fc7-e585-492c-869b-6096309d347f_400x.jpg?v=1762262026",
+      "img": "https://cdn.shopify.com/s/files/1/0552/9331/3232/files/T-paitaKlausH_9cc18fc7-e585-492c-869b-6096309d347f_400x.jpg?v=1762262026",
+      "srcset": null,
+      "mobile": "0"
+    },
+    {
+      "ad_id": "156009",
+      "ad_placement": "99",
+      "ad_text": "Suomi jugend kaulahuivi, Tummansininen|24,90",
+      "ad_url": "https://kauppa.palloliitto.fi/products/suomi-jugend-kaulahuivi-tummansininen?utm_source=Tulospalvelu&utm_medium=referral-internal",
+      "href": "https://kauppa.palloliitto.fi/products/suomi-jugend-kaulahuivi-tummansininen?utm_source=Tulospalvelu&utm_medium=referral-internal",
+      "ad_img": "https://cdn.shopify.com/s/files/1/0552/9331/3232/files/Huivitummansininen_HOpen_400x.jpg?v=1749823059",
+      "img": "https://cdn.shopify.com/s/files/1/0552/9331/3232/files/Huivitummansininen_HOpen_400x.jpg?v=1749823059",
+      "srcset": null,
+      "mobile": "0"
+    }
+  ],
+  "organiser": {
+    "organiser": "",
+    "organiser_name": "",
+    "organiser_type": "region",
+    "country": "",
+    "privacy_statement": "",
+    "sponsors": [],
+    "contact": {
+      "name": "",
+      "address": "",
+      "zipcode": "",
+      "city": "",
+      "phone": "",
+      "email": "",
+      "www": ""
+    }
+  },
+  "highlights": [],
+  "facts": {
+    "thisweek": [
+      {
+        "text": "matchesplayed",
+        "value": "1"
+      },
+      {
+        "text": "goalcount",
+        "value": "3"
+      },
+      {
+        "text": "playercount",
+        "value": "54"
+      }
+    ],
+    "thisyear": [
+      {
+        "text": "matchesplayed",
+        "value": "37934"
+      },
+      {
+        "text": "goalcount",
+        "value": "238944"
+      },
+      {
+        "text": "playercount",
+        "value": "104137"
+      }
+    ]
+  },
+  "current_season_id": "",
+  "current_registration_season_id": "2026",
+  "current_competition": "",
+  "registration_competition": "",
+  "links": []
+}

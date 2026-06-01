@@ -10,6 +10,7 @@ from extractors.bet365 import Bet365Extractor, Bet365ExtractorSettings
 from extractors.betovo_http import BetovoHttpExtractor, betovo_is_configured
 from extractors.betwarrior_http import BetWarriorHttpExtractor, betwarrior_is_configured
 from extractors.bz_http import BzHttpExtractor, bz_is_configured
+from extractors.mrpunter_http import MrPunterHttpExtractor, mrpunter_is_configured
 from extractors.mystake_http import MystakeHttpExtractor, mystake_is_configured
 from extractors.solcasino_http import SolcasinoHttpExtractor, solcasino_is_configured
 from extractors.xbet_http import XBetHttpExtractor
@@ -56,6 +57,11 @@ def register_default_extractors(
         BetWarriorHttpExtractor, browser_enabled=browser_enabled
     ):
         registered.append(registry.register(BetWarriorHttpExtractor()))
+    # MrPunter (FSB) registers once an api host is available.
+    if mrpunter_is_configured() and _should_register_provider(
+        MrPunterHttpExtractor, browser_enabled=browser_enabled
+    ):
+        registered.append(registry.register(MrPunterHttpExtractor()))
 
     return registered
 

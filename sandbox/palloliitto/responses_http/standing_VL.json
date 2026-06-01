@@ -1,0 +1,9 @@
+{
+  "call": {
+    "method": "getStanding",
+    "status": "error",
+    "error": "Unknown method",
+    "apilevel": "1",
+    "result_time": 0.024
+  }
+}

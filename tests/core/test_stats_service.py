@@ -1,0 +1,361 @@
+from __future__ import annotations
+
+import asyncio
+import importlib
+from pathlib import Path
+import tempfile
+import unittest
+
+from core.stats_models import (
+    MatchIdentityCandidate,
+    MatchStatsReport,
+    StatsFixture,
+    StatsLeagueOption,
+    StatsMatchLink,
+    StatsProviderCapabilities,
+)
+from core.stats_provider_base import StatsProvider, StatsProviderRegistry
+from monitors.stats import (
+    StatsService,
+    render_league_fixtures,
+    render_league_table,
+    render_team_row,
+    render_top_scorers,
+)
+from storage.tracking_repository import ActiveEventUpsert, SqliteTrackingRepository
+
+tracking_repository_module = importlib.import_module("storage.tracking_repository")
+
+
+class FakeStatsProvider(StatsProvider):
+    name = "sportradar_statshub"
+    display_name = "Sportradar Statshub"
+    capabilities = StatsProviderCapabilities(supports_league_discovery=True, supports_fixture_discovery=True)
+
+    async def search_leagues(self, *, country_name: str, query: str | None = None, limit: int = 80):
+        del query
+        return [
+            StatsLeagueOption(
+                provider=self.name,
+                provider_display_name=self.display_name,
+                country_name=country_name,
+                league_id="8",
+                league_name="LaLiga",
+            )
+        ][:limit]
+
+    async def list_fixtures(self, league_id: str, *, limit: int | None = None):
+        del limit
+        return [
+            StatsFixture(
+                provider=self.name,
+                league_id=league_id,
+                match_id="61624678",
+                home="Sevilla",
+                away="Real Madrid",
+                scheduled_at="2026-05-24T17:00:00+00:00",
+            )
+        ]
+
+    async def resolve_match(self, candidate: MatchIdentityCandidate, *, league_id: str | None = None):
+        if candidate.stats_url:
+            return StatsMatchLink(
+                provider=self.name,
+                stats_match_id="61624678",
+                stats_url=candidate.stats_url,
+                confidence=1.0,
+                method="direct_stats_url",
+            )
+        if league_id == "8":
+            return StatsMatchLink(
+                provider=self.name,
+                stats_match_id="61624678",
+                stats_url="https://statshub.sportradar.com/bet365/en/match/61624678",
+                confidence=0.96,
+                method="league_fixture_similarity",
+            )
+        return None
+
+    async def build_match_report(self, stats_match_id: str):
+        return MatchStatsReport(
+            provider=self.name,
+            match_id=stats_match_id,
+            title="Sevilla vs Real Madrid",
+            markdown="Sevilla vs Real Madrid\n\n- Form: 7.5 vs 5.2",
+            data={},
+            generated_at="2026-05-27T00:00:00+00:00",
+        )
+
+
+class StatsServiceTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.old_db_path = tracking_repository_module.DB_FILE_PATH
+        self.old_data_dir = tracking_repository_module.DATA_DIR
+        self.tmp = tempfile.TemporaryDirectory()
+        tracking_repository_module.DATA_DIR = Path(self.tmp.name)
+        tracking_repository_module.DB_FILE_PATH = Path(self.tmp.name) / "tracking.sqlite3"
+        self.repository = SqliteTrackingRepository()
+        registry = StatsProviderRegistry()
+        registry.register(FakeStatsProvider())
+        self.service = StatsService(provider_registry=registry, repository=self.repository)
+        self.subscription = self._create_track()
+
+    def tearDown(self) -> None:
+        tracking_repository_module.DB_FILE_PATH = self.old_db_path
+        tracking_repository_module.DATA_DIR = self.old_data_dir
+        self.tmp.cleanup()
+
+    def test_warm_tracked_leagues_prefetches_and_links(self) -> None:
+        options = asyncio.run(
+            self.service.search_leagues(provider_key="sportradar_statshub", country_name="Spain")
+        )
+        self.service.link_league(
+            tracked_competition_id=self.subscription.tracked_league.id, option=options[0]
+        )
+        self.repository.upsert_active_events(
+            self.subscription.tracked_league.id,
+            [
+                ActiveEventUpsert(
+                    external_event_id="fx-future",
+                    home="Sevilla",
+                    away="Real Madrid",
+                    scheduled_label_date="07/06",
+                    scheduled_label_time="03:00",
+                    scheduled_at="2099-06-07T03:00:00+00:00",
+                    odds_home=2.0,
+                    odds_draw=3.0,
+                    odds_away=3.0,
+                    raw_payload={},
+                )
+            ],
+        )
+        event = self.repository.get_active_events(self.subscription.tracked_league.id, only_future=True)[0]
+
+        summary = asyncio.run(self.service.warm_tracked_leagues(ttl_seconds=1000))
+
+        self.assertGreaterEqual(summary["leagues"], 1)
+        self.assertGreaterEqual(summary["reports"], 1)
+        # The resolved stats match link was persisted during prefetch.
+        self.assertIsNotNone(self.repository.get_stats_match_link(event.id))
+
+    def test_link_league_persists_option(self) -> None:
+        options = asyncio.run(
+            self.service.search_leagues(provider_key="sportradar_statshub", country_name="Spain")
+        )
+
+        result = self.service.link_league(
+            tracked_competition_id=self.subscription.tracked_league.id,
+            option=options[0],
+        )
+
+        self.assertTrue(result.ok)
+        link = self.repository.get_stats_league_link(self.subscription.tracked_league.id)
+        self.assertIsNotNone(link)
+        self.assertEqual(link.stats_league_id, "8")
+
+    def test_search_and_rank_promotes_league_holding_the_teams(self) -> None:
+        # Two leagues share a name; only one actually contains the tracked teams.
+        class DuplicateLeagueProvider(FakeStatsProvider):
+            async def search_leagues(self, *, country_name, query=None, limit=80):
+                del query, limit
+                return [
+                    StatsLeagueOption(
+                        provider=self.name,
+                        provider_display_name=self.display_name,
+                        country_name=country_name,
+                        league_id="wrong",
+                        league_name="Northern NSW NPL",
+                    ),
+                    StatsLeagueOption(
+                        provider=self.name,
+                        provider_display_name=self.display_name,
+                        country_name=country_name,
+                        league_id="right",
+                        league_name="Northern NSW NPL",
+                    ),
+                ]
+
+            async def list_fixtures(self, league_id, *, limit=None):
+                del limit
+                if league_id != "right":
+                    return []
+                return [
+                    StatsFixture(
+                        provider=self.name,
+                        league_id=league_id,
+                        match_id="1",
+                        home="Maitland",
+                        away="Belmont Swansea",
+                        scheduled_at="2026-05-30T06:30:00+00:00",
+                    )
+                ]
+
+            async def count_matching_events(self, league_id, candidates):
+                fixtures = await self.list_fixtures(league_id)
+                return len(fixtures) and len(candidates) and 1 or 0
+
+        registry = StatsProviderRegistry()
+        registry.register(DuplicateLeagueProvider())
+        service = StatsService(provider_registry=registry, repository=self.repository)
+
+        ordered = asyncio.run(
+            service.search_and_rank_leagues(
+                provider_key="sportradar_statshub",
+                country_name="Australia",
+                odds_league_name="Australia. NPL Northern NSW",
+                sample_events=[
+                    MatchIdentityCandidate(
+                        home="Maitland",
+                        away="Belmont Swansea United",
+                        scheduled_at="2026-05-30T06:30:00+00:00",
+                    )
+                ],
+            )
+        )
+
+        self.assertEqual(ordered[0].league_id, "right")
+
+    def test_build_report_uses_direct_stats_url(self) -> None:
+        event = self._create_event(raw_payload={"stats_url": "https://s5.sir.sportradar.com/bet365/en/match/61624678"})
+
+        result = asyncio.run(
+            self.service.build_match_stats_report(
+                tracked_subscription=self.subscription,
+                matches=[event],
+                event_number=1,
+            )
+        )
+
+        self.assertTrue(result.ok)
+        self.assertIn("Sevilla vs Real Madrid", result.message)
+        self.assertIn("direct_stats_url", result.message)
+
+    def test_build_report_uses_linked_league_when_no_direct_url(self) -> None:
+        options = asyncio.run(
+            self.service.search_leagues(provider_key="sportradar_statshub", country_name="Spain")
+        )
+        self.service.link_league(tracked_competition_id=self.subscription.tracked_league.id, option=options[0])
+        event = self._create_event(raw_payload={})
+
+        result = asyncio.run(
+            self.service.build_match_stats_report(
+                tracked_subscription=self.subscription,
+                matches=[event],
+                event_number=1,
+            )
+        )
+
+        self.assertTrue(result.ok)
+        self.assertIn("league_fixture_similarity", result.message)
+        cached = self.repository.get_stats_match_link(event.id)
+        self.assertIsNotNone(cached)
+        self.assertEqual(cached.stats_match_id, "61624678")
+
+    def _create_track(self):
+        chat_id = 123
+        self.repository.create_pending_competition_request(
+            chat_id,
+            platform="bet365",
+            source_url="https://example.test/laliga",
+            competition_external_id="laliga",
+            competition_name="Spanish Primera",
+        )
+        confirmed = self.repository.confirm_pending_competition_request(chat_id)
+        self.assertIsNotNone(confirmed)
+        return self.repository.list_tracked_competitions(chat_id)[0]
+
+    def _create_event(self, *, raw_payload: dict):
+        self.repository.upsert_active_events(
+            self.subscription.tracked_league.id,
+            [
+                ActiveEventUpsert(
+                    external_event_id="fixture-1",
+                    home="Sevilla",
+                    away="Real Madrid",
+                    scheduled_label_date="Dom 24/05",
+                    scheduled_label_time="17:00",
+                    scheduled_at="2026-05-24T17:00:00+00:00",
+                    odds_home=3.2,
+                    odds_draw=3.5,
+                    odds_away=2.1,
+                    raw_payload=raw_payload,
+                )
+            ],
+        )
+        return self.repository.get_active_events(self.subscription.tracked_league.id, only_future=False)[0]
+
+
+def _overview_fixture() -> dict:
+    return {
+        "league_id": "28743",
+        "season_id": "139904",
+        "league_name": "USL, League Two",
+        "source_url": "https://statshub.sportradar.com/bet365/en/sport/1/tournament/28743",
+        "standings": {
+            "tables": [
+                {
+                    "name": "Chesapeake Division",
+                    "rows": [
+                        {
+                            "position": 1,
+                            "team": {"name": "Virginia Beach United"},
+                            "played": 4,
+                            "points": 8,
+                            "wins": 2,
+                            "draws": 2,
+                            "losses": 0,
+                            "goals_for": 9,
+                            "goals_against": 3,
+                            "goal_difference": 6,
+                            "home": {"points": 4, "goals_for": 5, "goals_against": 1},
+                            "away": {"points": 4, "goals_for": 4, "goals_against": 2},
+                        }
+                    ],
+                }
+            ]
+        },
+        "fixtures": [
+            {
+                "time": {"date": "07/06/26", "time": "03:00", "iso_utc": "2099-06-07T03:00:00+00:00"},
+                "home": {"name": "Charlestown"},
+                "away": {"name": "Cooks Hill United"},
+            },
+            {
+                "time": {"date": "01/01/20", "time": "00:00", "iso_utc": "2020-01-01T00:00:00+00:00"},
+                "home": {"name": "Old"},
+                "away": {"name": "Past"},
+            },
+        ],
+        "teams": [],
+        "top_goals": [],
+    }
+
+
+class StatsExploreRenderTests(unittest.TestCase):
+    def test_table_lists_team_and_link(self) -> None:
+        out = render_league_table(_overview_fixture())
+        self.assertIn("Chesapeake Division", out)
+        self.assertIn("Virginia Beach", out)  # name is column-truncated in the table
+        self.assertIn("statshub.sportradar.com", out)
+
+    def test_fixtures_show_only_future(self) -> None:
+        out = render_league_fixtures(_overview_fixture())
+        self.assertIn("Charlestown vs Cooks Hill United", out)
+        self.assertNotIn("Old vs Past", out)  # past fixture filtered out
+
+    def test_team_row_found_by_fuzzy_name(self) -> None:
+        out = render_team_row(_overview_fixture(), "virginia beach")
+        self.assertIn("Virginia Beach United", out)
+        self.assertIn("8 pts", out)
+
+    def test_team_row_not_found(self) -> None:
+        out = render_team_row(_overview_fixture(), "zzz nonexistent")
+        self.assertIn("No encontré", out)
+
+    def test_top_scorers_empty_is_graceful(self) -> None:
+        out = render_top_scorers(_overview_fixture())
+        self.assertIn("Sin datos de goleadores", out)
+
+
+if __name__ == "__main__":
+    unittest.main()

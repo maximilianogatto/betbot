@@ -1,0 +1,10 @@
+{
+  "call": {
+    "status": "error",
+    "error": "competition_id missing",
+    "result_time": 0.03,
+    "time_stamp": 1780296028,
+    "xip": "127.0.1.1",
+    "apilevel": "1"
+  }
+}

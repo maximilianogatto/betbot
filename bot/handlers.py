@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+from datetime import date
 from difflib import SequenceMatcher
 import logging
 import re
@@ -2326,6 +2327,15 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("guide", guide_command))
     application.add_handler(CommandHandler("platforms", platforms_command))
+    
+    # Finnish Football Leagues and stats commands
+    application.add_handler(CommandHandler("fin_help", fin_help_command))
+    application.add_handler(CommandHandler("fin_leagues", fin_leagues_command))
+    application.add_handler(CommandHandler("fin_standings", fin_standings_command))
+    application.add_handler(CommandHandler("fin_fixtures", fin_fixtures_command))
+    application.add_handler(CommandHandler("fin_today", fin_today_command))
+    application.add_handler(CommandHandler("fin_match", fin_match_command))
+    
     application.add_handler(CommandHandler("ping", ping_command))
     application.add_handler(CommandHandler("status", status_command))
     application.add_handler(CommandHandler("resources", resources_command))
@@ -2679,6 +2689,497 @@ def _clear_all_selection_context(context: ContextTypes.DEFAULT_TYPE) -> None:
     context.user_data.pop(TRACK_LEAGUE_OPTIONS_CONTEXT_KEY, None)
     context.user_data.pop(LINK_STATS_TRACKS_CONTEXT_KEY, None)
     context.user_data.pop(LINK_STATS_SELECTED_TRACK_CONTEXT_KEY, None)
-    context.user_data.pop(LINK_STATS_PROVIDERS_CONTEXT_KEY, None)
     context.user_data.pop(LINK_STATS_SELECTED_PROVIDER_CONTEXT_KEY, None)
     context.user_data.pop(LINK_STATS_OPTIONS_CONTEXT_KEY, None)
+
+
+def _resolve_fin_league(code: str) -> tuple[str, str] | None:
+    """Resolve a short league code to competition_id and category_id."""
+    mapping = {
+        "VL": ("spljp26", "VL"),
+        "M1L": ("spljp26", "M1L"),
+        "M1": ("spljp26", "M1"),
+        "M2": ("spljp26", "M2"),
+        "NL": ("spljp26", "NL"),
+        "MSC": ("spljp26", "MSC"),
+        "NSC": ("spljp26", "NSC"),
+        "LC": ("spljp26", "LC"),
+    }
+    return mapping.get(code)
+
+
+async def fin_leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /fin_leagues: List mapped leagues and hierarchy."""
+    del context
+    if update.message is None:
+        return
+
+    from stats_providers.palloliitto.api_client import PalloliittoAPI
+    api = PalloliittoAPI()
+    try:
+        leagues = api.get_league_ranking_list()
+        lines = [
+            "🏆 *Jerarquía de Ligas Finlandesas (Escalafón)* 🏆\n",
+            "Estas ligas no suelen figurar en sitios comunes de stats.",
+            "Usá los comandos guiados abajo para explorar:\n",
+        ]
+        for l in leagues:
+            icon = "⚽" if l["sport"] == "Football" else "🥅"
+            gender_label = "Varones" if l["gender"] == "Men" else "Damas"
+            lines.append(
+                f"{icon} *{l['name']}* (Código: `{l['category_id']}`)\n"
+                f"    Tierra: Tier {l['tier']} | {gender_label} | {l['sport']}\n"
+            )
+            
+        lines.append("\n━━━━━━━━━━━━━━━━━━━━")
+        lines.append("👉 *¿Qué querés hacer ahora?*")
+        lines.append("📊 Ver posiciones: `/fin_standings [CÓDIGO]`")
+        lines.append("🗓️ Ver fixture: `/fin_fixtures [CÓDIGO]`")
+        lines.append("📚 Ver guía de análisis: `/fin_help`")
+        lines.append("Ejemplo: `/fin_standings VL`")
+        
+        await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+    except Exception as e:
+        logger.exception("Failed in /fin_leagues")
+        await update.message.reply_text(f"❌ Error al recuperar las ligas: {e}")
+    finally:
+        api.close()
+
+
+async def fin_standings_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /fin_standings [league_id]: Display standings for a league."""
+    if update.message is None:
+        return
+
+    usage_guide = (
+        "❌ *Código de liga ausente o inválido.*\n\n"
+        "Uso: `/fin_standings [CÓDIGO_LIGA]`\n\n"
+        "💡 *Ligas disponibles:*\n"
+        "• `VL` - Veikkausliiga (Tier 1)\n"
+        "• `M1L` - Ykkösliiga (Tier 2)\n"
+        "• `M1` - Ykkönen (Tier 3)\n"
+        "• `M2` - Kakkonen (Tier 4)\n"
+        "• `NL` - Kansallinen Liiga (Damas - Tier 1)\n"
+        "• `MSC` - Suomen Cup (Copa)\n\n"
+        "Ejemplo: `/fin_standings VL`"
+    )
+
+    if not context.args:
+        await update.message.reply_text(usage_guide, parse_mode="Markdown")
+        return
+
+    league_code = context.args[0].upper()
+    resolved = _resolve_fin_league(league_code)
+    if not resolved:
+        await update.message.reply_text(usage_guide, parse_mode="Markdown")
+        return
+
+    comp_id, cat_id = resolved[0], resolved[1]
+    from stats_providers.palloliitto.api_client import PalloliittoAPI
+    api = PalloliittoAPI()
+    
+    await update.message.reply_text("📊 Cargando tabla de posiciones de la federación...")
+    try:
+        # Group 1 is default
+        standings = api.get_standings(competition_id=comp_id, category_id=cat_id, group_id="1")
+        if not standings:
+            await update.message.reply_text("⚠️ No hay posiciones disponibles para esta liga en el sistema.")
+            return
+
+        lines = [
+            f"📊 *Posiciones: {league_code} (2026)*",
+            "━━━━━━━━━━━━━━━━━━━━",
+            " #  Equipo                PJ  Pts  Dif",
+        ]
+        for t in standings:
+            pos = str(t.get("current_standing", 0)).rjust(2)
+            name = (t.get("team_name", "Unknown"))[:20].ljust(20)
+            played = str(t.get("matches_played", 0)).rjust(2)
+            pts = str(t.get("points", 0)).rjust(3)
+            diff = str(t.get("goals_diff", 0)).rjust(4)
+            lines.append(f"` {pos} {name} {played} {pts} {diff}`")
+            
+        lines.append("━━━━━━━━━━━━━━━━━━━━")
+        lines.append("👉 *Siguientes pasos:*")
+        lines.append(f"🗓️ Ver fixture de esta liga: `/fin_fixtures {league_code}`")
+        lines.append("⚽ Ver partidos de hoy: `/fin_today`")
+        
+        await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+    except Exception as e:
+        logger.exception("Failed in /fin_standings")
+        await update.message.reply_text(f"❌ Error al consultar standings: {e}")
+    finally:
+        api.close()
+
+
+async def fin_fixtures_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /fin_fixtures [league_id]: Display recent/upcoming fixtures."""
+    if update.message is None:
+        return
+
+    usage_guide = (
+        "❌ *Código de liga ausente o inválido.*\n\n"
+        "Uso: `/fin_fixtures [CÓDIGO_LIGA]`\n\n"
+        "💡 *Ligas disponibles:*\n"
+        "• `VL` - Veikkausliiga (Tier 1)\n"
+        "• `M1L` - Ykkösliiga (Tier 2)\n"
+        "• `M1` - Ykkönen (Tier 3)\n"
+        "• `M2` - Kakkonen (Tier 4)\n"
+        "• `NL` - Kansallinen Liiga (Damas)\n"
+        "• `MSC` - Suomen Cup (Copa)\n\n"
+        "Ejemplo: `/fin_fixtures VL`"
+    )
+
+    if not context.args:
+        await update.message.reply_text(usage_guide, parse_mode="Markdown")
+        return
+
+    league_code = context.args[0].upper()
+    resolved = _resolve_fin_league(league_code)
+    if not resolved:
+        await update.message.reply_text(usage_guide, parse_mode="Markdown")
+        return
+
+    comp_id, cat_id = resolved[0], resolved[1]
+    from stats_providers.palloliitto.api_client import PalloliittoAPI
+    from datetime import date
+    api = PalloliittoAPI()
+    
+    await update.message.reply_text("🗓️ Consultando fixtures en vivo...")
+    try:
+        matches = api.get_matches_by_league(competition_id=comp_id, category_id=cat_id)
+        if not matches:
+            await update.message.reply_text("⚠️ No se encontraron partidos cargados para esta liga.")
+            return
+
+        # Sort matches by date. Show upcoming or most recent finished (total 15)
+        now_str = date.today().isoformat()
+        upcoming = [m for m in matches if m.get("date", "") >= now_str]
+        finished = [m for m in matches if m.get("date", "") < now_str]
+        
+        # We take up to 5 finished (for context) and up to 10 upcoming
+        finished.sort(key=lambda x: x.get("date", ""), reverse=True)
+        upcoming.sort(key=lambda x: x.get("date", ""))
+        
+        display_matches = list(reversed(finished[:5])) + upcoming[:10]
+        
+        lines = [
+            f"🗓️ *Fixture de {league_code}*",
+            "━━━━━━━━━━━━━━━━━━━━\n"
+        ]
+        for m in display_matches:
+            date_val = m.get("date")
+            time = m.get("time") or ""
+            home = m.get("team_A_name") or m.get("club_A_name")
+            away = m.get("team_B_name") or m.get("club_B_name")
+            m_id = m.get("match_id")
+            
+            score = "vs"
+            if m.get("status") in ["Finished", "Played"]:
+                score = f"*{m.get('fs_A')}-{m.get('fs_B')}*"
+            elif m.get("walkover") == 1:
+                score = "Walkover"
+                
+            lines.append(f"• `{date_val} {time}`: {home} {score} {away}\n   ID del partido: `{m_id}`")
+            
+        lines.append("\n━━━━━━━━━━━━━━━━━━━━")
+        lines.append("💡 *¿Querés analizar las alineaciones y ver si juegan con suplentes?*")
+        lines.append("Copia el ID del partido y corre:")
+        lines.append("👉 `/fin_match [ID_PARTIDO]`")
+        lines.append("Ejemplo: `/fin_match 4036852`")
+        
+        await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+    except Exception as e:
+        logger.exception("Failed in /fin_fixtures")
+        await update.message.reply_text(f"❌ Error al consultar fixture: {e}")
+    finally:
+        api.close()
+
+
+async def fin_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /fin_today: Show matches scheduled for today with their IDs."""
+    del context
+    if update.message is None:
+        return
+
+    from stats_providers.palloliitto.api_client import PalloliittoAPI
+    from datetime import date
+    api = PalloliittoAPI()
+    today_str = date.today().isoformat()
+    
+    await update.message.reply_text(f"⚽ Consultando partidos programados para hoy ({today_str})...")
+    try:
+        matches = api.get_matches_by_date(today_str)
+        if not matches:
+            await update.message.reply_text("📭 No hay partidos programados en la federación para el día de hoy.")
+            return
+
+        # Target adult categories to keep the output clean
+        target_cats = {"VL", "M1L", "M1", "M2", "NL", "MSC", "NSC", "LC", "M1LCUP", "FML", "FNL"}
+        
+        classified = []
+        youth_or_others_count = 0
+        for m in matches:
+            cat_id = m.get("category_id")
+            if cat_id in target_cats or "kakkonen" in str(m.get("category_name")).lower() or "ykkönen" in str(m.get("category_name")).lower():
+                classified.append(m)
+            else:
+                youth_or_others_count += 1
+                
+        lines = [
+            f"⚽ *Partidos de Hoy ({today_str})*",
+            "━━━━━━━━━━━━━━━━━━━━\n"
+        ]
+        
+        if not classified:
+            lines.append("No hay partidos de ligas adultas principales para hoy.")
+            if youth_or_others_count > 0:
+                lines.append(f"_(Hay {youth_or_others_count} partidos en ligas juveniles o regionales menores hoy)_")
+        else:
+            for m in classified:
+                cat_name = m.get("category_name") or "Liga"
+                home = m.get("home_team_name") or m.get("club_A_name")
+                away = m.get("away_team_name") or m.get("club_B_name")
+                time = m.get("time") or "N/A"
+                m_id = m.get("match_id")
+                
+                score = "vs"
+                if m.get("status") in ["Finished", "Played"]:
+                    score = f"*{m.get('fs_A')}-{m.get('fs_B')}*"
+                elif m.get("live_period") != "-1":
+                    score = f"🔴 *{m.get('fs_A')}-{m.get('fs_B')}*"
+                    
+                lines.append(
+                    f"🏆 *{cat_name}* (🕒 `{time}`)\n"
+                    f"   {home} {score} {away}\n"
+                    f"   ID del partido: `{m_id}`\n"
+                )
+                
+            if youth_or_others_count > 0:
+                lines.append(f"ℹ️ _Omitidos {youth_or_others_count} partidos de categorías juveniles o ligas menores._\n")
+                
+        lines.append("━━━━━━━━━━━━━━━━━━━━")
+        lines.append("💡 *Detector de Suplentes / B-Team:*")
+        lines.append("Para analizar alineaciones oficiales de hoy y ver si juegan titulares:")
+        lines.append("👉 `/fin_match [ID_PARTIDO]`")
+        
+        await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+    except Exception as e:
+        logger.exception("Failed in /fin_today")
+        await update.message.reply_text(f"❌ Error al consultar partidos de hoy: {e}")
+    finally:
+        api.close()
+
+
+async def fin_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /fin_match [match_id]: Lineups, scores, cards, and starting regularity analysis (Value bet detector)."""
+    if update.message is None:
+        return
+
+    usage_guide = (
+        "❌ *ID de partido ausente o inválido.*\n\n"
+        "Uso: `/fin_match [ID_PARTIDO]`\n\n"
+        "💡 *¿Cómo conseguir el ID?*\n"
+        "• Corré `/fin_today` para ver los partidos de hoy.\n"
+        "• Corré `/fin_fixtures [LIGA]` para ver fixtures de una liga.\n\n"
+        "Ejemplo: `/fin_match 4036852`"
+    )
+
+    if not context.args or not context.args[0].isdigit():
+        await update.message.reply_text(usage_guide, parse_mode="Markdown")
+        return
+
+    match_id = context.args[0]
+    from stats_providers.palloliitto.api_client import PalloliittoAPI
+    api = PalloliittoAPI()
+    
+    await update.message.reply_text("🔍 Recuperando datos detallados de alineación y estadísticas...")
+    try:
+        # 1. Fetch match details
+        m = api.get_match_details(match_id)
+        if not m:
+            await update.message.reply_text("❌ No encontré un partido con ese ID. Por favor, verificá el número.")
+            return
+
+        home = m.get("club_A_name") or m.get("team_A_name") or "Local"
+        away = m.get("club_B_name") or m.get("team_B_name") or "Visitante"
+        date_val = m.get("date") or "N/A"
+        time = m.get("time") or ""
+        venue = m.get("venue_name") or "N/A"
+        attendance = m.get("attendance") or "0"
+        status = m.get("status") or "Scheduled"
+        
+        # General details
+        lines = [
+            f"⚽ *{home} vs {away}*",
+            f"📍 Estadio: {venue} | Asistencia: {attendance}",
+            f"📅 Fecha: {date_val} {time} | Estado: {status}",
+            "━━━━━━━━━━━━━━━━━━━━"
+        ]
+        
+        if m.get("walkover") == 1:
+            lines.append("\n❌ *Partido Perdido / Walkover*")
+            winner = home if m.get("winner") == "Home" else away
+            score = f"{m.get('fs_A')}-{m.get('fs_B')}"
+            lines.append(f"Ganador adjudicado: *{winner}* (Resultado: {score})")
+            await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+            return
+            
+        if m.get("fs_A") is not None:
+            lines.append(f"⚽ *Marcador final: {m.get('fs_A')} - {m.get('fs_B')}*")
+            
+        # Goals List
+        goals = m.get("goals", [])
+        if goals:
+            lines.append("\n⚽ *Goles:*")
+            for g in goals:
+                scorer = g.get("player_name") or "Jugador"
+                minute = g.get("minute") or "N/A"
+                team = home if g.get("team_id") == m.get("team_A_id") else away
+                lines.append(f" • {minute}': *{scorer}* ({team})")
+                
+        # Cards List
+        bookings = m.get("bookings", [])
+        if bookings:
+            lines.append("\n🟨🟥 *Tarjetas:*")
+            for b in bookings:
+                player = b.get("player_name") or "Jugador"
+                minute = b.get("minute") or "N/A"
+                card = b.get("card_type") or "Yellow"
+                card_icon = "🟨" if "yellow" in card.lower() else "🟥"
+                team = home if b.get("team_id") == m.get("team_A_id") else away
+                lines.append(f" • {minute}': {card_icon} *{player}* ({team})")
+                
+        # Lineup Rotation Analysis (Value bet detector!)
+        lineups = m.get("lineups", [])
+        if not lineups:
+            lines.append("\n⚠️ *Alineaciones oficiales:*")
+            lines.append("Las alineaciones oficiales aún no están disponibles para este partido en el sistema de la federación. (Se publican usualmente 1 hora antes del pitazo inicial).")
+        else:
+            home_id = m.get("team_A_id")
+            away_id = m.get("team_B_id")
+            home_starters = [p for p in lineups if p.get("team_id") == home_id and p.get("start") == "1"]
+            away_starters = [p for p in lineups if p.get("team_id") == away_id and p.get("start") == "1"]
+            
+            lines.append("\n📋 *Titulares Confirmados:*")
+            lines.append(f" • {home}: {len(home_starters)} en cancha.")
+            lines.append(f" • {away}: {len(away_starters)} en cancha.")
+            lines.append("\n🔍 *Análisis de Rotación (Detección de Suplentes/B-Team):*")
+            
+            # Run the rotation calculator for Home
+            home_primary = m.get("team_A_primary_category_id") or m.get("category_id")
+            home_rot_text = _calculate_rotation_for_team(api, home_name=home, team_id=home_id, primary_category=home_primary, competition_id=m.get("competition_id"), starters=home_starters, target_match_id=match_id)
+            lines.append(f"\n🏘️ *Local ({home}):*\n{home_rot_text}")
+            
+            # Run the rotation calculator for Away
+            away_primary = m.get("team_B_primary_category_id") or m.get("category_id")
+            away_rot_text = _calculate_rotation_for_team(api, home_name=away, team_id=away_id, primary_category=away_primary, competition_id=m.get("competition_id"), starters=away_starters, target_match_id=match_id)
+            lines.append(f"\n🚀 *Visitante ({away}):*\n{away_rot_text}")
+            
+            lines.append("\n💡 _¿Cómo interpretar? Si la regularidad es < 45% (🚨), el equipo está jugando con rotación masiva o suplentes en la copa. Esto suele provocar caídas rápidas en las cuotas de los casinos cuando los bots detectan la alineación oficial. ¡Aprovechá oportunidades de valor contra las cuotas pre-partido!_")
+            
+        await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+    except Exception as e:
+        logger.exception("Failed in /fin_match")
+        await update.message.reply_text(f"❌ Error al consultar partido: {e}")
+    finally:
+        api.close()
+
+
+def _calculate_rotation_for_team(api: PalloliittoAPI, home_name: str, team_id: str, primary_category: str, competition_id: str, starters: list, target_match_id: str) -> str:
+    """Calculate regularity ratio of current lineup compared to the last 3 league games."""
+    if not starters:
+        return "⚠️ Sin datos de jugadores iniciales."
+        
+    try:
+        league_matches = api.get_matches_by_league(competition_id, primary_category)
+    except Exception:
+        return "⚠️ No se pudieron cargar partidos de liga recientes para comparar."
+        
+    # Find recent played league matches for this team (exclude today's match itself)
+    recent_matches = []
+    for m in league_matches:
+        m_id = str(m.get("match_id"))
+        if m_id == str(target_match_id):
+            continue
+        if m.get("status") in ["Finished", "Played"] and m.get("walkover") != 1:
+            if str(m.get("team_A_id")) == str(team_id) or str(m.get("team_B_id")) == str(team_id):
+                recent_matches.append(m)
+                
+    recent_matches.sort(key=lambda x: x.get("date", ""), reverse=True)
+    recent_matches = recent_matches[:3]
+    
+    if not recent_matches:
+        return "✅ *100% regularidad estimada* (sin partidos de liga previos para comparar)."
+        
+    starter_counts = {}
+    for rm in recent_matches:
+        rm_id = rm.get("match_id")
+        details = api.get_match_details(rm_id)
+        if details:
+            rm_lineup = details.get("lineups", [])
+            for p in rm_lineup:
+                if str(p.get("team_id")) == str(team_id) and p.get("start") == "1":
+                    p_id = p.get("player_id")
+                    starter_counts[p_id] = starter_counts.get(p_id, 0) + 1
+                    
+    min_starts = max(1, len(recent_matches) // 2 + (1 if len(recent_matches) % 2 != 0 else 0))
+    regular_starter_ids = {p_id for p_id, count in starter_counts.items() if count >= min_starts}
+    
+    current_starter_ids = {p.get("player_id") for p in starters}
+    matching_starters = current_starter_ids & regular_starter_ids
+    
+    regularity_ratio = len(matching_starters) / 11 if len(matching_starters) <= 11 else len(matching_starters) / len(starters)
+    
+    if regularity_ratio >= 0.70:
+        return f"✅ *Regularidad: {regularity_ratio:.0%}* (Titulares habituales de liga. Juegan con el A-Team)."
+    elif regularity_ratio >= 0.45:
+        return f"⚠️ *Regularidad: {regularity_ratio:.0%}* (Rotación moderada/parcial. Algunos suplentes)."
+    else:
+        # Mass rotation!
+        non_regulars = [p for p in starters if p.get("player_id") not in regular_starter_ids]
+        non_regulars_str = ", ".join(f"{p.get('shirt_number')} {p.get('player_name')}" for p in non_regulars[:3])
+        return (
+            f"🚨 *Regularidad: {regularity_ratio:.0%}* (¡ROTACIÓN MASIVA / B-TEAM! Juegan suplentes).\n"
+            f"   Nuevos titulares hoy: {non_regulars_str}..."
+        )
+
+
+async def fin_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /fin_help: Document and guide the user on using the Finland Federation integration."""
+    del context
+    if update.message is None:
+        return
+
+    help_text = (
+        "🇫🇮 *Guía de Estadísticas de la Federación de Finlandia* 🇫🇮\n\n"
+        "Este módulo te permite consultar estadísticas oficiales directo de la Asociación de Fútbol de Finlandia "
+        "(`tulospalvelu.palloliitto.fi`). Estas ligas de ascenso y copas no suelen figurar en sitios comunes "
+        "de estadísticas, lo cual genera grandes oportunidades de valor.\n\n"
+        "📖 *Comandos disponibles:*\n"
+        "• `/fin_leagues` - Muestra la jerarquía oficial (escalafón) de ligas masculinas, femeninas y copas.\n"
+        "• `/fin_today` - Lista los partidos programados para hoy en las categorías principales con sus IDs.\n"
+        "• `/fin_standings [CÓDIGO]` - Muestra la tabla de posiciones actual de una liga (Ej: `/fin_standings VL`).\n"
+        "• `/fin_fixtures [CÓDIGO]` - Muestra el calendario de partidos recientes y próximos de una liga y sus IDs.\n"
+        "• `/fin_match [ID_PARTIDO]` - Muestra detalles de un partido (goles, tarjetas, alineaciones) y corre el "
+        "**Análisis de Rotación de Alineación (Detector de Suplentes / B-Team)**.\n\n"
+        "🔍 *¿Cómo funciona el Detector de Suplentes / B-Team?*\n"
+        "En los partidos de copa (como la *Suomen Cup*) o en fechas de rotación, los equipos de divisiones superiores "
+        "suelen alinear reservas, juveniles o un equipo 'B'.\n"
+        "El comando `/fin_match [ID_PARTIDO]` analiza los titulares de hoy y los compara con los últimos 3 partidos "
+        "de liga del equipo, calculando un **Ratio de Regularidad**:\n"
+        "  🟢 *>= 70%*: Juegan los titulares habituales (A-Team).\n"
+        "  🟡 *45% - 69%*: Rotación parcial o moderada.\n"
+        "  🚨 *< 45%*: *¡ROTACIÓN MASIVA / B-TEAM!* Juegan suplentes.\n\n"
+        "💡 *Flujo de Análisis Recomendado:*\n"
+        "1️⃣ Corré `/fin_today` para ver qué partidos hay programados para hoy.\n"
+        "2️⃣ Si ves un partido interesante (por ejemplo, un equipo de división alta contra uno de división baja en Suomen Cup), "
+        "esperá a que falte 1 hora para el partido (cuando se cargan las alineaciones oficiales).\n"
+        "3️⃣ Corré `/fin_match [ID_PARTIDO]`.\n"
+        "4️⃣ Si detectás un ratio de regularidad muy bajo (🚨 < 45%) para el equipo favorito, las cuotas del casino suelen "
+        "estar desajustadas basándose en el poder del A-Team. ¡Esto te permite tomar apuestas de valor antes de que "
+        "las cuotas se desplomen!"
+    )
+
+    await update.message.reply_text(help_text, parse_mode="Markdown")
+

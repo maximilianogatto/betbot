@@ -11,6 +11,7 @@ import os
 
 from core.stats_provider_base import StatsProviderRegistry, stats_provider_registry
 from stats_providers.sportradar_http import SportradarHttpStatsProvider
+from stats_providers.palloliitto.provider import PalloliittoStatsProvider
 
 
 def register_default_stats_providers(
@@ -32,10 +33,12 @@ def register_default_stats_providers(
 
         cache = tracking_repository
     target.register(SportradarHttpStatsProvider(payload_cache=cache))
+    target.register(PalloliittoStatsProvider(payload_cache=cache))
     return target
 
 
 __all__ = [
     "SportradarHttpStatsProvider",
+    "PalloliittoStatsProvider",
     "register_default_stats_providers",
 ]
