@@ -36,6 +36,42 @@ def _int(value: Any) -> int | None:
         return None
 
 
+def prematch_events_from_listview(payload: dict[str, Any]) -> list[LiveEventSnapshot]:
+    """Map a Kambi listView (prematch day list) to prematch snapshots (soccer)."""
+
+    out: list[LiveEventSnapshot] = []
+    for item in payload.get("events") or []:
+        event = item.get("event") if isinstance(item, dict) and isinstance(item.get("event"), dict) else item
+        if not isinstance(event, dict):
+            continue
+        path = event.get("path") or []
+        if not (path and path[0].get("termKey") == "football"):
+            continue
+        home = str(event.get("homeName") or "").strip()
+        away = str(event.get("awayName") or "").strip()
+        if not home or not away:
+            continue
+        is_soccer = not any("esport" in str(p.get("termKey", "")).lower() for p in path)
+        country = path[-2].get("name") if len(path) >= 2 else None
+        out.append(
+            LiveEventSnapshot(
+                platform=PLATFORM,
+                external_event_id=str(event.get("id")),
+                home=home,
+                away=away,
+                competition_name=event.get("group"),
+                country_name=country,
+                minute=None,
+                scheduled_at=_kickoff_iso(event.get("start")),
+                source_url=f"betwarrior:group:{event.get('groupId')}",
+                is_soccer=is_soccer,
+                extracted_at=utc_now_iso(),
+                raw_payload={"state": event.get("state")},
+            )
+        )
+    return out
+
+
 def live_events_from_open(payload: dict[str, Any]) -> list[LiveEventSnapshot]:
     """Map Kambi ``event/live/open.json`` to live snapshots (soccer only)."""
 

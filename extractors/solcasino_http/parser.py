@@ -37,6 +37,42 @@ from core.models import (
 PLATFORM = "solcasino_http"
 
 
+def prematch_events_from_snapshot(snapshot: dict[str, Any], *, sport_id: str = "1") -> list[LiveEventSnapshot]:
+    """Map a merged Betby PREMATCH snapshot to soccer prematch snapshots (identity)."""
+
+    tournaments = snapshot.get("tournaments") or {}
+    categories = snapshot.get("categories") or {}
+    out: list[LiveEventSnapshot] = []
+    for event_id, event in (snapshot.get("events") or {}).items():
+        if not isinstance(event, dict):
+            continue
+        desc = event.get("desc") or {}
+        if desc.get("type") != "match" or str(desc.get("sport")) != str(sport_id):
+            continue
+        competitors = desc.get("competitors") or []
+        if len(competitors) < 2:
+            continue
+        tournament = tournaments.get(str(desc.get("tournament"))) or {}
+        category = categories.get(str(tournament.get("category_id"))) or {}
+        out.append(
+            LiveEventSnapshot(
+                platform=PLATFORM,
+                external_event_id=str(event_id),
+                home=str(competitors[0].get("name") or "").strip(),
+                away=str(competitors[1].get("name") or "").strip(),
+                competition_name=tournament.get("name"),
+                country_name=category.get("name"),
+                minute=None,
+                scheduled_at=_kickoff_iso(desc.get("scheduled")),
+                source_url=f"solcasino:tournament:{desc.get('tournament')}",
+                is_soccer=True,
+                extracted_at=utc_now_iso(),
+                raw_payload={},
+            )
+        )
+    return out
+
+
 def live_events_from_snapshot(snapshot: dict[str, Any], *, sport_id: str = "1") -> list[LiveEventSnapshot]:
     """Map a merged Betby LIVE snapshot to in-play soccer live snapshots."""
 

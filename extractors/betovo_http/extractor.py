@@ -41,6 +41,7 @@ class BetovoHttpExtractor(Extractor):
     provider_capabilities = ProviderCapabilities(supports_http=True, supports_browserless=True)
     supports_league_discovery = True  # via the Altenar GetEvents feed
     supports_live_detection = True  # via GetLivenow
+    supports_prematch_listing = True  # via GetEvents (whole-sport day list)
 
     # The GetEvents feed lists every prematch league; cache it briefly so a refresh
     # sweep / discovery search reuses one download.
@@ -88,6 +89,11 @@ class BetovoHttpExtractor(Extractor):
     async def list_live_events(self) -> list[LiveEventSnapshot]:
         client = BetovoHttpClient(self.settings)
         payload = await client.fetch_livenow()
+        return live_events_from_livenow(payload)
+
+    async def list_prematch_events(self) -> list[LiveEventSnapshot]:
+        client = BetovoHttpClient(self.settings)
+        payload = await client.fetch_events()  # whole-sport GetEvents (prematch)
         return live_events_from_livenow(payload)
 
     async def search_leagues(

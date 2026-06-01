@@ -78,6 +78,7 @@ class Extractor(ABC):
     implemented: bool = True
     supports_league_discovery: bool = False
     supports_live_detection: bool = False
+    supports_prematch_listing: bool = False
 
     @classmethod
     @abstractmethod
@@ -123,6 +124,16 @@ class Extractor(ABC):
         """
 
         raise NotImplementedError(f"{self.name} does not support live detection.")
+
+    async def list_prematch_events(self) -> list["LiveEventSnapshot"]:
+        """Return the platform's currently listed prematch (not-started) soccer events.
+
+        Used by the live-watch poller to detect when a watched fixture is listed in
+        prematch on some book before it goes live. Reuses each platform's cheap
+        whole-day listing; minute/score are None for prematch. Default: none.
+        """
+
+        return []
 
     def build_competition_url(
         self,

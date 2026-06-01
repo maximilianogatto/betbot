@@ -65,6 +65,9 @@ class LiveWatchEntry:
     matched_minute: str | None
     created_at: str
     fired_at: str | None
+    kickoff_at: str | None = None
+    prematch_seen_at: str | None = None
+    prematch_platform: str | None = None
 
 
 @dataclass(frozen=True)
@@ -2262,6 +2265,7 @@ class SqliteTrackingRepository:
         away: str,
         league_hint: str | None = None,
         note: str | None = None,
+        kickoff_at: str | None = None,
     ) -> LiveWatchEntry:
         """Add a fixture to a chat's live-watch list (status 'watching')."""
 
@@ -2269,10 +2273,11 @@ class SqliteTrackingRepository:
         with _connect() as connection:
             cursor = connection.execute(
                 """
-                INSERT INTO live_watch_entries (chat_id, home, away, league_hint, note, status, created_at)
-                VALUES (?, ?, ?, ?, ?, 'watching', ?)
+                INSERT INTO live_watch_entries
+                    (chat_id, home, away, league_hint, note, status, created_at, kickoff_at)
+                VALUES (?, ?, ?, ?, ?, 'watching', ?, ?)
                 """,
-                (chat_id, home.strip(), away.strip(), (league_hint or None), (note or None), now_iso),
+                (chat_id, home.strip(), away.strip(), (league_hint or None), (note or None), now_iso, kickoff_at),
             )
             row = connection.execute(
                 "SELECT * FROM live_watch_entries WHERE id = ?", (cursor.lastrowid,)
@@ -2323,6 +2328,49 @@ class SqliteTrackingRepository:
                 """,
                 (platform, event_id, minute, _utc_now_iso(), watch_id),
             )
+
+    def mark_live_watch_prematch_seen(self, watch_id: int, *, platform: str, event_id: str) -> None:
+        """Record that a watched fixture was listed in prematch (one-shot, stays watching)."""
+
+        with _connect() as connection:
+            connection.execute(
+                """
+                UPDATE live_watch_entries
+                SET prematch_seen_at = ?, prematch_platform = ?, matched_event_id = COALESCE(matched_event_id, ?)
+                WHERE id = ?
+                """,
+                (_utc_now_iso(), platform, event_id, watch_id),
+            )
+
+    def purge_expired_live_watches(
+        self,
+        *,
+        kickoff_grace_hours: float = 3.5,
+        stale_hours: float = 16.0,
+        fired_retain_hours: float = 3.0,
+    ) -> int:
+        """Delete watch entries whose time has passed. Returns the count removed.
+
+        - watching with a known kickoff: removed once now > kickoff + grace.
+        - watching without a kickoff: removed once older than ``stale_hours``.
+        - fired: removed ``fired_retain_hours`` after firing to keep the list tidy.
+        """
+
+        now = datetime.now(timezone.utc)
+        kickoff_cutoff = (now - timedelta(hours=kickoff_grace_hours)).isoformat()
+        stale_cutoff = (now - timedelta(hours=stale_hours)).isoformat()
+        fired_cutoff = (now - timedelta(hours=fired_retain_hours)).isoformat()
+        with _connect() as connection:
+            cursor = connection.execute(
+                """
+                DELETE FROM live_watch_entries
+                WHERE (status = 'watching' AND kickoff_at IS NOT NULL AND kickoff_at < ?)
+                   OR (status = 'watching' AND kickoff_at IS NULL AND created_at < ?)
+                   OR (status = 'fired' AND fired_at IS NOT NULL AND fired_at < ?)
+                """,
+                (kickoff_cutoff, stale_cutoff, fired_cutoff),
+            )
+        return cursor.rowcount
 
     def remove_live_watch(self, chat_id: int, watch_id: int) -> bool:
         """Delete one live-watch entry for a chat. Returns True if removed."""
@@ -2863,6 +2911,8 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
         "last_unavailable_notification_at",
         "TEXT",
     )
+    for _live_watch_column in ("kickoff_at", "prematch_seen_at", "prematch_platform"):
+        _ensure_column(connection, "live_watch_entries", _live_watch_column, "TEXT")
 
 
 def _ensure_column(
@@ -3530,6 +3580,9 @@ def _row_to_live_watch(row: sqlite3.Row) -> LiveWatchEntry:
         matched_minute=row["matched_minute"],
         created_at=row["created_at"],
         fired_at=row["fired_at"],
+        kickoff_at=row["kickoff_at"] if "kickoff_at" in row.keys() else None,
+        prematch_seen_at=row["prematch_seen_at"] if "prematch_seen_at" in row.keys() else None,
+        prematch_platform=row["prematch_platform"] if "prematch_platform" in row.keys() else None,
     )
 
 

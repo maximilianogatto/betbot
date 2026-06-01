@@ -24,7 +24,11 @@ from core.extractor_base import Extractor, LeagueDiscoveryOption
 from core.models import CompetitionExtraction, EventSnapshot, LiveEventSnapshot, ProviderCapabilities
 from extractors.betwarrior_http import discovery as discovery_module
 from extractors.betwarrior_http.client import BetWarriorHttpClient
-from extractors.betwarrior_http.parser import build_competition_extraction, live_events_from_open
+from extractors.betwarrior_http.parser import (
+    build_competition_extraction,
+    live_events_from_open,
+    prematch_events_from_listview,
+)
 from extractors.betwarrior_http.settings import BetWarriorHttpSettings, load_betwarrior_settings
 
 _SUPPORTED_HOSTS = ("betwarrior.bet.ar", "betwarrior.com", "kambicdn.com")
@@ -42,6 +46,7 @@ class BetWarriorHttpExtractor(Extractor):
     provider_capabilities = ProviderCapabilities(supports_http=True, supports_browserless=True)
     supports_league_discovery = True  # via the Kambi listView feed
     supports_live_detection = True  # via event/live/open.json
+    supports_prematch_listing = True  # via listView (prematch day list)
 
     # The listView lists every prematch league; cache it briefly so a refresh sweep
     # / discovery search reuses one download.
@@ -83,6 +88,11 @@ class BetWarriorHttpExtractor(Extractor):
         client = BetWarriorHttpClient(self.settings)
         payload = await client.fetch_live_open()
         return live_events_from_open(payload)
+
+    async def list_prematch_events(self) -> list[LiveEventSnapshot]:
+        client = BetWarriorHttpClient(self.settings)
+        list_view = await self._get_list_view(client)
+        return prematch_events_from_listview(list_view)
 
     async def search_leagues(
         self,
