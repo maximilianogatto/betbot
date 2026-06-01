@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from unittest.mock import patch
 import unittest
 
 from sandbox.sofascore_http.capture_traffic import (
@@ -10,6 +9,7 @@ from sandbox.sofascore_http.capture_traffic import (
     normalize_endpoint_path,
 )
 from sandbox.sofascore_http.client import SofaScoreHTTPClient
+from sandbox.sofascore_http.client import SofaScoreHTTPSettings
 from sandbox.sofascore_http.normalizers import (
     build_match_snapshot,
     normalize_1x2_odds,
@@ -26,6 +26,29 @@ class FakeResponse:
 
     def json(self) -> dict:
         return self._payload
+
+
+class FakeSession:
+    def __init__(self, response: FakeResponse) -> None:
+        self.response = response
+        self.calls = 0
+
+    def get(self, url: str, **kwargs):
+        self.calls += 1
+        return self.response
+
+
+class FakeClock:
+    def __init__(self) -> None:
+        self.value = 0.0
+        self.sleeps: list[float] = []
+
+    def monotonic(self) -> float:
+        return self.value
+
+    def sleep(self, seconds: float) -> None:
+        self.sleeps.append(seconds)
+        self.value += seconds
 
 
 class SofaScoreCaptureTests(unittest.TestCase):
@@ -157,21 +180,49 @@ class SofaScoreHTTPClientTests(unittest.TestCase):
                 ]
             },
         )
-        with patch("sandbox.sofascore_http.client.requests.get", return_value=response):
-            tournaments = SofaScoreHTTPClient().get_category_tournaments(34)
+        tournaments = SofaScoreHTTPClient(session=FakeSession(response)).get_category_tournaments(34)
 
         self.assertEqual([item["id"] for item in tournaments], [1, 2])
 
     def test_optional_404_returns_empty_payload(self) -> None:
-        with patch(
-            "sandbox.sofascore_http.client.requests.get",
-            return_value=FakeResponse(404, {"error": {"message": "Not Found"}}),
-        ):
-            incidents = SofaScoreHTTPClient().get_event_incidents(123)
+        incidents = SofaScoreHTTPClient(
+            session=FakeSession(FakeResponse(404, {"error": {"message": "Not Found"}}))
+        ).get_event_incidents(123)
 
         self.assertEqual(incidents, [])
+
+    def test_client_reuses_in_memory_cache(self) -> None:
+        session = FakeSession(FakeResponse(200, {"categories": []}))
+        client = SofaScoreHTTPClient(
+            SofaScoreHTTPSettings(cache_ttl_seconds=60),
+            session=session,
+        )
+
+        client.get_categories()
+        client.get_categories()
+
+        self.assertEqual(session.calls, 1)
+        self.assertEqual(client.cache_hit_count, 1)
+
+    def test_client_rate_limits_uncached_requests(self) -> None:
+        session = FakeSession(FakeResponse(200, {"categories": []}))
+        clock = FakeClock()
+        client = SofaScoreHTTPClient(
+            SofaScoreHTTPSettings(
+                cache_ttl_seconds=0,
+                min_request_interval_seconds=0.5,
+            ),
+            session=session,
+            monotonic=clock.monotonic,
+            sleep=clock.sleep,
+        )
+
+        client.get_categories()
+        client.get_categories()
+
+        self.assertEqual(session.calls, 2)
+        self.assertEqual(clock.sleeps, [0.5])
 
 
 if __name__ == "__main__":
     unittest.main()
-

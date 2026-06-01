@@ -13,8 +13,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import logging
+import threading
 import time
-from typing import Any
+from typing import Any, Callable
 
 from curl_cffi import requests
 
@@ -34,29 +35,73 @@ class SofaScoreHTTPSettings:
     timeout_seconds: float = 15.0
     retries: int = 2
     retry_delay_seconds: float = 0.35
+    min_request_interval_seconds: float = 0.15
+    cache_ttl_seconds: float = 30.0
     impersonate: str | None = None
 
 
 class SofaScoreHTTPClient:
-    """Fetch public SofaScore JSON endpoints without a browser session."""
+    """Fetch public SofaScore JSON endpoints without a browser session.
 
-    def __init__(self, settings: SofaScoreHTTPSettings | None = None) -> None:
+    The session is deliberately serialized through a small lock. This keeps the
+    libcurl session reuse predictable and enforces a conservative request rate
+    when multiple async provider calls delegate work to background threads.
+    """
+
+    def __init__(
+        self,
+        settings: SofaScoreHTTPSettings | None = None,
+        *,
+        session: Any | None = None,
+        monotonic: Callable[[], float] = time.monotonic,
+        sleep: Callable[[float], None] = time.sleep,
+    ) -> None:
         self.settings = settings or SofaScoreHTTPSettings()
+        self._session = session or requests.Session()
+        self._owns_session = session is None
+        self._monotonic = monotonic
+        self._sleep = sleep
+        self._request_lock = threading.Lock()
+        self._cache_lock = threading.Lock()
+        self._cache: dict[str, tuple[float, dict[str, Any]]] = {}
+        self._last_request_started_at: float | None = None
+        self.request_count = 0
+        self.cache_hit_count = 0
 
-    def get_json(self, path: str) -> dict[str, Any]:
+    def close(self) -> None:
+        """Close the owned libcurl session."""
+
+        if self._owns_session:
+            self._session.close()
+
+    def __enter__(self) -> SofaScoreHTTPClient:
+        return self
+
+    def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None:
+        self.close()
+
+    def get_json(self, path: str, *, cache_ttl_seconds: float | None = None) -> dict[str, Any]:
         """GET one SofaScore API path and validate its JSON object payload."""
 
         url = f"{self.settings.base_url.rstrip('/')}/{path.lstrip('/')}"
+        ttl = self.settings.cache_ttl_seconds if cache_ttl_seconds is None else max(0.0, cache_ttl_seconds)
+        cached = self._cached_payload(url, ttl=ttl)
+        if cached is not None:
+            return cached
         last_error: Exception | None = None
         for attempt in range(1, self.settings.retries + 1):
-            started_at = time.monotonic()
             try:
-                response = requests.get(
-                    url,
-                    timeout=self.settings.timeout_seconds,
-                    impersonate=self.settings.impersonate,
-                )
-                elapsed_seconds = time.monotonic() - started_at
+                with self._request_lock:
+                    self._wait_for_rate_limit()
+                    started_at = self._monotonic()
+                    self._last_request_started_at = started_at
+                    response = self._session.get(
+                        url,
+                        timeout=self.settings.timeout_seconds,
+                        impersonate=self.settings.impersonate,
+                    )
+                    self.request_count += 1
+                elapsed_seconds = self._monotonic() - started_at
                 logger.debug(
                     "SofaScore HTTP GET path=%s status=%s duration_seconds=%.3f attempt=%s/%s",
                     path,
@@ -74,12 +119,41 @@ class SofaScoreHTTPClient:
                 payload = response.json()
                 if not isinstance(payload, dict):
                     raise SofaScoreHTTPError(f"SofaScore GET {path} returned non-object JSON.")
+                self._store_cached_payload(url, payload, ttl=ttl)
                 return payload
             except (requests.RequestsError, ValueError, SofaScoreHTTPError) as exc:
                 last_error = exc
                 if attempt < self.settings.retries:
-                    time.sleep(self.settings.retry_delay_seconds)
+                    self._sleep(self.settings.retry_delay_seconds)
         raise SofaScoreHTTPError(f"SofaScore GET {path} failed after retries: {last_error}") from last_error
+
+    def _cached_payload(self, url: str, *, ttl: float) -> dict[str, Any] | None:
+        if ttl <= 0:
+            return None
+        with self._cache_lock:
+            cached = self._cache.get(url)
+            if cached is None:
+                return None
+            expires_at, payload = cached
+            if expires_at <= self._monotonic():
+                self._cache.pop(url, None)
+                return None
+            self.cache_hit_count += 1
+            return payload
+
+    def _store_cached_payload(self, url: str, payload: dict[str, Any], *, ttl: float) -> None:
+        if ttl <= 0:
+            return
+        with self._cache_lock:
+            self._cache[url] = (self._monotonic() + ttl, payload)
+
+    def _wait_for_rate_limit(self) -> None:
+        previous = self._last_request_started_at
+        if previous is None:
+            return
+        remaining = self.settings.min_request_interval_seconds - (self._monotonic() - previous)
+        if remaining > 0:
+            self._sleep(remaining)
 
     def get_categories(self, *, sport_slug: str = "football") -> list[dict[str, Any]]:
         """Return available country/category nodes for one sport."""
@@ -109,6 +183,14 @@ class SofaScoreHTTPClient:
         """Return known seasons for one unique tournament."""
 
         return _dict_items(self.get_json(f"unique-tournament/{unique_tournament_id}/seasons"), "seasons")
+
+    def get_tournament_scheduled_events(self, unique_tournament_id: int, date: str) -> list[dict[str, Any]]:
+        """Return tournament fixtures scheduled on one ISO date."""
+
+        return _dict_items(
+            self.get_json(f"unique-tournament/{unique_tournament_id}/scheduled-events/{date}"),
+            "events",
+        )
 
     def get_season_events(
         self,
@@ -196,4 +278,3 @@ __all__ = [
     "SofaScoreHTTPError",
     "SofaScoreHTTPSettings",
 ]
-
