@@ -1,22 +1,44 @@
 from __future__ import annotations
 
 import asyncio
+from contextlib import asynccontextmanager
 import unittest
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
-from extractors.bet365.client import Bet365ExtractorSettings
-from extractors.bet365.playwright_asian import Bet365PlaywrightAsianClient
+from extractors.bet365.client import Bet365HttpClient, Bet365ExtractorSettings
 
 
-class _NoopBrowserHandler:
+class MockPage:
     def __init__(self) -> None:
-        self.request_restart = AsyncMock()
+        self.evaluate = AsyncMock()
+        self.goto = AsyncMock()
+        self.wait_for_timeout = AsyncMock()
+        self.wait_for_function = AsyncMock()
 
-    async def start(self) -> None:
-        return None
 
-    async def stop(self) -> None:
-        return None
+class MockContext:
+    def __init__(self) -> None:
+        self.cookies = AsyncMock(return_value=[{"name": "foo", "value": "bar"}])
+        self.new_page = AsyncMock(return_value=MockPage())
+        self.close = AsyncMock()
+
+
+class MockBrowser:
+    def __init__(self) -> None:
+        self.new_context = AsyncMock(return_value=MockContext())
+        self.close = AsyncMock()
+
+
+class MockPlaywrightManager:
+    def __init__(self) -> None:
+        self.chromium = MagicMock()
+        self.chromium.launch = AsyncMock(return_value=MockBrowser())
+
+
+class MockResponse:
+    def __init__(self, status_code: int, content: bytes) -> None:
+        self.status_code = status_code
+        self.content = content
 
 
 def _league_matches(count: int) -> list[dict[str, object]]:
@@ -48,36 +70,69 @@ def _league_matches(count: int) -> list[dict[str, object]]:
 
 class Bet365PlaywrightAsianConcurrencyTests(unittest.IsolatedAsyncioTestCase):
     async def test_event_captures_respect_max_parallel_event_pages(self) -> None:
-        client = Bet365PlaywrightAsianClient(
+        client = Bet365HttpClient(
             Bet365ExtractorSettings(
-                max_parallel_competitions=1,
                 max_parallel_event_pages=2,
-                capture_attempts=1,
-                event_capture_attempts=1,
-            ),
-            browser_handler=_NoopBrowserHandler(),
+            )
         )
 
-        active_event_captures = 0
-        peak_event_captures = 0
-        event_lock = asyncio.Lock()
+        active_fetches = 0
+        peak_fetches = 0
+        lock = asyncio.Lock()
 
-        async def fake_capture(url, predicate, **kwargs):
-            nonlocal active_event_captures, peak_event_captures
-            if kwargs["capture_kind"] == "league":
-                return "F|league", "https://example.test/league", []
+        # Mock page evaluations
+        mock_page = MockPage()
+        async def mock_evaluate(code: str, *args: object) -> object:
+            if "Loader" in code and "xcft" in code:
+                if args and isinstance(args[0], list):
+                    # Batch coupon token evaluation
+                    return [{"url": u, "term": "tok"} for u in args[0]]
+                else:
+                    # Single league token evaluation
+                    return "league_token"
+            elif "Guid" in code:
+                return "guid_123"
+            return None
+        mock_page.evaluate = mock_evaluate
 
-            async with event_lock:
-                active_event_captures += 1
-                peak_event_captures = max(peak_event_captures, active_event_captures)
+        mock_browser = MockBrowser()
+        mock_context = MockContext()
+        mock_context.new_page = AsyncMock(return_value=mock_page)
+        mock_browser.new_context = AsyncMock(return_value=mock_context)
+        
+        mock_pw = MockPlaywrightManager()
+        mock_pw.chromium.launch = AsyncMock(return_value=mock_browser)
+
+        async def fake_get(url: str, *args: object, **kwargs: object) -> MockResponse:
+            nonlocal active_fetches, peak_fetches
+            if "sports-configuration" in url or "markets" in url:
+                return MockResponse(200, b"raw_league_data")
+            
+            # Coupon URL: check active fetches
+            async with lock:
+                active_fetches += 1
+                peak_fetches = max(peak_fetches, active_fetches)
             await asyncio.sleep(0.02)
-            async with event_lock:
-                active_event_captures -= 1
-            return "F|asian", f"https://example.test/{kwargs['capture_id']}", []
+            async with lock:
+                active_fetches -= 1
+            return MockResponse(200, b"raw_coupon_data")
+
+        @asynccontextmanager
+        async def mock_playwright_ctx() -> object:
+            yield mock_pw
+
+        @asynccontextmanager
+        async def mock_session_ctx(*args: object, **kwargs: object) -> object:
+            session = MagicMock()
+            session.cookies = MagicMock()
+            session.get = fake_get
+            yield session
 
         with (
+            patch("playwright.async_api.async_playwright", return_value=mock_playwright_ctx()),
+            patch("extractors.bet365.client.AsyncSession", side_effect=mock_session_ctx),
             patch(
-                "extractors.bet365.playwright_asian.parse_league_payload",
+                "extractors.bet365.client.parse_league_payload",
                 return_value={
                     "league_name": "Test League",
                     "topic": "#AC#B1#",
@@ -85,7 +140,7 @@ class Bet365PlaywrightAsianConcurrencyTests(unittest.IsolatedAsyncioTestCase):
                 },
             ),
             patch(
-                "extractors.bet365.playwright_asian.parse_asian_payload",
+                "extractors.bet365.client.parse_asian_payload",
                 return_value={
                     "event": {"league": "Test League"},
                     "markets_payload": {
@@ -94,81 +149,14 @@ class Bet365PlaywrightAsianConcurrencyTests(unittest.IsolatedAsyncioTestCase):
                     },
                 },
             ),
-            patch.object(client, "_capture_payload_with_retry", side_effect=fake_capture),
         ):
-            extraction = await client.extract_league_with_asian_lines(
+            extraction = await client.fetch_league(
                 "https://www.bet365.bet.ar/#/AC/B1/C1/D1002/E120757998/G40/"
             )
 
         self.assertEqual(len(extraction.matches), 5)
-        self.assertGreaterEqual(peak_event_captures, 2)
-        self.assertLessEqual(peak_event_captures, 2)
-
-    async def test_league_captures_respect_max_parallel_competitions(self) -> None:
-        client = Bet365PlaywrightAsianClient(
-            Bet365ExtractorSettings(
-                max_parallel_competitions=2,
-                max_parallel_event_pages=1,
-                capture_attempts=1,
-                event_capture_attempts=1,
-            ),
-            browser_handler=_NoopBrowserHandler(),
-        )
-
-        active_league_captures = 0
-        peak_league_captures = 0
-        league_lock = asyncio.Lock()
-
-        async def fake_capture(url, predicate, **kwargs):
-            nonlocal active_league_captures, peak_league_captures
-            if kwargs["capture_kind"] == "league":
-                async with league_lock:
-                    active_league_captures += 1
-                    peak_league_captures = max(peak_league_captures, active_league_captures)
-                await asyncio.sleep(0.02)
-                async with league_lock:
-                    active_league_captures -= 1
-                return "F|league", f"https://example.test/{kwargs['capture_id']}", []
-
-            return "F|asian", f"https://example.test/{kwargs['capture_id']}", []
-
-        async def fake_event_extract(host, match):
-            return {
-                "error": None,
-                "captured_url": f"https://example.test/{match['fixture_id']}",
-                "debug": [],
-                "event": {"league": "Test League"},
-                "markets_payload": {},
-                "asian_lines_unavailable": False,
-                "duration_seconds": 0.01,
-            }
-
-        with (
-            patch(
-                "extractors.bet365.playwright_asian.parse_league_payload",
-                return_value={
-                    "league_name": "Test League",
-                    "topic": "#AC#B1#",
-                    "matches": _league_matches(1),
-                },
-            ),
-            patch.object(client, "_capture_payload_with_retry", side_effect=fake_capture),
-            patch.object(client, "_extract_event_asian_lines", side_effect=fake_event_extract),
-        ):
-            await asyncio.gather(
-                client.extract_league_with_asian_lines(
-                    "https://www.bet365.bet.ar/#/AC/B1/C1/D1002/E120757998/G40/"
-                ),
-                client.extract_league_with_asian_lines(
-                    "https://www.bet365.bet.ar/#/AC/B1/C1/D1002/E123521148/G40/"
-                ),
-                client.extract_league_with_asian_lines(
-                    "https://www.bet365.bet.ar/#/AC/B1/C1/D1002/E129621231/G40/"
-                ),
-            )
-
-        self.assertGreaterEqual(peak_league_captures, 2)
-        self.assertLessEqual(peak_league_captures, 2)
+        # Verify that concurrency did not exceed the limit of 2, but reached 2
+        self.assertEqual(peak_fetches, 2)
 
 
 if __name__ == "__main__":
