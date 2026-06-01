@@ -2915,7 +2915,7 @@ async def fin_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             return
 
         # Target adult categories to keep the output clean
-        target_cats = {"VL", "M1L", "M1", "M2", "NL", "MSC", "NSC", "LC", "M1LCUP", "FML", "FNL"}
+        target_cats = {"VL", "M1L", "M1", "M2", "NL", "MSC", "NSC", "LC", "M1LCUP"}
         
         classified = []
         youth_or_others_count = 0

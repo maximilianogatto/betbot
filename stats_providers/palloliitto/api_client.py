@@ -45,16 +45,7 @@ class PalloliittoAPI:
         "MSC": {"name": "Suomen Cup", "gender": "M", "level": 1, "type": "cup"},
         "NSC": {"name": "Naisten Suomen Cup", "gender": "F", "level": 1, "type": "cup"},
         "LC": {"name": "Liigacup", "gender": "M", "level": 1, "type": "cup"},
-        "M1LCUP": {"name": "Ykkösliigacup", "gender": "M", "level": 2, "type": "cup"},
-        
-        # Futsal Men
-        "FML": {"name": "Futsal-Liiga", "gender": "M", "level": 1, "type": "futsal"},
-        "FM1": {"name": "Futsal-Ykkönen", "gender": "M", "level": 2, "type": "futsal"},
-        "FM2": {"name": "Futsal-Kakkonen", "gender": "M", "level": 3, "type": "futsal"},
-        
-        # Futsal Women
-        "FNL": {"name": "Naisten Futsal-Liiga", "gender": "F", "level": 1, "type": "futsal"},
-        "FN1": {"name": "Naisten Futsal-Ykkönen", "gender": "F", "level": 2, "type": "futsal"}
+        "M1LCUP": {"name": "Ykkösliigacup", "gender": "M", "level": 2, "type": "cup"}
     }
 
     def __init__(self, timeout: float = 15.0):
