@@ -93,7 +93,8 @@ committed so the conclusions remain inspectable.
 
 ## Next Decision
 
-Before integrating FootyStats into BetBot, decide whether a licensed official
-API key is acceptable. If yes, implement a typed official API adapter. If not,
-keep this as a research-only fallback and define a narrower public HTML/AJAX
-scope with explicit monitoring for markup changes.
+The narrow public fallback has been promoted to
+`stats_providers/footystats_http`. It exposes discovery, standings, fixtures
+and lightweight live score reports through BetBot's stable provider contract.
+The licensed official API remains the next step for richer H2H, odds and
+advanced metric normalization.

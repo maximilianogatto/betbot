@@ -21,13 +21,19 @@ The design stays intentionally simple:
 - `/guide`: quick usage guide
 - `/ping`: replies with `pong`
 - `/status`: reports that the bot is online
-- `/stats`: shows simple runtime resource metrics
+- `/resources`: shows simple runtime resource metrics
 - `/echo <text>`: echoes back the provided text
 - `/track_url <url>`: extract a Bet365 league and store it as pending
 - `/confirm_track`: confirm the latest pending league for the current chat
 - `/list_tracks`: list tracked leagues for the current chat
 - `/refresh_tracks`: refresh the tracked leagues for the current chat
 - `/matches`: browse stored active matches by numeric selection
+- `/link_stats`: link one odds-tracked league to an external stats league
+- `/stats_links`: list odds-league to stats-league links
+- `/track_stats`: follow an external stats league without requiring odds tracking
+- `/stats_tracks`: list standalone stats league subscriptions
+- `/explore_stats`: browse cached standings, fixtures, teams and provider-native match reports
+- `/stats`: generate stats for one sportsbook event from the latest `/matches` list
 - `/untrack`: stop tracking one league by numeric selection
 - `/odds_on`: enable odds-change notifications for one league by numeric selection
 - `/odds_off`: disable odds-change notifications for one league by numeric selection
@@ -238,6 +244,29 @@ You reply using numbers, for example:
 Then the bot returns either:
 
 - all matches from that league
+
+## Stats providers and daily cache
+
+Stats providers are independent from sportsbook odds extractors. A single
+provider-native league can be linked to one or more odds leagues with
+`/link_stats`, or followed independently with `/track_stats`.
+
+Standalone stats tracking is intended for teams and leagues you want to inspect
+even when no sportsbook collector has discovered the match. `/explore_stats`
+can browse those leagues and generate a provider-native match report directly.
+
+The background stats prefetch job defaults to one run per day:
+
+```env
+STATS_PREFETCH_ENABLED=true
+STATS_PREFETCH_INTERVAL_SECONDS=86400
+STATS_PREFETCH_TTL_SECONDS=90000
+```
+
+Current HTTP stats providers include Sportradar Statshub, SofaScore and
+FootyStats. FootyStats uses a narrow public HTTP fallback for discovery,
+standings, fixtures and lightweight live scores. Set `FOOTYSTATS_API_KEY` when
+a licensed key is available to prepare richer official API coverage.
 - or one selected match
 
 Each match message includes:
