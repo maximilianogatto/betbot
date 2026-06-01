@@ -21,6 +21,9 @@ were replayed. The same public API URLs returned JSON through `curl_cffi`.
 | `normalizers.py` | Pure compact normalizers for leagues, fixtures, odds, incidents and match snapshots. |
 | `build_match_snapshot.py` | Builds one compact HTTP-only match snapshot from a SofaScore event ID. |
 | `probe_provider.py` | Runs an HTTP-only end-to-end feasibility probe: countries, leagues, fixtures, live events and one optional match. |
+| `bot_ready/provider.py` | Implements BetBot's real `StatsProvider` interface without registering SofaScore in production. |
+| `reporting.py` | Renders compact provider-level Markdown from one normalized snapshot. |
+| `validate_bot_ready.py` | Validates country -> league -> fixtures -> standings -> report through the future bot contract. |
 
 ## Requirements
 
@@ -96,6 +99,35 @@ Build only a compact event snapshot:
   --out sandbox/sofascore_http/captures/live_16200011/match_snapshot.json
 ```
 
+## Bot-ready Contract Validation
+
+The adapter stays under `sandbox/`, but already implements the production
+`StatsProvider` interface. It uses current-season `next/0` and `last/0` pages
+instead of expensive date-by-date or full-season scans.
+
+```bash
+../BetBot/betbot/bin/python sandbox/sofascore_http/validate_bot_ready.py \
+  --country Australia \
+  --query "Northern NSW" \
+  --league-id 1638 \
+  --event-id 16200011 \
+  --out-dir sandbox/sofascore_http/examples/bot_ready_validation
+```
+
+This writes:
+
+- `bot_ready_validation.json`
+- `bot_ready_validation.md`
+
+The adapter adds:
+
+- one reusable `curl_cffi.Session`;
+- an in-memory TTL cache;
+- serialized requests with a conservative rate limit;
+- optional compatibility with BetBot's existing payload-cache protocol;
+- tolerant team-name and kickoff matching;
+- standings normalization and compact reports.
+
 ## Useful Endpoint Families
 
 Discovery and fixtures:
@@ -126,8 +158,9 @@ behavior may change without notice.
 ## Current Recommendation
 
 Do not integrate this sandbox directly into Telegram handlers. The next step is
-to implement a small production `StatsProvider` adapter backed by
-`SofaScoreHTTPClient`, keeping:
+to move the validated adapter into `stats_providers/sofascore_http`, add
+`curl_cffi` to production requirements and register the provider behind an
+environment flag, keeping:
 
 - league discovery independent from odds collectors;
 - SofaScore event IDs as provider-specific external IDs;
