@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
-from extractors.bet365.playwright_asian import (
+from extractors.bet365.parser import (
     extract_sportradar_url,
     parse_datetime,
     parse_asian_payload,
