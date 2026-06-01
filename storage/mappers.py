@@ -14,6 +14,7 @@ if TYPE_CHECKING:
         PendingCompetitionTrackRequest,
         SmallChangeRecord,
         StatsLeagueLink,
+        StatsLeagueSubscription,
         StatsMatchLinkRecord,
         TrackedCompetition,
         TrackedCompetitionSubscription,
@@ -209,6 +210,23 @@ def row_to_stats_league_link(row: sqlite3.Row) -> "StatsLeagueLink":
     )
 
 
+def row_to_stats_league_subscription(row: sqlite3.Row) -> "StatsLeagueSubscription":
+    from storage.tracking_repository import StatsLeagueSubscription
+
+    return StatsLeagueSubscription(
+        telegram_chat_id=int(row["telegram_chat_id"]),
+        stats_provider=str(row["stats_provider"]),
+        stats_league_id=str(row["stats_league_id"]),
+        stats_league_name=str(row["stats_league_name"]),
+        stats_country_name=row_optional_text(row, "stats_country_name"),
+        source_url=row_optional_text(row, "source_url"),
+        payload_json=row_optional_text(row, "payload_json"),
+        enabled=bool(row["enabled"]),
+        created_at=str(row["created_at"]),
+        updated_at=str(row["updated_at"]),
+    )
+
+
 def row_to_stats_match_link(row: sqlite3.Row) -> "StatsMatchLinkRecord":
     from storage.tracking_repository import StatsMatchLinkRecord
 
@@ -255,6 +273,7 @@ __all__ = [
     "row_to_pending_request",
     "row_to_small_change_record",
     "row_to_stats_league_link",
+    "row_to_stats_league_subscription",
     "row_to_stats_match_link",
     "row_to_subscription",
     "row_to_tracked_competition",

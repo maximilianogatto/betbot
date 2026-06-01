@@ -27,6 +27,7 @@ from monitors.models import CommandResult
 from storage.tracking_repository import (
     ActiveEventRecord,
     SqliteTrackingRepository,
+    StatsLeagueSubscription,
     TrackedCompetitionSubscription,
     tracking_repository as default_tracking_repository,
 )
@@ -58,6 +59,18 @@ class StatsResolution:
     candidates: tuple[StatsMatchCandidate, ...] = ()
     event_index: int = 0
     provider_key: str | None = None
+
+
+@dataclass(frozen=True)
+class ExplorableStatsLeague:
+    """One provider-native league available in `/explore_stats`."""
+
+    provider_key: str
+    league_id: str
+    league_name: str
+    country_name: str | None
+    label: str
+    source_url: str | None = None
 
 
 class StatsService:
@@ -176,6 +189,7 @@ class StatsService:
         """
 
         summary = {"leagues": 0, "reports": 0, "skipped": 0, "errors": 0}
+        warmed_leagues: set[tuple[str, str]] = set()
         try:
             competitions = self.repository.list_globally_active_competitions()
         except Exception:
@@ -190,15 +204,19 @@ class StatsService:
                 provider = self.provider_registry.get(link.stats_provider)
             except ValueError:
                 continue
-            summary["leagues"] += 1
-
-            getter = getattr(provider, "get_league_overview", None)
-            if callable(getter):
-                try:
-                    await getter(link.stats_league_id, cache_ttl=ttl_seconds)
-                except Exception:
-                    logger.exception("Prefetch league overview failed competition=%s", tracked.id)
-                    summary["errors"] += 1
+            league_key = (link.stats_provider, link.stats_league_id)
+            if league_key not in warmed_leagues:
+                warmed_leagues.add(league_key)
+                summary["leagues"] += 1
+                getter = getattr(provider, "get_league_overview", None)
+                if callable(getter):
+                    try:
+                        await getter(link.stats_league_id, cache_ttl=ttl_seconds)
+                    except TypeError:
+                        await getter(link.stats_league_id)
+                    except Exception:
+                        logger.exception("Prefetch league overview failed competition=%s", tracked.id)
+                        summary["errors"] += 1
 
             try:
                 events = self.repository.get_active_events(tracked.id, only_future=True)
@@ -212,6 +230,34 @@ class StatsService:
                 except Exception:
                     logger.exception("Prefetch report failed event=%s", getattr(event, "id", "?"))
                     summary["errors"] += 1
+
+        list_standalone = getattr(self.repository, "list_globally_active_stats_leagues", None)
+        standalone = list_standalone() if callable(list_standalone) else []
+        for subscription in standalone:
+            league_key = (subscription.stats_provider, subscription.stats_league_id)
+            if league_key in warmed_leagues:
+                continue
+            try:
+                provider = self.provider_registry.get(subscription.stats_provider)
+            except ValueError:
+                continue
+            warmed_leagues.add(league_key)
+            summary["leagues"] += 1
+            getter = getattr(provider, "get_league_overview", None)
+            if not callable(getter):
+                summary["skipped"] += 1
+                continue
+            try:
+                await getter(subscription.stats_league_id, cache_ttl=ttl_seconds)
+            except TypeError:
+                await getter(subscription.stats_league_id)
+            except Exception:
+                logger.exception(
+                    "Prefetch standalone stats league failed provider=%s league=%s",
+                    subscription.stats_provider,
+                    subscription.stats_league_id,
+                )
+                summary["errors"] += 1
         return summary
 
     async def _warm_event_report(self, provider, link, tracked, event, ttl_seconds: float) -> bool:
@@ -281,6 +327,111 @@ class StatsService:
                 f"ID stats: {option.league_id}"
             ),
         )
+
+    def track_stats_league(self, *, chat_id: int, option: StatsLeagueOption) -> CommandResult:
+        """Persist one provider-native stats league independently from odds tracks."""
+
+        self.repository.upsert_stats_league_subscription(
+            chat_id,
+            stats_provider=option.provider,
+            stats_league_id=option.league_id,
+            stats_league_name=option.league_name,
+            stats_country_name=option.country_name,
+            source_url=option.source_url,
+            payload=_league_option_payload(option),
+        )
+        return CommandResult(
+            ok=True,
+            message=(
+                "✅ Liga agregada al tracking de stats.\n"
+                f"Provider: {option.provider_display_name}\n"
+                f"Liga stats: {option.league_name}\n"
+                f"ID stats: {option.league_id}\n\n"
+                "El cache diario incluirá esta liga aunque no esté vinculada a cuotas."
+            ),
+        )
+
+    def build_stats_tracks_message(self, *, chat_id: int) -> CommandResult:
+        """Render standalone stats leagues followed by one chat."""
+
+        subscriptions = self.repository.list_stats_league_subscriptions(chat_id)
+        if not subscriptions:
+            return CommandResult(
+                ok=True,
+                message="No tenés ligas seguidas solo para stats. Usá /track_stats para agregar una.",
+            )
+        lines = ["Ligas seguidas para stats:"]
+        for index, subscription in enumerate(subscriptions, start=1):
+            provider_name = _provider_display_name(self.provider_registry, subscription.stats_provider)
+            country = f" | {subscription.stats_country_name}" if subscription.stats_country_name else ""
+            lines.append(
+                f"{index} - {provider_name}{country} | {subscription.stats_league_name} "
+                f"| id={subscription.stats_league_id}"
+            )
+        lines.append("")
+        lines.append("Estas ligas se precargan una vez por día aunque no estén vinculadas a cuotas.")
+        return CommandResult(ok=True, message="\n".join(lines))
+
+    def list_explorable_leagues(
+        self,
+        *,
+        chat_id: int,
+        tracked_subscriptions: Sequence[TrackedCompetitionSubscription],
+    ) -> list[ExplorableStatsLeague]:
+        """Combine odds-linked and standalone stats leagues without duplicates."""
+
+        leagues: list[ExplorableStatsLeague] = []
+        seen: set[tuple[str, str]] = set()
+        for subscription in tracked_subscriptions:
+            tracked = subscription.tracked_league
+            link = self.repository.get_stats_league_link(tracked.id)
+            if link is None:
+                continue
+            key = (link.stats_provider, link.stats_league_id)
+            if key in seen:
+                continue
+            seen.add(key)
+            leagues.append(
+                ExplorableStatsLeague(
+                    provider_key=link.stats_provider,
+                    league_id=link.stats_league_id,
+                    league_name=link.stats_league_name,
+                    country_name=link.stats_country_name,
+                    label=f"{tracked.competition_name} → {link.stats_league_name}",
+                )
+            )
+        for subscription in self.repository.list_stats_league_subscriptions(chat_id):
+            key = (subscription.stats_provider, subscription.stats_league_id)
+            if key in seen:
+                continue
+            seen.add(key)
+            leagues.append(
+                ExplorableStatsLeague(
+                    provider_key=subscription.stats_provider,
+                    league_id=subscription.stats_league_id,
+                    league_name=subscription.stats_league_name,
+                    country_name=subscription.stats_country_name,
+                    source_url=subscription.source_url,
+                    label=f"{subscription.stats_league_name} (solo stats)",
+                )
+            )
+        return leagues
+
+    async def build_direct_match_report(
+        self,
+        *,
+        provider_key: str,
+        stats_match_id: str,
+    ) -> CommandResult:
+        """Build a provider-native report without requiring a sportsbook event link."""
+
+        try:
+            provider = self.provider_registry.get(provider_key)
+            report = await provider.build_match_report(stats_match_id)
+        except Exception as exc:
+            logger.exception("Direct stats report failed provider=%s match_id=%s", provider_key, stats_match_id)
+            return CommandResult(ok=False, message=f"No pude generar el reporte de stats en este momento: {exc}")
+        return CommandResult(ok=True, message=report.markdown)
 
     def build_links_message(
         self,
