@@ -280,6 +280,106 @@ class StatsServiceTests(unittest.TestCase):
         self.assertIsNotNone(cached)
         self.assertEqual(cached.stats_match_id, "61624678")
 
+    def test_link_multiple_providers_and_build_consolidated_report(self) -> None:
+        # Create a second fake provider
+        class SecondFakeProvider(StatsProvider):
+            name = "footystats_http"
+            display_name = "FootyStats HTTP"
+            capabilities = StatsProviderCapabilities(supports_league_discovery=True, supports_fixture_discovery=True)
+
+            async def search_leagues(self, *, country_name: str, query: str | None = None, limit: int = 80):
+                return []
+
+            async def list_fixtures(self, league_id: str, *, limit: int | None = None):
+                return []
+
+            async def resolve_match(self, candidate: MatchIdentityCandidate, *, league_id: str | None = None):
+                if league_id == "fs-123":
+                    return StatsMatchLink(
+                        provider=self.name,
+                        stats_match_id="fs-match-1",
+                        stats_url="https://footystats.org/fs-match-1",
+                        confidence=0.98,
+                        method="league_fixture_similarity",
+                    )
+                return None
+
+            async def build_match_report(self, stats_match_id: str):
+                return MatchStatsReport(
+                    provider=self.name,
+                    match_id=stats_match_id,
+                    title="Sevilla vs Real Madrid",
+                    markdown="Sevilla vs Real Madrid (FootyStats)\n\n- Goals avg: 3.5",
+                    data={},
+                    generated_at="2026-05-27T00:00:00+00:00",
+                )
+
+        self.service.provider_registry.register(SecondFakeProvider())
+
+        # Link LaLiga to BOTH FakeStatsProvider ("sportradar_statshub") and SecondFakeProvider ("footystats_http")
+        # 1. Link FakeStatsProvider
+        option1 = StatsLeagueOption(
+            provider="sportradar_statshub",
+            provider_display_name="Sportradar Statshub",
+            country_name="Spain",
+            league_id="8",
+            league_name="LaLiga",
+        )
+        self.service.link_league(tracked_competition_id=self.subscription.tracked_league.id, option=option1)
+
+        # 2. Link SecondFakeProvider
+        option2 = StatsLeagueOption(
+            provider="footystats_http",
+            provider_display_name="FootyStats HTTP",
+            country_name="Spain",
+            league_id="fs-123",
+            league_name="LaLiga FS",
+        )
+        self.service.link_league(tracked_competition_id=self.subscription.tracked_league.id, option=option2)
+
+        # Let's verify we have both links in the database
+        links = self.repository.list_stats_league_links(self.subscription.tracked_league.id)
+        self.assertEqual(len(links), 2)
+        
+        # Verify get_stats_league_link supports stats_provider filtering
+        link_sr = self.repository.get_stats_league_link(self.subscription.tracked_league.id, stats_provider="sportradar_statshub")
+        self.assertIsNotNone(link_sr)
+        self.assertEqual(link_sr.stats_league_id, "8")
+        
+        link_fs = self.repository.get_stats_league_link(self.subscription.tracked_league.id, stats_provider="footystats_http")
+        self.assertIsNotNone(link_fs)
+        self.assertEqual(link_fs.stats_league_id, "fs-123")
+
+        # Let's create an event to resolve
+        event = self._create_event(raw_payload={})
+
+        # Build stats report (should query and merge both!)
+        result = asyncio.run(
+            self.service.build_match_stats_report(
+                tracked_subscription=self.subscription,
+                matches=[event],
+                event_number=1,
+            )
+        )
+
+        self.assertTrue(result.ok)
+        self.assertIn("Form: 7.5 vs 5.2", result.message)
+        self.assertIn("Goals avg: 3.5", result.message)
+        self.assertIn("━━━━━━━━━━━━━━━━━━━━", result.message)
+
+        # Check match links are stored for both
+        match_links = self.repository.list_stats_match_links(event.id)
+        self.assertEqual(len(match_links), 2)
+        
+        # Test get_stats_match_link with stats_provider filtering
+        match_link_sr = self.repository.get_stats_match_link(event.id, stats_provider="sportradar_statshub")
+        self.assertIsNotNone(match_link_sr)
+        self.assertEqual(match_link_sr.stats_match_id, "61624678")
+        
+        match_link_fs = self.repository.get_stats_match_link(event.id, stats_provider="footystats_http")
+        self.assertIsNotNone(match_link_fs)
+        self.assertEqual(match_link_fs.stats_match_id, "fs-match-1")
+
     def _create_track(self):
         chat_id = 123
         self.repository.create_pending_competition_request(

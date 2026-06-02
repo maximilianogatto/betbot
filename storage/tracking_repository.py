@@ -2206,8 +2206,7 @@ class SqliteTrackingRepository:
                     updated_at
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(tracked_competition_id) DO UPDATE SET
-                    stats_provider = excluded.stats_provider,
+                ON CONFLICT(tracked_competition_id, stats_provider) DO UPDATE SET
                     stats_league_id = excluded.stats_league_id,
                     stats_league_name = excluded.stats_league_name,
                     stats_country_name = excluded.stats_country_name,
@@ -2227,20 +2226,46 @@ class SqliteTrackingRepository:
                     now_iso,
                 ),
             )
-            row = _fetch_stats_league_link_row(connection, tracked_competition_id)
+            row = _fetch_stats_league_link_row(connection, tracked_competition_id, stats_provider=normalized_provider)
 
         if row is None:
             raise RuntimeError("Stats league link was upserted but could not be reloaded.")
         return _row_to_stats_league_link(row)
 
-    def get_stats_league_link(self, tracked_competition_id: int) -> StatsLeagueLink | None:
-        """Return the stats-provider league linked to a tracked competition."""
+    def get_stats_league_link(self, tracked_competition_id: int, stats_provider: str | None = None) -> StatsLeagueLink | None:
+        """Return a specific stats-provider league link or the first one linked."""
 
         with _connect() as connection:
             _ensure_tracked_competition_exists(connection, tracked_competition_id)
-            row = _fetch_stats_league_link_row(connection, tracked_competition_id)
+            row = _fetch_stats_league_link_row(connection, tracked_competition_id, stats_provider=stats_provider)
 
         return _row_to_stats_league_link(row) if row is not None else None
+
+    def list_stats_league_links(self, tracked_competition_id: int) -> list[StatsLeagueLink]:
+        """Return all stats-provider league links associated with a tracked competition."""
+
+        with _connect() as connection:
+            _ensure_tracked_competition_exists(connection, tracked_competition_id)
+            rows = connection.execute(
+                """
+                SELECT
+                    id,
+                    tracked_competition_id,
+                    stats_provider,
+                    stats_league_id,
+                    stats_league_name,
+                    stats_country_name,
+                    confidence,
+                    payload_json,
+                    created_at,
+                    updated_at
+                FROM stats_league_links
+                WHERE tracked_competition_id = ?
+                """,
+                (tracked_competition_id,),
+            ).fetchall()
+
+        return [_row_to_stats_league_link(row) for row in rows]
 
     def upsert_stats_league_subscription(
         self,
@@ -2608,18 +2633,28 @@ class SqliteTrackingRepository:
                 )
         return cursor.rowcount
 
-    def delete_stats_league_link(self, tracked_competition_id: int) -> bool:
+    def delete_stats_league_link(self, tracked_competition_id: int, stats_provider: str | None = None) -> bool:
         """Delete the stats-provider league link for one tracked competition."""
 
         with _connect() as connection:
             _ensure_tracked_competition_exists(connection, tracked_competition_id)
-            cursor = connection.execute(
-                """
-                DELETE FROM stats_league_links
-                WHERE tracked_competition_id = ?
-                """,
-                (tracked_competition_id,),
-            )
+            if stats_provider:
+                normalized_provider = _normalize_platform(stats_provider)
+                cursor = connection.execute(
+                    """
+                    DELETE FROM stats_league_links
+                    WHERE tracked_competition_id = ? AND stats_provider = ?
+                    """,
+                    (tracked_competition_id, normalized_provider),
+                )
+            else:
+                cursor = connection.execute(
+                    """
+                    DELETE FROM stats_league_links
+                    WHERE tracked_competition_id = ?
+                    """,
+                    (tracked_competition_id,),
+                )
 
         return cursor.rowcount > 0
 
@@ -2663,8 +2698,7 @@ class SqliteTrackingRepository:
                     updated_at
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(active_event_id) DO UPDATE SET
-                    stats_provider = excluded.stats_provider,
+                ON CONFLICT(active_event_id, stats_provider) DO UPDATE SET
                     stats_match_id = excluded.stats_match_id,
                     stats_url = excluded.stats_url,
                     confidence = excluded.confidence,
@@ -2684,20 +2718,46 @@ class SqliteTrackingRepository:
                     now_iso,
                 ),
             )
-            row = _fetch_stats_match_link_row(connection, active_event_id)
+            row = _fetch_stats_match_link_row(connection, active_event_id, stats_provider=normalized_provider)
 
         if row is None:
             raise RuntimeError("Stats match link was upserted but could not be reloaded.")
         return _row_to_stats_match_link(row)
 
-    def get_stats_match_link(self, active_event_id: int) -> StatsMatchLinkRecord | None:
+    def get_stats_match_link(self, active_event_id: int, stats_provider: str | None = None) -> StatsMatchLinkRecord | None:
         """Return the cached stats-provider match link for one active event."""
 
         with _connect() as connection:
             _ensure_active_event_exists(connection, active_event_id)
-            row = _fetch_stats_match_link_row(connection, active_event_id)
+            row = _fetch_stats_match_link_row(connection, active_event_id, stats_provider=stats_provider)
 
         return _row_to_stats_match_link(row) if row is not None else None
+
+    def list_stats_match_links(self, active_event_id: int) -> list[StatsMatchLinkRecord]:
+        """Return all stats-provider match links for one active event."""
+
+        with _connect() as connection:
+            _ensure_active_event_exists(connection, active_event_id)
+            rows = connection.execute(
+                """
+                SELECT
+                    id,
+                    active_event_id,
+                    stats_provider,
+                    stats_match_id,
+                    stats_url,
+                    confidence,
+                    method,
+                    payload_json,
+                    created_at,
+                    updated_at
+                FROM stats_match_links
+                WHERE active_event_id = ?
+                """,
+                (active_event_id,),
+            ).fetchall()
+
+        return [_row_to_stats_match_link(row) for row in rows]
 
     def has_sent_alert(
         self,
@@ -2999,7 +3059,7 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
             payload_json TEXT,
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL,
-            UNIQUE(tracked_competition_id),
+            UNIQUE(tracked_competition_id, stats_provider),
             FOREIGN KEY(tracked_competition_id) REFERENCES tracked_competitions(id) ON DELETE CASCADE
         );
 
@@ -3034,7 +3094,7 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
             payload_json TEXT,
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL,
-            UNIQUE(active_event_id),
+            UNIQUE(active_event_id, stats_provider),
             FOREIGN KEY(active_event_id) REFERENCES active_events(id) ON DELETE CASCADE
         );
 
@@ -3118,6 +3178,101 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
         ON live_watch_entries(chat_id, status);
         """
     )
+
+    # Check stats_league_links unique constraint and migrate if old
+    row_league = connection.execute(
+        "SELECT sql FROM sqlite_master WHERE type='table' AND name='stats_league_links'"
+    ).fetchone()
+    if row_league and "UNIQUE(tracked_competition_id)" in row_league[0].replace(" ", ""):
+        connection.executescript(
+            """
+            -- Rename existing table to old
+            ALTER TABLE stats_league_links RENAME TO stats_league_links_old;
+            
+            -- Create new table with updated unique constraint
+            CREATE TABLE stats_league_links (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                tracked_competition_id INTEGER NOT NULL,
+                stats_provider TEXT NOT NULL,
+                stats_league_id TEXT NOT NULL,
+                stats_league_name TEXT NOT NULL,
+                stats_country_name TEXT,
+                confidence REAL NOT NULL DEFAULT 1.0,
+                payload_json TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                UNIQUE(tracked_competition_id, stats_provider),
+                FOREIGN KEY(tracked_competition_id) REFERENCES tracked_competitions(id) ON DELETE CASCADE
+            );
+            
+            -- Copy existing data
+            INSERT OR IGNORE INTO stats_league_links (
+                id, tracked_competition_id, stats_provider, stats_league_id, 
+                stats_league_name, stats_country_name, confidence, 
+                payload_json, created_at, updated_at
+            )
+            SELECT 
+                id, tracked_competition_id, stats_provider, stats_league_id, 
+                stats_league_name, stats_country_name, confidence, 
+                payload_json, created_at, updated_at
+            FROM stats_league_links_old;
+            
+            -- Drop old table
+            DROP TABLE stats_league_links_old;
+            
+            -- Recreate index
+            CREATE INDEX IF NOT EXISTS idx_stats_league_links_provider
+            ON stats_league_links(stats_provider, stats_league_id);
+            """
+        )
+
+    # Check stats_match_links unique constraint and migrate if old
+    row_match = connection.execute(
+        "SELECT sql FROM sqlite_master WHERE type='table' AND name='stats_match_links'"
+    ).fetchone()
+    if row_match and "UNIQUE(active_event_id)" in row_match[0].replace(" ", ""):
+        connection.executescript(
+            """
+            -- Rename existing table to old
+            ALTER TABLE stats_match_links RENAME TO stats_match_links_old;
+            
+            -- Create new table with updated unique constraint
+            CREATE TABLE stats_match_links (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                active_event_id INTEGER NOT NULL,
+                stats_provider TEXT NOT NULL,
+                stats_match_id TEXT NOT NULL,
+                stats_url TEXT,
+                confidence REAL NOT NULL DEFAULT 0.0,
+                method TEXT NOT NULL,
+                payload_json TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                UNIQUE(active_event_id, stats_provider),
+                FOREIGN KEY(active_event_id) REFERENCES active_events(id) ON DELETE CASCADE
+            );
+            
+            -- Copy existing data
+            INSERT OR IGNORE INTO stats_match_links (
+                id, active_event_id, stats_provider, stats_match_id, 
+                stats_url, confidence, method, payload_json, 
+                created_at, updated_at
+            )
+            SELECT 
+                id, active_event_id, stats_provider, stats_match_id, 
+                stats_url, confidence, method, payload_json, 
+                created_at, updated_at
+            FROM stats_match_links_old;
+            
+            -- Drop old table
+            DROP TABLE stats_match_links_old;
+            
+            -- Recreate index
+            CREATE INDEX IF NOT EXISTS idx_stats_match_links_provider
+            ON stats_match_links(stats_provider, stats_match_id);
+            """
+        )
+
     _ensure_column(
         connection,
         "tracked_competitions",
@@ -3440,7 +3595,30 @@ def _fetch_active_event_row_by_id(
 def _fetch_stats_league_link_row(
     connection: sqlite3.Connection,
     tracked_competition_id: int,
+    stats_provider: str | None = None,
 ) -> sqlite3.Row | None:
+    if stats_provider:
+        normalized_provider = _normalize_platform(stats_provider)
+        return connection.execute(
+            """
+            SELECT
+                id,
+                tracked_competition_id,
+                stats_provider,
+                stats_league_id,
+                stats_league_name,
+                stats_country_name,
+                confidence,
+                payload_json,
+                created_at,
+                updated_at
+            FROM stats_league_links
+            WHERE tracked_competition_id = ?
+              AND stats_provider = ?
+            LIMIT 1
+            """,
+            (tracked_competition_id, normalized_provider),
+        ).fetchone()
     return connection.execute(
         """
         SELECT
@@ -3494,7 +3672,30 @@ def _fetch_stats_league_subscription_row(
 def _fetch_stats_match_link_row(
     connection: sqlite3.Connection,
     active_event_id: int,
+    stats_provider: str | None = None,
 ) -> sqlite3.Row | None:
+    if stats_provider:
+        normalized_provider = _normalize_platform(stats_provider)
+        return connection.execute(
+            """
+            SELECT
+                id,
+                active_event_id,
+                stats_provider,
+                stats_match_id,
+                stats_url,
+                confidence,
+                method,
+                payload_json,
+                created_at,
+                updated_at
+            FROM stats_match_links
+            WHERE active_event_id = ?
+              AND stats_provider = ?
+            LIMIT 1
+            """,
+            (active_event_id, normalized_provider),
+        ).fetchone()
     return connection.execute(
         """
         SELECT

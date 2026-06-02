@@ -209,39 +209,40 @@ class StatsService:
             return summary
 
         for tracked in competitions:
-            link = self.repository.get_stats_league_link(tracked.id)
-            if link is None:
+            links = self.repository.list_stats_league_links(tracked.id)
+            if not links:
                 continue
-            try:
-                provider = self.provider_registry.get(link.stats_provider)
-            except ValueError:
-                continue
-            league_key = (link.stats_provider, link.stats_league_id)
-            if league_key not in warmed_leagues:
-                warmed_leagues.add(league_key)
-                summary["leagues"] += 1
-                getter = getattr(provider, "get_league_overview", None)
-                if callable(getter):
-                    try:
-                        await getter(link.stats_league_id, cache_ttl=ttl_seconds)
-                    except TypeError:
-                        await getter(link.stats_league_id)
-                    except Exception:
-                        logger.exception("Prefetch league overview failed competition=%s", tracked.id)
-                        summary["errors"] += 1
-
-            try:
-                events = self.repository.get_active_events(tracked.id, only_future=True)
-            except Exception:
-                logger.exception("Prefetch could not load active events competition=%s", tracked.id)
-                events = []
-            for event in events:
+            for link in links:
                 try:
-                    warmed = await self._warm_event_report(provider, link, tracked, event, ttl_seconds)
-                    summary["reports" if warmed else "skipped"] += 1
+                    provider = self.provider_registry.get(link.stats_provider)
+                except ValueError:
+                    continue
+                league_key = (link.stats_provider, link.stats_league_id)
+                if league_key not in warmed_leagues:
+                    warmed_leagues.add(league_key)
+                    summary["leagues"] += 1
+                    getter = getattr(provider, "get_league_overview", None)
+                    if callable(getter):
+                        try:
+                            await getter(link.stats_league_id, cache_ttl=ttl_seconds)
+                        except TypeError:
+                            await getter(link.stats_league_id)
+                        except Exception:
+                            logger.exception("Prefetch league overview failed competition=%s provider=%s", tracked.id, link.stats_provider)
+                            summary["errors"] += 1
+
+                try:
+                    events = self.repository.get_active_events(tracked.id, only_future=True)
                 except Exception:
-                    logger.exception("Prefetch report failed event=%s", getattr(event, "id", "?"))
-                    summary["errors"] += 1
+                    logger.exception("Prefetch could not load active events competition=%s", tracked.id)
+                    events = []
+                for event in events:
+                    try:
+                        warmed = await self._warm_event_report(provider, link, tracked, event, ttl_seconds)
+                        summary["reports" if warmed else "skipped"] += 1
+                    except Exception:
+                        logger.exception("Prefetch report failed event=%s provider=%s", getattr(event, "id", "?"), link.stats_provider)
+                        summary["errors"] += 1
 
         list_standalone = getattr(self.repository, "list_globally_active_stats_leagues", None)
         standalone = list_standalone() if callable(list_standalone) else []
@@ -275,7 +276,7 @@ class StatsService:
     async def _warm_event_report(self, provider, link, tracked, event, ttl_seconds: float) -> bool:
         """Resolve one odds event to a stats match and prewarm its report. True if warmed."""
 
-        stored = self.repository.get_stats_match_link(event.id)
+        stored = self.repository.get_stats_match_link(event.id, stats_provider=link.stats_provider)
         if stored is not None and stored.stats_provider == link.stats_provider:
             stats_match_id = stored.stats_match_id
         else:
@@ -396,22 +397,21 @@ class StatsService:
         seen: set[tuple[str, str]] = set()
         for subscription in tracked_subscriptions:
             tracked = subscription.tracked_league
-            link = self.repository.get_stats_league_link(tracked.id)
-            if link is None:
-                continue
-            key = (link.stats_provider, link.stats_league_id)
-            if key in seen:
-                continue
-            seen.add(key)
-            leagues.append(
-                ExplorableStatsLeague(
-                    provider_key=link.stats_provider,
-                    league_id=link.stats_league_id,
-                    league_name=link.stats_league_name,
-                    country_name=link.stats_country_name,
-                    label=f"{tracked.competition_name} → {link.stats_league_name}",
+            links = self.repository.list_stats_league_links(tracked.id)
+            for link in links:
+                key = (link.stats_provider, link.stats_league_id)
+                if key in seen:
+                    continue
+                seen.add(key)
+                leagues.append(
+                    ExplorableStatsLeague(
+                        provider_key=link.stats_provider,
+                        league_id=link.stats_league_id,
+                        league_name=link.stats_league_name,
+                        country_name=link.stats_country_name,
+                        label=f"{tracked.competition_name} → {link.stats_league_name}",
+                    )
                 )
-            )
         for subscription in self.repository.list_stats_league_subscriptions(chat_id):
             key = (subscription.stats_provider, subscription.stats_league_id)
             if key in seen:
@@ -463,21 +463,22 @@ class StatsService:
         lines = ["Vínculos de stats:"]
         for index, subscription in enumerate(tracked_subscriptions, start=1):
             tracked = subscription.tracked_league
-            link = self.repository.get_stats_league_link(tracked.id)
+            links = self.repository.list_stats_league_links(tracked.id)
             lines.append(f"{index} - [{tracked.platform}] {tracked.competition_name}")
-            if link is None:
+            if not links:
                 lines.append("    Stats: sin vincular")
                 continue
-            provider_name = _provider_display_name(self.provider_registry, link.stats_provider)
-            country = f" | {link.stats_country_name}" if link.stats_country_name else ""
-            lines.append(
-                "    "
-                f"Stats: {provider_name}{country} | {link.stats_league_name} "
-                f"| id={link.stats_league_id} | confidence={link.confidence:.2f}"
-            )
+            for link in links:
+                provider_name = _provider_display_name(self.provider_registry, link.stats_provider)
+                country = f" | {link.stats_country_name}" if link.stats_country_name else ""
+                lines.append(
+                    "    "
+                    f"Stats: {provider_name}{country} | {link.stats_league_name} "
+                    f"| id={link.stats_league_id} | confidence={link.confidence:.2f}"
+                )
 
         lines.append("")
-        lines.append("Para corregir un vínculo, corré /link_stats de nuevo sobre esa liga.")
+        lines.append("Para agregar o corregir un vínculo, corré /link_stats de nuevo sobre esa liga.")
         return CommandResult(ok=True, message="\n".join(lines))
 
     async def build_match_stats_report(
@@ -529,14 +530,20 @@ class StatsService:
             )
 
         match = matches[event_number - 1]
+        
+        # 1. Collect all providers we should query
         direct_provider_key = _provider_key_from_stats_url(match.stats_url)
-        stored_link = self.repository.get_stats_match_link(match.id)
-        league_link = self.repository.get_stats_league_link(tracked_subscription.tracked_league.id)
-
-        provider_key = direct_provider_key or (stored_link.stats_provider if stored_link else None)
-        if provider_key is None and league_link is not None:
-            provider_key = league_link.stats_provider
-        if provider_key is None:
+        league_links = self.repository.list_stats_league_links(tracked_subscription.tracked_league.id)
+        
+        providers_to_query: list[tuple[str, str | None]] = []
+        if direct_provider_key:
+            providers_to_query.append((direct_provider_key, None))
+            
+        for link in league_links:
+            if not any(p[0] == link.stats_provider for p in providers_to_query):
+                providers_to_query.append((link.stats_provider, link.stats_league_id))
+                
+        if not providers_to_query:
             return StatsResolution(
                 kind="error",
                 result=CommandResult(
@@ -545,28 +552,6 @@ class StatsService:
                         "No encontré stats para ese evento.\n"
                         "Si la plataforma no trae URL de stats directa, primero vinculá la liga con /link_stats."
                     ),
-                ),
-            )
-
-        try:
-            provider = self.provider_registry.get(provider_key)
-        except ValueError:
-            return StatsResolution(
-                kind="error",
-                result=CommandResult(ok=False, message=f"El provider de stats `{provider_key}` no está registrado."),
-            )
-
-        # 1) A confirmed link for this exact event always wins.
-        if stored_link is not None and stored_link.stats_provider == provider_key:
-            return StatsResolution(
-                kind="report",
-                result=await self._render_report(
-                    provider_key=provider_key,
-                    provider=provider,
-                    match=match,
-                    stats_match_id=stored_link.stats_match_id,
-                    confidence=stored_link.confidence,
-                    method=stored_link.method,
                 ),
             )
 
@@ -579,29 +564,88 @@ class StatsService:
             platform=match.platform,
             external_event_id=match.external_event_id,
         )
-        league_id = league_link.stats_league_id if league_link is not None else None
 
-        # 2) Confident, unambiguous auto-link: persist and report straight away.
-        resolved = await provider.resolve_match(candidate, league_id=league_id)
-        if resolved is not None:
-            self._persist_match_link(match.id, resolved)
-            return StatsResolution(
-                kind="report",
-                result=await self._render_report(
+        successful_reports: list[str] = []
+        ambiguous_candidates: list[tuple[str, list[StatsMatchLink]]] = []
+        failed_providers: list[str] = []
+
+        for provider_key, league_id in providers_to_query:
+            try:
+                provider = self.provider_registry.get(provider_key)
+            except ValueError:
+                failed_providers.append(provider_key)
+                continue
+
+            # a) A confirmed link for this exact event and provider always wins.
+            stored_link = self.repository.get_stats_match_link(match.id, stats_provider=provider_key)
+            if stored_link is not None:
+                report_res = await self._render_report(
+                    provider_key=provider_key,
+                    provider=provider,
+                    match=match,
+                    stats_match_id=stored_link.stats_match_id,
+                    confidence=stored_link.confidence,
+                    method=stored_link.method,
+                )
+                if report_res.ok:
+                    successful_reports.append(report_res.message)
+                else:
+                    failed_providers.append(provider_key)
+                continue
+
+            # b) Confident, unambiguous auto-link: persist and report.
+            resolved = await provider.resolve_match(candidate, league_id=league_id)
+            if resolved is not None:
+                self._persist_match_link(match.id, resolved)
+                report_res = await self._render_report(
                     provider_key=provider_key,
                     provider=provider,
                     match=match,
                     stats_match_id=resolved.stats_match_id,
                     confidence=resolved.confidence,
                     method=resolved.method,
-                ),
+                )
+                if report_res.ok:
+                    successful_reports.append(report_res.message)
+                else:
+                    failed_providers.append(provider_key)
+                continue
+
+            # c) Ambiguous or low confidence: check if candidates exist for disambiguation.
+            ranked: list[StatsMatchLink] = []
+            if league_id is not None and hasattr(provider, "rank_match_candidates"):
+                ranked = await provider.rank_match_candidates(candidate, league_id=league_id)
+            if ranked:
+                ambiguous_candidates.append((provider_key, ranked))
+            else:
+                failed_providers.append(provider_key)
+
+        # 2. Return the aggregated result
+        if successful_reports:
+            # Combine successful reports using a nice visual separator
+            combined_message = "\n\n━━━━━━━━━━━━━━━━━━━━\n\n".join(successful_reports)
+            
+            # If any provider was ambiguous or failed, append a non-intrusive footnote
+            footnotes = []
+            for p_key, _ in ambiguous_candidates:
+                p_name = _provider_display_name(self.provider_registry, p_key)
+                footnotes.append(f"• *{p_name}*: No se pudo vincular automáticamente por ambigüedad. Usá `/stats` interactivo para confirmar.")
+            for p_key in failed_providers:
+                p_name = _provider_display_name(self.provider_registry, p_key)
+                footnotes.append(f"• *{p_name}*: No se encontraron datos para este partido.")
+                
+            if footnotes:
+                combined_message += "\n\n⚠️ *Proveedores adicionales:*\n" + "\n".join(footnotes)
+                
+            return StatsResolution(
+                kind="report",
+                result=CommandResult(ok=True, message=combined_message)
             )
 
-        # 3) Ambiguous or low confidence: offer ranked candidates if any exist.
-        ranked: list[StatsMatchLink] = []
-        if league_id is not None and hasattr(provider, "rank_match_candidates"):
-            ranked = await provider.rank_match_candidates(candidate, league_id=league_id)
-        if ranked:
+        # If zero reports succeeded, check if we have ambiguous candidates to let the user choose
+        if ambiguous_candidates:
+            # Pick the first ambiguous provider to prompt the user
+            provider_key, ranked = ambiguous_candidates[0]
             return StatsResolution(
                 kind="choose",
                 candidates=tuple(
@@ -611,22 +655,23 @@ class StatsService:
                 provider_key=provider_key,
             )
 
-        current_link = ""
-        if league_link is not None:
-            provider_name = _provider_display_name(self.provider_registry, league_link.stats_provider)
-            current_link = (
-                "\n\n"
-                f"Vínculo actual: {provider_name} | "
-                f"{league_link.stats_league_name} | id={league_link.stats_league_id}"
-            )
+        # If everything failed completely
+        current_links_str = ""
+        if league_links:
+            lines = ["\n\nVínculos actuales:"]
+            for link in league_links:
+                p_name = _provider_display_name(self.provider_registry, link.stats_provider)
+                lines.append(f"• {p_name} | {link.stats_league_name} | id={link.stats_league_id}")
+            current_links_str = "\n".join(lines)
+            
         return StatsResolution(
             kind="error",
             result=CommandResult(
                 ok=False,
                 message=(
-                    "No pude vincular ese partido con el provider de stats.\n"
+                    "No pude vincular ese partido con ningún provider de stats.\n"
                     "Probá primero vincular la liga correcta con /link_stats."
-                    f"{current_link}"
+                    f"{current_links_str}"
                 ),
             ),
         )
