@@ -295,6 +295,105 @@ class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):
         remaining = self.repository.list_live_watches(chat)
         self.assertEqual([w.id for w in remaining], [keep.id])
 
+    def test_chat_local_id_generation_and_deletion(self) -> None:
+        chat_a = 111
+        chat_b = 222
+        
+        # Add to chat A
+        w1 = self.repository.add_live_watch(chat_a, home="A1", away="A2")
+        w2 = self.repository.add_live_watch(chat_a, home="B1", away="B2")
+        self.assertEqual(w1.chat_local_id, 1)
+        self.assertEqual(w2.chat_local_id, 2)
+        
+        # Add to chat B
+        w3 = self.repository.add_live_watch(chat_b, home="C1", away="C2")
+        self.assertEqual(w3.chat_local_id, 1)
+        
+        # Remove by local ID in chat A
+        ok = self.repository.remove_live_watch_by_local_id(chat_a, 1)
+        self.assertTrue(ok)
+        
+        # Remaining in chat A
+        remaining = self.repository.list_live_watches(chat_a)
+        self.assertEqual(len(remaining), 1)
+        self.assertEqual(remaining[0].id, w2.id)
+        self.assertEqual(remaining[0].chat_local_id, 2)
+        
+        # Ensure Chat B's watch wasn't affected
+        self.assertEqual(len(self.repository.list_live_watches(chat_b)), 1)
+
+    def test_purge_expired_default_grace_period_is_2_hours(self) -> None:
+        import datetime as _dt
+        chat = 777
+        # Kickoff 2.5 hours ago -> should be purged because 2.5 > 2.0 default grace
+        past = (_dt.datetime.now(_dt.timezone.utc) - _dt.timedelta(hours=2.5)).isoformat()
+        self.repository.add_live_watch(chat, home="A", away="B", kickoff_at=past)
+        
+        # Kickoff 1.5 hours ago -> should be kept because 1.5 < 2.0 default grace
+        future = (_dt.datetime.now(_dt.timezone.utc) - _dt.timedelta(hours=1.5)).isoformat()
+        keep = self.repository.add_live_watch(chat, home="C", away="D", kickoff_at=future)
+        
+        removed = self.repository.purge_expired_live_watches()
+        self.assertEqual(removed, 1)
+        remaining = self.repository.list_live_watches(chat)
+        self.assertEqual(len(remaining), 1)
+        self.assertEqual(remaining[0].id, keep.id)
+
+    def test_kickoff_from_arg_time_tomorrow_shifting(self) -> None:
+        from monitors.live_watch import _kickoff_from_arg_time, _ARG_TZ
+        import datetime as _dt
+        
+        # Current Argentina local time (with clean seconds/microseconds for exact comparisons)
+        now_arg = _dt.datetime.now(_ARG_TZ).replace(second=0, microsecond=0)
+        
+        # Test case 1: Kickoff is 1 hour in the past compared to now
+        # It should stay today (timedelta <= 2.5 hours)
+        target_time1 = now_arg - _dt.timedelta(hours=1)
+        ko_str1 = _kickoff_from_arg_time(target_time1.hour, target_time1.minute)
+        self.assertIsNotNone(ko_str1)
+        ko_dt1 = _dt.datetime.fromisoformat(ko_str1)
+        diff1 = now_arg - ko_dt1.astimezone(_ARG_TZ)
+        self.assertLessEqual(abs(diff1.total_seconds() - 3600), 15)
+        
+        # Test case 2: Kickoff is 5 hours in the past compared to now
+        # Since 5 > 2.5 hours, it must shift to tomorrow (+1 day)
+        target_time2 = now_arg - _dt.timedelta(hours=5)
+        ko_str2 = _kickoff_from_arg_time(target_time2.hour, target_time2.minute)
+        self.assertIsNotNone(ko_str2)
+        ko_dt2 = _dt.datetime.fromisoformat(ko_str2)
+        diff2 = ko_dt2.astimezone(_ARG_TZ) - now_arg
+        # Difference should be tomorrow minus 5 hours = +19 hours in the future
+        self.assertLessEqual(abs(diff2.total_seconds() - 19 * 3600), 15)
+
+        # Test case 3: Kickoff is 2 hours in the future compared to now
+        # It should stay today (future)
+        target_time3 = now_arg + _dt.timedelta(hours=2)
+        ko_str3 = _kickoff_from_arg_time(target_time3.hour, target_time3.minute)
+        self.assertIsNotNone(ko_str3)
+        ko_dt3 = _dt.datetime.fromisoformat(ko_str3)
+        diff3 = ko_dt3.astimezone(_ARG_TZ) - now_arg
+        self.assertLessEqual(abs(diff3.total_seconds() - 2 * 3600), 15)
+
+    def test_get_recommended_poll_interval(self) -> None:
+        import datetime as _dt
+        from datetime import timezone
+        service = LiveWatchService(repository=self.repository)
+        
+        # 1. No active watches -> should return normal interval (60s)
+        self.assertEqual(service.get_recommended_poll_interval(), 60.0)
+        
+        # 2. Has watch, but kickoff is far in the future (e.g. 5 hours) -> should return normal (60s)
+        far_future = (_dt.datetime.now(timezone.utc) + _dt.timedelta(hours=5)).isoformat()
+        self.repository.add_live_watch(123, home="A", away="B", kickoff_at=far_future)
+        self.assertEqual(service.get_recommended_poll_interval(), 60.0)
+        
+        # 3. Has watch starting in 1 minute (within the 2-minute fast-polling window) -> should return fast (15s)
+        near_future = (_dt.datetime.now(timezone.utc) + _dt.timedelta(minutes=1)).isoformat()
+        self.repository.add_live_watch(123, home="C", away="D", kickoff_at=near_future)
+        self.assertEqual(service.get_recommended_poll_interval(), 15.0)
+
+
+
 
 if __name__ == "__main__":
     unittest.main()

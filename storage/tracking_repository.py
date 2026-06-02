@@ -69,6 +69,7 @@ class LiveWatchEntry:
     kickoff_at: str | None = None
     prematch_seen_at: str | None = None
     prematch_platform: str | None = None
+    chat_local_id: int | None = None
 
 
 @dataclass(frozen=True)
@@ -2432,13 +2433,28 @@ class SqliteTrackingRepository:
 
         now_iso = _utc_now_iso()
         with _connect() as connection:
+            row_max = connection.execute(
+                "SELECT COALESCE(MAX(chat_local_id), 0) as max_id FROM live_watch_entries WHERE chat_id = ?",
+                (chat_id,),
+            ).fetchone()
+            next_local_id = (row_max["max_id"] or 0) + 1
+
             cursor = connection.execute(
                 """
                 INSERT INTO live_watch_entries
-                    (chat_id, home, away, league_hint, note, status, created_at, kickoff_at)
-                VALUES (?, ?, ?, ?, ?, 'watching', ?, ?)
+                    (chat_id, chat_local_id, home, away, league_hint, note, status, created_at, kickoff_at)
+                VALUES (?, ?, ?, ?, ?, ?, 'watching', ?, ?)
                 """,
-                (chat_id, home.strip(), away.strip(), (league_hint or None), (note or None), now_iso, kickoff_at),
+                (
+                    chat_id,
+                    next_local_id,
+                    home.strip(),
+                    away.strip(),
+                    (league_hint or None),
+                    (note or None),
+                    now_iso,
+                    kickoff_at,
+                ),
             )
             row = connection.execute(
                 "SELECT * FROM live_watch_entries WHERE id = ?", (cursor.lastrowid,)
@@ -2506,7 +2522,7 @@ class SqliteTrackingRepository:
     def purge_expired_live_watches(
         self,
         *,
-        kickoff_grace_hours: float = 3.5,
+        kickoff_grace_hours: float = 2.0,
         stale_hours: float = 16.0,
         fired_retain_hours: float = 3.0,
     ) -> int:
@@ -2539,6 +2555,16 @@ class SqliteTrackingRepository:
         with _connect() as connection:
             cursor = connection.execute(
                 "DELETE FROM live_watch_entries WHERE id = ? AND chat_id = ?", (watch_id, chat_id)
+            )
+        return cursor.rowcount > 0
+
+    def remove_live_watch_by_local_id(self, chat_id: int, local_id: int) -> bool:
+        """Delete one live-watch entry by chat_local_id for a chat. Returns True if removed."""
+
+        with _connect() as connection:
+            cursor = connection.execute(
+                "DELETE FROM live_watch_entries WHERE chat_local_id = ? AND chat_id = ?",
+                (local_id, chat_id),
             )
         return cursor.rowcount > 0
 
@@ -3091,6 +3117,7 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
     )
     for _live_watch_column in ("kickoff_at", "prematch_seen_at", "prematch_platform"):
         _ensure_column(connection, "live_watch_entries", _live_watch_column, "TEXT")
+    _ensure_column(connection, "live_watch_entries", "chat_local_id", "INTEGER")
 
 
 def _ensure_column(
@@ -3790,6 +3817,7 @@ def _row_to_live_watch(row: sqlite3.Row) -> LiveWatchEntry:
         kickoff_at=row["kickoff_at"] if "kickoff_at" in row.keys() else None,
         prematch_seen_at=row["prematch_seen_at"] if "prematch_seen_at" in row.keys() else None,
         prematch_platform=row["prematch_platform"] if "prematch_platform" in row.keys() else None,
+        chat_local_id=row["chat_local_id"] if "chat_local_id" in row.keys() else None,
     )
 
 

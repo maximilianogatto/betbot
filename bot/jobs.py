@@ -95,7 +95,12 @@ async def _live_watch_loop(application: Application, *, interval_seconds: int) -
             raise
         except Exception:
             logger.exception("Unhandled error during live-watch cycle.")
-        await asyncio.sleep(interval_seconds)
+        
+        sleep_sec = service.get_recommended_poll_interval(
+            default_normal=float(interval_seconds),
+            default_fast=15.0
+        )
+        await asyncio.sleep(sleep_sec)
 
 
 async def start_tracking_monitor(application: Application, interval_seconds: int) -> None:

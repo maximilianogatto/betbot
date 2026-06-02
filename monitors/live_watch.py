@@ -10,7 +10,7 @@ misprice. Matching is per-side: both home and away must clear a similarity floor
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from difflib import SequenceMatcher
 import logging
 import re
@@ -129,6 +129,9 @@ class LiveWatchService:
     def remove_watch(self, chat_id: int, watch_id: int) -> bool:
         return self.repository.remove_live_watch(chat_id, watch_id)
 
+    def remove_watch_by_local_id(self, chat_id: int, local_id: int) -> bool:
+        return self.repository.remove_live_watch_by_local_id(chat_id, local_id)
+
     def clear_watches(self, chat_id: int, *, status: str | None = None) -> int:
         return self.repository.clear_live_watches(chat_id, status=status)
 
@@ -226,6 +229,32 @@ class LiveWatchService:
 
         return self.repository.purge_expired_live_watches()
 
+    def get_recommended_poll_interval(self, default_normal: float = 60.0, default_fast: float = 15.0) -> float:
+        """Determine the next sleep interval based on active watch kickoffs.
+
+        Returns default_fast (15s) if any watched fixture starts in <= 2 min
+        or started <= 15 min ago, otherwise default_normal (60s).
+        """
+
+        watches = self.repository.list_all_active_live_watches()
+        if not watches:
+            return default_normal
+
+        now = datetime.now(timezone.utc)
+        for w in watches:
+            if w.kickoff_at:
+                try:
+                    ko = datetime.fromisoformat(w.kickoff_at)
+                    # Fast window: [ko - 2 min, ko + 15 min]
+                    start_fast = ko - timedelta(minutes=2)
+                    end_fast = ko + timedelta(minutes=15)
+                    if start_fast <= now <= end_fast:
+                        return default_fast
+                except Exception:
+                    pass
+        return default_normal
+
+
 
 def render_live_hit(hit: LiveWatchHit) -> str:
     """Build the Telegram alert for a watched fixture (live or prematch listing)."""
@@ -266,12 +295,15 @@ _ARG_TZ = ZoneInfo("America/Argentina/Buenos_Aires")
 
 
 def _kickoff_from_arg_time(hour: int, minute: int) -> str | None:
-    """Build today's (Argentina) kickoff as a UTC ISO timestamp."""
+    """Build today's (or tomorrow's if in the past) Argentina kickoff as a UTC ISO timestamp."""
 
     if not (0 <= hour < 24 and 0 <= minute < 60):
         return None
     now_arg = datetime.now(_ARG_TZ)
     kickoff = now_arg.replace(hour=hour, minute=minute, second=0, microsecond=0)
+    # If the kickoff is in the past by more than 2.5 hours, it belongs to tomorrow.
+    if kickoff < now_arg and (now_arg - kickoff) > timedelta(hours=2.5):
+        kickoff += timedelta(days=1)
     return kickoff.astimezone(timezone.utc).isoformat()
 
 

@@ -275,13 +275,18 @@ async def watch_live_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
             "No pude leer ningún partido. Usá 'Local - Visitante' (uno por renglón)."
         )
         return
-    msg = [f"👁️ Vigilando {len(added)} partido(s) para avisarte cuando salgan en vivo:"]
+    msg = [
+        f"👁️ *Vigilando {len(added)} partido(s) en vivo:*",
+        "━━━━━━━━━━━━━━━━━━━━\n"
+    ]
     for entry in added:
-        hint = f" [{entry.league_hint}]" if entry.league_hint else ""
-        msg.append(f"  #{entry.id} · {entry.home} vs {entry.away}{hint}")
+        hint = f" ({entry.league_hint})" if entry.league_hint else ""
+        disp_id = entry.chat_local_id if entry.chat_local_id is not None else entry.id
+        msg.append(f"  *#{disp_id}* · `{entry.home}` vs `{entry.away}`{hint}")
     if skipped:
-        msg.append(f"\n({skipped} renglón(es) no los pude interpretar.)")
-    await _reply_text_chunks(update.message, "\n".join(msg))
+        msg.append(f"\n_(Se omitieron {skipped} renglones no legibles)_")
+    msg.append("\nTe avisaré en este chat apenas salgan en vivo.")
+    await _reply_text_chunks(update.message, "\n".join(msg), parse_mode="Markdown")
 
 
 async def watch_live_photo_handler(
@@ -368,19 +373,30 @@ async def watch_live_photo_handler(
                 match_text = columns[match_col_idx]
                 league_hint = None
                 note = None
+                time_str = None
+
+                # Search for a time column anywhere in this row's columns
+                for col in columns:
+                    tm = re.search(r"\b(\d{1,2})[:.](\d{2})\b", col)
+                    if tm:
+                        time_str = f"{int(tm.group(1)):02d}:{tm.group(2)}"
+                        break
 
                 if match_col_idx > 0:
                     hint_candidate = columns[match_col_idx - 1]
                     if not any(header in hint_candidate.lower() for header in ("horario", "competicion", "partido", "detalle")):
-                        if not (":" in hint_candidate and len(hint_candidate) <= 6):
+                        if not re.search(r"\b(\d{1,2})[:.](\d{2})\b", hint_candidate):
                             league_hint = hint_candidate
 
                 if match_col_idx + 1 < len(columns):
                     note_candidate = columns[match_col_idx + 1]
                     if not any(header in note_candidate.lower() for header in ("detalle", "note")):
-                        note = note_candidate
+                        if not re.search(r"\b(\d{1,2})[:.](\d{2})\b", note_candidate):
+                            note = note_candidate
 
                 line = ""
+                if time_str:
+                    line += f"{time_str} "
                 if league_hint:
                     line += f"{league_hint} | "
                 line += match_text
@@ -404,13 +420,17 @@ async def watch_live_photo_handler(
             )
             return
 
-        msg = [f"📸 ¡Imagen leída! Vigilando {len(added)} partido(s) extraídos del fixture:"]
+        msg = [
+            "📸 *¡Fixture leído con éxito!* Vigilando partidos:",
+            "━━━━━━━━━━━━━━━━━━━━\n"
+        ]
         for entry in added:
-            hint = f" [{entry.league_hint}]" if entry.league_hint else ""
-            msg.append(f"  #{entry.id} · {entry.home} vs {entry.away}{hint}")
+            hint = f" ({entry.league_hint})" if entry.league_hint else ""
+            disp_id = entry.chat_local_id if entry.chat_local_id is not None else entry.id
+            msg.append(f"  *#{disp_id}* · `{entry.home}` vs `{entry.away}`{hint}")
 
         await loading_msg.delete()
-        await _reply_text_chunks(update.message, "\n".join(msg))
+        await _reply_text_chunks(update.message, "\n".join(msg), parse_mode="Markdown")
 
     except Exception as e:
         logger.exception("Error procesando foto de fixture")
@@ -446,17 +466,37 @@ async def watching_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         return
     lines: list[str] = []
     if watching:
-        lines.append(f"👁️ En vigilancia ({len(watching)}):")
+        lines.append("👁️ *En vigilancia:*")
+        lines.append("━━━━━━━━━━━━━━━━━━━━")
         for e in watching:
-            hint = f" [{e.league_hint}]" if e.league_hint else ""
-            lines.append(f"  #{e.id} · {e.home} vs {e.away}{hint}")
+            time_lbl = "Pendiente"
+            if e.kickoff_at:
+                try:
+                    from datetime import datetime
+                    from zoneinfo import ZoneInfo
+                    dt = datetime.fromisoformat(e.kickoff_at)
+                    dt_arg = dt.astimezone(ZoneInfo("America/Argentina/Buenos_Aires"))
+                    time_lbl = dt_arg.strftime('%H:%M')
+                except Exception:
+                    pass
+            disp_id = e.chat_local_id if e.chat_local_id is not None else e.id
+            hint = f" ({e.league_hint})" if e.league_hint else ""
+            lines.append(
+                f"  *#{disp_id}* · 🕒 `{time_lbl}`{hint}\n"
+                f"     ⚽ `{e.home}` vs `{e.away}`\n"
+            )
     if fired:
-        lines.append(f"\n🔴 Ya salieron en vivo ({len(fired)}):")
+        lines.append("\n🔴 *Ya salieron en vivo:*")
+        lines.append("━━━━━━━━━━━━━━━━━━━━")
         for e in fired:
             where = (e.matched_platform or "").replace("_http", "")
-            lines.append(f"  #{e.id} · {e.home} vs {e.away} → {where} {e.matched_minute or ''}".rstrip())
-    lines.append("\nBorrar: /unwatch <id> · /unwatch all")
-    await _reply_text_chunks(update.message, "\n".join(lines))
+            disp_id = e.chat_local_id if e.chat_local_id is not None else e.id
+            lines.append(
+                f"  *#{disp_id}* · ⚽ `{e.home}` vs `{e.away}`\n"
+                f"     🏦 → {where} {e.matched_minute or ''}\n".rstrip()
+            )
+    lines.append("\nBorrar: `/unwatch <id>` · `/unwatch all`")
+    await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
 
 
 async def unwatch_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -474,7 +514,12 @@ async def unwatch_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if not arg.isdigit():
         await update.message.reply_text("Usá /unwatch <id> (mirá los ids con /watching) o /unwatch all.")
         return
-    ok = service.remove_watch(chat_id, int(arg))
+    target_id = int(arg)
+    ok = False
+    if hasattr(service, "remove_watch_by_local_id"):
+        ok = service.remove_watch_by_local_id(chat_id, target_id)
+    if not ok:
+        ok = service.remove_watch(chat_id, target_id)
     await update.message.reply_text("🗑️ Borrado." if ok else "No encontré ese id en tu vigilancia.")
 
 
