@@ -37,9 +37,14 @@ def register_default_stats_providers(
         cache = tracking_repository
     target.register(SportradarHttpStatsProvider(payload_cache=cache))
     target.register(PalloliittoStatsProvider(payload_cache=cache))
-    # SofaScore (HTTP-only via curl_cffi). Disable with SOFASCORE_ENABLED=false.
-    if os.getenv("SOFASCORE_ENABLED", "true").strip().lower() not in {"false", "0", "no"}:
-        target.register(SofaScoreHttpStatsProvider(payload_cache=cache))
+    # SofaScore currently exposes public league metadata, but its fixture/report
+    # API can return anti-bot `challenge` responses even to Playwright. Keep it
+    # registered for old links, but hide it from new Telegram linking unless it
+    # is explicitly enabled.
+    sofascore = SofaScoreHttpStatsProvider(payload_cache=cache)
+    if os.getenv("SOFASCORE_ENABLED", "false").strip().lower() not in {"true", "1", "yes"}:
+        sofascore.implemented = False
+    target.register(sofascore)
     # Flashscore (HTTP-only via static x-fsign; broadest league coverage).
     if os.getenv("FLASHSCORE_ENABLED", "true").strip().lower() not in {"false", "0", "no"}:
         target.register(FlashscoreHttpStatsProvider(payload_cache=cache))
