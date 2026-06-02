@@ -40,6 +40,35 @@ class FakeSofaScoreClient:
             },
         ]
 
+    def get_public_html(self, url: str) -> str:
+        self.last_public_url = url
+        next_data = {
+            "props": {
+                "pageProps": {
+                    "initialProps": {
+                        "uniqueTournament": {
+                            "id": 33650,
+                            "name": "Northern Territory Premier League, Women",
+                            "slug": "northern-territory-premier-league-women",
+                            "category": {
+                                "name": "Australia",
+                                "slug": "australia",
+                                "country": {"name": "Australia"},
+                            },
+                        },
+                        "info": {"season": {"id": 91941, "name": "2026", "year": "2026"}},
+                        "seasons": [{"id": 91941, "name": "2026", "year": "2026"}],
+                        "hasEvents": True,
+                    }
+                }
+            }
+        }
+        return (
+            '<html><head><script id="__NEXT_DATA__" type="application/json">'
+            f"{json.dumps(next_data)}"
+            "</script></head></html>"
+        )
+
     def get_unique_tournament_seasons(self, tournament_id: int):
         self.last_tournament_id = tournament_id
         return [{"id": 88647, "name": "Northern NSW NPL 2026", "year": "2026"}]
@@ -166,12 +195,35 @@ class SofaScoreBotReadyProviderTests(unittest.TestCase):
         self.assertEqual(leagues[0].league_id, "1638")
         self.assertEqual(leagues[0].provider, "sofascore_http")
 
+    def test_describe_league_from_public_tournament_url(self) -> None:
+        option = asyncio.run(
+            self.provider.describe_league(
+                "https://www.sofascore.com/es-la/football/tournament/australia/"
+                "northern-territory-premier-league-women/33650#id:91941"
+            )
+        )
+
+        self.assertIsNotNone(option)
+        assert option is not None
+        self.assertEqual(option.provider, "sofascore_http")
+        self.assertEqual(option.league_id, "33650:91941")
+        self.assertEqual(option.season_id, "91941")
+        self.assertEqual(option.country_name, "Australia")
+        self.assertEqual(option.league_name, "Northern Territory Premier League, Women")
+        self.assertEqual(self.client.last_public_url, option.source_url)
+
     def test_list_fixtures_deduplicates_next_and_last_pages(self) -> None:
         fixtures = asyncio.run(self.provider.list_fixtures("1638"))
 
         self.assertEqual(len(fixtures), 1)
         self.assertEqual(fixtures[0].match_id, "15981197")
         self.assertEqual(self.client.season_event_calls, 2)
+
+    def test_list_fixtures_accepts_explicit_season_league_id(self) -> None:
+        fixtures = asyncio.run(self.provider.list_fixtures("1638:88647"))
+
+        self.assertEqual(len(fixtures), 1)
+        self.assertEqual(self.client.last_season_args, (1638, 88647, "last", 0))
 
     def test_resolve_match_scores_similar_names(self) -> None:
         link = asyncio.run(

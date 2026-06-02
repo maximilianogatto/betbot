@@ -156,6 +156,46 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         stats_service.link_league.assert_called_once()
         self.assertIn("vinculada", message.reply_text.await_args.args[0])
 
+    async def test_link_stats_links_by_provider_url(self) -> None:
+        sofa_url = (
+            "https://www.sofascore.com/es-la/football/tournament/australia/"
+            "northern-territory-premier-league-women/33650#id:91941"
+        )
+        option = StatsLeagueOption(
+            provider="sofascore_http",
+            provider_display_name="SofaScore HTTP",
+            country_name="Australia",
+            league_id="33650:91941",
+            league_name="Northern Territory Premier League, Women",
+            season_id="91941",
+            source_url=sofa_url,
+        )
+        stats_service = SimpleNamespace(
+            describe_league=AsyncMock(return_value=option),
+            link_league=Mock(return_value=CommandResult(ok=True, message="✅ Liga de stats vinculada.")),
+        )
+        provider = StatsProviderDescriptor(
+            key="sofascore_http",
+            display_name="SofaScore HTTP",
+            capabilities=StatsProviderCapabilities(supports_league_discovery=True),
+        )
+        message = SimpleNamespace(text=sofa_url, reply_text=AsyncMock())
+        context = SimpleNamespace(
+            user_data={
+                LINK_STATS_SELECTED_PROVIDER_CONTEXT_KEY: provider,
+                LINK_STATS_SELECTED_TRACK_CONTEXT_KEY: _tracked_subscription(),
+            },
+        )
+        update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
+
+        with patch("bot.handlers.get_stats_service", return_value=stats_service):
+            state = await link_stats_enter_country(update, context)
+
+        self.assertEqual(state, -1)
+        stats_service.describe_league.assert_awaited_once_with(provider_key="sofascore_http", league_id=sofa_url)
+        stats_service.link_league.assert_called_once()
+        self.assertIn("vinculada", message.reply_text.await_args.args[0])
+
     async def test_link_stats_country_reports_sportradar_bootstrap_failure(self) -> None:
         stats_service = SimpleNamespace(
             search_and_rank_leagues=AsyncMock(

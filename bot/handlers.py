@@ -1421,6 +1421,7 @@ async def track_league_select_league(
 
 
 _STATSHUB_TOURNAMENT_RE = re.compile(r"statshub\.sportradar\.com/\S*?/tournament/(\d+)", re.IGNORECASE)
+_HTTP_URL_RE = re.compile(r"^https?://", re.IGNORECASE)
 
 
 def _extract_statshub_tournament_id(text: str) -> str | None:
@@ -1428,6 +1429,16 @@ def _extract_statshub_tournament_id(text: str) -> str | None:
 
     match = _STATSHUB_TOURNAMENT_RE.search(text or "")
     return match.group(1) if match else None
+
+
+def _extract_direct_stats_league_reference(text: str) -> str | None:
+    """Return the provider-native league reference from a pasted direct URL."""
+
+    statshub_tournament_id = _extract_statshub_tournament_id(text)
+    if statshub_tournament_id is not None:
+        return statshub_tournament_id
+    stripped = (text or "").strip()
+    return stripped if _HTTP_URL_RE.search(stripped) else None
 
 
 async def track_stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -1473,12 +1484,7 @@ async def track_stats_select_provider(update: Update, context: ContextTypes.DEFA
         return ConversationHandler.END
     context.user_data[TRACK_STATS_SELECTED_PROVIDER_CONTEXT_KEY] = selected_provider
     await update.message.reply_text(
-        (
-            f"Provider elegido: {selected_provider.display_name}\n\n"
-            "Escribí el país para buscar ligas de stats.\n"
-            "Ejemplos: Spain, Australia, Argentina, England.\n\n"
-            "Para Sportradar también podés pegar directamente una URL de torneo."
-        ),
+        _build_stats_provider_input_message(selected_provider),
         reply_markup=ReplyKeyboardRemove(),
     )
     return ENTER_COUNTRY_FOR_TRACK_STATS
@@ -1499,19 +1505,23 @@ async def track_stats_enter_country(update: Update, context: ContextTypes.DEFAUL
         return ENTER_COUNTRY_FOR_TRACK_STATS
 
     stats_service = get_stats_service(context)
-    tournament_id = _extract_statshub_tournament_id(country_name)
-    if tournament_id is not None:
-        await update.message.reply_text(f"Resolviendo torneo de Statshub id={tournament_id}...")
+    direct_reference = _extract_direct_stats_league_reference(country_name)
+    if direct_reference is not None:
+        await update.message.reply_text(f"Resolviendo liga de {selected_provider.display_name}...")
         try:
             option = await stats_service.describe_league(
                 provider_key=selected_provider.key,
-                league_id=tournament_id,
+                league_id=direct_reference,
             )
         except Exception:
-            logger.exception("Standalone stats league describe-by-url failed id=%s", tournament_id)
+            logger.exception(
+                "Standalone stats league describe-by-url failed provider=%s reference=%s",
+                selected_provider.key,
+                direct_reference,
+            )
             option = None
         if option is None:
-            await update.message.reply_text("No pude resolver esa URL de torneo.", reply_markup=ReplyKeyboardRemove())
+            await update.message.reply_text("No pude resolver esa URL de liga.", reply_markup=ReplyKeyboardRemove())
             _clear_all_selection_context(context)
             return ConversationHandler.END
         result = stats_service.track_stats_league(chat_id=update.effective_chat.id, option=option)
@@ -1692,15 +1702,7 @@ async def link_stats_select_provider(update: Update, context: ContextTypes.DEFAU
 
     context.user_data[LINK_STATS_SELECTED_PROVIDER_CONTEXT_KEY] = selected_provider
     await update.message.reply_text(
-        (
-            f"Provider elegido: {selected_provider.display_name}\n\n"
-            "Tenés 2 formas de vincular:\n\n"
-            "1) Escribí el país para buscar (ej: Spain, Australia, England).\n\n"
-            "2) Si la liga no aparece, buscala manualmente en la página de fútbol del proveedor:\n"
-            "https://statshub.sportradar.com/bet365/es/sport/1\n"
-            "abrí la liga y pegá acá su URL, por ejemplo:\n"
-            "https://statshub.sportradar.com/bet365/es/sport/1/tournament/28743"
-        ),
+        _build_stats_provider_input_message(selected_provider),
         reply_markup=ReplyKeyboardRemove(),
     )
     return ENTER_COUNTRY_FOR_LINK_STATS
@@ -1723,16 +1725,16 @@ async def link_stats_enter_country(update: Update, context: ContextTypes.DEFAULT
 
     country_name = (update.message.text or "").strip()
     if not country_name:
-        await update.message.reply_text("Escribí un país válido o pegá una URL de Statshub.")
+        await update.message.reply_text("Escribí un país válido o pegá una URL de liga del provider.")
         return ENTER_COUNTRY_FOR_LINK_STATS
 
     stats_service = get_stats_service(context)
     selected_track = context.user_data.get(LINK_STATS_SELECTED_TRACK_CONTEXT_KEY)
 
-    # Direct link by pasted Statshub tournament URL, bypassing country discovery
-    # (which omits some valid tournaments, e.g. USL League Two).
-    tournament_id = _extract_statshub_tournament_id(country_name)
-    if tournament_id is not None:
+    # Direct provider URL, bypassing country discovery (some providers omit valid
+    # leagues from search or expose a richer public tournament page).
+    direct_reference = _extract_direct_stats_league_reference(country_name)
+    if direct_reference is not None:
         if not isinstance(selected_track, TrackedCompetitionSubscription):
             await update.message.reply_text(
                 "No encontré la liga de odds seleccionada. Probá de nuevo con /link_stats.",
@@ -1740,19 +1742,23 @@ async def link_stats_enter_country(update: Update, context: ContextTypes.DEFAULT
             )
             _clear_all_selection_context(context)
             return ConversationHandler.END
-        await update.message.reply_text(f"Resolviendo torneo de Statshub id={tournament_id}...")
+        await update.message.reply_text(f"Resolviendo liga de {selected_provider.display_name}...")
         try:
             option = await stats_service.describe_league(
                 provider_key=selected_provider.key,
-                league_id=tournament_id,
+                league_id=direct_reference,
             )
         except Exception:
-            logger.exception("Stats league describe-by-url failed id=%s", tournament_id)
+            logger.exception(
+                "Stats league describe-by-url failed provider=%s reference=%s",
+                selected_provider.key,
+                direct_reference,
+            )
             option = None
         if option is None:
             await update.message.reply_text(
-                f"No pude resolver el torneo id={tournament_id} en {selected_provider.display_name}.\n"
-                "Verificá la URL de Statshub o probá con el país.",
+                f"No pude resolver esa URL en {selected_provider.display_name}.\n"
+                "Verificá que sea una URL de liga/torneo del provider o probá con el país.",
                 reply_markup=ReplyKeyboardRemove(),
             )
             _clear_all_selection_context(context)
@@ -1829,9 +1835,7 @@ async def link_stats_enter_country(update: Update, context: ContextTypes.DEFAULT
     if not options:
         await update.message.reply_text(
             f"No encontré ligas de stats para {country_name} en {selected_provider.display_name}.\n\n"
-            "Probá con otro nombre de país, o buscala manualmente en:\n"
-            "https://statshub.sportradar.com/bet365/es/sport/1\n"
-            "abrí la liga y pegá acá su URL para vincularla. (/cancel para salir)",
+            "Probá con otro nombre de país o pegá una URL directa de la liga del provider. (/cancel para salir)",
         )
         return ENTER_COUNTRY_FOR_LINK_STATS
 
@@ -2902,6 +2906,43 @@ def _build_stats_provider_selection_message(providers: list[StatsProviderDescrip
         live = "live" if provider.capabilities.supports_live else "prematch"
         lines.append(f"{index} - {provider.display_name} ({provider.key}) | {live}")
 
+    return "\n".join(lines)
+
+
+def _build_stats_provider_input_message(provider: StatsProviderDescriptor) -> str:
+    """Build the provider-specific country/direct-URL prompt."""
+
+    lines = [
+        f"Provider elegido: {provider.display_name}",
+        "",
+        "Tenés 2 formas de buscar o vincular:",
+        "",
+        "1) Escribí el país para buscar ligas de stats.",
+        "Ejemplos: Spain, Australia, Argentina, England.",
+        "",
+        "2) Si la liga no aparece, pegá una URL directa de liga/torneo del provider.",
+    ]
+    if provider.key == "sportradar_statshub":
+        lines.extend(
+            [
+                "Ejemplo Sportradar:",
+                "https://statshub.sportradar.com/bet365/es/sport/1/tournament/28743",
+            ]
+        )
+    elif provider.key == "sofascore_http":
+        lines.extend(
+            [
+                "Ejemplo SofaScore:",
+                "https://www.sofascore.com/es-la/football/tournament/australia/northern-territory-premier-league-women/33650#id:91941",
+            ]
+        )
+    elif provider.key == "footystats_http":
+        lines.extend(
+            [
+                "Ejemplo FootyStats:",
+                "https://footystats.org/australia/northern-nsw-npl",
+            ]
+        )
     return "\n".join(lines)
 
 

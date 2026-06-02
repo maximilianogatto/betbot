@@ -127,6 +127,47 @@ class SofaScoreHTTPClient:
                     self._sleep(self.settings.retry_delay_seconds)
         raise SofaScoreHTTPError(f"SofaScore GET {path} failed after retries: {last_error}") from last_error
 
+    def get_public_html(self, url: str) -> str:
+        """GET one public SofaScore page and return its HTML.
+
+        The API JSON endpoints can be intermittently challenged, while public
+        tournament pages still expose compact Next.js bootstrap data. Providers
+        use this only for direct URL resolution, not for DOM scraping.
+        """
+
+        last_error: Exception | None = None
+        for attempt in range(1, self.settings.retries + 1):
+            try:
+                with self._request_lock:
+                    self._wait_for_rate_limit()
+                    started_at = self._monotonic()
+                    self._last_request_started_at = started_at
+                    response = self._session.get(
+                        url,
+                        timeout=self.settings.timeout_seconds,
+                        impersonate=self.settings.impersonate,
+                    )
+                    self.request_count += 1
+                elapsed_seconds = self._monotonic() - started_at
+                logger.debug(
+                    "SofaScore public GET url=%s status=%s duration_seconds=%.3f attempt=%s/%s",
+                    url,
+                    response.status_code,
+                    elapsed_seconds,
+                    attempt,
+                    self.settings.retries,
+                )
+                if response.status_code != 200:
+                    raise SofaScoreHTTPError(
+                        f"SofaScore public GET {url} returned HTTP {response.status_code}: {response.text[:200]}"
+                    )
+                return response.text
+            except (requests.RequestsError, SofaScoreHTTPError) as exc:
+                last_error = exc
+                if attempt < self.settings.retries:
+                    self._sleep(self.settings.retry_delay_seconds)
+        raise SofaScoreHTTPError(f"SofaScore public GET {url} failed after retries: {last_error}") from last_error
+
     def _cached_payload(self, url: str, *, ttl: float) -> dict[str, Any] | None:
         if ttl <= 0:
             return None
