@@ -83,6 +83,42 @@ class TrackingStatsLinksTests(unittest.TestCase):
                 tracking_repository_module.DB_FILE_PATH = old_db_path
                 tracking_repository_module.DATA_DIR = old_data_dir
 
+    def test_tracks_stats_league_without_sportsbook_competition(self) -> None:
+        old_db_path = tracking_repository_module.DB_FILE_PATH
+        old_data_dir = tracking_repository_module.DATA_DIR
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tracking_repository_module.DATA_DIR = Path(tmp_dir)
+            tracking_repository_module.DB_FILE_PATH = Path(tmp_dir) / "tracking.sqlite3"
+            try:
+                repository = SqliteTrackingRepository()
+                subscription = repository.upsert_stats_league_subscription(
+                    10,
+                    stats_provider="footystats_http",
+                    stats_league_id="australia/northern-nsw-npl",
+                    stats_league_name="Northern NSW NPL",
+                    stats_country_name="Australia",
+                    source_url="https://footystats.org/australia/northern-nsw-npl",
+                    payload={"source": "public_html"},
+                )
+
+                loaded = repository.list_stats_league_subscriptions(10)
+                global_loaded = repository.list_globally_active_stats_leagues()
+
+                self.assertEqual(loaded, [subscription])
+                self.assertEqual(global_loaded, [subscription])
+                self.assertTrue(
+                    repository.delete_stats_league_subscription(
+                        10,
+                        stats_provider="footystats_http",
+                        stats_league_id="australia/northern-nsw-npl",
+                    )
+                )
+                self.assertEqual(repository.list_stats_league_subscriptions(10), [])
+            finally:
+                tracking_repository_module.DB_FILE_PATH = old_db_path
+                tracking_repository_module.DATA_DIR = old_data_dir
+
 
 if __name__ == "__main__":
     unittest.main()

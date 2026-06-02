@@ -41,3 +41,5 @@ sandbox/sofascore_http/captures/
 
 # Flashscore research captures
 sandbox/flashscore_http/captures/
+# FootyStats research network dumps (regenerate via capture_traffic.py)
+sandbox/footystats_http/captures/

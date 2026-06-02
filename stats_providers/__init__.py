@@ -10,6 +10,7 @@ from __future__ import annotations
 import os
 
 from core.stats_provider_base import StatsProviderRegistry, stats_provider_registry
+from stats_providers.footystats_http import FootyStatsHttpStatsProvider
 from stats_providers.sportradar_http import SportradarHttpStatsProvider
 from stats_providers.palloliitto.provider import PalloliittoStatsProvider
 from stats_providers.sofascore_http import SofaScoreHttpStatsProvider
@@ -42,12 +43,24 @@ def register_default_stats_providers(
     # Flashscore (HTTP-only via static x-fsign; broadest league coverage).
     if os.getenv("FLASHSCORE_ENABLED", "true").strip().lower() not in {"false", "0", "no"}:
         target.register(FlashscoreHttpStatsProvider(payload_cache=cache))
+    # FootyStats public fallback uses plain HTTP. A licensed key can be added
+    # later without changing the provider contract.
+    if os.getenv("FOOTYSTATS_ENABLED", "true").strip().lower() not in {"false", "0", "no"}:
+        from stats_providers.footystats_http.client import FootyStatsHTTPClient
+
+        target.register(
+            FootyStatsHttpStatsProvider(
+                client=FootyStatsHTTPClient(api_key=os.getenv("FOOTYSTATS_API_KEY")),
+                payload_cache=cache,
+            )
+        )
     return target
 
 
 __all__ = [
     "SportradarHttpStatsProvider",
     "PalloliittoStatsProvider",
+    "FootyStatsHttpStatsProvider",
     "SofaScoreHttpStatsProvider",
     "FlashscoreHttpStatsProvider",
     "register_default_stats_providers",

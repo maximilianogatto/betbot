@@ -34,6 +34,7 @@ from storage.mappers import (
     row_to_pending_request as _row_to_pending_request,
     row_to_small_change_record as _row_to_small_change_record,
     row_to_stats_league_link as _row_to_stats_league_link,
+    row_to_stats_league_subscription as _row_to_stats_league_subscription,
     row_to_stats_match_link as _row_to_stats_match_link,
     row_to_subscription as _row_to_subscription,
     row_to_tracked_competition as _row_to_tracked_competition,
@@ -351,6 +352,22 @@ class StatsLeagueLink:
     stats_country_name: str | None
     confidence: float
     payload_json: str | None
+    created_at: str
+    updated_at: str
+
+
+@dataclass(frozen=True)
+class StatsLeagueSubscription:
+    """Track one provider-native stats league independently from sportsbook odds."""
+
+    telegram_chat_id: int
+    stats_provider: str
+    stats_league_id: str
+    stats_league_name: str
+    stats_country_name: str | None
+    source_url: str | None
+    payload_json: str | None
+    enabled: bool
     created_at: str
     updated_at: str
 
@@ -2216,6 +2233,150 @@ class SqliteTrackingRepository:
 
         return _row_to_stats_league_link(row) if row is not None else None
 
+    def upsert_stats_league_subscription(
+        self,
+        chat_id: int,
+        *,
+        stats_provider: str,
+        stats_league_id: str,
+        stats_league_name: str,
+        stats_country_name: str | None = None,
+        source_url: str | None = None,
+        payload: dict[str, Any] | None = None,
+    ) -> StatsLeagueSubscription:
+        """Follow one stats league without requiring a sportsbook competition."""
+
+        normalized_provider = _normalize_platform(stats_provider)
+        normalized_league_id = stats_league_id.strip()
+        normalized_league_name = stats_league_name.strip()
+        if not normalized_league_id:
+            raise ValueError("stats_league_id must not be empty.")
+        if _is_invalid_label(normalized_league_name):
+            raise ValueError("stats_league_name must not be empty.")
+
+        now_iso = _utc_now_iso()
+        with _connect() as connection:
+            connection.execute(
+                """
+                INSERT INTO stats_league_subscriptions (
+                    telegram_chat_id,
+                    stats_provider,
+                    stats_league_id,
+                    stats_league_name,
+                    stats_country_name,
+                    source_url,
+                    payload_json,
+                    enabled,
+                    created_at,
+                    updated_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
+                ON CONFLICT(telegram_chat_id, stats_provider, stats_league_id) DO UPDATE SET
+                    stats_league_name = excluded.stats_league_name,
+                    stats_country_name = excluded.stats_country_name,
+                    source_url = excluded.source_url,
+                    payload_json = excluded.payload_json,
+                    enabled = 1,
+                    updated_at = excluded.updated_at
+                """,
+                (
+                    int(chat_id),
+                    normalized_provider,
+                    normalized_league_id,
+                    normalized_league_name,
+                    _normalize_optional_text(stats_country_name),
+                    _normalize_optional_text(source_url),
+                    _json_dumps(payload),
+                    now_iso,
+                    now_iso,
+                ),
+            )
+            row = _fetch_stats_league_subscription_row(
+                connection,
+                int(chat_id),
+                normalized_provider,
+                normalized_league_id,
+            )
+        if row is None:
+            raise RuntimeError("Stats league subscription was upserted but could not be reloaded.")
+        return _row_to_stats_league_subscription(row)
+
+    def list_stats_league_subscriptions(
+        self,
+        chat_id: int,
+        *,
+        only_enabled: bool = True,
+    ) -> list[StatsLeagueSubscription]:
+        """Return provider-native stats leagues followed by one chat."""
+
+        query = """
+            SELECT
+                telegram_chat_id,
+                stats_provider,
+                stats_league_id,
+                stats_league_name,
+                stats_country_name,
+                source_url,
+                payload_json,
+                enabled,
+                created_at,
+                updated_at
+            FROM stats_league_subscriptions
+            WHERE telegram_chat_id = ?
+        """
+        parameters: list[Any] = [int(chat_id)]
+        if only_enabled:
+            query += " AND enabled = 1"
+        query += " ORDER BY stats_country_name, stats_league_name, stats_provider"
+        with _connect() as connection:
+            rows = connection.execute(query, parameters).fetchall()
+        return [_row_to_stats_league_subscription(row) for row in rows]
+
+    def list_globally_active_stats_leagues(self) -> list[StatsLeagueSubscription]:
+        """Return enabled standalone stats subscriptions across all chats."""
+
+        with _connect() as connection:
+            rows = connection.execute(
+                """
+                SELECT
+                    telegram_chat_id,
+                    stats_provider,
+                    stats_league_id,
+                    stats_league_name,
+                    stats_country_name,
+                    source_url,
+                    payload_json,
+                    enabled,
+                    created_at,
+                    updated_at
+                FROM stats_league_subscriptions
+                WHERE enabled = 1
+                ORDER BY stats_provider, stats_league_id, telegram_chat_id
+                """
+            ).fetchall()
+        return [_row_to_stats_league_subscription(row) for row in rows]
+
+    def delete_stats_league_subscription(
+        self,
+        chat_id: int,
+        *,
+        stats_provider: str,
+        stats_league_id: str,
+    ) -> bool:
+        """Stop following one standalone stats league for one chat."""
+
+        with _connect() as connection:
+            cursor = connection.execute(
+                """
+                DELETE FROM stats_league_subscriptions
+                WHERE telegram_chat_id = ?
+                  AND stats_provider = ?
+                  AND stats_league_id = ?
+                """,
+                (int(chat_id), _normalize_platform(stats_provider), stats_league_id.strip()),
+            )
+        return cursor.rowcount > 0
+
     def get_cached_stats_payload(self, cache_key: str) -> dict[str, Any] | None:
         """Return a cached stats payload if present and not expired, else None.
 
@@ -2793,6 +2954,23 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
         CREATE INDEX IF NOT EXISTS idx_stats_league_links_provider
         ON stats_league_links(stats_provider, stats_league_id);
 
+        CREATE TABLE IF NOT EXISTS stats_league_subscriptions (
+            telegram_chat_id INTEGER NOT NULL,
+            stats_provider TEXT NOT NULL,
+            stats_league_id TEXT NOT NULL,
+            stats_league_name TEXT NOT NULL,
+            stats_country_name TEXT,
+            source_url TEXT,
+            payload_json TEXT,
+            enabled INTEGER NOT NULL DEFAULT 1,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            PRIMARY KEY (telegram_chat_id, stats_provider, stats_league_id)
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_stats_league_subscriptions_provider
+        ON stats_league_subscriptions(stats_provider, stats_league_id, enabled);
+
         CREATE TABLE IF NOT EXISTS stats_match_links (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             active_event_id INTEGER NOT NULL,
@@ -3230,6 +3408,35 @@ def _fetch_stats_league_link_row(
     ).fetchone()
 
 
+def _fetch_stats_league_subscription_row(
+    connection: sqlite3.Connection,
+    chat_id: int,
+    stats_provider: str,
+    stats_league_id: str,
+) -> sqlite3.Row | None:
+    return connection.execute(
+        """
+        SELECT
+            telegram_chat_id,
+            stats_provider,
+            stats_league_id,
+            stats_league_name,
+            stats_country_name,
+            source_url,
+            payload_json,
+            enabled,
+            created_at,
+            updated_at
+        FROM stats_league_subscriptions
+        WHERE telegram_chat_id = ?
+          AND stats_provider = ?
+          AND stats_league_id = ?
+        LIMIT 1
+        """,
+        (chat_id, stats_provider, stats_league_id),
+    ).fetchone()
+
+
 def _fetch_stats_match_link_row(
     connection: sqlite3.Connection,
     active_event_id: int,
@@ -3601,6 +3808,7 @@ __all__ = [
     "SmallChangeRecord",
     "SqliteTrackingRepository",
     "StatsLeagueLink",
+    "StatsLeagueSubscription",
     "StatsMatchLinkRecord",
     "TrackedCompetition",
     "TrackedCompetitionSubscription",

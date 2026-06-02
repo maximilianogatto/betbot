@@ -153,6 +153,35 @@ class StatsServiceTests(unittest.TestCase):
         self.assertIsNotNone(link)
         self.assertEqual(link.stats_league_id, "8")
 
+    def test_tracks_and_lists_standalone_stats_league(self) -> None:
+        option = asyncio.run(
+            self.service.search_leagues(provider_key="sportradar_statshub", country_name="Spain")
+        )[0]
+
+        result = self.service.track_stats_league(chat_id=123, option=option)
+        message = self.service.build_stats_tracks_message(chat_id=123)
+        explorable = self.service.list_explorable_leagues(
+            chat_id=123,
+            tracked_subscriptions=[self.subscription],
+        )
+
+        self.assertTrue(result.ok)
+        self.assertIn("cache diario", result.message)
+        self.assertIn("LaLiga", message.message)
+        self.assertEqual(explorable[0].league_id, "8")
+        self.assertIn("solo stats", explorable[0].label)
+
+    def test_builds_direct_provider_native_report(self) -> None:
+        result = asyncio.run(
+            self.service.build_direct_match_report(
+                provider_key="sportradar_statshub",
+                stats_match_id="61624678",
+            )
+        )
+
+        self.assertTrue(result.ok)
+        self.assertIn("Sevilla vs Real Madrid", result.message)
+
     def test_search_and_rank_promotes_league_holding_the_teams(self) -> None:
         # Two leagues share a name; only one actually contains the tracked teams.
         class DuplicateLeagueProvider(FakeStatsProvider):
