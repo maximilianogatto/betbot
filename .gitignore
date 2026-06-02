@@ -38,3 +38,6 @@ sandbox/mrpunter/captures/
 # Local Playwright CLI state and SofaScore research dumps
 .playwright-cli/
 sandbox/sofascore_http/captures/
+
+# Flashscore research captures
+sandbox/flashscore_http/captures/
