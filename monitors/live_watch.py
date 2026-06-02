@@ -203,7 +203,12 @@ class LiveWatchService:
 
         hits: list[LiveWatchHit] = []
         for entry in watches:
-            live_best = self._best_match(entry, live_events) if live_events else None
+            eligible_live_events = (
+                [ev for ev in live_events if ev.platform not in entry.fired_platforms_list]
+                if live_events
+                else []
+            )
+            live_best = self._best_match(entry, eligible_live_events) if eligible_live_events else None
             if live_best is not None:
                 score, event = live_best
                 self.repository.mark_live_watch_fired(

@@ -33,6 +33,8 @@ class _LeagueLinkParser(HTMLParser):
         match = _LEAGUE_LINK_RE.match(href)
         if match is None or match.group(1) in _RESERVED_SEGMENTS:
             return
+        if "-vs-" in href or href.endswith("-h2h-stats"):
+            return
         self._path = href
         self._parts = []
 
@@ -236,4 +238,246 @@ __all__ = [
     "normalize_live_scores",
     "normalize_public_fixtures",
     "normalize_public_standings",
+    "normalize_public_match_h2h",
 ]
+
+
+def normalize_public_match_h2h(html: str) -> dict[str, Any]:
+    """Parse public FootyStats match H2H page HTML into structured stats."""
+
+    # 1. Parse basic team stats (Overall/Home/Away form & PPG)
+    teams = _parse_team_stats(html)
+    if len(teams) < 2:
+        return {}
+    home_team = teams[0]
+    away_team = teams[1]
+
+    # 2. Parse mini tables (standings stats: mp, win_rate, gf, ga, gd, pts, avg_goals)
+    mini_tables = _parse_mini_tables_stats(html, home_team.get("id", ""), away_team.get("id", ""))
+
+    # 3. Parse market probabilities
+    markets = _parse_market_stats(html)
+
+    # 4. Parse historical fixtures
+    fixtures = _parse_h2h_fixtures(html)
+
+    # 5. Parse H2H tendencies
+    h2h_sec_start = -1
+    for match in re.finditer(r"<section[^>]*h2h-widget-neo", html):
+        h2h_sec_start = match.start()
+        break
+    if h2h_sec_start == -1:
+        h2h_sec_start = html.find("h2h-widget-neo")
+
+    h2h_tendencies: dict[str, int] = {}
+    h2h_summary = ""
+    if h2h_sec_start != -1:
+        content = html[h2h_sec_start:h2h_sec_start + 4000]
+        # Match grid-items with stats
+        pattern = r"<div class=['\"]grid-item has-indicator[^'\"]*['\"][^>]*><div class=['\"]stat-strong['\"]>(\d+)%<span>([^<]+)</span></div><div class=['\"]stat-text['\"]>([^<]+)</div></div>"
+        matches = re.finditer(pattern, content)
+        clean_sheets_count = 0
+        for m in matches:
+            val = int(m.group(1))
+            label = m.group(2).strip().lower().replace(" ", "_")
+            if label == "clean_sheets":
+                clean_sheets_count += 1
+                if clean_sheets_count == 1:
+                    h2h_tendencies["home_clean_sheets"] = val
+                else:
+                    h2h_tendencies["away_clean_sheets"] = val
+            else:
+                h2h_tendencies[label] = val
+
+        # Parse trailing summary text
+        summary_match = re.search(r"<p class='h2h-trailing-text[^']*'[^>]*>(.*?)</p>", content, re.DOTALL)
+        if summary_match:
+            h2h_summary = " ".join(unescape(re.sub(r"<[^>]+>", "", summary_match.group(1))).split())
+
+    return {
+        "home": home_team,
+        "away": away_team,
+        "mini_tables": mini_tables,
+        "markets": markets,
+        "fixtures": fixtures,
+        "h2h_tendencies": h2h_tendencies,
+        "h2h_summary": h2h_summary
+    }
+
+
+def _parse_team_stats(html: str) -> list[dict[str, Any]]:
+    pos_matches = list(re.finditer(r"League Pos\.\s*<span class='semi-bold'>(\d+)</span>\s*/\s*(\d+)", html))
+    teams_data: list[dict[str, Any]] = []
+    
+    for i, m in enumerate(pos_matches):
+        pos_start = m.start()
+        header_text = html[max(0, pos_start - 600):pos_start]
+        team_link_match = re.search(
+            r"href='/clubs/[a-z0-9-]+-(\d+)'[^>]*>(?:<span[^>]*>.*?</span>)?\s*([^<]+)</a>",
+            header_text
+        )
+        team_name = team_link_match.group(2).strip() if team_link_match else f"Team {i+1}"
+        team_id = team_link_match.group(1).strip() if team_link_match else ""
+        
+        pos = int(m.group(1))
+        pos_total = int(m.group(2))
+        
+        form_text = html[m.end():m.end() + 1500]
+        form_block_match = re.search(r"neo-border-all.*?</div>\s*</div>\s*</div>\s*</div>", form_text, re.DOTALL)
+        
+        forms: dict[str, dict[str, Any]] = {}
+        if form_block_match:
+            block = form_block_match.group(0)
+            row_matches = re.finditer(
+                r"<div class=['\"]section1 cf bbox['\"]><div class=['\"]col1 dark-gray semi-bold fl ac['\"]>([^<]+)</div><div class=['\"]col2 dark-gray fl ac['\"]><ul class=['\"]form-run['\"]>(.*?)</ul></div><div class=['\"]col3 dark-gray fl ac['\"]><div class=['\"]form-box(?: [^\"]*)?['\"]>([\d\.]+)</div></div></div>",
+                block,
+                re.DOTALL
+            )
+            for row in row_matches:
+                row_type = row.group(1).strip()
+                form_lis = re.findall(r"<li class='form-run [^']*'>([WDL])</li>", row.group(2))
+                try:
+                    ppg = float(row.group(3))
+                except ValueError:
+                    ppg = 0.0
+                forms[row_type.lower()] = {
+                    "form": "".join(form_lis),
+                    "ppg": ppg
+                }
+        
+        teams_data.append({
+            "name": team_name,
+            "id": team_id,
+            "league_pos": pos,
+            "league_pos_total": pos_total,
+            "stats": forms
+        })
+        
+    return teams_data
+
+
+def _parse_market_stats(html: str) -> dict[str, Any]:
+    table_match = re.search(r"<table class='[^']*stats-to-odds-table'>(.*?)</table>", html, re.DOTALL)
+    if not table_match:
+        return {}
+    
+    table_content = table_match.group(1)
+    rows = re.findall(r"<tr>(.*?)</tr>", table_content, re.DOTALL)
+    markets = {}
+    for row in rows:
+        tds = re.findall(r"<td[^>]*>(.*?)</td>", row, re.DOTALL)
+        if len(tds) >= 3:
+            market_name = re.sub(r"<[^>]+>", "", tds[0]).strip()
+            stat_val = re.sub(r"<[^>]+>", "", tds[2]).strip()
+            stat_val = stat_val.replace("%", "").strip()
+            
+            key = market_name.lower().replace(" ", "_")
+            markets[key] = {
+                "name": market_name,
+                "value": stat_val
+            }
+    return markets
+
+
+def _parse_h2h_fixtures(html: str) -> list[dict[str, Any]]:
+    sliding_idx = html.find("class='sliding-fixtures")
+    if sliding_idx == -1:
+        sliding_idx = html.find('class="sliding-fixtures')
+    if sliding_idx == -1:
+        return []
+    
+    content = html[sliding_idx:sliding_idx + 15000]
+    anchors = re.findall(r"<a href='#' class='fixture[^']*'.*?</a>", content, re.DOTALL)
+    fixtures = []
+    
+    for anchor in anchors:
+        time_match = re.search(r"<time[^>]*datetime='([^']*)'[^>]*>(.*?)</time>", anchor)
+        dt = time_match.group(1) if time_match else ""
+        date_str = time_match.group(2).strip() if time_match else ""
+        
+        divs = re.findall(r"<div class='team[^']*'>(.*?)</div>", anchor, re.DOTALL)
+        if len(divs) >= 2:
+            teams = []
+            for div in divs:
+                span_match = re.search(r"(.*?)\s*<span>(\d+)</span>", div)
+                if span_match:
+                    name = re.sub(r"<[^>]+>", "", span_match.group(1)).strip()
+                    try:
+                        score = int(span_match.group(2))
+                    except ValueError:
+                        score = 0
+                    teams.append({"name": name, "score": score})
+                else:
+                    teams.append({"name": div.strip(), "score": 0})
+            
+            fixtures.append({
+                "datetime": dt,
+                "date_display": date_str,
+                "home": teams[0]["name"],
+                "home_score": teams[0]["score"],
+                "away": teams[1]["name"],
+                "away_score": teams[1]["score"]
+            })
+            
+    return fixtures
+
+
+def _parse_mini_tables_stats(html: str, home_id: str, away_id: str) -> dict[str, dict[str, Any]]:
+    tables = re.findall(r"<table[^>]*class=['\"][^'\"]*miniTableNeo[^'\"]*['\"][^>]*>(.*?)</table>", html, re.DOTALL)
+    
+    stats = {
+        "home": {"home": {}, "away": {}, "overall": {}},
+        "away": {"home": {}, "away": {}, "overall": {}}
+    }
+    
+    if len(tables) < 3:
+        return stats
+        
+    table_types = ["home", "away", "overall"]
+    
+    for i, table_type in enumerate(table_types):
+        table_content = tables[i]
+        rows = re.findall(r"<tr[^>]*>(.*?)</tr>", table_content, re.DOTALL)
+        for row in rows:
+            club_match = re.search(r"href=['\"]/clubs/[a-z0-9-]+-(\d+)['\"]", row)
+            if not club_match:
+                continue
+            row_team_id = club_match.group(1)
+            
+            target = None
+            if home_id and row_team_id == home_id:
+                target = stats["home"][table_type]
+            elif away_id and row_team_id == away_id:
+                target = stats["away"][table_type]
+            else:
+                continue
+                
+            tds = re.findall(r"<td[^>]*>(.*?)</td>", row, re.DOTALL)
+            cleaned_tds = [" ".join(unescape(re.sub(r"<[^>]+>", "", td)).split()).strip() for td in tds]
+            if len(cleaned_tds) >= 9:
+                try:
+                    target["pos"] = int(cleaned_tds[0])
+                except ValueError:
+                    target["pos"] = cleaned_tds[0]
+                try:
+                    target["mp"] = int(cleaned_tds[2])
+                except ValueError:
+                    target["mp"] = 0
+                target["win_rate"] = cleaned_tds[3]
+                try:
+                    target["gf"] = int(cleaned_tds[4])
+                except ValueError:
+                    target["gf"] = 0
+                try:
+                    target["ga"] = int(cleaned_tds[5])
+                except ValueError:
+                    target["ga"] = 0
+                target["gd"] = cleaned_tds[6]
+                try:
+                    target["pts"] = int(cleaned_tds[7])
+                except ValueError:
+                    target["pts"] = 0
+                target["avg_goals"] = cleaned_tds[8]
+                
+    return stats
+

@@ -27,6 +27,7 @@ from stats_providers.footystats_http.normalizers import (
     normalize_live_scores,
     normalize_public_fixtures,
     normalize_public_standings,
+    normalize_public_match_h2h,
 )
 from stats_providers.footystats_http.reporting import render_match_report
 
@@ -59,7 +60,7 @@ class FootyStatsHttpStatsProvider(StatsProvider):
         supports_league_discovery=True,
         supports_fixture_discovery=True,
         supports_live=True,
-        supports_h2h=False,
+        supports_h2h=True,
         supports_lineups=False,
         supports_injuries=False,
         supports_odds=False,
@@ -305,15 +306,34 @@ class FootyStatsHttpStatsProvider(StatsProvider):
 
     def _fetch_match_snapshot(self, stats_match_id: str) -> dict[str, Any]:
         path, numeric_id = decode_public_match_id(stats_match_id)
+        
+        # Fetch public H2H HTML page to parse advanced H2H stats
+        h2h_data = {}
+        if path:
+            try:
+                html = self._client.get_public_html(path)
+                h2h_data = normalize_public_match_h2h(html)
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning("Failed to fetch public H2H HTML for %s: %s", path, e)
+
         live_scores = normalize_live_scores(self._client.get_live_scores())
         live = next((item for item in live_scores if item.get("match_id") == numeric_id), {})
+        title = match_title_from_path(path)
+        if h2h_data and h2h_data.get("home") and h2h_data.get("away"):
+            home_name = h2h_data["home"].get("name")
+            away_name = h2h_data["away"].get("name")
+            if home_name and away_name:
+                title = f"{home_name} vs {away_name}"
+
         return {
             "match": {
                 "id": numeric_id,
-                "title": match_title_from_path(path),
+                "title": title,
                 "status": "live" if live else "prematch_or_ended",
             },
             "live_state": live,
+            "h2h": h2h_data,
             "source_mode": "public_html",
             "source_url": self.build_match_url(stats_match_id),
         }

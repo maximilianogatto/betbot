@@ -81,6 +81,33 @@ def live_events_from_1x2_vzip(payload: dict[str, Any]) -> list[LiveEventSnapshot
     return live
 
 
+def live_events_from_champ_zip(payload: dict[str, Any]) -> list[LiveEventSnapshot]:
+    """Map a LiveFeed GetChampZip response (single league) to in-play soccer live snapshots."""
+
+    value = payload.get("Value")
+    if not isinstance(value, dict):
+        return []
+
+    league_name = value.get("L")
+    country_name = value.get("CN")
+    sport_id = _safe_str(value.get("SI"))
+
+    events = []
+    for g in value.get("G") or []:
+        if not isinstance(g, dict):
+            continue
+        event = dict(g)
+        if "L" not in event and league_name:
+            event["L"] = league_name
+        if "CN" not in event and country_name:
+            event["CN"] = country_name
+        if "SI" not in event and sport_id:
+            event["SI"] = sport_id
+        events.append(event)
+
+    return live_events_from_1x2_vzip({"Value": events})
+
+
 def _coerce_int(value: Any) -> int | None:
     try:
         return int(value)

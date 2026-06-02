@@ -6,7 +6,7 @@ from extractors.betovo_http.parser import live_events_from_livenow
 from extractors.betwarrior_http.parser import live_events_from_open
 from extractors.bz_http.parser import live_events_from_search
 from extractors.solcasino_http.parser import live_events_from_snapshot
-from extractors.xbet_http.parser import live_events_from_1x2_vzip
+from extractors.xbet_http.parser import live_events_from_1x2_vzip, live_events_from_champ_zip
 
 
 class XBetLiveTests(unittest.TestCase):
@@ -40,6 +40,33 @@ class XBetLiveTests(unittest.TestCase):
         self.assertEqual(e.minute, "76 minutos")
         self.assertEqual(e.odds_1x2.home, 1.17)
         self.assertEqual(e.odds_1x2.away, 19.7)
+
+    def test_champ_zip_maps_live_events(self) -> None:
+        payload = {
+            "Success": True,
+            "Value": {
+                "LI": "1907776",
+                "L": "Australia. NPL Northern NSW (F)",
+                "CN": "Australia",
+                "SI": "1",
+                "G": [
+                    {
+                        "I": 105, "O1": "Maitland", "O2": "Broadmeadow",
+                        "SC": {"FS": {"S1": 1, "S2": 2}, "I": "", "SLS": "45 minutos", "CP": 1},
+                        "E": [{"T": 1, "C": 2.5}, {"T": 2, "C": 3.4}, {"T": 3, "C": 2.3}],
+                    }
+                ]
+            }
+        }
+        live = live_events_from_champ_zip(payload)
+        self.assertEqual(len(live), 1)
+        e = live[0]
+        self.assertEqual((e.home, e.away), ("Maitland", "Broadmeadow"))
+        self.assertEqual(e.competition_name, "Australia. NPL Northern NSW (F)")
+        self.assertEqual(e.country_name, "Australia")
+        self.assertEqual((e.home_score, e.away_score), (1, 2))
+        self.assertEqual(e.minute, "45 minutos")
+        self.assertEqual(e.odds_1x2.home, 2.5)
 
 
 class KambiLiveTests(unittest.TestCase):
@@ -144,6 +171,35 @@ class BetbyLiveTests(unittest.TestCase):
         self.assertEqual((e.home, e.away), ("Bay Olympic", "Birkenhead"))
         self.assertEqual(e.country_name, "New Zealand")
         self.assertEqual(e.minute, "25:19")
+
+    def test_snapshot_extracts_odds_and_scores(self) -> None:
+        snapshot = {
+            "tournaments": {"100": {"name": "Chatham Cup", "category_id": "10"}},
+            "categories": {"10": {"name": "New Zealand"}},
+            "events": {
+                "e1": {
+                    "desc": {"type": "match", "sport": "1", "tournament": "100",
+                             "competitors": [{"name": "Bay Olympic"}, {"name": "Birkenhead"}]},
+                    "state": {
+                        "status": 1,
+                        "clock": {"match_time": "25:19"},
+                        "score": {"home": "2", "away": "1"}
+                    },
+                    "markets": {
+                        "1": {"": {"1": {"k": "2.10"}, "2": {"k": "3.40"}, "3": {"k": "3.20"}}}
+                    }
+                }
+            }
+        }
+        live = live_events_from_snapshot(snapshot, sport_id="1")
+        self.assertEqual(len(live), 1)
+        e = live[0]
+        self.assertEqual((e.home, e.away), ("Bay Olympic", "Birkenhead"))
+        self.assertEqual(e.home_score, 2)
+        self.assertEqual(e.away_score, 1)
+        self.assertEqual(e.odds_1x2.home, 2.10)
+        self.assertEqual(e.odds_1x2.draw, 3.40)
+        self.assertEqual(e.odds_1x2.away, 3.20)
 
 
 if __name__ == "__main__":

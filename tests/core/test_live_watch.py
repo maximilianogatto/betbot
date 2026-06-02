@@ -142,14 +142,15 @@ class LiveWatchRepositoryTests(unittest.TestCase):
             w1.id, platform="betovo", event_id="ev-123", minute="45'"
         )
         watches_after = self.repository.list_live_watches(chat_id)
-        self.assertEqual(watches_after[0].status, "fired")
+        self.assertEqual(watches_after[0].status, "watching")
+        self.assertEqual(watches_after[0].fired_platforms, "betovo")
         self.assertEqual(watches_after[0].matched_platform, "betovo")
         self.assertEqual(watches_after[0].matched_event_id, "ev-123")
         self.assertEqual(watches_after[0].matched_minute, "45'")
 
-        # Ensure no longer in active list
+        # Under the new multi-platform alert flow, the entry remains active until expiry
         active_after = self.repository.list_all_active_live_watches()
-        self.assertEqual(len(active_after), 0)
+        self.assertEqual(len(active_after), 1)
 
         # Clear watches
         removed = self.repository.clear_live_watches(chat_id)
@@ -218,10 +219,12 @@ class LiveWatchServiceTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(hit.event.home, "Banyule City")
         self.assertEqual(hit.event.minute, "5'")
 
-        # Verify it has been marked as fired in repository
+        # Verify it has been marked as fired on betovo in repository but remains active
         active = self.repository.list_all_active_live_watches()
-        self.assertEqual(len(active), 1)  # Only Poli Iasi vs Otelul remains
-        self.assertEqual(active[0].home, "Poli Iasi")
+        self.assertEqual(len(active), 2)
+        fired_ones = [w for w in active if w.fired_platforms == "betovo"]
+        self.assertEqual(len(fired_ones), 1)
+        self.assertEqual(fired_ones[0].home, "Banyule")
 
         # Test render_live_hit helper
         alert_msg = render_live_hit(hit)
@@ -231,6 +234,81 @@ class LiveWatchServiceTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("5'  |  1-0", alert_msg)
         self.assertIn("1.85 / 3.4 / 3.8", alert_msg)
         self.assertIn("betovo", alert_msg)
+
+    async def test_live_watch_poller_fires_per_casino(self) -> None:
+        service = LiveWatchService(repository=self.repository)
+        chat_id = 888
+        added = service.add_fixture_lines(chat_id, ["Banyule - Bundoora"])
+        self.assertEqual(len(added), 1)
+
+        # Mock first platform (betovo)
+        mock_betovo = SimpleNamespace(
+            name="betovo",
+            display_name="Betovo",
+            supports_live_detection=True,
+            list_live_events=AsyncMock(
+                return_value=[
+                    LiveEventSnapshot(
+                        platform="betovo",
+                        external_event_id="ev-1",
+                        is_soccer=True,
+                        home="Banyule",
+                        away="Bundoora",
+                        minute="5'",
+                        home_score=1,
+                        away_score=0,
+                    )
+                ]
+            ),
+        )
+        # Mock second platform (bz_http)
+        mock_bz = SimpleNamespace(
+            name="bz_http",
+            display_name="BZ",
+            supports_live_detection=True,
+            list_live_events=AsyncMock(
+                return_value=[
+                    LiveEventSnapshot(
+                        platform="bz_http",
+                        external_event_id="ev-2",
+                        is_soccer=True,
+                        home="Banyule",
+                        away="Bundoora",
+                        minute="6'",
+                        home_score=1,
+                        away_score=0,
+                    )
+                ]
+            ),
+        )
+        service.extractor_registry = SimpleNamespace(
+            list_registered=lambda: [mock_betovo, mock_bz]
+        )
+
+        # Poll once -> matches betovo
+        hits1 = await service.poll_once()
+        self.assertEqual(len(hits1), 1)
+        self.assertEqual(hits1[0].event.platform, "betovo")
+
+        # Verify entry is still active but marked with betovo in fired_platforms
+        watches = self.repository.list_all_active_live_watches()
+        self.assertEqual(len(watches), 1)
+        self.assertEqual(watches[0].fired_platforms, "betovo")
+
+        # Poll twice -> betovo is already fired, should match bz_http
+        hits2 = await service.poll_once()
+        self.assertEqual(len(hits2), 1)
+        self.assertEqual(hits2[0].event.platform, "bz_http")
+
+        # Verify entry is still active and marked with both
+        watches2 = self.repository.list_all_active_live_watches()
+        self.assertEqual(len(watches2), 1)
+        self.assertIn("betovo", watches2[0].fired_platforms_list)
+        self.assertIn("bz_http", watches2[0].fired_platforms_list)
+
+        # Poll thrice -> both are fired, should not alert again
+        hits3 = await service.poll_once()
+        self.assertEqual(len(hits3), 0)
 
 
 class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):

@@ -69,7 +69,15 @@ class LiveWatchEntry:
     kickoff_at: str | None = None
     prematch_seen_at: str | None = None
     prematch_platform: str | None = None
+    fired_platforms: str | None = None
     chat_local_id: int | None = None
+
+    @property
+    def fired_platforms_list(self) -> list[str]:
+        if not self.fired_platforms:
+            return []
+        return [p.strip() for p in self.fired_platforms.split(",") if p.strip()]
+
 
 
 @dataclass(frozen=True)
@@ -2465,10 +2473,15 @@ class SqliteTrackingRepository:
         """Return a chat's live-watch entries, optionally filtered by status."""
 
         with _connect() as connection:
-            if status:
+            if status == "watching":
                 rows = connection.execute(
-                    "SELECT * FROM live_watch_entries WHERE chat_id = ? AND status = ? ORDER BY id",
-                    (chat_id, status),
+                    "SELECT * FROM live_watch_entries WHERE chat_id = ? AND status = 'watching' ORDER BY id",
+                    (chat_id,),
+                ).fetchall()
+            elif status == "fired":
+                rows = connection.execute(
+                    "SELECT * FROM live_watch_entries WHERE chat_id = ? AND fired_platforms IS NOT NULL AND fired_platforms != '' ORDER BY id",
+                    (chat_id,),
                 ).fetchall()
             else:
                 rows = connection.execute(
@@ -2493,17 +2506,30 @@ class SqliteTrackingRepository:
         event_id: str,
         minute: str | None,
     ) -> None:
-        """Mark a watch entry as fired so it is not alerted again."""
+        """Mark a platform as fired for this watch entry."""
 
         with _connect() as connection:
+            row = connection.execute(
+                "SELECT fired_platforms FROM live_watch_entries WHERE id = ?", (watch_id,)
+            ).fetchone()
+            current = row[0] if row else None
+
+            if current:
+                platforms_list = [p.strip() for p in current.split(",") if p.strip()]
+                if platform not in platforms_list:
+                    platforms_list.append(platform)
+                new_val = ",".join(platforms_list)
+            else:
+                new_val = platform
+
             connection.execute(
                 """
                 UPDATE live_watch_entries
-                SET status = 'fired', matched_platform = ?, matched_event_id = ?,
+                SET fired_platforms = ?, matched_platform = ?, matched_event_id = ?,
                     matched_minute = ?, fired_at = ?
                 WHERE id = ?
                 """,
-                (platform, event_id, minute, _utc_now_iso(), watch_id),
+                (new_val, platform, event_id, minute, _utc_now_iso(), watch_id),
             )
 
     def mark_live_watch_prematch_seen(self, watch_id: int, *, platform: str, event_id: str) -> None:
@@ -3084,7 +3110,8 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
             matched_event_id TEXT,
             matched_minute TEXT,
             created_at TEXT NOT NULL,
-            fired_at TEXT
+            fired_at TEXT,
+            fired_platforms TEXT
         );
 
         CREATE INDEX IF NOT EXISTS idx_live_watch_chat_status
@@ -3115,7 +3142,7 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
         "last_unavailable_notification_at",
         "TEXT",
     )
-    for _live_watch_column in ("kickoff_at", "prematch_seen_at", "prematch_platform"):
+    for _live_watch_column in ("kickoff_at", "prematch_seen_at", "prematch_platform", "fired_platforms"):
         _ensure_column(connection, "live_watch_entries", _live_watch_column, "TEXT")
     _ensure_column(connection, "live_watch_entries", "chat_local_id", "INTEGER")
 
@@ -3817,6 +3844,7 @@ def _row_to_live_watch(row: sqlite3.Row) -> LiveWatchEntry:
         kickoff_at=row["kickoff_at"] if "kickoff_at" in row.keys() else None,
         prematch_seen_at=row["prematch_seen_at"] if "prematch_seen_at" in row.keys() else None,
         prematch_platform=row["prematch_platform"] if "prematch_platform" in row.keys() else None,
+        fired_platforms=row["fired_platforms"] if "fired_platforms" in row.keys() else None,
         chat_local_id=row["chat_local_id"] if "chat_local_id" in row.keys() else None,
     )
 

@@ -22,6 +22,7 @@ def _live_watch_entry(entry_id: int, home: str, away: str, status: str = "watchi
         matched_minute=matched_minute,
         created_at="2026-06-01T00:00:00+00:00",
         fired_at="2026-06-01T00:01:00+00:00" if status == "fired" else None,
+        fired_platforms=matched_platform,
     )
 
 

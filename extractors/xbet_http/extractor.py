@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from dataclasses import replace
 from typing import Any, Protocol
@@ -24,6 +25,7 @@ from extractors.xbet_http.discovery import build_league_options_from_sports_shor
 from extractors.xbet_http.parser import (
     enrich_event_snapshot_with_game_detail,
     live_events_from_1x2_vzip,
+    live_events_from_champ_zip,
     parse_champ_zip_payload,
 )
 from extractors.xbet_http.settings import XBetHttpSettings
@@ -129,8 +131,41 @@ class XBetHttpExtractor(Extractor):
             cfview=self.settings.live_cfview,
             count=self.settings.live_count,
         )
-        payload = await self._client.fetch_live_1x2_zip(url)
-        return live_events_from_1x2_vzip(payload)
+        try:
+            payload = await self._client.fetch_live_1x2_zip(url)
+            events = live_events_from_1x2_vzip(payload)
+        except Exception as e:
+            logger.warning("Failed to fetch general 1xBet live feed: %s", e)
+            events = []
+
+        try:
+            from storage.tracking_repository import tracking_repository
+            tracked = tracking_repository.list_globally_active_competitions()
+            xbet_leagues = [c for c in tracked if c.platform == self.name and c.enabled]
+            if xbet_leagues:
+                tasks = []
+                for league in xbet_leagues:
+                    champ_id = league.competition_external_id
+                    live_base = normalize_linefeed_base_url(self.settings.base_url).replace("/LineFeed", "/LiveFeed")
+                    live_url = f"{live_base}/GetChampZip?champ={champ_id}&lng={self.settings.language}"
+                    tasks.append(self._client.fetch_champ_zip(live_url))
+                
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                for res in results:
+                    if isinstance(res, Exception):
+                        continue
+                    if isinstance(res, dict):
+                        events.extend(live_events_from_champ_zip(res))
+        except Exception as e:
+            logger.warning("Failed to fetch 1xBet specific live feeds: %s", e)
+
+        seen = set()
+        deduped = []
+        for e in events:
+            if e.external_event_id not in seen:
+                seen.add(e.external_event_id)
+                deduped.append(e)
+        return deduped
 
     async def search_leagues(
         self,

@@ -100,44 +100,46 @@ TRACK_STATS_OPTIONS_CONTEXT_KEY = "track_stats_options"
 MANUAL_REFRESH_TASK_KEY = "manual_refresh_task"
 
 HELP_MESSAGE = (
-    "Comandos generales\n"
-    "/start - Mensaje de bienvenida\n"
-    "/help - Lista de comandos\n"
-    "/guide - Guía rápida del flujo\n"
-    "/platforms - Plataformas soportadas\n"
-    "/ping - Responde pong\n"
-    "/status - Informa si el bot está online\n"
-    "/resources - Muestra métricas simples de recursos\n"
-    "/echo <texto> - Devuelve el texto enviado\n\n"
-    "Tracking de ligas\n"
-    "/track_league - Elegí plataforma, país y liga sin pegar URL\n"
-    "/track_url <url> - Extrae una liga de una plataforma soportada y la deja pendiente\n"
-    "/confirm_track - Confirma la última liga pendiente\n"
-    "/confirm_empty_track - Confirma una liga válida pero vacía\n"
-    "/link_stats - Vincula una liga trackeada con stats (por país o pegando una URL de Statshub)\n"
-    "/stats_links - Lista las ligas vinculadas con stats\n"
-    "/track_stats - Agrega una liga solo para stats y cache diario\n"
-    "/stats_tracks - Lista las ligas seguidas solo para stats\n"
-    "/explore_stats - Explora tabla, fixtures, equipos y reportes de stats\n"
-    "/list_tracks - Lista las ligas trackeadas\n"
-    "/competition_url <n> - Muestra la URL original de una liga trackeada\n"
-    "/refresh_tracks - Actualiza partidos y detecta eventos nuevos\n"
-    "/update_track_url <n> <url> - Actualiza la URL de una liga usando el número de /list_tracks\n"
-    "/untrack - Permite dejar de trackear una liga\n\n"
-    "Consulta de partidos\n"
-    "/matches - Permite elegir una liga y ver sus partidos\n"
-    "/event_url <n> - Muestra la URL directa de un partido de la última lista de /matches\n\n"
-    "/stats <n> - Genera reporte de stats del partido de la última lista de /matches\n\n"
-    "Configuración de odds\n"
-    "/odds_on - Activa notificaciones de cambios de odds para una liga\n"
-    "/odds_off - Desactiva notificaciones de cambios de odds para una liga\n"
-    "/set_change_percent <n> - Configura el % mínimo de cambio para alertar\n\n"
-    "Little changes\n"
-    "/check_little_changes - Lista cambios pequeños pendientes\n"
-    "/confirm_change <n> - Confirma un little change por número\n"
-    "/confirm_all_little_changes - Confirma todos los pendientes\n\n"
-    "Flujos interactivos\n"
-    "/cancel - Cancela la selección interactiva actual"
+    "🤖 *Comandos del Bot y Configuración:*\n"
+    "  `/start` - Mensaje de bienvenida y presentación\n"
+    "  `/help` - Muestra esta lista de comandos agrupados\n"
+    "  `/guide` - Guía rápida paso a paso del flujo completo\n"
+    "  `/ping` - Verifica si el bot responde (pong)\n"
+    "  `/status` - Estado del servidor y del bot (online)\n"
+    "  `/resources` - Estadísticas de consumo de CPU/RAM del VPS\n"
+    "  `/echo <texto>` - Devuelve el mismo texto enviado\n"
+    "  `/cancel` - Cancela la selección interactiva en curso\n\n"
+    "📈 *Odds en General:*\n"
+    "  `/track_league` - Agrega una liga de odds de forma interactiva (plataforma -> país -> liga)\n"
+    "  `/track_url <url>` - Agrega una liga de odds usando un link directo y la deja pendiente\n"
+    "  `/confirm_track` - Confirma la última liga pendiente\n"
+    "  `/confirm_empty_track` - Confirma la liga pendiente aunque no tenga partidos hoy\n"
+    "  `/list_tracks` - Lista todas las ligas de odds en seguimiento activo\n"
+    "  `/competition_url <n>` - Muestra el link original de una liga trackeada\n"
+    "  `/refresh_tracks` - Actualiza manualmente los partidos y detecta eventos nuevos\n"
+    "  `/update_track_url <n> <url>` - Actualiza el link de una liga trackeada\n"
+    "  `/untrack` - Deja de seguir y borra una liga de tu lista\n"
+    "  `/matches` - Muestra partidos de una liga para elegir uno\n"
+    "  `/event_url <n>` - Muestra la URL directa del partido seleccionado previamente en /matches\n"
+    "  `/odds_on` - Activa alertas automáticas de caída de cuotas en una liga\n"
+    "  `/odds_off` - Desactiva alertas automáticas de caída de cuotas en una liga\n"
+    "  `/set_change_percent <n>` - Configura el % de variación mínima para alertar\n"
+    "  `/check_little_changes` - Lista cambios pequeños de cuotas pendientes de aprobación\n"
+    "  `/confirm_change <n>` - Aprueba un cambio pequeño individual y actualiza su baseline\n"
+    "  `/confirm_all_little_changes` - Aprueba todos los cambios pequeños pendientes\n\n"
+    "🔴 *Live Commands (En vivo):*\n"
+    "  `/watch_live` - Pone partidos en vigilancia en vivo (escribí los equipos o subí foto del fixture)\n"
+    "  `/watching` - Lista tus partidos en vigilancia activa y los que ya salieron\n"
+    "  `/unwatch <id>` - Saca un partido de la vigilancia en vivo (o /unwatch all)\n\n"
+    "📊 *Stats (Estadísticas):*\n"
+    "  `/link_stats` - Vincula una liga de odds con un proveedor de estadísticas\n"
+    "  `/stats_links` - Muestra los vínculos activos entre odds y stats\n"
+    "  `/track_stats` - Sigue una liga únicamente para estadísticas y cache diario\n"
+    "  `/stats_tracks` - Lista las ligas seguidas exclusivamente por estadísticas\n"
+    "  `/explore_stats` - Explora tabla, partidos anteriores, fixture y goleadores de stats\n"
+    "  `/stats <n>` - Genera reporte H2H del partido elegido de la lista de /matches\n\n"
+    "🌐 *Plataformas soportadas:*\n"
+    "  `/platforms` - Muestra las plataformas de odds y proveedores de stats soportados"
 )
 
 GUIDE_MESSAGE = (
@@ -481,19 +483,22 @@ async def watching_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
                     pass
             disp_id = e.chat_local_id if e.chat_local_id is not None else e.id
             hint = f" ({e.league_hint})" if e.league_hint else ""
+            alerted_str = ""
+            if e.fired_platforms:
+                alerted_str = f" _(Alertados: {', '.join(p.replace('_http', '') for p in e.fired_platforms_list)})_"
             lines.append(
-                f"  *#{disp_id}* · 🕒 `{time_lbl}`{hint}\n"
+                f"  *#{disp_id}* · 🕒 `{time_lbl}`{hint}{alerted_str}\n"
                 f"     ⚽ `{e.home}` vs `{e.away}`\n"
             )
     if fired:
         lines.append("\n🔴 *Ya salieron en vivo:*")
         lines.append("━━━━━━━━━━━━━━━━━━━━")
         for e in fired:
-            where = (e.matched_platform or "").replace("_http", "")
+            platforms_str = ", ".join(p.replace("_http", "") for p in e.fired_platforms_list)
             disp_id = e.chat_local_id if e.chat_local_id is not None else e.id
             lines.append(
                 f"  *#{disp_id}* · ⚽ `{e.home}` vs `{e.away}`\n"
-                f"     🏦 → {where} {e.matched_minute or ''}\n".rstrip()
+                f"     🏦 → {platforms_str} {e.matched_minute or ''}\n".rstrip()
             )
     lines.append("\nBorrar: `/unwatch <id>` · `/unwatch all`")
     await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
@@ -612,13 +617,36 @@ async def guide_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 
 async def platforms_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle `/platforms` with the registered extractor list."""
+    """Handle `/platforms` showing both odds platforms and stats providers."""
 
     if update.message is None:
         return
 
     tracking_service = get_tracking_service(context)
-    await reply_with_result(update, tracking_service.build_platforms_message())
+    stats_service = get_stats_service(context)
+
+    odds_platforms = tracking_service.list_supported_platforms()
+    stats_providers = stats_service.list_providers()
+
+    lines = ["🌐 *Plataformas de Odds (Bookmakers):*"]
+    for platform in odds_platforms:
+        prefix = "✅" if platform.implemented else "⚪️"
+        lines.append(f"  {prefix} *{platform.display_name}* (`{platform.key}`)")
+        if platform.domains:
+            lines.append(f"     Dominios: {', '.join(platform.domains)}")
+        if platform.supports:
+            lines.append(f"     Soporta: {', '.join(platform.supports)}")
+        lines.append("")
+
+    lines.append("\n📊 *Plataformas de Stats (Proveedores):*")
+    for provider in stats_providers:
+        prefix = "✅" if provider.implemented else "⚪️"
+        lines.append(f"  {prefix} *{provider.display_name}* (`{provider.key}`)")
+        if provider.capabilities.supports_h2h:
+            lines.append("     Soporta: Comparación H2H, Reportes estadísticos, Tablas y Fixtures")
+        lines.append("")
+
+    await update.message.reply_text("\n".join(lines), parse_mode=ParseMode.MARKDOWN)
 
 
 async def ping_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -1519,8 +1547,8 @@ async def track_stats_enter_country(update: Update, context: ContextTypes.DEFAUL
     context.user_data[TRACK_STATS_OPTIONS_CONTEXT_KEY] = options
     await _reply_text_chunks(
         update.message,
-        _build_stats_league_selection_message(options, prompt="Elegí la liga de stats a seguir:"),
-        reply_markup=_build_numeric_keyboard(len(options), "Elegí la liga stats"),
+        _build_stats_league_selection_message(options, prompt="Elegí la liga de stats a seguir:", limit=25),
+        reply_markup=_build_numeric_keyboard(min(len(options), 25), "Elegí la liga stats"),
     )
     return SELECT_LEAGUE_FOR_TRACK_STATS
 
@@ -1813,8 +1841,8 @@ async def link_stats_enter_country(update: Update, context: ContextTypes.DEFAULT
         intro = "🔢 Ordenadas por relevancia: la #1 es la que más coincide con tus partidos.\n\n"
     await _reply_text_chunks(
         update.message,
-        intro + _build_stats_league_selection_message(options),
-        reply_markup=_build_numeric_keyboard(len(options), "Elegí la liga stats"),
+        intro + _build_stats_league_selection_message(options, limit=25),
+        reply_markup=_build_numeric_keyboard(min(len(options), 25), "Elegí la liga stats"),
     )
     return SELECT_LEAGUE_FOR_LINK_STATS
 
@@ -2893,15 +2921,23 @@ def _build_stats_league_selection_message(
     options: list[StatsLeagueOption],
     *,
     prompt: str = "Elegí la liga de stats a vincular:",
+    limit: int = 25,
 ) -> str:
     """Build a stats-league prompt for linking or standalone tracking."""
 
     lines = [prompt]
 
-    for index, option in enumerate(options, start=1):
+    displayed = options[:limit]
+    for index, option in enumerate(displayed, start=1):
         season = f" | season={option.season_id}" if option.season_id else ""
         country = f" | {option.country_name}" if option.country_name else ""
         lines.append(f"{index} - {option.league_name}{country} | id={option.league_id}{season}")
+
+    if len(options) > limit:
+        lines.append(
+            f"\n_(Mostrando {limit} de {len(options)} ligas encontradas. "
+            "Si no ves tu liga, escribí una búsqueda más específica o pegá la URL directa.)_"
+        )
 
     return "\n".join(lines)
 

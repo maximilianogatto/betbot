@@ -94,6 +94,10 @@ def live_events_from_snapshot(snapshot: dict[str, Any], *, sport_id: str = "1") 
             continue
         tournament = tournaments.get(str(desc.get("tournament"))) or {}
         category = categories.get(str(tournament.get("category_id"))) or {}
+        markets = event.get("markets") or {}
+        if not isinstance(markets, dict):
+            markets = {}
+
         live.append(
             LiveEventSnapshot(
                 platform=PLATFORM,
@@ -103,6 +107,9 @@ def live_events_from_snapshot(snapshot: dict[str, Any], *, sport_id: str = "1") 
                 competition_name=tournament.get("name"),
                 country_name=category.get("name"),
                 minute=str(clock.get("match_time")) if clock.get("match_time") is not None else None,
+                home_score=_extract_score_value(state, side="home"),
+                away_score=_extract_score_value(state, side="away"),
+                odds_1x2=_odds_1x2(markets),
                 source_url=f"solcasino:tournament:{desc.get('tournament')}",
                 is_soccer=True,
                 extracted_at=utc_now_iso(),
@@ -119,6 +126,43 @@ def _coerce_float(value: Any) -> float | None:
         return float(value)
     except (TypeError, ValueError):
         return None
+
+
+def _coerce_int(value: Any) -> int | None:
+    if isinstance(value, bool) or value in (None, ""):
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _extract_score_value(state: dict[str, Any], *, side: str) -> int | None:
+    """Best-effort score extraction; observed live samples often omit score."""
+
+    direct_keys = (
+        ("home_score", "score_home", "homeScore", "team1_score", "score1")
+        if side == "home"
+        else ("away_score", "score_away", "awayScore", "team2_score", "score2")
+    )
+    for key in direct_keys:
+        score = _coerce_int(state.get(key))
+        if score is not None:
+            return score
+
+    score_payload = state.get("score")
+    if isinstance(score_payload, dict):
+        nested_keys = (
+            ("home", "home_score", "score_home", "1")
+            if side == "home"
+            else ("away", "away_score", "score_away", "2")
+        )
+        for key in nested_keys:
+            score = _coerce_int(score_payload.get(key))
+            if score is not None:
+                return score
+
+    return None
 
 
 def _odds_1x2(markets: dict[str, Any]) -> Odds1X2:
