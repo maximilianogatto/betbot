@@ -474,7 +474,7 @@ async def import_sheet_command(update: Update, context: ContextTypes.DEFAULT_TYP
     loading_msg = await update.message.reply_text("⏳ Descargando y analizando planilla de partidos...")
 
     try:
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(follow_redirects=True) as client:
             response = await client.get(url, timeout=20.0)
 
         if response.status_code != 200:
