@@ -10,6 +10,8 @@ feasibility reports live there).
 from __future__ import annotations
 
 import asyncio
+import json
+import logging
 from datetime import UTC, datetime
 from difflib import SequenceMatcher
 import re
@@ -37,7 +39,18 @@ from stats_providers.sofascore_http.reporting import render_match_report
 
 
 _T = TypeVar("_T")
+logger = logging.getLogger(__name__)
 _SOFASCORE_EVENT_RE = re.compile(r"(?:/event/|#id:)(\d+)")
+_SOFASCORE_TOURNAMENT_URL_RE = re.compile(
+    r"sofascore\.com/(?:[^/]+/)?football/tournament/"
+    r"(?P<country_slug>[^/]+)/(?P<tournament_slug>[^/]+)/(?P<tournament_id>\d+)",
+    re.IGNORECASE,
+)
+_SOFASCORE_SEASON_ID_RE = re.compile(r"(?:#id:|[?&]id=)(?P<season_id>\d+)", re.IGNORECASE)
+_NEXT_DATA_RE = re.compile(
+    r'<script id="__NEXT_DATA__" type="application/json">(.*?)</script>',
+    re.DOTALL,
+)
 _PER_SIDE_FLOOR = 0.50
 _AUTO_COMBINED = 0.78
 _AUTO_GAP = 0.08
@@ -136,26 +149,87 @@ class SofaScoreHttpStatsProvider(StatsProvider):
                     return options
         return options
 
+    async def describe_league(self, league_id: str) -> StatsLeagueOption | None:
+        """Resolve one SofaScore league id or public tournament URL.
+
+        Direct URLs are important for Telegram linking because SofaScore country
+        discovery is API-backed and can be challenged, while public tournament
+        pages still include the tournament and season identity in Next.js data.
+        """
+
+        identity = _parse_league_identity(league_id)
+        if identity is None:
+            return None
+        tournament_id = int(identity["tournament_id"])
+        season_id = identity.get("season_id")
+        raw_payload: dict[str, Any] = {"input": league_id, "parsed_identity": identity}
+
+        page_info: dict[str, Any] = {}
+        if _looks_like_sofascore_url(league_id):
+            html = await self._call(self._client.get_public_html, league_id)
+            page_info = _extract_tournament_page_info(html)
+            if not page_info:
+                return None
+            raw_payload["public_page"] = page_info
+            tournament_id = int(page_info.get("tournament_id") or tournament_id)
+            season_id = str(page_info.get("season_id") or season_id or "") or None
+
+        season: dict[str, Any] | None = None
+        if not page_info:
+            season = await self._current_season(tournament_id, preferred_season_id=_safe_int(season_id))
+            if season:
+                season_id = str(season.get("id") or season_id or "") or None
+                raw_payload["season"] = season
+
+        league_name = (
+            str(page_info.get("league_name") or "")
+            or (str(season.get("name") or "") if season else "")
+            or f"SofaScore Tournament {tournament_id}"
+        )
+        country_name = str(page_info.get("country_name") or "") or None
+        return StatsLeagueOption(
+            provider=self.name,
+            provider_display_name=self.display_name,
+            country_name=country_name,
+            league_id=_format_league_id(tournament_id, _safe_int(season_id)),
+            league_name=league_name,
+            season_id=str(season_id) if season_id else None,
+            source_url=league_id if _looks_like_sofascore_url(league_id) else self.build_league_url(str(tournament_id)),
+            raw_payload=raw_payload,
+        )
+
     async def list_fixtures(self, league_id: str, *, limit: int | None = None) -> list[StatsFixture]:
         """List recent and upcoming fixtures using the current season pages."""
 
-        tournament_id = int(league_id)
-        season = await self._current_season(tournament_id)
+        identity = _parse_league_identity(league_id)
+        if identity is None:
+            return []
+        tournament_id = int(identity["tournament_id"])
+        season = await self._current_season(tournament_id, preferred_season_id=_safe_int(identity.get("season_id")))
         if not season:
             return []
         season_id = int(season["id"])
         fixture_docs: list[dict[str, Any]] = []
         for direction in ("next", "last"):
-            fixture_docs.extend(
-                await self._cached_payload(
-                    f"tournament:{tournament_id}:season:{season_id}:events:{direction}:0",
-                    self._client.get_season_events,
+            try:
+                fixture_docs.extend(
+                    await self._cached_payload(
+                        f"tournament:{tournament_id}:season:{season_id}:events:{direction}:0",
+                        self._client.get_season_events,
+                        tournament_id,
+                        season_id,
+                        direction=direction,
+                        page=0,
+                    )
+                )
+            except Exception as exc:
+                logger.warning(
+                    "SofaScore fixture page unavailable tournament_id=%s season_id=%s direction=%s reason=%s",
                     tournament_id,
                     season_id,
-                    direction=direction,
-                    page=0,
+                    direction,
+                    exc,
                 )
-            )
         fixtures: list[StatsFixture] = []
         for item in _dedupe_events(fixture_docs):
             normalized = normalize_fixture(item)
@@ -181,17 +255,29 @@ class SofaScoreHttpStatsProvider(StatsProvider):
     async def get_league_overview(self, league_id: str) -> dict[str, Any] | None:
         """Return compact standings and fixtures for future `/explore_stats` use."""
 
-        tournament_id = int(league_id)
-        season = await self._current_season(tournament_id)
+        identity = _parse_league_identity(league_id)
+        if identity is None:
+            return None
+        tournament_id = int(identity["tournament_id"])
+        season = await self._current_season(tournament_id, preferred_season_id=_safe_int(identity.get("season_id")))
         if not season:
             return None
         season_id = int(season["id"])
-        standings = await self._cached_payload(
-            f"tournament:{tournament_id}:season:{season_id}:standings",
-            self._client.get_season_standings,
-            tournament_id,
-            season_id,
-        )
+        try:
+            standings = await self._cached_payload(
+                f"tournament:{tournament_id}:season:{season_id}:standings",
+                self._client.get_season_standings,
+                tournament_id,
+                season_id,
+            )
+        except Exception as exc:
+            logger.warning(
+                "SofaScore standings unavailable tournament_id=%s season_id=%s reason=%s",
+                tournament_id,
+                season_id,
+                exc,
+            )
+            standings = []
         fixtures = await self.list_fixtures(league_id)
         return {
             "league_id": str(league_id),
@@ -311,9 +397,18 @@ class SofaScoreHttpStatsProvider(StatsProvider):
     def build_league_url(self, league_id: str) -> str:
         """Return a stable API URL for one unique tournament."""
 
-        return f"https://www.sofascore.com/api/v1/unique-tournament/{league_id}/seasons"
+        identity = _parse_league_identity(league_id)
+        tournament_id = identity["tournament_id"] if identity else league_id
+        return f"https://www.sofascore.com/api/v1/unique-tournament/{tournament_id}/seasons"
 
-    async def _current_season(self, tournament_id: int) -> dict[str, Any] | None:
+    async def _current_season(
+        self,
+        tournament_id: int,
+        *,
+        preferred_season_id: int | None = None,
+    ) -> dict[str, Any] | None:
+        if preferred_season_id is not None:
+            return {"id": preferred_season_id, "name": f"Season {preferred_season_id}"}
         seasons = await self._cached_payload(
             f"tournament:{tournament_id}:seasons",
             self._client.get_unique_tournament_seasons,
@@ -358,6 +453,83 @@ def _dedupe_events(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def _extract_match_id(url: str | None) -> str | None:
     match = _SOFASCORE_EVENT_RE.search(url or "")
     return match.group(1) if match else None
+
+
+def _looks_like_sofascore_url(value: str | None) -> bool:
+    return bool(re.search(r"https?://(?:www\.)?sofascore\.com/", value or "", re.IGNORECASE))
+
+
+def _parse_league_identity(value: str | None) -> dict[str, str] | None:
+    text = (value or "").strip()
+    if not text:
+        return None
+    url_match = _SOFASCORE_TOURNAMENT_URL_RE.search(text)
+    if url_match:
+        identity = {
+            "tournament_id": url_match.group("tournament_id"),
+            "country_slug": url_match.group("country_slug"),
+            "tournament_slug": url_match.group("tournament_slug"),
+        }
+        season_match = _SOFASCORE_SEASON_ID_RE.search(text)
+        if season_match:
+            identity["season_id"] = season_match.group("season_id")
+        return identity
+    parts = text.split(":")
+    if not parts or not parts[0].isdigit():
+        return None
+    identity = {"tournament_id": parts[0]}
+    if len(parts) > 1 and parts[1].isdigit():
+        identity["season_id"] = parts[1]
+    return identity
+
+
+def _format_league_id(tournament_id: int, season_id: int | None = None) -> str:
+    return f"{tournament_id}:{season_id}" if season_id is not None else str(tournament_id)
+
+
+def _safe_int(value: Any) -> int | None:
+    try:
+        return int(value) if value not in (None, "") else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _extract_tournament_page_info(html: str) -> dict[str, Any]:
+    match = _NEXT_DATA_RE.search(html or "")
+    if not match:
+        return {}
+    try:
+        next_data = json.loads(match.group(1))
+    except json.JSONDecodeError:
+        return {}
+    if not isinstance(next_data, dict):
+        return {}
+    props = next_data.get("props") if isinstance(next_data.get("props"), dict) else {}
+    page_props = props.get("pageProps") if isinstance(props.get("pageProps"), dict) else {}
+    initial = page_props.get("initialProps") if isinstance(page_props.get("initialProps"), dict) else {}
+    if not isinstance(initial, dict):
+        return {}
+    unique = initial.get("uniqueTournament")
+    if not isinstance(unique, dict):
+        return {}
+    info = initial.get("info") if isinstance(initial.get("info"), dict) else {}
+    season = info.get("season") if isinstance(info.get("season"), dict) else None
+    seasons = initial.get("seasons") if isinstance(initial.get("seasons"), list) else []
+    if season is None:
+        season = next((item for item in seasons if isinstance(item, dict)), None)
+    category = unique.get("category") if isinstance(unique.get("category"), dict) else {}
+    country = category.get("country") if isinstance(category.get("country"), dict) else {}
+    return {
+        "tournament_id": unique.get("id"),
+        "league_name": unique.get("name"),
+        "league_slug": unique.get("slug"),
+        "country_name": country.get("name") or category.get("name"),
+        "country_slug": category.get("slug"),
+        "season_id": season.get("id") if isinstance(season, dict) else None,
+        "season_name": season.get("name") if isinstance(season, dict) else None,
+        "has_events": initial.get("hasEvents"),
+        "has_home_away_standings": initial.get("hasHomeAwayStandings"),
+    }
 
 
 def _name_score(left: str, right: str) -> float:
