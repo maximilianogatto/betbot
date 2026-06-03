@@ -3218,6 +3218,36 @@ def _clear_all_selection_context(context: ContextTypes.DEFAULT_TYPE) -> None:
     context.user_data.pop(TRACK_STATS_OPTIONS_CONTEXT_KEY, None)
 
 
+def _convert_fin_to_arg_datetime(date_str: str | None, time_str: str | None) -> tuple[str, str]:
+    """Convert Finnish match date & time (Europe/Helsinki) to Argentina (America/Argentina/Buenos_Aires) date & time."""
+    if not time_str:
+        return date_str or "N/A", "N/A"
+    if not date_str or date_str == "N/A":
+        from datetime import date
+        date_str = date.today().isoformat()
+    try:
+        from datetime import datetime
+        from zoneinfo import ZoneInfo
+        time_str = str(time_str).strip()
+        time_parts = time_str.split(":")
+        if len(time_parts) < 2:
+            return date_str, time_str
+        hour = int(time_parts[0])
+        minute = int(time_parts[1])
+        second = int(time_parts[2]) if len(time_parts) > 2 else 0
+        date_parts = str(date_str).strip().split("-")
+        if len(date_parts) != 3:
+            return date_str, time_str
+        year = int(date_parts[0])
+        month = int(date_parts[1])
+        day = int(date_parts[2])
+        helsinki_dt = datetime(year, month, day, hour, minute, second, tzinfo=ZoneInfo("Europe/Helsinki"))
+        arg_dt = helsinki_dt.astimezone(ZoneInfo("America/Argentina/Buenos_Aires"))
+        return arg_dt.strftime("%Y-%m-%d"), arg_dt.strftime("%H:%M")
+    except Exception:
+        return date_str, time_str
+
+
 def _resolve_fin_league(code: str) -> tuple[str, str] | None:
     """Resolve a short league code to competition_id and category_id."""
     mapping = {
@@ -3393,8 +3423,9 @@ async def fin_fixtures_command(update: Update, context: ContextTypes.DEFAULT_TYP
             "━━━━━━━━━━━━━━━━━━━━\n"
         ]
         for m in display_matches:
-            date_val = m.get("date")
-            time = m.get("time") or ""
+            orig_date = m.get("date")
+            orig_time = m.get("time")
+            date_val, time = _convert_fin_to_arg_datetime(orig_date, orig_time)
             home = m.get("team_A_name") or m.get("club_A_name")
             away = m.get("team_B_name") or m.get("club_B_name")
             m_id = m.get("match_id")
@@ -3423,7 +3454,6 @@ async def fin_fixtures_command(update: Update, context: ContextTypes.DEFAULT_TYP
 
 async def fin_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle /fin_today: Show matches scheduled for today with their IDs."""
-    del context
     if update.message is None:
         return
 
@@ -3441,37 +3471,140 @@ async def fin_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
         # Target adult categories to keep the output clean
         target_cats = {"VL", "M1L", "M1", "M2", "NL", "MSC", "NSC", "LC", "M1LCUP"}
+        LEAGUE_NAMES = {
+            "VL": "Veikkausliiga (Tier 1)",
+            "M1L": "Ykkösliiga (Tier 2)",
+            "M1": "Ykkönen (Tier 3)",
+            "M2": "Kakkonen (Tier 4)",
+            "NL": "Kansallinen Liiga (Damas Tier 1)",
+            "MSC": "Suomen Cup (Copa)",
+            "NSC": "Naisten Suomen Cup (Copa Damas)",
+            "LC": "Liigacup (Copa de la Liga)",
+            "M1LCUP": "Ykkösliigacup",
+            "OTHER": "Otros partidos principales"
+        }
         
+        # 1. Filter out futsal & beach soccer completely
+        filtered_matches = []
+        for m in matches:
+            cat_name = str(m.get("category_name") or "").lower()
+            comp_name = str(m.get("competition_name") or "").lower()
+            sport_name = str(m.get("sport_name") or "").lower()
+            if any(term in cat_name or term in comp_name or term in sport_name for term in ("futsal", "beach", "ranta", "hiekka")):
+                continue
+            filtered_matches.append(m)
+
         classified = []
         youth_or_others_count = 0
-        for m in matches:
+        for m in filtered_matches:
             cat_id = m.get("category_id")
-            if cat_id in target_cats or "kakkonen" in str(m.get("category_name")).lower() or "ykkönen" in str(m.get("category_name")).lower():
+            cat_name = str(m.get("category_name") or "").lower()
+            
+            is_target = (
+                cat_id in target_cats or 
+                "kakkonen" in cat_name or 
+                "ykkönen" in cat_name or 
+                "veikkausliiga" in cat_name
+            )
+            
+            if is_target:
+                # Assign a standardized code for filtering/selection
+                std_code = "OTHER"
+                if cat_id in target_cats:
+                    std_code = cat_id
+                elif "veikkausliiga" in cat_name:
+                    std_code = "VL"
+                elif "kakkonen" in cat_name:
+                    std_code = "M2"
+                elif "ykkönen" in cat_name or "ykkös" in cat_name:
+                    std_code = "M1"
+                
+                m["_std_code"] = std_code
                 classified.append(m)
             else:
                 youth_or_others_count += 1
-                
-        lines = [
-            f"⚽ *Partidos de Hoy ({today_str})*",
-            "━━━━━━━━━━━━━━━━━━━━\n"
-        ]
-        
+
         if not classified:
-            lines.append("No hay partidos de ligas adultas principales para hoy.")
+            lines = [
+                f"⚽ *Partidos de Hoy ({today_str})*",
+                "━━━━━━━━━━━━━━━━━━━━\n",
+                "No hay partidos de ligas adultas principales para hoy."
+            ]
             if youth_or_others_count > 0:
                 lines.append(f"_(Hay {youth_or_others_count} partidos en ligas juveniles o regionales menores hoy)_")
-        else:
-            for m in classified:
-                cat_name = m.get("category_name") or "Liga"
+            lines.append("━━━━━━━━━━━━━━━━━━━━")
+            await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+            return
+
+        # Check if a specific league is selected
+        selected_league = None
+        if context.args:
+            selected_league = context.args[0].upper()
+
+        if selected_league:
+            filtered_classified = [m for m in classified if m["_std_code"] == selected_league]
+            if not filtered_classified:
+                await update.message.reply_text(
+                    f"⚠️ No hay partidos hoy para la liga `{selected_league}`.\n"
+                    "Corré `/fin_today` para ver qué ligas tienen partidos hoy."
+                )
+                return
+
+            lines = [
+                f"⚽ *Partidos de {selected_league} ({today_str})*",
+                "━━━━━━━━━━━━━━━━━━━━\n"
+            ]
+            for m in filtered_classified:
                 home = m.get("home_team_name") or m.get("club_A_name")
                 away = m.get("away_team_name") or m.get("club_B_name")
-                time = m.get("time") or "N/A"
+                orig_date = m.get("date") or today_str
+                orig_time = m.get("time")
+                _, time = _convert_fin_to_arg_datetime(orig_date, orig_time)
                 m_id = m.get("match_id")
                 
                 score = "vs"
                 if m.get("status") in ["Finished", "Played"]:
                     score = f"*{m.get('fs_A')}-{m.get('fs_B')}*"
-                elif m.get("live_period") != "-1":
+                elif m.get("live_period") is not None and str(m.get("live_period")) != "-1":
+                    score = f"🔴 *{m.get('fs_A')}-{m.get('fs_B')}*"
+                    
+                lines.append(
+                    f"🕒 `{time}` | {home} {score} {away}\n"
+                    f"   ID del partido: `{m_id}`\n"
+                )
+            
+            lines.append("━━━━━━━━━━━━━━━━━━━━")
+            lines.append("💡 *Detector de Suplentes / B-Team:*")
+            lines.append("👉 `/fin_match [ID_PARTIDO]`")
+            
+            await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+            return
+
+        # No league code selected: decide whether to show list or league menu
+        total_matches = len(classified)
+        by_league = {}
+        for m in classified:
+            by_league.setdefault(m["_std_code"], []).append(m)
+
+        if total_matches <= 5:
+            # Show all matches directly if they are few
+            lines = [
+                f"⚽ *Partidos de Hoy ({today_str})*",
+                "━━━━━━━━━━━━━━━━━━━━\n"
+            ]
+            for m in classified:
+                cat_name = m.get("category_name") or "Liga"
+                home = m.get("home_team_name") or m.get("club_A_name")
+                away = m.get("away_team_name") or m.get("club_B_name")
+                orig_date = m.get("date") or today_str
+                orig_time = m.get("time")
+                _, time = _convert_fin_to_arg_datetime(orig_date, orig_time)
+                m_id = m.get("match_id")
+                
+                score = "vs"
+                if m.get("status") in ["Finished", "Played"]:
+                    score = f"*{m.get('fs_A')}-{m.get('fs_B')}*"
+                elif m.get("live_period") is not None and str(m.get("live_period")) != "-1":
                     score = f"🔴 *{m.get('fs_A')}-{m.get('fs_B')}*"
                     
                 lines.append(
@@ -3483,12 +3616,34 @@ async def fin_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             if youth_or_others_count > 0:
                 lines.append(f"ℹ️ _Omitidos {youth_or_others_count} partidos de categorías juveniles o ligas menores._\n")
                 
-        lines.append("━━━━━━━━━━━━━━━━━━━━")
-        lines.append("💡 *Detector de Suplentes / B-Team:*")
-        lines.append("Para analizar alineaciones oficiales de hoy y ver si juegan titulares:")
-        lines.append("👉 `/fin_match [ID_PARTIDO]`")
-        
-        await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+            lines.append("━━━━━━━━━━━━━━━━━━━━")
+            lines.append("💡 *Detector de Suplentes / B-Team:*")
+            lines.append("👉 `/fin_match [ID_PARTIDO]`")
+            
+            await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+        else:
+            # Show league selection menu to avoid Telegram length limit
+            lines = [
+                f"⚽ *Partidos de Hoy ({today_str})*",
+                "━━━━━━━━━━━━━━━━━━━━\n",
+                "Selecciona una liga para ver los partidos de hoy:\n"
+            ]
+            
+            league_order = ["VL", "M1L", "M1", "M2", "NL", "MSC", "NSC", "LC", "M1LCUP", "OTHER"]
+            for code in league_order:
+                if code in by_league:
+                    name = LEAGUE_NAMES.get(code, code)
+                    count = len(by_league[code])
+                    lines.append(f"• `{name}` ({count} part.) ➔ `/fin_today {code}`")
+                    
+            lines.append("")
+            if youth_or_others_count > 0:
+                lines.append(f"ℹ️ _Omitidos {youth_or_others_count} partidos de categorías juveniles o ligas menores._\n")
+                
+            lines.append("━━━━━━━━━━━━━━━━━━━━")
+            lines.append("💡 Hacé click en el comando de la derecha para ver la liga correspondiente.")
+            
+            await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
     except Exception as e:
         logger.exception("Failed in /fin_today")
         await update.message.reply_text(f"❌ Error al consultar partidos de hoy: {e}")
@@ -3528,8 +3683,9 @@ async def fin_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
         home = m.get("club_A_name") or m.get("team_A_name") or "Local"
         away = m.get("club_B_name") or m.get("team_B_name") or "Visitante"
-        date_val = m.get("date") or "N/A"
-        time = m.get("time") or ""
+        orig_date = m.get("date")
+        orig_time = m.get("time")
+        date_val, time = _convert_fin_to_arg_datetime(orig_date, orig_time)
         venue = m.get("venue_name") or "N/A"
         attendance = m.get("attendance") or "0"
         status = m.get("status") or "Scheduled"
