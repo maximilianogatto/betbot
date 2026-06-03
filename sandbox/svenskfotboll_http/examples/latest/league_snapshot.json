@@ -1,0 +1,397 @@
+{
+  "provider": "svenskfotboll_http",
+  "competition_id": "133348",
+  "standings": {
+    "competition_id": "133348",
+    "title": "Allsvenskan 2026",
+    "teams": [
+      {
+        "team": "IK Sirius FK",
+        "played": 10,
+        "goal_difference": 17,
+        "points": 28,
+        "team_id": "108445"
+      },
+      {
+        "team": "BK Häcken",
+        "played": 10,
+        "goal_difference": 6,
+        "points": 20,
+        "team_id": "25509"
+      },
+      {
+        "team": "IF Elfsborg",
+        "played": 11,
+        "goal_difference": 5,
+        "points": 18,
+        "team_id": "25504"
+      },
+      {
+        "team": "Hammarby",
+        "played": 11,
+        "goal_difference": 11,
+        "points": 17,
+        "team_id": "66592"
+      },
+      {
+        "team": "GAIS",
+        "played": 11,
+        "goal_difference": 5,
+        "points": 15,
+        "team_id": "25530"
+      },
+      {
+        "team": "Mjällby AIF",
+        "played": 10,
+        "goal_difference": 3,
+        "points": 15,
+        "team_id": "25506"
+      },
+      {
+        "team": "IF Brommapojkarna",
+        "played": 10,
+        "goal_difference": -1,
+        "points": 15,
+        "team_id": "25591"
+      },
+      {
+        "team": "Djurgården",
+        "played": 9,
+        "goal_difference": 6,
+        "points": 13,
+        "team_id": "89483"
+      },
+      {
+        "team": "Malmö FF",
+        "played": 10,
+        "goal_difference": 0,
+        "points": 13,
+        "team_id": "25517"
+      },
+      {
+        "team": "AIK",
+        "played": 10,
+        "goal_difference": -4,
+        "points": 12,
+        "team_id": "66036"
+      },
+      {
+        "team": "Västerås SK FK",
+        "played": 10,
+        "goal_difference": -5,
+        "points": 12,
+        "team_id": "25525"
+      },
+      {
+        "team": "Degerfors IF",
+        "played": 10,
+        "goal_difference": -4,
+        "points": 10,
+        "team_id": "25640"
+      },
+      {
+        "team": "Kalmar FF",
+        "played": 10,
+        "goal_difference": -4,
+        "points": 10,
+        "team_id": "25521"
+      },
+      {
+        "team": "IFK Göteborg",
+        "played": 10,
+        "goal_difference": -9,
+        "points": 10,
+        "team_id": "25508"
+      },
+      {
+        "team": "Halmstad",
+        "played": 10,
+        "goal_difference": -11,
+        "points": 6,
+        "team_id": "200265"
+      },
+      {
+        "team": "Örgryte IS Fotboll",
+        "played": 10,
+        "goal_difference": -15,
+        "points": 6,
+        "team_id": "204429"
+      }
+    ],
+    "raw_row_count": 19
+  },
+  "upcoming_matches": {
+    "competition_id": "133348",
+    "title": "Allsvenskan 2026: Kommande matcher",
+    "matches": [
+      {
+        "match_id": "6529914",
+        "start_time_local": "2026-07-03 19:00",
+        "home": "IK Sirius FK",
+        "away": "Mjällby AIF"
+      },
+      {
+        "match_id": "6529913",
+        "start_time_local": "2026-07-04 15:00",
+        "home": "Degerfors IF",
+        "away": "Malmö FF"
+      },
+      {
+        "match_id": "6529916",
+        "start_time_local": "2026-07-04 15:00",
+        "home": "Halmstad",
+        "away": "Västerås SK FK"
+      },
+      {
+        "match_id": "6529909",
+        "start_time_local": "2026-07-05 14:00",
+        "home": "IFK Göteborg",
+        "away": "AIK"
+      },
+      {
+        "match_id": "6529915",
+        "start_time_local": "2026-07-05 14:00",
+        "home": "Kalmar FF",
+        "away": "Örgryte IS Fotboll"
+      },
+      {
+        "match_id": "6529911",
+        "start_time_local": "2026-07-05 16:30",
+        "home": "IF Elfsborg",
+        "away": "Hammarby"
+      },
+      {
+        "match_id": "6529910",
+        "start_time_local": "2026-07-06 19:00",
+        "home": "BK Häcken",
+        "away": "Djurgården"
+      },
+      {
+        "match_id": "6529912",
+        "start_time_local": "2026-07-06 19:00",
+        "home": "IF Brommapojkarna",
+        "away": "GAIS"
+      },
+      {
+        "match_id": "6529921",
+        "start_time_local": "2026-07-11 15:00",
+        "home": "Mjällby AIF",
+        "away": "AIK"
+      },
+      {
+        "match_id": "6529920",
+        "start_time_local": "2026-07-11 17:30",
+        "home": "Örgryte IS Fotboll",
+        "away": "BK Häcken"
+      },
+      {
+        "match_id": "6529918",
+        "start_time_local": "2026-07-12 14:00",
+        "home": "Hammarby",
+        "away": "Kalmar FF"
+      },
+      {
+        "match_id": "6529922",
+        "start_time_local": "2026-07-12 14:00",
+        "home": "Malmö FF",
+        "away": "IFK Göteborg"
+      },
+      {
+        "match_id": "6529924",
+        "start_time_local": "2026-07-12 14:00",
+        "home": "Västerås SK FK",
+        "away": "Degerfors IF"
+      },
+      {
+        "match_id": "6529919",
+        "start_time_local": "2026-07-12 16:30",
+        "home": "GAIS",
+        "away": "IF Elfsborg"
+      },
+      {
+        "match_id": "6529923",
+        "start_time_local": "2026-07-12 16:30",
+        "home": "IF Brommapojkarna",
+        "away": "IK Sirius FK"
+      },
+      {
+        "match_id": "6529917",
+        "start_time_local": "2026-07-13 19:00",
+        "home": "Djurgården",
+        "away": "Halmstad"
+      },
+      {
+        "match_id": "6529929",
+        "start_time_local": "2026-07-17 19:00",
+        "home": "Mjällby AIF",
+        "away": "Västerås SK FK"
+      },
+      {
+        "match_id": "6529925",
+        "start_time_local": "2026-07-18 15:00",
+        "home": "AIK",
+        "away": "GAIS"
+      },
+      {
+        "match_id": "6529927",
+        "start_time_local": "2026-07-19 14:00",
+        "home": "IFK Göteborg",
+        "away": "IF Brommapojkarna"
+      },
+      {
+        "match_id": "6529926",
+        "start_time_local": "2026-07-19 16:30",
+        "home": "Hammarby",
+        "away": "Degerfors IF"
+      }
+    ],
+    "raw_row_count": 23
+  },
+  "latest_results": {
+    "competition_id": "133348",
+    "title": "Allsvenskan 2026: Senaste resultat",
+    "matches": [
+      {
+        "match_id": "6529904",
+        "start_time_local": "2026-05-31 14:00",
+        "home": "BK Häcken",
+        "away": "Hammarby",
+        "score": "3 - 2"
+      },
+      {
+        "match_id": "6529907",
+        "start_time_local": "2026-05-31 14:00",
+        "home": "Degerfors IF",
+        "away": "IF Brommapojkarna",
+        "score": "2 - 2"
+      },
+      {
+        "match_id": "6529908",
+        "start_time_local": "2026-05-31 14:00",
+        "home": "Västerås SK FK",
+        "away": "IFK Göteborg",
+        "score": "4 - 5"
+      },
+      {
+        "match_id": "6529901",
+        "start_time_local": "2026-05-30 15:00",
+        "home": "AIK",
+        "away": "IK Sirius FK",
+        "score": "0 - 3"
+      },
+      {
+        "match_id": "6529902",
+        "start_time_local": "2026-05-30 15:00",
+        "home": "GAIS",
+        "away": "Kalmar FF",
+        "score": "3 - 0"
+      },
+      {
+        "match_id": "6529906",
+        "start_time_local": "2026-05-30 15:00",
+        "home": "Malmö FF",
+        "away": "Halmstad",
+        "score": "5 - 2"
+      },
+      {
+        "match_id": "6529903",
+        "start_time_local": "2026-05-29 19:00",
+        "home": "Örgryte IS Fotboll",
+        "away": "IF Elfsborg",
+        "score": "2 - 2"
+      },
+      {
+        "match_id": "6529895",
+        "start_time_local": "2026-05-25 19:00",
+        "home": "IFK Göteborg",
+        "away": "Mjällby AIF",
+        "score": "1 - 1"
+      },
+      {
+        "match_id": "6529897",
+        "start_time_local": "2026-05-25 19:00",
+        "home": "IF Elfsborg",
+        "away": "BK Häcken",
+        "score": "1 - 1"
+      },
+      {
+        "match_id": "6529896",
+        "start_time_local": "2026-05-24 16:30",
+        "home": "Malmö FF",
+        "away": "Västerås SK FK",
+        "score": "2 - 3"
+      },
+      {
+        "match_id": "6529894",
+        "start_time_local": "2026-05-24 14:00",
+        "home": "Hammarby",
+        "away": "AIK",
+        "score": "1 - 2"
+      },
+      {
+        "match_id": "6529898",
+        "start_time_local": "2026-05-24 14:00",
+        "home": "IK Sirius FK",
+        "away": "GAIS",
+        "score": "2 - 1"
+      },
+      {
+        "match_id": "6529899",
+        "start_time_local": "2026-05-23 15:00",
+        "home": "Kalmar FF",
+        "away": "Degerfors IF",
+        "score": "2 - 1"
+      },
+      {
+        "match_id": "6529900",
+        "start_time_local": "2026-05-23 15:00",
+        "home": "Halmstad",
+        "away": "Örgryte IS Fotboll",
+        "score": "2 - 0"
+      },
+      {
+        "match_id": "6529893",
+        "start_time_local": "2026-05-22 19:00",
+        "home": "Djurgården",
+        "away": "IF Brommapojkarna",
+        "score": "1 - 2"
+      },
+      {
+        "match_id": "6529946",
+        "start_time_local": "2026-05-21 19:00",
+        "home": "IF Elfsborg",
+        "away": "Mjällby AIF",
+        "score": "1 - 1"
+      },
+      {
+        "match_id": "6529944",
+        "start_time_local": "2026-05-20 19:00",
+        "home": "GAIS",
+        "away": "Hammarby",
+        "score": "2 - 0"
+      },
+      {
+        "match_id": "6529888",
+        "start_time_local": "2026-05-19 15:00",
+        "home": "Örgryte IS Fotboll",
+        "away": "IFK Göteborg",
+        "score": "2 - 3"
+      },
+      {
+        "match_id": "6529885",
+        "start_time_local": "2026-05-18 19:00",
+        "home": "Djurgården",
+        "away": "IK Sirius FK",
+        "score": "2 - 3"
+      },
+      {
+        "match_id": "6529889",
+        "start_time_local": "2026-05-17 16:30",
+        "home": "Mjällby AIF",
+        "away": "BK Häcken",
+        "score": "0 - 1"
+      }
+    ],
+    "raw_row_count": 23
+  }
+}

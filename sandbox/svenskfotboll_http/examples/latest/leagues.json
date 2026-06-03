@@ -1,0 +1,549 @@
+[
+  {
+    "competition_id": "115560",
+    "name": "Allsvenskan 2024",
+    "source_url": "/go-to/?ftid=115560",
+    "categories": [
+      "Allsvenskan herrar"
+    ],
+    "association_ids": [
+      "1",
+      "14",
+      "15",
+      "16",
+      "18",
+      "2",
+      "21",
+      "22",
+      "24",
+      "7",
+      "8"
+    ],
+    "gender_ids": [
+      "2"
+    ],
+    "age_category_ids": [
+      "4"
+    ],
+    "football_type_ids": [
+      "1"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "123864",
+    "name": "Allsvenskan 2025",
+    "source_url": "/go-to/?ftid=123864",
+    "categories": [
+      "Allsvenskan herrar"
+    ],
+    "association_ids": [
+      "1",
+      "14",
+      "15",
+      "16",
+      "18",
+      "19",
+      "2",
+      "21",
+      "24",
+      "7",
+      "8"
+    ],
+    "gender_ids": [
+      "2"
+    ],
+    "age_category_ids": [
+      "4"
+    ],
+    "football_type_ids": [
+      "1"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "133348",
+    "name": "Allsvenskan 2026",
+    "source_url": "/go-to/?ftid=133348",
+    "categories": [
+      "Allsvenskan herrar"
+    ],
+    "association_ids": [
+      "1",
+      "14",
+      "15",
+      "16",
+      "18",
+      "19",
+      "2",
+      "21",
+      "22",
+      "7",
+      "8"
+    ],
+    "gender_ids": [
+      "2"
+    ],
+    "age_category_ids": [
+      "4"
+    ],
+    "football_type_ids": [
+      "1"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "131881",
+    "name": "F17 Allsvenskan Final 2025",
+    "source_url": "/go-to/?ftid=131881",
+    "categories": [
+      "F17-serier"
+    ],
+    "association_ids": [
+      "1",
+      "14",
+      "16"
+    ],
+    "gender_ids": [
+      "3"
+    ],
+    "age_category_ids": [
+      "3"
+    ],
+    "football_type_ids": [
+      "1"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "123409",
+    "name": "F17 Allsvenskan Norra 2025",
+    "source_url": "/go-to/?ftid=123409",
+    "categories": [
+      "F17-serier"
+    ],
+    "association_ids": [
+      "0",
+      "1",
+      "10",
+      "11",
+      "16",
+      "20",
+      "23",
+      "4",
+      "6"
+    ],
+    "gender_ids": [
+      "3"
+    ],
+    "age_category_ids": [
+      "3"
+    ],
+    "football_type_ids": [
+      "1"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "133303",
+    "name": "F17 Allsvenskan Norra 2026",
+    "source_url": "/go-to/?ftid=133303",
+    "categories": [
+      "F17-serier"
+    ],
+    "association_ids": [
+      "1",
+      "16",
+      "17",
+      "20",
+      "22",
+      "23",
+      "6"
+    ],
+    "gender_ids": [
+      "3"
+    ],
+    "age_category_ids": [
+      "3"
+    ],
+    "football_type_ids": [
+      "1"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "123408",
+    "name": "F17 Allsvenskan Södra 2025",
+    "source_url": "/go-to/?ftid=123408",
+    "categories": [
+      "F17-serier"
+    ],
+    "association_ids": [
+      "1",
+      "14",
+      "15",
+      "16",
+      "24",
+      "7"
+    ],
+    "gender_ids": [
+      "3"
+    ],
+    "age_category_ids": [
+      "3"
+    ],
+    "football_type_ids": [
+      "1"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "133302",
+    "name": "F17 Allsvenskan Södra 2026",
+    "source_url": "/go-to/?ftid=133302",
+    "categories": [
+      "F17-serier"
+    ],
+    "association_ids": [
+      "1",
+      "14",
+      "15",
+      "16",
+      "24",
+      "7",
+      "8"
+    ],
+    "gender_ids": [
+      "3"
+    ],
+    "age_category_ids": [
+      "3"
+    ],
+    "football_type_ids": [
+      "1"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "123051",
+    "name": "F19 Allsvenskan 2025",
+    "source_url": "/go-to/?ftid=123051",
+    "categories": [
+      "F19-serier"
+    ],
+    "association_ids": [
+      "1",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16",
+      "20",
+      "21",
+      "24",
+      "7"
+    ],
+    "gender_ids": [
+      "3"
+    ],
+    "age_category_ids": [
+      "3"
+    ],
+    "football_type_ids": [
+      "1"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "131381",
+    "name": "F19 Allsvenskan 2026",
+    "source_url": "/go-to/?ftid=131381",
+    "categories": [
+      "F19-serier"
+    ],
+    "association_ids": [
+      "1",
+      "14",
+      "15",
+      "16",
+      "17",
+      "20",
+      "21",
+      "24",
+      "7"
+    ],
+    "gender_ids": [
+      "3"
+    ],
+    "age_category_ids": [
+      "3"
+    ],
+    "football_type_ids": [
+      "1"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "133109",
+    "name": "Hallsvenskan Dam",
+    "source_url": "/go-to/?ftid=133109",
+    "categories": [],
+    "association_ids": [
+      "7",
+      "8"
+    ],
+    "gender_ids": [
+      "3"
+    ],
+    "age_category_ids": [
+      "5"
+    ],
+    "football_type_ids": [
+      "2"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "113986",
+    "name": "Hallsvenskan Herr",
+    "source_url": "/go-to/?ftid=113986",
+    "categories": [
+      "Fotbollsligan - Futsal"
+    ],
+    "association_ids": [
+      "7"
+    ],
+    "gender_ids": [
+      "2"
+    ],
+    "age_category_ids": [
+      "5"
+    ],
+    "football_type_ids": [
+      "2"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "123240",
+    "name": "Hallsvenskan Herr",
+    "source_url": "/go-to/?ftid=123240",
+    "categories": [
+      "Fotbollsligan - Futsal"
+    ],
+    "association_ids": [
+      "7"
+    ],
+    "gender_ids": [
+      "2"
+    ],
+    "age_category_ids": [
+      "5"
+    ],
+    "football_type_ids": [
+      "2"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "131612",
+    "name": "Hallsvenskan Herr",
+    "source_url": "/go-to/?ftid=131612",
+    "categories": [
+      "Fotbollsligan - Futsal"
+    ],
+    "association_ids": [
+      "7"
+    ],
+    "gender_ids": [
+      "2"
+    ],
+    "age_category_ids": [
+      "5"
+    ],
+    "football_type_ids": [
+      "2"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "122983",
+    "name": "Kval till Allsvenskan",
+    "source_url": "/go-to/?ftid=122983",
+    "categories": [
+      "Kval"
+    ],
+    "association_ids": [
+      "1",
+      "14",
+      "15"
+    ],
+    "gender_ids": [
+      "2"
+    ],
+    "age_category_ids": [
+      "4"
+    ],
+    "football_type_ids": [
+      "1"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "131476",
+    "name": "Kval till Allsvenskan",
+    "source_url": "/go-to/?ftid=131476",
+    "categories": [
+      "Kval"
+    ],
+    "association_ids": [
+      "0",
+      "1",
+      "24",
+      "7"
+    ],
+    "gender_ids": [
+      "2"
+    ],
+    "age_category_ids": [
+      "4"
+    ],
+    "football_type_ids": [
+      "1"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "122990",
+    "name": "Kval till OBOS Damallsvenskan",
+    "source_url": "/go-to/?ftid=122990",
+    "categories": [
+      "Kval"
+    ],
+    "association_ids": [
+      "1",
+      "16",
+      "20"
+    ],
+    "gender_ids": [
+      "3"
+    ],
+    "age_category_ids": [
+      "4"
+    ],
+    "football_type_ids": [
+      "1"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "131483",
+    "name": "Kval till OBOS Damallsvenskan",
+    "source_url": "/go-to/?ftid=131483",
+    "categories": [
+      "Kval"
+    ],
+    "association_ids": [
+      "1",
+      "13",
+      "16"
+    ],
+    "gender_ids": [
+      "3"
+    ],
+    "age_category_ids": [
+      "4"
+    ],
+    "football_type_ids": [
+      "1"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "112317",
+    "name": "Kval till P17 Allsvenskan - Grupp 1",
+    "source_url": "/go-to/?ftid=112317",
+    "categories": [
+      "P17 serier"
+    ],
+    "association_ids": [
+      "1",
+      "12",
+      "16"
+    ],
+    "gender_ids": [
+      "2"
+    ],
+    "age_category_ids": [
+      "3"
+    ],
+    "football_type_ids": [
+      "1"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  },
+  {
+    "competition_id": "122036",
+    "name": "Kval till P17 Allsvenskan - Grupp 1",
+    "source_url": "/go-to/?ftid=122036",
+    "categories": [
+      "P17 serier"
+    ],
+    "association_ids": [
+      "1",
+      "10",
+      "17",
+      "18"
+    ],
+    "gender_ids": [
+      "2"
+    ],
+    "age_category_ids": [
+      "3"
+    ],
+    "football_type_ids": [
+      "1"
+    ],
+    "type_ids": [
+      "Inget"
+    ]
+  }
+]

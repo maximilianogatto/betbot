@@ -1,0 +1,368 @@
+{
+  "provider": "svenskfotboll_http",
+  "ticker": [
+    {
+      "match_id": "6812343",
+      "url": "/livescore/#?date=2026-06-03&game=6812343",
+      "is_live": true,
+      "is_finished": false,
+      "is_today": true,
+      "start_time_local": "2026-06-03 18:30",
+      "home": "Sver",
+      "away": "Norg",
+      "score_home": 2,
+      "score_away": 0
+    },
+    {
+      "match_id": "6537780",
+      "url": "/livescore/#?date=2026-06-03&game=6537780",
+      "is_live": true,
+      "is_finished": false,
+      "is_today": true,
+      "start_time_local": "2026-06-03 19:30",
+      "home": "Vasa",
+      "away": "FC J",
+      "score_home": 0,
+      "score_away": 1
+    },
+    {
+      "match_id": "6576728",
+      "url": "/livescore/#?date=2026-06-03&game=6576728",
+      "is_live": true,
+      "is_finished": false,
+      "is_today": true,
+      "start_time_local": "2026-06-03 19:30",
+      "home": "Stor",
+      "away": "Skel",
+      "score_home": 0,
+      "score_away": 0
+    },
+    {
+      "match_id": "6538014",
+      "url": "/livescore/#?date=2026-06-03&game=6538014",
+      "is_live": false,
+      "is_finished": false,
+      "is_today": true,
+      "start_time_local": "2026-06-03 19:00",
+      "home": "BK O",
+      "away": "Lund",
+      "score_home": 0,
+      "score_away": 0
+    },
+    {
+      "match_id": "6576764",
+      "url": "/livescore/#?date=2026-06-03&game=6576764",
+      "is_live": false,
+      "is_finished": false,
+      "is_today": true,
+      "start_time_local": "2026-06-03 19:00",
+      "home": "IFK ",
+      "away": "Täft",
+      "score_home": 0,
+      "score_away": 0
+    },
+    {
+      "match_id": "6576733",
+      "url": "/livescore/#?date=2026-06-03&game=6576733",
+      "is_live": false,
+      "is_finished": false,
+      "is_today": true,
+      "start_time_local": "2026-06-03 19:00",
+      "home": "Umeå",
+      "away": "IFK ",
+      "score_home": 0,
+      "score_away": 0
+    },
+    {
+      "match_id": "6551009",
+      "url": "/livescore/#?date=2026-06-03&game=6551009",
+      "is_live": false,
+      "is_finished": false,
+      "is_today": true,
+      "start_time_local": "2026-06-03 19:00",
+      "home": "Gisl",
+      "away": "Vejb",
+      "score_home": 0,
+      "score_away": 0
+    }
+  ],
+  "overview": {
+    "created_at": "2026-06-03 19:35:41",
+    "status": "200",
+    "games": [
+      {
+        "match_id": "6812343",
+        "competition_id": "133223",
+        "competition_name": "Dam U23 landskamp",
+        "date": "2026-06-03",
+        "start": "18:30:00",
+        "home": {
+          "team_id": "97728",
+          "name": "Sverige",
+          "short_name": "Sverige",
+          "participation_id": "1395416"
+        },
+        "away": {
+          "team_id": "97651",
+          "name": "Norge",
+          "short_name": "Norge",
+          "participation_id": "1418692"
+        },
+        "status": {
+          "id": "3",
+          "desc": "HALFTIME"
+        },
+        "score": {
+          "home-team": "2",
+          "away-team": "0",
+          "home-team-half-time": "2",
+          "away-team-half-time": "0"
+        }
+      },
+      {
+        "match_id": "6537780",
+        "competition_id": "133338",
+        "competition_name": "Ettan Norra, herr 2026",
+        "date": "2026-06-03",
+        "start": "19:30:00",
+        "home": {
+          "team_id": "253938",
+          "name": "Vasalund",
+          "short_name": "Vasalund",
+          "participation_id": "1356072"
+        },
+        "away": {
+          "team_id": "125677",
+          "name": "FC Järfälla",
+          "short_name": "FC Järfälla",
+          "participation_id": "1347995"
+        },
+        "status": {
+          "id": "1",
+          "desc": "FIRST_HALF_IN_PROGRESS"
+        },
+        "score": {
+          "home-team": "0",
+          "away-team": "1",
+          "home-team-half-time": "0",
+          "away-team-half-time": "1"
+        }
+      },
+      {
+        "match_id": "6576728",
+        "competition_id": "131960",
+        "competition_name": "Div 2 Norrland Vår Norra 2026",
+        "date": "2026-06-03",
+        "start": "19:30:00",
+        "home": {
+          "team_id": "32724",
+          "name": "Storfors AIK",
+          "short_name": "Storfors AIK",
+          "participation_id": "1344505"
+        },
+        "away": {
+          "team_id": "25575",
+          "name": "Skellefteå FF",
+          "short_name": "Skellefteå FF",
+          "participation_id": "1348071"
+        },
+        "status": {
+          "id": "1",
+          "desc": "FIRST_HALF_IN_PROGRESS"
+        },
+        "score": {
+          "home-team": "0",
+          "away-team": "0",
+          "home-team-half-time": "0",
+          "away-team-half-time": "0"
+        }
+      },
+      {
+        "match_id": "6538014",
+        "competition_id": "133339",
+        "competition_name": "Ettan Södra, herr 2026",
+        "date": "2026-06-03",
+        "start": "19:00:00",
+        "home": {
+          "team_id": "78264",
+          "name": "BK Olympic",
+          "short_name": "BK Olympic",
+          "participation_id": "1356089"
+        },
+        "away": {
+          "team_id": "25695",
+          "name": "Lunds BK",
+          "short_name": "Lunds BK",
+          "participation_id": "1356084"
+        },
+        "status": {
+          "id": "7",
+          "desc": "NOT_STARTED"
+        },
+        "score": {
+          "home-team": "0",
+          "away-team": "0",
+          "home-team-half-time": "0",
+          "away-team-half-time": "0"
+        }
+      },
+      {
+        "match_id": "6576764",
+        "competition_id": "131960",
+        "competition_name": "Div 2 Norrland Vår Norra 2026",
+        "date": "2026-06-03",
+        "start": "19:00:00",
+        "home": {
+          "team_id": "41506",
+          "name": "IFK Umeå",
+          "short_name": "IFK Umeå",
+          "participation_id": "1344501"
+        },
+        "away": {
+          "team_id": "41191",
+          "name": "Täfteå IK",
+          "short_name": "Täfteå IK",
+          "participation_id": "1348076"
+        },
+        "status": {
+          "id": "7",
+          "desc": "NOT_STARTED"
+        },
+        "score": {
+          "home-team": "0",
+          "away-team": "0",
+          "home-team-half-time": "0",
+          "away-team-half-time": "0"
+        }
+      },
+      {
+        "match_id": "6576733",
+        "competition_id": "131960",
+        "competition_name": "Div 2 Norrland Vår Norra 2026",
+        "date": "2026-06-03",
+        "start": "19:00:00",
+        "home": {
+          "team_id": "193446",
+          "name": "Umeå FC Akademi",
+          "short_name": "Umeå FC Akademi",
+          "participation_id": "1348069"
+        },
+        "away": {
+          "team_id": "25572",
+          "name": "IFK Luleå",
+          "short_name": "IFK Luleå",
+          "participation_id": "1348070"
+        },
+        "status": {
+          "id": "7",
+          "desc": "NOT_STARTED"
+        },
+        "score": {
+          "home-team": "0",
+          "away-team": "0",
+          "home-team-half-time": "0",
+          "away-team-half-time": "0"
+        }
+      },
+      {
+        "match_id": "6551009",
+        "competition_id": "131820",
+        "competition_name": "Div 3 Sydvästra Götaland, herr 2026",
+        "date": "2026-06-03",
+        "start": "19:00:00",
+        "home": {
+          "team_id": "35171",
+          "name": "Gislaveds IS ",
+          "short_name": "Gislaveds IS ",
+          "participation_id": "1346307"
+        },
+        "away": {
+          "team_id": "79371",
+          "name": "Vejby IF",
+          "short_name": "Vejby IF",
+          "participation_id": "1344607"
+        },
+        "status": {
+          "id": "7",
+          "desc": "NOT_STARTED"
+        },
+        "score": {
+          "home-team": "0",
+          "away-team": "0",
+          "home-team-half-time": "0",
+          "away-team-half-time": "0"
+        }
+      }
+    ]
+  },
+  "sample_game_info": {
+    "match_id": "6812343",
+    "competition_id": "133223",
+    "competition_name": "Dam U23 landskamp",
+    "date": "2026-06-03",
+    "start": "18:30:00",
+    "home": {
+      "team_id": "97728",
+      "name": "Sverige",
+      "short_name": "Sverige",
+      "participation_id": "1395416"
+    },
+    "away": {
+      "team_id": "97651",
+      "name": "Norge",
+      "short_name": "Norge",
+      "participation_id": "1418692"
+    },
+    "status": {
+      "id": "3",
+      "desc": "HALFTIME"
+    },
+    "score": {
+      "home-team": "2",
+      "away-team": "0",
+      "home-team-half-time": "2",
+      "away-team-half-time": "0"
+    },
+    "stats": {
+      "home-corners": "2",
+      "home-ball-possession": "0",
+      "home-offsides": "0",
+      "home-yellow-cards": "0",
+      "home-red-cards": "0",
+      "home-red-cards-from-bookings": "0",
+      "home-freekicks-awarded": "0",
+      "home-finishes": "2",
+      "home-shots-on-goal": "2",
+      "home-shots-post": "0",
+      "home-shots-missed": "0",
+      "home-normal-goals": "2",
+      "home-penalty-goals": "0",
+      "home-freekick-goals": "0",
+      "home-cornor-goals": "0",
+      "home-assists": "1",
+      "away-corners": "2",
+      "away-ball-possession": "0",
+      "away-offsides": "0",
+      "away-yellow-cards": "0",
+      "away-red-cards": "0",
+      "away-red-cards-from-bookings": "0",
+      "away-freekicks-awarded": "0",
+      "away-finishes": "1",
+      "away-shots-on-goal": "1",
+      "away-shots-post": "0",
+      "away-shots-missed": "0",
+      "away-normal-goals": "0",
+      "away-penalty-goals": "0",
+      "away-freekick-goals": "0",
+      "away-cornor-goals": "0",
+      "away-assists": "0"
+    },
+    "events": [],
+    "event_summary": {
+      "goals": 0,
+      "red_cards": 0,
+      "corners": 0,
+      "latest_event": null
+    }
+  }
+}
