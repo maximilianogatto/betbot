@@ -12,6 +12,7 @@ import unicodedata
 from typing import Any
 from urllib.parse import urlparse, quote
 
+# pyrefly: ignore [missing-import]
 from curl_cffi.requests import AsyncSession
 from core.extractor_base import CompetitionUnavailableError
 from extractors.bet365.parser import (

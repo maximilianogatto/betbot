@@ -12,10 +12,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, timezone, timedelta
 from difflib import SequenceMatcher
+import json
 import logging
 import re
 import unicodedata
-from typing import Iterable
+from typing import Iterable, Any
 from zoneinfo import ZoneInfo
 
 from core.extractor_base import Extractor
@@ -34,14 +35,35 @@ SIDE_FLOOR = 0.62
 COMBINED_FLOOR = 0.70
 
 
+_TEAM_TRANSLATION_MAP = {
+    "femenino": "women",
+    "femenil": "women",
+    "mujeres": "women",
+    "fem": "women",
+    "reserva": "reserves",
+    "reservas": "reserves",
+    "sub": "u",
+    "youth": "youth",
+    "juvenil": "youth",
+}
+
+
 def _normalize(value: str) -> str:
     raw = unicodedata.normalize("NFKD", str(value or "").lower())
     raw = "".join(ch for ch in raw if not unicodedata.combining(ch))
+    raw = re.sub(r"\bsub[- ]?(\d+)\b", r"u\1", raw)
+    tokens = raw.split()
+    translated = [_TEAM_TRANSLATION_MAP.get(t, t) for t in tokens]
+    raw = " ".join(translated)
     return re.sub(r"[^a-z0-9]+", " ", raw).strip()
 
 
 # Generic tokens that should not, on their own, make two team names match.
-_STOPWORDS = {"fc", "afc", "sc", "cf", "ca", "ac", "if", "sk", "club", "de", "the", "women", "w", "u20", "u23", "u19", "u17"}
+_STOPWORDS = {
+    "fc", "afc", "sc", "cf", "ca", "ac", "if", "sk", "club", "de", "the",
+    "women", "w", "u20", "u23", "u19", "u17", "reserves", "reserva", "reservas",
+    "femenino", "femenil", "sub", "fem", "youth", "u21", "u18", "u16", "u15"
+}
 
 
 def _name_similarity(left: str, right: str) -> float:
@@ -57,8 +79,8 @@ def _name_similarity(left: str, right: str) -> float:
     return ratio
 
 
-def match_score(entry: LiveWatchEntry, event: LiveEventSnapshot) -> float:
-    """Per-side combined score for one watch entry vs one live event (0..1)."""
+def match_score(entry: LiveWatchEntry, event: Any) -> float:
+    """Per-side combined score for one watch entry vs one event (live or prematch/active_event)."""
 
     home = _name_similarity(entry.home, event.home)
     away = _name_similarity(entry.away, event.away)
@@ -69,12 +91,13 @@ def match_score(entry: LiveWatchEntry, event: LiveEventSnapshot) -> float:
 
 @dataclass(frozen=True)
 class LiveWatchHit:
-    """A watch entry that just matched an event (live or prematch)."""
+    """A watch entry that just matched an event (live, prematch, or countdown)."""
 
     entry: LiveWatchEntry
-    event: LiveEventSnapshot
-    score: float
-    phase: str = "live"  # "live" (in-play, terminal) | "pre" (listed prematch, one-shot)
+    event: LiveEventSnapshot | None = None
+    score: float = 0.0
+    phase: str = "live"  # "live" | "pre" | "countdown"
+    custom_message: str | None = None
 
 
 class LiveWatchService:
@@ -106,22 +129,52 @@ class LiveWatchService:
         """
 
         added: list[LiveWatchEntry] = []
+        existing_watches = self.repository.list_live_watches(chat_id, status="watching")
+
         for raw in lines:
             parsed = parse_fixture_line(raw)
             if parsed is None:
                 continue
             league_hint, home, away, kickoff_at = parsed
-            added.append(
-                self.repository.add_live_watch(
-                    chat_id,
-                    home=home,
-                    away=away,
-                    league_hint=league_hint,
-                    note=raw.strip(),
-                    kickoff_at=kickoff_at,
-                )
+
+            # 1. Skip past kickoff times
+            if kickoff_at:
+                try:
+                    ko = datetime.fromisoformat(kickoff_at)
+                    if ko.tzinfo is None:
+                        ko = ko.replace(tzinfo=timezone.utc)
+                    now = datetime.now(timezone.utc)
+                    if ko < now:
+                        logger.info("Skipping watch entry because kickoff %s is in the past", kickoff_at)
+                        continue
+                except Exception:
+                    pass
+
+            # 2. Skip duplicates
+            is_dup = False
+            for entry in existing_watches:
+                sim_home = _name_similarity(home, entry.home)
+                sim_away = _name_similarity(away, entry.away)
+                if sim_home >= 0.85 and sim_away >= 0.85:
+                    is_dup = True
+                    break
+            if is_dup:
+                logger.info("Skipping watch entry %s vs %s because it is a duplicate", home, away)
+                continue
+
+            new_entry = self.repository.add_live_watch(
+                chat_id,
+                home=home,
+                away=away,
+                league_hint=league_hint,
+                note=raw.strip(),
+                kickoff_at=kickoff_at,
             )
+            added.append(new_entry)
+            existing_watches.append(new_entry)
+
         return added
+
 
     def list_watches(self, chat_id: int, *, status: str | None = None) -> list[LiveWatchEntry]:
         return self.repository.list_live_watches(chat_id, status=status)
@@ -198,11 +251,12 @@ class LiveWatchService:
 
         live_events = await self.collect_live_events()
         prematch_events = await self.collect_prematch_events()
-        if not live_events and not prematch_events:
-            return []
 
         hits: list[LiveWatchHit] = []
+        active_events = None
+
         for entry in watches:
+            # 1. Process Live events
             eligible_live_events = (
                 [ev for ev in live_events if ev.platform not in entry.fired_platforms_list]
                 if live_events
@@ -216,18 +270,48 @@ class LiveWatchService:
                 )
                 hits.append(LiveWatchHit(entry=entry, event=event, score=score, phase="live"))
                 continue
-            # Not live: surface a one-shot prematch listing (only once per entry).
-            if entry.prematch_seen_at:
-                continue
-            pre_best = self._best_match(entry, prematch_events) if prematch_events else None
-            if pre_best is None:
-                continue
-            score, event = pre_best
-            self.repository.mark_live_watch_prematch_seen(
-                entry.id, platform=event.platform, event_id=event.external_event_id
+
+            # 2. Process Kickoff Countdown alerts (5 min before kickoff)
+            if entry.kickoff_at and not entry.countdown_fired_at:
+                try:
+                    ko = datetime.fromisoformat(entry.kickoff_at)
+                    if ko.tzinfo is None:
+                        ko = ko.replace(tzinfo=timezone.utc)
+                    now = datetime.now(timezone.utc)
+                    diff_seconds = (ko - now).total_seconds()
+                    # Fire alert exactly if starts in 4 to 6 minutes (240 to 360 seconds)
+                    if 240 <= diff_seconds <= 360:
+                        if active_events is None:
+                            active_events = self.repository.get_all_active_events_with_league()
+
+                        matched_prematch = []
+                        for ev in active_events:
+                            if match_score(entry, ev) >= COMBINED_FLOOR:
+                                matched_prematch.append(ev)
+
+                        if matched_prematch:
+                            msg = render_countdown_alert(entry, matched_prematch)
+                            self.repository.mark_live_watch_countdown_fired(entry.id)
+                            hits.append(LiveWatchHit(entry=entry, phase="countdown", custom_message=msg))
+                except Exception:
+                    logger.exception("Error checking kickoff countdown for entry_id=%s", entry.id)
+
+            # 3. Process Prematch events (per platform alert)
+            eligible_prematch_events = (
+                [ev for ev in prematch_events if ev.platform not in entry.prematch_fired_platforms_list]
+                if prematch_events
+                else []
             )
-            hits.append(LiveWatchHit(entry=entry, event=event, score=score, phase="pre"))
+            pre_best = self._best_match(entry, eligible_prematch_events) if eligible_prematch_events else None
+            if pre_best is not None:
+                score, event = pre_best
+                self.repository.mark_live_watch_prematch_fired(
+                    entry.id, platform=event.platform, event_id=event.external_event_id
+                )
+                hits.append(LiveWatchHit(entry=entry, event=event, score=score, phase="pre"))
+
         return hits
+
 
     def purge_expired(self) -> int:
         """Delete watch entries whose time has passed (kickoff+grace, or stale)."""
@@ -261,8 +345,127 @@ class LiveWatchService:
 
 
 
+def _format_handicap(event: Any) -> str | None:
+    if not getattr(event, "markets_json", None):
+        return None
+    try:
+        markets = json.loads(event.markets_json)
+    except Exception:
+        return None
+    ah = markets.get("asian_handicap")
+    if not ah or not isinstance(ah, dict):
+        return None
+    selections = ah.get("selections")
+    if not isinstance(selections, list) or not selections:
+        return None
+
+    home_sel = None
+    away_sel = None
+    home_norm = _normalize(event.home)
+    away_norm = _normalize(event.away)
+    for sel in selections:
+        if not isinstance(sel, dict):
+            continue
+        sel_name = _normalize(sel.get("selection"))
+        if sel_name == home_norm:
+            home_sel = sel
+        elif sel_name == away_norm:
+            away_sel = sel
+
+    if not home_sel or not away_sel:
+        if len(selections) >= 2:
+            home_sel, away_sel = selections[0], selections[1]
+        else:
+            return None
+
+    try:
+        h_line = home_sel.get("line")
+        h_odds = home_sel.get("odds")
+        a_line = away_sel.get("line")
+        a_odds = away_sel.get("odds")
+        if h_line is not None and h_odds is not None and a_line is not None and a_odds is not None:
+            return f"📐 AH L({h_line}):{float(h_odds):.2f} | V({a_line}):{float(a_odds):.2f}"
+    except Exception:
+        pass
+    return None
+
+
+def _format_goals(event: Any) -> str | None:
+    if not getattr(event, "markets_json", None):
+        return None
+    try:
+        markets = json.loads(event.markets_json)
+    except Exception:
+        return None
+    gl = markets.get("goal_line")
+    if not gl or not isinstance(gl, dict):
+        return None
+    selections = gl.get("selections")
+    if not isinstance(selections, list) or not selections:
+        return None
+    parts = []
+    for sel in selections[:4]:
+        name = sel.get("selection")
+        line = sel.get("line")
+        odds = sel.get("odds")
+        if name and odds is not None:
+            line_str = f" {line}" if line else ""
+            parts.append(f"{name}{line_str}={float(odds):.2f}")
+    if parts:
+        return f"📏 GL {' | '.join(parts)}"
+    return None
+
+
+def render_countdown_alert(entry: LiveWatchEntry, matched: list[Any]) -> str:
+    lines = [
+        "⏰ PRÓXIMO INICIO (5 min)",
+        "",
+        f"⚽ {entry.home} vs {entry.away}"
+    ]
+    league_name = None
+    for ev in matched:
+        if getattr(ev, "league_name", None):
+            league_name = ev.league_name
+            break
+    if league_name:
+        lines.append(f"🏆 {league_name}")
+
+    if entry.note and entry.note.strip() not in (f"{entry.home} - {entry.away}",):
+        lines.append("")
+        lines.append(f"📝 {entry.note.strip()}")
+
+    lines.append("")
+    lines.append("💰 ODDS POR CASA:")
+
+    for ev in matched:
+        book = ev.platform.replace("_http", "")
+        lines.append("")
+        lines.append(f"🏦 {book}")
+
+        # 1X2
+        h = f"{ev.odds_home:.2f}" if ev.odds_home is not None else "-"
+        d = f"{ev.odds_draw:.2f}" if ev.odds_draw is not None else "-"
+        a = f"{ev.odds_away:.2f}" if ev.odds_away is not None else "-"
+        lines.append(f"• 1X2: {h} / {d} / {a}")
+
+        # Handicap
+        handicap_str = _format_handicap(ev)
+        if handicap_str:
+            lines.append(f"• {handicap_str}")
+
+        # Goals
+        goals_str = _format_goals(ev)
+        if goals_str:
+            lines.append(f"• {goals_str}")
+
+    return "\n".join(lines)
+
+
 def render_live_hit(hit: LiveWatchHit) -> str:
-    """Build the Telegram alert for a watched fixture (live or prematch listing)."""
+    """Build the Telegram alert for a watched fixture (live, prematch, or countdown)."""
+
+    if hit.phase == "countdown":
+        return hit.custom_message or ""
 
     event = hit.event
     book = event.platform.replace("_http", "")
@@ -276,21 +479,36 @@ def render_live_hit(hit: LiveWatchHit) -> str:
             lines.append(f"📝 {hit.entry.note.strip()}")
         return "\n".join(lines)
 
-    lines = ["🔴 EN VIVO — salió tu partido", f"⚽ {event.home} vs {event.away}"]
+    # Phase is "live"
+    lines = [
+        "🔴 EN VIVO",
+        "",
+        f"⚽ {event.home} vs {event.away}"
+    ]
     league_bits = " · ".join(b for b in (event.country_name, event.competition_name) if b)
     if league_bits:
         lines.append(f"🏆 {league_bits}")
+    lines.append(f"🏦 {book}")
+    lines.append("")
     clock = event.minute or "en juego"
     if event.home_score is not None and event.away_score is not None:
         clock += f"  |  {event.home_score}-{event.away_score}"
     lines.append(f"⏱️ {clock}")
+
+    if hit.entry.note and hit.entry.note.strip() not in (f"{event.home} - {event.away}",):
+        lines.append("")
+        lines.append(f"📝 {hit.entry.note.strip()}")
+
     if event.odds_1x2 and any(v is not None for v in (event.odds_1x2.home, event.odds_1x2.draw, event.odds_1x2.away)):
         o = event.odds_1x2
-        lines.append(f"💰 1X2: {o.home} / {o.draw} / {o.away}")
-    lines.append(f"🏦 {book}")
-    if hit.entry.note and hit.entry.note.strip() not in (f"{event.home} - {event.away}",):
-        lines.append(f"📝 {hit.entry.note.strip()}")
+        h = str(o.home) if o.home is not None else "-"
+        d = str(o.draw) if o.draw is not None else "-"
+        a = str(o.away) if o.away is not None else "-"
+        lines.append("")
+        lines.append(f"💰 1X2: {h} / {d} / {a}")
+
     return "\n".join(lines)
+
 
 
 _FIXTURE_SEPARATORS = (" - ", " – ", " vs. ", " vs ", " v ", " x ")

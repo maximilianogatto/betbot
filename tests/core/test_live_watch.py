@@ -228,7 +228,7 @@ class LiveWatchServiceTests(unittest.IsolatedAsyncioTestCase):
 
         # Test render_live_hit helper
         alert_msg = render_live_hit(hit)
-        self.assertIn("🔴 EN VIVO — salió tu partido", alert_msg)
+        self.assertIn("🔴 EN VIVO", alert_msg)
         self.assertIn("Banyule City vs Bundoora FC", alert_msg)
         self.assertIn("Victorian State League", alert_msg)
         self.assertIn("5'  |  1-0", alert_msg)
@@ -470,8 +470,162 @@ class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):
         self.repository.add_live_watch(123, home="C", away="D", kickoff_at=near_future)
         self.assertEqual(service.get_recommended_poll_interval(), 15.0)
 
+    def test_spanish_name_similarity_normalization(self) -> None:
+        # Femenino normalization
+        self.assertGreaterEqual(_name_similarity("AC Connecticut Femenino", "AC Connecticut Women"), 0.8)
+        self.assertGreaterEqual(_name_similarity("Vermont (Femenil)", "Vermont FC"), 0.8)
+        # Sub-20 normalization
+        self.assertGreaterEqual(_name_similarity("Texoma Sub 20", "Texoma U20"), 0.8)
+        self.assertGreaterEqual(_name_similarity("Banyule sub-23", "Banyule U23"), 0.8)
+        # Reserva normalization
+        self.assertGreaterEqual(_name_similarity("Belconnen United Reserva", "Belconnen United Reserves"), 0.8)
 
+    async def test_per_casino_prematch_alerting(self) -> None:
+        service = LiveWatchService(repository=self.repository)
+        chat_id = 999
+        entry = service.add_fixture_lines(chat_id, ["Texoma - Fort Worth"])[0]
+
+        # First poll: event listed on betovo
+        ev_betovo = LiveEventSnapshot(
+            platform="betovo", external_event_id="ev1", home="Texoma FC", away="Fort Worth Vaqueros",
+            country_name="USA", competition_name="USL Two",
+        )
+        service.extractor_registry = SimpleNamespace(
+            list_registered=lambda: [
+                SimpleNamespace(name="betovo", supports_live_detection=False, supports_prematch_listing=True,
+                                list_prematch_events=AsyncMock(return_value=[ev_betovo]), list_live_events=AsyncMock(return_value=[]))
+            ]
+        )
+
+        hits1 = await service.poll_once()
+        self.assertEqual(len(hits1), 1)
+        self.assertEqual(hits1[0].event.platform, "betovo")
+        self.assertEqual(hits1[0].phase, "pre")
+
+        # Reload watch entry
+        entry = self.repository.list_live_watches(chat_id)[0]
+        self.assertEqual(entry.prematch_fired_platforms, "betovo")
+
+        # Second poll: event listed on solcasino too
+        ev_sol = LiveEventSnapshot(
+            platform="solcasino_http", external_event_id="ev2", home="Texoma FC", away="Fort Worth Vaqueros",
+            country_name="USA", competition_name="USL Two",
+        )
+        service.extractor_registry = SimpleNamespace(
+            list_registered=lambda: [
+                SimpleNamespace(name="betovo", supports_live_detection=False, supports_prematch_listing=True,
+                                list_prematch_events=AsyncMock(return_value=[ev_betovo]), list_live_events=AsyncMock(return_value=[])),
+                SimpleNamespace(name="solcasino_http", supports_live_detection=False, supports_prematch_listing=True,
+                                list_prematch_events=AsyncMock(return_value=[ev_sol]), list_live_events=AsyncMock(return_value=[]))
+            ]
+        )
+
+        service._prematch_cache = None
+        hits2 = await service.poll_once()
+        self.assertEqual(len(hits2), 1)
+        self.assertEqual(hits2[0].event.platform, "solcasino_http")
+        self.assertEqual(hits2[0].phase, "pre")
+
+        # Reload watch entry
+        entry = self.repository.list_live_watches(chat_id)[0]
+        self.assertIn("betovo", entry.prematch_fired_platforms_list)
+        self.assertIn("solcasino_http", entry.prematch_fired_platforms_list)
+
+        # Third poll: both are already fired, no new alerts
+        service._prematch_cache = None
+        hits3 = await service.poll_once()
+        self.assertEqual(len(hits3), 0)
+
+    async def test_kickoff_countdown_alert(self) -> None:
+        import datetime as _dt
+        from datetime import timezone
+        from unittest.mock import patch
+        
+        service = LiveWatchService(repository=self.repository)
+        chat_id = 999
+        
+        # Add a watch with kickoff 5 minutes in the future
+        ko_time = (_dt.datetime.now(timezone.utc) + _dt.timedelta(minutes=5)).isoformat()
+        entry = self.repository.add_live_watch(chat_id, home="Texoma FC", away="Fort Worth Vaqueros", kickoff_at=ko_time)
+        
+        # Populate repository mock active events
+        active_event = SimpleNamespace(
+            id=1,
+            tracked_competition_id=10,
+            platform="betovo",
+            competition_external_id="ext1",
+            external_event_id="ev1",
+            home="Texoma FC",
+            away="Fort Worth Vaqueros FC",
+            scheduled_label_date="2026-06-03",
+            scheduled_label_time="12:00",
+            scheduled_at=ko_time,
+            event_url=None,
+            odds_home=1.85,
+            odds_draw=3.40,
+            odds_away=3.80,
+            markets_json='{"asian_handicap": {"selections": [{"selection": "Texoma FC", "line": "-0.5", "odds": 1.85}, {"selection": "Fort Worth Vaqueros FC", "line": "+0.5", "odds": 1.90}]}}',
+            raw_payload_json=None,
+            reminder_sent_at=None,
+            is_active=1,
+            first_seen_at=ko_time,
+            last_seen_at=ko_time,
+            created_at=ko_time,
+            updated_at=ko_time,
+            league_name="USA USL League Two"
+        )
+        
+        with patch.object(self.repository, "get_all_active_events_with_league", return_value=[active_event]):
+            # Set extractors to return empty so we only focus on countdown
+            service.extractor_registry = SimpleNamespace(list_registered=lambda: [])
+            
+            hits = await service.poll_once()
+            self.assertEqual(len(hits), 1)
+            self.assertEqual(hits[0].phase, "countdown")
+            msg = render_live_hit(hits[0])
+            self.assertIn("⏰ PRÓXIMO INICIO (5 min)", msg)
+            self.assertIn("USA USL League Two", msg)
+            self.assertIn("1.85 / 3.40 / 3.80", msg)
+            self.assertIn("📐 AH L(-0.5):1.85 | V(+0.5):1.90", msg)
+            
+            # Verify countdown is marked as fired in database
+            entry_after = self.repository.list_live_watches(chat_id)[0]
+            self.assertIsNotNone(entry_after.countdown_fired_at)
+            
+            # Second poll: should not fire again
+            hits2 = await service.poll_once()
+            self.assertEqual(len(hits2), 0)
+
+    def test_add_fixture_lines_filters_duplicates_and_past_kickoffs(self) -> None:
+        from unittest.mock import patch
+        from datetime import datetime, timezone, timedelta
+        service = LiveWatchService(repository=self.repository)
+        chat_id = 111
+
+        past_iso = (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat()
+        future_iso = (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat()
+
+        # 1. Past kickoff filter
+        with patch("monitors.live_watch.parse_fixture_line", return_value=(None, "Past", "Match", past_iso)):
+            added_past = service.add_fixture_lines(chat_id, ["some line"])
+            self.assertEqual(len(added_past), 0)
+
+        # 2. Future kickoff filter (should succeed)
+        with patch("monitors.live_watch.parse_fixture_line", return_value=(None, "Future", "Match", future_iso)):
+            added_future = service.add_fixture_lines(chat_id, ["some line"])
+            self.assertEqual(len(added_future), 1)
+
+        # 3. Duplicate check (same fixture name "Future" vs "Match")
+        with patch("monitors.live_watch.parse_fixture_line", return_value=(None, "Future", "Match", future_iso)):
+            added_dup = service.add_fixture_lines(chat_id, ["some line"])
+            self.assertEqual(len(added_dup), 0)
+
+        # 4. Batch duplicates check (two identical mock events in the same call)
+        with patch("monitors.live_watch.parse_fixture_line", return_value=(None, "Another", "Match", future_iso)):
+            added_batch = service.add_fixture_lines(chat_id, ["line1", "line2"])
+            self.assertEqual(len(added_batch), 1)
 
 
 if __name__ == "__main__":
     unittest.main()
+

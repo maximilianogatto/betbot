@@ -4,11 +4,11 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import AsyncMock, Mock, patch
 
-from bot.handlers import watch_live_command, watching_command, unwatch_command
+from bot.handlers import watch_live_command, watching_command, unwatch_command, import_sheet_command
 from storage.tracking_repository import LiveWatchEntry
 
 
-def _live_watch_entry(entry_id: int, home: str, away: str, status: str = "watching", matched_platform: str | None = None, matched_minute: str | None = None) -> LiveWatchEntry:
+def _live_watch_entry(entry_id: int, home: str, away: str, status: str = "watching", matched_platform: str | None = None, matched_minute: str | None = None, chat_local_id: int | None = None) -> LiveWatchEntry:
     return LiveWatchEntry(
         id=entry_id,
         chat_id=123,
@@ -23,6 +23,7 @@ def _live_watch_entry(entry_id: int, home: str, away: str, status: str = "watchi
         created_at="2026-06-01T00:00:00+00:00",
         fired_at="2026-06-01T00:01:00+00:00" if status == "fired" else None,
         fired_platforms=matched_platform,
+        chat_local_id=chat_local_id,
     )
 
 
@@ -419,6 +420,136 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
             123, ["11:00 Estonia U19 | Legion - Tallinn"]
         )
 
+    async def test_import_sheet_success(self) -> None:
+        csv_content = (
+            "Horario,Competición,Partido,Detalle\n"
+            "15:00,Australia Victoria NPL 1,Banyule vs Bundoora,Visitantes +5/6\n"
+            "18:00,USA USL League Two,Texoma vs Fort Worth,Locales +4t5\n"
+        )
+        mock_client = AsyncMock()
+        mock_client.__aenter__.return_value = mock_client
+        mock_client.get.return_value = SimpleNamespace(
+            status_code=200, text=csv_content
+        )
+
+        added_entries = [
+            _live_watch_entry(1, "Banyule", "Bundoora", chat_local_id=1),
+            _live_watch_entry(2, "Texoma", "Fort Worth", chat_local_id=2),
+        ]
+
+        live_watch_service = SimpleNamespace(
+            add_fixture_lines=Mock(return_value=added_entries)
+        )
+
+        loading_msg = SimpleNamespace(
+            edit_text=AsyncMock(),
+            delete=AsyncMock()
+        )
+        message = SimpleNamespace(
+            reply_text=AsyncMock(return_value=loading_msg),
+        )
+
+        bot = SimpleNamespace(send_message=AsyncMock())
+        application = SimpleNamespace(bot_data={"live_watch_service": live_watch_service})
+        context = SimpleNamespace(application=application, bot=bot, args=[], user_data={})
+        update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
+
+        with (
+            patch("bot.handlers.get_live_watch_service", return_value=live_watch_service),
+            patch("httpx.AsyncClient", return_value=mock_client),
+            patch("bot.handlers._reply_text_chunks", new_callable=AsyncMock) as mock_reply_chunks
+        ):
+            await import_sheet_command(update, context)
+
+        mock_client.get.assert_called_once()
+        live_watch_service.add_fixture_lines.assert_called_once_with(
+            123,
+            [
+                "15:00 Australia Victoria NPL 1 | Banyule vs Bundoora (Visitantes +5/6)",
+                "18:00 USA USL League Two | Texoma vs Fort Worth (Locales +4t5)",
+            ]
+        )
+        mock_reply_chunks.assert_awaited_once()
+        reply_content = mock_reply_chunks.await_args[0][1]
+        self.assertIn("Importación completada con éxito", reply_content)
+        self.assertIn("Banyule", reply_content)
+        self.assertIn("Texoma", reply_content)
+        loading_msg.delete.assert_awaited_once()
+
+    async def test_import_sheet_invalid_headers(self) -> None:
+        csv_content = (
+            "Wrong,Headers,Here\n"
+            "1,2,3\n"
+        )
+        mock_client = AsyncMock()
+        mock_client.__aenter__.return_value = mock_client
+        mock_client.get.return_value = SimpleNamespace(
+            status_code=200, text=csv_content
+        )
+
+        live_watch_service = SimpleNamespace()
+        loading_msg = SimpleNamespace(edit_text=AsyncMock(), delete=AsyncMock())
+        message = SimpleNamespace(reply_text=AsyncMock(return_value=loading_msg))
+        application = SimpleNamespace(bot_data={"live_watch_service": live_watch_service})
+        context = SimpleNamespace(application=application, args=[], user_data={})
+        update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
+
+        with (
+            patch("httpx.AsyncClient", return_value=mock_client),
+        ):
+            await import_sheet_command(update, context)
+
+        loading_msg.edit_text.assert_awaited_once()
+        self.assertIn("formato de la planilla no es correcto", loading_msg.edit_text.await_args[0][0])
+
+    async def test_import_sheet_no_added(self) -> None:
+        csv_content = (
+            "Horario,Competición,Partido,Detalle\n"
+            "15:00,Australia Victoria NPL 1,Banyule vs Bundoora,Visitantes +5/6\n"
+        )
+        mock_client = AsyncMock()
+        mock_client.__aenter__.return_value = mock_client
+        mock_client.get.return_value = SimpleNamespace(
+            status_code=200, text=csv_content
+        )
+
+        live_watch_service = SimpleNamespace(
+            add_fixture_lines=Mock(return_value=[])
+        )
+        loading_msg = SimpleNamespace(edit_text=AsyncMock(), delete=AsyncMock())
+        message = SimpleNamespace(reply_text=AsyncMock(return_value=loading_msg))
+        application = SimpleNamespace(bot_data={"live_watch_service": live_watch_service})
+        context = SimpleNamespace(application=application, args=[], user_data={})
+        update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
+
+        with (
+            patch("bot.handlers.get_live_watch_service", return_value=live_watch_service),
+            patch("httpx.AsyncClient", return_value=mock_client),
+        ):
+            await import_sheet_command(update, context)
+
+        loading_msg.edit_text.assert_awaited_once()
+        self.assertIn("todos fueron omitidos", loading_msg.edit_text.await_args[0][0])
+
+    async def test_import_sheet_http_error(self) -> None:
+        mock_client = AsyncMock()
+        mock_client.__aenter__.return_value = mock_client
+        mock_client.get.return_value = SimpleNamespace(
+            status_code=500
+        )
+
+        loading_msg = SimpleNamespace(edit_text=AsyncMock(), delete=AsyncMock())
+        message = SimpleNamespace(reply_text=AsyncMock(return_value=loading_msg))
+        context = SimpleNamespace(args=[], user_data={})
+        update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
+
+        with (
+            patch("httpx.AsyncClient", return_value=mock_client),
+        ):
+            await import_sheet_command(update, context)
+
+        loading_msg.edit_text.assert_awaited_once()
+        self.assertIn("Error al descargar planilla (HTTP 500)", loading_msg.edit_text.await_args[0][0])
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ class XBetHttpSettings:
     """Configuration for defensive LineFeed polling."""
 
     base_url: str = "https://spinbetter.com/service-api/LineFeed"
-    language: str = "es"
+    language: str = "en"
     sport_id: str = "1"
     discovery_country_group: str = "14"
     # Live (LiveFeed) routing params, captured from the live football page.
@@ -18,7 +18,7 @@ class XBetHttpSettings:
     live_country: str = "14"
     live_mode: str = "4"
     live_cfview: str = "2"
-    live_count: int = 100
+    live_count: int = 500
     timeout_seconds: float = 20.0
     max_attempts: int = 2
     retry_backoff_seconds: float = 0.75

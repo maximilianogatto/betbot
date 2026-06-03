@@ -129,6 +129,7 @@ HELP_MESSAGE = (
     "  `/confirm_all_little_changes` - Aprueba todos los cambios pequeños pendientes\n\n"
     "🔴 *Live Commands (En vivo):*\n"
     "  `/watch_live` - Pone partidos en vigilancia en vivo (escribí los equipos o subí foto del fixture)\n"
+    "  `/import_sheet` - Importa partidos en vigilancia directamente desde la planilla de Google Drive\n"
     "  `/watching` - Lista tus partidos en vigilancia activa y los que ya salieron\n"
     "  `/unwatch <id>` - Saca un partido de la vigilancia en vivo (o /unwatch all)\n\n"
     "📊 *Stats (Estadísticas):*\n"
@@ -453,7 +454,117 @@ async def photo_guidance_handler(update: Update, context: ContextTypes.DEFAULT_T
     )
 
 
+async def import_sheet_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Import and watch matches from the shared Google Sheet URL."""
+    if update.message is None or update.effective_chat is None:
+        return
+
+    import os
+    import httpx
+    import csv
+    from io import StringIO
+
+    url = os.getenv(
+        "LIVE_WATCH_SHEET_URL",
+        "https://docs.google.com/spreadsheets/d/17QRnS_BmmAz_7F4hvpUytPoD66U65W2f1pgF6q9y7fY/export?format=csv&gid=0"
+    )
+
+    loading_msg = await update.message.reply_text("⏳ Descargando y analizando planilla de partidos...")
+
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, timeout=20.0)
+
+        if response.status_code != 200:
+            await loading_msg.edit_text(f"❌ Error al descargar planilla (HTTP {response.status_code}).")
+            return
+
+        csv_data = response.text
+        f = StringIO(csv_data)
+        reader = csv.DictReader(f)
+
+        headers = reader.fieldnames or []
+        
+        def clean_header(h: str) -> str:
+            import unicodedata
+            folded = "".join(c for c in unicodedata.normalize('NFD', h) if unicodedata.category(c) != 'Mn')
+            return folded.lower().strip()
+
+        required_clean = {"horario", "competicion", "partido", "detalle"}
+        clean_map = {clean_header(h): h for h in headers}
+
+        if not required_clean.issubset(set(clean_map.keys())):
+            required_cols = {"Horario", "Competición", "Partido", "Detalle"}
+            await loading_msg.edit_text(
+                f"❌ El formato de la planilla no es correcto. Debe contener las columnas: {', '.join(required_cols)}.\n"
+                f"Columnas encontradas: {', '.join(headers)}"
+            )
+            return
+
+        col_horario = clean_map["horario"]
+        col_competicion = clean_map["competicion"]
+        col_partido = clean_map["partido"]
+        col_detalle = clean_map["detalle"]
+
+        lines_to_add = []
+        for row in reader:
+            horario = (row.get(col_horario) or "").strip()
+            competicion = (row.get(col_competicion) or "").strip()
+            partido = (row.get(col_partido) or "").strip()
+            detalle = (row.get(col_detalle) or "").strip()
+
+            if not partido:
+                continue
+
+            line = ""
+            if horario:
+                line += f"{horario} "
+            if competicion:
+                line += f"{competicion} | "
+            line += partido
+            if detalle:
+                line += f" ({detalle})"
+            lines_to_add.append(line)
+
+        if not lines_to_add:
+            await loading_msg.edit_text("⚠️ No se encontraron partidos válidos en la planilla.")
+            return
+
+        service = get_live_watch_service(context)
+        added = service.add_fixture_lines(update.effective_chat.id, lines_to_add)
+
+        total_read = len(lines_to_add)
+        total_added = len(added)
+        skipped = total_read - total_added
+
+        if not added:
+            await loading_msg.edit_text(
+                f"📋 Se leyeron {total_read} partidos de la planilla, pero todos fueron omitidos por estar en el pasado o ya estar duplicados en tu lista."
+            )
+            return
+
+        msg = [
+            f"📊 *¡Importación completada con éxito!*",
+            f"Se leyeron {total_read} partidos de la planilla.",
+            f"➕ *Nuevos en vigilancia:* {total_added}",
+            f"⏭️ *Omitidos (pasados/duplicados):* {skipped}",
+            "\n━━━━━━━━━━━━━━━━━━━━\n"
+        ]
+        for entry in added:
+            hint = f" ({entry.league_hint})" if entry.league_hint else ""
+            disp_id = entry.chat_local_id if entry.chat_local_id is not None else entry.id
+            msg.append(f"  *#{disp_id}* · `{entry.home}` vs `{entry.away}`{hint}")
+
+        await _reply_text_chunks(update.message, "\n".join(msg), parse_mode="Markdown")
+        await loading_msg.delete()
+
+    except Exception as e:
+        logger.exception("Error during sheet import")
+        await loading_msg.edit_text(f"❌ Ocurrió un error inesperado al importar la planilla: {str(e)}")
+
+
 async def watching_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
     """List the chat's active live-watch fixtures."""
 
     if update.message is None or update.effective_chat is None:
@@ -2666,6 +2777,7 @@ def register_handlers(application: Application) -> None:
         CommandHandler("confirm_all_little_changes", confirm_all_little_changes_command)
     )
     application.add_handler(CommandHandler("watch_live", watch_live_command))
+    application.add_handler(CommandHandler("import_sheet", import_sheet_command))
     application.add_handler(CommandHandler("watching", watching_command))
     application.add_handler(CommandHandler("unwatch", unwatch_command))
 

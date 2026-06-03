@@ -70,6 +70,8 @@ class LiveWatchEntry:
     prematch_seen_at: str | None = None
     prematch_platform: str | None = None
     fired_platforms: str | None = None
+    prematch_fired_platforms: str | None = None
+    countdown_fired_at: str | None = None
     chat_local_id: int | None = None
 
     @property
@@ -77,6 +79,12 @@ class LiveWatchEntry:
         if not self.fired_platforms:
             return []
         return [p.strip() for p in self.fired_platforms.split(",") if p.strip()]
+
+    @property
+    def prematch_fired_platforms_list(self) -> list[str]:
+        if not self.prematch_fired_platforms:
+            return []
+        return [p.strip() for p in self.prematch_fired_platforms.split(",") if p.strip()]
 
 
 
@@ -2570,6 +2578,90 @@ class SqliteTrackingRepository:
                 (_utc_now_iso(), platform, event_id, watch_id),
             )
 
+    def mark_live_watch_prematch_fired(
+        self,
+        watch_id: int,
+        *,
+        platform: str,
+        event_id: str,
+    ) -> None:
+        """Mark a platform as fired in prematch for this watch entry."""
+
+        with _connect() as connection:
+            row = connection.execute(
+                "SELECT prematch_fired_platforms FROM live_watch_entries WHERE id = ?", (watch_id,)
+            ).fetchone()
+            current = row[0] if row else None
+
+            if current:
+                platforms_list = [p.strip() for p in current.split(",") if p.strip()]
+                if platform not in platforms_list:
+                    platforms_list.append(platform)
+                new_val = ",".join(platforms_list)
+            else:
+                new_val = platform
+
+            connection.execute(
+                """
+                UPDATE live_watch_entries
+                SET prematch_fired_platforms = ?,
+                    prematch_seen_at = ?,
+                    prematch_platform = ?,
+                    matched_event_id = COALESCE(matched_event_id, ?)
+                WHERE id = ?
+                """,
+                (new_val, _utc_now_iso(), platform, event_id, watch_id),
+            )
+
+    def mark_live_watch_countdown_fired(self, watch_id: int) -> None:
+        """Mark kickoff countdown as fired for this watch entry."""
+        with _connect() as connection:
+            connection.execute(
+                """
+                UPDATE live_watch_entries
+                SET countdown_fired_at = ?
+                WHERE id = ?
+                """,
+                (_utc_now_iso(), watch_id),
+            )
+
+    def get_all_active_events_with_league(self) -> list[Any]:
+        """Return all active events as SimpleNamespace objects with their tracked league name."""
+        from types import SimpleNamespace
+        with _connect() as connection:
+            rows = connection.execute(
+                """
+                SELECT
+                    ae.id,
+                    ae.tracked_competition_id,
+                    ae.platform,
+                    ae.competition_external_id,
+                    ae.external_event_id,
+                    ae.home,
+                    ae.away,
+                    ae.scheduled_label_date,
+                    ae.scheduled_label_time,
+                    ae.scheduled_at,
+                    ae.event_url,
+                    ae.odds_home,
+                    ae.odds_draw,
+                    ae.odds_away,
+                    ae.markets_json,
+                    ae.raw_payload_json,
+                    ae.reminder_sent_at,
+                    ae.is_active,
+                    ae.first_seen_at,
+                    ae.last_seen_at,
+                    ae.created_at,
+                    ae.updated_at,
+                    tc.competition_name as league_name
+                FROM active_events ae
+                JOIN tracked_competitions tc ON ae.tracked_competition_id = tc.id
+                WHERE ae.is_active = 1
+                """
+            ).fetchall()
+        return [SimpleNamespace(**dict(row)) for row in rows]
+
     def purge_expired_live_watches(
         self,
         *,
@@ -3297,7 +3389,7 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
         "last_unavailable_notification_at",
         "TEXT",
     )
-    for _live_watch_column in ("kickoff_at", "prematch_seen_at", "prematch_platform", "fired_platforms"):
+    for _live_watch_column in ("kickoff_at", "prematch_seen_at", "prematch_platform", "fired_platforms", "prematch_fired_platforms", "countdown_fired_at"):
         _ensure_column(connection, "live_watch_entries", _live_watch_column, "TEXT")
     _ensure_column(connection, "live_watch_entries", "chat_local_id", "INTEGER")
 
@@ -4046,6 +4138,8 @@ def _row_to_live_watch(row: sqlite3.Row) -> LiveWatchEntry:
         prematch_seen_at=row["prematch_seen_at"] if "prematch_seen_at" in row.keys() else None,
         prematch_platform=row["prematch_platform"] if "prematch_platform" in row.keys() else None,
         fired_platforms=row["fired_platforms"] if "fired_platforms" in row.keys() else None,
+        prematch_fired_platforms=row["prematch_fired_platforms"] if "prematch_fired_platforms" in row.keys() else None,
+        countdown_fired_at=row["countdown_fired_at"] if "countdown_fired_at" in row.keys() else None,
         chat_local_id=row["chat_local_id"] if "chat_local_id" in row.keys() else None,
     )
 

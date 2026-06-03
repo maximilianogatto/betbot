@@ -358,7 +358,7 @@ class XBetHttpExtractionTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(option.league_name, "Australia. ACT National Premier League")
         self.assertEqual(
             option.source_url,
-            "https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=2872359&lng=es",
+            "https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=2872359&lng=en",
         )
 
     async def test_tracking_service_persists_1xbet_events_in_existing_schema(self) -> None:

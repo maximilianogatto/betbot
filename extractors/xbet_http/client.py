@@ -8,6 +8,7 @@ import time
 from typing import Any
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
+# pyrefly: ignore [missing-import]
 import httpx
 
 from extractors.xbet_http.settings import XBetHttpSettings
