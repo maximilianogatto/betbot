@@ -3270,6 +3270,36 @@ def _clear_all_selection_context(context: ContextTypes.DEFAULT_TYPE) -> None:
     context.user_data.pop(TRACK_STATS_OPTIONS_CONTEXT_KEY, None)
 
 
+def _convert_fin_to_arg_datetime(date_str: str | None, time_str: str | None) -> tuple[str, str]:
+    """Convert Finnish match date & time (Europe/Helsinki) to Argentina (America/Argentina/Buenos_Aires) date & time."""
+    if not time_str:
+        return date_str or "N/A", "N/A"
+    if not date_str or date_str == "N/A":
+        from datetime import date
+        date_str = date.today().isoformat()
+    try:
+        from datetime import datetime
+        from zoneinfo import ZoneInfo
+        time_str = str(time_str).strip()
+        time_parts = time_str.split(":")
+        if len(time_parts) < 2:
+            return date_str, time_str
+        hour = int(time_parts[0])
+        minute = int(time_parts[1])
+        second = int(time_parts[2]) if len(time_parts) > 2 else 0
+        date_parts = str(date_str).strip().split("-")
+        if len(date_parts) != 3:
+            return date_str, time_str
+        year = int(date_parts[0])
+        month = int(date_parts[1])
+        day = int(date_parts[2])
+        helsinki_dt = datetime(year, month, day, hour, minute, second, tzinfo=ZoneInfo("Europe/Helsinki"))
+        arg_dt = helsinki_dt.astimezone(ZoneInfo("America/Argentina/Buenos_Aires"))
+        return arg_dt.strftime("%Y-%m-%d"), arg_dt.strftime("%H:%M")
+    except Exception:
+        return date_str, time_str
+
+
 def _resolve_fin_league(code: str) -> tuple[str, str] | None:
     """Resolve a short league code to competition_id and category_id."""
     mapping = {
@@ -3445,8 +3475,9 @@ async def fin_fixtures_command(update: Update, context: ContextTypes.DEFAULT_TYP
             "━━━━━━━━━━━━━━━━━━━━\n"
         ]
         for m in display_matches:
-            date_val = m.get("date")
-            time = m.get("time") or ""
+            orig_date = m.get("date")
+            orig_time = m.get("time")
+            date_val, time = _convert_fin_to_arg_datetime(orig_date, orig_time)
             home = m.get("team_A_name") or m.get("club_A_name")
             away = m.get("team_B_name") or m.get("club_B_name")
             m_id = m.get("match_id")
@@ -3578,7 +3609,9 @@ async def fin_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             for m in filtered_classified:
                 home = m.get("home_team_name") or m.get("club_A_name")
                 away = m.get("away_team_name") or m.get("club_B_name")
-                time = m.get("time") or "N/A"
+                orig_date = m.get("date") or today_str
+                orig_time = m.get("time")
+                _, time = _convert_fin_to_arg_datetime(orig_date, orig_time)
                 m_id = m.get("match_id")
                 
                 score = "vs"
@@ -3615,7 +3648,9 @@ async def fin_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
                 cat_name = m.get("category_name") or "Liga"
                 home = m.get("home_team_name") or m.get("club_A_name")
                 away = m.get("away_team_name") or m.get("club_B_name")
-                time = m.get("time") or "N/A"
+                orig_date = m.get("date") or today_str
+                orig_time = m.get("time")
+                _, time = _convert_fin_to_arg_datetime(orig_date, orig_time)
                 m_id = m.get("match_id")
                 
                 score = "vs"
@@ -3700,8 +3735,9 @@ async def fin_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
         home = m.get("club_A_name") or m.get("team_A_name") or "Local"
         away = m.get("club_B_name") or m.get("team_B_name") or "Visitante"
-        date_val = m.get("date") or "N/A"
-        time = m.get("time") or ""
+        orig_date = m.get("date")
+        orig_time = m.get("time")
+        date_val, time = _convert_fin_to_arg_datetime(orig_date, orig_time)
         venue = m.get("venue_name") or "N/A"
         attendance = m.get("attendance") or "0"
         status = m.get("status") or "Scheduled"

@@ -190,4 +190,22 @@ class TestFinlandCommands(unittest.IsolatedAsyncioTestCase):
         self.assertIn("fin_leagues", args)
         self.assertIn("B-Team", args)
 
+    def test_convert_fin_to_arg_datetime(self) -> None:
+        from bot.handlers import _convert_fin_to_arg_datetime
+        # Finland is UTC+3 in summer (June), Argentina is UTC-3. 6 hours difference.
+        d, t = _convert_fin_to_arg_datetime("2026-06-03", "14:00:00")
+        self.assertEqual(d, "2026-06-03")
+        self.assertEqual(t, "08:00")
+        
+        # Test offset crossing midnight: 01:00 AM Finland is 19:00 PM previous day in Argentina
+        d, t = _convert_fin_to_arg_datetime("2026-06-03", "01:00:00")
+        self.assertEqual(d, "2026-06-02")
+        self.assertEqual(t, "19:00")
+        
+        # Finland is UTC+2 in winter (December), Argentina is UTC-3. 5 hours difference.
+        d, t = _convert_fin_to_arg_datetime("2026-12-15", "14:00:00")
+        self.assertEqual(d, "2026-12-15")
+        self.assertEqual(t, "09:00")
+
+
 
