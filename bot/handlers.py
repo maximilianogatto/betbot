@@ -2760,7 +2760,16 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("fin_fixtures", fin_fixtures_command))
     application.add_handler(CommandHandler("fin_today", fin_today_command))
     application.add_handler(CommandHandler("fin_match", fin_match_command))
-    
+
+    # Swedish Football (Svenskfotboll / FOGIS) leagues and stats commands
+    application.add_handler(CommandHandler("swe_help", swe_help_command))
+    application.add_handler(CommandHandler("swe_leagues", swe_leagues_command))
+    application.add_handler(CommandHandler("swe_standings", swe_standings_command))
+    application.add_handler(CommandHandler("swe_fixtures", swe_fixtures_command))
+    application.add_handler(CommandHandler("swe_results", swe_results_command))
+    application.add_handler(CommandHandler("swe_today", swe_today_command))
+    application.add_handler(CommandHandler("swe_match", swe_match_command))
+
     application.add_handler(CommandHandler("ping", ping_command))
     application.add_handler(CommandHandler("status", status_command))
     application.add_handler(CommandHandler("resources", resources_command))
@@ -3053,6 +3062,14 @@ def _build_stats_provider_input_message(provider: StatsProviderDescriptor) -> st
             [
                 "Ejemplo FootyStats:",
                 "https://footystats.org/australia/northern-nsw-npl",
+            ]
+        )
+    elif provider.key == "svenskfotboll_http":
+        lines.extend(
+            [
+                "Ejemplo Svenskfotboll:",
+                "País: Sweden | búsqueda: Allsvenskan",
+                "ID/URL de liga: https://www.svenskfotboll.se/widget-go-to/?scr=table&ftid=133348",
             ]
         )
     return "\n".join(lines)
@@ -3854,4 +3871,265 @@ async def fin_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         "las cuotas se desplomen!"
     )
 
+    await update.message.reply_text(help_text, parse_mode="Markdown")
+
+
+# ===================== Svenskfotboll (Swedish FA) commands =====================
+# Mirrors the Finland (/fin_*) integration: standalone commands backed by the
+# Swedish FA's HTTP feeds (svenskfotboll.se / FOGIS). 2026-season competition ids.
+_SWE_LEAGUES: dict[str, tuple[str, str, str]] = {
+    "AL": ("133348", "Allsvenskan", "Tier 1 · Varones"),
+    "SE": ("133340", "Superettan", "Tier 2 · Varones"),
+    "EN": ("133338", "Ettan Norra", "Tier 3 · Varones"),
+    "ES": ("133339", "Ettan Södra", "Tier 3 · Varones"),
+    "DA": ("133440", "OBOS Damallsvenskan", "Tier 1 · Damas"),
+    "EE": ("133439", "Elitettan", "Tier 2 · Damas"),
+}
+
+
+def _resolve_swe_league(code: str) -> tuple[str, str, str] | None:
+    """Resolve a short league code to (competition_id, name, tier_label)."""
+
+    return _SWE_LEAGUES.get((code or "").strip().upper())
+
+
+def _convert_swe_to_arg_datetime(local_dt: str | None) -> tuple[str, str]:
+    """Convert a Swedish local datetime ('YYYY-MM-DD[ T]HH:MM[:SS]') to Argentina."""
+
+    if not local_dt:
+        return "N/A", "N/A"
+    try:
+        from datetime import datetime
+        from zoneinfo import ZoneInfo
+
+        text = str(local_dt).strip().replace("T", " ")
+        parts = text.split(" ")
+        date_part = parts[0]
+        time_part = parts[1] if len(parts) > 1 else "00:00"
+        y, m, d = (int(x) for x in date_part.split("-"))
+        tp = time_part.split(":")
+        hh, mm = int(tp[0]), int(tp[1])
+        ss = int(tp[2]) if len(tp) > 2 else 0
+        swe = datetime(y, m, d, hh, mm, ss, tzinfo=ZoneInfo("Europe/Stockholm"))
+        arg = swe.astimezone(ZoneInfo("America/Argentina/Buenos_Aires"))
+        return arg.strftime("%Y-%m-%d"), arg.strftime("%H:%M")
+    except Exception:
+        return str(local_dt), "N/A"
+
+
+def _swe_usage_guide() -> str:
+    lines = ["💡 *Ligas disponibles (código):*"]
+    for code, (_cid, name, tier) in _SWE_LEAGUES.items():
+        lines.append(f"• `{code}` - {name} ({tier})")
+    lines.append("\nEjemplo: `/swe_standings AL`")
+    return "\n".join(lines)
+
+
+async def swe_leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /swe_leagues: list mapped Swedish leagues and their codes."""
+
+    del context
+    if update.message is None:
+        return
+    lines = [
+        "🇸🇪 *Ligas de Suecia (Federación / svenskfotboll.se)* 🇸🇪\n",
+        "Ligas oficiales que no siempre figuran en sitios comunes de stats.\n",
+    ]
+    for code, (_cid, name, tier) in _SWE_LEAGUES.items():
+        lines.append(f"⚽ *{name}* (Código: `{code}`)\n    {tier}\n")
+    lines.append("━━━━━━━━━━━━━━━━━━━━")
+    lines.append("👉 *¿Qué querés hacer?*")
+    lines.append("📊 Posiciones: `/swe_standings [CÓDIGO]`")
+    lines.append("🗓️ Próximos: `/swe_fixtures [CÓDIGO]`")
+    lines.append("🏁 Últimos resultados: `/swe_results [CÓDIGO]`")
+    lines.append("⚽ Partidos de hoy: `/swe_today`")
+    lines.append("📚 Guía: `/swe_help`")
+    await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+
+
+async def swe_standings_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /swe_standings [CODE]: standings table for a Swedish league."""
+
+    if update.message is None:
+        return
+    if not context.args:
+        await update.message.reply_text("❌ Falta el código.\n\n" + _swe_usage_guide(), parse_mode="Markdown")
+        return
+    resolved = _resolve_swe_league(context.args[0])
+    if not resolved:
+        await update.message.reply_text("❌ Código inválido.\n\n" + _swe_usage_guide(), parse_mode="Markdown")
+        return
+    comp_id, name, _tier = resolved
+    from stats_providers.svenskfotboll_http.client import SvenskfotbollHTTPClient
+
+    await update.message.reply_text("📊 Cargando tabla de posiciones...")
+    client = SvenskfotbollHTTPClient()
+    try:
+        data = client.get_standings(comp_id)
+        teams = data.get("teams") or []
+        if not teams:
+            await update.message.reply_text("⚠️ No hay posiciones disponibles para esta liga.")
+            return
+        lines = [f"📊 *Posiciones: {name} (2026)*", "━━━━━━━━━━━━━━━━━━━━", " #  Equipo               PJ Pts  Dif"]
+        for i, t in enumerate(teams, start=1):
+            pos = str(i).rjust(2)
+            team = str(t.get("team", "?"))[:20].ljust(20)
+            pj = str(t.get("played", 0)).rjust(2)
+            pts = str(t.get("points", 0)).rjust(3)
+            dif = str(t.get("goal_difference", 0)).rjust(4)
+            lines.append(f"`{pos} {team} {pj} {pts} {dif}`")
+        lines.append("━━━━━━━━━━━━━━━━━━━━")
+        lines.append(f"🗓️ Fixture: `/swe_fixtures {context.args[0].upper()}`  ⚽ Hoy: `/swe_today`")
+        await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
+    except Exception as e:
+        logger.exception("Failed in /swe_standings")
+        await update.message.reply_text(f"❌ Error al consultar posiciones: {e}")
+    finally:
+        client.close()
+
+
+async def _swe_matches_reply(update: Update, name: str, code: str, data: dict, *, header: str) -> None:
+    matches = data.get("matches") or []
+    if not matches:
+        await update.message.reply_text("⚠️ No hay partidos para mostrar.")
+        return
+    lines = [f"{header}: *{name}* (2026)", "━━━━━━━━━━━━━━━━━━━━"]
+    for mtch in matches[:25]:
+        d_arg, t_arg = _convert_swe_to_arg_datetime(mtch.get("start_time_local"))
+        score = ""
+        if mtch.get("home_score") is not None and mtch.get("away_score") is not None:
+            score = f" [{mtch.get('home_score')}-{mtch.get('away_score')}]"
+        lines.append(f"`{d_arg} {t_arg}` {mtch.get('home','?')} vs {mtch.get('away','?')}{score}")
+        lines.append(f"    🆔 `/swe_match {mtch.get('match_id','')}`")
+    await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
+
+
+async def swe_fixtures_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /swe_fixtures [CODE]: upcoming matches for a Swedish league."""
+
+    if update.message is None:
+        return
+    if not context.args or not _resolve_swe_league(context.args[0]):
+        await update.message.reply_text("❌ Falta/!código.\n\n" + _swe_usage_guide(), parse_mode="Markdown")
+        return
+    comp_id, name, _ = _resolve_swe_league(context.args[0])
+    from stats_providers.svenskfotboll_http.client import SvenskfotbollHTTPClient
+
+    client = SvenskfotbollHTTPClient()
+    try:
+        data = client.get_upcoming_matches(comp_id, limit=25)
+        await _swe_matches_reply(update, name, context.args[0].upper(), data, header="🗓️ Próximos partidos")
+    except Exception as e:
+        logger.exception("Failed in /swe_fixtures")
+        await update.message.reply_text(f"❌ Error: {e}")
+    finally:
+        client.close()
+
+
+async def swe_results_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /swe_results [CODE]: latest results for a Swedish league."""
+
+    if update.message is None:
+        return
+    if not context.args or not _resolve_swe_league(context.args[0]):
+        await update.message.reply_text("❌ Falta/!código.\n\n" + _swe_usage_guide(), parse_mode="Markdown")
+        return
+    comp_id, name, _ = _resolve_swe_league(context.args[0])
+    from stats_providers.svenskfotboll_http.client import SvenskfotbollHTTPClient
+
+    client = SvenskfotbollHTTPClient()
+    try:
+        data = client.get_latest_results(comp_id, limit=25)
+        await _swe_matches_reply(update, name, context.args[0].upper(), data, header="🏁 Últimos resultados")
+    except Exception as e:
+        logger.exception("Failed in /swe_results")
+        await update.message.reply_text(f"❌ Error: {e}")
+    finally:
+        client.close()
+
+
+async def swe_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /swe_today: Swedish football matches scheduled for today."""
+
+    del context
+    if update.message is None:
+        return
+    from stats_providers.svenskfotboll_http.client import SvenskfotbollHTTPClient
+
+    client = SvenskfotbollHTTPClient()
+    try:
+        matches = client.get_matches_today()
+        if not matches:
+            await update.message.reply_text("⚠️ No hay partidos suecos listados para hoy.")
+            return
+        lines = ["⚽ *Partidos de hoy (Suecia)* — horario Argentina", "━━━━━━━━━━━━━━━━━━━━"]
+        for m in matches[:40]:
+            _d, t_arg = _convert_swe_to_arg_datetime(m.get("start_time_local"))
+            comp = str(m.get("competition_name") or "")[:24]
+            lines.append(f"`{t_arg}` {m.get('home','?')} vs {m.get('away','?')}  · {comp}")
+            lines.append(f"    🆔 `/swe_match {m.get('match_id','')}`")
+        await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
+    except Exception as e:
+        logger.exception("Failed in /swe_today")
+        await update.message.reply_text(f"❌ Error: {e}")
+    finally:
+        client.close()
+
+
+async def swe_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /swe_match [ID]: live/FOGIS detail for one match (score, events)."""
+
+    if update.message is None:
+        return
+    if not context.args:
+        await update.message.reply_text("Uso: `/swe_match [ID_PARTIDO]` (los IDs salen de /swe_today o /swe_fixtures).", parse_mode="Markdown")
+        return
+    match_id = context.args[0].strip()
+    from stats_providers.svenskfotboll_http.client import SvenskfotbollHTTPClient
+
+    client = SvenskfotbollHTTPClient()
+    try:
+        info = client.get_live_game_info(match_id)
+        if not info or not info.get("home") and not info.get("away"):
+            await update.message.reply_text("⚠️ Sin datos en vivo para ese partido (puede no haber empezado o no tener cobertura FOGIS).")
+            return
+        home = info.get("home") or info.get("home_team") or "Local"
+        away = info.get("away") or info.get("away_team") or "Visitante"
+        lines = [f"🇸🇪 *{home} vs {away}*", "━━━━━━━━━━━━━━━━━━━━"]
+        if info.get("score"):
+            lines.append(f"⚽ Marcador: {info.get('score')}")
+        if info.get("status"):
+            lines.append(f"⏱️ Estado: {info.get('status')}")
+        events = info.get("events") or []
+        if events:
+            lines.append("\nEventos:")
+            for ev in events[:15]:
+                lines.append(f"- {ev.get('minute','')} {ev.get('type','')} {ev.get('player','')}".rstrip())
+        await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
+    except Exception as e:
+        logger.exception("Failed in /swe_match")
+        await update.message.reply_text(f"❌ Error: {e}")
+    finally:
+        client.close()
+
+
+async def swe_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /swe_help: guide for the Sweden federation integration."""
+
+    del context
+    if update.message is None:
+        return
+    help_text = (
+        "🇸🇪 *Guía de Estadísticas de la Federación de Suecia* 🇸🇪\n\n"
+        "Consultá datos oficiales directo de la Asociación Sueca de Fútbol (`svenskfotboll.se` / FOGIS). "
+        "Incluye divisiones de ascenso que no suelen estar en sitios comunes de stats.\n\n"
+        "📖 *Comandos:*\n"
+        "• `/swe_leagues` - Lista las ligas mapeadas y sus códigos.\n"
+        "• `/swe_standings [CÓDIGO]` - Tabla de posiciones (Ej: `/swe_standings AL`).\n"
+        "• `/swe_fixtures [CÓDIGO]` - Próximos partidos de la liga (con IDs).\n"
+        "• `/swe_results [CÓDIGO]` - Últimos resultados de la liga.\n"
+        "• `/swe_today` - Partidos suecos de hoy (horario Argentina) con IDs.\n"
+        "• `/swe_match [ID]` - Detalle/vivo de un partido (marcador, eventos vía FOGIS).\n\n"
+        + _swe_usage_guide()
+    )
     await update.message.reply_text(help_text, parse_mode="Markdown")
