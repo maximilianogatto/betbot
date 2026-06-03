@@ -2270,6 +2270,17 @@ async def matches_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     logger.info("Comando /matches recibido.")
 
+    full_odds = False
+    selected_track_num = None
+    for arg in context.args:
+        normalized_arg = arg.strip().lower()
+        if normalized_arg in ("-full_odds", "--full_odds", "-full", "-f"):
+            full_odds = True
+        elif normalized_arg.isdigit():
+            selected_track_num = int(normalized_arg)
+
+    context.user_data["matches_full_odds"] = full_odds
+
     tracking_service = get_tracking_service(context)
     tracked_leagues = tracking_service.list_confirmed_tracks(update.effective_chat.id)
 
@@ -2281,6 +2292,47 @@ async def matches_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         return ConversationHandler.END
 
     context.user_data[MATCHES_TRACKS_CONTEXT_KEY] = tracked_leagues
+
+    if selected_track_num is not None:
+        if 1 <= selected_track_num <= len(tracked_leagues):
+            selected_index = selected_track_num - 1
+            selected_track = tracked_leagues[selected_index]
+            try:
+                tracked_subscription, active_matches = tracking_service.get_matches_for_track(
+                    update.effective_chat.id,
+                    selected_track.tracked_league.id,
+                )
+            except ValueError as error:
+                await update.message.reply_text(
+                    str(error),
+                    reply_markup=ReplyKeyboardRemove(),
+                )
+                _clear_all_selection_context(context)
+                return ConversationHandler.END
+
+            if not active_matches:
+                try:
+                    await tracking_service.refresh_tracked_league(selected_track.tracked_league.id)
+                    tracked_subscription, active_matches = tracking_service.get_matches_for_track(
+                        update.effective_chat.id,
+                        selected_track.tracked_league.id,
+                    )
+                except Exception:
+                    pass
+
+            if active_matches:
+                context.user_data[MATCHES_ACTIVE_CONTEXT_KEY] = active_matches
+                context.user_data[MATCHES_SELECTED_TRACK_CONTEXT_KEY] = tracked_subscription
+
+                await update.message.reply_text(
+                    _build_match_selection_message(tracked_subscription, active_matches),
+                    reply_markup=_build_numeric_keyboard(
+                        len(active_matches) + 1,
+                        "Elegí el número del partido",
+                    ),
+                )
+                return SELECT_MATCH_FOR_MATCHES
+
     await update.message.reply_text(
         _build_track_selection_message("Qué liga quiere ver?", tracked_leagues),
         reply_markup=_build_numeric_keyboard(len(tracked_leagues), "Elegí el número de la liga"),
@@ -2408,7 +2460,15 @@ async def matches_select_match(update: Update, context: ContextTypes.DEFAULT_TYP
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    selected_index = _parse_selection_number(update.message.text, len(active_matches) + 1)
+    input_text = str(update.message.text).strip()
+    full_odds = context.user_data.get("matches_full_odds", False)
+    for flag in ("-full_odds", "--full_odds", "-full", "-f"):
+        if flag in input_text.lower():
+            full_odds = True
+            input_text = input_text.lower().replace(flag, "").strip()
+            break
+
+    selected_index = _parse_selection_number(input_text, len(active_matches) + 1)
 
     if selected_index is None:
         await update.message.reply_text(
@@ -2428,7 +2488,7 @@ async def matches_select_match(update: Update, context: ContextTypes.DEFAULT_TYP
         selected_match = active_matches[selected_index - 1]
         await _reply_text_chunks(
             update.message,
-            build_match_card_message(tracked_league.tracked_league, selected_match),
+            build_match_card_message(tracked_league.tracked_league, selected_match, full_odds=full_odds),
             reply_markup=ReplyKeyboardRemove(),
             parse_mode=ParseMode.HTML,
         )

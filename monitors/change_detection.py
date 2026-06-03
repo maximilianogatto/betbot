@@ -365,6 +365,92 @@ def _merge_1x2_payload(
     return merged_payload
 
 
+def _parse_line_float(line_str: str | None) -> float | None:
+    if line_str is None:
+        return None
+    try:
+        cleaned = str(line_str).replace("+", "").replace(",", ".").strip()
+        for sep in (",", "/", "-"):
+            if sep in cleaned:
+                parts = [float(p.strip()) for p in cleaned.split(sep) if p.strip()]
+                if parts:
+                    return abs(sum(parts) / len(parts))
+        return abs(float(cleaned))
+    except ValueError:
+        return None
+
+
+def find_main_line_selections(selections: list[dict[str, Any]], is_handicap: bool = False) -> list[dict[str, Any]]:
+    if not selections:
+        return []
+
+    groups = {}
+    for sel in selections:
+        line_str = sel.get("line")
+        if line_str is None:
+            continue
+        val = _parse_line_float(line_str)
+        if val is None:
+            continue
+        groups.setdefault(val, []).append(sel)
+
+    if not groups:
+        return []
+
+    best_key = None
+    best_score = float("inf")
+
+    for key, group_sels in groups.items():
+        count_penalty = 0.0 if len(group_sels) == 2 else 1000.0
+        odds_diff = 0.0
+        for sel in group_sels:
+            odds = sel.get("odds")
+            if odds is not None:
+                odds_diff += abs(float(odds) - 1.95)
+            else:
+                odds_diff += 10.0
+
+        score = count_penalty + odds_diff
+        if score < best_score:
+            best_score = score
+            best_key = key
+
+    if best_key is not None:
+        return groups[best_key]
+    return []
+
+
+def _filter_payload_to_main_lines(payload: dict[str, Any] | None) -> dict[str, Any]:
+    if not payload:
+        return {}
+
+    filtered = {}
+    if "1x2" in payload:
+        filtered["1x2"] = payload["1x2"]
+
+    ah = payload.get("asian_handicap")
+    if isinstance(ah, dict):
+        selections = ah.get("selections") or []
+        main_selections = find_main_line_selections(selections, is_handicap=True)
+        filtered["asian_handicap"] = {
+            **ah,
+            "selections": main_selections
+        }
+
+    gl = payload.get("goal_line")
+    if isinstance(gl, dict):
+        selections = gl.get("selections") or []
+        main_selections = find_main_line_selections(selections, is_handicap=False)
+        filtered["goal_line"] = {
+            **gl,
+            "selections": main_selections
+        }
+
+    # We completely ignore alternative_markets
+
+    return filtered
+
+
 def _flatten_market_payload(payload: dict[str, Any]) -> dict[str, dict[str, Any]]:
     flattened: dict[str, dict[str, Any]] = {}
 
@@ -385,13 +471,14 @@ def _flatten_market_payload(payload: dict[str, Any]) -> dict[str, dict[str, Any]
     for market_type in ("asian_handicap", "goal_line"):
         market_payload = payload.get(market_type)
         if isinstance(market_payload, dict):
-            _flatten_market_object(flattened, market_type, market_payload)
+            selections = market_payload.get("selections") or []
+            is_handicap = (market_type == "asian_handicap")
+            main_selections = find_main_line_selections(selections, is_handicap=is_handicap)
+            temp_market_payload = dict(market_payload)
+            temp_market_payload["selections"] = main_selections
+            _flatten_market_object(flattened, market_type, temp_market_payload)
 
-    alternative_markets = payload.get("alternative_markets")
-    if isinstance(alternative_markets, list):
-        for market_payload in alternative_markets:
-            if isinstance(market_payload, dict):
-                _flatten_market_object(flattened, "alternative_markets", market_payload)
+    # We completely ignore alternative_markets
 
     return flattened
 
@@ -556,7 +643,8 @@ def _build_snapshot_hash(
     raw_payload_json: str | None,
     epsilon: float,
 ) -> str:
-    canonical_payload = _canonicalize_for_hash(payload or {}, epsilon=epsilon)
+    filtered = _filter_payload_to_main_lines(payload)
+    canonical_payload = _canonicalize_for_hash(filtered, epsilon=epsilon)
     extractor_mode = _extract_snapshot_mode(raw_payload_json)
     canonical_snapshot = {
         "scheduled_at": _normalize_optional_text(scheduled_at),

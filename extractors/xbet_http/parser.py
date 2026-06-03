@@ -366,6 +366,7 @@ def _extract_markets(raw_game: dict[str, Any], *, home: str, away: str) -> tuple
     one_x_two = _extract_1x2(outcomes)
     asian_handicap = _extract_asian_handicap(outcomes, home=home, away=away)
     goal_line = _extract_goal_line(outcomes)
+    btts = _extract_both_teams_to_score(outcomes)
     markets_payload: dict[str, Any] = {}
 
     if any(value is not None for value in (one_x_two.home, one_x_two.draw, one_x_two.away)):
@@ -378,8 +379,37 @@ def _extract_markets(raw_game: dict[str, Any], *, home: str, away: str) -> tuple
         markets_payload["asian_handicap"] = asian_handicap
     if goal_line is not None:
         markets_payload["goal_line"] = goal_line
+    if btts is not None:
+        markets_payload["both_teams_to_score"] = btts
 
     return one_x_two, markets_payload or None
+
+
+def _extract_both_teams_to_score(outcomes: list[object]) -> dict[str, Any] | None:
+    yes_odds = None
+    no_odds = None
+    for outcome in outcomes:
+        if not isinstance(outcome, dict):
+            continue
+        outcome_type = outcome.get("T")
+        if outcome_type == 180:
+            yes_odds = _coerce_float(outcome.get("C"))
+        elif outcome_type == 181:
+            no_odds = _coerce_float(outcome.get("C"))
+
+    if yes_odds is not None or no_odds is not None:
+        selections = []
+        if yes_odds is not None:
+            selections.append({"selection": "Yes", "odds": yes_odds})
+        if no_odds is not None:
+            selections.append({"selection": "No", "odds": no_odds})
+        return {
+            "market_id": "1xbet_both_teams_to_score",
+            "market_name": "Both Teams to Score",
+            "selections": selections,
+        }
+    return None
+
 
 
 def _merge_markets_payload(

@@ -190,6 +190,49 @@ class BotAlertsTests(unittest.TestCase):
         self.assertNotIn("2026", message)
         self.assertIn("2026-05-13T22:00:00+00:00", match.scheduled_at)
 
+    def test_build_match_card_message_with_full_odds(self) -> None:
+        from bot.alerts import build_match_card_message
+        
+        match = _match_with_markets(
+            {
+                "1x2": {"home": 2.15, "draw": 3.10, "away": 3.40},
+                "both_teams_to_score": {
+                    "selections": [
+                        {"selection": "Yes", "odds": 1.80},
+                        {"selection": "No", "odds": 2.05}
+                    ]
+                },
+                "asian_handicap": {
+                    "selections": [
+                        {"selection": "Elche", "line": "-1.5", "odds": 5.85},
+                        {"selection": "CD Alaves", "line": "+1.5", "odds": 1.10},
+                        {"selection": "Elche", "line": "-0.5", "odds": 2.14},
+                        {"selection": "CD Alaves", "line": "+0.5", "odds": 1.68}
+                    ]
+                },
+                "goal_line": {
+                    "selections": [
+                        {"selection": "Over", "line": "2.5", "odds": 1.85},
+                        {"selection": "Under", "line": "2.5", "odds": 2.0},
+                        {"selection": "Over", "line": "3.5", "odds": 3.40},
+                        {"selection": "Under", "line": "3.5", "odds": 1.30}
+                    ]
+                }
+            }
+        )
+        
+        standard_msg = build_match_card_message(_tracked_league(), match, full_odds=False)
+        self.assertIn("📐 AH", standard_msg)
+        self.assertNotIn("Ambos anotan", standard_msg)
+        
+        full_msg = build_match_card_message(_tracked_league(), match, full_odds=True)
+        self.assertIn("Ambos anotan:</b> Sí=1.80 | No=2.05", full_msg)
+        self.assertIn("• AH -1.5: 5.85 | AH +1.5: 1.10", full_msg)
+        self.assertIn("• AH -0.5: 2.14 | AH +0.5: 1.68", full_msg)
+        self.assertIn("• GL Over 2.5: 1.85 | Under 2.5: 2.00", full_msg)
+        self.assertIn("• GL Over 3.5: 3.40 | Under 3.5: 1.30", full_msg)
+
 
 if __name__ == "__main__":
     unittest.main()
+
