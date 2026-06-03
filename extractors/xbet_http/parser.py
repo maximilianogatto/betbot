@@ -71,6 +71,10 @@ def live_events_from_1x2_vzip(payload: dict[str, Any]) -> list[LiveEventSnapshot
                 minute=sls or status_text or None,
                 home_score=_coerce_int(full_score.get("S1")),
                 away_score=_coerce_int(full_score.get("S2")),
+                home_red_cards=_extract_card_value(sc, side=1, color="red"),
+                away_red_cards=_extract_card_value(sc, side=2, color="red"),
+                home_yellow_cards=_extract_card_value(sc, side=1, color="yellow"),
+                away_yellow_cards=_extract_card_value(sc, side=2, color="yellow"),
                 odds_1x2=odds_1x2,
                 source_url=f"https://spinbetter.com/service-api/LineFeed/GetGameZip?id={event_id}",
                 is_soccer=not bool(_VIRTUAL_LEAGUE_RE.search(str(league or ""))),
@@ -113,6 +117,30 @@ def _coerce_int(value: Any) -> int | None:
         return int(value)
     except (TypeError, ValueError):
         return None
+
+
+def _extract_card_value(sc: dict[str, Any], *, side: int, color: str) -> int | None:
+    """Best-effort card extraction from observed 1xBet live score payloads."""
+
+    prefixes = ("RC", "R", "Red", "RED") if color == "red" else ("YC", "Y", "Yellow", "YELLOW")
+    for prefix in prefixes:
+        for key in (f"{prefix}{side}", f"{prefix}_{side}", f"{prefix}S{side}"):
+            value = _coerce_int(sc.get(key))
+            if value is not None:
+                return value
+
+    cards = sc.get("Cards") or sc.get("cards")
+    if isinstance(cards, dict):
+        side_keys = (f"S{side}", str(side), "home" if side == 1 else "away")
+        color_keys = ("red", "reds", "RC") if color == "red" else ("yellow", "yellows", "YC")
+        for side_key in side_keys:
+            side_payload = cards.get(side_key)
+            if isinstance(side_payload, dict):
+                for color_key in color_keys:
+                    value = _coerce_int(side_payload.get(color_key))
+                    if value is not None:
+                        return value
+    return None
 
 
 def parse_champ_zip_payload(

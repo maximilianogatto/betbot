@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import importlib
 from pathlib import Path
 import tempfile
@@ -151,6 +152,26 @@ class LiveWatchRepositoryTests(unittest.TestCase):
         # Under the new multi-platform alert flow, the entry remains active until expiry
         active_after = self.repository.list_all_active_live_watches()
         self.assertEqual(len(active_after), 1)
+
+        # Last observed live state is persisted per platform.
+        self.repository.update_live_watch_platform_state(
+            w1.id,
+            platform="betovo",
+            state={"event_id": "ev-123", "home_score": 1, "away_score": 0},
+        )
+        state_after = self.repository.list_live_watches(chat_id)[0].live_state
+        self.assertEqual(state_after["betovo"]["event_id"], "ev-123")
+        self.assertEqual(state_after["betovo"]["home_score"], 1)
+
+        # Per-chat alert settings default to goals+reds on and yellows off.
+        defaults = self.repository.get_live_watch_settings(chat_id)
+        self.assertTrue(defaults.alert_goals)
+        self.assertTrue(defaults.alert_red_cards)
+        self.assertFalse(defaults.alert_yellow_cards)
+        updated = self.repository.set_live_watch_settings(chat_id, alert_goals=False, alert_yellow_cards=True)
+        self.assertFalse(updated.alert_goals)
+        self.assertTrue(updated.alert_red_cards)
+        self.assertTrue(updated.alert_yellow_cards)
 
         # Clear watches
         removed = self.repository.clear_live_watches(chat_id)
@@ -310,6 +331,199 @@ class LiveWatchServiceTests(unittest.IsolatedAsyncioTestCase):
         hits3 = await service.poll_once()
         self.assertEqual(len(hits3), 0)
 
+    async def test_goal_alert_is_deduplicated_across_platforms(self) -> None:
+        service = LiveWatchService(repository=self.repository)
+        chat_id = 889
+        service.add_fixture_lines(chat_id, ["Banyule - Bundoora"])
+
+        score_state = {"home": 0, "away": 0}
+
+        def event(platform: str, event_id: str) -> LiveEventSnapshot:
+            return LiveEventSnapshot(
+                platform=platform,
+                external_event_id=event_id,
+                home="Banyule",
+                away="Bundoora",
+                minute="10'",
+                home_score=score_state["home"],
+                away_score=score_state["away"],
+            )
+
+        service.extractor_registry = SimpleNamespace(
+            list_registered=lambda: [
+                SimpleNamespace(
+                    name="betovo",
+                    supports_live_detection=True,
+                    list_live_events=AsyncMock(side_effect=lambda: [event("betovo", "ev-1")]),
+                ),
+                SimpleNamespace(
+                    name="bz_http",
+                    supports_live_detection=True,
+                    list_live_events=AsyncMock(side_effect=lambda: [event("bz_http", "ev-2")]),
+                ),
+            ]
+        )
+
+        self.assertEqual([hit.phase for hit in await service.poll_once()], ["live"])
+        self.assertEqual([hit.phase for hit in await service.poll_once()], ["live"])
+
+        score_state["home"] = 1
+        hits = await service.poll_once()
+        self.assertEqual([hit.phase for hit in hits], ["goal"])
+
+    async def test_collect_live_events_fetches_platforms_in_parallel(self) -> None:
+        service = LiveWatchService(repository=self.repository)
+        started = 0
+        release = asyncio.Event()
+
+        async def fetch(platform: str) -> list[LiveEventSnapshot]:
+            nonlocal started
+            started += 1
+            if started == 2:
+                release.set()
+            await release.wait()
+            return [
+                LiveEventSnapshot(
+                    platform=platform,
+                    external_event_id=f"{platform}-1",
+                    home="A",
+                    away="B",
+                )
+            ]
+
+        service.extractor_registry = SimpleNamespace(
+            list_registered=lambda: [
+                SimpleNamespace(name="one", supports_live_detection=True, list_live_events=lambda: fetch("one")),
+                SimpleNamespace(name="two", supports_live_detection=True, list_live_events=lambda: fetch("two")),
+            ]
+        )
+
+        events = await asyncio.wait_for(service.collect_live_events(), timeout=1.0)
+        self.assertEqual({event.platform for event in events}, {"one", "two"})
+
+    async def test_live_watch_detects_goal_and_red_card_after_live_match(self) -> None:
+        service = LiveWatchService(repository=self.repository)
+        chat_id = 777
+        service.add_fixture_lines(chat_id, ["Banyule - Bundoora"])
+
+        current_events = [
+            LiveEventSnapshot(
+                platform="betovo",
+                external_event_id="ev-1",
+                home="Banyule",
+                away="Bundoora",
+                minute="1'",
+                home_score=0,
+                away_score=0,
+                home_red_cards=0,
+                away_red_cards=0,
+                home_yellow_cards=0,
+                away_yellow_cards=0,
+            )
+        ]
+        extractor = SimpleNamespace(
+            name="betovo",
+            supports_live_detection=True,
+            list_live_events=AsyncMock(side_effect=lambda: list(current_events)),
+        )
+        service.extractor_registry = SimpleNamespace(list_registered=lambda: [extractor])
+
+        hits1 = await service.poll_once()
+        self.assertEqual([hit.phase for hit in hits1], ["live"])
+
+        current_events[0] = LiveEventSnapshot(
+            platform="betovo",
+            external_event_id="ev-1",
+            home="Banyule",
+            away="Bundoora",
+            minute="9'",
+            home_score=1,
+            away_score=0,
+            home_red_cards=0,
+            away_red_cards=0,
+            home_yellow_cards=0,
+            away_yellow_cards=0,
+        )
+        hits2 = await service.poll_once()
+        self.assertEqual([hit.phase for hit in hits2], ["goal"])
+        self.assertIn("GOL DETECTADO", render_live_hit(hits2[0]))
+        self.assertIn("Banyule", render_live_hit(hits2[0]))
+
+        current_events[0] = LiveEventSnapshot(
+            platform="betovo",
+            external_event_id="ev-1",
+            home="Banyule",
+            away="Bundoora",
+            minute="18'",
+            home_score=1,
+            away_score=0,
+            home_red_cards=0,
+            away_red_cards=1,
+            home_yellow_cards=0,
+            away_yellow_cards=0,
+        )
+        hits3 = await service.poll_once()
+        self.assertEqual([hit.phase for hit in hits3], ["red_card"])
+        self.assertIn("TARJETA ROJA", render_live_hit(hits3[0]))
+        self.assertIn("Bundoora", render_live_hit(hits3[0]))
+
+        self.repository.set_live_watch_settings(chat_id, alert_yellow_cards=True)
+        current_events[0] = LiveEventSnapshot(
+            platform="betovo",
+            external_event_id="ev-1",
+            home="Banyule",
+            away="Bundoora",
+            minute="23'",
+            home_score=1,
+            away_score=0,
+            home_red_cards=0,
+            away_red_cards=1,
+            home_yellow_cards=0,
+            away_yellow_cards=1,
+        )
+        hits4 = await service.poll_once()
+        self.assertEqual([hit.phase for hit in hits4], ["yellow_card"])
+        self.assertIn("TARJETA AMARILLA", render_live_hit(hits4[0]))
+
+    async def test_live_watch_settings_suppress_goal_alerts(self) -> None:
+        service = LiveWatchService(repository=self.repository)
+        chat_id = 778
+        service.add_fixture_lines(chat_id, ["Banyule - Bundoora"])
+        self.repository.set_live_watch_settings(chat_id, alert_goals=False)
+
+        current_events = [
+            LiveEventSnapshot(
+                platform="betovo",
+                external_event_id="ev-1",
+                home="Banyule",
+                away="Bundoora",
+                minute="1'",
+                home_score=0,
+                away_score=0,
+            )
+        ]
+        service.extractor_registry = SimpleNamespace(
+            list_registered=lambda: [
+                SimpleNamespace(
+                    name="betovo",
+                    supports_live_detection=True,
+                    list_live_events=AsyncMock(side_effect=lambda: list(current_events)),
+                )
+            ]
+        )
+        self.assertEqual([hit.phase for hit in await service.poll_once()], ["live"])
+
+        current_events[0] = LiveEventSnapshot(
+            platform="betovo",
+            external_event_id="ev-1",
+            home="Banyule",
+            away="Bundoora",
+            minute="5'",
+            home_score=1,
+            away_score=0,
+        )
+        self.assertEqual(await service.poll_once(), [])
+
 
 class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):
     def setUp(self) -> None:
@@ -457,18 +671,18 @@ class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):
         from datetime import timezone
         service = LiveWatchService(repository=self.repository)
         
-        # 1. No active watches -> should return normal interval (60s)
-        self.assertEqual(service.get_recommended_poll_interval(), 60.0)
+        # 1. No active watches -> should return normal interval (30s)
+        self.assertEqual(service.get_recommended_poll_interval(), 30.0)
         
-        # 2. Has watch, but kickoff is far in the future (e.g. 5 hours) -> should return normal (60s)
+        # 2. Has watch, but kickoff is far in the future (e.g. 5 hours) -> should return normal (30s)
         far_future = (_dt.datetime.now(timezone.utc) + _dt.timedelta(hours=5)).isoformat()
         self.repository.add_live_watch(123, home="A", away="B", kickoff_at=far_future)
-        self.assertEqual(service.get_recommended_poll_interval(), 60.0)
+        self.assertEqual(service.get_recommended_poll_interval(), 30.0)
         
-        # 3. Has watch starting in 1 minute (within the 2-minute fast-polling window) -> should return fast (15s)
+        # 3. Has watch starting in 1 minute (within the 2-minute fast-polling window) -> should return fast (10s)
         near_future = (_dt.datetime.now(timezone.utc) + _dt.timedelta(minutes=1)).isoformat()
         self.repository.add_live_watch(123, home="C", away="D", kickoff_at=near_future)
-        self.assertEqual(service.get_recommended_poll_interval(), 15.0)
+        self.assertEqual(service.get_recommended_poll_interval(), 10.0)
 
     def test_spanish_name_similarity_normalization(self) -> None:
         # Femenino normalization
@@ -628,4 +842,3 @@ class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

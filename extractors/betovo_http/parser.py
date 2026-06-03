@@ -59,6 +59,10 @@ def live_events_from_livenow(payload: dict[str, Any]) -> list[LiveEventSnapshot]
                 minute=event.get("liveTime") if event.get("liveTime") not in (None, "Not started") else event.get("ls"),
                 home_score=_int(score[0]) if len(score) > 0 else None,
                 away_score=_int(score[1]) if len(score) > 1 else None,
+                home_red_cards=_side_count(event, "red", side=0),
+                away_red_cards=_side_count(event, "red", side=1),
+                home_yellow_cards=_side_count(event, "yellow", side=0),
+                away_yellow_cards=_side_count(event, "yellow", side=1),
                 scheduled_at=_kickoff_iso(event.get("startDate")),
                 source_url=f"betovo:champ:{event.get('champId')}",
                 is_soccer=bool(category.get("iso")),
@@ -74,6 +78,25 @@ def _int(value: Any) -> int | None:
         return int(value)
     except (TypeError, ValueError):
         return None
+
+
+def _side_count(event: dict[str, Any], color: str, *, side: int) -> int | None:
+    """Best-effort card extraction from Altenar live events."""
+
+    names = (
+        ("redCards", "redcards", "reds") if color == "red" else ("yellowCards", "yellowcards", "yellows")
+    )
+    side_names = ("home", "away")
+    for name in names:
+        payload = event.get(name)
+        if isinstance(payload, list) and len(payload) > side:
+            return _int(payload[side])
+        if isinstance(payload, dict):
+            for key in (side_names[side], str(side), str(side + 1)):
+                value = _int(payload.get(key))
+                if value is not None:
+                    return value
+    return None
 
 _LINE_IN_NAME_RE = re.compile(r"\(([+-]?\d+(?:\.\d+)?)\)")
 _SR_ID_RE = re.compile(r"((?:sr|ar|od):match:\d+)", re.IGNORECASE)

@@ -73,6 +73,7 @@ class LiveWatchEntry:
     prematch_fired_platforms: str | None = None
     countdown_fired_at: str | None = None
     chat_local_id: int | None = None
+    live_state_json: str | None = None
 
     @property
     def fired_platforms_list(self) -> list[str]:
@@ -85,6 +86,22 @@ class LiveWatchEntry:
         if not self.prematch_fired_platforms:
             return []
         return [p.strip() for p in self.prematch_fired_platforms.split(",") if p.strip()]
+
+    @property
+    def live_state(self) -> dict[str, Any]:
+        """Return last observed live state keyed by platform."""
+
+        return _loads_json_object(self.live_state_json)
+
+
+@dataclass(frozen=True)
+class LiveWatchSettings:
+    """Per-chat switches for high-frequency live-watch alerts."""
+
+    chat_id: int
+    alert_goals: bool = True
+    alert_red_cards: bool = True
+    alert_yellow_cards: bool = False
 
 
 
@@ -2625,6 +2642,87 @@ class SqliteTrackingRepository:
                 (_utc_now_iso(), watch_id),
             )
 
+    def update_live_watch_platform_state(
+        self,
+        watch_id: int,
+        *,
+        platform: str,
+        state: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Persist the last observed live state for one platform.
+
+        Returns the full platform->state mapping after the update.
+        """
+
+        with _connect() as connection:
+            row = connection.execute(
+                "SELECT live_state_json FROM live_watch_entries WHERE id = ?", (watch_id,)
+            ).fetchone()
+            current = _loads_json_object(row["live_state_json"] if row else None)
+            current[str(platform)] = dict(state)
+            connection.execute(
+                """
+                UPDATE live_watch_entries
+                SET live_state_json = ?
+                WHERE id = ?
+                """,
+                (json.dumps(current, ensure_ascii=False, sort_keys=True), watch_id),
+            )
+        return current
+
+    def get_live_watch_settings(self, chat_id: int) -> LiveWatchSettings:
+        """Return per-chat live alert settings, with defaults if unset."""
+
+        with _connect() as connection:
+            row = connection.execute(
+                "SELECT * FROM live_watch_settings WHERE chat_id = ?", (chat_id,)
+            ).fetchone()
+        if row is None:
+            return LiveWatchSettings(chat_id=chat_id)
+        return LiveWatchSettings(
+            chat_id=int(row["chat_id"]),
+            alert_goals=bool(row["alert_goals"]),
+            alert_red_cards=bool(row["alert_red_cards"]),
+            alert_yellow_cards=bool(row["alert_yellow_cards"]),
+        )
+
+    def set_live_watch_settings(
+        self,
+        chat_id: int,
+        *,
+        alert_goals: bool | None = None,
+        alert_red_cards: bool | None = None,
+        alert_yellow_cards: bool | None = None,
+    ) -> LiveWatchSettings:
+        """Upsert per-chat live alert settings and return the saved settings."""
+
+        current = self.get_live_watch_settings(chat_id)
+        new_goals = current.alert_goals if alert_goals is None else bool(alert_goals)
+        new_reds = current.alert_red_cards if alert_red_cards is None else bool(alert_red_cards)
+        new_yellows = current.alert_yellow_cards if alert_yellow_cards is None else bool(alert_yellow_cards)
+        now_iso = _utc_now_iso()
+        with _connect() as connection:
+            connection.execute(
+                """
+                INSERT INTO live_watch_settings (
+                    chat_id, alert_goals, alert_red_cards, alert_yellow_cards, updated_at
+                )
+                VALUES (?, ?, ?, ?, ?)
+                ON CONFLICT(chat_id) DO UPDATE SET
+                    alert_goals = excluded.alert_goals,
+                    alert_red_cards = excluded.alert_red_cards,
+                    alert_yellow_cards = excluded.alert_yellow_cards,
+                    updated_at = excluded.updated_at
+                """,
+                (chat_id, int(new_goals), int(new_reds), int(new_yellows), now_iso),
+            )
+        return LiveWatchSettings(
+            chat_id=chat_id,
+            alert_goals=new_goals,
+            alert_red_cards=new_reds,
+            alert_yellow_cards=new_yellows,
+        )
+
     def get_all_active_events_with_league(self) -> list[Any]:
         """Return all active events as SimpleNamespace objects with their tracked league name."""
         from types import SimpleNamespace
@@ -3268,6 +3366,14 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
 
         CREATE INDEX IF NOT EXISTS idx_live_watch_chat_status
         ON live_watch_entries(chat_id, status);
+
+        CREATE TABLE IF NOT EXISTS live_watch_settings (
+            chat_id INTEGER PRIMARY KEY,
+            alert_goals INTEGER NOT NULL DEFAULT 1,
+            alert_red_cards INTEGER NOT NULL DEFAULT 1,
+            alert_yellow_cards INTEGER NOT NULL DEFAULT 0,
+            updated_at TEXT NOT NULL
+        );
         """
     )
 
@@ -3389,7 +3495,15 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
         "last_unavailable_notification_at",
         "TEXT",
     )
-    for _live_watch_column in ("kickoff_at", "prematch_seen_at", "prematch_platform", "fired_platforms", "prematch_fired_platforms", "countdown_fired_at"):
+    for _live_watch_column in (
+        "kickoff_at",
+        "prematch_seen_at",
+        "prematch_platform",
+        "fired_platforms",
+        "prematch_fired_platforms",
+        "countdown_fired_at",
+        "live_state_json",
+    ):
         _ensure_column(connection, "live_watch_entries", _live_watch_column, "TEXT")
     _ensure_column(connection, "live_watch_entries", "chat_local_id", "INTEGER")
 
@@ -4141,6 +4255,7 @@ def _row_to_live_watch(row: sqlite3.Row) -> LiveWatchEntry:
         prematch_fired_platforms=row["prematch_fired_platforms"] if "prematch_fired_platforms" in row.keys() else None,
         countdown_fired_at=row["countdown_fired_at"] if "countdown_fired_at" in row.keys() else None,
         chat_local_id=row["chat_local_id"] if "chat_local_id" in row.keys() else None,
+        live_state_json=row["live_state_json"] if "live_state_json" in row.keys() else None,
     )
 
 
@@ -4155,6 +4270,7 @@ __all__ = [
     "DB_FILE_PATH",
     "EventBaseline",
     "LiveWatchEntry",
+    "LiveWatchSettings",
     "PendingCompetitionTrackRequest",
     "SmallChangeRecord",
     "SqliteTrackingRepository",

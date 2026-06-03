@@ -9,6 +9,7 @@ misprice. Matching is per-side: both home and away must clear a similarity floor
 
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass
 from datetime import datetime, timezone, timedelta
 from difflib import SequenceMatcher
@@ -24,6 +25,7 @@ from core.models import LiveEventSnapshot
 from core.registry import ExtractorRegistry, extractor_registry as global_extractor_registry
 from storage.tracking_repository import (
     LiveWatchEntry,
+    LiveWatchSettings,
     SqliteTrackingRepository,
     tracking_repository as default_tracking_repository,
 )
@@ -96,7 +98,7 @@ class LiveWatchHit:
     entry: LiveWatchEntry
     event: LiveEventSnapshot | None = None
     score: float = 0.0
-    phase: str = "live"  # "live" | "pre" | "countdown"
+    phase: str = "live"  # "live" | "pre" | "countdown" | "goal" | "red_card" | "yellow_card"
     custom_message: str | None = None
 
 
@@ -188,6 +190,24 @@ class LiveWatchService:
     def clear_watches(self, chat_id: int, *, status: str | None = None) -> int:
         return self.repository.clear_live_watches(chat_id, status=status)
 
+    def get_alert_settings(self, chat_id: int) -> LiveWatchSettings:
+        return self.repository.get_live_watch_settings(chat_id)
+
+    def update_alert_settings(
+        self,
+        chat_id: int,
+        *,
+        alert_goals: bool | None = None,
+        alert_red_cards: bool | None = None,
+        alert_yellow_cards: bool | None = None,
+    ) -> LiveWatchSettings:
+        return self.repository.set_live_watch_settings(
+            chat_id,
+            alert_goals=alert_goals,
+            alert_red_cards=alert_red_cards,
+            alert_yellow_cards=alert_yellow_cards,
+        )
+
     # ----- polling -----
 
     def _live_extractors(self) -> list[Extractor]:
@@ -199,13 +219,11 @@ class LiveWatchService:
     async def collect_live_events(self) -> list[LiveEventSnapshot]:
         """Gather in-play soccer events from every live-capable extractor."""
 
-        events: list[LiveEventSnapshot] = []
-        for extractor in self._live_extractors():
-            try:
-                events.extend(await extractor.list_live_events())
-            except Exception:
-                logger.exception("Live fetch failed platform=%s", extractor.name)
-        return events
+        return await self._collect_events_parallel(
+            self._live_extractors(),
+            method_name="list_live_events",
+            label="Live",
+        )
 
     async def collect_prematch_events(self) -> list[LiveEventSnapshot]:
         """Gather currently-listed prematch soccer events (cached ~120s)."""
@@ -215,16 +233,37 @@ class LiveWatchService:
         now = _time.monotonic()
         if self._prematch_cache is not None and (now - self._prematch_cached_at) < self._prematch_ttl_seconds:
             return self._prematch_cache
-        events: list[LiveEventSnapshot] = []
-        for extractor in self._prematch_extractors():
-            try:
-                events.extend(await extractor.list_prematch_events())
-            except Exception:
-                logger.exception("Prematch fetch failed platform=%s", extractor.name)
+        events = await self._collect_events_parallel(
+            self._prematch_extractors(),
+            method_name="list_prematch_events",
+            label="Prematch",
+        )
         if events:
             self._prematch_cache = events
             self._prematch_cached_at = now
         return events
+
+    async def _collect_events_parallel(
+        self,
+        extractors: list[Extractor],
+        *,
+        method_name: str,
+        label: str,
+    ) -> list[LiveEventSnapshot]:
+        """Fetch one live/prematch feed per platform concurrently."""
+
+        async def _fetch(extractor: Extractor) -> list[LiveEventSnapshot]:
+            try:
+                method = getattr(extractor, method_name)
+                return list(await method())
+            except Exception:
+                logger.exception("%s fetch failed platform=%s", label, extractor.name)
+                return []
+
+        if not extractors:
+            return []
+        batches = await asyncio.gather(*(_fetch(extractor) for extractor in extractors))
+        return [event for batch in batches for event in batch]
 
     @staticmethod
     def _best_match(entry: LiveWatchEntry, events: list[LiveEventSnapshot]) -> tuple[float, LiveEventSnapshot] | None:
@@ -254,9 +293,56 @@ class LiveWatchService:
 
         hits: list[LiveWatchHit] = []
         active_events = None
+        settings_cache: dict[int, LiveWatchSettings] = {}
 
         for entry in watches:
-            # 1. Process Live events
+            settings = settings_cache.get(entry.chat_id)
+            if settings is None:
+                settings = self.repository.get_live_watch_settings(entry.chat_id)
+                settings_cache[entry.chat_id] = settings
+
+            # 1. Process score/card changes from platforms where this fixture is already live.
+            entry_state = entry.live_state
+            alert_state = entry_state.get("_alerts") if isinstance(entry_state.get("_alerts"), dict) else {}
+            alert_state_changed = False
+            for platform in entry.fired_platforms_list:
+                platform_event = self._best_known_platform_match(
+                    entry,
+                    platform=platform,
+                    events=live_events,
+                    state_by_platform=entry_state,
+                )
+                if platform_event is None:
+                    continue
+                current_state = _event_live_state(platform_event)
+                previous_state = entry_state.get(platform)
+                if previous_state:
+                    transition_hits = _transition_hits(
+                        entry,
+                        platform_event,
+                        previous_state=previous_state,
+                        current_state=current_state,
+                        settings=settings,
+                        alert_state=alert_state,
+                    )
+                    if transition_hits:
+                        alert_state_changed = True
+                    for hit in transition_hits:
+                        hits.append(hit)
+                self.repository.update_live_watch_platform_state(
+                    entry.id,
+                    platform=platform_event.platform,
+                    state=current_state,
+                )
+                entry_state[platform_event.platform] = current_state
+            if alert_state_changed:
+                self.repository.update_live_watch_platform_state(
+                    entry.id,
+                    platform="_alerts",
+                    state=alert_state,
+                )
+
+            # 2. Process first LIVE detection per platform.
             eligible_live_events = (
                 [ev for ev in live_events if ev.platform not in entry.fired_platforms_list]
                 if live_events
@@ -268,10 +354,15 @@ class LiveWatchService:
                 self.repository.mark_live_watch_fired(
                     entry.id, platform=event.platform, event_id=event.external_event_id, minute=event.minute
                 )
+                self.repository.update_live_watch_platform_state(
+                    entry.id,
+                    platform=event.platform,
+                    state=_event_live_state(event),
+                )
                 hits.append(LiveWatchHit(entry=entry, event=event, score=score, phase="live"))
                 continue
 
-            # 2. Process Kickoff Countdown alerts (5 min before kickoff)
+            # 3. Process Kickoff Countdown alerts (5 min before kickoff)
             if entry.kickoff_at and not entry.countdown_fired_at:
                 try:
                     ko = datetime.fromisoformat(entry.kickoff_at)
@@ -296,7 +387,7 @@ class LiveWatchService:
                 except Exception:
                     logger.exception("Error checking kickoff countdown for entry_id=%s", entry.id)
 
-            # 3. Process Prematch events (per platform alert)
+            # 4. Process Prematch events (per platform alert)
             eligible_prematch_events = (
                 [ev for ev in prematch_events if ev.platform not in entry.prematch_fired_platforms_list]
                 if prematch_events
@@ -312,17 +403,42 @@ class LiveWatchService:
 
         return hits
 
+    @staticmethod
+    def _best_known_platform_match(
+        entry: LiveWatchEntry,
+        *,
+        platform: str,
+        events: list[LiveEventSnapshot],
+        state_by_platform: dict[str, Any],
+    ) -> LiveEventSnapshot | None:
+        candidates = [event for event in events if event.platform == platform]
+        if not candidates:
+            return None
+        known_state = state_by_platform.get(platform)
+        if isinstance(known_state, dict):
+            known_event_id = str(known_state.get("event_id") or "")
+            if known_event_id:
+                direct = next(
+                    (event for event in candidates if str(event.external_event_id) == known_event_id),
+                    None,
+                )
+                if direct is not None:
+                    return direct
+        best = LiveWatchService._best_match(entry, candidates)
+        return best[1] if best is not None else None
+
 
     def purge_expired(self) -> int:
         """Delete watch entries whose time has passed (kickoff+grace, or stale)."""
 
         return self.repository.purge_expired_live_watches()
 
-    def get_recommended_poll_interval(self, default_normal: float = 60.0, default_fast: float = 15.0) -> float:
+    def get_recommended_poll_interval(self, default_normal: float = 30.0, default_fast: float = 10.0) -> float:
         """Determine the next sleep interval based on active watch kickoffs.
 
-        Returns default_fast (15s) if any watched fixture starts in <= 2 min
-        or started <= 15 min ago, otherwise default_normal (60s).
+        Returns default_fast (10s) if any watched fixture is in the
+        [kickoff-2m, kickoff+15m] window. After +15m, entries fall back to the
+        normal cadence (30s by default) even if a platform never listed them live.
         """
 
         watches = self.repository.list_all_active_live_watches()
@@ -343,6 +459,233 @@ class LiveWatchService:
                     pass
         return default_normal
 
+
+
+def _event_live_state(event: LiveEventSnapshot) -> dict[str, Any]:
+    """Compact persisted state used to detect score/card deltas per platform."""
+
+    return {
+        "event_id": str(event.external_event_id),
+        "minute": event.minute,
+        "home": event.home,
+        "away": event.away,
+        "home_score": event.home_score,
+        "away_score": event.away_score,
+        "home_red_cards": event.home_red_cards,
+        "away_red_cards": event.away_red_cards,
+        "home_yellow_cards": event.home_yellow_cards,
+        "away_yellow_cards": event.away_yellow_cards,
+        "live_stats": event.live_stats or {},
+        "observed_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+def _state_int(state: dict[str, Any], key: str) -> int | None:
+    value = state.get(key)
+    if isinstance(value, bool) or value in (None, ""):
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _increased(previous_state: dict[str, Any], current_state: dict[str, Any], key: str) -> bool:
+    previous = _state_int(previous_state, key)
+    current = _state_int(current_state, key)
+    return previous is not None and current is not None and current > previous
+
+
+def _transition_hits(
+    entry: LiveWatchEntry,
+    event: LiveEventSnapshot,
+    *,
+    previous_state: dict[str, Any],
+    current_state: dict[str, Any],
+    settings: LiveWatchSettings,
+    alert_state: dict[str, Any],
+) -> list[LiveWatchHit]:
+    """Build high-priority live alerts from one state transition."""
+
+    hits: list[LiveWatchHit] = []
+    goal_changed = (
+        _increased(previous_state, current_state, "home_score")
+        or _increased(previous_state, current_state, "away_score")
+    )
+    score_key = _score_key_from_state(current_state)
+    if settings.alert_goals and goal_changed and score_key and alert_state.get("score_key") != score_key:
+        hits.append(
+            LiveWatchHit(
+                entry=entry,
+                event=event,
+                phase="goal",
+                custom_message=_render_goal_alert(event, previous_state, current_state),
+            )
+        )
+        alert_state["score_key"] = score_key
+
+    red_changed = (
+        _increased(previous_state, current_state, "home_red_cards")
+        or _increased(previous_state, current_state, "away_red_cards")
+    )
+    red_key = _card_key_from_state(current_state, color="red")
+    if settings.alert_red_cards and red_changed and red_key and alert_state.get("red_key") != red_key:
+        hits.append(
+            LiveWatchHit(
+                entry=entry,
+                event=event,
+                phase="red_card",
+                custom_message=_render_red_card_alert(event, previous_state, current_state),
+            )
+        )
+        alert_state["red_key"] = red_key
+
+    yellow_changed = (
+        _increased(previous_state, current_state, "home_yellow_cards")
+        or _increased(previous_state, current_state, "away_yellow_cards")
+    )
+    yellow_key = _card_key_from_state(current_state, color="yellow")
+    if settings.alert_yellow_cards and yellow_changed and yellow_key and alert_state.get("yellow_key") != yellow_key:
+        hits.append(
+            LiveWatchHit(
+                entry=entry,
+                event=event,
+                phase="yellow_card",
+                custom_message=_render_yellow_card_alert(event, previous_state, current_state),
+            )
+        )
+        alert_state["yellow_key"] = yellow_key
+    return hits
+
+
+def _score_key_from_state(state: dict[str, Any]) -> str | None:
+    home = _state_int(state, "home_score")
+    away = _state_int(state, "away_score")
+    if home is None or away is None:
+        return None
+    return f"{home}-{away}"
+
+
+def _card_key_from_state(state: dict[str, Any], *, color: str) -> str | None:
+    home_key = f"home_{color}_cards"
+    away_key = f"away_{color}_cards"
+    home = _state_int(state, home_key)
+    away = _state_int(state, away_key)
+    if home is None or away is None:
+        return None
+    return f"{home}-{away}"
+
+
+def _platform_label(platform: str) -> str:
+    return platform.replace("_http", "").replace("_", " ")
+
+
+def _score_label(event: LiveEventSnapshot) -> str:
+    if event.home_score is not None and event.away_score is not None:
+        return f"{event.home_score}-{event.away_score}"
+    return "score no informado"
+
+
+def _render_goal_alert(
+    event: LiveEventSnapshot,
+    previous_state: dict[str, Any],
+    current_state: dict[str, Any],
+) -> str:
+    scorers: list[str] = []
+    if _increased(previous_state, current_state, "home_score"):
+        scorers.append(event.home)
+    if _increased(previous_state, current_state, "away_score"):
+        scorers.append(event.away)
+    scorer_text = ", ".join(scorers) if scorers else "Equipo no identificado"
+    lines = [
+        "⚽ GOL DETECTADO",
+        "",
+        f"🏦 {_platform_label(event.platform)}",
+        f"⚽ {event.home} vs {event.away}",
+        f"📌 Gol: {scorer_text}",
+        f"🔢 Marcador: {_score_label(event)}",
+    ]
+    if event.minute:
+        lines.append(f"⏱️ {event.minute}")
+    lines.extend(_live_stats_lines(event))
+    return "\n".join(lines)
+
+
+def _render_red_card_alert(
+    event: LiveEventSnapshot,
+    previous_state: dict[str, Any],
+    current_state: dict[str, Any],
+) -> str:
+    teams: list[str] = []
+    if _increased(previous_state, current_state, "home_red_cards"):
+        count = _state_int(current_state, "home_red_cards")
+        teams.append(f"{event.home} ({count})")
+    if _increased(previous_state, current_state, "away_red_cards"):
+        count = _state_int(current_state, "away_red_cards")
+        teams.append(f"{event.away} ({count})")
+    team_text = ", ".join(teams) if teams else "Equipo no identificado"
+    lines = [
+        "🟥 TARJETA ROJA",
+        "",
+        f"🏦 {_platform_label(event.platform)}",
+        f"⚽ {event.home} vs {event.away}",
+        f"📌 Roja: {team_text}",
+        f"🔢 Marcador: {_score_label(event)}",
+    ]
+    if event.minute:
+        lines.append(f"⏱️ {event.minute}")
+    lines.extend(_live_stats_lines(event))
+    return "\n".join(lines)
+
+
+def _render_yellow_card_alert(
+    event: LiveEventSnapshot,
+    previous_state: dict[str, Any],
+    current_state: dict[str, Any],
+) -> str:
+    teams: list[str] = []
+    if _increased(previous_state, current_state, "home_yellow_cards"):
+        count = _state_int(current_state, "home_yellow_cards")
+        teams.append(f"{event.home} ({count})")
+    if _increased(previous_state, current_state, "away_yellow_cards"):
+        count = _state_int(current_state, "away_yellow_cards")
+        teams.append(f"{event.away} ({count})")
+    team_text = ", ".join(teams) if teams else "Equipo no identificado"
+    lines = [
+        "🟨 TARJETA AMARILLA",
+        "",
+        f"🏦 {_platform_label(event.platform)}",
+        f"⚽ {event.home} vs {event.away}",
+        f"📌 Amarilla: {team_text}",
+        f"🔢 Marcador: {_score_label(event)}",
+    ]
+    if event.minute:
+        lines.append(f"⏱️ {event.minute}")
+    lines.extend(_live_stats_lines(event))
+    return "\n".join(lines)
+
+
+def _live_stats_lines(event: LiveEventSnapshot) -> list[str]:
+    """Render optional live stats when a provider exposes them."""
+
+    stats = event.live_stats or {}
+    if not isinstance(stats, dict):
+        return []
+    labels = [
+        ("Posesión", "possession_home", "possession_away"),
+        ("Ataques", "attacks_home", "attacks_away"),
+        ("Ataques peligrosos", "dangerous_attacks_home", "dangerous_attacks_away"),
+        ("Tiros al arco", "shots_on_target_home", "shots_on_target_away"),
+        ("Corners", "corners_home", "corners_away"),
+    ]
+    lines: list[str] = []
+    for label, home_key, away_key in labels:
+        home = stats.get(home_key)
+        away = stats.get(away_key)
+        if home is None and away is None:
+            continue
+        lines.append(f"📊 {label}: {home if home is not None else '-'} / {away if away is not None else '-'}")
+    return lines
 
 
 def _format_handicap(event: Any) -> str | None:
@@ -464,7 +807,7 @@ def render_countdown_alert(entry: LiveWatchEntry, matched: list[Any]) -> str:
 def render_live_hit(hit: LiveWatchHit) -> str:
     """Build the Telegram alert for a watched fixture (live, prematch, or countdown)."""
 
-    if hit.phase == "countdown":
+    if hit.phase in ("countdown", "goal", "red_card", "yellow_card"):
         return hit.custom_message or ""
 
     event = hit.event
@@ -494,6 +837,25 @@ def render_live_hit(hit: LiveWatchHit) -> str:
     if event.home_score is not None and event.away_score is not None:
         clock += f"  |  {event.home_score}-{event.away_score}"
     lines.append(f"⏱️ {clock}")
+
+    card_parts = []
+    if event.home_red_cards is not None or event.away_red_cards is not None:
+        card_parts.append(
+            f"🟥 {event.home_red_cards if event.home_red_cards is not None else 0}/"
+            f"{event.away_red_cards if event.away_red_cards is not None else 0}"
+        )
+    if event.home_yellow_cards is not None or event.away_yellow_cards is not None:
+        card_parts.append(
+            f"🟨 {event.home_yellow_cards if event.home_yellow_cards is not None else 0}/"
+            f"{event.away_yellow_cards if event.away_yellow_cards is not None else 0}"
+        )
+    if card_parts:
+        lines.append(" ".join(card_parts))
+
+    stats_lines = _live_stats_lines(event)
+    if stats_lines:
+        lines.append("")
+        lines.extend(stats_lines)
 
     if hit.entry.note and hit.entry.note.strip() not in (f"{event.home} - {event.away}",):
         lines.append("")
