@@ -15,6 +15,7 @@ from stats_providers.sportradar_http import SportradarHttpStatsProvider
 from stats_providers.palloliitto.provider import PalloliittoStatsProvider
 from stats_providers.sofascore_http import SofaScoreHttpStatsProvider
 from stats_providers.flashscore_http import FlashscoreHttpStatsProvider
+from stats_providers.svenskfotboll_http import SvenskfotbollHttpStatsProvider
 
 
 def register_default_stats_providers(
@@ -37,6 +38,8 @@ def register_default_stats_providers(
         cache = tracking_repository
     target.register(SportradarHttpStatsProvider(payload_cache=cache))
     target.register(PalloliittoStatsProvider(payload_cache=cache))
+    if os.getenv("SVENSKFOTBOLL_ENABLED", "true").strip().lower() not in {"false", "0", "no"}:
+        target.register(SvenskfotbollHttpStatsProvider(payload_cache=cache))
     # SofaScore currently exposes public league metadata, but its fixture/report
     # API can return anti-bot `challenge` responses even to Playwright. Keep it
     # registered for old links, but hide it from new Telegram linking unless it
@@ -68,5 +71,6 @@ __all__ = [
     "FootyStatsHttpStatsProvider",
     "SofaScoreHttpStatsProvider",
     "FlashscoreHttpStatsProvider",
+    "SvenskfotbollHttpStatsProvider",
     "register_default_stats_providers",
 ]

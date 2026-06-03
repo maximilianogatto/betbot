@@ -3055,6 +3055,14 @@ def _build_stats_provider_input_message(provider: StatsProviderDescriptor) -> st
                 "https://footystats.org/australia/northern-nsw-npl",
             ]
         )
+    elif provider.key == "svenskfotboll_http":
+        lines.extend(
+            [
+                "Ejemplo Svenskfotboll:",
+                "País: Sweden | búsqueda: Allsvenskan",
+                "ID/URL de liga: https://www.svenskfotboll.se/widget-go-to/?scr=table&ftid=133348",
+            ]
+        )
     return "\n".join(lines)
 
 
