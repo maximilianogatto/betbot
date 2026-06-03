@@ -108,6 +108,10 @@ def live_events_from_open(payload: dict[str, Any]) -> list[LiveEventSnapshot]:
                 minute=minute,
                 home_score=_int(score.get("home")),
                 away_score=_int(score.get("away")),
+                home_red_cards=_card_count(live_data, color="red", side="home"),
+                away_red_cards=_card_count(live_data, color="red", side="away"),
+                home_yellow_cards=_card_count(live_data, color="yellow", side="home"),
+                away_yellow_cards=_card_count(live_data, color="yellow", side="away"),
                 scheduled_at=_kickoff_iso(event.get("start")),
                 source_url=f"betwarrior:group:{event.get('groupId')}",
                 is_soccer=is_soccer,
@@ -116,6 +120,33 @@ def live_events_from_open(payload: dict[str, Any]) -> list[LiveEventSnapshot]:
             )
         )
     return live
+
+
+def _card_count(live_data: dict[str, Any], *, color: str, side: str) -> int | None:
+    """Best-effort card extraction from Kambi liveData."""
+
+    key_variants = (
+        ("redCards", "reds", "red_cards") if color == "red" else ("yellowCards", "yellows", "yellow_cards")
+    )
+    for key in key_variants:
+        payload = live_data.get(key)
+        if isinstance(payload, dict):
+            value = _int(payload.get(side))
+            if value is not None:
+                return value
+        if isinstance(payload, list):
+            index = 0 if side == "home" else 1
+            if len(payload) > index:
+                return _int(payload[index])
+    cards = live_data.get("cards")
+    if isinstance(cards, dict):
+        side_payload = cards.get(side)
+        if isinstance(side_payload, dict):
+            for key in key_variants:
+                value = _int(side_payload.get(key))
+                if value is not None:
+                    return value
+    return None
 
 
 def _odds(value: Any) -> float | None:

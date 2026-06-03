@@ -147,11 +147,16 @@ class LiveEventSnapshot:
     minute: str | None = None  # human label, e.g. "12'", "HT", "2ª parte"
     home_score: int | None = None
     away_score: int | None = None
+    home_red_cards: int | None = None
+    away_red_cards: int | None = None
+    home_yellow_cards: int | None = None
+    away_yellow_cards: int | None = None
     scheduled_at: str | None = None
     odds_1x2: Odds1X2 | None = None
     source_url: str | None = None
     is_soccer: bool = True  # False for eSports football and similar virtual feeds
     extracted_at: str = ""
+    live_stats: dict[str, Any] = field(default_factory=dict)
     raw_payload: dict[str, Any] = field(default_factory=dict)
 
 

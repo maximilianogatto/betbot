@@ -98,7 +98,7 @@ async def _live_watch_loop(application: Application, *, interval_seconds: int) -
         
         sleep_sec = service.get_recommended_poll_interval(
             default_normal=float(interval_seconds),
-            default_fast=15.0
+            default_fast=10.0
         )
         await asyncio.sleep(sleep_sec)
 

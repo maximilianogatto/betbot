@@ -131,6 +131,8 @@ HELP_MESSAGE = (
     "  `/watch_live` - Pone partidos en vigilancia en vivo (escribí los equipos o subí foto del fixture)\n"
     "  `/import_sheet` - Importa partidos en vigilancia directamente desde la planilla de Google Drive\n"
     "  `/watching` - Lista tus partidos en vigilancia activa y los que ya salieron\n"
+    "  `/live_status` - Muestra cadencia, partidos activos y último estado live detectado\n"
+    "  `/live_settings` - Configura alertas live: goles, rojas y amarillas\n"
     "  `/unwatch <id>` - Saca un partido de la vigilancia en vivo (o /unwatch all)\n\n"
     "📊 *Stats (Estadísticas):*\n"
     "  `/link_stats` - Vincula una liga de odds con un proveedor de estadísticas\n"
@@ -637,6 +639,128 @@ async def unwatch_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if not ok:
         ok = service.remove_watch(chat_id, target_id)
     await update.message.reply_text("🗑️ Borrado." if ok else "No encontré ese id en tu vigilancia.")
+
+
+async def live_status_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Show current live-watch cadence, active fixtures and stored live states."""
+
+    if update.message is None or update.effective_chat is None:
+        return
+
+    service = get_live_watch_service(context)
+    chat_id = update.effective_chat.id
+    settings = service.get_alert_settings(chat_id)
+    watches = service.list_watches(chat_id, status="watching")
+    interval = service.get_recommended_poll_interval(default_normal=30.0, default_fast=10.0)
+
+    lines = [
+        "🔴 *Estado Live Watch*",
+        f"⏱️ Próximo intervalo estimado: `{int(interval)}s`",
+        f"⚽ Goles: {'on' if settings.alert_goals else 'off'} · 🟥 Rojas: {'on' if settings.alert_red_cards else 'off'} · 🟨 Amarillas: {'on' if settings.alert_yellow_cards else 'off'}",
+        "",
+    ]
+    if not watches:
+        lines.append("No tenés partidos activos en vigilancia.")
+        await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
+        return
+
+    lines.append(f"👁️ Activos: `{len(watches)}`")
+    lines.append("━━━━━━━━━━━━━━━━━━━━")
+    for entry in watches[:25]:
+        disp_id = entry.chat_local_id if entry.chat_local_id is not None else entry.id
+        hint = f" ({entry.league_hint})" if entry.league_hint else ""
+        lines.append(f"*#{disp_id}* · `{entry.home}` vs `{entry.away}`{hint}")
+        state = entry.live_state
+        if state:
+            for platform, payload in state.items():
+                if str(platform).startswith("_"):
+                    continue
+                if not isinstance(payload, dict):
+                    continue
+                score = "-"
+                if payload.get("home_score") is not None and payload.get("away_score") is not None:
+                    score = f"{payload.get('home_score')}-{payload.get('away_score')}"
+                minute = payload.get("minute") or "live"
+                reds = ""
+                if payload.get("home_red_cards") is not None or payload.get("away_red_cards") is not None:
+                    reds = f" · 🟥 {payload.get('home_red_cards') or 0}/{payload.get('away_red_cards') or 0}"
+                lines.append(f"   🏦 `{platform.replace('_http', '')}` · `{minute}` · `{score}`{reds}")
+        else:
+            lines.append("   Sin live detectado todavía.")
+    if len(watches) > 25:
+        lines.append(f"\nMostrando 25 de {len(watches)}.")
+
+    lines.append("\nConfigurar: `/live_settings goals off`, `/live_settings reds off`, `/live_settings all on`")
+    await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
+
+
+async def live_settings_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """View or update per-chat live alert switches."""
+
+    if update.message is None or update.effective_chat is None:
+        return
+
+    service = get_live_watch_service(context)
+    chat_id = update.effective_chat.id
+    args = [arg.strip().lower() for arg in context.args if arg.strip()]
+
+    if not args:
+        settings = service.get_alert_settings(chat_id)
+        await update.message.reply_text(_format_live_settings(settings))
+        return
+
+    if len(args) < 2:
+        await update.message.reply_text(
+            "Uso: /live_settings <goals|reds|yellows|all> <on|off>\n"
+            "Ejemplos: /live_settings goals off · /live_settings reds on"
+        )
+        return
+
+    target = args[0]
+    value = _parse_live_setting_bool(args[1])
+    if value is None:
+        await update.message.reply_text("Valor inválido. Usá on/off, si/no, true/false o 1/0.")
+        return
+
+    kwargs: dict[str, bool] = {}
+    if target in ("goals", "goles", "goal"):
+        kwargs["alert_goals"] = value
+    elif target in ("reds", "rojas", "red", "red_cards"):
+        kwargs["alert_red_cards"] = value
+    elif target in ("yellows", "amarillas", "yellow", "yellow_cards"):
+        kwargs["alert_yellow_cards"] = value
+    elif target in ("all", "todo", "todos"):
+        kwargs["alert_goals"] = value
+        kwargs["alert_red_cards"] = value
+        kwargs["alert_yellow_cards"] = value
+    else:
+        await update.message.reply_text("Target inválido. Usá goals, reds, yellows o all.")
+        return
+
+    settings = service.update_alert_settings(chat_id, **kwargs)
+    await update.message.reply_text(_format_live_settings(settings))
+
+
+def _parse_live_setting_bool(raw: str) -> bool | None:
+    normalized = raw.strip().lower()
+    if normalized in ("on", "si", "sí", "yes", "true", "1", "activar", "activa"):
+        return True
+    if normalized in ("off", "no", "false", "0", "desactivar", "desactiva"):
+        return False
+    return None
+
+
+def _format_live_settings(settings) -> str:
+    return (
+        "⚙️ Configuración live\n\n"
+        f"⚽ Goles: {'on' if settings.alert_goals else 'off'}\n"
+        f"🟥 Rojas: {'on' if settings.alert_red_cards else 'off'}\n"
+        f"🟨 Amarillas: {'on' if settings.alert_yellow_cards else 'off'}\n\n"
+        "Cambiar:\n"
+        "/live_settings goals off\n"
+        "/live_settings reds on\n"
+        "/live_settings all on"
+    )
 
 
 async def reply_with_result(update: Update, result: CommandResult) -> None:
@@ -2783,6 +2907,8 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("watch_live", watch_live_command))
     application.add_handler(CommandHandler("import_sheet", import_sheet_command))
     application.add_handler(CommandHandler("watching", watching_command))
+    application.add_handler(CommandHandler("live_status", live_status_command))
+    application.add_handler(CommandHandler("live_settings", live_settings_command))
     application.add_handler(CommandHandler("unwatch", unwatch_command))
 
     track_league_conversation = ConversationHandler(

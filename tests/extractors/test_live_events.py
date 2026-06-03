@@ -15,7 +15,7 @@ class XBetLiveTests(unittest.TestCase):
             "Value": [
                 {  # real, in-play
                     "I": 100, "O1": "Alto Zambeze", "O2": "Kalandula", "L": "Angola. Liga Bantu", "CN": "Angola",
-                    "SC": {"FS": {"S1": 2, "S2": 3}, "I": "", "SLS": "76 minutos", "CP": 2},
+                    "SC": {"FS": {"S1": 2, "S2": 3}, "I": "", "SLS": "76 minutos", "CP": 2, "RC1": 1, "RC2": 0},
                     "E": [{"T": 1, "C": 1.17}, {"T": 2, "C": 5.31}, {"T": 3, "C": 19.7}],
                 },
                 {  # prematch (in live feed but not kicked off) -> excluded
@@ -37,6 +37,7 @@ class XBetLiveTests(unittest.TestCase):
         e = real[0]
         self.assertEqual((e.home, e.away), ("Alto Zambeze", "Kalandula"))
         self.assertEqual((e.home_score, e.away_score), (2, 3))
+        self.assertEqual((e.home_red_cards, e.away_red_cards), (1, 0))
         self.assertEqual(e.minute, "76 minutos")
         self.assertEqual(e.odds_1x2.home, 1.17)
         self.assertEqual(e.odds_1x2.away, 19.7)
@@ -134,7 +135,8 @@ class BzLiveTests(unittest.TestCase):
                 "id": "sr:tournament:1", "name": "Primera", "categoryName": "Brasil",
                 "matches": [
                     {"id": "sr:match:9", "homeName": "A", "awayName": "B", "matchStatusName": "2nd half",
-                     "scheduledTime": 1780000000000, "sportEventStatus": {"homeScore": 2, "awayScore": 1}},
+                     "scheduledTime": 1780000000000,
+                     "sportEventStatus": {"homeScore": 2, "awayScore": 1, "homeRedCards": 0, "awayRedCards": 1}},
                 ],
             }
         ]
@@ -144,6 +146,7 @@ class BzLiveTests(unittest.TestCase):
         self.assertEqual((e.home, e.away), ("A", "B"))
         self.assertEqual(e.minute, "2nd half")
         self.assertEqual((e.home_score, e.away_score), (2, 1))
+        self.assertEqual((e.home_red_cards, e.away_red_cards), (0, 1))
         self.assertEqual(e.source_url, "bz:tournament:1")
 
 

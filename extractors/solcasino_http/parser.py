@@ -109,6 +109,10 @@ def live_events_from_snapshot(snapshot: dict[str, Any], *, sport_id: str = "1") 
                 minute=str(clock.get("match_time")) if clock.get("match_time") is not None else None,
                 home_score=_extract_score_value(state, side="home"),
                 away_score=_extract_score_value(state, side="away"),
+                home_red_cards=_extract_card_value(state, side="home", color="red"),
+                away_red_cards=_extract_card_value(state, side="away", color="red"),
+                home_yellow_cards=_extract_card_value(state, side="home", color="yellow"),
+                away_yellow_cards=_extract_card_value(state, side="away", color="yellow"),
                 odds_1x2=_odds_1x2(markets),
                 source_url=f"solcasino:tournament:{desc.get('tournament')}",
                 is_soccer=True,
@@ -162,6 +166,33 @@ def _extract_score_value(state: dict[str, Any], *, side: str) -> int | None:
             if score is not None:
                 return score
 
+    return None
+
+
+def _extract_card_value(state: dict[str, Any], *, side: str, color: str) -> int | None:
+    names = (
+        ("red_cards", "redCards", "reds") if color == "red" else ("yellow_cards", "yellowCards", "yellows")
+    )
+    side_keys = (side, "home" if side == "home" else "away", "1" if side == "home" else "2")
+    for name in names:
+        payload = state.get(name)
+        if isinstance(payload, dict):
+            for key in side_keys:
+                value = _coerce_int(payload.get(key))
+                if value is not None:
+                    return value
+        if isinstance(payload, list):
+            index = 0 if side == "home" else 1
+            if len(payload) > index:
+                return _coerce_int(payload[index])
+    cards = state.get("cards")
+    if isinstance(cards, dict):
+        side_payload = cards.get(side)
+        if isinstance(side_payload, dict):
+            for name in names:
+                value = _coerce_int(side_payload.get(name))
+                if value is not None:
+                    return value
     return None
 
 
