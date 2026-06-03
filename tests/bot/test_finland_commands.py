@@ -97,6 +97,72 @@ class TestFinlandCommands(unittest.IsolatedAsyncioTestCase):
         self.assertIn("Partidos de Hoy", message.reply_text.call_args_list[1][0][0])
         self.assertIn("HJK", message.reply_text.call_args_list[1][0][0])
         self.assertIn("4036853", message.reply_text.call_args_list[1][0][0])
+    async def test_fin_today_command_filters_futsal(self) -> None:
+        message = SimpleNamespace(reply_text=AsyncMock())
+        context = SimpleNamespace(args=[])
+        update = SimpleNamespace(message=message)
+
+        mock_matches = [
+            {"category_id": "VL", "category_name": "Miesten Futsal-Liiga", "home_team_name": "HJK Futsal", "away_team_name": "SJK Futsal", "time": "18:00", "match_id": "4036853", "status": "Scheduled"},
+            {"category_id": "VL", "category_name": "Veikkausliiga", "home_team_name": "HJK", "away_team_name": "SJK", "time": "19:00", "match_id": "4036854", "status": "Scheduled"},
+        ]
+        
+        mock_date = Mock()
+        mock_date.today.return_value.isoformat.return_value = "2026-06-01"
+        
+        with patch("bot.handlers.date", mock_date):
+            with patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_matches_by_date", return_value=mock_matches):
+                await fin_today_command(update, context)
+            
+        self.assertEqual(message.reply_text.call_count, 2)
+        response = message.reply_text.call_args_list[1][0][0]
+        self.assertIn("HJK vs SJK", response)
+        self.assertNotIn("Futsal", response)
+
+    async def test_fin_today_command_many_matches_shows_menu(self) -> None:
+        message = SimpleNamespace(reply_text=AsyncMock())
+        context = SimpleNamespace(args=[])
+        update = SimpleNamespace(message=message)
+
+        mock_matches = [
+            {"category_id": "VL", "category_name": "Veikkausliiga", "home_team_name": f"Home {i}", "away_team_name": f"Away {i}", "time": "18:00", "match_id": f"id_{i}", "status": "Scheduled"}
+            for i in range(6)
+        ]
+        
+        mock_date = Mock()
+        mock_date.today.return_value.isoformat.return_value = "2026-06-01"
+        
+        with patch("bot.handlers.date", mock_date):
+            with patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_matches_by_date", return_value=mock_matches):
+                await fin_today_command(update, context)
+            
+        self.assertEqual(message.reply_text.call_count, 2)
+        response = message.reply_text.call_args_list[1][0][0]
+        self.assertIn("Selecciona una liga para ver los partidos de hoy", response)
+        self.assertIn("• `Veikkausliiga (Tier 1)` (6 part.) ➔ `/fin_today VL`", response)
+
+    async def test_fin_today_command_with_league_argument(self) -> None:
+        message = SimpleNamespace(reply_text=AsyncMock())
+        context = SimpleNamespace(args=["VL"])
+        update = SimpleNamespace(message=message)
+
+        mock_matches = [
+            {"category_id": "VL", "category_name": "Veikkausliiga", "home_team_name": "HJK", "away_team_name": "SJK", "time": "18:00", "match_id": "vl_1", "status": "Scheduled"},
+            {"category_id": "M2", "category_name": "Kakkonen", "home_team_name": "TPV", "away_team_name": "Ilves II", "time": "18:00", "match_id": "m2_1", "status": "Scheduled"},
+        ]
+        
+        mock_date = Mock()
+        mock_date.today.return_value.isoformat.return_value = "2026-06-01"
+        
+        with patch("bot.handlers.date", mock_date):
+            with patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_matches_by_date", return_value=mock_matches):
+                await fin_today_command(update, context)
+            
+        self.assertEqual(message.reply_text.call_count, 2)
+        response = message.reply_text.call_args_list[1][0][0]
+        self.assertIn("Partidos de VL", response)
+        self.assertIn("HJK vs SJK", response)
+        self.assertNotIn("TPV vs Ilves II", response)
 
 
     async def test_fin_match_command_no_args_shows_guide(self) -> None:
