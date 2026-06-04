@@ -28,6 +28,7 @@ RESOURCE_MONITOR_TASK_KEY = "resource_monitor_task"
 STATS_SESSION_TASK_KEY = "stats_session_refresh_task"
 STATS_PREFETCH_TASK_KEY = "stats_prefetch_task"
 LIVE_WATCH_TASK_KEY = "live_watch_task"
+PEAK_DIGEST_TASK_KEY = "peak_digest_task"
 TRACKING_SERVICE_KEY = "tracking_service"
 STATS_SERVICE_KEY = "stats_service"
 LIVE_WATCH_SERVICE_KEY = "live_watch_service"
@@ -329,6 +330,102 @@ async def _stats_prefetch_loop(
         except Exception:
             logger.exception("Unhandled error during stats prefetch cycle.")
         await asyncio.sleep(interval_seconds)
+
+
+async def start_peak_digest(
+    application: Application,
+    *,
+    enabled: bool,
+    hour_arg: int,
+) -> None:
+    """Start the daily special-league peak digest push loop if enabled."""
+
+    if not enabled:
+        logger.info("Peak digest push is disabled.")
+        return
+
+    existing_task = application.bot_data.get(PEAK_DIGEST_TASK_KEY)
+    if isinstance(existing_task, asyncio.Task) and not existing_task.done():
+        return
+
+    task = asyncio.create_task(
+        _peak_digest_loop(application, hour_arg=hour_arg),
+        name="peak-digest-loop",
+    )
+    application.bot_data[PEAK_DIGEST_TASK_KEY] = task
+    logger.info("Peak digest push loop started hour_arg=%s.", hour_arg)
+
+
+async def stop_peak_digest(application: Application) -> None:
+    """Stop the daily peak digest push loop if running."""
+
+    task = application.bot_data.get(PEAK_DIGEST_TASK_KEY)
+    if not isinstance(task, asyncio.Task):
+        return
+    task.cancel()
+    try:
+        await task
+    except asyncio.CancelledError:
+        logger.info("Peak digest push loop stopped.")
+    application.bot_data.pop(PEAK_DIGEST_TASK_KEY, None)
+
+
+def _seconds_until_arg_hour(hour_arg: int) -> float:
+    """Seconds from now until the next occurrence of ``hour_arg`` in ARG time."""
+
+    from datetime import datetime, timedelta
+    from zoneinfo import ZoneInfo
+
+    arg = ZoneInfo("America/Argentina/Buenos_Aires")
+    now = datetime.now(tz=arg)
+    target = now.replace(hour=hour_arg % 24, minute=0, second=0, microsecond=0)
+    if target <= now:
+        target = target + timedelta(days=1)
+    return max(1.0, (target - now).total_seconds())
+
+
+async def _peak_digest_loop(application: Application, *, hour_arg: int) -> None:
+    """Push the special-league peak digest to subscribed chats once per day."""
+
+    from monitors.special_peak import build_peak_scores, render_peak_digest
+    from storage.tracking_repository import tracking_repository
+
+    while True:
+        try:
+            await asyncio.sleep(_seconds_until_arg_hour(hour_arg))
+        except asyncio.CancelledError:
+            raise
+
+        try:
+            chat_ids = tracking_repository.list_peak_digest_chats()
+            if not chat_ids:
+                continue
+
+            from stats_providers.palloliitto.api_client import PalloliittoAPI
+            from stats_providers.svenskfotboll_http.client import SvenskfotbollHTTPClient
+
+            fin_api = PalloliittoAPI()
+            swe_client = SvenskfotbollHTTPClient()
+            try:
+                scores = await asyncio.to_thread(
+                    build_peak_scores, finland_api=fin_api, sweden_client=swe_client
+                )
+            finally:
+                fin_api.close()
+                swe_client.close()
+
+            digest = render_peak_digest(scores)
+            for chat_id in chat_ids:
+                try:
+                    await application.bot.send_message(
+                        chat_id=chat_id, text=digest, parse_mode="Markdown"
+                    )
+                except Exception:
+                    logger.exception("Failed to send peak digest chat_id=%s", chat_id)
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            logger.exception("Unhandled error during peak digest cycle.")
 
 
 async def _stats_session_refresh_loop(

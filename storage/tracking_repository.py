@@ -2723,6 +2723,42 @@ class SqliteTrackingRepository:
             alert_yellow_cards=new_yellows,
         )
 
+    def set_peak_digest_subscription(self, chat_id: int, enabled: bool) -> bool:
+        """Enable/disable the daily special-league peak digest for a chat."""
+
+        now_iso = _utc_now_iso()
+        with _connect() as connection:
+            connection.execute(
+                """
+                INSERT INTO peak_digest_subscriptions (chat_id, enabled, updated_at)
+                VALUES (?, ?, ?)
+                ON CONFLICT(chat_id) DO UPDATE SET
+                    enabled = excluded.enabled,
+                    updated_at = excluded.updated_at
+                """,
+                (chat_id, int(bool(enabled)), now_iso),
+            )
+        return bool(enabled)
+
+    def is_peak_digest_enabled(self, chat_id: int) -> bool:
+        """Return whether a chat is subscribed to the daily peak digest."""
+
+        with _connect() as connection:
+            row = connection.execute(
+                "SELECT enabled FROM peak_digest_subscriptions WHERE chat_id = ?",
+                (chat_id,),
+            ).fetchone()
+        return bool(row["enabled"]) if row is not None else False
+
+    def list_peak_digest_chats(self) -> list[int]:
+        """Return chat_ids subscribed to the daily peak digest."""
+
+        with _connect() as connection:
+            rows = connection.execute(
+                "SELECT chat_id FROM peak_digest_subscriptions WHERE enabled = 1"
+            ).fetchall()
+        return [int(row["chat_id"]) for row in rows]
+
     def get_all_active_events_with_league(self) -> list[Any]:
         """Return all active events as SimpleNamespace objects with their tracked league name."""
         from types import SimpleNamespace
@@ -3372,6 +3408,12 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
             alert_goals INTEGER NOT NULL DEFAULT 1,
             alert_red_cards INTEGER NOT NULL DEFAULT 1,
             alert_yellow_cards INTEGER NOT NULL DEFAULT 0,
+            updated_at TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS peak_digest_subscriptions (
+            chat_id INTEGER PRIMARY KEY,
+            enabled INTEGER NOT NULL DEFAULT 1,
             updated_at TEXT NOT NULL
         );
         """

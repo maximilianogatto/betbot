@@ -157,7 +157,11 @@ HELP_MESSAGE = (
     "    `/swe_standings <CÓDIGO>` - Tabla de posiciones de una liga\n"
     "    `/swe_fixtures <CÓDIGO>` - Próximos partidos de una liga\n"
     "    `/swe_results <CÓDIGO>` - Últimos resultados de una liga\n"
-    "    `/swe_match <ID>` - Reporte detallado de un partido\n\n"
+    "    `/swe_match <ID>` - Reporte detallado de un partido\n"
+    "  🎯 *Peak del día* (detección + scoring 1–10):\n"
+    "    `/peak_today` - Detecta y puntúa (1–10) los partidos especiales del día con flag de peak y cuándo entrar\n"
+    "    `/peak_on` - Activa el envío automático del Peak del día cada mañana\n"
+    "    `/peak_off` - Desactiva el envío automático del Peak del día\n\n"
     "🌐 *Plataformas soportadas:*\n"
     "  `/platforms` - Muestra las plataformas de odds y proveedores de stats soportados"
 )
@@ -2971,6 +2975,11 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("swe_today", swe_today_command))
     application.add_handler(CommandHandler("swe_match", swe_match_command))
 
+    # Special-league daily peak scoring (Finland + Sweden)
+    application.add_handler(CommandHandler("peak_today", peak_today_command))
+    application.add_handler(CommandHandler("peak_on", peak_on_command))
+    application.add_handler(CommandHandler("peak_off", peak_off_command))
+
     application.add_handler(CommandHandler("ping", ping_command))
     application.add_handler(CommandHandler("status", status_command))
     application.add_handler(CommandHandler("resources", resources_command))
@@ -4336,3 +4345,71 @@ async def swe_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         + _swe_usage_guide()
     )
     await update.message.reply_text(help_text, parse_mode="Markdown")
+
+
+# ===================== Peak digest (special-league daily scoring) =====================
+# Detects today's Finland + Sweden federation matches, scores them 1-10
+# (value-opportunity + B-Team/substitute detector) and flags peak + timing.
+async def peak_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /peak_today: ranked 1-10 scoring of today's special-league matches."""
+
+    del context
+    if update.message is None:
+        return
+
+    import asyncio as _asyncio
+
+    from monitors.special_peak import build_peak_scores, render_peak_digest
+    from stats_providers.palloliitto.api_client import PalloliittoAPI
+    from stats_providers.svenskfotboll_http.client import SvenskfotbollHTTPClient
+
+    await update.message.reply_text(
+        "🎯 Analizando partidos de ligas especiales del día (Finlandia 🇫🇮 + Suecia 🇸🇪)..."
+    )
+
+    fin_api = PalloliittoAPI()
+    swe_client = SvenskfotbollHTTPClient()
+    try:
+        scores = await _asyncio.to_thread(
+            build_peak_scores, finland_api=fin_api, sweden_client=swe_client
+        )
+        digest = render_peak_digest(scores)
+        await _reply_text_chunks(update.message, digest, parse_mode="Markdown")
+    except Exception as e:  # noqa: BLE001
+        logger.exception("Failed in /peak_today")
+        await update.message.reply_text(f"❌ Error al armar el peak del día: {e}")
+    finally:
+        fin_api.close()
+        swe_client.close()
+
+
+async def peak_on_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /peak_on: subscribe this chat to the daily peak digest push."""
+
+    del context
+    if update.message is None or update.effective_chat is None:
+        return
+    from storage.tracking_repository import tracking_repository
+
+    tracking_repository.set_peak_digest_subscription(update.effective_chat.id, True)
+    await update.message.reply_text(
+        "✅ Listo. Vas a recibir cada mañana el *Peak del día* de ligas especiales "
+        "(Finlandia 🇫🇮 + Suecia 🇸🇪).\n"
+        "Para verlo cuando quieras: `/peak_today`. Para desactivar: `/peak_off`.",
+        parse_mode="Markdown",
+    )
+
+
+async def peak_off_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /peak_off: unsubscribe this chat from the daily peak digest push."""
+
+    del context
+    if update.message is None or update.effective_chat is None:
+        return
+    from storage.tracking_repository import tracking_repository
+
+    tracking_repository.set_peak_digest_subscription(update.effective_chat.id, False)
+    await update.message.reply_text(
+        "🔕 Desactivé el envío automático del Peak del día. Igual podés consultarlo con `/peak_today`.",
+        parse_mode="Markdown",
+    )

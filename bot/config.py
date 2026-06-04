@@ -53,6 +53,8 @@ class Settings:
     stats_prefetch_ttl_seconds: float = 90000.0
     live_watch_enabled: bool = True
     live_watch_interval_seconds: int = 30
+    peak_digest_enabled: bool = True
+    peak_digest_hour_arg: int = 8
 
 
 def load_settings() -> Settings:
@@ -215,6 +217,11 @@ def load_settings() -> Settings:
         os.getenv("LIVE_WATCH_INTERVAL_SECONDS", "30"),
         variable_name="LIVE_WATCH_INTERVAL_SECONDS",
     )
+    peak_digest_enabled = _parse_bool(os.getenv("PEAK_DIGEST_ENABLED", "true"))
+    peak_digest_hour_arg = _parse_positive_int(
+        os.getenv("PEAK_DIGEST_HOUR_ARG", "8"),
+        variable_name="PEAK_DIGEST_HOUR_ARG",
+    )
 
     if not telegram_bot_token:
         raise ValueError(
@@ -261,6 +268,8 @@ def load_settings() -> Settings:
         live_watch_enabled=live_watch_enabled,
         live_watch_interval_seconds=live_watch_interval_seconds,
         stats_prefetch_ttl_seconds=stats_prefetch_ttl_seconds,
+        peak_digest_enabled=peak_digest_enabled,
+        peak_digest_hour_arg=peak_digest_hour_arg,
     )
 
 

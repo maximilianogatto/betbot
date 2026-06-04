@@ -9,11 +9,13 @@ from bot.error_handler import handle_error
 from bot.handlers import register_handlers
 from bot.jobs import (
     start_live_watch_monitor,
+    start_peak_digest,
     start_stats_prefetch,
     start_stats_session_refresh,
     start_tracking_monitor,
     start_resource_monitor,
     stop_live_watch_monitor,
+    stop_peak_digest,
     stop_stats_prefetch,
     stop_stats_session_refresh,
     stop_tracking_monitor,
@@ -95,10 +97,17 @@ def create_application(settings: Settings) -> Application:
             enabled=settings.live_watch_enabled,
             interval_seconds=settings.live_watch_interval_seconds,
         )
+        # Daily morning push of the special-league peak digest to subscribers.
+        await start_peak_digest(
+            application,
+            enabled=settings.peak_digest_enabled,
+            hour_arg=settings.peak_digest_hour_arg,
+        )
 
     async def post_shutdown(application: Application) -> None:
         """Stop background monitoring when the bot shuts down."""
 
+        await stop_peak_digest(application)
         await stop_live_watch_monitor(application)
         await stop_stats_prefetch(application)
         await stop_stats_session_refresh(application)

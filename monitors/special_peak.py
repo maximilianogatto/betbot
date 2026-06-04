@@ -31,15 +31,29 @@ _HELSINKI = ZoneInfo("Europe/Helsinki")
 _STOCKHOLM = ZoneInfo("Europe/Stockholm")
 _ARG = ZoneInfo("America/Argentina/Buenos_Aires")
 
-# Finland standardized category codes (mirrors bot.handlers /fin_today).
-_FIN_SENIOR_CODES = {"VL", "M1L", "M1", "M2", "NL", "MSC", "NSC", "LC", "M1LCUP"}
-_FIN_CUP_CODES = {"MSC", "NSC", "LC", "M1LCUP"}
-_FIN_SENIOR_NAME_HINTS = (
-    "veikkausliiga", "ykkösliiga", "ykkönen", "ykkös", "kakkonen",
-    "kansallinen", "naisten", "suomen cup", "liigacup",
+# Finland senior-competition category_id codes. These are EXACT codes (the
+# federation feed tags youth/hobby leagues with codes like P15LE / MH1 / P12HL
+# whose *names* still contain "Liiga"/"Cup"/"Kakkonen", so name matching would
+# leak youth games — we match the code only).
+#   VL  Veikkausliiga (1) · M1L Ykkösliiga (2) · M1 Ykkönen (3) · M2 Kakkonen (4)
+#   NL  Kansallinen Liiga (women 1)
+#   MSC Suomen Cup · NSC Naisten Suomen Cup · LC Liigacup · M1LCUP Ykkösliigacup
+#   MRC Regions Cup · MRRC Roots Cup (regional men's cups: big division gaps)
+_FIN_CUP_CODES = {"MSC", "NSC", "LC", "M1LCUP", "MRC", "MRRC"}
+_FIN_LEAGUE_CODES = {"VL", "M1L", "M1", "M2", "NL"}
+_FIN_SENIOR_CODES = _FIN_LEAGUE_CODES | _FIN_CUP_CODES
+
+# Sweden has no clean category codes in the "matches today" feed, only a
+# competition name. Keep the pro/semi-pro senior tiers + the national cup and
+# drop youth (P19/F18/U..), academy and friendly noise.
+_SWE_LEAGUE_HINTS = ("allsvenskan", "superettan", "ettan", "damallsvenskan", "elitettan")
+_SWE_CUP_HINTS = ("svenska cupen",)
+_SWE_YOUTH_HINTS = (
+    "p21", "p19", "p17", "p16", "p15", "p14", "p13",
+    "f21", "f19", "f18", "f17", "f16", "f15",
+    "u21", "u19", "u17", "u16", "ungdom", "pojkar", "flickor", "junior",
+    "akademi", "3-nations", "landskamp", "träningsmatch", "futsal",
 )
-_CUP_NAME_HINTS = ("cup", "copa", "cupen", "liigacup")
-_NOISE_HINTS = ("futsal", "beach", "ranta", "hiekka")
 
 _FINISHED_STATUSES = {"finished", "played", "walkover"}
 
@@ -276,30 +290,12 @@ def rotation_lookup_for_match(api: Any, details: dict[str, Any]) -> tuple[Rotati
 # --------------------------------------------------------------------------- #
 # Finland scoring
 # --------------------------------------------------------------------------- #
-def _is_fin_noise(match: dict[str, Any]) -> bool:
-    blob = " ".join(
-        str(match.get(k) or "").lower()
-        for k in ("category_name", "competition_name", "sport_name")
-    )
-    return any(term in blob for term in _NOISE_HINTS)
-
-
 def _is_fin_senior(match: dict[str, Any]) -> bool:
-    if _is_fin_noise(match):
-        return False
-    code = str(match.get("category_id") or "")
-    if code in _FIN_SENIOR_CODES:
-        return True
-    name = str(match.get("category_name") or "").lower()
-    return any(hint in name for hint in _FIN_SENIOR_NAME_HINTS)
+    return str(match.get("category_id") or "") in _FIN_SENIOR_CODES
 
 
 def _is_fin_cup(match: dict[str, Any]) -> bool:
-    code = str(match.get("category_id") or "")
-    if code in _FIN_CUP_CODES:
-        return True
-    name = str(match.get("category_name") or "").lower()
-    return any(hint in name for hint in _CUP_NAME_HINTS)
+    return str(match.get("category_id") or "") in _FIN_CUP_CODES
 
 
 def score_finland_match(
@@ -381,6 +377,20 @@ def score_finland_match(
 # Sweden scoring (no cup rounds in the tracked set => lighter, league-mismatch
 # driven; the B-Team detector stays Finland-only for now).
 # --------------------------------------------------------------------------- #
+def _is_swe_senior(competition: str) -> bool:
+    name = str(competition or "").lower()
+    if any(hint in name for hint in _SWE_YOUTH_HINTS):
+        return False
+    return any(hint in name for hint in _SWE_LEAGUE_HINTS) or any(hint in name for hint in _SWE_CUP_HINTS)
+
+
+def _is_swe_cup(competition: str) -> bool:
+    name = str(competition or "").lower()
+    if any(hint in name for hint in _SWE_YOUTH_HINTS):
+        return False
+    return any(hint in name for hint in _SWE_CUP_HINTS)
+
+
 def score_sweden_match(
     match: dict[str, Any],
     *,
@@ -397,15 +407,23 @@ def score_sweden_match(
     if status in _FINISHED_STATUSES:
         return None
 
+    competition = match.get("competition_name") or match.get("title") or "Liga"
+    if not _is_swe_senior(competition):
+        return None
+
     home = match.get("home") or match.get("home_team") or "Local"
     away = match.get("away") or match.get("away_team") or "Visitante"
     match_id = str(match.get("match_id") or match.get("id") or "")
-    competition = match.get("competition_name") or match.get("title") or "Liga"
     kickoff = _parse_kickoff_from_local(match.get("start_time_local"), _STOCKHOLM)
 
     factors = [PeakFactor("Base", "Liga de federación sueca (cobertura pública escasa)", _W_BASE)]
-    points = _W_BASE + _W_SENIOR
-    factors.append(PeakFactor("Liga senior", "Categoría adulta de la federación sueca", _W_SENIOR))
+    points = _W_BASE
+    if _is_swe_cup(competition):
+        points += _W_CUP
+        factors.append(PeakFactor("Copa", "Svenska Cupen: posible rotación / cruce de divisiones", _W_CUP))
+    else:
+        points += _W_SENIOR
+        factors.append(PeakFactor("Liga senior", "Categoría adulta de la federación sueca", _W_SENIOR))
 
     if standings_gap is not None and standings_gap >= 0.5:
         bonus = round(_W_MISMATCH * min(1.0, standings_gap), 1)
