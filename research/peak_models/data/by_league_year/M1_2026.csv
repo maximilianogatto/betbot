@@ -1,0 +1,133 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,14,4042990,2026-04-02,18:30:00,106945,Jalkapalloseura Tampere United,60521,FC Jazz Juniorit,4,0,3,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,14,4042991,2026-04-04,14:00:00,60690,Salon Palloilijat,60973,Rovaniemen Palloseura,1,1,1,1,Played,D
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,14,4042993,2026-04-04,14:00:00,60929,Pallokerho Keski-Uusimaa,60536,KPV Juniorit,2,2,0,1,Played,D
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,14,4042992,2026-04-04,17:00:00,60704,Tampereen Pallo-Veikot,63440,Vantaan Jalkapalloseura,3,1,2,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,14,4042994,2026-04-05,15:00:00,60860,Football Club International Turku,144858,JJK Jyväskylä,3,5,1,1,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,14,4042995,2026-04-05,17:00:00,106331,Kuopion Palloseura,106449,Oulun Luistinseura,2,4,0,4,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,15,4042996,2026-04-10,18:30:00,106331,Kuopion Palloseura,144858,JJK Jyväskylä,1,2,0,0,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,15,4042997,2026-04-11,14:00:00,106449,Oulun Luistinseura,63440,Vantaan Jalkapalloseura,1,0,0,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,15,4042998,2026-04-11,15:00:00,60521,FC Jazz Juniorit,60929,Pallokerho Keski-Uusimaa,1,5,0,5,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,15,4042999,2026-04-11,16:00:00,60690,Salon Palloilijat,106945,Jalkapalloseura Tampere United,2,0,0,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,15,4043001,2026-04-11,17:00:00,60973,Rovaniemen Palloseura,60860,Football Club International Turku,3,2,1,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,15,4043000,2026-04-11,17:00:00,60704,Tampereen Pallo-Veikot,60536,KPV Juniorit,0,0,0,0,Played,D
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,16,4043003,2026-04-18,17:00:00,63440,Vantaan Jalkapalloseura,60690,Salon Palloilijat,1,1,0,1,Played,D
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,16,4043002,2026-04-18,17:00:00,144858,JJK Jyväskylä,60704,Tampereen Pallo-Veikot,2,1,0,1,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,16,4043005,2026-04-18,17:00:00,106945,Jalkapalloseura Tampere United,106331,Kuopion Palloseura,4,0,2,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,16,4043004,2026-04-18,17:00:00,60929,Pallokerho Keski-Uusimaa,60973,Rovaniemen Palloseura,0,2,0,1,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,16,4043006,2026-04-19,17:00:00,60860,Football Club International Turku,106449,Oulun Luistinseura,1,1,1,0,Played,D
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,17,4043007,2026-04-20,18:30:00,60536,KPV Juniorit,60521,FC Jazz Juniorit,0,2,0,1,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,17,4043009,2026-04-24,18:30:00,60690,Salon Palloilijat,60860,Football Club International Turku,2,3,0,1,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,17,4043010,2026-04-24,18:30:00,106945,Jalkapalloseura Tampere United,63440,Vantaan Jalkapalloseura,0,4,0,1,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,17,4043008,2026-04-24,18:30:00,106331,Kuopion Palloseura,60704,Tampereen Pallo-Veikot,3,0,1,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,17,4043011,2026-04-25,14:00:00,106449,Oulun Luistinseura,60929,Pallokerho Keski-Uusimaa,2,0,0,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,17,4043012,2026-04-25,15:00:00,60521,FC Jazz Juniorit,144858,JJK Jyväskylä,0,2,0,1,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,17,4043013,2026-04-25,16:00:00,60973,Rovaniemen Palloseura,60536,KPV Juniorit,7,0,3,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,18,4043017,2026-05-02,14:00:00,60929,Pallokerho Keski-Uusimaa,60690,Salon Palloilijat,2,0,1,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,18,4043018,2026-05-02,16:00:00,60536,KPV Juniorit,106449,Oulun Luistinseura,0,4,0,1,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,18,4043015,2026-05-02,16:00:00,144858,JJK Jyväskylä,60973,Rovaniemen Palloseura,3,3,1,0,Played,D
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,18,4043014,2026-05-02,16:00:00,60860,Football Club International Turku,106945,Jalkapalloseura Tampere United,0,2,0,1,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,18,4043019,2026-05-02,17:00:00,63440,Vantaan Jalkapalloseura,106331,Kuopion Palloseura,0,0,0,0,Played,D
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,18,4043016,2026-05-02,17:00:00,60704,Tampereen Pallo-Veikot,60521,FC Jazz Juniorit,0,2,0,0,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,19,4043025,2026-05-09,14:00:00,106449,Oulun Luistinseura,144858,JJK Jyväskylä,2,1,1,1,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,19,4043021,2026-05-09,15:00:00,60973,Rovaniemen Palloseura,60704,Tampereen Pallo-Veikot,1,0,0,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,19,4043020,2026-05-09,16:00:00,60690,Salon Palloilijat,60536,KPV Juniorit,6,0,4,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,19,4043022,2026-05-09,17:00:00,106945,Jalkapalloseura Tampere United,60929,Pallokerho Keski-Uusimaa,0,0,0,0,Played,D
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,19,4043023,2026-05-09,17:00:00,106331,Kuopion Palloseura,60521,FC Jazz Juniorit,1,2,0,1,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,19,4043024,2026-05-09,18:00:00,63440,Vantaan Jalkapalloseura,60860,Football Club International Turku,3,2,2,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,20,4043026,2026-05-16,15:00:00,60521,FC Jazz Juniorit,60973,Rovaniemen Palloseura,2,1,0,1,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,20,4043029,2026-05-16,17:00:00,60536,KPV Juniorit,106945,Jalkapalloseura Tampere United,0,6,0,2,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,20,4043027,2026-05-16,17:00:00,60704,Tampereen Pallo-Veikot,106449,Oulun Luistinseura,2,2,1,1,Played,D
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,20,4043030,2026-05-16,18:30:00,144858,JJK Jyväskylä,60690,Salon Palloilijat,2,2,1,1,Played,D
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,20,4043031,2026-05-17,15:00:00,60860,Football Club International Turku,106331,Kuopion Palloseura,4,2,2,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,21,4043032,2026-05-22,18:30:00,106945,Jalkapalloseura Tampere United,144858,JJK Jyväskylä,1,0,0,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,21,4043034,2026-05-23,13:00:00,63440,Vantaan Jalkapalloseura,60536,KPV Juniorit,5,0,4,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,21,4043033,2026-05-23,16:00:00,60690,Salon Palloilijat,60704,Tampereen Pallo-Veikot,4,2,3,1,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,21,4043036,2026-05-24,14:00:00,106449,Oulun Luistinseura,60521,FC Jazz Juniorit,1,2,1,0,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,21,4043037,2026-05-24,16:00:00,60860,Football Club International Turku,60929,Pallokerho Keski-Uusimaa,2,1,1,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,21,4043035,2026-05-24,16:00:00,106331,Kuopion Palloseura,60973,Rovaniemen Palloseura,0,1,0,0,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,22,4043038,2026-05-28,18:30:00,60521,FC Jazz Juniorit,60690,Salon Palloilijat,1,2,0,0,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,22,4043086,2026-05-28,18:30:00,144858,JJK Jyväskylä,106449,Oulun Luistinseura,1,0,0,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,22,4043041,2026-05-29,18:30:00,60536,KPV Juniorit,60860,Football Club International Turku,4,2,1,1,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,22,4043040,2026-05-29,18:30:00,60929,Pallokerho Keski-Uusimaa,106331,Kuopion Palloseura,3,0,2,0,Played,H
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,22,4043039,2026-05-29,19:00:00,60704,Tampereen Pallo-Veikot,106945,Jalkapalloseura Tampere United,0,3,0,3,Played,A
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,23,4043042,2026-06-02,18:30:00,144858,JJK Jyväskylä,63440,Vantaan Jalkapalloseura,2,2,1,2,Played,D
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,23,4043043,2026-06-02,19:00:00,60973,Rovaniemen Palloseura,106449,Oulun Luistinseura,1,1,0,1,Played,D
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,23,4043044,2026-06-05,18:30:00,106331,Kuopion Palloseura,60536,KPV Juniorit,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,23,4043046,2026-06-06,14:00:00,60521,FC Jazz Juniorit,63440,Vantaan Jalkapalloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,23,4043047,2026-06-06,16:00:00,60973,Rovaniemen Palloseura,106945,Jalkapalloseura Tampere United,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,23,4043048,2026-06-06,16:00:00,106449,Oulun Luistinseura,60690,Salon Palloilijat,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,23,4043045,2026-06-06,17:00:00,60704,Tampereen Pallo-Veikot,60860,Football Club International Turku,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,23,4043049,2026-06-06,18:30:00,144858,JJK Jyväskylä,60929,Pallokerho Keski-Uusimaa,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,24,4043050,2026-06-11,18:30:00,106945,Jalkapalloseura Tampere United,106449,Oulun Luistinseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,24,4043052,2026-06-12,18:30:00,60690,Salon Palloilijat,106331,Kuopion Palloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,24,4043053,2026-06-12,18:30:00,60860,Football Club International Turku,60521,FC Jazz Juniorit,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,24,4043054,2026-06-13,17:00:00,60536,KPV Juniorit,144858,JJK Jyväskylä,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,24,4043051,2026-06-13,18:30:00,63440,Vantaan Jalkapalloseura,60973,Rovaniemen Palloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,24,4043055,2026-06-14,14:00:00,60929,Pallokerho Keski-Uusimaa,60704,Tampereen Pallo-Veikot,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,26,4043057,2026-06-25,19:00:00,60521,FC Jazz Juniorit,106945,Jalkapalloseura Tampere United,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,26,4043056,2026-06-25,19:00:00,144858,JJK Jyväskylä,60860,Football Club International Turku,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,26,4043059,2026-06-27,22:15:00,60973,Rovaniemen Palloseura,60690,Salon Palloilijat,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,26,4043058,2026-06-28,16:00:00,60536,KPV Juniorit,60929,Pallokerho Keski-Uusimaa,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,26,4043060,2026-06-28,18:30:00,106449,Oulun Luistinseura,106331,Kuopion Palloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,27,4043061,2026-06-29,18:30:00,63440,Vantaan Jalkapalloseura,60704,Tampereen Pallo-Veikot,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,27,4043066,2026-07-02,19:00:00,60521,FC Jazz Juniorit,60536,KPV Juniorit,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,27,4043062,2026-07-04,16:00:00,60690,Salon Palloilijat,63440,Vantaan Jalkapalloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,27,4043063,2026-07-04,17:00:00,106331,Kuopion Palloseura,106945,Jalkapalloseura Tampere United,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,27,4043065,2026-07-04,18:00:00,106449,Oulun Luistinseura,60860,Football Club International Turku,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,27,4043064,2026-07-05,15:00:00,60704,Tampereen Pallo-Veikot,144858,JJK Jyväskylä,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,27,4043067,2026-07-05,16:00:00,60973,Rovaniemen Palloseura,60929,Pallokerho Keski-Uusimaa,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,28,4043068,2026-07-10,17:30:00,60860,Football Club International Turku,60973,Rovaniemen Palloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,28,4043069,2026-07-10,18:30:00,106945,Jalkapalloseura Tampere United,60690,Salon Palloilijat,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,28,4043070,2026-07-11,16:00:00,60929,Pallokerho Keski-Uusimaa,60521,FC Jazz Juniorit,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,28,4043071,2026-07-11,17:00:00,63440,Vantaan Jalkapalloseura,106449,Oulun Luistinseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,28,4043073,2026-07-11,17:00:00,60536,KPV Juniorit,60704,Tampereen Pallo-Veikot,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,28,4043072,2026-07-11,17:00:00,144858,JJK Jyväskylä,106331,Kuopion Palloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,29,4043074,2026-07-18,16:00:00,60704,Tampereen Pallo-Veikot,106331,Kuopion Palloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,29,4043077,2026-07-18,16:00:00,60929,Pallokerho Keski-Uusimaa,106449,Oulun Luistinseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,29,4043076,2026-07-18,17:00:00,63440,Vantaan Jalkapalloseura,106945,Jalkapalloseura Tampere United,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,29,4043075,2026-07-18,17:00:00,60860,Football Club International Turku,60690,Salon Palloilijat,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,29,4043078,2026-07-18,18:30:00,144858,JJK Jyväskylä,60521,FC Jazz Juniorit,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,30,4043079,2026-07-20,18:30:00,60536,KPV Juniorit,60973,Rovaniemen Palloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,30,4043028,2026-07-22,19:00:00,60929,Pallokerho Keski-Uusimaa,63440,Vantaan Jalkapalloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,30,4043080,2026-07-24,19:00:00,60521,FC Jazz Juniorit,60704,Tampereen Pallo-Veikot,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,30,4043081,2026-07-24,19:00:00,106945,Jalkapalloseura Tampere United,60860,Football Club International Turku,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,30,4043083,2026-07-25,16:00:00,60690,Salon Palloilijat,60929,Pallokerho Keski-Uusimaa,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,30,4043082,2026-07-25,16:00:00,60973,Rovaniemen Palloseura,144858,JJK Jyväskylä,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,30,4043084,2026-07-26,16:00:00,106331,Kuopion Palloseura,63440,Vantaan Jalkapalloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,30,4043085,2026-07-26,18:00:00,106449,Oulun Luistinseura,60536,KPV Juniorit,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,31,4043087,2026-07-30,19:00:00,60521,FC Jazz Juniorit,106331,Kuopion Palloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,31,4043088,2026-07-31,18:30:00,60860,Football Club International Turku,63440,Vantaan Jalkapalloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,31,4043091,2026-07-31,18:30:00,60929,Pallokerho Keski-Uusimaa,106945,Jalkapalloseura Tampere United,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,31,4043090,2026-08-01,17:00:00,60536,KPV Juniorit,60690,Salon Palloilijat,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,31,4043089,2026-08-01,18:00:00,60704,Tampereen Pallo-Veikot,60973,Rovaniemen Palloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,32,4043092,2026-08-05,18:30:00,60690,Salon Palloilijat,144858,JJK Jyväskylä,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,32,4043094,2026-08-05,18:30:00,60973,Rovaniemen Palloseura,60521,FC Jazz Juniorit,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,32,4043096,2026-08-05,18:30:00,106945,Jalkapalloseura Tampere United,60536,KPV Juniorit,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,32,4043093,2026-08-05,18:30:00,106449,Oulun Luistinseura,60704,Tampereen Pallo-Veikot,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,32,4043095,2026-08-05,19:00:00,63440,Vantaan Jalkapalloseura,60929,Pallokerho Keski-Uusimaa,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,32,4043097,2026-08-07,18:30:00,106331,Kuopion Palloseura,60860,Football Club International Turku,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,32,4043098,2026-08-09,16:00:00,60536,KPV Juniorit,63440,Vantaan Jalkapalloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,32,4043099,2026-08-09,18:30:00,60521,FC Jazz Juniorit,106449,Oulun Luistinseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,33,4043101,2026-08-11,18:30:00,144858,JJK Jyväskylä,106945,Jalkapalloseura Tampere United,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,33,4043103,2026-08-11,18:30:00,60973,Rovaniemen Palloseura,106331,Kuopion Palloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,33,4043100,2026-08-11,18:30:00,60704,Tampereen Pallo-Veikot,60690,Salon Palloilijat,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,33,4043102,2026-08-11,18:30:00,60929,Pallokerho Keski-Uusimaa,60860,Football Club International Turku,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,33,4043104,2026-08-15,16:00:00,60690,Salon Palloilijat,60521,FC Jazz Juniorit,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,33,4043105,2026-08-15,17:00:00,106945,Jalkapalloseura Tampere United,60704,Tampereen Pallo-Veikot,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,33,4043108,2026-08-16,16:00:00,60860,Football Club International Turku,60536,KPV Juniorit,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,33,4043106,2026-08-16,16:00:00,106331,Kuopion Palloseura,60929,Pallokerho Keski-Uusimaa,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,33,4043109,2026-08-16,17:00:00,63440,Vantaan Jalkapalloseura,144858,JJK Jyväskylä,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,33,4043107,2026-08-16,18:00:00,106449,Oulun Luistinseura,60973,Rovaniemen Palloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,34,4043110,2026-08-21,18:30:00,60536,KPV Juniorit,106331,Kuopion Palloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,34,4043114,2026-08-21,18:30:00,60929,Pallokerho Keski-Uusimaa,144858,JJK Jyväskylä,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,34,4043112,2026-08-22,15:00:00,106945,Jalkapalloseura Tampere United,60973,Rovaniemen Palloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,34,4043113,2026-08-22,16:00:00,60690,Salon Palloilijat,106449,Oulun Luistinseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,34,4043111,2026-08-23,17:00:00,63440,Vantaan Jalkapalloseura,60521,FC Jazz Juniorit,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,34,4043115,2026-08-23,18:30:00,60860,Football Club International Turku,60704,Tampereen Pallo-Veikot,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,35,4043120,2026-08-29,14:00:00,60521,FC Jazz Juniorit,60860,Football Club International Turku,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,35,4043121,2026-08-29,14:00:00,144858,JJK Jyväskylä,60536,KPV Juniorit,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,35,4043116,2026-08-29,14:00:00,60973,Rovaniemen Palloseura,63440,Vantaan Jalkapalloseura,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,35,4043117,2026-08-29,14:00:00,60704,Tampereen Pallo-Veikot,60929,Pallokerho Keski-Uusimaa,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,35,4043119,2026-08-29,14:00:00,106449,Oulun Luistinseura,106945,Jalkapalloseura Tampere United,,,,,Fixture,
+2026,M1,Ykkönen (M3),spljp26,1,Runkosarja,35,4043118,2026-08-29,14:00:00,106331,Kuopion Palloseura,60690,Salon Palloilijat,,,,,Fixture,

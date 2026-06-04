@@ -1,0 +1,328 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,15,3780696,2025-04-12,17:00:00,60554,Football Club Kiffen 08,60704,Tampereen Pallo-Veikot,2,3,1,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,16,3780786,2025-04-17,19:00:00,108059,Oulunsalon Pallo,60666,Tornion Pallo-47,1,1,0,1,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,16,3780699,2025-04-19,16:00:00,49949,Helsingin Palloseura,35121579,Hämeenlinnan Jalkapalloseura,0,1,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,16,3780608,2025-04-19,16:00:00,60549,GrIFK - Fotboll,61010,Pepo Lappeenranta,4,1,2,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,16,3780787,2025-04-19,16:00:00,131834,SJK Akatemia,60686,Idrottsföreningen Kraft,2,1,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,16,3780606,2025-04-19,16:00:00,61562,Lahden Reipas,62416,FC Honka,1,3,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,16,3780607,2025-04-19,16:00:00,60496,FC Vaajakoski,129934,MYPA,3,3,1,1,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,16,3780610,2025-04-20,16:30:00,61483,Haminan Pallo-Kissat Edustus,49973,Puistolan Urheilijat,0,3,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,17,3780790,2025-04-21,15:00:00,60492,Gamlakarleby Bollklubb,169909,Vaasan Palloseura,0,3,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,17,3780700,2025-04-21,15:00:00,106905,Ilves,60696,Musan Salama,2,1,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,17,3780697,2025-04-21,15:00:00,48924,Pallo-Pojat Juniorit,107307,Pallo-Iirot,3,2,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,17,3780789,2025-04-21,15:00:00,60647,Idrottsföreningen Kamraterna Vasa,61766,Jakobstads Bollklubb,1,1,0,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,17,3780609,2025-04-21,15:00:00,106602,Jyväskylän Seudun Palloseura,63440,Vantaan Jalkapalloseura,0,6,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,17,3780698,2025-04-22,19:00:00,35135803,Atlantis Football Club,60537,Nurmijärven Jalkapalloseura,2,3,1,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,17,3780613,2025-04-25,19:00:00,129934,MYPA,60549,GrIFK - Fotboll,2,1,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,17,3780701,2025-04-26,14:00:00,60704,Tampereen Pallo-Veikot,48924,Pallo-Pojat Juniorit,4,0,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,17,3780611,2025-04-26,15:00:00,62416,FC Honka,60496,FC Vaajakoski,5,0,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,17,3780792,2025-04-26,16:00:00,60492,Gamlakarleby Bollklubb,60686,Idrottsföreningen Kraft,1,1,0,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,17,3780702,2025-04-26,16:00:00,49949,Helsingin Palloseura,60696,Musan Salama,1,3,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,17,3780704,2025-04-26,17:00:00,35121579,Hämeenlinnan Jalkapalloseura,60554,Football Club Kiffen 08,2,4,1,3,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,17,3780703,2025-04-26,17:00:00,107307,Pallo-Iirot,35135803,Atlantis Football Club,3,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,17,3780614,2025-04-26,18:00:00,63440,Vantaan Jalkapalloseura,61562,Lahden Reipas,5,1,1,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,17,3780612,2025-04-26,19:00:00,61483,Haminan Pallo-Kissat Edustus,61010,Pepo Lappeenranta,1,1,0,1,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,17,3780791,2025-04-26,19:00:00,131834,SJK Akatemia,60666,Tornion Pallo-47,7,1,4,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,17,3780795,2025-04-27,15:00:00,61766,Jakobstads Bollklubb,108059,Oulunsalon Pallo,3,2,2,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,17,3780793,2025-04-27,15:00:00,61004,Jalkapalloseura Hercules,60647,Idrottsföreningen Kamraterna Vasa,3,2,1,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,18,3780705,2025-04-28,19:00:00,106905,Ilves,60537,Nurmijärven Jalkapalloseura,8,0,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,18,3780615,2025-04-29,19:00:00,106602,Jyväskylän Seudun Palloseura,49973,Puistolan Urheilijat,0,2,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,18,3780616,2025-05-02,18:30:00,61562,Lahden Reipas,61483,Haminan Pallo-Kissat Edustus,0,2,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,18,3780796,2025-05-02,18:30:00,108059,Oulunsalon Pallo,60492,Gamlakarleby Bollklubb,6,1,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,18,3780707,2025-05-02,19:00:00,60554,Football Club Kiffen 08,106905,Ilves,1,2,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,18,3780706,2025-05-02,19:00:00,60537,Nurmijärven Jalkapalloseura,107307,Pallo-Iirot,1,2,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,18,3780797,2025-05-03,16:00:00,60686,Idrottsföreningen Kraft,61004,Jalkapalloseura Hercules,2,3,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,18,3780617,2025-05-03,16:00:00,61010,Pepo Lappeenranta,129934,MYPA,2,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,18,3780620,2025-05-03,17:00:00,63440,Vantaan Jalkapalloseura,60496,FC Vaajakoski,5,1,4,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,18,3780710,2025-05-03,17:00:00,35121579,Hämeenlinnan Jalkapalloseura,48924,Pallo-Pojat Juniorit,3,3,1,3,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,18,3780708,2025-05-03,17:00:00,60696,Musan Salama,60704,Tampereen Pallo-Veikot,1,2,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,18,3780618,2025-05-03,17:00:00,49973,Puistolan Urheilijat,62416,FC Honka,0,3,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,18,3780619,2025-05-03,17:00:00,60549,GrIFK - Fotboll,106602,Jyväskylän Seudun Palloseura,3,0,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,18,3780709,2025-05-03,17:00:00,35135803,Atlantis Football Club,49949,Helsingin Palloseura,3,2,0,2,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,18,3780798,2025-05-03,17:00:00,60666,Tornion Pallo-47,61766,Jakobstads Bollklubb,3,2,1,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,18,3780800,2025-05-04,18:30:00,169909,Vaasan Palloseura,60647,Idrottsföreningen Kamraterna Vasa,3,3,1,2,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,19,3780715,2025-05-10,15:00:00,48924,Pallo-Pojat Juniorit,60537,Nurmijärven Jalkapalloseura,3,2,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,19,3780712,2025-05-10,17:00:00,60554,Football Club Kiffen 08,35135803,Atlantis Football Club,2,0,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,19,3780621,2025-05-10,17:00:00,106602,Jyväskylän Seudun Palloseura,61483,Haminan Pallo-Kissat Edustus,5,1,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,19,3780713,2025-05-10,19:00:00,49949,Helsingin Palloseura,106905,Ilves,3,1,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,19,3780623,2025-05-11,15:00:00,61562,Lahden Reipas,60549,GrIFK - Fotboll,4,3,2,2,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,19,3780802,2025-05-11,15:00:00,61004,Jalkapalloseura Hercules,169909,Vaasan Palloseura,1,2,1,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,19,3780803,2025-05-11,15:00:00,60647,Idrottsföreningen Kamraterna Vasa,60666,Tornion Pallo-47,1,2,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,19,3780622,2025-05-11,16:00:00,129934,MYPA,49973,Puistolan Urheilijat,4,0,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,19,3780804,2025-05-11,17:00:00,60492,Gamlakarleby Bollklubb,131834,SJK Akatemia,2,3,1,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,19,3780624,2025-05-11,18:30:00,62416,FC Honka,63440,Vantaan Jalkapalloseura,1,2,1,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,20,3780805,2025-05-12,18:30:00,61766,Jakobstads Bollklubb,60686,Idrottsföreningen Kraft,4,1,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,20,3780625,2025-05-12,18:30:00,60496,FC Vaajakoski,61010,Pepo Lappeenranta,5,1,1,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,20,3780714,2025-05-12,19:00:00,60704,Tampereen Pallo-Veikot,35121579,Hämeenlinnan Jalkapalloseura,1,1,1,1,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,20,3780806,2025-05-16,18:30:00,61766,Jakobstads Bollklubb,60492,Gamlakarleby Bollklubb,0,1,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,20,3780626,2025-05-16,18:30:00,61483,Haminan Pallo-Kissat Edustus,62416,FC Honka,1,12,1,4,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,20,3780716,2025-05-16,19:00:00,60696,Musan Salama,48924,Pallo-Pojat Juniorit,2,1,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,20,3780717,2025-05-17,16:00:00,60537,Nurmijärven Jalkapalloseura,60554,Football Club Kiffen 08,1,3,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,20,3780718,2025-05-17,17:00:00,35135803,Atlantis Football Club,35121579,Hämeenlinnan Jalkapalloseura,0,5,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,20,3780719,2025-05-17,17:00:00,107307,Pallo-Iirot,49949,Helsingin Palloseura,1,2,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,20,3780628,2025-05-17,17:00:00,129934,MYPA,106602,Jyväskylän Seudun Palloseura,5,3,5,2,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,20,3780627,2025-05-17,17:00:00,61010,Pepo Lappeenranta,61562,Lahden Reipas,2,1,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,20,3780629,2025-05-17,17:00:00,49973,Puistolan Urheilijat,60496,FC Vaajakoski,2,1,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,20,3780807,2025-05-17,19:00:00,108059,Oulunsalon Pallo,169909,Vaasan Palloseura,0,2,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,20,3780809,2025-05-18,17:00:00,131834,SJK Akatemia,61004,Jalkapalloseura Hercules,2,4,1,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,20,3780720,2025-05-18,18:00:00,106905,Ilves,60704,Tampereen Pallo-Veikot,5,1,4,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,20,3780810,2025-05-18,18:30:00,60686,Idrottsföreningen Kraft,60647,Idrottsföreningen Kamraterna Vasa,3,1,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,20,3780630,2025-05-18,18:30:00,60549,GrIFK - Fotboll,63440,Vantaan Jalkapalloseura,0,2,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,21,3780811,2025-05-22,18:30:00,61004,Jalkapalloseura Hercules,60666,Tornion Pallo-47,1,5,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,21,3780721,2025-05-23,18:30:00,60704,Tampereen Pallo-Veikot,60537,Nurmijärven Jalkapalloseura,5,0,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,21,3780631,2025-05-23,19:00:00,63440,Vantaan Jalkapalloseura,129934,MYPA,3,2,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,21,3780812,2025-05-23,19:00:00,169909,Vaasan Palloseura,61766,Jakobstads Bollklubb,1,0,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,21,3780723,2025-05-23,19:00:00,60554,Football Club Kiffen 08,49949,Helsingin Palloseura,3,1,0,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,21,3780722,2025-05-23,19:00:00,48924,Pallo-Pojat Juniorit,106905,Ilves,2,4,1,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,21,3780632,2025-05-24,16:00:00,61562,Lahden Reipas,106602,Jyväskylän Seudun Palloseura,6,1,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,21,3780724,2025-05-24,17:00:00,35135803,Atlantis Football Club,60696,Musan Salama,1,7,1,3,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,21,3780725,2025-05-24,17:00:00,35121579,Hämeenlinnan Jalkapalloseura,107307,Pallo-Iirot,0,1,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,21,3780634,2025-05-24,17:00:00,62416,FC Honka,61010,Pepo Lappeenranta,4,1,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,21,3780633,2025-05-24,17:00:00,60496,FC Vaajakoski,61483,Haminan Pallo-Kissat Edustus,2,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,21,3780814,2025-05-24,18:00:00,60647,Idrottsföreningen Kamraterna Vasa,131834,SJK Akatemia,4,2,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,21,3780815,2025-05-24,19:00:00,108059,Oulunsalon Pallo,60686,Idrottsföreningen Kraft,4,3,2,3,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,21,3780635,2025-05-25,18:30:00,60549,GrIFK - Fotboll,49973,Puistolan Urheilijat,6,3,1,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,22,3780817,2025-05-30,19:00:00,61766,Jakobstads Bollklubb,61004,Jalkapalloseura Hercules,2,1,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,22,3780727,2025-05-30,19:00:00,60696,Musan Salama,60554,Football Club Kiffen 08,1,0,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,22,3780726,2025-05-30,19:00:00,49949,Helsingin Palloseura,48924,Pallo-Pojat Juniorit,1,0,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,22,3780640,2025-06-01,16:00:00,129934,MYPA,62416,FC Honka,2,6,0,3,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,22,3780818,2025-06-01,16:00:00,131834,SJK Akatemia,108059,Oulunsalon Pallo,1,3,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,22,3780728,2025-06-01,18:30:00,107307,Pallo-Iirot,60704,Tampereen Pallo-Veikot,1,2,1,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,22,3780638,2025-06-01,18:30:00,61483,Haminan Pallo-Kissat Edustus,60549,GrIFK - Fotboll,1,1,1,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,22,3780637,2025-06-01,18:30:00,61010,Pepo Lappeenranta,63440,Vantaan Jalkapalloseura,4,1,2,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,22,3780639,2025-06-01,18:30:00,49973,Puistolan Urheilijat,61562,Lahden Reipas,1,1,0,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,22,3780820,2025-06-01,18:30:00,60666,Tornion Pallo-47,169909,Vaasan Palloseura,3,2,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,23,3780730,2025-06-02,19:00:00,106905,Ilves,35135803,Atlantis Football Club,2,2,0,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,23,3780729,2025-06-02,19:00:00,60537,Nurmijärven Jalkapalloseura,35121579,Hämeenlinnan Jalkapalloseura,1,1,0,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,23,3780816,2025-06-03,18:30:00,60492,Gamlakarleby Bollklubb,60647,Idrottsföreningen Kamraterna Vasa,3,2,1,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,23,3780643,2025-06-06,18:30:00,63440,Vantaan Jalkapalloseura,61483,Haminan Pallo-Kissat Edustus,5,0,4,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,23,3780731,2025-06-06,18:30:00,35121579,Hämeenlinnan Jalkapalloseura,106905,Ilves,2,2,1,1,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,23,3780732,2025-06-06,18:30:00,60704,Tampereen Pallo-Veikot,49949,Helsingin Palloseura,3,0,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,23,3780642,2025-06-06,18:30:00,60496,FC Vaajakoski,60549,GrIFK - Fotboll,0,1,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,23,3780822,2025-06-06,19:00:00,169909,Vaasan Palloseura,131834,SJK Akatemia,4,0,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,23,3780734,2025-06-06,19:00:00,107307,Pallo-Iirot,60554,Football Club Kiffen 08,4,1,2,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,23,3780733,2025-06-06,19:00:00,48924,Pallo-Pojat Juniorit,35135803,Atlantis Football Club,6,2,3,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,23,3780645,2025-06-08,16:00:00,129934,MYPA,61562,Lahden Reipas,1,3,0,3,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,23,3780823,2025-06-08,16:00:00,60647,Idrottsföreningen Kamraterna Vasa,108059,Oulunsalon Pallo,1,2,1,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,23,3780644,2025-06-08,17:00:00,62416,FC Honka,106602,Jyväskylän Seudun Palloseura,4,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,23,3780735,2025-06-08,17:00:00,60537,Nurmijärven Jalkapalloseura,60696,Musan Salama,1,1,1,1,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,23,3780824,2025-06-08,17:00:00,60666,Tornion Pallo-47,60686,Idrottsföreningen Kraft,1,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,23,3780825,2025-06-08,18:00:00,61004,Jalkapalloseura Hercules,60492,Gamlakarleby Bollklubb,1,2,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,23,3780641,2025-06-08,18:30:00,61010,Pepo Lappeenranta,49973,Puistolan Urheilijat,1,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,24,3780636,2025-06-11,19:00:00,106602,Jyväskylän Seudun Palloseura,60496,FC Vaajakoski,1,5,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,24,3780826,2025-06-12,18:30:00,60686,Idrottsföreningen Kraft,169909,Vaasan Palloseura,2,2,1,1,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,24,3780646,2025-06-13,18:30:00,61483,Haminan Pallo-Kissat Edustus,129934,MYPA,0,5,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,24,3780827,2025-06-13,18:30:00,108059,Oulunsalon Pallo,61004,Jalkapalloseura Hercules,5,1,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,24,3780737,2025-06-13,19:00:00,60554,Football Club Kiffen 08,48924,Pallo-Pojat Juniorit,2,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,24,3780647,2025-06-13,19:00:00,49973,Puistolan Urheilijat,63440,Vantaan Jalkapalloseura,1,0,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,24,3780736,2025-06-13,19:00:00,49949,Helsingin Palloseura,60537,Nurmijärven Jalkapalloseura,1,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,24,3780739,2025-06-14,17:00:00,35135803,Atlantis Football Club,60704,Tampereen Pallo-Veikot,0,2,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,24,3780738,2025-06-14,17:00:00,60696,Musan Salama,35121579,Hämeenlinnan Jalkapalloseura,0,2,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,24,3780648,2025-06-14,17:00:00,106602,Jyväskylän Seudun Palloseura,61010,Pepo Lappeenranta,1,3,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,24,3780740,2025-06-14,18:00:00,106905,Ilves,107307,Pallo-Iirot,1,5,0,3,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,24,3780828,2025-06-15,16:00:00,60492,Gamlakarleby Bollklubb,60666,Tornion Pallo-47,3,3,1,3,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,24,3780649,2025-06-15,16:00:00,61562,Lahden Reipas,60496,FC Vaajakoski,3,1,2,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,24,3780650,2025-06-15,18:30:00,60549,GrIFK - Fotboll,62416,FC Honka,1,3,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,24,3780830,2025-06-15,18:30:00,131834,SJK Akatemia,61766,Jakobstads Bollklubb,1,3,1,3,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,25,3780651,2025-06-18,18:30:00,63440,Vantaan Jalkapalloseura,106602,Jyväskylän Seudun Palloseura,6,0,4,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,25,3780841,2025-06-18,18:30:00,61004,Jalkapalloseura Hercules,60686,Idrottsföreningen Kraft,2,3,2,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,25,3780711,2025-06-18,19:00:00,107307,Pallo-Iirot,60696,Musan Salama,0,3,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,25,3780842,2025-06-19,18:30:00,60492,Gamlakarleby Bollklubb,108059,Oulunsalon Pallo,3,1,0,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,25,3780869,2025-06-19,18:30:00,131834,SJK Akatemia,169909,Vaasan Palloseura,5,2,3,2,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,26,3780741,2025-06-25,18:30:00,60704,Tampereen Pallo-Veikot,60554,Football Club Kiffen 08,0,2,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,26,3780833,2025-06-26,18:30:00,60686,Idrottsföreningen Kraft,131834,SJK Akatemia,2,3,2,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,26,3780652,2025-06-26,18:30:00,129934,MYPA,60496,FC Vaajakoski,4,3,2,2,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,26,3780834,2025-06-26,19:00:00,60666,Tornion Pallo-47,108059,Oulunsalon Pallo,5,4,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,26,3780831,2025-06-27,18:30:00,61766,Jakobstads Bollklubb,60647,Idrottsföreningen Kamraterna Vasa,3,2,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,26,3780832,2025-06-27,18:30:00,169909,Vaasan Palloseura,60492,Gamlakarleby Bollklubb,3,0,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,26,3780653,2025-06-27,18:30:00,61010,Pepo Lappeenranta,60549,GrIFK - Fotboll,2,1,1,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,26,3780744,2025-06-27,19:00:00,60537,Nurmijärven Jalkapalloseura,35135803,Atlantis Football Club,3,3,1,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,26,3780745,2025-06-28,17:00:00,35121579,Hämeenlinnan Jalkapalloseura,49949,Helsingin Palloseura,4,2,2,2,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,26,3780742,2025-06-28,17:00:00,60696,Musan Salama,106905,Ilves,0,2,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,26,3780743,2025-06-28,17:00:00,107307,Pallo-Iirot,48924,Pallo-Pojat Juniorit,1,1,0,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,26,3780655,2025-06-28,17:00:00,62416,FC Honka,61562,Lahden Reipas,5,3,2,3,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,26,3780654,2025-06-28,17:00:00,49973,Puistolan Urheilijat,61483,Haminan Pallo-Kissat Edustus,6,0,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,27,3780836,2025-07-01,19:00:00,60666,Tornion Pallo-47,131834,SJK Akatemia,4,3,2,2,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,27,3780837,2025-07-01,19:00:00,108059,Oulunsalon Pallo,61766,Jakobstads Bollklubb,4,1,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,27,3780838,2025-07-02,18:30:00,60647,Idrottsföreningen Kamraterna Vasa,61004,Jalkapalloseura Hercules,5,1,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,27,3780656,2025-07-02,18:30:00,60496,FC Vaajakoski,62416,FC Honka,0,4,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,27,3780657,2025-07-02,19:00:00,49973,Puistolan Urheilijat,106602,Jyväskylän Seudun Palloseura,3,1,2,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,27,3780658,2025-07-02,19:00:00,60549,GrIFK - Fotboll,129934,MYPA,0,3,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,27,3780747,2025-07-02,19:00:00,60537,Nurmijärven Jalkapalloseura,106905,Ilves,1,1,0,1,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,27,3780748,2025-07-02,19:00:00,35135803,Atlantis Football Club,107307,Pallo-Iirot,0,4,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,27,3780659,2025-07-02,20:00:00,61010,Pepo Lappeenranta,61483,Haminan Pallo-Kissat Edustus,2,1,1,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,27,3780746,2025-07-02,20:00:00,48924,Pallo-Pojat Juniorit,60704,Tampereen Pallo-Veikot,2,3,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,27,3780750,2025-07-03,19:00:00,60696,Musan Salama,49949,Helsingin Palloseura,1,1,0,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,27,3780749,2025-07-03,19:00:00,60554,Football Club Kiffen 08,35121579,Hämeenlinnan Jalkapalloseura,1,4,1,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,27,3780660,2025-07-04,18:30:00,61562,Lahden Reipas,63440,Vantaan Jalkapalloseura,1,5,0,4,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,27,3780840,2025-07-05,15:00:00,60686,Idrottsföreningen Kraft,60492,Gamlakarleby Bollklubb,2,3,1,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,27,3780661,2025-07-05,15:00:00,129934,MYPA,61010,Pepo Lappeenranta,0,0,0,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,27,3780843,2025-07-05,16:00:00,61766,Jakobstads Bollklubb,60666,Tornion Pallo-47,1,0,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,27,3780662,2025-07-06,16:00:00,106602,Jyväskylän Seudun Palloseura,60549,GrIFK - Fotboll,3,3,2,1,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,27,3780751,2025-07-06,17:00:00,107307,Pallo-Iirot,60537,Nurmijärven Jalkapalloseura,2,2,1,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,27,3780663,2025-07-06,18:30:00,62416,FC Honka,49973,Puistolan Urheilijat,4,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,28,3780845,2025-07-07,18:30:00,60647,Idrottsföreningen Kamraterna Vasa,169909,Vaasan Palloseura,0,0,0,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,28,3780753,2025-07-07,19:00:00,106905,Ilves,60554,Football Club Kiffen 08,2,0,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,28,3780665,2025-07-08,18:30:00,61483,Haminan Pallo-Kissat Edustus,61562,Lahden Reipas,2,3,1,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,28,3780664,2025-07-08,18:30:00,60496,FC Vaajakoski,63440,Vantaan Jalkapalloseura,0,3,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,28,3780752,2025-07-08,19:00:00,49949,Helsingin Palloseura,35135803,Atlantis Football Club,3,1,0,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,28,3780754,2025-07-08,19:00:00,60704,Tampereen Pallo-Veikot,60696,Musan Salama,7,1,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,28,3780755,2025-07-10,18:00:00,48924,Pallo-Pojat Juniorit,35121579,Hämeenlinnan Jalkapalloseura,1,2,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,28,3780846,2025-07-10,18:30:00,60686,Idrottsföreningen Kraft,61766,Jakobstads Bollklubb,0,2,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,28,3780668,2025-07-12,16:00:00,61483,Haminan Pallo-Kissat Edustus,106602,Jyväskylän Seudun Palloseura,2,2,2,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,28,3780669,2025-07-12,16:00:00,49973,Puistolan Urheilijat,129934,MYPA,2,0,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,28,3780756,2025-07-12,17:00:00,35135803,Atlantis Football Club,60554,Football Club Kiffen 08,1,6,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,28,3780667,2025-07-12,17:00:00,61010,Pepo Lappeenranta,60496,FC Vaajakoski,1,2,1,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,28,3780666,2025-07-12,17:00:00,60549,GrIFK - Fotboll,61562,Lahden Reipas,2,2,0,1,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,28,3780848,2025-07-12,17:00:00,131834,SJK Akatemia,60492,Gamlakarleby Bollklubb,2,3,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,28,3780847,2025-07-12,17:00:00,60666,Tornion Pallo-47,60647,Idrottsföreningen Kamraterna Vasa,5,2,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,28,3780670,2025-07-12,18:00:00,63440,Vantaan Jalkapalloseura,62416,FC Honka,1,1,1,1,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,28,3780850,2025-07-13,17:00:00,169909,Vaasan Palloseura,61004,Jalkapalloseura Hercules,8,0,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,28,3780757,2025-07-13,18:00:00,106905,Ilves,49949,Helsingin Palloseura,1,1,1,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,29,3780758,2025-07-14,18:30:00,35121579,Hämeenlinnan Jalkapalloseura,60704,Tampereen Pallo-Veikot,3,3,2,1,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,29,3780759,2025-07-14,19:00:00,60537,Nurmijärven Jalkapalloseura,48924,Pallo-Pojat Juniorit,4,1,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,29,3780851,2025-07-16,18:30:00,60492,Gamlakarleby Bollklubb,61766,Jakobstads Bollklubb,3,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,29,3780760,2025-07-17,18:30:00,60696,Musan Salama,107307,Pallo-Iirot,1,1,0,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,29,3780671,2025-07-18,19:00:00,106602,Jyväskylän Seudun Palloseura,129934,MYPA,0,8,0,3,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,29,3780761,2025-07-18,19:00:00,60704,Tampereen Pallo-Veikot,106905,Ilves,0,2,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,29,3780672,2025-07-19,16:00:00,61562,Lahden Reipas,61010,Pepo Lappeenranta,1,2,1,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,29,3780673,2025-07-19,17:00:00,62416,FC Honka,61483,Haminan Pallo-Kissat Edustus,5,0,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,29,3780762,2025-07-19,17:00:00,60554,Football Club Kiffen 08,60537,Nurmijärven Jalkapalloseura,1,1,1,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,29,3780853,2025-07-19,18:00:00,61004,Jalkapalloseura Hercules,131834,SJK Akatemia,0,6,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,29,3780763,2025-07-19,18:30:00,35121579,Hämeenlinnan Jalkapalloseura,35135803,Atlantis Football Club,2,1,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,29,3780854,2025-07-19,19:00:00,60647,Idrottsföreningen Kamraterna Vasa,60686,Idrottsföreningen Kraft,0,2,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,29,3780674,2025-07-19,19:00:00,60496,FC Vaajakoski,49973,Puistolan Urheilijat,1,2,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,29,3780855,2025-07-20,17:00:00,169909,Vaasan Palloseura,108059,Oulunsalon Pallo,2,1,1,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,30,3780675,2025-07-21,18:30:00,63440,Vantaan Jalkapalloseura,60549,GrIFK - Fotboll,1,1,1,1,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,30,3780764,2025-07-21,18:30:00,49949,Helsingin Palloseura,107307,Pallo-Iirot,1,3,1,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,30,3780765,2025-07-22,19:00:00,48924,Pallo-Pojat Juniorit,60696,Musan Salama,6,1,5,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,30,3780676,2025-07-24,18:30:00,106602,Jyväskylän Seudun Palloseura,61562,Lahden Reipas,1,5,1,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,30,3780856,2025-07-24,18:30:00,60666,Tornion Pallo-47,61004,Jalkapalloseura Hercules,1,5,1,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,30,3780767,2025-07-25,19:00:00,107307,Pallo-Iirot,35121579,Hämeenlinnan Jalkapalloseura,3,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,30,3780766,2025-07-25,19:00:00,49949,Helsingin Palloseura,60554,Football Club Kiffen 08,1,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,30,3780678,2025-07-26,16:00:00,61483,Haminan Pallo-Kissat Edustus,60496,FC Vaajakoski,1,4,1,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,30,3780858,2025-07-26,16:00:00,61766,Jakobstads Bollklubb,169909,Vaasan Palloseura,2,1,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,30,3780769,2025-07-26,17:00:00,60696,Musan Salama,35135803,Atlantis Football Club,10,0,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,30,3780680,2025-07-26,17:00:00,129934,MYPA,63440,Vantaan Jalkapalloseura,3,3,2,1,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,30,3780677,2025-07-26,17:00:00,61010,Pepo Lappeenranta,62416,FC Honka,1,2,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,30,3780679,2025-07-26,17:00:00,49973,Puistolan Urheilijat,60549,GrIFK - Fotboll,1,2,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,30,3780768,2025-07-26,17:00:00,60537,Nurmijärven Jalkapalloseura,60704,Tampereen Pallo-Veikot,1,3,0,3,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,30,3780857,2025-07-26,18:30:00,60686,Idrottsföreningen Kraft,108059,Oulunsalon Pallo,2,3,2,3,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,30,3780770,2025-07-27,15:00:00,106905,Ilves,48924,Pallo-Pojat Juniorit,1,0,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,31,3780860,2025-07-29,18:30:00,131834,SJK Akatemia,60647,Idrottsföreningen Kamraterna Vasa,6,0,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,31,3780862,2025-08-01,18:30:00,61004,Jalkapalloseura Hercules,61766,Jakobstads Bollklubb,0,3,0,3,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,31,3780861,2025-08-01,18:30:00,60647,Idrottsföreningen Kamraterna Vasa,60492,Gamlakarleby Bollklubb,1,3,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,31,3780771,2025-08-01,19:00:00,48924,Pallo-Pojat Juniorit,49949,Helsingin Palloseura,1,2,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,31,3780772,2025-08-02,16:00:00,60704,Tampereen Pallo-Veikot,107307,Pallo-Iirot,1,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,31,3780774,2025-08-02,17:00:00,35135803,Atlantis Football Club,106905,Ilves,1,5,1,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,31,3780773,2025-08-02,17:00:00,35121579,Hämeenlinnan Jalkapalloseura,60537,Nurmijärven Jalkapalloseura,2,1,1,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,31,3780863,2025-08-02,17:00:00,169909,Vaasan Palloseura,60666,Tornion Pallo-47,8,0,4,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,31,3780681,2025-08-02,17:00:00,62416,FC Honka,129934,MYPA,6,0,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,31,3780775,2025-08-02,17:00:00,60554,Football Club Kiffen 08,60696,Musan Salama,3,0,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,31,3780682,2025-08-03,18:00:00,61562,Lahden Reipas,49973,Puistolan Urheilijat,0,1,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,31,3780864,2025-08-03,18:00:00,108059,Oulunsalon Pallo,131834,SJK Akatemia,1,2,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,31,3780683,2025-08-03,18:30:00,60549,GrIFK - Fotboll,61483,Haminan Pallo-Kissat Edustus,5,0,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,32,3780684,2025-08-04,18:30:00,63440,Vantaan Jalkapalloseura,61010,Pepo Lappeenranta,1,0,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,32,3780685,2025-08-07,18:30:00,60496,FC Vaajakoski,106602,Jyväskylän Seudun Palloseura,4,0,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,32,3780866,2025-08-08,18:30:00,60492,Gamlakarleby Bollklubb,61004,Jalkapalloseura Hercules,2,1,2,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,32,3780777,2025-08-08,18:30:00,60696,Musan Salama,60537,Nurmijärven Jalkapalloseura,1,5,1,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,32,3780686,2025-08-08,18:30:00,61483,Haminan Pallo-Kissat Edustus,63440,Vantaan Jalkapalloseura,1,3,1,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,32,3780776,2025-08-08,19:00:00,49949,Helsingin Palloseura,60704,Tampereen Pallo-Veikot,1,2,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,32,3780687,2025-08-09,16:00:00,61562,Lahden Reipas,129934,MYPA,4,2,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,32,3780867,2025-08-09,16:30:00,60686,Idrottsföreningen Kraft,60666,Tornion Pallo-47,1,2,1,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,32,3780779,2025-08-09,17:00:00,35135803,Atlantis Football Club,48924,Pallo-Pojat Juniorit,0,4,0,3,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,32,3780778,2025-08-09,17:00:00,60554,Football Club Kiffen 08,107307,Pallo-Iirot,3,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,32,3780688,2025-08-09,17:00:00,49973,Puistolan Urheilijat,61010,Pepo Lappeenranta,4,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,32,3780780,2025-08-09,18:00:00,106905,Ilves,35121579,Hämeenlinnan Jalkapalloseura,2,1,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,32,3780870,2025-08-09,19:00:00,108059,Oulunsalon Pallo,60647,Idrottsföreningen Kamraterna Vasa,10,2,4,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,32,3780689,2025-08-10,16:00:00,106602,Jyväskylän Seudun Palloseura,62416,FC Honka,0,4,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,32,3780690,2025-08-10,18:30:00,60549,GrIFK - Fotboll,60496,FC Vaajakoski,3,1,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,33,3780693,2025-08-16,15:00:00,63440,Vantaan Jalkapalloseura,49973,Puistolan Urheilijat,2,1,2,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,33,3780872,2025-08-16,15:00:00,61766,Jakobstads Bollklubb,131834,SJK Akatemia,1,0,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,33,3780783,2025-08-16,15:00:00,35121579,Hämeenlinnan Jalkapalloseura,60696,Musan Salama,4,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,33,3780873,2025-08-16,15:00:00,169909,Vaasan Palloseura,60686,Idrottsföreningen Kraft,4,0,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,33,3780782,2025-08-16,15:00:00,107307,Pallo-Iirot,106905,Ilves,1,2,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,33,3780692,2025-08-16,15:00:00,129934,MYPA,61483,Haminan Pallo-Kissat Edustus,3,0,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,33,3780694,2025-08-16,15:00:00,62416,FC Honka,60549,GrIFK - Fotboll,7,0,4,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,33,3780695,2025-08-16,15:00:00,61010,Pepo Lappeenranta,106602,Jyväskylän Seudun Palloseura,7,0,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,33,3780785,2025-08-16,15:00:00,60537,Nurmijärven Jalkapalloseura,49949,Helsingin Palloseura,1,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,33,3780781,2025-08-16,15:00:00,48924,Pallo-Pojat Juniorit,60554,Football Club Kiffen 08,4,1,1,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,33,3780875,2025-08-16,15:00:00,60666,Tornion Pallo-47,60492,Gamlakarleby Bollklubb,2,3,1,3,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,2,Lohko B,33,3780784,2025-08-16,15:00:00,60704,Tampereen Pallo-Veikot,35135803,Atlantis Football Club,11,0,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,3,Lohko C,33,3780874,2025-08-16,15:00:00,61004,Jalkapalloseura Hercules,108059,Oulunsalon Pallo,2,3,1,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,1,Lohko A,33,3780691,2025-08-16,15:00:00,60496,FC Vaajakoski,61562,Lahden Reipas,4,2,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,6,Ylempi jatkosarja C,35,3965433,2025-08-29,18:00:00,60492,Gamlakarleby Bollklubb,131834,SJK Akatemia,3,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,5,Ylempi jatkosarja B,35,3965419,2025-08-29,19:00:00,106905,Ilves,49949,Helsingin Palloseura,7,0,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,5,Ylempi jatkosarja B,35,3965418,2025-08-29,19:00:00,60704,Tampereen Pallo-Veikot,107307,Pallo-Iirot,4,1,3,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,7,Alempi jatkosarja A,35,3965449,2025-08-30,15:00:00,60496,FC Vaajakoski,106602,Jyväskylän Seudun Palloseura,7,0,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,7,Alempi jatkosarja A,35,3965448,2025-08-30,16:00:00,61483,Haminan Pallo-Kissat Edustus,61562,Lahden Reipas,0,7,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,4,Ylempi jatkosarja A,35,3965403,2025-08-30,16:00:00,49973,Puistolan Urheilijat,129934,MYPA,6,1,4,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,6,Ylempi jatkosarja C,35,3965434,2025-08-30,16:00:00,61766,Jakobstads Bollklubb,108059,Oulunsalon Pallo,3,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,4,Ylempi jatkosarja A,35,3965404,2025-08-30,17:00:00,62416,FC Honka,60549,GrIFK - Fotboll,3,1,0,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,5,Ylempi jatkosarja B,35,3965420,2025-08-30,18:00:00,35121579,Hämeenlinnan Jalkapalloseura,60554,Football Club Kiffen 08,3,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,4,Ylempi jatkosarja A,35,3965405,2025-08-30,19:00:00,63440,Vantaan Jalkapalloseura,61010,Pepo Lappeenranta,7,0,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,6,Ylempi jatkosarja C,35,3965435,2025-08-30,19:00:00,169909,Vaasan Palloseura,60666,Tornion Pallo-47,11,0,6,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,8,Alempi jatkosarja B,35,3965461,2025-08-31,15:00:00,35135803,Atlantis Football Club,48924,Pallo-Pojat Juniorit,0,4,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,8,Alempi jatkosarja B,35,3965460,2025-08-31,15:00:00,60537,Nurmijärven Jalkapalloseura,60696,Musan Salama,0,3,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,9,Alempi jatkosarja C,35,3965472,2025-08-31,15:00:00,61004,Jalkapalloseura Hercules,60647,Idrottsföreningen Kamraterna Vasa,1,2,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,5,Ylempi jatkosarja B,36,3965421,2025-09-02,18:30:00,107307,Pallo-Iirot,106905,Ilves,2,4,1,3,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,4,Ylempi jatkosarja A,36,3965406,2025-09-03,18:00:00,60549,GrIFK - Fotboll,63440,Vantaan Jalkapalloseura,1,3,0,3,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,4,Ylempi jatkosarja A,36,3965407,2025-09-03,18:30:00,129934,MYPA,61010,Pepo Lappeenranta,1,6,1,4,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,6,Ylempi jatkosarja C,36,3965436,2025-09-03,19:00:00,131834,SJK Akatemia,169909,Vaasan Palloseura,3,7,1,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,6,Ylempi jatkosarja C,36,3965438,2025-09-03,19:00:00,108059,Oulunsalon Pallo,60666,Tornion Pallo-47,1,1,0,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,6,Ylempi jatkosarja C,36,3965437,2025-09-03,19:00:00,61766,Jakobstads Bollklubb,60492,Gamlakarleby Bollklubb,1,1,1,1,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,4,Ylempi jatkosarja A,36,3965408,2025-09-04,18:00:00,49973,Puistolan Urheilijat,62416,FC Honka,1,2,1,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,5,Ylempi jatkosarja B,36,3965422,2025-09-04,19:00:00,60554,Football Club Kiffen 08,49949,Helsingin Palloseura,2,3,1,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,5,Ylempi jatkosarja B,36,3965423,2025-09-05,18:30:00,35121579,Hämeenlinnan Jalkapalloseura,60704,Tampereen Pallo-Veikot,2,0,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,8,Alempi jatkosarja B,36,3965463,2025-09-06,16:00:00,35135803,Atlantis Football Club,60537,Nurmijärven Jalkapalloseura,0,4,0,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,7,Alempi jatkosarja A,36,3965451,2025-09-06,17:00:00,106602,Jyväskylän Seudun Palloseura,61483,Haminan Pallo-Kissat Edustus,3,1,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,8,Alempi jatkosarja B,36,3965462,2025-09-06,17:00:00,48924,Pallo-Pojat Juniorit,60696,Musan Salama,1,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,7,Alempi jatkosarja A,36,3965450,2025-09-07,14:00:00,60496,FC Vaajakoski,61562,Lahden Reipas,1,6,1,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,9,Alempi jatkosarja C,36,3965473,2025-09-07,15:00:00,60686,Idrottsföreningen Kraft,60647,Idrottsföreningen Kamraterna Vasa,2,0,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,4,Ylempi jatkosarja A,36,3965409,2025-09-07,15:00:00,61010,Pepo Lappeenranta,60549,GrIFK - Fotboll,3,1,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,6,Ylempi jatkosarja C,36,3965439,2025-09-07,16:00:00,60492,Gamlakarleby Bollklubb,108059,Oulunsalon Pallo,5,1,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,6,Ylempi jatkosarja C,36,3965440,2025-09-07,16:00:00,60666,Tornion Pallo-47,131834,SJK Akatemia,2,6,2,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,4,Ylempi jatkosarja A,37,3965411,2025-09-08,18:30:00,63440,Vantaan Jalkapalloseura,49973,Puistolan Urheilijat,4,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,6,Ylempi jatkosarja C,37,3965441,2025-09-08,18:30:00,169909,Vaasan Palloseura,61766,Jakobstads Bollklubb,4,1,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,4,Ylempi jatkosarja A,37,3965410,2025-09-08,18:30:00,62416,FC Honka,129934,MYPA,6,1,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,5,Ylempi jatkosarja B,37,3965424,2025-09-08,18:30:00,49949,Helsingin Palloseura,107307,Pallo-Iirot,3,1,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,5,Ylempi jatkosarja B,37,3965426,2025-09-09,19:00:00,106905,Ilves,35121579,Hämeenlinnan Jalkapalloseura,2,1,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,5,Ylempi jatkosarja B,37,3965425,2025-09-09,19:00:00,60704,Tampereen Pallo-Veikot,60554,Football Club Kiffen 08,3,2,3,2,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,4,Ylempi jatkosarja A,37,3965412,2025-09-13,15:00:00,61010,Pepo Lappeenranta,62416,FC Honka,3,2,2,2,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,7,Alempi jatkosarja A,37,3965453,2025-09-13,16:00:00,61483,Haminan Pallo-Kissat Edustus,60496,FC Vaajakoski,0,3,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,7,Alempi jatkosarja A,37,3965452,2025-09-13,16:00:00,61562,Lahden Reipas,106602,Jyväskylän Seudun Palloseura,8,3,5,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,6,Ylempi jatkosarja C,37,3965442,2025-09-13,17:00:00,60666,Tornion Pallo-47,60492,Gamlakarleby Bollklubb,2,2,1,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,5,Ylempi jatkosarja B,37,3965427,2025-09-13,18:00:00,107307,Pallo-Iirot,35121579,Hämeenlinnan Jalkapalloseura,0,1,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,5,Ylempi jatkosarja B,37,3965428,2025-09-13,18:00:00,106905,Ilves,60554,Football Club Kiffen 08,5,1,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,9,Alempi jatkosarja C,37,3965474,2025-09-14,14:00:00,61004,Jalkapalloseura Hercules,60686,Idrottsföreningen Kraft,2,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,5,Ylempi jatkosarja B,37,3965429,2025-09-14,15:00:00,49949,Helsingin Palloseura,60704,Tampereen Pallo-Veikot,0,1,0,1,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,8,Alempi jatkosarja B,37,3965465,2025-09-14,15:00:00,60537,Nurmijärven Jalkapalloseura,48924,Pallo-Pojat Juniorit,3,4,1,3,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,8,Alempi jatkosarja B,37,3965464,2025-09-14,16:00:00,60696,Musan Salama,35135803,Atlantis Football Club,4,0,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,6,Ylempi jatkosarja C,37,3965443,2025-09-14,17:00:00,169909,Vaasan Palloseura,108059,Oulunsalon Pallo,3,0,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,4,Ylempi jatkosarja A,37,3965414,2025-09-14,18:30:00,63440,Vantaan Jalkapalloseura,129934,MYPA,9,0,5,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,4,Ylempi jatkosarja A,37,3965413,2025-09-14,18:30:00,60549,GrIFK - Fotboll,49973,Puistolan Urheilijat,2,2,1,1,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,6,Ylempi jatkosarja C,38,3965444,2025-09-15,18:30:00,131834,SJK Akatemia,61766,Jakobstads Bollklubb,0,1,0,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,7,Alempi jatkosarja A,38,3965454,2025-09-18,18:30:00,106602,Jyväskylän Seudun Palloseura,60496,FC Vaajakoski,2,2,1,0,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,8,Alempi jatkosarja B,38,3965467,2025-09-19,19:00:00,48924,Pallo-Pojat Juniorit,35135803,Atlantis Football Club,5,0,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,6,Ylempi jatkosarja C,38,3965445,2025-09-21,14:00:00,60492,Gamlakarleby Bollklubb,169909,Vaasan Palloseura,3,0,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,6,Ylempi jatkosarja C,38,3965447,2025-09-21,14:00:00,108059,Oulunsalon Pallo,131834,SJK Akatemia,4,2,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,6,Ylempi jatkosarja C,38,3965446,2025-09-21,14:00:00,61766,Jakobstads Bollklubb,60666,Tornion Pallo-47,4,1,1,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,4,Ylempi jatkosarja A,38,3965417,2025-09-21,15:00:00,129934,MYPA,60549,GrIFK - Fotboll,3,2,2,2,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,4,Ylempi jatkosarja A,38,3965415,2025-09-21,15:00:00,62416,FC Honka,63440,Vantaan Jalkapalloseura,4,1,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,4,Ylempi jatkosarja A,38,3965416,2025-09-21,15:00:00,49973,Puistolan Urheilijat,61010,Pepo Lappeenranta,1,1,0,1,Played,D
+2025,M2,Miesten Kakkonen (M4),spljp25,8,Alempi jatkosarja B,38,3965466,2025-09-21,16:00:00,60696,Musan Salama,60537,Nurmijärven Jalkapalloseura,2,1,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,7,Alempi jatkosarja A,38,3965455,2025-09-21,16:00:00,61562,Lahden Reipas,61483,Haminan Pallo-Kissat Edustus,6,0,3,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,5,Ylempi jatkosarja B,38,3965431,2025-09-21,17:00:00,35121579,Hämeenlinnan Jalkapalloseura,49949,Helsingin Palloseura,0,4,0,4,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,5,Ylempi jatkosarja B,38,3965432,2025-09-21,17:00:00,60554,Football Club Kiffen 08,107307,Pallo-Iirot,7,1,4,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,5,Ylempi jatkosarja B,38,3965430,2025-09-21,17:00:00,60704,Tampereen Pallo-Veikot,106905,Ilves,3,4,1,0,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,9,Alempi jatkosarja C,38,3965475,2025-09-21,17:00:00,60647,Idrottsföreningen Kamraterna Vasa,61004,Jalkapalloseura Hercules,1,2,1,2,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,8,Alempi jatkosarja B,39,3965469,2025-09-26,19:00:00,48924,Pallo-Pojat Juniorit,60537,Nurmijärven Jalkapalloseura,5,1,4,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,7,Alempi jatkosarja A,39,3965456,2025-09-27,15:00:00,60496,FC Vaajakoski,61483,Haminan Pallo-Kissat Edustus,4,2,2,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,8,Alempi jatkosarja B,39,3965468,2025-09-27,16:00:00,35135803,Atlantis Football Club,60696,Musan Salama,0,10,0,4,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,9,Alempi jatkosarja C,39,3965476,2025-09-28,15:00:00,60686,Idrottsföreningen Kraft,61004,Jalkapalloseura Hercules,5,0,2,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,7,Alempi jatkosarja A,39,3965457,2025-09-28,16:00:00,106602,Jyväskylän Seudun Palloseura,61562,Lahden Reipas,1,9,0,3,Played,A
+2025,M2,Miesten Kakkonen (M4),spljp25,8,Alempi jatkosarja B,40,3965470,2025-10-04,14:00:00,60696,Musan Salama,48924,Pallo-Pojat Juniorit,1,0,0,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,7,Alempi jatkosarja A,40,3965459,2025-10-04,14:00:00,61483,Haminan Pallo-Kissat Edustus,106602,Jyväskylän Seudun Palloseura,3,2,1,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,8,Alempi jatkosarja B,40,3965471,2025-10-04,14:00:00,60537,Nurmijärven Jalkapalloseura,35135803,Atlantis Football Club,5,2,1,1,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,7,Alempi jatkosarja A,40,3965458,2025-10-04,14:00:00,61562,Lahden Reipas,60496,FC Vaajakoski,2,1,1,0,Played,H
+2025,M2,Miesten Kakkonen (M4),spljp25,9,Alempi jatkosarja C,40,3965477,2025-10-04,17:00:00,60647,Idrottsföreningen Kamraterna Vasa,60686,Idrottsföreningen Kraft,4,2,2,0,Played,H

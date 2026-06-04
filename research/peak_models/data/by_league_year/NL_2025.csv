@@ -1,0 +1,87 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,17,3747951,2025-04-26,14:00:00,60671,PK-35 Vantaa,143879,Pallokerho-35,1,0,1,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,17,3747952,2025-04-26,16:00:00,60884,Jyväskylän Pallokerho,60691,Idrottsföreningen Kamraterna Vasa,0,1,0,0,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,17,3747953,2025-04-26,17:00:00,60532,Åland United,60781,Helsingin Palloseura,3,2,1,1,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,17,3747954,2025-04-26,17:00:00,157420,Kuopion Palloseura,60682,Helsingin Jalkapalloklubi,1,3,0,1,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,18,3747955,2025-05-03,16:00:00,60691,Idrottsföreningen Kamraterna Vasa,60781,Helsingin Palloseura,1,7,1,5,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,18,3747956,2025-05-03,16:00:00,157420,Kuopion Palloseura,60671,PK-35 Vantaa,1,0,1,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,18,3747957,2025-05-03,18:00:00,60532,Åland United,60682,Helsingin Jalkapalloklubi,0,0,0,0,Played,D
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,18,3747958,2025-05-04,15:00:00,143879,Pallokerho-35,60884,Jyväskylän Pallokerho,1,1,0,0,Played,D
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,19,3747959,2025-05-09,19:00:00,143879,Pallokerho-35,157420,Kuopion Palloseura,0,2,0,1,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,19,3747961,2025-05-11,16:00:00,60682,Helsingin Jalkapalloklubi,60691,Idrottsföreningen Kamraterna Vasa,4,0,1,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,19,3747960,2025-05-11,16:00:00,60781,Helsingin Palloseura,60884,Jyväskylän Pallokerho,3,0,2,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,19,3747962,2025-05-11,18:30:00,60532,Åland United,60671,PK-35 Vantaa,1,1,1,0,Played,D
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,20,3747963,2025-05-17,14:00:00,60691,Idrottsföreningen Kamraterna Vasa,60671,PK-35 Vantaa,2,2,2,1,Played,D
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,20,3747964,2025-05-17,15:00:00,60884,Jyväskylän Pallokerho,157420,Kuopion Palloseura,0,2,0,1,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,20,3747965,2025-05-17,17:00:00,60532,Åland United,143879,Pallokerho-35,1,0,0,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,20,3747966,2025-05-17,18:30:00,60781,Helsingin Palloseura,60682,Helsingin Jalkapalloklubi,1,3,0,1,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,21,3747967,2025-05-22,18:30:00,143879,Pallokerho-35,60691,Idrottsföreningen Kamraterna Vasa,0,1,0,0,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,21,3747968,2025-05-24,16:00:00,60682,Helsingin Jalkapalloklubi,60884,Jyväskylän Pallokerho,2,0,1,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,21,3747969,2025-05-24,17:00:00,60671,PK-35 Vantaa,60781,Helsingin Palloseura,2,0,1,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,21,3747970,2025-05-24,19:00:00,157420,Kuopion Palloseura,60532,Åland United,2,1,2,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,23,3747971,2025-06-07,14:00:00,60781,Helsingin Palloseura,143879,Pallokerho-35,2,1,2,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,23,3747972,2025-06-07,16:00:00,60691,Idrottsföreningen Kamraterna Vasa,157420,Kuopion Palloseura,0,0,0,0,Played,D
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,23,3747973,2025-06-07,18:00:00,60682,Helsingin Jalkapalloklubi,60671,PK-35 Vantaa,3,1,1,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,23,3747974,2025-06-07,18:30:00,60884,Jyväskylän Pallokerho,60532,Åland United,2,3,2,2,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,24,3747976,2025-06-14,12:00:00,143879,Pallokerho-35,60682,Helsingin Jalkapalloklubi,0,4,0,1,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,24,3747975,2025-06-14,14:30:00,157420,Kuopion Palloseura,60781,Helsingin Palloseura,2,2,1,0,Played,D
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,24,3747977,2025-06-15,19:00:00,60532,Åland United,60691,Idrottsföreningen Kamraterna Vasa,1,1,1,0,Played,D
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,25,3747978,2025-06-16,18:30:00,60671,PK-35 Vantaa,60884,Jyväskylän Pallokerho,1,2,0,2,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,26,3747979,2025-06-28,14:00:00,60781,Helsingin Palloseura,60532,Åland United,3,1,1,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,26,3747981,2025-06-28,16:00:00,60691,Idrottsföreningen Kamraterna Vasa,60884,Jyväskylän Pallokerho,3,1,3,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,26,3747980,2025-06-28,16:00:00,60682,Helsingin Jalkapalloklubi,157420,Kuopion Palloseura,1,0,1,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,26,3747982,2025-06-29,17:00:00,143879,Pallokerho-35,60671,PK-35 Vantaa,3,0,2,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,27,3747983,2025-07-05,15:00:00,60884,Jyväskylän Pallokerho,143879,Pallokerho-35,2,2,2,2,Played,D
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,27,3747984,2025-07-05,17:00:00,60781,Helsingin Palloseura,60691,Idrottsföreningen Kamraterna Vasa,5,0,0,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,27,3747986,2025-07-06,14:00:00,60671,PK-35 Vantaa,157420,Kuopion Palloseura,2,1,2,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,27,3747985,2025-07-06,15:00:00,60682,Helsingin Jalkapalloklubi,60532,Åland United,9,1,4,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,28,3747990,2025-07-12,14:00:00,60671,PK-35 Vantaa,60532,Åland United,1,3,0,1,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,28,3747987,2025-07-12,15:00:00,60884,Jyväskylän Pallokerho,60781,Helsingin Palloseura,2,5,2,1,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,28,3747988,2025-07-12,15:00:00,157420,Kuopion Palloseura,143879,Pallokerho-35,3,1,2,1,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,28,3747989,2025-07-12,17:00:00,60691,Idrottsföreningen Kamraterna Vasa,60682,Helsingin Jalkapalloklubi,1,6,1,2,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,29,3747991,2025-07-16,18:30:00,60671,PK-35 Vantaa,60691,Idrottsföreningen Kamraterna Vasa,2,1,2,1,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,29,3747994,2025-07-17,18:30:00,157420,Kuopion Palloseura,60884,Jyväskylän Pallokerho,1,0,1,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,29,3747992,2025-07-18,18:30:00,60682,Helsingin Jalkapalloklubi,60781,Helsingin Palloseura,4,0,1,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,29,3747993,2025-07-19,14:00:00,143879,Pallokerho-35,60532,Åland United,0,2,0,1,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,30,3747996,2025-07-26,15:00:00,60884,Jyväskylän Pallokerho,60682,Helsingin Jalkapalloklubi,0,5,0,1,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,30,3747995,2025-07-26,15:00:00,60781,Helsingin Palloseura,60671,PK-35 Vantaa,2,1,1,1,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,30,3747997,2025-07-27,17:00:00,60532,Åland United,157420,Kuopion Palloseura,1,0,1,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,31,3747998,2025-07-29,18:30:00,60691,Idrottsföreningen Kamraterna Vasa,143879,Pallokerho-35,2,2,1,2,Played,D
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,31,3748000,2025-08-02,14:00:00,143879,Pallokerho-35,60781,Helsingin Palloseura,0,3,0,2,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,31,3748001,2025-08-02,17:00:00,60532,Åland United,60884,Jyväskylän Pallokerho,5,1,4,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,31,3747999,2025-08-03,17:00:00,157420,Kuopion Palloseura,60691,Idrottsföreningen Kamraterna Vasa,7,0,3,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,31,3748002,2025-08-03,18:30:00,60671,PK-35 Vantaa,60682,Helsingin Jalkapalloklubi,0,2,0,1,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,32,3748005,2025-08-09,16:00:00,60691,Idrottsföreningen Kamraterna Vasa,60532,Åland United,1,4,0,2,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,32,3748003,2025-08-09,16:00:00,60682,Helsingin Jalkapalloklubi,143879,Pallokerho-35,2,0,1,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,32,3748006,2025-08-09,16:00:00,60884,Jyväskylän Pallokerho,60671,PK-35 Vantaa,1,10,0,3,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,1,Runkosarja,32,3748004,2025-08-09,16:00:00,60781,Helsingin Palloseura,157420,Kuopion Palloseura,2,3,2,1,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,33,3962234,2025-08-15,18:30:00,157420,Kuopion Palloseura,60682,Helsingin Jalkapalloklubi,1,0,0,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,34,3962226,2025-08-22,18:30:00,60671,PK-35 Vantaa,157420,Kuopion Palloseura,0,4,0,1,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,34,3962225,2025-08-22,18:30:00,60682,Helsingin Jalkapalloklubi,60781,Helsingin Palloseura,5,2,1,1,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,34,3962227,2025-08-24,16:00:00,60691,Idrottsföreningen Kamraterna Vasa,60532,Åland United,0,2,0,0,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,35,3962229,2025-08-30,17:00:00,60532,Åland United,157420,Kuopion Palloseura,2,5,0,5,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,35,3962228,2025-08-30,17:00:00,60781,Helsingin Palloseura,60671,PK-35 Vantaa,5,1,1,1,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,36,3962230,2025-09-02,18:30:00,60691,Idrottsföreningen Kamraterna Vasa,60682,Helsingin Jalkapalloklubi,0,6,0,3,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,36,3962231,2025-09-06,14:00:00,60682,Helsingin Jalkapalloklubi,60532,Åland United,6,1,2,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,36,3962232,2025-09-06,16:00:00,157420,Kuopion Palloseura,60781,Helsingin Palloseura,5,1,2,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,36,3962233,2025-09-07,16:00:00,60671,PK-35 Vantaa,60691,Idrottsföreningen Kamraterna Vasa,10,0,7,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,37,3962238,2025-09-10,18:30:00,60682,Helsingin Jalkapalloklubi,60671,PK-35 Vantaa,2,0,0,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,37,3962235,2025-09-13,18:00:00,60781,Helsingin Palloseura,60691,Idrottsföreningen Kamraterna Vasa,5,0,4,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,37,3962236,2025-09-14,14:00:00,60671,PK-35 Vantaa,60532,Åland United,0,3,0,2,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,38,3962244,2025-09-19,19:00:00,60671,PK-35 Vantaa,60781,Helsingin Palloseura,3,0,1,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,38,3962239,2025-09-21,14:00:00,60691,Idrottsföreningen Kamraterna Vasa,157420,Kuopion Palloseura,0,1,0,1,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,39,3962241,2025-09-24,18:30:00,60532,Åland United,60691,Idrottsföreningen Kamraterna Vasa,2,0,0,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,39,3962242,2025-09-24,18:30:00,60781,Helsingin Palloseura,60682,Helsingin Jalkapalloklubi,1,1,1,0,Played,D
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,39,3962240,2025-09-24,18:30:00,157420,Kuopion Palloseura,60671,PK-35 Vantaa,6,1,3,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,39,3962243,2025-09-27,14:00:00,60682,Helsingin Jalkapalloklubi,60691,Idrottsföreningen Kamraterna Vasa,3,0,0,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,39,3962245,2025-09-27,16:00:00,157420,Kuopion Palloseura,60532,Åland United,2,1,1,1,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,40,3962247,2025-10-03,18:00:00,60532,Åland United,60682,Helsingin Jalkapalloklubi,2,2,1,1,Played,D
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,40,3962246,2025-10-03,18:30:00,60781,Helsingin Palloseura,157420,Kuopion Palloseura,2,1,0,1,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,40,3962248,2025-10-04,16:00:00,60691,Idrottsföreningen Kamraterna Vasa,60671,PK-35 Vantaa,1,3,0,2,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,41,3962237,2025-10-07,18:30:00,60532,Åland United,60781,Helsingin Palloseura,6,2,2,1,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,41,3962249,2025-10-11,16:00:00,60691,Idrottsföreningen Kamraterna Vasa,60781,Helsingin Palloseura,0,2,0,2,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,41,3962250,2025-10-11,17:00:00,60532,Åland United,60671,PK-35 Vantaa,3,1,2,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,41,3962251,2025-10-12,14:00:00,60682,Helsingin Jalkapalloklubi,157420,Kuopion Palloseura,3,2,1,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,42,3962252,2025-10-18,14:00:00,60671,PK-35 Vantaa,60682,Helsingin Jalkapalloklubi,1,2,1,0,Played,A
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,42,3962254,2025-10-18,14:00:00,60781,Helsingin Palloseura,60532,Åland United,2,1,1,0,Played,H
+2025,NL,Kansallinen Liiga (women),spljp25,2,Mestaruussarja,42,3962253,2025-10-18,14:00:00,157420,Kuopion Palloseura,60691,Idrottsföreningen Kamraterna Vasa,6,0,3,0,Played,H
