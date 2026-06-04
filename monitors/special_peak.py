@@ -27,6 +27,15 @@ from datetime import datetime, timedelta
 from typing import Any, Callable, Optional
 from zoneinfo import ZoneInfo
 
+from monitors.peak_model import (
+    LeagueModel,
+    PastMatch,
+    PeakParams,
+    PrematchBreakdown,
+    TeamStats,
+    score_prematch,
+)
+
 _HELSINKI = ZoneInfo("Europe/Helsinki")
 _STOCKHOLM = ZoneInfo("Europe/Stockholm")
 _ARG = ZoneInfo("America/Argentina/Buenos_Aires")
@@ -75,6 +84,14 @@ _PEAK_SCORE_THRESHOLD = 6.5
 LINEUP_WINDOW_MIN = 150  # only run the (costly) rotation detector this close.
 LINEUP_LEAD_MIN = 60  # lineups publish ~1h before kickoff.
 
+# Cup overlay: a cup round is inherently watch-worthy (rotation risk the
+# pre-lineup mismatch model can't see), so floor its model score.
+_CUP_FLOOR = 5.0
+# Rotation overlay deltas applied on top of the model score (1-10).
+_ROT_DELTA_MASSIVE = 3.0
+_ROT_DELTA_PARTIAL = 1.0
+_ROT_DELTA_REGULAR = -1.0
+
 
 @dataclass
 class PeakFactor:
@@ -111,6 +128,8 @@ class SpecialMatchScore:
     rotation_ratio: Optional[float]
     factors: list[PeakFactor]
     detail_command: str  # e.g. "/fin_match 123"
+    favorite: Optional[str] = None  # name of the favoured team, if any
+    edge: float = 0.0  # signed mismatch edge toward home (>0 home favoured)
 
     @property
     def score_int(self) -> int:
@@ -302,15 +321,32 @@ def score_finland_match(
     match: dict[str, Any],
     *,
     now: datetime,
+    model: Optional[LeagueModel] = None,
     rotation_lookup: Optional[Callable[[dict[str, Any]], tuple[RotationResult, RotationResult]]] = None,
+    params: Optional[PeakParams] = None,
 ) -> Optional[SpecialMatchScore]:
-    """Score one Finnish federation match. Returns ``None`` to skip it."""
+    """Score one Finnish federation match.
+
+    With a ``model`` the statistical mismatch model drives the score; without it
+    (e.g. competition data unavailable) a lightweight structural fallback is used.
+    Returns ``None`` to skip the match.
+    """
 
     status = str(match.get("status") or "").lower()
-    if status in _FINISHED_STATUSES:
+    if status in _FINISHED_STATUSES or not _is_fin_senior(match):
         return None
-    if not _is_fin_senior(match):
-        return None
+    if model is not None:
+        return _score_finland_model(match, now=now, model=model, rotation_lookup=rotation_lookup, params=params)
+    return _score_finland_structural(match, now=now, rotation_lookup=rotation_lookup)
+
+
+def _score_finland_structural(
+    match: dict[str, Any],
+    *,
+    now: datetime,
+    rotation_lookup: Optional[Callable[[dict[str, Any]], tuple[RotationResult, RotationResult]]] = None,
+) -> Optional[SpecialMatchScore]:
+    """Lightweight fallback score (cup + cross-division + rotation), no league model."""
 
     home = match.get("home_team_name") or match.get("club_A_name") or "Local"
     away = match.get("away_team_name") or match.get("club_B_name") or "Visitante"
@@ -373,9 +409,150 @@ def score_finland_match(
     )
 
 
+def _model_factors(
+    breakdown: PrematchBreakdown,
+    favorite_name: Optional[str],
+    params: PeakParams,
+) -> list[PeakFactor]:
+    """Translate a model breakdown into human-readable Spanish factor lines."""
+
+    c = breakdown.components
+    fav = favorite_name or "—"
+    factors: list[PeakFactor] = []
+    if abs(c["supremacy"]) > 0.05:
+        factors.append(PeakFactor(
+            "Superioridad de gol",
+            f"z de ataque/defensa {c['supremacy_z']:+.2f} → favorito {fav}",
+            round(params.w_supremacy * c["supremacy"], 2),
+        ))
+    if abs(c["position"]) > 0.02:
+        factors.append(PeakFactor(
+            "Tabla",
+            f"diferencia de posiciones (gate de datos {c['data_gate']:.0%})",
+            round(params.w_position * c["position"], 2),
+        ))
+    if c["h2h_n"]:
+        factors.append(PeakFactor(
+            f"H2H ({c['h2h_n']})",
+            f"tendencia {c['h2h']:+.2f} hacia {fav}",
+            round(params.w_h2h * c["h2h"], 2),
+        ))
+    if c["transitivity_n"]:
+        factors.append(PeakFactor(
+            f"Rivales en común ({c['transitivity_n']})",
+            f"señal {c['transitivity']:+.2f} hacia {fav}",
+            round(params.w_transitivity * c["transitivity"], 2),
+        ))
+    if c["data_gate"] < 0.5:
+        factors.append(PeakFactor(
+            "⚠️ Pocos datos",
+            f"gate {c['data_gate']:.0%}: la tabla aún no es representativa",
+            0.0,
+        ))
+    if not factors:
+        factors.append(PeakFactor("Sin desnivel claro", "los equipos lucen parejos", 0.0))
+    return factors
+
+
+def _score_finland_model(
+    match: dict[str, Any],
+    *,
+    now: datetime,
+    model: LeagueModel,
+    rotation_lookup: Optional[Callable[[dict[str, Any]], tuple[RotationResult, RotationResult]]] = None,
+    params: Optional[PeakParams] = None,
+) -> SpecialMatchScore:
+    """Model-driven score for a Finnish match (mismatch model + cup/rotation overlay)."""
+
+    params = params or PeakParams()
+    home = match.get("home_team_name") or match.get("club_A_name") or "Local"
+    away = match.get("away_team_name") or match.get("club_B_name") or "Visitante"
+    match_id = str(match.get("match_id"))
+    competition = match.get("category_name") or "Liga"
+    kickoff = _parse_kickoff(match.get("date"), match.get("time"), _HELSINKI)
+    home_id = str(match.get("team_A_id") or "")
+    away_id = str(match.get("team_B_id") or "")
+
+    breakdown = score_prematch(home_id, away_id, model, now=now, params=params)
+    favorite_name = None
+    if breakdown.favorite_id == home_id:
+        favorite_name = home
+    elif breakdown.favorite_id == away_id:
+        favorite_name = away
+
+    score = breakdown.score
+    factors = _model_factors(breakdown, favorite_name, params)
+
+    if _is_fin_cup(match):
+        if score < _CUP_FLOOR:
+            score = _CUP_FLOOR
+        factors.append(PeakFactor("Copa", "ronda de copa: rotación posible (mirá las alineaciones)", 0.0))
+
+    rotation_ratio = _apply_rotation(match, now, rotation_lookup, factors)
+    if rotation_ratio is not None:
+        score += _rotation_delta(rotation_ratio)
+
+    score = max(1.0, min(10.0, score))
+    is_peak, window = _peak_decision(score, rotation_ratio, kickoff, now)
+    return SpecialMatchScore(
+        source="🇫🇮 Finlandia",
+        provider_key="finland",
+        match_id=match_id,
+        home=home,
+        away=away,
+        competition=competition,
+        kickoff_arg=kickoff.astimezone(_ARG) if kickoff else None,
+        kickoff_label=_arg_label(kickoff),
+        score=score,
+        is_peak=is_peak,
+        peak_window=window,
+        rotation_ratio=rotation_ratio,
+        factors=factors,
+        detail_command=f"/fin_match {match_id}",
+        favorite=favorite_name,
+        edge=breakdown.edge,
+    )
+
+
+def _apply_rotation(
+    match: dict[str, Any],
+    now: datetime,
+    rotation_lookup: Optional[Callable[[dict[str, Any]], tuple[RotationResult, RotationResult]]],
+    factors: list[PeakFactor],
+) -> Optional[float]:
+    """Run the B-Team detector when near kickoff; append a factor and return the min ratio."""
+
+    kickoff = _parse_kickoff(match.get("date"), match.get("time"), _HELSINKI)
+    if rotation_lookup is None or not _within_lineup_window(kickoff, now):
+        return None
+    try:
+        home_rot, away_rot = rotation_lookup(match)
+    except Exception:
+        return None
+    ratios = [r.ratio for r in (home_rot, away_rot) if r and r.ratio is not None]
+    if not ratios:
+        return None
+    ratio = min(ratios)
+    if ratio < _ROT_MASSIVE:
+        factors.append(PeakFactor("B-Team confirmado", f"Regularidad {ratio:.0%}: ROTACIÓN MASIVA", _ROT_DELTA_MASSIVE))
+    elif ratio < _ROT_PARTIAL:
+        factors.append(PeakFactor("Rotación parcial", f"Regularidad {ratio:.0%}: algunos suplentes", _ROT_DELTA_PARTIAL))
+    else:
+        factors.append(PeakFactor("Titulares habituales", f"Regularidad {ratio:.0%}: juega el A-Team", _ROT_DELTA_REGULAR))
+    return ratio
+
+
+def _rotation_delta(ratio: float) -> float:
+    if ratio < _ROT_MASSIVE:
+        return _ROT_DELTA_MASSIVE
+    if ratio < _ROT_PARTIAL:
+        return _ROT_DELTA_PARTIAL
+    return _ROT_DELTA_REGULAR
+
+
 # --------------------------------------------------------------------------- #
-# Sweden scoring (no cup rounds in the tracked set => lighter, league-mismatch
-# driven; the B-Team detector stays Finland-only for now).
+# Sweden scoring (mismatch model from aggregated results; B-Team detector stays
+# Finland-only for now).
 # --------------------------------------------------------------------------- #
 def _is_swe_senior(competition: str) -> bool:
     name = str(competition or "").lower()
@@ -395,21 +572,35 @@ def score_sweden_match(
     match: dict[str, Any],
     *,
     now: datetime,
+    model: Optional[LeagueModel] = None,
+    params: Optional[PeakParams] = None,
     standings_gap: Optional[float] = None,
 ) -> Optional[SpecialMatchScore]:
     """Score one Swedish federation match.
 
-    ``standings_gap`` (0..1) is the relative table distance between the two
-    sides when known; a wide gap flags a mismatch worth watching.
+    With a ``model`` the mismatch model drives the score; otherwise a structural
+    fallback (cup/senior + optional ``standings_gap``) is used.
     """
 
     status = str(match.get("status") or "").lower()
     if status in _FINISHED_STATUSES:
         return None
-
     competition = match.get("competition_name") or match.get("title") or "Liga"
     if not _is_swe_senior(competition):
         return None
+    if model is not None:
+        return _score_sweden_model(match, now=now, model=model, competition=competition, params=params)
+    return _score_sweden_structural(match, now=now, competition=competition, standings_gap=standings_gap)
+
+
+def _score_sweden_structural(
+    match: dict[str, Any],
+    *,
+    now: datetime,
+    competition: str,
+    standings_gap: Optional[float] = None,
+) -> Optional[SpecialMatchScore]:
+    """Lightweight fallback score for a Swedish match (no league model)."""
 
     home = match.get("home") or match.get("home_team") or "Local"
     away = match.get("away") or match.get("away_team") or "Visitante"
@@ -450,6 +641,66 @@ def score_sweden_match(
     )
 
 
+def _norm_team(name: str) -> str:
+    """Normalised team key for Sweden (results feed has names, not ids)."""
+
+    return " ".join(str(name or "").strip().lower().split())
+
+
+def _score_sweden_model(
+    match: dict[str, Any],
+    *,
+    now: datetime,
+    model: LeagueModel,
+    competition: str,
+    params: Optional[PeakParams] = None,
+) -> SpecialMatchScore:
+    """Model-driven score for a Swedish match (mismatch model + cup overlay)."""
+
+    params = params or PeakParams()
+    home = match.get("home") or match.get("home_team") or "Local"
+    away = match.get("away") or match.get("away_team") or "Visitante"
+    match_id = str(match.get("match_id") or match.get("id") or "")
+    kickoff = _parse_kickoff_from_local(match.get("start_time_local"), _STOCKHOLM)
+    home_id = _norm_team(home)
+    away_id = _norm_team(away)
+
+    breakdown = score_prematch(home_id, away_id, model, now=now, params=params)
+    favorite_name = None
+    if breakdown.favorite_id == home_id:
+        favorite_name = home
+    elif breakdown.favorite_id == away_id:
+        favorite_name = away
+
+    score = breakdown.score
+    factors = _model_factors(breakdown, favorite_name, params)
+    if _is_swe_cup(competition):
+        if score < _CUP_FLOOR:
+            score = _CUP_FLOOR
+        factors.append(PeakFactor("Copa", "Svenska Cupen: rotación / cruce de divisiones posible", 0.0))
+
+    score = max(1.0, min(10.0, score))
+    is_peak, window = _peak_decision(score, None, kickoff, now)
+    return SpecialMatchScore(
+        source="🇸🇪 Suecia",
+        provider_key="sweden",
+        match_id=match_id,
+        home=home,
+        away=away,
+        competition=competition,
+        kickoff_arg=kickoff.astimezone(_ARG) if kickoff else None,
+        kickoff_label=_arg_label(kickoff),
+        score=score,
+        is_peak=is_peak,
+        peak_window=window,
+        rotation_ratio=None,
+        factors=factors,
+        detail_command=f"/swe_match {match_id}" if match_id else "/swe_today",
+        favorite=favorite_name,
+        edge=breakdown.edge,
+    )
+
+
 def _parse_kickoff_from_local(value: Optional[str], tz: ZoneInfo) -> Optional[datetime]:
     if not value:
         return None
@@ -463,6 +714,219 @@ def _parse_kickoff_from_local(value: Optional[str], tz: ZoneInfo) -> Optional[da
 
 
 # --------------------------------------------------------------------------- #
+# League-model adapters (build a peak_model.LeagueModel from the live feeds)
+# --------------------------------------------------------------------------- #
+def _to_int(value: Any) -> Optional[int]:
+    try:
+        return int(str(value).strip())
+    except (TypeError, ValueError):
+        return None
+
+
+def _fin_standings_to_teams(standings: list[dict[str, Any]]) -> dict[str, TeamStats]:
+    teams: dict[str, TeamStats] = {}
+    for row in standings or []:
+        tid = str(row.get("team_id") or "")
+        if not tid:
+            continue
+        teams[tid] = TeamStats(
+            team_id=tid,
+            name=str(row.get("team_name") or ""),
+            position=_to_int(row.get("current_standing")),
+            played=_to_int(row.get("matches_played")) or 0,
+            played_home=_to_int(row.get("matches_played_home")) or 0,
+            played_away=_to_int(row.get("matches_played_away")) or 0,
+            gf_home=_to_int(row.get("goals_for_home")) or 0,
+            ga_home=_to_int(row.get("goals_against_home")) or 0,
+            gf_away=_to_int(row.get("goals_for_away")) or 0,
+            ga_away=_to_int(row.get("goals_against_away")) or 0,
+        )
+    return teams
+
+
+def _fin_matches_to_past(raw: list[dict[str, Any]]) -> list[PastMatch]:
+    out: list[PastMatch] = []
+    for m in raw or []:
+        if m.get("status") not in ("Finished", "Played") or m.get("walkover") == 1:
+            continue
+        gh = _to_int(m.get("fs_A"))
+        ga = _to_int(m.get("fs_B"))
+        if gh is None or ga is None:
+            continue
+        out.append(PastMatch(
+            date=str(m.get("date") or ""),
+            home_id=str(m.get("team_A_id") or ""),
+            away_id=str(m.get("team_B_id") or ""),
+            gh=gh, ga=ga,
+            match_id=str(m.get("match_id") or ""),
+        ))
+    return out
+
+
+def _resolve_fin_previous_competition(api: Any, competition_id: str, category_id: str, now: datetime) -> Optional[str]:
+    """Resolve the previous season's competition_id for the same category."""
+
+    import re
+
+    season_year = now.astimezone(_HELSINKI).year
+    digits = re.search(r"(\d{2})$", str(competition_id))
+    if digits:
+        season_year = 2000 + int(digits.group(1))
+    prev_season = str(season_year - 1)
+    try:
+        cats = api.get_categories(prev_season)
+    except Exception:
+        return None
+    for c in cats or []:
+        if str(c.get("category_id")) == str(category_id):
+            cid = c.get("competition_id")
+            return str(cid) if cid else None
+    return None
+
+
+def build_finland_model(
+    api: Any,
+    competition_id: str,
+    category_id: str,
+    *,
+    now: datetime,
+    include_previous: bool = True,
+) -> LeagueModel:
+    """Build a LeagueModel for one Finnish competition (standings + matches)."""
+
+    try:
+        standings = api.get_standings(competition_id, category_id, "1")
+    except Exception:
+        standings = []
+    teams = _fin_standings_to_teams(standings)
+
+    try:
+        matches = _fin_matches_to_past(api.get_matches_by_league(competition_id, category_id))
+    except Exception:
+        matches = []
+
+    if include_previous:
+        prev_id = _resolve_fin_previous_competition(api, competition_id, category_id, now)
+        if prev_id and prev_id != competition_id:
+            try:
+                matches += _fin_matches_to_past(api.get_matches_by_league(prev_id, category_id))
+            except Exception:
+                pass
+
+    return LeagueModel(name=str(category_id), teams=teams, matches=matches)
+
+
+def _enrich_fin_red_cards(api: Any, matches: list[PastMatch], home_id: str, away_id: str, cache: dict[str, dict]) -> None:
+    """Set red-card flags on the H2H matches of a given pair (lazy + cached)."""
+
+    pair = {home_id, away_id}
+    for m in matches:
+        if m.has_red_info or not m.match_id or {m.home_id, m.away_id} != pair:
+            continue
+        details = cache.get(m.match_id)
+        if details is None:
+            try:
+                details = api.get_match_details(m.match_id) or {}
+            except Exception:
+                details = {}
+            cache[m.match_id] = details
+        team_a_id = str(details.get("team_A_id") or m.home_id)
+        for b in details.get("bookings", []) or []:
+            if "red" in str(b.get("card_type") or "").lower():
+                if str(b.get("team_id")) == team_a_id:
+                    m.home_red = True
+                else:
+                    m.away_red = True
+        m.has_red_info = True
+
+
+# Swedish senior competition_id map (2026), to resolve the model from the
+# "matches today" competition name (which carries no id).
+_SWE_COMP_IDS = {
+    "allsvenskan": "133348",
+    "superettan": "133340",
+    "ettan norra": "133338",
+    "ettan södra": "133339",
+    "ettan sodra": "133339",
+    "damallsvenskan": "133440",
+    "elitettan": "133439",
+}
+
+
+def _resolve_swe_competition_id(competition_name: str) -> Optional[str]:
+    low = str(competition_name or "").lower()
+    for key, cid in _SWE_COMP_IDS.items():
+        if key in low:
+            return cid
+    return None
+
+
+def _parse_swe_score(value: Any) -> tuple[Optional[int], Optional[int]]:
+    try:
+        parts = str(value).replace("–", "-").split("-")
+        return int(parts[0].strip()), int(parts[1].strip())
+    except (TypeError, ValueError, IndexError):
+        return None, None
+
+
+def build_sweden_model(client: Any, competition_id: str, *, name: str = "") -> LeagueModel:
+    """Build a LeagueModel for one Swedish competition.
+
+    Standings give position/played; per-team home/away goals are aggregated from
+    the season's results (the standings feed lacks goals-for/against splits).
+    Teams are keyed by normalised name (the results feed has names, not ids).
+    """
+
+    teams: dict[str, TeamStats] = {}
+    try:
+        st = client.get_standings(competition_id)
+        rows = st.get("teams") if isinstance(st, dict) else st
+    except Exception:
+        rows = []
+    for row in rows or []:
+        key = _norm_team(row.get("team"))
+        if not key:
+            continue
+        teams[key] = TeamStats(
+            team_id=key,
+            name=str(row.get("team") or ""),
+            position=_to_int(row.get("position")),
+            played=_to_int(row.get("played")) or 0,
+        )
+
+    try:
+        res = client.get_latest_results(competition_id, limit=300)
+        results = res.get("matches") if isinstance(res, dict) else res
+    except Exception:
+        results = []
+
+    matches: list[PastMatch] = []
+    for r in results or []:
+        gh, ga = _parse_swe_score(r.get("score"))
+        if gh is None or ga is None:
+            continue
+        hk = _norm_team(r.get("home"))
+        ak = _norm_team(r.get("away"))
+        if not hk or not ak:
+            continue
+        th = teams.setdefault(hk, TeamStats(team_id=hk, name=str(r.get("home") or "")))
+        ta = teams.setdefault(ak, TeamStats(team_id=ak, name=str(r.get("away") or "")))
+        th.played_home += 1
+        th.gf_home += gh
+        th.ga_home += ga
+        ta.played_away += 1
+        ta.gf_away += ga
+        ta.ga_away += gh
+        matches.append(PastMatch(
+            date=str(r.get("start_time_local") or "")[:10],
+            home_id=hk, away_id=ak, gh=gh, ga=ga,
+            match_id=str(r.get("match_id") or ""),
+        ))
+
+    return LeagueModel(name=name or str(competition_id), teams=teams, matches=matches)
+
+
+# --------------------------------------------------------------------------- #
 # Orchestration
 # --------------------------------------------------------------------------- #
 def build_peak_scores(
@@ -471,14 +935,18 @@ def build_peak_scores(
     sweden_client: Any = None,
     now: Optional[datetime] = None,
     fin_date: Optional[str] = None,
+    params: Optional[PeakParams] = None,
+    include_previous: bool = True,
 ) -> list[SpecialMatchScore]:
     """Fetch today's special-league matches and return them scored & ranked.
 
-    Network access happens only through the injected ``finland_api`` /
-    ``sweden_client`` objects, so this stays unit-testable with fakes.
+    Matches are grouped by competition so each league model (standings + match
+    history, current + previous season) is built once. Network access happens
+    only through the injected ``finland_api`` / ``sweden_client`` objects.
     """
 
     now = now or datetime.now(tz=_ARG)
+    params = params or PeakParams()
     scores: list[SpecialMatchScore] = []
 
     if finland_api is not None:
@@ -487,6 +955,13 @@ def build_peak_scores(
             matches = finland_api.get_matches_by_date(fin_date) or []
         except Exception:
             matches = []
+        senior = [
+            m for m in matches
+            if str(m.get("status") or "").lower() not in _FINISHED_STATUSES and _is_fin_senior(m)
+        ]
+
+        fin_models: dict[tuple[str, str], LeagueModel] = {}
+        red_cache: dict[str, dict] = {}
 
         def _lookup(match: dict[str, Any]) -> tuple[RotationResult, RotationResult]:
             details = finland_api.get_match_details(match.get("match_id"))
@@ -494,8 +969,21 @@ def build_peak_scores(
                 return RotationResult(None), RotationResult(None)
             return rotation_lookup_for_match(finland_api, details)
 
-        for match in matches:
-            scored = score_finland_match(match, now=now, rotation_lookup=_lookup)
+        for match in senior:
+            key = (str(match.get("competition_id") or ""), str(match.get("category_id") or ""))
+            model = fin_models.get(key)
+            if model is None:
+                model = build_finland_model(finland_api, key[0], key[1], now=now, include_previous=include_previous)
+                fin_models[key] = model
+            try:
+                _enrich_fin_red_cards(
+                    finland_api, model.matches,
+                    str(match.get("team_A_id") or ""), str(match.get("team_B_id") or ""),
+                    red_cache,
+                )
+            except Exception:
+                pass
+            scored = score_finland_match(match, now=now, model=model, rotation_lookup=_lookup, params=params)
             if scored is not None:
                 scores.append(scored)
 
@@ -504,8 +992,25 @@ def build_peak_scores(
             swe_matches = sweden_client.get_matches_today() or []
         except Exception:
             swe_matches = []
-        for match in swe_matches:
-            scored = score_sweden_match(match, now=now)
+        senior = [
+            m for m in swe_matches
+            if str(m.get("status") or "").lower() not in _FINISHED_STATUSES
+            and _is_swe_senior(m.get("competition_name") or m.get("title") or "")
+        ]
+        swe_models: dict[str, LeagueModel] = {}
+        for match in senior:
+            comp = match.get("competition_name") or match.get("title") or ""
+            cid = _resolve_swe_competition_id(comp)
+            model = None
+            if cid:
+                model = swe_models.get(cid)
+                if model is None:
+                    try:
+                        model = build_sweden_model(sweden_client, cid, name=comp)
+                    except Exception:
+                        model = None
+                    swe_models[cid] = model
+            scored = score_sweden_match(match, now=now, model=model, params=params)
             if scored is not None:
                 scores.append(scored)
 
@@ -566,8 +1071,10 @@ def _render_entry(score: SpecialMatchScore) -> list[str]:
         f"\n{score.badge} *{score.score_int}/10* — {score.source}",
         f"🏆 {score.competition}",
         f"⚽ *{score.home} vs {score.away}* · 🕒 `{score.kickoff_label}` (ARG)",
-        f"🎯 Peak: {score.peak_window}",
     ]
+    if score.favorite:
+        out.append(f"⭐ Favorito: *{score.favorite}*")
+    out.append(f"🎯 Peak: {score.peak_window}")
     if score.rotation_ratio is not None:
         out.append(f"🔍 Regularidad XI más baja: *{score.rotation_ratio:.0%}*")
     out.append("📊 Factores:")
@@ -587,7 +1094,8 @@ def render_match_report(score: SpecialMatchScore) -> str:
         "━━━━━━━━━━━━━━━━━━━━",
         f"⚽ *{score.home} vs {score.away}*",
         f"🕒 Inicio: `{score.kickoff_label}` (ARG)",
-        f"🎯 Peak: {'SÍ ✅' if score.is_peak else 'no ⚪️'} — {score.peak_window}",
+        f"⭐ Favorito: *{score.favorite}*" if score.favorite else "⭐ Favorito: sin desnivel claro",
+        f"🎯 Peak: {'SÍ ✅' if score.is_peak else 'No ⚪️'} — {score.peak_window}",
     ]
     if score.rotation_ratio is not None:
         lines.append(f"🔍 Regularidad del XI (mín. entre equipos): *{score.rotation_ratio:.0%}*")

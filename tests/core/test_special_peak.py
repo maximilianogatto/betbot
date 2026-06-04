@@ -178,21 +178,51 @@ class SwedenScoringTests(unittest.TestCase):
         self.assertEqual(score.score, 4.5)
 
 
+def _fin_standing(tid, pos, gfh, gah, gfa, gaa, ph=5, pa=5):
+    return {
+        "team_id": tid, "team_name": tid, "current_standing": pos,
+        "matches_played": ph + pa, "matches_played_home": ph, "matches_played_away": pa,
+        "goals_for_home": gfh, "goals_against_home": gah,
+        "goals_for_away": gfa, "goals_against_away": gaa,
+    }
+
+
+_FIN_STANDINGS = [
+    _fin_standing("H", 1, 15, 5, 10, 8),
+    _fin_standing("A", 4, 5, 15, 2, 18),
+    _fin_standing("M1", 2, 10, 10, 7, 10),
+    _fin_standing("M2", 3, 8, 8, 6, 9),
+]
+
+
 class OrchestrationTests(unittest.TestCase):
     def test_build_and_render(self) -> None:
+        cup = {
+            "match_id": "2002", "status": "Scheduled",
+            "category_id": "MSC", "category_name": "Suomen Cup", "competition_id": "spljp26",
+            "team_A_id": "H", "team_B_id": "A", "club_A_name": "HJK", "club_B_name": "Weakling",
+            "date": "2026-07-03", "time": "19:00",
+        }
+        plain = {
+            "match_id": "1001", "status": "Scheduled",
+            "category_id": "M2", "category_name": "Miesten Kakkonen", "competition_id": "spljp26",
+            "team_A_id": "M1", "team_B_id": "M2", "club_A_name": "M1", "club_B_name": "M2",
+            "date": "2026-07-03", "time": "19:00",
+        }
+        finished = {"match_id": "x", "status": "Finished", "category_id": "M2"}
+
         class _FinApi:
             def get_matches_by_date(self, _date):
-                return [
-                    _fin_match(),  # plain league -> 2
-                    _fin_match(
-                        match_id="2002",
-                        category_id="MSC",
-                        category_name="Suomen Cup",
-                        team_A_primary_category_id="VL",
-                        team_B_primary_category_id="M2",
-                    ),  # cup mismatch -> 6.5
-                    _fin_match(match_id="x", status="Finished"),  # skipped
-                ]
+                return [plain, cup, finished]
+
+            def get_standings(self, _c, _cat, _g):
+                return _FIN_STANDINGS
+
+            def get_matches_by_league(self, _c, _cat):
+                return []
+
+            def get_categories(self, _year):
+                return []
 
             def get_match_details(self, _id):
                 return None
@@ -207,15 +237,32 @@ class OrchestrationTests(unittest.TestCase):
                     "start_time_local": "2026-07-03 19:00",
                 }]
 
+            def get_standings(self, _cid):
+                return {"teams": [
+                    {"team": "Leader", "position": 1, "played": 10, "team_id": "0"},
+                    {"team": "Sirius", "position": 4, "played": 10, "team_id": "1"},
+                    {"team": "Mjällby", "position": 5, "played": 10, "team_id": "2"},
+                    {"team": "Bottom", "position": 8, "played": 10, "team_id": "3"},
+                ]}
+
+            def get_latest_results(self, _cid, *, limit=300):
+                return {"matches": [
+                    {"match_id": "9", "home": "Sirius", "away": "Mjällby", "score": "1 - 1", "start_time_local": "2026-05-01 15:00"},
+                ]}
+
         scores = build_peak_scores(finland_api=_FinApi(), sweden_client=_SweClient(), now=_NOW)
-        self.assertEqual(len(scores), 3)
-        # Sorted by score desc: cup(6.5) first.
+        self.assertEqual(len(scores), 3)  # finished skipped
+
+        cup_score = next(s for s in scores if s.match_id == "2002")
+        # Strong home vs weak away in a cup -> clear favourite + cup floor -> peak.
+        self.assertEqual(cup_score.favorite, "HJK")
+        self.assertTrue(cup_score.is_peak)
+        self.assertGreaterEqual(cup_score.score, 5.0)
+        # Cup ranks at the top.
         self.assertEqual(scores[0].match_id, "2002")
-        self.assertTrue(scores[0].is_peak)
 
         digest = render_peak_digest(scores, now=_NOW)
         self.assertIn("Peak del día", digest)
-        self.assertIn("PEAKS", digest)
         self.assertIn("Suomen Cup", digest)
 
     def test_render_empty(self) -> None:

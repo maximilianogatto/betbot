@@ -112,6 +112,7 @@ class PastMatch:
     home_red: bool = False
     away_red: bool = False
     has_red_info: bool = False
+    match_id: str = ""  # provider match id, for lazy red-card enrichment
 
 
 @dataclass
@@ -224,7 +225,8 @@ def position_signal(team_h: TeamStats, team_a: TeamStats, n_teams: int) -> float
 
     if team_h.position is None or team_a.position is None or n_teams < 2:
         return 0.0
-    return (team_a.position - team_h.position) / (n_teams - 1)
+    val = (team_a.position - team_h.position) / (n_teams - 1)
+    return max(-1.0, min(1.0, val))
 
 
 def expected_supremacy(
@@ -352,14 +354,18 @@ def score_prematch(
     h2h, h2h_n = h2h_signal(home_id, away_id, model.matches, now, params)
     trans, trans_n = transitivity_signal(home_id, away_id, model.matches, now, params)
 
-    edge = (
-        params.w_supremacy * sup
-        + params.w_position * pos
-        + params.w_h2h * h2h
-        + params.w_transitivity * trans
-    )
-    weight_sum = params.w_supremacy + params.w_position + params.w_h2h + params.w_transitivity
-    magnitude = min(1.0, abs(edge) / weight_sum) if weight_sum else 0.0
+    position_known = team_h.position is not None and team_a.position is not None
+    # Only factors that actually have data contribute to (and normalise) the
+    # edge — a missing factor must not dilute the magnitude toward zero.
+    terms = [
+        (params.w_supremacy, sup, abs(sup) > 1e-9),
+        (params.w_position, pos, position_known and abs(pos) > 1e-12),
+        (params.w_h2h, h2h, h2h_n > 0),
+        (params.w_transitivity, trans, trans_n > 0),
+    ]
+    edge = sum(w * v for w, v, active in terms if active)
+    weight_sum = sum(w for w, _v, active in terms if active)
+    magnitude = min(1.0, abs(edge) / weight_sum) if weight_sum > 0 else 0.0
     score = 1.0 + 9.0 * magnitude
 
     favorite_id: Optional[str]
