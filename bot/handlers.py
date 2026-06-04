@@ -100,16 +100,31 @@ TRACK_STATS_OPTIONS_CONTEXT_KEY = "track_stats_options"
 MANUAL_REFRESH_TASK_KEY = "manual_refresh_task"
 
 HELP_MESSAGE = (
-    "🤖 *Comandos del Bot y Configuración:*\n"
+    "🤖 *Menú de Ayuda de BetBot*\n\n"
+    "Elegí una sección para ver los comandos detallados:\n"
+    "• `/help general` - Comandos generales y de estado\n"
+    "• `/help odds` - Seguimiento de cuotas/odds y variaciones\n"
+    "• `/help live` - Monitoreo de partidos en vivo (live)\n"
+    "• `/help stats` - Estadísticas y H2H\n"
+    "• `/help especial` - Ligas especiales (Finlandia y Suecia)\n\n"
+    "También podés usar los comandos directos de ayuda:\n"
+    "/help_general, /help_odds, /help_live, /help_stats, /help_especial"
+)
+
+HELP_GENERAL_MESSAGE = (
+    "🤖 *Comandos Generales y de Configuración:*\n"
     "  `/start` - Mensaje de bienvenida y presentación\n"
-    "  `/help` - Muestra esta lista de comandos agrupados\n"
+    "  `/help` - Menú principal de ayuda\n"
     "  `/guide` - Guía rápida paso a paso del flujo completo\n"
     "  `/ping` - Verifica si el bot responde (pong)\n"
     "  `/status` - Estado del servidor y del bot (online)\n"
     "  `/resources` - Estadísticas de consumo de CPU/RAM del VPS\n"
     "  `/echo <texto>` - Devuelve el mismo texto enviado\n"
-    "  `/cancel` - Cancela la selección interactiva en curso\n\n"
-    "📈 *Odds en General:*\n"
+    "  `/cancel` - Cancela la selección interactiva en curso"
+)
+
+HELP_ODDS_MESSAGE = (
+    "📈 *Comandos para Odds (Cuotas):*\n"
     "  `/track_league` - Agrega una liga de odds de forma interactiva (plataforma -> país -> liga)\n"
     "  `/track_url <url>` - Agrega una liga de odds usando un link directo y la deja pendiente\n"
     "  `/confirm_track` - Confirma la última liga pendiente\n"
@@ -127,6 +142,13 @@ HELP_MESSAGE = (
     "  `/check_little_changes` - Lista cambios pequeños de cuotas pendientes de aprobación\n"
     "  `/confirm_change <n>` - Aprueba un cambio pequeño individual y actualiza su baseline\n"
     "  `/confirm_all_little_changes` - Aprueba todos los cambios pequeños pendientes\n\n"
+    "🎯 *Peak del día* (detección + scoring 1–10):\n"
+    "  `/peak_today` - Detecta y puntúa los partidos especiales con flag de peak y cuándo entrar\n"
+    "  `/peak_on` - Activa el envío automático del Peak del día cada mañana\n"
+    "  `/peak_off` - Desactiva el envío automático del Peak del día"
+)
+
+HELP_LIVE_MESSAGE = (
     "🔴 *Live Commands (En vivo):*\n"
     "  `/watch_live` - Pone partidos en vigilancia en vivo (escribí los equipos o subí foto del fixture)\n"
     "  `/import_sheet` - Importa partidos en vigilancia directamente desde la planilla de Google Drive\n"
@@ -134,37 +156,38 @@ HELP_MESSAGE = (
     "  `/view_match <id>` - Muestra estadísticas en tiempo real y cuotas de un partido vigilado\n"
     "  `/live_status` - Muestra cadencia, partidos activos y último estado live detectado\n"
     "  `/live_settings` - Configura alertas live: goles, rojas y amarillas\n"
-    "  `/unwatch <id>` - Saca un partido de la vigilancia en vivo (o /unwatch all)\n\n"
-    "📊 *Stats (Estadísticas):*\n"
+    "  `/unwatch <id>` - Saca un partido de la vigilancia en vivo (o /unwatch all)"
+)
+
+HELP_STATS_MESSAGE = (
+    "📊 *Stats y Estadísticas:*\n"
     "  `/link_stats` - Vincula una liga de odds con un proveedor de estadísticas\n"
     "  `/stats_links` - Muestra los vínculos activos entre odds y stats\n"
     "  `/track_stats` - Sigue una liga únicamente para estadísticas y cache diario\n"
     "  `/stats_tracks` - Lista las ligas seguidas exclusivamente por estadísticas\n"
     "  `/explore_stats` - Explora tabla, partidos anteriores, fixture y goleadores de stats\n"
-    "  `/stats <n>` - Genera reporte H2H del partido elegido de la lista de /matches\n\n"
-    "🌍 *Ligas Especiales (Stats de Federaciones):*\n"
-    "  _Ligas de ascenso/copas que no figuran en sitios comunes: las sacamos de las páginas oficiales para detectar valor._\n"
-    "  🇫🇮 *Finlandia* (`tulospalvelu.palloliitto.fi`):\n"
-    "    `/fin_help` - Guía completa del módulo de Finlandia\n"
-    "    `/fin_leagues` - Escalafón oficial de ligas y copas\n"
-    "    `/fin_today` - Partidos de hoy con sus IDs\n"
-    "    `/fin_standings <CÓDIGO>` - Tabla de posiciones de una liga\n"
-    "    `/fin_fixtures <CÓDIGO>` - Calendario reciente y próximo de una liga\n"
-    "    `/fin_match <ID>` - Reporte del partido + Detector de Suplentes / B-Team\n"
-    "  🇸🇪 *Suecia* (`svenskfotboll.se`):\n"
-    "    `/swe_help` - Guía completa del módulo de Suecia\n"
-    "    `/swe_leagues` - Ligas disponibles y sus códigos\n"
-    "    `/swe_today` - Partidos de hoy con sus IDs\n"
-    "    `/swe_standings <CÓDIGO>` - Tabla de posiciones de una liga\n"
-    "    `/swe_fixtures <CÓDIGO>` - Próximos partidos de una liga\n"
-    "    `/swe_results <CÓDIGO>` - Últimos resultados de una liga\n"
-    "    `/swe_match <ID>` - Reporte detallado de un partido\n"
-    "  🎯 *Peak del día* (detección + scoring 1–10):\n"
-    "    `/peak_today` - Detecta y puntúa (1–10) los partidos especiales del día con flag de peak y cuándo entrar\n"
-    "    `/peak_on` - Activa el envío automático del Peak del día cada mañana\n"
-    "    `/peak_off` - Desactiva el envío automático del Peak del día\n\n"
-    "🌐 *Plataformas soportadas:*\n"
+    "  `/stats <n>` - Genera reporte H2H del partido elegido de la lista de /matches\n"
     "  `/platforms` - Muestra las plataformas de odds y proveedores de stats soportados"
+)
+
+HELP_SPECIAL_MESSAGE = (
+    "🌍 *Ligas Especiales (Stats de Federaciones):*\n"
+    "_Ligas de ascenso/copas que no figuran en sitios comunes: las sacamos de las páginas oficiales para detectar valor._\n\n"
+    "🇫🇮 *Finlandia* (`tulospalvelu.palloliitto.fi`):\n"
+    "  `/fin_help` - Guía completa del módulo de Finlandia\n"
+    "  `/fin_leagues` - Escalafón oficial de ligas y copas\n"
+    "  `/fin_today` - Partidos de hoy con sus IDs\n"
+    "  `/fin_standings <CÓDIGO>` - Tabla de posiciones de una liga\n"
+    "  `/fin_fixtures <CÓDIGO>` - Calendario reciente y próximo de una liga\n"
+    "  `/fin_match <ID>` - Reporte del partido + Detector de Suplentes / B-Team\n\n"
+    "🇸🇪 *Suecia* (`svenskfotboll.se`):\n"
+    "  `/swe_help` - Guía completa del módulo de Suecia\n"
+    "  `/swe_leagues` - Ligas disponibles y sus códigos\n"
+    "  `/swe_today` - Partidos de hoy con sus IDs\n"
+    "  `/swe_standings <CÓDIGO>` - Tabla de posiciones de una liga\n"
+    "  `/swe_fixtures <CÓDIGO>` - Próximos partidos de una liga\n"
+    "  `/swe_results <CÓDIGO>` - Últimos resultados de una liga\n"
+    "  `/swe_match <ID>` - Reporte detallado de un partido"
 )
 
 GUIDE_MESSAGE = (
@@ -1066,14 +1089,62 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle the `/help` command."""
-
-    del context
+    """Handle the `/help` command with optional category argument."""
 
     if update.message is None:
         return
 
-    await update.message.reply_text(HELP_MESSAGE)
+    category = ""
+    if context.args:
+        category = context.args[0].strip().lower()
+
+    if category in ("general", "bot"):
+        await update.message.reply_text(HELP_GENERAL_MESSAGE, parse_mode=ParseMode.MARKDOWN)
+    elif category == "odds":
+        await update.message.reply_text(HELP_ODDS_MESSAGE, parse_mode=ParseMode.MARKDOWN)
+    elif category == "live":
+        await update.message.reply_text(HELP_LIVE_MESSAGE, parse_mode=ParseMode.MARKDOWN)
+    elif category == "stats":
+        await update.message.reply_text(HELP_STATS_MESSAGE, parse_mode=ParseMode.MARKDOWN)
+    elif category in ("especial", "especiales", "federaciones"):
+        await update.message.reply_text(HELP_SPECIAL_MESSAGE, parse_mode=ParseMode.MARKDOWN)
+    else:
+        await update.message.reply_text(HELP_MESSAGE, parse_mode=ParseMode.MARKDOWN)
+
+
+async def help_general_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle the `/help_general` command."""
+    del context
+    if update.message:
+        await update.message.reply_text(HELP_GENERAL_MESSAGE, parse_mode=ParseMode.MARKDOWN)
+
+
+async def help_odds_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle the `/help_odds` command."""
+    del context
+    if update.message:
+        await update.message.reply_text(HELP_ODDS_MESSAGE, parse_mode=ParseMode.MARKDOWN)
+
+
+async def help_live_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle the `/help_live` command."""
+    del context
+    if update.message:
+        await update.message.reply_text(HELP_LIVE_MESSAGE, parse_mode=ParseMode.MARKDOWN)
+
+
+async def help_stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle the `/help_stats` command."""
+    del context
+    if update.message:
+        await update.message.reply_text(HELP_STATS_MESSAGE, parse_mode=ParseMode.MARKDOWN)
+
+
+async def help_special_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle the `/help_especial` command."""
+    del context
+    if update.message:
+        await update.message.reply_text(HELP_SPECIAL_MESSAGE, parse_mode=ParseMode.MARKDOWN)
 
 
 async def guide_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -3170,6 +3241,11 @@ def register_handlers(application: Application) -> None:
 
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("help", help_command))
+    application.add_handler(CommandHandler("help_general", help_general_command))
+    application.add_handler(CommandHandler("help_odds", help_odds_command))
+    application.add_handler(CommandHandler("help_live", help_live_command))
+    application.add_handler(CommandHandler("help_stats", help_stats_command))
+    application.add_handler(CommandHandler("help_especial", help_special_command))
     application.add_handler(CommandHandler("guide", guide_command))
     application.add_handler(CommandHandler("platforms", platforms_command))
     
