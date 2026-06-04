@@ -634,37 +634,45 @@ class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):
     def test_kickoff_from_arg_time_tomorrow_shifting(self) -> None:
         from monitors.live_watch import _kickoff_from_arg_time, _ARG_TZ
         import datetime as _dt
+        from unittest.mock import patch
         
-        # Current Argentina local time (with clean seconds/microseconds for exact comparisons)
-        now_arg = _dt.datetime.now(_ARG_TZ).replace(second=0, microsecond=0)
+        # Fixed reference time at 12:00 Argentina time to avoid midnight test failures
+        mock_now = _dt.datetime(2026, 6, 3, 12, 0, 0, tzinfo=_ARG_TZ)
+        now_arg = mock_now
         
-        # Test case 1: Kickoff is 1 hour in the past compared to now
-        # It should stay today (timedelta <= 2.5 hours)
-        target_time1 = now_arg - _dt.timedelta(hours=1)
-        ko_str1 = _kickoff_from_arg_time(target_time1.hour, target_time1.minute)
-        self.assertIsNotNone(ko_str1)
-        ko_dt1 = _dt.datetime.fromisoformat(ko_str1)
-        diff1 = now_arg - ko_dt1.astimezone(_ARG_TZ)
-        self.assertLessEqual(abs(diff1.total_seconds() - 3600), 15)
+        class MockDatetime(_dt.datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return mock_now.astimezone(tz)
         
-        # Test case 2: Kickoff is 5 hours in the past compared to now
-        # Since 5 > 2.5 hours, it must shift to tomorrow (+1 day)
-        target_time2 = now_arg - _dt.timedelta(hours=5)
-        ko_str2 = _kickoff_from_arg_time(target_time2.hour, target_time2.minute)
-        self.assertIsNotNone(ko_str2)
-        ko_dt2 = _dt.datetime.fromisoformat(ko_str2)
-        diff2 = ko_dt2.astimezone(_ARG_TZ) - now_arg
-        # Difference should be tomorrow minus 5 hours = +19 hours in the future
-        self.assertLessEqual(abs(diff2.total_seconds() - 19 * 3600), 15)
-
-        # Test case 3: Kickoff is 2 hours in the future compared to now
-        # It should stay today (future)
-        target_time3 = now_arg + _dt.timedelta(hours=2)
-        ko_str3 = _kickoff_from_arg_time(target_time3.hour, target_time3.minute)
-        self.assertIsNotNone(ko_str3)
-        ko_dt3 = _dt.datetime.fromisoformat(ko_str3)
-        diff3 = ko_dt3.astimezone(_ARG_TZ) - now_arg
-        self.assertLessEqual(abs(diff3.total_seconds() - 2 * 3600), 15)
+        with patch("monitors.live_watch.datetime", MockDatetime):
+            # Test case 1: Kickoff is 1 hour in the past compared to now
+            # It should stay today (timedelta <= 2.5 hours)
+            target_time1 = now_arg - _dt.timedelta(hours=1)
+            ko_str1 = _kickoff_from_arg_time(target_time1.hour, target_time1.minute)
+            self.assertIsNotNone(ko_str1)
+            ko_dt1 = _dt.datetime.fromisoformat(ko_str1)
+            diff1 = now_arg - ko_dt1.astimezone(_ARG_TZ)
+            self.assertLessEqual(abs(diff1.total_seconds() - 3600), 15)
+            
+            # Test case 2: Kickoff is 5 hours in the past compared to now
+            # Since 5 > 2.5 hours, it must shift to tomorrow (+1 day)
+            target_time2 = now_arg - _dt.timedelta(hours=5)
+            ko_str2 = _kickoff_from_arg_time(target_time2.hour, target_time2.minute)
+            self.assertIsNotNone(ko_str2)
+            ko_dt2 = _dt.datetime.fromisoformat(ko_str2)
+            diff2 = ko_dt2.astimezone(_ARG_TZ) - now_arg
+            # Difference should be tomorrow minus 5 hours = +19 hours in the future
+            self.assertLessEqual(abs(diff2.total_seconds() - 19 * 3600), 15)
+    
+            # Test case 3: Kickoff is 2 hours in the future compared to now
+            # It should stay today (future)
+            target_time3 = now_arg + _dt.timedelta(hours=2)
+            ko_str3 = _kickoff_from_arg_time(target_time3.hour, target_time3.minute)
+            self.assertIsNotNone(ko_str3)
+            ko_dt3 = _dt.datetime.fromisoformat(ko_str3)
+            diff3 = ko_dt3.astimezone(_ARG_TZ) - now_arg
+            self.assertLessEqual(abs(diff3.total_seconds() - 2 * 3600), 15)
 
     def test_get_recommended_poll_interval(self) -> None:
         import datetime as _dt
