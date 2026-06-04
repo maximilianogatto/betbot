@@ -464,6 +464,14 @@ class LiveWatchService:
 def _event_live_state(event: LiveEventSnapshot) -> dict[str, Any]:
     """Compact persisted state used to detect score/card deltas per platform."""
 
+    odds_dict = None
+    if event.odds_1x2:
+        odds_dict = {
+            "home": event.odds_1x2.home,
+            "draw": event.odds_1x2.draw,
+            "away": event.odds_1x2.away,
+        }
+
     return {
         "event_id": str(event.external_event_id),
         "minute": event.minute,
@@ -476,6 +484,7 @@ def _event_live_state(event: LiveEventSnapshot) -> dict[str, Any]:
         "home_yellow_cards": event.home_yellow_cards,
         "away_yellow_cards": event.away_yellow_cards,
         "live_stats": event.live_stats or {},
+        "odds": odds_dict,
         "observed_at": datetime.now(timezone.utc).isoformat(),
     }
 

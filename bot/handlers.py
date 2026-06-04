@@ -131,6 +131,7 @@ HELP_MESSAGE = (
     "  `/watch_live` - Pone partidos en vigilancia en vivo (escribí los equipos o subí foto del fixture)\n"
     "  `/import_sheet` - Importa partidos en vigilancia directamente desde la planilla de Google Drive\n"
     "  `/watching` - Lista tus partidos en vigilancia activa y los que ya salieron\n"
+    "  `/view_match <id>` - Muestra estadísticas en tiempo real y cuotas de un partido vigilado\n"
     "  `/live_status` - Muestra cadencia, partidos activos y último estado live detectado\n"
     "  `/live_settings` - Configura alertas live: goles, rojas y amarillas\n"
     "  `/unwatch <id>` - Saca un partido de la vigilancia en vivo (o /unwatch all)\n\n"
@@ -761,6 +762,220 @@ def _format_live_settings(settings) -> str:
         "/live_settings reds on\n"
         "/live_settings all on"
     )
+
+
+def _format_live_state_report(
+    home: str,
+    away: str,
+    league_hint: str | None,
+    minute: str | None,
+    home_score: int | None,
+    away_score: int | None,
+    home_red_cards: int | None,
+    away_red_cards: int | None,
+    home_yellow_cards: int | None,
+    away_yellow_cards: int | None,
+    live_stats: dict[str, Any],
+    odds: dict[str, Any] | None,
+    platform: str
+) -> str:
+    platform_lbl = platform.replace("_http", "").upper()
+    lines = [
+        f"🔴 *EN VIVO ({platform_lbl})*",
+        f"⚽ *{home} vs {away}*",
+    ]
+    if league_hint:
+        lines.append(f"🏆 Liga: {league_hint}")
+    lines.append("━━━━━━━━━━━━━━━━━━━━")
+    
+    clock_str = minute or "en juego"
+    if home_score is not None and away_score is not None:
+        clock_str += f"  |  Marcador: *{home_score}-{away_score}*"
+    lines.append(f"⏱️ Estado: {clock_str}")
+    
+    card_parts = []
+    card_parts.append(f"🟥 Rojas: {home_red_cards or 0} / {away_red_cards or 0}")
+    card_parts.append(f"🟨 Amarillas: {home_yellow_cards or 0} / {away_yellow_cards or 0}")
+    lines.append(" ".join(card_parts))
+    lines.append("")
+    
+    # Stats
+    has_stats = False
+    stats_lines = ["📊 *Estadísticas:*"]
+    labels = [
+        ("Posesión", "possession_home", "possession_away", "%"),
+        ("Ataques", "attacks_home", "attacks_away", ""),
+        ("Ataques peligrosos", "dangerous_attacks_home", "dangerous_attacks_away", ""),
+        ("Tiros al arco", "shots_on_target_home", "shots_on_target_away", ""),
+        ("Corners", "corners_home", "corners_away", ""),
+    ]
+    for label, home_key, away_key, suffix in labels:
+        h_val = live_stats.get(home_key)
+        a_val = live_stats.get(away_key)
+        if h_val is not None or a_val is not None:
+            has_stats = True
+            h_str = f"{h_val}{suffix}" if h_val is not None else "-"
+            a_str = f"{a_val}{suffix}" if a_val is not None else "-"
+            stats_lines.append(f"• {label}: {h_str} vs {a_str}")
+            
+    if has_stats:
+        lines.extend(stats_lines)
+        lines.append("")
+        
+    # Odds
+    if odds:
+        o_h = odds.get("home")
+        o_d = odds.get("draw")
+        o_a = odds.get("away")
+        h_str = f"{o_h:.2f}" if o_h is not None else "-"
+        d_str = f"{o_d:.2f}" if o_d is not None else "-"
+        a_str = f"{o_a:.2f}" if o_a is not None else "-"
+        lines.append(f"💰 *Odds (1X2):* 1={h_str} | X={d_str} | 2={a_str}")
+        
+    return "\n".join(lines)
+
+
+def format_watch_entry_report(entry, real_time_event=None) -> str:
+    from core.models import LiveEventSnapshot
+    if real_time_event and isinstance(real_time_event, LiveEventSnapshot):
+        odds_dict = None
+        if real_time_event.odds_1x2:
+            odds_dict = {
+                "home": real_time_event.odds_1x2.home,
+                "draw": real_time_event.odds_1x2.draw,
+                "away": real_time_event.odds_1x2.away,
+            }
+        return _format_live_state_report(
+            home=real_time_event.home,
+            away=real_time_event.away,
+            league_hint=entry.league_hint,
+            minute=real_time_event.minute,
+            home_score=real_time_event.home_score,
+            away_score=real_time_event.away_score,
+            home_red_cards=real_time_event.home_red_cards,
+            away_red_cards=real_time_event.away_red_cards,
+            home_yellow_cards=real_time_event.home_yellow_cards,
+            away_yellow_cards=real_time_event.away_yellow_cards,
+            live_stats=real_time_event.live_stats or {},
+            odds=odds_dict,
+            platform=real_time_event.platform
+        )
+        
+    state = entry.live_state
+    if not state:
+        return (
+            f"⏳ *{entry.home} vs {entry.away}*\n"
+            "El partido está en vigilancia pero todavía no fue detectado en vivo en ninguna plataforma."
+        )
+        
+    reports = []
+    for platform, payload in state.items():
+        if platform.startswith("_"):
+            continue
+        if not isinstance(payload, dict):
+            continue
+        reports.append(
+            _format_live_state_report(
+                home=payload.get("home", entry.home),
+                away=payload.get("away", entry.away),
+                league_hint=entry.league_hint,
+                minute=payload.get("minute"),
+                home_score=payload.get("home_score"),
+                away_score=payload.get("away_score"),
+                home_red_cards=payload.get("home_red_cards"),
+                away_red_cards=payload.get("away_red_cards"),
+                home_yellow_cards=payload.get("home_yellow_cards"),
+                away_yellow_cards=payload.get("away_yellow_cards"),
+                live_stats=payload.get("live_stats") or {},
+                odds=payload.get("odds"),
+                platform=platform
+            )
+        )
+        
+    if not reports:
+        return (
+            f"⏳ *{entry.home} vs {entry.away}*\n"
+            "El partido está en vigilancia pero todavía no tiene estadísticas registradas."
+        )
+        
+    return "\n\n".join(reports)
+
+
+async def view_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /view_match [id]: Show live stats, cards, minute, and live odds for a watched match."""
+    if update.message is None or update.effective_chat is None:
+        return
+
+    usage_guide = (
+        "❌ *ID de partido ausente o inválido.*\n\n"
+        "Uso: `/view_match [ID]`\n"
+        "Podés usar los IDs que figuran en `/watching` (por ejemplo, `#5` o el ID de base de datos).\n\n"
+        "Ejemplos:\n"
+        "• `/view_match 5`\n"
+        "• `/view_match 123`"
+    )
+
+    if not context.args:
+        await update.message.reply_text(usage_guide, parse_mode="Markdown")
+        return
+
+    arg = context.args[0].strip().replace("#", "")
+    if not arg.isdigit():
+        await update.message.reply_text(usage_guide, parse_mode="Markdown")
+        return
+
+    target_id = int(arg)
+    chat_id = update.effective_chat.id
+    service = get_live_watch_service(context)
+
+    # Try to load watch entry
+    entry = None
+    if hasattr(service.repository, "get_live_watch_by_local_id"):
+        entry = service.repository.get_live_watch_by_local_id(chat_id, target_id)
+    if entry is None:
+        if hasattr(service.repository, "get_live_watch"):
+            entry = service.repository.get_live_watch(chat_id, target_id)
+
+    if entry is None:
+        await update.message.reply_text(
+            f"❌ No encontré ningún partido en vigilancia con el ID `#{target_id}` en este chat.\n"
+            "Corré `/watching` para ver tus partidos activos."
+        )
+        return
+
+    loading_msg = await update.message.reply_text(
+        f"🔍 Buscando estadísticas en vivo en tiempo real para *{entry.home} vs {entry.away}*..."
+    )
+
+    try:
+        # Fetch current live events from extractors to see if it is playing right now
+        live_events = await service.collect_live_events()
+        
+        # Search for best match in live events
+        best_match = service._best_match(entry, live_events) if live_events else None
+        
+        if best_match is not None:
+            score, event = best_match
+            from monitors.live_watch import _event_live_state
+            current_state = _event_live_state(event)
+            service.repository.update_live_watch_platform_state(
+                entry.id,
+                platform=event.platform,
+                state=current_state,
+            )
+            
+            # Use the real-time event
+            report = format_watch_entry_report(entry, real_time_event=event)
+        else:
+            # Not found in active live events, fall back to DB live_state
+            report = format_watch_entry_report(entry, real_time_event=None)
+            
+        await loading_msg.delete()
+        await _reply_text_chunks(update.message, report, parse_mode="Markdown")
+        
+    except Exception as e:
+        logger.exception("Error in /view_match command")
+        await loading_msg.edit_text(f"❌ Error al consultar estadísticas en vivo: {str(e)}")
 
 
 async def reply_with_result(update: Update, result: CommandResult) -> None:
@@ -2979,6 +3194,9 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("live_status", live_status_command))
     application.add_handler(CommandHandler("live_settings", live_settings_command))
     application.add_handler(CommandHandler("unwatch", unwatch_command))
+    application.add_handler(CommandHandler("view_match", view_match_command))
+    application.add_handler(CommandHandler("view_live_match", view_match_command))
+    application.add_handler(CommandHandler("live_match", view_match_command))
 
     track_league_conversation = ConversationHandler(
         entry_points=[CommandHandler(["track_league", "tracl_league"], track_league_command)],

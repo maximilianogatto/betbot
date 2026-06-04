@@ -4,11 +4,11 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import AsyncMock, Mock, patch
 
-from bot.handlers import watch_live_command, watching_command, unwatch_command, import_sheet_command
+from bot.handlers import watch_live_command, watching_command, unwatch_command, import_sheet_command, view_match_command
 from storage.tracking_repository import LiveWatchEntry
 
 
-def _live_watch_entry(entry_id: int, home: str, away: str, status: str = "watching", matched_platform: str | None = None, matched_minute: str | None = None, chat_local_id: int | None = None) -> LiveWatchEntry:
+def _live_watch_entry(entry_id: int, home: str, away: str, status: str = "watching", matched_platform: str | None = None, matched_minute: str | None = None, chat_local_id: int | None = None, live_state_json: str | None = None) -> LiveWatchEntry:
     return LiveWatchEntry(
         id=entry_id,
         chat_id=123,
@@ -24,6 +24,7 @@ def _live_watch_entry(entry_id: int, home: str, away: str, status: str = "watchi
         fired_at="2026-06-01T00:01:00+00:00" if status == "fired" else None,
         fired_platforms=matched_platform,
         chat_local_id=chat_local_id,
+        live_state_json=live_state_json,
     )
 
 
@@ -550,6 +551,164 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
 
         loading_msg.edit_text.assert_awaited_once()
         self.assertIn("Error al descargar planilla (HTTP 500)", loading_msg.edit_text.await_args[0][0])
+
+    async def test_view_match_missing_args(self) -> None:
+        message = SimpleNamespace(reply_text=AsyncMock())
+        context = SimpleNamespace(args=[], user_data={})
+        update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
+        await view_match_command(update, context)
+        message.reply_text.assert_awaited_once()
+        self.assertIn("Uso: `/view_match [ID]`", message.reply_text.await_args.args[0])
+
+    async def test_view_match_invalid_id(self) -> None:
+        message = SimpleNamespace(reply_text=AsyncMock())
+        context = SimpleNamespace(args=["abc"], user_data={})
+        update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
+        await view_match_command(update, context)
+        message.reply_text.assert_awaited_once()
+        self.assertIn("Uso: `/view_match [ID]`", message.reply_text.await_args.args[0])
+
+    async def test_view_match_not_found(self) -> None:
+        live_watch_service = SimpleNamespace(
+            repository=SimpleNamespace(
+                get_live_watch_by_local_id=Mock(return_value=None),
+                get_live_watch=Mock(return_value=None),
+            )
+        )
+        message = SimpleNamespace(reply_text=AsyncMock())
+        application = SimpleNamespace(bot_data={"live_watch_service": live_watch_service})
+        context = SimpleNamespace(application=application, args=["5"], user_data={})
+        update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
+
+        with patch("bot.handlers.get_live_watch_service", return_value=live_watch_service):
+            await view_match_command(update, context)
+
+        message.reply_text.assert_awaited_once()
+        self.assertIn("No encontré ningún partido", message.reply_text.await_args.args[0])
+
+    async def test_view_match_found_in_db_only(self) -> None:
+        live_state_val = {
+            "bet365": {
+                "home": "Banyule",
+                "away": "Bundoora",
+                "minute": "45'",
+                "home_score": 1,
+                "away_score": 0,
+                "home_red_cards": 0,
+                "away_red_cards": 0,
+                "home_yellow_cards": 1,
+                "away_yellow_cards": 2,
+                "live_stats": {
+                    "possession_home": 60,
+                    "possession_away": 40,
+                    "attacks_home": 45,
+                    "attacks_away": 30,
+                    "dangerous_attacks_home": 25,
+                    "dangerous_attacks_away": 15,
+                    "shots_on_target_home": 5,
+                    "shots_on_target_away": 2
+                },
+                "odds": {
+                    "home": 1.50,
+                    "draw": 3.40,
+                    "away": 5.50
+                }
+            }
+        }
+        import json
+        entry = _live_watch_entry(1, "Banyule", "Bundoora", "watching", live_state_json=json.dumps(live_state_val))
+
+        live_watch_service = SimpleNamespace(
+            repository=SimpleNamespace(
+                get_live_watch_by_local_id=Mock(return_value=entry),
+            ),
+            collect_live_events=AsyncMock(return_value=[])
+        )
+        loading_msg = SimpleNamespace(delete=AsyncMock())
+        message = SimpleNamespace(reply_text=AsyncMock(return_value=loading_msg))
+        application = SimpleNamespace(bot_data={"live_watch_service": live_watch_service})
+        context = SimpleNamespace(application=application, args=["1"], user_data={})
+        update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
+
+        with (
+            patch("bot.handlers.get_live_watch_service", return_value=live_watch_service),
+            patch("bot.handlers._reply_text_chunks", new_callable=AsyncMock) as mock_reply_chunks,
+        ):
+            await view_match_command(update, context)
+
+        loading_msg.delete.assert_awaited_once()
+        mock_reply_chunks.assert_awaited_once()
+        content = mock_reply_chunks.await_args[0][1]
+        self.assertIn("🔴 *EN VIVO (BET365)*", content)
+        self.assertIn("⚽ *Banyule vs Bundoora*", content)
+        self.assertIn("⏱️ Estado: 45'  |  Marcador: *1-0*", content)
+        self.assertIn("• Posesión: 60% vs 40%", content)
+        self.assertIn("• Ataques: 45 vs 30", content)
+        self.assertIn("• Ataques peligrosos: 25 vs 15", content)
+        self.assertIn("• Tiros al arco: 5 vs 2", content)
+        self.assertIn("💰 *Odds (1X2):* 1=1.50 | X=3.40 | 2=5.50", content)
+
+    async def test_view_match_found_realtime(self) -> None:
+        from core.models import LiveEventSnapshot, Odds1X2
+        mock_event = LiveEventSnapshot(
+            platform="bet365",
+            external_event_id="ext-123",
+            home="Banyule",
+            away="Bundoora",
+            minute="35'",
+            home_score=1,
+            away_score=0,
+            home_red_cards=0,
+            away_red_cards=0,
+            home_yellow_cards=1,
+            away_yellow_cards=2,
+            live_stats={
+                "possession_home": 60,
+                "possession_away": 40,
+                "attacks_home": 45,
+                "attacks_away": 30,
+                "dangerous_attacks_home": 25,
+                "dangerous_attacks_away": 15,
+                "shots_on_target_home": 5,
+                "shots_on_target_away": 2
+            },
+            odds_1x2=Odds1X2(home=1.5, draw=3.4, away=5.5),
+        )
+
+        entry = _live_watch_entry(1, "Banyule", "Bundoora", "watching")
+        
+        live_watch_service = SimpleNamespace(
+            repository=SimpleNamespace(
+                get_live_watch_by_local_id=Mock(return_value=entry),
+                update_live_watch_platform_state=Mock(),
+            ),
+            collect_live_events=AsyncMock(return_value=[mock_event]),
+            _best_match=Mock(return_value=(1.0, mock_event))
+        )
+        loading_msg = SimpleNamespace(delete=AsyncMock())
+        message = SimpleNamespace(reply_text=AsyncMock(return_value=loading_msg))
+        application = SimpleNamespace(bot_data={"live_watch_service": live_watch_service})
+        context = SimpleNamespace(application=application, args=["1"], user_data={})
+        update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
+
+        with (
+            patch("bot.handlers.get_live_watch_service", return_value=live_watch_service),
+            patch("bot.handlers._reply_text_chunks", new_callable=AsyncMock) as mock_reply_chunks,
+        ):
+            await view_match_command(update, context)
+
+        loading_msg.delete.assert_awaited_once()
+        mock_reply_chunks.assert_awaited_once()
+        content = mock_reply_chunks.await_args[0][1]
+        self.assertIn("🔴 *EN VIVO (BET365)*", content)
+        self.assertIn("⚽ *Banyule vs Bundoora*", content)
+        self.assertIn("⏱️ Estado: 35'  |  Marcador: *1-0*", content)
+        self.assertIn("• Posesión: 60% vs 40%", content)
+        self.assertIn("• Ataques: 45 vs 30", content)
+        self.assertIn("• Ataques peligrosos: 25 vs 15", content)
+        self.assertIn("• Tiros al arco: 5 vs 2", content)
+        self.assertIn("💰 *Odds (1X2):* 1=1.50 | X=3.40 | 2=5.50", content)
+        live_watch_service.repository.update_live_watch_platform_state.assert_called_once()
 
 
 if __name__ == "__main__":
