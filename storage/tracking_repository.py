@@ -2539,6 +2539,26 @@ class SqliteTrackingRepository:
                 ).fetchall()
         return [_row_to_live_watch(row) for row in rows]
 
+    def get_live_watch(self, chat_id: int, watch_id: int) -> LiveWatchEntry | None:
+        """Get one live-watch entry by its database ID for a chat."""
+
+        with _connect() as connection:
+            row = connection.execute(
+                "SELECT * FROM live_watch_entries WHERE id = ? AND chat_id = ?",
+                (watch_id, chat_id),
+            ).fetchone()
+        return _row_to_live_watch(row) if row else None
+
+    def get_live_watch_by_local_id(self, chat_id: int, local_id: int) -> LiveWatchEntry | None:
+        """Get one live-watch entry by chat_local_id for a chat."""
+
+        with _connect() as connection:
+            row = connection.execute(
+                "SELECT * FROM live_watch_entries WHERE chat_local_id = ? AND chat_id = ?",
+                (local_id, chat_id),
+            ).fetchone()
+        return _row_to_live_watch(row) if row else None
+
     def list_all_active_live_watches(self) -> list[LiveWatchEntry]:
         """Return every still-watching entry across all chats (for the poller)."""
 
