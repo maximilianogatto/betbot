@@ -531,3 +531,199 @@ class SwedenLeagues(SpecialLeague):
                 score=score, league_code=code,
             ))
         return rows
+
+
+# --------------------------------------------------------------------------- #
+# Romania adapter (FRF Datalake)
+# --------------------------------------------------------------------------- #
+_RO_BUCHAREST = ZoneInfo("Europe/Bucharest")
+
+
+class RomaniaLeagues(SpecialLeague):
+    flag = "🇷🇴"
+    country = "Rumanas"
+    prefix = "ro"
+
+    def __init__(self, client):
+        self.client = client
+        self.table = {
+            "RO1": (869, 3844, "SuperLiga Feminină", 1, "F"),
+            "RO1PO": (895, 4029, "SuperLiga Play-off", 1, "F"),
+            "RO1PL": (896, 4030, "SuperLiga Play-out", 1, "F"),
+            "RO2S1": (877, 3895, "Liga 2 Feminin Seria 1", 2, "F"),
+            "RO2S2": (877, 3896, "Liga 2 Feminin Seria 2", 2, "F"),
+        }
+
+    def close(self) -> None:
+        try:
+            self.client.close()
+        except Exception:
+            pass
+
+    def leagues(self) -> list[LeagueInfo]:
+        return [
+            LeagueInfo(code=code, name=info[2], tier=info[3], gender=info[4])
+            for code, info in self.table.items()
+        ]
+
+    def _resolve_round(self, series_id: int) -> dict | None:
+        try:
+            filters = self.client.get_filters()
+            tours = filters.get("responseData", {}).get("tours", [])
+            series_tours = [t for t in tours if t.get("seriesId") == series_id]
+            if not series_tours:
+                return None
+            curr = next((t for t in series_tours if t.get("isCurrent")), None)
+            if not curr:
+                series_tours.sort(key=lambda t: (t.get("startDate") or "", t.get("tourRoundId") or 0))
+                curr = series_tours[-1]
+            return curr
+        except Exception:
+            return None
+
+    def today(self) -> tuple[list[MatchRow], int]:
+        from datetime import date
+        today_str = date.today().isoformat()
+        rows: list[MatchRow] = []
+        omitted = 0
+
+        for code, info in self.table.items():
+            comp_season_id, series_id, name, tier, gender = info
+            curr_round = self._resolve_round(series_id)
+            if not curr_round:
+                continue
+
+            try:
+                res = self.client.get_matches(
+                    season_id=curr_round["seasonId"],
+                    stage_id=curr_round["stageId"],
+                    series_id=series_id,
+                    tour_round_id=curr_round["tourRoundId"]
+                )
+
+                resp_data = res.get("responseData", {})
+                matches_list = resp_data.get("matches", [])
+
+                for m_group in matches_list:
+                    for m in m_group.get("list", []):
+                        d_arg, t_arg = _arg_time(m.get("startDate"), _RO_BUCHAREST)
+                        if d_arg == today_str:
+                            status = m.get("sysCompetitionMatchStatusId")
+                            played = status == 3
+                            live = status == 2
+                            score = None
+                            if played or live:
+                                score = f"{m.get('homeGoals')}-{m.get('awayGoals')}"
+
+                            rows.append(MatchRow(
+                                match_id=str(m.get("matchId")),
+                                time_arg=t_arg,
+                                date_arg=d_arg,
+                                home=m.get("homeClub", {}).get("name", "Local"),
+                                away=m.get("awayClub", {}).get("name", "Visitante"),
+                                score=score,
+                                is_live=live,
+                                league_code=code,
+                                league_name=name,
+                                league_tier=tier
+                            ))
+            except Exception:
+                pass
+
+        rows.sort(key=lambda r: r.time_arg)
+        return rows, omitted
+
+    def standings(self, code: str) -> StandingsResult:
+        code = code.upper()
+        info = self.table.get(code)
+        if not info:
+            return StandingsResult(title=code, found=False)
+
+        comp_season_id, series_id, name, tier, gender = info
+        curr_round = self._resolve_round(series_id)
+        if not curr_round:
+            return StandingsResult(title=name, found=True)
+
+        try:
+            res = self.client.get_matches(
+                season_id=curr_round["seasonId"],
+                stage_id=curr_round["stageId"],
+                series_id=series_id,
+                tour_round_id=curr_round["tourRoundId"]
+            )
+
+            resp_data = res.get("responseData", {})
+            rankings = resp_data.get("rankings", [])
+            clubs_ranking = resp_data.get("clubsRanking", [])
+
+            rows = []
+            for idx, r in enumerate(rankings, start=1):
+                club_id = r[0]
+                club_name = next((c["name"] for c in clubs_ranking if str(c["clubId"]) == str(club_id)), f"Club {club_id}")
+                played = _to_int(r[1]) or 0
+                points = _to_int(r[2]) or 0
+                gf = _to_int(r[3]) or 0
+                ga = _to_int(r[4]) or 0
+                goal_diff = gf - ga
+
+                rows.append(StandRow(
+                    position=idx,
+                    team=club_name,
+                    played=played,
+                    points=points,
+                    goal_diff=goal_diff
+                ))
+            return StandingsResult(title=f"{name} (2025/2026)", rows=rows)
+        except Exception:
+            return StandingsResult(title=name, found=True)
+
+    def fixtures(self, code: str) -> tuple[Optional[str], list[MatchRow]]:
+        code = code.upper()
+        info = self.table.get(code)
+        if not info:
+            return None, []
+
+        comp_season_id, series_id, name, tier, gender = info
+        curr_round = self._resolve_round(series_id)
+        if not curr_round:
+            return name, []
+
+        try:
+            res = self.client.get_matches(
+                season_id=curr_round["seasonId"],
+                stage_id=curr_round["stageId"],
+                series_id=series_id,
+                tour_round_id=curr_round["tourRoundId"]
+            )
+
+            resp_data = res.get("responseData", {})
+            matches_list = resp_data.get("matches", [])
+
+            rows = []
+            for m_group in matches_list:
+                for m in m_group.get("list", []):
+                    d_arg, t_arg = _arg_time(m.get("startDate"), _RO_BUCHAREST)
+                    status = m.get("sysCompetitionMatchStatusId")
+                    played = status == 3
+                    live = status == 2
+                    score = None
+                    if played or live:
+                        score = f"{m.get('homeGoals')}-{m.get('awayGoals')}"
+
+                    rows.append(MatchRow(
+                        match_id=str(m.get("matchId")),
+                        time_arg=t_arg,
+                        date_arg=d_arg,
+                        home=m.get("homeClub", {}).get("name", "Local"),
+                        away=m.get("awayClub", {}).get("name", "Visitante"),
+                        score=score,
+                        is_live=live,
+                        league_code=code,
+                        league_name=name,
+                        league_tier=tier
+                    ))
+            rows.sort(key=lambda r: (r.date_arg, r.time_arg))
+            return name, rows
+        except Exception:
+            return name, []
+

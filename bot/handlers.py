@@ -3271,6 +3271,14 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("swe_today", swe_today_command))
     application.add_handler(CommandHandler("swe_match", swe_match_command))
 
+    # Romanian Football Leagues and stats commands
+    application.add_handler(CommandHandler("ro_help", ro_help_command))
+    application.add_handler(CommandHandler("ro_leagues", ro_leagues_command))
+    application.add_handler(CommandHandler("ro_standings", ro_standings_command))
+    application.add_handler(CommandHandler("ro_fixtures", ro_fixtures_command))
+    application.add_handler(CommandHandler("ro_today", ro_today_command))
+    application.add_handler(CommandHandler("ro_match", ro_match_command))
+
     # Special-league daily peak scoring (Finland + Sweden)
     application.add_handler(CommandHandler("peak_today", peak_today_command))
     application.add_handler(CommandHandler("peak_on", peak_on_command))
@@ -3863,6 +3871,12 @@ def _sweden_adapter():
     return SwedenLeagues(SvenskfotbollHTTPClient(), _SWE_LEAGUES)
 
 
+def _romania_adapter():
+    from bot.special_leagues import RomaniaLeagues
+    from stats_providers.romania_http.client import RomaniaFRFHTTPClient
+    return RomaniaLeagues(RomaniaFRFHTTPClient())
+
+
 async def _run_special_leagues(message, adapter) -> None:
     import asyncio
     from bot.special_leagues import render_leagues
@@ -4322,6 +4336,71 @@ def _swe_usage_guide(as_html: bool = False) -> str:
             lines.append(f"• `{code}` - {name} ({tier})")
         lines.append("\nEjemplo: `/swe_standings AL`")
         return "\n".join(lines)
+
+
+_RO_LEAGUE_USAGE = "Escribí `/ro_standings [CÓDIGO]` o `/ro_fixtures [CÓDIGO]` con uno de estos códigos:\n- `RO1` (SuperLiga Feminină)\n- `RO1PO` (SuperLiga Play-off)\n- `RO1PL` (SuperLiga Play-out)\n- `RO2S1` (Liga 2 Seria 1)\n- `RO2S2` (Liga 2 Seria 2)"
+
+
+async def ro_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /ro_help: Display help for Romanian leagues."""
+    del context
+    if update.message is None:
+        return
+    help_text = (
+        "🇷🇴 *Guía de Estadísticas de la Federación de Rumania* 🇷🇴\n\n"
+        "Comandos disponibles:\n"
+        "• `/ro_leagues` - Muestra la jerarquía de ligas y códigos\n"
+        "• `/ro_standings [CÓDIGO]` - Tabla de posiciones actual\n"
+        "• `/ro_fixtures [CÓDIGO]` - Calendario de partidos recientes/próximos\n"
+        "• `/ro_today` - Partidos programados para hoy\n\n"
+        + _RO_LEAGUE_USAGE
+    )
+    await update.message.reply_text(help_text, parse_mode="Markdown")
+
+
+async def ro_leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /ro_leagues: list Romanian leagues."""
+    del context
+    if update.message is None:
+        return
+    await _run_special_leagues(update.message, _romania_adapter())
+
+
+async def ro_standings_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /ro_standings [CÓDIGO]: standings for a Romanian league."""
+    if update.message is None:
+        return
+    usage = (
+        "❌ *Falta el código de liga.*\n\nUso: `/ro_standings [CÓDIGO_LIGA]`\n\n"
+        + _RO_LEAGUE_USAGE + "\n\nEjemplo: `/ro_standings RO2S1`"
+    )
+    await _run_special_standings(update.message, (getattr(context, 'args', None) or []), _romania_adapter(), usage)
+
+
+async def ro_fixtures_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /ro_fixtures [CÓDIGO]: Display recent/upcoming fixtures."""
+    if update.message is None:
+        return
+    usage = (
+        "❌ *Falta el código de liga.*\n\nUso: `/ro_fixtures [CÓDIGO_LIGA]`\n\n"
+        + _RO_LEAGUE_USAGE + "\n\nEjemplo: `/ro_fixtures RO2S1`"
+    )
+    await _run_special_fixtures(update.message, (getattr(context, 'args', None) or []), _romania_adapter(), usage)
+
+
+async def ro_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /ro_today: today's matches."""
+    if update.message is None:
+        return
+    await _run_special_today(update.message, (getattr(context, 'args', None) or []), _romania_adapter())
+
+
+async def ro_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /ro_match [match_id]: details for a match (not supported in detail)."""
+    del context
+    if update.message is None:
+        return
+    await update.message.reply_text("ℹ️ El detector de alineaciones no está disponible para la federación rumana.")
 
 
 async def swe_leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
