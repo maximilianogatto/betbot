@@ -48,7 +48,7 @@ class SweCommandTests(unittest.IsolatedAsyncioTestCase):
         await swe_leagues_command(update, SimpleNamespace())
         out = message.reply_text.await_args.args[0]
         self.assertIn("Allsvenskan", out)
-        self.assertIn("<code>AL</code>", out)
+        self.assertIn("`AL`", out)
 
     async def test_standings_renders_table(self) -> None:
         update, message = _update()
@@ -64,7 +64,7 @@ class SweCommandTests(unittest.IsolatedAsyncioTestCase):
     async def test_standings_invalid_code_shows_guide(self) -> None:
         update, message = _update()
         await swe_standings_command(update, SimpleNamespace(args=["ZZ"]))
-        self.assertIn("Ligas disponibles", message.reply_text.await_args.args[0])
+        self.assertIn("No reconozco la liga", message.reply_text.await_args.args[0])
 
     async def test_fixtures_lists_matches_with_ids(self) -> None:
         update, message = _update()
@@ -73,7 +73,7 @@ class SweCommandTests(unittest.IsolatedAsyncioTestCase):
             await swe_fixtures_command(update, SimpleNamespace(args=["AL"]))
         out = message.reply_text.await_args.args[0]
         self.assertIn("Sirius", out)
-        self.assertIn("/swe_match 6529914", out)
+        self.assertIn("6529914", out)
 
     async def test_today_uses_arg_time(self) -> None:
         update, message = _update()
@@ -81,7 +81,7 @@ class SweCommandTests(unittest.IsolatedAsyncioTestCase):
         with self._patch_client(get_matches_today=today):
             await swe_today_command(update, SimpleNamespace())
         out = message.reply_text.await_args.args[0]
-        self.assertIn("Partidos de hoy (Suecia)", out)
+        self.assertIn("Partidos de Hoy", out)
         self.assertIn("14:00", out)
 
     async def test_today_sorts_chronologically(self) -> None:
@@ -93,7 +93,7 @@ class SweCommandTests(unittest.IsolatedAsyncioTestCase):
         with self._patch_client(get_matches_today=today):
             await swe_today_command(update, SimpleNamespace())
         out = message.reply_text.await_args.args[0]
-        self.assertIn("Partidos de hoy (Suecia)", out)
+        self.assertIn("Partidos de Hoy", out)
         idx1 = out.index("Home1")
         idx2 = out.index("Home2")
         self.assertLess(idx1, idx2)

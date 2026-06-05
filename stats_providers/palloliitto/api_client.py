@@ -1,3 +1,5 @@
+import json
+
 import httpx
 from typing import Dict, List, Any, Optional
 
@@ -48,22 +50,45 @@ class PalloliittoAPI:
         "M1LCUP": {"name": "Ykkösliigacup", "gender": "M", "level": 2, "type": "cup"}
     }
 
-    def __init__(self, timeout: float = 15.0):
+    def __init__(self, timeout: float = 60.0):
+        # Some payloads (a whole day of getMatches) are ~5-6 MB; the old 15s
+        # timeout + a reused keep-alive connection delivered truncated bodies.
+        self._timeout = timeout
         self.client = httpx.Client(headers=self.HEADERS, timeout=timeout)
 
+    def _reset_client(self) -> None:
+        try:
+            self.client.close()
+        except Exception:
+            pass
+        self.client = httpx.Client(headers=self.HEADERS, timeout=self._timeout)
+
     def _request(self, method_name: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """Send a request to the Torneopal REST endpoint."""
+        """Send a request to the Torneopal REST endpoint.
+
+        Large payloads (e.g. a whole day of `getMatches`, ~2 MB) occasionally
+        arrive truncated and fail to parse. We discard a bad/incomplete body and
+        re-fetch a few times before giving up, instead of crashing the command.
+        """
         url = f"{self.BASE_URL}/{method_name}"
-        response = self.client.get(url, params=params)
-        if response.status_code != 200:
-            raise RuntimeError(f"HTTP error {response.status_code}: {response.text}")
-        
-        data = response.json()
-        call_info = data.get("call", {})
-        if call_info.get("status") == "error":
-            raise ValueError(f"API Error ({method_name}): {call_info.get('error')}")
-            
-        return data
+        last_error: Optional[Exception] = None
+        for _attempt in range(3):
+            response = self.client.get(url, params=params)
+            if response.status_code != 200:
+                raise RuntimeError(f"HTTP error {response.status_code}: {response.text}")
+            try:
+                data = response.json()
+            except (json.JSONDecodeError, ValueError) as exc:
+                last_error = exc  # truncated/garbled body -> drop the connection and re-fetch
+                self._reset_client()
+                continue
+            call_info = data.get("call", {})
+            if call_info.get("status") == "error":
+                raise ValueError(f"API Error ({method_name}): {call_info.get('error')}")
+            return data
+        raise RuntimeError(
+            f"Respuesta inválida o truncada de {method_name} tras reintentos: {last_error}"
+        )
 
     def get_categories(self, season: str = "2026") -> List[Dict[str, Any]]:
         """
