@@ -3771,19 +3771,82 @@ def _convert_fin_to_arg_datetime(date_str: str | None, time_str: str | None) -> 
         return date_str, time_str
 
 
+_FIN_COMPETITION_ID = "spljp26"  # 2026 SPL Jalkapallo season; all FIN leagues share it.
+
+# Full senior hierarchy (mirrors /fin_leagues). Fallback when the live ranking
+# list is unavailable; also drives /fin_today classification + names.
+_FIN_SENIOR_FALLBACK: dict[str, str] = {
+    "VL": "Veikkausliiga (Tier 1)", "NL": "Kansallinen Liiga (Damas T1)",
+    "M1L": "Ykkösliiga (Tier 2)", "N1": "Naisten Ykkönen (Damas T2)",
+    "M1": "Ykkönen (Tier 3)", "N2": "Naisten Kakkonen (Damas T3)",
+    "M2": "Kakkonen (Tier 4)", "N3": "Naisten Kolmonen (Damas T4)",
+    "M3": "Kolmonen (Tier 5)", "N4": "Naisten Nelonen (Damas T5)",
+    "M4": "Nelonen (Tier 6)", "N5": "Naisten Vitonen (Damas T6)",
+    "M5": "Vitonen (Tier 7)", "M6": "Kutonen (Tier 8)", "M7": "Seiska (Tier 9)",
+    "MSC": "Suomen Cup (Copa)", "LC": "Liigacup (Copa)",
+    "NSC": "Naisten Suomen Cup (Copa Damas)", "M1LCUP": "Ykkösliigacup",
+    "MRC": "Miesten Regions Cup", "MRRC": "Miesten Roots Cup",
+}
+
+_FIN_LEAGUE_USAGE = (
+    "💡 Mirá todos los códigos con `/fin_leagues`.\n"
+    "Ejemplos: `VL` Veikkausliiga · `M1` Ykkönen · `M3` Kolmonen · `MSC` Suomen Cup."
+)
+
+
 def _resolve_fin_league(code: str) -> tuple[str, str] | None:
-    """Resolve a short league code to competition_id and category_id."""
-    mapping = {
-        "VL": ("spljp26", "VL"),
-        "M1L": ("spljp26", "M1L"),
-        "M1": ("spljp26", "M1"),
-        "M2": ("spljp26", "M2"),
-        "NL": ("spljp26", "NL"),
-        "MSC": ("spljp26", "MSC"),
-        "NSC": ("spljp26", "NSC"),
-        "LC": ("spljp26", "LC"),
-    }
-    return mapping.get(code)
+    """Resolve a league code to (competition_id, category_id).
+
+    Accepts ANY federation category code shown in /fin_leagues (the season's
+    competition_id is shared across leagues); an unknown code just yields no
+    data downstream instead of a hard "invalid code" rejection.
+    """
+    code = (code or "").strip().upper()
+    if not code:
+        return None
+    return (_FIN_COMPETITION_ID, code)
+
+
+def _fin_senior_catalog(api) -> dict[str, dict]:
+    """{category_id: {name, tier, gender}} for senior leagues + cups.
+
+    Uses the live federation ranking list (same source as /fin_leagues) so the
+    set stays in sync; falls back to a static hierarchy if unavailable.
+    """
+    catalog: dict[str, dict] = {}
+    try:
+        for l in api.get_league_ranking_list() or []:
+            cid = str(l.get("category_id") or "")
+            if cid:
+                catalog[cid] = {"name": l.get("name") or cid, "tier": l.get("tier"), "gender": l.get("gender")}
+    except Exception:
+        pass
+    if not catalog:
+        catalog = {c: {"name": n, "tier": None, "gender": None} for c, n in _FIN_SENIOR_FALLBACK.items()}
+    return catalog
+
+
+def _fin_competitions_for_category(api, code: str, season: str = "2026") -> list[str]:
+    """All competition_ids that host a category code this season.
+
+    National leagues (VL, M1, M2, NL, N1, N2, cups) → one competition (spljp26).
+    Regional leagues (Kolmonen M3, Nelonen M4, women N3+) run as SEVERAL regional
+    competitions (Etelä/Länsi/Pohjois/Itä/Åland), so there is no single table.
+    """
+
+    code = (code or "").strip().upper()
+    if not code:
+        return []
+    comps: list[str] = []
+    try:
+        for c in api.get_categories(season) or []:
+            if str(c.get("category_id")) == code:
+                cid = str(c.get("competition_id") or "")
+                if cid and cid not in comps:
+                    comps.append(cid)
+    except Exception:
+        pass
+    return comps
 
 
 async def fin_leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -3830,16 +3893,9 @@ async def fin_standings_command(update: Update, context: ContextTypes.DEFAULT_TY
         return
 
     usage_guide = (
-        "❌ *Código de liga ausente o inválido.*\n\n"
+        "❌ *Falta el código de liga.*\n\n"
         "Uso: `/fin_standings [CÓDIGO_LIGA]`\n\n"
-        "💡 *Ligas disponibles:*\n"
-        "• `VL` - Veikkausliiga (Tier 1)\n"
-        "• `M1L` - Ykkösliiga (Tier 2)\n"
-        "• `M1` - Ykkönen (Tier 3)\n"
-        "• `M2` - Kakkonen (Tier 4)\n"
-        "• `NL` - Kansallinen Liiga (Damas - Tier 1)\n"
-        "• `MSC` - Suomen Cup (Copa)\n\n"
-        "Ejemplo: `/fin_standings VL`"
+        + _FIN_LEAGUE_USAGE + "\n\nEjemplo: `/fin_standings VL`"
     )
 
     if not context.args:
@@ -3847,19 +3903,27 @@ async def fin_standings_command(update: Update, context: ContextTypes.DEFAULT_TY
         return
 
     league_code = context.args[0].upper()
-    resolved = _resolve_fin_league(league_code)
-    if not resolved:
-        await update.message.reply_text(usage_guide, parse_mode="Markdown")
-        return
-
-    comp_id, cat_id = resolved[0], resolved[1]
     from stats_providers.palloliitto.api_client import PalloliittoAPI
     api = PalloliittoAPI()
-    
+
     await update.message.reply_text("📊 Cargando tabla de posiciones de la federación...")
     try:
-        # Group 1 is default
-        standings = api.get_standings(competition_id=comp_id, category_id=cat_id, group_id="1")
+        comps = _fin_competitions_for_category(api, league_code)
+        if not comps:
+            await update.message.reply_text(
+                f"⚠️ No reconozco la liga `{league_code}`. Mirá los códigos con `/fin_leagues`.",
+                parse_mode="Markdown")
+            return
+        if len(comps) > 1:
+            await update.message.reply_text(
+                f"ℹ️ *{league_code}* es una liga *regional* (varios grupos por región), "
+                "así que no tiene una tabla única.\n"
+                f"• Partidos de hoy: `/fin_today {league_code}`\n"
+                f"• Fixture completo: `/fin_fixtures {league_code}`",
+                parse_mode="Markdown")
+            return
+        # National league: single competition, group 1 by default.
+        standings = api.get_standings(competition_id=comps[0], category_id=league_code, group_id="1")
         if not standings:
             await update.message.reply_text("⚠️ No hay posiciones disponibles para esta liga en el sistema.")
             return
@@ -3881,8 +3945,8 @@ async def fin_standings_command(update: Update, context: ContextTypes.DEFAULT_TY
         lines.append("👉 *Siguientes pasos:*")
         lines.append(f"🗓️ Ver fixture de esta liga: `/fin_fixtures {league_code}`")
         lines.append("⚽ Ver partidos de hoy: `/fin_today`")
-        
-        await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+
+        await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
     except Exception as e:
         logger.exception("Failed in /fin_standings")
         await update.message.reply_text(f"❌ Error al consultar standings: {e}")
@@ -3896,16 +3960,9 @@ async def fin_fixtures_command(update: Update, context: ContextTypes.DEFAULT_TYP
         return
 
     usage_guide = (
-        "❌ *Código de liga ausente o inválido.*\n\n"
+        "❌ *Falta el código de liga.*\n\n"
         "Uso: `/fin_fixtures [CÓDIGO_LIGA]`\n\n"
-        "💡 *Ligas disponibles:*\n"
-        "• `VL` - Veikkausliiga (Tier 1)\n"
-        "• `M1L` - Ykkösliiga (Tier 2)\n"
-        "• `M1` - Ykkönen (Tier 3)\n"
-        "• `M2` - Kakkonen (Tier 4)\n"
-        "• `NL` - Kansallinen Liiga (Damas)\n"
-        "• `MSC` - Suomen Cup (Copa)\n\n"
-        "Ejemplo: `/fin_fixtures VL`"
+        + _FIN_LEAGUE_USAGE + "\n\nEjemplo: `/fin_fixtures VL`"
     )
 
     if not context.args:
@@ -3913,19 +3970,25 @@ async def fin_fixtures_command(update: Update, context: ContextTypes.DEFAULT_TYP
         return
 
     league_code = context.args[0].upper()
-    resolved = _resolve_fin_league(league_code)
-    if not resolved:
-        await update.message.reply_text(usage_guide, parse_mode="Markdown")
-        return
-
-    comp_id, cat_id = resolved[0], resolved[1]
     from stats_providers.palloliitto.api_client import PalloliittoAPI
     from datetime import date
     api = PalloliittoAPI()
-    
+
     await update.message.reply_text("🗓️ Consultando fixtures en vivo...")
     try:
-        matches = api.get_matches_by_league(competition_id=comp_id, category_id=cat_id)
+        comps = _fin_competitions_for_category(api, league_code)
+        if not comps:
+            await update.message.reply_text(
+                f"⚠️ No reconozco la liga `{league_code}`. Mirá los códigos con `/fin_leagues`.",
+                parse_mode="Markdown")
+            return
+        # Aggregate across regional competitions (Kolmonen/Nelonen run several).
+        matches: list = []
+        for comp in comps:
+            try:
+                matches += api.get_matches_by_league(competition_id=comp, category_id=league_code) or []
+            except Exception:
+                pass
         if not matches:
             await update.message.reply_text("⚠️ No se encontraron partidos cargados para esta liga.")
             return
@@ -3966,8 +4029,8 @@ async def fin_fixtures_command(update: Update, context: ContextTypes.DEFAULT_TYP
         lines.append("Copia el ID del partido y corre:")
         lines.append("👉 `/fin_match [ID_PARTIDO]`")
         lines.append("Ejemplo: `/fin_match 4036852`")
-        
-        await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+
+        await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
     except Exception as e:
         logger.exception("Failed in /fin_fixtures")
         await update.message.reply_text(f"❌ Error al consultar fixture: {e}")
@@ -3992,21 +4055,12 @@ async def fin_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             await update.message.reply_text("📭 No hay partidos programados en la federación para el día de hoy.")
             return
 
-        # Target adult categories to keep the output clean
-        target_cats = {"VL", "M1L", "M1", "M2", "NL", "MSC", "NSC", "LC", "M1LCUP"}
-        LEAGUE_NAMES = {
-            "VL": "Veikkausliiga (Tier 1)",
-            "M1L": "Ykkösliiga (Tier 2)",
-            "M1": "Ykkönen (Tier 3)",
-            "M2": "Kakkonen (Tier 4)",
-            "NL": "Kansallinen Liiga (Damas Tier 1)",
-            "MSC": "Suomen Cup (Copa)",
-            "NSC": "Naisten Suomen Cup (Copa Damas)",
-            "LC": "Liigacup (Copa de la Liga)",
-            "M1LCUP": "Ykkösliigacup",
-            "OTHER": "Otros partidos principales"
-        }
-        
+        # Senior leagues come from the same source as /fin_leagues so the set
+        # stays consistent (incl. M3 Kolmonen, N1.. femeninas, copas). Anything
+        # not in that catalogue is youth/minor and gets omitted.
+        catalog = _fin_senior_catalog(api)
+        LEAGUE_NAMES = {c: v["name"] for c, v in catalog.items()}
+
         # 1. Filter out futsal & beach soccer completely
         filtered_matches = []
         for m in matches:
@@ -4020,29 +4074,9 @@ async def fin_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         classified = []
         youth_or_others_count = 0
         for m in filtered_matches:
-            cat_id = m.get("category_id")
-            cat_name = str(m.get("category_name") or "").lower()
-            
-            is_target = (
-                cat_id in target_cats or 
-                "kakkonen" in cat_name or 
-                "ykkönen" in cat_name or 
-                "veikkausliiga" in cat_name
-            )
-            
-            if is_target:
-                # Assign a standardized code for filtering/selection
-                std_code = "OTHER"
-                if cat_id in target_cats:
-                    std_code = cat_id
-                elif "veikkausliiga" in cat_name:
-                    std_code = "VL"
-                elif "kakkonen" in cat_name:
-                    std_code = "M2"
-                elif "ykkönen" in cat_name or "ykkös" in cat_name:
-                    std_code = "M1"
-                
-                m["_std_code"] = std_code
+            cat_id = str(m.get("category_id") or "")
+            if cat_id in catalog:
+                m["_std_code"] = cat_id
                 classified.append(m)
             else:
                 youth_or_others_count += 1
@@ -4099,8 +4133,8 @@ async def fin_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             lines.append("━━━━━━━━━━━━━━━━━━━━")
             lines.append("💡 *Detector de Suplentes / B-Team:*")
             lines.append("👉 `/fin_match [ID_PARTIDO]`")
-            
-            await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+
+            await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
             return
 
         # No league code selected: decide whether to show list or league menu
@@ -4142,8 +4176,8 @@ async def fin_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             lines.append("━━━━━━━━━━━━━━━━━━━━")
             lines.append("💡 *Detector de Suplentes / B-Team:*")
             lines.append("👉 `/fin_match [ID_PARTIDO]`")
-            
-            await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+
+            await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
         else:
             # Show league selection menu to avoid Telegram length limit
             lines = [
@@ -4152,26 +4186,64 @@ async def fin_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
                 "Selecciona una liga para ver los partidos de hoy:\n"
             ]
             
-            league_order = ["VL", "M1L", "M1", "M2", "NL", "MSC", "NSC", "LC", "M1LCUP", "OTHER"]
-            for code in league_order:
-                if code in by_league:
-                    name = LEAGUE_NAMES.get(code, code)
-                    count = len(by_league[code])
-                    lines.append(f"• `{name}` ({count} part.) ➔ `/fin_today {code}`")
-                    
+            def _tier_key(code):
+                t = catalog.get(code, {}).get("tier")
+                try:
+                    t = int(t)
+                except (TypeError, ValueError):
+                    t = 99
+                return (t, LEAGUE_NAMES.get(code, code))
+
+            for code in sorted(by_league.keys(), key=_tier_key):
+                info = catalog.get(code, {})
+                name = info.get("name", code)
+                tier = info.get("tier")
+                label = f"{name} (Tier {tier})" if tier not in (None, "") else name
+                count = len(by_league[code])
+                lines.append(f"• `{label}` ({count} part.) ➔ `/fin_today {code}`")
+
             lines.append("")
             if youth_or_others_count > 0:
                 lines.append(f"ℹ️ _Omitidos {youth_or_others_count} partidos de categorías juveniles o ligas menores._\n")
                 
             lines.append("━━━━━━━━━━━━━━━━━━━━")
             lines.append("💡 Hacé click en el comando de la derecha para ver la liga correspondiente.")
-            
-            await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+
+            await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
     except Exception as e:
         logger.exception("Failed in /fin_today")
         await update.message.reply_text(f"❌ Error al consultar partidos de hoy: {e}")
     finally:
         api.close()
+
+
+def _format_fin_squad(team_label: str, players: list, icon: str) -> list[str]:
+    """Render a team's full XI (with shirt, captain, scorers) + bench."""
+
+    def _order(p):
+        try:
+            return (int(p.get("position_order") or 999), int(p.get("shirt_number") or 999))
+        except (TypeError, ValueError):
+            return (999, 999)
+
+    starters = sorted([p for p in players if str(p.get("start")) == "1"], key=_order)
+    bench = [p for p in players if str(p.get("start")) == "0"]
+    out = [f"\n{icon} *{team_label}* — XI ({len(starters)}):"]
+    for p in starters:
+        num = str(p.get("shirt_number") or "?").rjust(2)
+        cap = " Ⓒ" if str(p.get("captain")) in ("1", "true", "True") else ""
+        pos = p.get("position_en") or p.get("position") or ""
+        posn = f" _{pos}_" if pos else ""
+        try:
+            g = int(p.get("goals") or 0)
+        except (TypeError, ValueError):
+            g = 0
+        goals = f" {g}⚽" if g > 0 else ""
+        out.append(f"  `{num}` {p.get('player_name')}{cap}{posn}{goals}")
+    if bench:
+        names = ", ".join(f"{p.get('shirt_number')} {p.get('player_name')}" for p in bench[:12])
+        out.append(f"  🔁 _Banco:_ {names}")
+    return out
 
 
 async def fin_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -4238,7 +4310,7 @@ async def fin_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             lines.append("\n⚽ *Goles:*")
             for g in goals:
                 scorer = g.get("player_name") or "Jugador"
-                minute = g.get("minute") or "N/A"
+                minute = g.get("time_min") or g.get("minute") or "?"
                 team = home if g.get("team_id") == m.get("team_A_id") else away
                 lines.append(f" • {minute}': *{scorer}* ({team})")
                 
@@ -4248,41 +4320,44 @@ async def fin_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             lines.append("\n🟨🟥 *Tarjetas:*")
             for b in bookings:
                 player = b.get("player_name") or "Jugador"
-                minute = b.get("minute") or "N/A"
+                minute = b.get("time_min") or b.get("minute") or "?"
                 card = b.get("card_type") or "Yellow"
                 card_icon = "🟨" if "yellow" in card.lower() else "🟥"
                 team = home if b.get("team_id") == m.get("team_A_id") else away
                 lines.append(f" • {minute}': {card_icon} *{player}* ({team})")
                 
-        # Lineup Rotation Analysis (Value bet detector!)
+        # Half-time score + referee (extra context).
+        if m.get("hts_A") not in (None, ""):
+            lines.append(f"⏱️ Entretiempo: {m.get('hts_A')} - {m.get('hts_B')}")
+        if m.get("referee_1_name"):
+            lines.append(f"👨‍⚖️ Árbitro: {m.get('referee_1_name')}")
+
+        # Lineups: full XI + bench (richer than just a count) + B-Team detector.
         lineups = m.get("lineups", [])
+        home_id = m.get("team_A_id")
+        away_id = m.get("team_B_id")
         if not lineups:
-            lines.append("\n⚠️ *Alineaciones oficiales:*")
-            lines.append("Las alineaciones oficiales aún no están disponibles para este partido en el sistema de la federación. (Se publican usualmente 1 hora antes del pitazo inicial).")
+            lines.append("\n⚠️ *Alineaciones:* aún no publicadas (salen ~1h antes del inicio).")
         else:
-            home_id = m.get("team_A_id")
-            away_id = m.get("team_B_id")
-            home_starters = [p for p in lineups if p.get("team_id") == home_id and p.get("start") == "1"]
-            away_starters = [p for p in lineups if p.get("team_id") == away_id and p.get("start") == "1"]
-            
-            lines.append("\n📋 *Titulares Confirmados:*")
-            lines.append(f" • {home}: {len(home_starters)} en cancha.")
-            lines.append(f" • {away}: {len(away_starters)} en cancha.")
-            lines.append("\n🔍 *Análisis de Rotación (Detección de Suplentes/B-Team):*")
-            
-            # Run the rotation calculator for Home
+            home_players = [p for p in lineups if p.get("team_id") == home_id]
+            away_players = [p for p in lineups if p.get("team_id") == away_id]
+            lines.extend(_format_fin_squad(home, home_players, "🏠"))
+            lines.extend(_format_fin_squad(away, away_players, "✈️"))
+
+            home_starters = [p for p in home_players if str(p.get("start")) == "1"]
+            away_starters = [p for p in away_players if str(p.get("start")) == "1"]
+            lines.append("\n🔍 *Detector de Suplentes / B-Team:*")
             home_primary = m.get("team_A_primary_category_id") or m.get("category_id")
-            home_rot_text = _calculate_rotation_for_team(api, home_name=home, team_id=home_id, primary_category=home_primary, competition_id=m.get("competition_id"), starters=home_starters, target_match_id=match_id)
-            lines.append(f"\n🏘️ *Local ({home}):*\n{home_rot_text}")
-            
-            # Run the rotation calculator for Away
             away_primary = m.get("team_B_primary_category_id") or m.get("category_id")
-            away_rot_text = _calculate_rotation_for_team(api, home_name=away, team_id=away_id, primary_category=away_primary, competition_id=m.get("competition_id"), starters=away_starters, target_match_id=match_id)
-            lines.append(f"\n🚀 *Visitante ({away}):*\n{away_rot_text}")
-            
-            lines.append("\n💡 _¿Cómo interpretar? Si la regularidad es < 45% (🚨), el equipo está jugando con rotación masiva o suplentes en la copa. Esto suele provocar caídas rápidas en las cuotas de los casinos cuando los bots detectan la alineación oficial. ¡Aprovechá oportunidades de valor contra las cuotas pre-partido!_")
-            
-        await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+            lines.append("🏠 *%s:* %s" % (home, _calculate_rotation_for_team(
+                api, home_name=home, team_id=home_id, primary_category=home_primary,
+                competition_id=m.get("competition_id"), starters=home_starters, target_match_id=match_id)))
+            lines.append("✈️ *%s:* %s" % (away, _calculate_rotation_for_team(
+                api, home_name=away, team_id=away_id, primary_category=away_primary,
+                competition_id=m.get("competition_id"), starters=away_starters, target_match_id=match_id)))
+            lines.append("\n💡 _Regularidad <45% 🚨 = B-Team/rotación masiva → posible valor vs cuotas pre-partido._")
+
+        await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
     except Exception as e:
         logger.exception("Failed in /fin_match")
         await update.message.reply_text(f"❌ Error al consultar partido: {e}")

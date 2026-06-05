@@ -36,7 +36,7 @@ def build_new_event_alert_message(
     tracked_league: TrackedCompetition,
     match: ActiveEventRecord,
 ) -> str:
-    """Build a compact HTML-formatted Telegram message for a new event."""
+    """Build a compact HTML-formatted Telegram message for a new event, including cross-platform comparisons."""
 
     lines = [
         f"🌐 <b>Plataforma:</b> {escape(tracked_league.platform_display_name)}",
@@ -46,6 +46,33 @@ def build_new_event_alert_message(
         "",
     ]
     lines.extend(_build_match_block_lines(match))
+
+    # Cross-platform odds comparison if available
+    from storage.tracking_repository import tracking_repository
+    other_matches = []
+    if tracked_league.unified_competition_id is not None:
+        all_active = tracking_repository.get_active_events_for_unified_competition(
+            tracked_league.unified_competition_id,
+            only_future=True,
+        )
+        for active in all_active:
+            if active.id != match.id and active.platform != match.platform:
+                if _physical_match_similarity(match, active) >= 0.80:
+                    other_matches.append(active)
+
+    if other_matches:
+        lines.append("")
+        lines.append("💰 <b>Comparación de Odds (Otras Plataformas):</b>")
+        for other in other_matches:
+            tracked_other = tracking_repository.get_tracked_competition(other.tracked_competition_id)
+            plat_disp = escape(tracked_other.platform_display_name) if tracked_other else escape(other.platform.capitalize())
+            lines.append(
+                f"• <b>{plat_disp}:</b> "
+                f"1={format_odd_text(other.odds_home)} | "
+                f"X={format_odd_text(other.odds_draw)} | "
+                f"2={format_odd_text(other.odds_away)}"
+            )
+
     return "\n".join(lines)
 
 
@@ -55,7 +82,7 @@ def build_grouped_new_event_alert_message(
     *,
     max_items: int | None = None,
 ) -> str:
-    """Build one grouped Telegram message for multiple new events."""
+    """Build one grouped Telegram message for multiple new events, including cross-platform comparisons."""
 
     total_matches = len(matches)
     lines = [
@@ -65,10 +92,33 @@ def build_grouped_new_event_alert_message(
         f"📋 <b>Nuevos partidos:</b> {total_matches}",
     ]
 
+    from storage.tracking_repository import tracking_repository
+
     visible_matches = matches if max_items is None else matches[:max_items]
     for match in visible_matches:
         lines.append("")
         lines.extend(_build_match_block_lines(match))
+
+        # Check if it exists on other platforms
+        other_matches = []
+        if tracked_league.unified_competition_id is not None:
+            all_active = tracking_repository.get_active_events_for_unified_competition(
+                tracked_league.unified_competition_id,
+                only_future=True,
+            )
+            for active in all_active:
+                if active.id != match.id and active.platform != match.platform:
+                    if _physical_match_similarity(match, active) >= 0.80:
+                        other_matches.append(active)
+
+        if other_matches:
+            lines.append("💰 <b>Comparación (Otras Plats):</b>")
+            for other in other_matches:
+                tracked_other = tracking_repository.get_tracked_competition(other.tracked_competition_id)
+                plat_disp = escape(tracked_other.platform_display_name) if tracked_other else escape(other.platform.capitalize())
+                lines.append(
+                    f"  • {plat_disp}: 1={format_odd_text(other.odds_home)} | X={format_odd_text(other.odds_draw)} | 2={format_odd_text(other.odds_away)}"
+                )
 
     return "\n".join(lines)
 
@@ -183,7 +233,19 @@ def build_match_reminder_alert_message(
     tracked_league: TrackedCompetition,
     match: ActiveEventRecord,
 ) -> str:
-    """Build an HTML-formatted Telegram reminder sent 5 minutes before kickoff."""
+    """Build an HTML-formatted Telegram reminder sent 5 minutes before kickoff, comparing other bookmakers."""
+    from storage.tracking_repository import tracking_repository
+    other_matches = []
+    if tracked_league.unified_competition_id is not None:
+        all_active = tracking_repository.get_active_events_for_unified_competition(
+            tracked_league.unified_competition_id,
+            only_future=False,
+        )
+        for active in all_active:
+            if active.id != match.id and active.platform != match.platform:
+                if _physical_match_similarity(match, active) >= 0.80:
+                    other_matches.append(active)
+
     lines = [
         f"⏰ <b>Recordatorio de partido (5 min) - {escape(tracked_league.platform_display_name)}</b>",
         "",
@@ -198,6 +260,20 @@ def build_match_reminder_alert_message(
             f"2={format_odd_text(match.odds_away)}"
         ),
     ]
+
+    if other_matches:
+        lines.append("")
+        lines.append("💰 <b>Odds en otras plataformas:</b>")
+        for other in other_matches:
+            tracked_other = tracking_repository.get_tracked_competition(other.tracked_competition_id)
+            plat_disp = escape(tracked_other.platform_display_name) if tracked_other else escape(other.platform.capitalize())
+            lines.append(
+                f"• <b>{plat_disp}:</b> "
+                f"1={format_odd_text(other.odds_home)} | "
+                f"X={format_odd_text(other.odds_draw)} | "
+                f"2={format_odd_text(other.odds_away)}"
+            )
+
     lines.extend(_build_extra_market_lines(match))
     return "\n".join(lines)
 
@@ -251,6 +327,107 @@ def build_match_card_message(
         lines.append("")
         lines.extend(_build_extra_market_lines(match))
 
+    return "\n".join(lines)
+
+
+def _physical_match_similarity(event_a: ActiveEventRecord, event_b: ActiveEventRecord) -> float:
+    from datetime import datetime
+    def parse_dt(dt_val):
+        if not dt_val:
+            return None
+        if isinstance(dt_val, datetime):
+            return dt_val
+        try:
+            return datetime.fromisoformat(dt_val.strip())
+        except ValueError:
+            return None
+            
+    dt_a = parse_dt(event_a.scheduled_at)
+    dt_b = parse_dt(event_b.scheduled_at)
+    if dt_a and dt_b:
+        diff_hours = abs((dt_a - dt_b).total_seconds()) / 3600.0
+        if diff_hours > 3.0:
+            return 0.0
+            
+    from monitors.live_watch import _name_similarity
+    home_sim = _name_similarity(event_a.home, event_b.home)
+    away_sim = _name_similarity(event_a.away, event_b.away)
+    
+    if home_sim >= 0.70 and away_sim >= 0.70:
+        avg_score = (home_sim + away_sim) / 2.0
+        if avg_score >= 0.80:
+            return avg_score
+            
+    return 0.0
+
+
+def group_events_by_physical_match(events: list[ActiveEventRecord]) -> list[list[ActiveEventRecord]]:
+    """Group events from different platforms representing the same physical match."""
+    groups: list[list[ActiveEventRecord]] = []
+    for event in events:
+        placed = False
+        for group in groups:
+            representative = group[0]
+            if _physical_match_similarity(representative, event) >= 0.80:
+                group.append(event)
+                placed = True
+                break
+        if not placed:
+            groups.append([event])
+    return groups
+
+
+def build_comparison_match_card_message(
+    matches: list[ActiveEventRecord],
+    *,
+    full_odds: bool = False,
+) -> str:
+    """Build a comparison card showing odds from all platforms/bookmakers for the same physical match."""
+    if not matches:
+        return ""
+        
+    representative = matches[0]
+    
+    lines = [
+        f"⚽ <b>{escape(representative.home)} vs {escape(representative.away)}</b>",
+        f"🕒 <b>{escape(format_kickoff_text(representative))}</b>",
+        "",
+        "💰 <b>Comparación de Odds 1X2:</b>",
+    ]
+    
+    for match in matches:
+        from storage.tracking_repository import tracking_repository
+        tracked = tracking_repository.get_tracked_competition(match.tracked_competition_id)
+        plat_disp = escape(tracked.platform_display_name) if tracked else escape(match.platform.capitalize())
+        lines.append(
+            f"• <b>{plat_disp}:</b> "
+            f"1={format_odd_text(match.odds_home)} | "
+            f"X={format_odd_text(match.odds_draw)} | "
+            f"2={format_odd_text(match.odds_away)}"
+        )
+        
+    lines.append("")
+    lines.append("🔗 <b>Links directos:</b>")
+    for match in matches:
+        from storage.tracking_repository import tracking_repository
+        from monitors.tracking import tracking_service
+        tracked = tracking_repository.get_tracked_competition(match.tracked_competition_id)
+        if tracked:
+            extractor = tracking_service.extractor_registry.get_for_platform(match.platform)
+            event_url = extractor.build_event_url(
+                competition_external_id=tracked.competition_external_id,
+                external_event_id=match.external_event_id,
+                source_url=tracked.source_url,
+                event_url=match.event_url,
+                competition_metadata=json.loads(tracked.metadata_json) if tracked.metadata_json else None,
+                event_metadata=json.loads(match.raw_payload_json) if match.raw_payload_json else None,
+            )
+            plat_disp = escape(tracked.platform_display_name)
+            if event_url:
+                lines.append(f"• <a href=\"{escape(event_url)}\">{plat_disp}</a>")
+            else:
+                lines.append(f"• {plat_disp} (sin link directo)")
+                
     return "\n".join(lines)
 
 
