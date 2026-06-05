@@ -13,6 +13,12 @@ from bot.handlers import (
     fin_match_command,
 )
 
+_MOCK_FIN_LEAGUES = [
+    {"sport": "Football", "name": "Veikkausliiga", "category_id": "VL", "gender": "Men", "tier": 1},
+    {"sport": "Football", "name": "Kakkonen", "category_id": "M2", "gender": "Men", "tier": 4},
+]
+
+
 class TestFinlandCommands(unittest.IsolatedAsyncioTestCase):
     
     async def test_fin_leagues_command_success(self) -> None:
@@ -40,10 +46,10 @@ class TestFinlandCommands(unittest.IsolatedAsyncioTestCase):
         update = SimpleNamespace(message=message)
 
         await fin_standings_command(update, context)
-        
+
         message.reply_text.assert_awaited_once()
         args = message.reply_text.await_args.args[0]
-        self.assertIn("Código de liga ausente o inválido", args)
+        self.assertIn("Falta el código de liga", args)
         self.assertIn("fin_standings", args)
 
     async def test_fin_standings_command_valid_league(self) -> None:
@@ -55,7 +61,9 @@ class TestFinlandCommands(unittest.IsolatedAsyncioTestCase):
             {"current_standing": 1, "team_name": "FC Inter", "matches_played": 11, "points": 24, "goals_diff": 9}
         ]
         
-        with patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_standings", return_value=mock_standings):
+        with patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_categories",
+                   return_value=[{"category_id": "VL", "competition_id": "spljp26"}]), \
+             patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_standings", return_value=mock_standings):
             await fin_standings_command(update, context)
             
         self.assertEqual(message.reply_text.call_count, 2)
@@ -70,10 +78,10 @@ class TestFinlandCommands(unittest.IsolatedAsyncioTestCase):
         update = SimpleNamespace(message=message)
 
         await fin_fixtures_command(update, context)
-        
+
         message.reply_text.assert_awaited_once()
         args = message.reply_text.await_args.args[0]
-        self.assertIn("Código de liga ausente o inválido", args)
+        self.assertIn("Falta el código de liga", args)
         self.assertIn("fin_fixtures", args)
 
     async def test_fin_today_command_success(self) -> None:
@@ -90,7 +98,8 @@ class TestFinlandCommands(unittest.IsolatedAsyncioTestCase):
         mock_date.today.return_value.isoformat.return_value = "2026-06-01"
         
         with patch("bot.handlers.date", mock_date):
-            with patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_matches_by_date", return_value=mock_matches):
+            with patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_matches_by_date", return_value=mock_matches), \
+                 patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_league_ranking_list", return_value=_MOCK_FIN_LEAGUES):
                 await fin_today_command(update, context)
             
         self.assertEqual(message.reply_text.call_count, 2)
@@ -111,7 +120,8 @@ class TestFinlandCommands(unittest.IsolatedAsyncioTestCase):
         mock_date.today.return_value.isoformat.return_value = "2026-06-01"
         
         with patch("bot.handlers.date", mock_date):
-            with patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_matches_by_date", return_value=mock_matches):
+            with patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_matches_by_date", return_value=mock_matches), \
+                 patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_league_ranking_list", return_value=_MOCK_FIN_LEAGUES):
                 await fin_today_command(update, context)
             
         self.assertEqual(message.reply_text.call_count, 2)
@@ -133,7 +143,8 @@ class TestFinlandCommands(unittest.IsolatedAsyncioTestCase):
         mock_date.today.return_value.isoformat.return_value = "2026-06-01"
         
         with patch("bot.handlers.date", mock_date):
-            with patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_matches_by_date", return_value=mock_matches):
+            with patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_matches_by_date", return_value=mock_matches), \
+                 patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_league_ranking_list", return_value=_MOCK_FIN_LEAGUES):
                 await fin_today_command(update, context)
             
         self.assertEqual(message.reply_text.call_count, 2)
@@ -155,7 +166,8 @@ class TestFinlandCommands(unittest.IsolatedAsyncioTestCase):
         mock_date.today.return_value.isoformat.return_value = "2026-06-01"
         
         with patch("bot.handlers.date", mock_date):
-            with patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_matches_by_date", return_value=mock_matches):
+            with patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_matches_by_date", return_value=mock_matches), \
+                 patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_league_ranking_list", return_value=_MOCK_FIN_LEAGUES):
                 await fin_today_command(update, context)
             
         self.assertEqual(message.reply_text.call_count, 2)
