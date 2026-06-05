@@ -11,6 +11,7 @@ from bot.handlers import (
     swe_leagues_command,
     swe_standings_command,
     swe_today_command,
+    swe_match_command,
 )
 
 
@@ -47,7 +48,7 @@ class SweCommandTests(unittest.IsolatedAsyncioTestCase):
         await swe_leagues_command(update, SimpleNamespace())
         out = message.reply_text.await_args.args[0]
         self.assertIn("Allsvenskan", out)
-        self.assertIn("`AL`", out)
+        self.assertIn("<code>AL</code>", out)
 
     async def test_standings_renders_table(self) -> None:
         update, message = _update()
@@ -82,6 +83,42 @@ class SweCommandTests(unittest.IsolatedAsyncioTestCase):
         out = message.reply_text.await_args.args[0]
         self.assertIn("Partidos de hoy (Suecia)", out)
         self.assertIn("14:00", out)
+
+    async def test_today_sorts_chronologically(self) -> None:
+        update, message = _update()
+        today = [
+            {"match_id": "2", "competition_name": "Allsvenskan 2026", "home": "Home2", "away": "Away2", "start_time_local": "2026-07-03T21:00:00"},
+            {"match_id": "1", "competition_name": "Allsvenskan 2026", "home": "Home1", "away": "Away1", "start_time_local": "2026-07-03T19:00:00"},
+        ]
+        with self._patch_client(get_matches_today=today):
+            await swe_today_command(update, SimpleNamespace())
+        out = message.reply_text.await_args.args[0]
+        self.assertIn("Partidos de hoy (Suecia)", out)
+        idx1 = out.index("Home1")
+        idx2 = out.index("Home2")
+        self.assertLess(idx1, idx2)
+
+    async def test_swe_match_success(self) -> None:
+        update, message = _update()
+        game_info = {
+            "home": "AIK",
+            "away": "GAIS",
+            "score": "2-1",
+            "status": "In Play",
+            "events": [
+                {"minute": "12'", "type": "Goal", "player": "Player A"},
+                {"minute": "45'", "type": "Yellow Card", "player": "Player B"},
+            ]
+        }
+        with self._patch_client(get_live_game_info=game_info):
+            await swe_match_command(update, SimpleNamespace(args=["6529915"]))
+        
+        # Note: _reply_text_chunks uses Message.reply_text to reply, so the mock assertions hold
+        message.reply_text.assert_awaited_once()
+        out = message.reply_text.await_args.args[0]
+        self.assertIn("AIK vs GAIS", out)
+        self.assertIn("Marcador: 2-1", out)
+        self.assertIn("- 12' Goal Player A", out)
 
 
 if __name__ == "__main__":

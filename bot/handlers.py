@@ -45,6 +45,12 @@ from storage.tracking_repository import ActiveEventRecord, TrackedCompetitionSub
 
 logger = logging.getLogger(__name__)
 
+
+def escape_html(text) -> str:
+    """Escape text for Telegram HTML parse mode without escaping quotes."""
+    return str(text or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
 SELECT_LEAGUE_FOR_MATCHES = 1
 SELECT_MATCH_FOR_MATCHES = 2
 SELECT_LEAGUE_FOR_UNTRACK = 3
@@ -100,94 +106,86 @@ TRACK_STATS_OPTIONS_CONTEXT_KEY = "track_stats_options"
 MANUAL_REFRESH_TASK_KEY = "manual_refresh_task"
 
 HELP_MESSAGE = (
-    "🤖 *Menú de Ayuda de BetBot*\n\n"
-    "Elegí una sección para ver los comandos detallados:\n"
-    "• `/help general` - Comandos generales y de estado\n"
-    "• `/help odds` - Seguimiento de cuotas/odds y variaciones\n"
-    "• `/help live` - Monitoreo de partidos en vivo (live)\n"
-    "• `/help stats` - Estadísticas y H2H\n"
-    "• `/help especial` - Ligas especiales (Finlandia y Suecia)\n\n"
-    "También podés usar los comandos directos de ayuda:\n"
-    "`/help_general`, `/help_odds`, `/help_live`, `/help_stats`, `/help_especial`"
+    "🤖 <b>Ayuda de BetBot - Comandos Generales y de Configuración:</b>\n"
+    "  <code>/start</code> - Mensaje de bienvenida y presentación\n"
+    "  <code>/help</code> - Muestra este menú principal de ayuda\n"
+    "  <code>/guide</code> - Guía rápida paso a paso del flujo completo\n"
+    "  <code>/ping</code> - Verifica si el bot responde (pong)\n"
+    "  <code>/status</code> - Estado del servidor y del bot (online)\n"
+    "  <code>/resources</code> - Estadísticas de consumo de CPU/RAM del VPS\n"
+    "  <code>/echo &lt;texto&gt;</code> - Devuelve el mismo texto enviado\n"
+    "  <code>/cancel</code> - Cancela la selección interactiva en curso\n\n"
+    "📂 <b>Secciones de Ayuda Especializadas:</b>\n"
+    "• <code>/help_matches</code> - Seguimiento de cuotas, odds y variaciones\n"
+    "• <code>/help_live</code> - Monitoreo de partidos en vivo (live)\n"
+    "• <code>/help_stats</code> - Estadísticas H2H y ligas especiales (Finlandia y Suecia)"
 )
 
-HELP_GENERAL_MESSAGE = (
-    "🤖 *Comandos Generales y de Configuración:*\n"
-    "  `/start` - Mensaje de bienvenida y presentación\n"
-    "  `/help` - Menú principal de ayuda\n"
-    "  `/guide` - Guía rápida paso a paso del flujo completo\n"
-    "  `/ping` - Verifica si el bot responde (pong)\n"
-    "  `/status` - Estado del servidor y del bot (online)\n"
-    "  `/resources` - Estadísticas de consumo de CPU/RAM del VPS\n"
-    "  `/echo <texto>` - Devuelve el mismo texto enviado\n"
-    "  `/cancel` - Cancela la selección interactiva en curso"
-)
-
-HELP_ODDS_MESSAGE = (
-    "📈 *Comandos para Odds (Cuotas):*\n"
-    "  `/track_league` - Agrega una liga de odds de forma interactiva (plataforma -> país -> liga)\n"
-    "  `/track_url <url>` - Agrega una liga de odds usando un link directo y la deja pendiente\n"
-    "  `/confirm_track` - Confirma la última liga pendiente\n"
-    "  `/confirm_empty_track` - Confirma la liga pendiente aunque no tenga partidos hoy\n"
-    "  `/list_tracks` - Lista todas las ligas de odds en seguimiento activo\n"
-    "  `/competition_url <n>` - Muestra el link original de una liga trackeada\n"
-    "  `/refresh_tracks` - Actualiza manualmente los partidos y detecta eventos nuevos\n"
-    "  `/update_track_url <n> <url>` - Actualiza el link de una liga trackeada\n"
-    "  `/untrack` - Deja de seguir y borra una liga de tu lista\n"
-    "  `/matches` - Muestra partidos de una liga para elegir uno\n"
-    "  `/event_url <n>` - Muestra la URL directa del partido seleccionado previamente en /matches\n"
-    "  `/odds_on` - Activa alertas automáticas de caída de cuotas en una liga\n"
-    "  `/odds_off` - Desactiva alertas automáticas de caída de cuotas en una liga\n"
-    "  `/set_change_percent <n>` - Configura el % de variación mínima para alertar\n"
-    "  `/check_little_changes` - Lista cambios pequeños de cuotas pendientes de aprobación\n"
-    "  `/confirm_change <n>` - Aprueba un cambio pequeño individual y actualiza su baseline\n"
-    "  `/confirm_all_little_changes` - Aprueba todos los cambios pequeños pendientes\n\n"
-    "🎯 *Peak del día* (detección + scoring 1–10):\n"
-    "  `/peak_today` - Detecta y puntúa los partidos especiales con flag de peak y cuándo entrar\n"
-    "  `/peak_on` - Activa el envío automático del Peak del día cada mañana\n"
-    "  `/peak_off` - Desactiva el envío automático del Peak del día"
+HELP_MATCHES_MESSAGE = (
+    "📈 <b>Comandos para Odds y Seguimiento de Partidos (Matches):</b>\n"
+    "  <code>/track_league</code> - Agrega una liga de odds de forma interactiva (plataforma -&gt; país -&gt; liga)\n"
+    "  <code>/track_url &lt;url&gt;</code> - Agrega una liga de odds usando un link directo y la deja pendiente\n"
+    "  <code>/confirm_track</code> - Confirma la última liga pendiente\n"
+    "  <code>/confirm_empty_track</code> - Confirma la liga pendiente aunque no tenga partidos hoy\n"
+    "  <code>/list_tracks</code> - Lista todas las ligas de odds en seguimiento activo\n"
+    "  <code>/competition_url &lt;n&gt;</code> - Muestra el link original de una liga trackeada\n"
+    "  <code>/refresh_tracks</code> - Actualiza manualmente los partidos y detecta eventos nuevos\n"
+    "  <code>/update_track_url &lt;n&gt; &lt;url&gt;</code> - Actualiza el link de una liga trackeada\n"
+    "  <code>/untrack</code> - Deja de seguir y borra una liga de tu lista\n"
+    "  <code>/matches</code> - Muestra partidos de una liga para elegir uno\n"
+    "  <code>/event_url &lt;n&gt;</code> - Muestra la URL directa del partido seleccionado previamente en /matches\n"
+    "  <code>/odds_on</code> - Activa alertas automáticas de caída de cuotas en una liga\n"
+    "  <code>/odds_off</code> - Desactiva alertas automáticas de caída de cuotas en una liga\n"
+    "  <code>/set_change_percent &lt;n&gt;</code> - Configura el % de variación mínima para alertar\n"
+    "  <code>/check_little_changes</code> - Lista cambios pequeños de cuotas pendientes de aprobación\n"
+    "  <code>/confirm_change &lt;n&gt;</code> - Aprueba un cambio pequeño individual y actualiza su baseline\n"
+    "  <code>/confirm_all_little_changes</code> - Aprueba todos los cambios pequeños pendientes\n\n"
+    "🎯 <b>Peak del día</b> (detección + scoring 1–10):\n"
+    "  <code>/peak_today</code> - Detecta y puntúa los partidos especiales con flag de peak y cuándo entrar\n"
+    "  <code>/peak_on</code> - Activa el envío automático del Peak del día cada mañana\n"
+    "  <code>/peak_off</code> - Desactiva el envío automático del Peak del día\n\n"
+    "Volver al menú principal: <code>/help</code>"
 )
 
 HELP_LIVE_MESSAGE = (
-    "🔴 *Live Commands (En vivo):*\n"
-    "  `/watch_live` - Pone partidos en vigilancia en vivo (escribí los equipos o subí foto del fixture)\n"
-    "  `/import_sheet` - Importa partidos en vigilancia directamente desde la planilla de Google Drive\n"
-    "  `/watching` - Lista tus partidos en vigilancia activa y los que ya salieron\n"
-    "  `/view_match <id>` - Muestra estadísticas en tiempo real y cuotas de un partido vigilado\n"
-    "  `/live_status` - Muestra cadencia, partidos activos y último estado live detectado\n"
-    "  `/live_settings` - Configura alertas live: goles, rojas y amarillas\n"
-    "  `/unwatch <id>` - Saca un partido de la vigilancia en vivo (o /unwatch all)"
+    "🔴 <b>Live Commands (En vivo):</b>\n"
+    "  <code>/watch_live</code> - Pone partidos en vigilancia en vivo (escribí los equipos o subí foto del fixture)\n"
+    "  <code>/import_sheet</code> - Importa partidos en vigilancia directamente desde la planilla de Google Drive\n"
+    "  <code>/watching</code> - Lista tus partidos en vigilancia activa y los que ya salieron\n"
+    "  <code>/view_match &lt;id&gt;</code> - Muestra estadísticas en tiempo real y cuotas de un partido vigilado\n"
+    "  <code>/live_status</code> - Muestra cadencia, partidos activos y último estado live detectado\n"
+    "  <code>/live_settings</code> - Configura alertas live: goles, rojas y amarillas\n"
+    "  <code>/unwatch &lt;id&gt;</code> - Saca un partido de la vigilancia en vivo (o /unwatch all)\n\n"
+    "Volver al menú principal: <code>/help</code>"
 )
 
 HELP_STATS_MESSAGE = (
-    "📊 *Stats y Estadísticas:*\n"
-    "  `/link_stats` - Vincula una liga de odds con un proveedor de estadísticas\n"
-    "  `/stats_links` - Muestra los vínculos activos entre odds y stats\n"
-    "  `/track_stats` - Sigue una liga únicamente para estadísticas y cache diario\n"
-    "  `/stats_tracks` - Lista las ligas seguidas exclusivamente por estadísticas\n"
-    "  `/explore_stats` - Explora tabla, partidos anteriores, fixture y goleadores de stats\n"
-    "  `/stats <n>` - Genera reporte H2H del partido elegido de la lista de /matches\n"
-    "  `/platforms` - Muestra las plataformas de odds y proveedores de stats soportados"
-)
-
-HELP_SPECIAL_MESSAGE = (
-    "🌍 *Ligas Especiales (Stats de Federaciones):*\n"
-    "_Ligas de ascenso/copas que no figuran en sitios comunes: las sacamos de las páginas oficiales para detectar valor._\n\n"
-    "🇫🇮 *Finlandia* (`tulospalvelu.palloliitto.fi`):\n"
-    "  `/fin_help` - Guía completa del módulo de Finlandia\n"
-    "  `/fin_leagues` - Escalafón oficial de ligas y copas\n"
-    "  `/fin_today` - Partidos de hoy con sus IDs\n"
-    "  `/fin_standings <CÓDIGO>` - Tabla de posiciones de una liga\n"
-    "  `/fin_fixtures <CÓDIGO>` - Calendario reciente y próximo de una liga\n"
-    "  `/fin_match <ID>` - Reporte del partido + Detector de Suplentes / B-Team\n\n"
-    "🇸🇪 *Suecia* (`svenskfotboll.se`):\n"
-    "  `/swe_help` - Guía completa del módulo de Suecia\n"
-    "  `/swe_leagues` - Ligas disponibles y sus códigos\n"
-    "  `/swe_today` - Partidos de hoy con sus IDs\n"
-    "  `/swe_standings <CÓDIGO>` - Tabla de posiciones de una liga\n"
-    "  `/swe_fixtures <CÓDIGO>` - Próximos partidos de una liga\n"
-    "  `/swe_results <CÓDIGO>` - Últimos resultados de una liga\n"
-    "  `/swe_match <ID>` - Reporte detallado de un partido"
+    "📊 <b>Stats y Estadísticas (Estándar):</b>\n"
+    "  <code>/link_stats</code> - Vincula una liga de odds con un proveedor de estadísticas\n"
+    "  <code>/stats_links</code> - Muestra los vínculos activos entre odds y stats\n"
+    "  <code>/track_stats</code> - Sigue una liga únicamente para estadísticas y cache diario\n"
+    "  <code>/stats_tracks</code> - Lista las ligas seguidas exclusivamente por estadísticas\n"
+    "  <code>/explore_stats</code> - Explora tabla, partidos anteriores, fixture y goleadores de stats\n"
+    "  <code>/stats &lt;n&gt;</code> - Genera reporte H2H del partido elegido de la lista de /matches\n"
+    "  <code>/platforms</code> - Muestra las plataformas de odds y proveedores de stats soportados\n\n"
+    "🌍 <b>Ligas Especiales (Stats de Federaciones):</b>\n"
+    "  <i>Ligas de ascenso/copas que no figuran en sitios comunes: las sacamos de las páginas oficiales.</i>\n"
+    "  🇫🇮 <b>Finlandia</b> (<code>tulospalvelu.palloliitto.fi</code>):\n"
+    "    <code>/fin_help</code> - Guía completa del módulo de Finlandia\n"
+    "    <code>/fin_leagues</code> - Escalafón oficial de ligas y copas\n"
+    "    <code>/fin_today</code> - Partidos de hoy con sus IDs\n"
+    "    <code>/fin_standings &lt;CÓDIGO&gt;</code> - Tabla de posiciones de una liga\n"
+    "    <code>/fin_fixtures &lt;CÓDIGO&gt;</code> - Calendario reciente y próximo de una liga\n"
+    "    <code>/fin_match &lt;ID&gt;</code> - Reporte del partido + Detector de Suplentes / B-Team\n"
+    "  🇸🇪 <b>Suecia</b> (<code>svenskfotboll.se</code>):\n"
+    "    <code>/swe_help</code> - Guía completa del módulo de Suecia\n"
+    "    <code>/swe_leagues</code> - Ligas disponibles y sus códigos\n"
+    "    <code>/swe_today</code> - Partidos de hoy con sus IDs\n"
+    "    <code>/swe_standings &lt;CÓDIGO&gt;</code> - Tabla de posiciones de una liga\n"
+    "    <code>/swe_fixtures &lt;CÓDIGO&gt;</code> - Próximos partidos de una liga\n"
+    "    <code>/swe_results &lt;CÓDIGO&gt;</code> - Últimos resultados de una liga\n"
+    "    <code>/swe_match &lt;ID&gt;</code> - Reporte detallado de un partido\n\n"
+    "Volver al menú principal: <code>/help</code>"
 )
 
 GUIDE_MESSAGE = (
@@ -1098,53 +1096,35 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     if context.args:
         category = context.args[0].strip().lower()
 
-    if category in ("general", "bot"):
-        await update.message.reply_text(HELP_GENERAL_MESSAGE, parse_mode=ParseMode.MARKDOWN)
-    elif category == "odds":
-        await update.message.reply_text(HELP_ODDS_MESSAGE, parse_mode=ParseMode.MARKDOWN)
+    if category in ("matches", "odds", "tracking"):
+        await update.message.reply_text(HELP_MATCHES_MESSAGE, parse_mode=ParseMode.HTML)
     elif category == "live":
-        await update.message.reply_text(HELP_LIVE_MESSAGE, parse_mode=ParseMode.MARKDOWN)
-    elif category == "stats":
-        await update.message.reply_text(HELP_STATS_MESSAGE, parse_mode=ParseMode.MARKDOWN)
-    elif category in ("especial", "especiales", "federaciones"):
-        await update.message.reply_text(HELP_SPECIAL_MESSAGE, parse_mode=ParseMode.MARKDOWN)
+        await update.message.reply_text(HELP_LIVE_MESSAGE, parse_mode=ParseMode.HTML)
+    elif category in ("stats", "statistics", "especial", "especiales", "federaciones"):
+        await update.message.reply_text(HELP_STATS_MESSAGE, parse_mode=ParseMode.HTML)
     else:
-        await update.message.reply_text(HELP_MESSAGE, parse_mode=ParseMode.MARKDOWN)
+        await update.message.reply_text(HELP_MESSAGE, parse_mode=ParseMode.HTML)
 
 
-async def help_general_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle the `/help_general` command."""
+async def help_matches_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle the `/help_matches` command."""
     del context
     if update.message:
-        await update.message.reply_text(HELP_GENERAL_MESSAGE, parse_mode=ParseMode.MARKDOWN)
-
-
-async def help_odds_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle the `/help_odds` command."""
-    del context
-    if update.message:
-        await update.message.reply_text(HELP_ODDS_MESSAGE, parse_mode=ParseMode.MARKDOWN)
+        await update.message.reply_text(HELP_MATCHES_MESSAGE, parse_mode=ParseMode.HTML)
 
 
 async def help_live_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle the `/help_live` command."""
     del context
     if update.message:
-        await update.message.reply_text(HELP_LIVE_MESSAGE, parse_mode=ParseMode.MARKDOWN)
+        await update.message.reply_text(HELP_LIVE_MESSAGE, parse_mode=ParseMode.HTML)
 
 
 async def help_stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle the `/help_stats` command."""
     del context
     if update.message:
-        await update.message.reply_text(HELP_STATS_MESSAGE, parse_mode=ParseMode.MARKDOWN)
-
-
-async def help_special_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle the `/help_especial` command."""
-    del context
-    if update.message:
-        await update.message.reply_text(HELP_SPECIAL_MESSAGE, parse_mode=ParseMode.MARKDOWN)
+        await update.message.reply_text(HELP_STATS_MESSAGE, parse_mode=ParseMode.HTML)
 
 
 async def guide_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -3241,11 +3221,9 @@ def register_handlers(application: Application) -> None:
 
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(CommandHandler("help_general", help_general_command))
-    application.add_handler(CommandHandler("help_odds", help_odds_command))
+    application.add_handler(CommandHandler("help_matches", help_matches_command))
     application.add_handler(CommandHandler("help_live", help_live_command))
     application.add_handler(CommandHandler("help_stats", help_stats_command))
-    application.add_handler(CommandHandler("help_especial", help_special_command))
     application.add_handler(CommandHandler("guide", guide_command))
     application.add_handler(CommandHandler("platforms", platforms_command))
     
@@ -4348,36 +4326,36 @@ async def fin_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         return
 
     help_text = (
-        "🇫🇮 *Guía de Estadísticas de la Federación de Finlandia* 🇫🇮\n\n"
+        "🇫🇮 <b>Guía de Estadísticas de la Federación de Finlandia</b> 🇫🇮\n\n"
         "Este módulo te permite consultar estadísticas oficiales directo de la Asociación de Fútbol de Finlandia "
-        "(`tulospalvelu.palloliitto.fi`). Estas ligas de ascenso y copas no suelen figurar en sitios comunes "
+        "(<code>tulospalvelu.palloliitto.fi</code>). Estas ligas de ascenso y copas no suelen figurar en sitios comunes "
         "de estadísticas, lo cual genera grandes oportunidades de valor.\n\n"
-        "📖 *Comandos disponibles:*\n"
-        "• `/fin_leagues` - Muestra la jerarquía oficial (escalafón) de ligas masculinas, femeninas y copas.\n"
-        "• `/fin_today` - Lista los partidos programados para hoy en las categorías principales con sus IDs.\n"
-        "• `/fin_standings [CÓDIGO]` - Muestra la tabla de posiciones actual de una liga (Ej: `/fin_standings VL`).\n"
-        "• `/fin_fixtures [CÓDIGO]` - Muestra el calendario de partidos recientes y próximos de una liga y sus IDs.\n"
-        "• `/fin_match [ID_PARTIDO]` - Muestra detalles de un partido (goles, tarjetas, alineaciones) y corre el "
-        "**Análisis de Rotación de Alineación (Detector de Suplentes / B-Team)**.\n\n"
-        "🔍 *¿Cómo funciona el Detector de Suplentes / B-Team?*\n"
-        "En los partidos de copa (como la *Suomen Cup*) o en fechas de rotación, los equipos de divisiones superiores "
+        "📖 <b>Comandos disponibles:</b>\n"
+        "• <code>/fin_leagues</code> - Muestra la jerarquía oficial (escalafón) de ligas masculinas, femeninas y copas.\n"
+        "• <code>/fin_today</code> - Lista los partidos programados para hoy en las categorías principales con sus IDs.\n"
+        "• <code>/fin_standings [CÓDIGO]</code> - Muestra la tabla de posiciones actual de una liga (Ej: <code>/fin_standings VL</code>).\n"
+        "• <code>/fin_fixtures [CÓDIGO]</code> - Muestra el calendario de partidos recientes y próximos de una liga y sus IDs.\n"
+        "• <code>/fin_match [ID_PARTIDO]</code> - Muestra detalles de un partido (goles, tarjetas, alineaciones) y corre el "
+        "<b>Análisis de Rotación de Alineación (Detector de Suplentes / B-Team)</b>.\n\n"
+        "🔍 <b>¿Cómo funciona el Detector de Suplentes / B-Team?</b>\n"
+        "En los partidos de copa (como la <i>Suomen Cup</i>) o en fechas de rotación, los equipos de divisiones superiores "
         "suelen alinear reservas, juveniles o un equipo 'B'.\n"
-        "El comando `/fin_match [ID_PARTIDO]` analiza los titulares de hoy y los compara con los últimos 3 partidos "
-        "de liga del equipo, calculando un **Ratio de Regularidad**:\n"
-        "  🟢 *>= 70%*: Juegan los titulares habituales (A-Team).\n"
-        "  🟡 *45% - 69%*: Rotación parcial o moderada.\n"
-        "  🚨 *< 45%*: *¡ROTACIÓN MASIVA / B-TEAM!* Juegan suplentes.\n\n"
-        "💡 *Flujo de Análisis Recomendado:*\n"
-        "1️⃣ Corré `/fin_today` para ver qué partidos hay programados para hoy.\n"
+        "El comando <code>/fin_match [ID_PARTIDO]</code> analiza los titulares de hoy y los compara con los últimos 3 partidos "
+        "de liga del equipo, calculando un <b>Ratio de Regularidad</b>:\n"
+        "  🟢 <b>&gt;= 70%</b>: Juegan los titulares habituales (A-Team).\n"
+        "  🟡 <b>45% - 69%</b>: Rotación parcial o moderada.\n"
+        "  🚨 <b>&lt; 45%</b>: <b>¡ROTACIÓN MASIVA / B-TEAM!</b> Juegan suplentes.\n\n"
+        "💡 <b>Flujo de Análisis Recomendado:</b>\n"
+        "1️⃣ Corré <code>/fin_today</code> para ver qué partidos hay programados para hoy.\n"
         "2️⃣ Si ves un partido interesante (por ejemplo, un equipo de división alta contra uno de división baja en Suomen Cup), "
         "esperá a que falte 1 hora para el partido (cuando se cargan las alineaciones oficiales).\n"
-        "3️⃣ Corré `/fin_match [ID_PARTIDO]`.\n"
-        "4️⃣ Si detectás un ratio de regularidad muy bajo (🚨 < 45%) para el equipo favorito, las cuotas del casino suelen "
+        "3️⃣ Corré <code>/fin_match [ID_PARTIDO]</code>.\n"
+        "4️⃣ Si detectás un ratio de regularidad muy bajo (🚨 &lt; 45%) para el equipo favorito, las cuotas del casino suelen "
         "estar desajustadas basándose en el poder del A-Team. ¡Esto te permite tomar apuestas de valor antes de que "
         "las cuotas se desplomen!"
     )
 
-    await update.message.reply_text(help_text, parse_mode="Markdown")
+    await update.message.reply_text(help_text, parse_mode=ParseMode.HTML)
 
 
 # ===================== Svenskfotboll (Swedish FA) commands =====================
@@ -4423,12 +4401,19 @@ def _convert_swe_to_arg_datetime(local_dt: str | None) -> tuple[str, str]:
         return str(local_dt), "N/A"
 
 
-def _swe_usage_guide() -> str:
-    lines = ["💡 *Ligas disponibles (código):*"]
-    for code, (_cid, name, tier) in _SWE_LEAGUES.items():
-        lines.append(f"• `{code}` - {name} ({tier})")
-    lines.append("\nEjemplo: `/swe_standings AL`")
-    return "\n".join(lines)
+def _swe_usage_guide(as_html: bool = False) -> str:
+    if as_html:
+        lines = ["💡 <b>Ligas disponibles (código):</b>"]
+        for code, (_cid, name, tier) in _SWE_LEAGUES.items():
+            lines.append(f"• <code>{code}</code> - {name} ({tier})")
+        lines.append("\nEjemplo: <code>/swe_standings AL</code>")
+        return "\n".join(lines)
+    else:
+        lines = ["💡 *Ligas disponibles (código):*"]
+        for code, (_cid, name, tier) in _SWE_LEAGUES.items():
+            lines.append(f"• `{code}` - {name} ({tier})")
+        lines.append("\nEjemplo: `/swe_standings AL`")
+        return "\n".join(lines)
 
 
 async def swe_leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -4438,19 +4423,19 @@ async def swe_leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     if update.message is None:
         return
     lines = [
-        "🇸🇪 *Ligas de Suecia (Federación / svenskfotboll.se)* 🇸🇪\n",
+        "🇸🇪 <b>Ligas de Suecia (Federación / svenskfotboll.se)</b> 🇸🇪\n",
         "Ligas oficiales que no siempre figuran en sitios comunes de stats.\n",
     ]
     for code, (_cid, name, tier) in _SWE_LEAGUES.items():
-        lines.append(f"⚽ *{name}* (Código: `{code}`)\n    {tier}\n")
+        lines.append(f"⚽ <b>{name}</b> (Código: <code>{code}</code>)\n    {tier}\n")
     lines.append("━━━━━━━━━━━━━━━━━━━━")
-    lines.append("👉 *¿Qué querés hacer?*")
-    lines.append("📊 Posiciones: `/swe_standings [CÓDIGO]`")
-    lines.append("🗓️ Próximos: `/swe_fixtures [CÓDIGO]`")
-    lines.append("🏁 Últimos resultados: `/swe_results [CÓDIGO]`")
-    lines.append("⚽ Partidos de hoy: `/swe_today`")
-    lines.append("📚 Guía: `/swe_help`")
-    await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+    lines.append("👉 <b>¿Qué querés hacer?</b>")
+    lines.append("📊 Posiciones: <code>/swe_standings [CÓDIGO]</code>")
+    lines.append("🗓️ Próximos: <code>/swe_fixtures [CÓDIGO]</code>")
+    lines.append("🏁 Últimos resultados: <code>/swe_results [CÓDIGO]</code>")
+    lines.append("⚽ Partidos de hoy: <code>/swe_today</code>")
+    lines.append("📚 Guía: <code>/swe_help</code>")
+    await update.message.reply_text("\n".join(lines), parse_mode=ParseMode.HTML)
 
 
 async def swe_standings_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -4459,11 +4444,11 @@ async def swe_standings_command(update: Update, context: ContextTypes.DEFAULT_TY
     if update.message is None:
         return
     if not context.args:
-        await update.message.reply_text("❌ Falta el código.\n\n" + _swe_usage_guide(), parse_mode="Markdown")
+        await update.message.reply_text("❌ Falta el código.\n\n" + _swe_usage_guide(as_html=True), parse_mode=ParseMode.HTML)
         return
     resolved = _resolve_swe_league(context.args[0])
     if not resolved:
-        await update.message.reply_text("❌ Código inválido.\n\n" + _swe_usage_guide(), parse_mode="Markdown")
+        await update.message.reply_text("❌ Código inválido.\n\n" + _swe_usage_guide(as_html=True), parse_mode=ParseMode.HTML)
         return
     comp_id, name, _tier = resolved
     from stats_providers.svenskfotboll_http.client import SvenskfotbollHTTPClient
@@ -4476,17 +4461,17 @@ async def swe_standings_command(update: Update, context: ContextTypes.DEFAULT_TY
         if not teams:
             await update.message.reply_text("⚠️ No hay posiciones disponibles para esta liga.")
             return
-        lines = [f"📊 *Posiciones: {name} (2026)*", "━━━━━━━━━━━━━━━━━━━━", " #  Equipo               PJ Pts  Dif"]
+        lines = [f"📊 <b>Posiciones: {name} (2026)</b>", "━━━━━━━━━━━━━━━━━━━━", " #  Equipo               PJ Pts  Dif"]
         for i, t in enumerate(teams, start=1):
             pos = str(i).rjust(2)
-            team = str(t.get("team", "?"))[:20].ljust(20)
+            team = escape_html(str(t.get("team", "?")))[:20].ljust(20)
             pj = str(t.get("played", 0)).rjust(2)
             pts = str(t.get("points", 0)).rjust(3)
             dif = str(t.get("goal_difference", 0)).rjust(4)
-            lines.append(f"`{pos} {team} {pj} {pts} {dif}`")
+            lines.append(f"<code>{pos} {team} {pj} {pts} {dif}</code>")
         lines.append("━━━━━━━━━━━━━━━━━━━━")
-        lines.append(f"🗓️ Fixture: `/swe_fixtures {context.args[0].upper()}`  ⚽ Hoy: `/swe_today`")
-        await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
+        lines.append(f"🗓️ Fixture: <code>/swe_fixtures {context.args[0].upper()}</code>  ⚽ Hoy: <code>/swe_today</code>")
+        await _reply_text_chunks(update.message, "\n".join(lines), parse_mode=ParseMode.HTML)
     except Exception as e:
         logger.exception("Failed in /swe_standings")
         await update.message.reply_text(f"❌ Error al consultar posiciones: {e}")
@@ -4499,15 +4484,17 @@ async def _swe_matches_reply(update: Update, name: str, code: str, data: dict, *
     if not matches:
         await update.message.reply_text("⚠️ No hay partidos para mostrar.")
         return
-    lines = [f"{header}: *{name}* (2026)", "━━━━━━━━━━━━━━━━━━━━"]
+    lines = [f"{header}: <b>{name}</b> (2026)", "━━━━━━━━━━━━━━━━━━━━"]
     for mtch in matches[:25]:
         d_arg, t_arg = _convert_swe_to_arg_datetime(mtch.get("start_time_local"))
         score = ""
         if mtch.get("home_score") is not None and mtch.get("away_score") is not None:
             score = f" [{mtch.get('home_score')}-{mtch.get('away_score')}]"
-        lines.append(f"`{d_arg} {t_arg}` {mtch.get('home','?')} vs {mtch.get('away','?')}{score}")
-        lines.append(f"    🆔 `/swe_match {mtch.get('match_id','')}`")
-    await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
+        home_esc = escape_html(mtch.get('home','?'))
+        away_esc = escape_html(mtch.get('away','?'))
+        lines.append(f"<code>{d_arg} {t_arg}</code> {home_esc} vs {away_esc}{score}")
+        lines.append(f"    🆔 <code>/swe_match {mtch.get('match_id','')}</code>")
+    await _reply_text_chunks(update.message, "\n".join(lines), parse_mode=ParseMode.HTML)
 
 
 async def swe_fixtures_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -4516,7 +4503,7 @@ async def swe_fixtures_command(update: Update, context: ContextTypes.DEFAULT_TYP
     if update.message is None:
         return
     if not context.args or not _resolve_swe_league(context.args[0]):
-        await update.message.reply_text("❌ Falta/!código.\n\n" + _swe_usage_guide(), parse_mode="Markdown")
+        await update.message.reply_text("❌ Falta/!código.\n\n" + _swe_usage_guide(as_html=True), parse_mode=ParseMode.HTML)
         return
     comp_id, name, _ = _resolve_swe_league(context.args[0])
     from stats_providers.svenskfotboll_http.client import SvenskfotbollHTTPClient
@@ -4538,7 +4525,7 @@ async def swe_results_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     if update.message is None:
         return
     if not context.args or not _resolve_swe_league(context.args[0]):
-        await update.message.reply_text("❌ Falta/!código.\n\n" + _swe_usage_guide(), parse_mode="Markdown")
+        await update.message.reply_text("❌ Falta/!código.\n\n" + _swe_usage_guide(as_html=True), parse_mode=ParseMode.HTML)
         return
     comp_id, name, _ = _resolve_swe_league(context.args[0])
     from stats_providers.svenskfotboll_http.client import SvenskfotbollHTTPClient
@@ -4568,13 +4555,16 @@ async def swe_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         if not matches:
             await update.message.reply_text("⚠️ No hay partidos suecos listados para hoy.")
             return
-        lines = ["⚽ *Partidos de hoy (Suecia)* — horario Argentina", "━━━━━━━━━━━━━━━━━━━━"]
+        matches = sorted(matches, key=lambda x: x.get("start_time_local") or "")
+        lines = ["⚽ <b>Partidos de hoy (Suecia)</b> — horario Argentina", "━━━━━━━━━━━━━━━━━━━━"]
         for m in matches[:40]:
             _d, t_arg = _convert_swe_to_arg_datetime(m.get("start_time_local"))
-            comp = str(m.get("competition_name") or "")[:24]
-            lines.append(f"`{t_arg}` {m.get('home','?')} vs {m.get('away','?')}  · {comp}")
-            lines.append(f"    🆔 `/swe_match {m.get('match_id','')}`")
-        await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
+            comp = escape_html(str(m.get("competition_name") or ""))[:24]
+            home_esc = escape_html(m.get('home','?'))
+            away_esc = escape_html(m.get('away','?'))
+            lines.append(f"<code>{t_arg}</code> {home_esc} vs {away_esc}  · {comp}")
+            lines.append(f"    🆔 <code>/swe_match {m.get('match_id','')}</code>")
+        await _reply_text_chunks(update.message, "\n".join(lines), parse_mode=ParseMode.HTML)
     except Exception as e:
         logger.exception("Failed in /swe_today")
         await update.message.reply_text(f"❌ Error: {e}")
@@ -4588,7 +4578,7 @@ async def swe_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     if update.message is None:
         return
     if not context.args:
-        await update.message.reply_text("Uso: `/swe_match [ID_PARTIDO]` (los IDs salen de /swe_today o /swe_fixtures).", parse_mode="Markdown")
+        await update.message.reply_text("Uso: <code>/swe_match [ID_PARTIDO]</code> (los IDs salen de /swe_today o /swe_fixtures).", parse_mode=ParseMode.HTML)
         return
     match_id = context.args[0].strip()
     from stats_providers.svenskfotboll_http.client import SvenskfotbollHTTPClient
@@ -4601,17 +4591,20 @@ async def swe_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             return
         home = info.get("home") or info.get("home_team") or "Local"
         away = info.get("away") or info.get("away_team") or "Visitante"
-        lines = [f"🇸🇪 *{home} vs {away}*", "━━━━━━━━━━━━━━━━━━━━"]
+        lines = [f"🇸🇪 <b>{escape_html(home)} vs {escape_html(away)}</b>", "━━━━━━━━━━━━━━━━━━━━"]
         if info.get("score"):
-            lines.append(f"⚽ Marcador: {info.get('score')}")
+            lines.append(f"⚽ Marcador: {escape_html(info.get('score'))}")
         if info.get("status"):
-            lines.append(f"⏱️ Estado: {info.get('status')}")
+            lines.append(f"⏱️ Estado: {escape_html(info.get('status'))}")
         events = info.get("events") or []
         if events:
             lines.append("\nEventos:")
             for ev in events[:15]:
-                lines.append(f"- {ev.get('minute','')} {ev.get('type','')} {ev.get('player','')}".rstrip())
-        await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
+                m = ev.get('minute','')
+                t = ev.get('type','')
+                p = ev.get('player','')
+                lines.append(escape_html(f"- {m} {t} {p}".rstrip()))
+        await _reply_text_chunks(update.message, "\n".join(lines), parse_mode=ParseMode.HTML)
     except Exception as e:
         logger.exception("Failed in /swe_match")
         await update.message.reply_text(f"❌ Error: {e}")
@@ -4626,19 +4619,19 @@ async def swe_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     if update.message is None:
         return
     help_text = (
-        "🇸🇪 *Guía de Estadísticas de la Federación de Suecia* 🇸🇪\n\n"
-        "Consultá datos oficiales directo de la Asociación Sueca de Fútbol (`svenskfotboll.se` / FOGIS). "
+        "🇸🇪 <b>Guía de Estadísticas de la Federación de Suecia</b> 🇸🇪\n\n"
+        "Consultá datos oficiales directo de la Asociación Sueca de Fútbol (<code>svenskfotboll.se</code> / FOGIS). "
         "Incluye divisiones de ascenso que no suelen estar en sitios comunes de stats.\n\n"
-        "📖 *Comandos:*\n"
-        "• `/swe_leagues` - Lista las ligas mapeadas y sus códigos.\n"
-        "• `/swe_standings [CÓDIGO]` - Tabla de posiciones (Ej: `/swe_standings AL`).\n"
-        "• `/swe_fixtures [CÓDIGO]` - Próximos partidos de la liga (con IDs).\n"
-        "• `/swe_results [CÓDIGO]` - Últimos resultados de la liga.\n"
-        "• `/swe_today` - Partidos suecos de hoy (horario Argentina) con IDs.\n"
-        "• `/swe_match [ID]` - Detalle/vivo de un partido (marcador, eventos vía FOGIS).\n\n"
-        + _swe_usage_guide()
+        "📖 <b>Comandos:</b>\n"
+        "• <code>/swe_leagues</code> - Lista las ligas mapeadas y sus códigos.\n"
+        "• <code>/swe_standings [CÓDIGO]</code> - Tabla de posiciones (Ej: <code>/swe_standings AL</code>).\n"
+        "• <code>/swe_fixtures [CÓDIGO]</code> - Próximos partidos de la liga (con IDs).\n"
+        "• <code>/swe_results [CÓDIGO]</code> - Últimos resultados de la liga.\n"
+        "• <code>/swe_today</code> - Partidos suecos de hoy (horario Argentina) con IDs.\n"
+        "• <code>/swe_match [ID]</code> - Detalle/vivo de un partido (marcador, eventos vía FOGIS).\n\n"
+        + _swe_usage_guide(as_html=True)
     )
-    await update.message.reply_text(help_text, parse_mode="Markdown")
+    await update.message.reply_text(help_text, parse_mode=ParseMode.HTML)
 
 
 # ===================== Peak digest (special-league daily scoring) =====================
