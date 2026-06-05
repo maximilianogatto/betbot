@@ -791,11 +791,12 @@ def build_finland_model(
     *,
     now: datetime,
     include_previous: bool = True,
+    group_id: str = "1",
 ) -> LeagueModel:
     """Build a LeagueModel for one Finnish competition (standings + matches)."""
 
     try:
-        standings = api.get_standings(competition_id, category_id, "1")
+        standings = api.get_standings(competition_id, category_id, group_id)
     except Exception:
         standings = []
     teams = _fin_standings_to_teams(standings)
