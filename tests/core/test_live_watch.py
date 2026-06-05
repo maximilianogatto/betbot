@@ -98,6 +98,80 @@ class LiveWatchUnitTests(unittest.TestCase):
         score_fail = match_score(entry, event_mismatch)
         self.assertEqual(score_fail, 0.0)
 
+    def test_match_score_category_and_time_mismatches(self) -> None:
+        # 1. Age Group U-group mismatch
+        entry_u20 = SimpleNamespace(
+            home="Avondale",
+            away="Melbourne Victory",
+            league_hint="Australia U20 (F)",
+            note="Avondale - Melbourne Victory U20",
+            kickoff_at=None,
+        )
+        event_senior = LiveEventSnapshot(
+            platform="betovo",
+            external_event_id="1",
+            is_soccer=True,
+            home="Avondale FC",
+            away="Melbourne Victory II",
+            country_name="Australia",
+            competition_name="Victoria Premier League, Women",
+        )
+        # Should mismatch because entry has U20 and event has no U-groups
+        self.assertEqual(match_score(entry_u20, event_senior), 0.0)
+
+        # 2. Gender mismatch
+        entry_female = SimpleNamespace(
+            home="Avondale",
+            away="Melbourne Victory",
+            league_hint="Australia (F)",
+            note=None,
+            kickoff_at=None,
+        )
+        event_male = LiveEventSnapshot(
+            platform="betovo",
+            external_event_id="2",
+            is_soccer=True,
+            home="Avondale FC",
+            away="Melbourne Victory FC",
+            country_name="Australia",
+            competition_name="Victoria NPL",
+        )
+        # Should mismatch because entry has female indicator and event is male (no gender keywords)
+        self.assertEqual(match_score(entry_female, event_male), 0.0)
+
+        # 3. Kickoff time mismatch (more than 3 hours difference)
+        entry_time = SimpleNamespace(
+            home="Avondale",
+            away="Melbourne Victory",
+            league_hint=None,
+            note=None,
+            kickoff_at="2026-06-05T22:00:00+00:00",
+        )
+        event_time_far = LiveEventSnapshot(
+            platform="betovo",
+            external_event_id="3",
+            is_soccer=True,
+            home="Avondale FC",
+            away="Melbourne Victory FC",
+            country_name="Australia",
+            competition_name="Victoria NPL",
+            scheduled_at="2026-06-06T02:00:00+00:00", # 4 hours difference
+        )
+        self.assertEqual(match_score(entry_time, event_time_far), 0.0)
+
+        # 4. Success match with aligned category and time
+        event_time_close = LiveEventSnapshot(
+            platform="betovo",
+            external_event_id="4",
+            is_soccer=True,
+            home="Avondale FC",
+            away="Melbourne Victory FC",
+            country_name="Australia",
+            competition_name="Victoria NPL",
+            scheduled_at="2026-06-05T23:00:00+00:00", # 1 hour difference
+        )
+        self.assertGreaterEqual(match_score(entry_time, event_time_close), 0.70)
+
 
 class LiveWatchRepositoryTests(unittest.TestCase):
     def setUp(self) -> None:

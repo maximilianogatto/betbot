@@ -81,11 +81,99 @@ def _name_similarity(left: str, right: str) -> float:
     return ratio
 
 
-def match_score(entry: LiveWatchEntry, event: Any) -> float:
+def _parse_iso_datetime(dt_str: str | None) -> datetime | None:
+    if not dt_str:
+        return None
+    try:
+        dt = datetime.fromisoformat(str(dt_str).strip())
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(timezone.utc)
+    except Exception:
+        return None
+
+
+def _extract_u_groups(text: str) -> set[str]:
+    if not text:
+        return set()
+    text = text.lower()
+    res = set()
+    # Normalize sub/under to u
+    normalized = re.sub(r"\bsub[- ]?(\d+)\b", r"u\1", text)
+    normalized = re.sub(r"\bunder[- ]?(\d+)\b", r"u\1", normalized)
+    normalized = re.sub(r"\bu[- ]?(\d+)\b", r"u\1", normalized)
+    
+    # Now find all u\d+
+    for m in re.finditer(r"\bu(\d+)\b", normalized):
+        res.add(f"u{m.group(1)}")
+    return res
+
+
+_GENDER_KEYWORDS = {"women", "femenino", "femenil", "mujeres", "fem", "dames", "damas", "frauen", "kvinder", "kvinner"}
+
+
+def _has_gender_indicator(text: str) -> bool:
+    if not text:
+        return False
+    text = text.lower()
+    tokens = set(re.findall(r"\b[a-z0-9]+\b", text))
+    if tokens & _GENDER_KEYWORDS:
+        return True
+    if re.search(r"\b(f|w)\b", text):
+        return True
+    return False
+
+
+def match_score(entry: Any, event: Any) -> float:
     """Per-side combined score for one watch entry vs one event (live or prematch/active_event)."""
 
-    home = _name_similarity(entry.home, event.home)
-    away = _name_similarity(entry.away, event.away)
+    # 1. Kickoff time mismatch check (if both are present)
+    entry_ko_str = getattr(entry, "kickoff_at", None)
+    event_ko_str = getattr(event, "scheduled_at", None)
+    
+    if entry_ko_str and event_ko_str:
+        entry_ko = _parse_iso_datetime(entry_ko_str)
+        event_ko = _parse_iso_datetime(event_ko_str)
+        if entry_ko and event_ko:
+            diff_seconds = abs((entry_ko - event_ko).total_seconds())
+            # Enforce max 3 hours (10800 seconds) difference
+            if diff_seconds > 10800:
+                return 0.0
+
+    # 2. Category mismatch checks (Age Group, Gender)
+    # Extract age groups and gender info from entry (league_hint and note)
+    entry_hint = getattr(entry, "league_hint", None) or ""
+    entry_note = getattr(entry, "note", None) or ""
+    entry_home = getattr(entry, "home", "")
+    entry_away = getattr(entry, "away", "")
+    entry_text = f"{entry_hint} {entry_note} {entry_home} {entry_away}"
+    entry_u_groups = _extract_u_groups(entry_text)
+    entry_is_female = _has_gender_indicator(entry_text)
+
+    # Extract age groups and gender info from event (competition_name, country_name, teams)
+    event_comp = getattr(event, "competition_name", None) or getattr(event, "league_name", None) or ""
+    event_country = getattr(event, "country_name", None) or ""
+    event_home = getattr(event, "home", "")
+    event_away = getattr(event, "away", "")
+    
+    event_home_str = event_home if isinstance(event_home, str) else getattr(event_home, "name", "")
+    event_away_str = event_away if isinstance(event_away, str) else getattr(event_away, "name", "")
+
+    event_text = f"{event_comp} {event_country} {event_home_str} {event_away_str}"
+    event_u_groups = _extract_u_groups(event_text)
+    event_is_female = _has_gender_indicator(event_text)
+
+    # Check Age Group mismatch (e.g. entry has 'u20', but event has no U-groups or has 'u17')
+    if entry_u_groups != event_u_groups:
+        return 0.0
+
+    # Check Gender mismatch (e.g. one is female, the other is not)
+    if entry_is_female != event_is_female:
+        return 0.0
+
+    # 3. Team name similarity checks
+    home = _name_similarity(entry_home, event_home_str)
+    away = _name_similarity(entry_away, event_away_str)
     if home < SIDE_FLOOR or away < SIDE_FLOOR:
         return 0.0
     return (home + away) / 2.0
