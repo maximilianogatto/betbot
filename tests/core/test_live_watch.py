@@ -172,6 +172,40 @@ class LiveWatchUnitTests(unittest.TestCase):
         )
         self.assertGreaterEqual(match_score(entry_time, event_time_close), 0.70)
 
+        # 5. Suffix-based category and gender alignments (u20f, u17w, etc.)
+        entry_u20f_hint = SimpleNamespace(
+            home="Avondale",
+            away="Melbourne Victory",
+            league_hint="Australia U20 (F)",
+            note=None,
+            kickoff_at=None,
+        )
+        event_u20f_suffix = LiveEventSnapshot(
+            platform="betovo",
+            external_event_id="5",
+            is_soccer=True,
+            home="Avondale FC",
+            away="Melbourne Victory U20f",
+            country_name="Australia",
+            competition_name="Victoria NPL Women",
+        )
+        # Should match successfully because u20f implies U20 and Female
+        self.assertGreaterEqual(match_score(entry_u20f_hint, event_u20f_suffix), 0.70)
+
+        # 6. Suffix gender mismatch (u20f vs u20)
+        event_u20_male = LiveEventSnapshot(
+            platform="betovo",
+            external_event_id="6",
+            is_soccer=True,
+            home="Avondale FC",
+            away="Melbourne Victory U20",
+            country_name="Australia",
+            competition_name="Victoria NPL Youth",
+        )
+        # Should mismatch because entry is female but event is male (neutral)
+        self.assertEqual(match_score(entry_u20f_hint, event_u20_male), 0.0)
+
+
 
 class LiveWatchRepositoryTests(unittest.TestCase):
     def setUp(self) -> None:

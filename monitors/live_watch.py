@@ -98,13 +98,7 @@ def _extract_u_groups(text: str) -> set[str]:
         return set()
     text = text.lower()
     res = set()
-    # Normalize sub/under to u
-    normalized = re.sub(r"\bsub[- ]?(\d+)\b", r"u\1", text)
-    normalized = re.sub(r"\bunder[- ]?(\d+)\b", r"u\1", normalized)
-    normalized = re.sub(r"\bu[- ]?(\d+)\b", r"u\1", normalized)
-    
-    # Now find all u\d+
-    for m in re.finditer(r"\bu(\d+)\b", normalized):
+    for m in re.finditer(r"\b(?:sub|under|u)[- ]?(\d+)", text):
         res.add(f"u{m.group(1)}")
     return res
 
@@ -120,6 +114,8 @@ def _has_gender_indicator(text: str) -> bool:
     if tokens & _GENDER_KEYWORDS:
         return True
     if re.search(r"\b(f|w)\b", text):
+        return True
+    if re.search(r"\b(?:sub|under|u)[- ]?\d+(f|w)\b", text):
         return True
     return False
 
