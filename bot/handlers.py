@@ -4217,6 +4217,14 @@ async def fin_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         api.close()
 
 
+def _md_escape(text: str) -> str:
+    """Escape Markdown-significant chars in free text (team names, etc.)."""
+    s = str(text)
+    for ch in ("\\", "_", "*", "`", "[", "]"):
+        s = s.replace(ch, "\\" + ch)
+    return s
+
+
 def _format_fin_squad(team_label: str, players: list, icon: str) -> list[str]:
     """Render a team's full XI (with shirt, captain, scorers) + bench."""
 
@@ -4331,6 +4339,24 @@ async def fin_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             lines.append(f"⏱️ Entretiempo: {m.get('hts_A')} - {m.get('hts_B')}")
         if m.get("referee_1_name"):
             lines.append(f"👨‍⚖️ Árbitro: {m.get('referee_1_name')}")
+
+        # Pre-match analytics: standings, form (last 5), H2H, goal averages.
+        try:
+            from datetime import datetime as _dt, timezone as _tz
+            from monitors.match_analytics import build_analytics, render_analytics
+            from monitors.special_peak import build_finland_model
+            _model = build_finland_model(
+                api,
+                str(m.get("competition_id") or ""),
+                str(m.get("category_id") or ""),
+                now=_dt.now(tz=_tz.utc),
+                include_previous=True,
+                group_id=str(m.get("group_id") or "1"),
+            )
+            _an = build_analytics(_model, str(m.get("team_A_id") or ""), str(m.get("team_B_id") or ""), home, away)
+            lines.extend(render_analytics(_an, home, away, escape=_md_escape))
+        except Exception:
+            logger.exception("fin_match analytics block failed")
 
         # Lineups: full XI + bench (richer than just a count) + B-Team detector.
         lineups = m.get("lineups", [])
@@ -4480,6 +4506,29 @@ def _resolve_swe_league(code: str) -> tuple[str, str, str] | None:
     """Resolve a short league code to (competition_id, name, tier_label)."""
 
     return _SWE_LEAGUES.get((code or "").strip().upper())
+
+
+def _swe_resolve_comp_for_teams(client, home: str, away: str) -> str | None:
+    """Find which tracked Swedish competition has BOTH teams (for analytics).
+
+    The /swe_match endpoint only gives team names, not a league id, so we scan
+    the known leagues' standings and match by normalised team name.
+    """
+
+    from monitors.special_peak import _norm_team
+
+    h, a = _norm_team(home), _norm_team(away)
+    if not h or not a:
+        return None
+    for _code, (cid, _name, _tier) in _SWE_LEAGUES.items():
+        try:
+            data = client.get_standings(cid)
+            teams = {_norm_team(t.get("team")) for t in (data.get("teams") or [])}
+        except Exception:
+            continue
+        if h in teams and a in teams:
+            return cid
+    return None
 
 
 def _convert_swe_to_arg_datetime(local_dt: str | None) -> tuple[str, str]:
@@ -4694,13 +4743,28 @@ async def swe_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         if not info or not info.get("home") and not info.get("away"):
             await update.message.reply_text("⚠️ Sin datos en vivo para ese partido (puede no haber empezado o no tener cobertura FOGIS).")
             return
-        home = info.get("home") or info.get("home_team") or "Local"
-        away = info.get("away") or info.get("away_team") or "Visitante"
+        def _swe_name(val, default):
+            if isinstance(val, dict):
+                return val.get("name") or val.get("short_name") or default
+            return val or default
+
+        home = _swe_name(info.get("home") or info.get("home_team"), "Local")
+        away = _swe_name(info.get("away") or info.get("away_team"), "Visitante")
         lines = [f"🇸🇪 <b>{escape_html(home)} vs {escape_html(away)}</b>", "━━━━━━━━━━━━━━━━━━━━"]
-        if info.get("score"):
-            lines.append(f"⚽ Marcador: {escape_html(info.get('score'))}")
-        if info.get("status"):
-            lines.append(f"⏱️ Estado: {escape_html(info.get('status'))}")
+        score = info.get("score")
+        if isinstance(score, dict):
+            hs, aw_s = score.get("home-team"), score.get("away-team")
+            if hs is not None and aw_s is not None:
+                lines.append(f"⚽ Marcador: {escape_html(str(hs))} - {escape_html(str(aw_s))}")
+            ht_h, ht_a = score.get("home-team-half-time"), score.get("away-team-half-time")
+            if ht_h is not None and ht_a is not None:
+                lines.append(f"⏱️ Entretiempo: {escape_html(str(ht_h))} - {escape_html(str(ht_a))}")
+        elif score:
+            lines.append(f"⚽ Marcador: {escape_html(str(score))}")
+        status = info.get("status")
+        status_desc = status.get("desc") if isinstance(status, dict) else status
+        if status_desc:
+            lines.append(f"⏱️ Estado: {escape_html(str(status_desc))}")
         events = info.get("events") or []
         if events:
             lines.append("\nEventos:")
@@ -4709,6 +4773,21 @@ async def swe_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
                 t = ev.get('type','')
                 p = ev.get('player','')
                 lines.append(escape_html(f"- {m} {t} {p}".rstrip()))
+
+        # Pre-match analytics: standings, form (last 5), H2H, goal averages.
+        try:
+            from monitors.match_analytics import build_analytics, render_analytics
+            from monitors.special_peak import build_sweden_model, _norm_team
+            cid = _swe_resolve_comp_for_teams(client, home, away)
+            if cid:
+                _model = build_sweden_model(client, cid)
+                _an = build_analytics(_model, _norm_team(home), _norm_team(away), home, away)
+                lines.extend(render_analytics(_an, home, away, escape=escape_html))
+            else:
+                lines.append("\n📊 _Análisis pre-match no disponible (no ubiqué la liga de estos equipos)._")
+        except Exception:
+            logger.exception("swe_match analytics block failed")
+
         await _reply_text_chunks(update.message, "\n".join(lines), parse_mode=ParseMode.HTML)
     except Exception as e:
         logger.exception("Failed in /swe_match")
