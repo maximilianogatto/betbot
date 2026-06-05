@@ -58,6 +58,7 @@ def row_to_tracked_competition(row: sqlite3.Row) -> "TrackedCompetition":
         last_unavailable_notification_at=row_optional_text(row, "last_unavailable_notification_at"),
         created_at=str(row["created_at"]),
         updated_at=str(row["updated_at"]),
+        unified_competition_id=int(row["unified_competition_id"]) if "unified_competition_id" in row.keys() and row["unified_competition_id"] is not None else None,
     )
 
 
@@ -99,6 +100,7 @@ def row_to_tracked_competition_subscription(
         last_unavailable_notification_at=row_optional_text(row, "tracked_last_unavailable_notification_at"),
         created_at=str(row["tracked_created_at"]),
         updated_at=str(row["tracked_updated_at"]),
+        unified_competition_id=int(row["tracked_unified_competition_id"]) if "tracked_unified_competition_id" in row.keys() and row["tracked_unified_competition_id"] is not None else None,
     )
     subscription = CompetitionSubscription(
         telegram_chat_id=int(row["subscription_telegram_chat_id"]),

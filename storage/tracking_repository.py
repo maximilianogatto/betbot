@@ -157,6 +157,7 @@ class TrackedCompetition:
     last_unavailable_notification_at: str | None
     created_at: str
     updated_at: str
+    unified_competition_id: int | None = None
 
     @property
     def url(self) -> str:
@@ -649,6 +650,7 @@ class SqliteTrackingRepository:
             subscription_created = False
 
             if tracked_row is None:
+                uc_id = _find_or_create_unified_competition_id(connection, pending_request.competition_name)
                 cursor = connection.execute(
                     """
                     INSERT INTO tracked_competitions (
@@ -664,10 +666,11 @@ class SqliteTrackingRepository:
                         last_unavailable_reason,
                         last_unavailable_notification_at,
                         last_refreshed_at,
+                        unified_competition_id,
                         created_at,
                         updated_at
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, 1, 0, NULL, NULL, NULL, NULL, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, 1, 0, NULL, NULL, NULL, NULL, ?, ?, ?)
                     """,
                     (
                         pending_request.platform,
@@ -676,6 +679,7 @@ class SqliteTrackingRepository:
                         pending_request.source_url,
                         pending_request.payload_json,
                         int(pending_request.needs_name_resolution),
+                        uc_id,
                         now_iso,
                         now_iso,
                     ),
@@ -690,6 +694,9 @@ class SqliteTrackingRepository:
                     pending_request.needs_name_resolution,
                 )
                 tracked_competition_id = existing.id
+                uc_id = existing.unified_competition_id
+                if uc_id is None:
+                    uc_id = _find_or_create_unified_competition_id(connection, resolved_name)
                 connection.execute(
                     """
                     UPDATE tracked_competitions
@@ -703,6 +710,7 @@ class SqliteTrackingRepository:
                         last_unavailable_refresh_at = NULL,
                         last_unavailable_reason = NULL,
                         last_unavailable_notification_at = NULL,
+                        unified_competition_id = ?,
                         updated_at = ?
                     WHERE id = ?
                     """,
@@ -711,6 +719,7 @@ class SqliteTrackingRepository:
                         resolved_name,
                         pending_request.payload_json,
                         int(resolved_needs_name_resolution),
+                        uc_id,
                         now_iso,
                         tracked_competition_id,
                     ),
@@ -798,6 +807,7 @@ class SqliteTrackingRepository:
                     tc.last_unavailable_notification_at AS tracked_last_unavailable_notification_at,
                     tc.created_at AS tracked_created_at,
                     tc.updated_at AS tracked_updated_at,
+                    tc.unified_competition_id AS tracked_unified_competition_id,
                     cs.telegram_chat_id AS subscription_telegram_chat_id,
                     cs.tracked_competition_id AS subscription_tracked_competition_id,
                     cs.notify_new_events AS subscription_notify_new_events,
@@ -817,6 +827,83 @@ class SqliteTrackingRepository:
             ).fetchall()
 
         return [_row_to_tracked_competition_subscription(row) for row in rows]
+
+    def get_or_create_unified_competition(self, name: str) -> int:
+        """Find or create a unified competition by name, returning its ID."""
+        with _connect() as connection:
+            _sanitize_tracking_state(connection)
+            return _find_or_create_unified_competition_id(connection, name)
+
+    def list_subscribed_unified_competitions(self, chat_id: int) -> list[dict[str, Any]]:
+        """List distinct unified competitions with active subscriptions for a chat."""
+        with _connect() as connection:
+            _sanitize_tracking_state(connection)
+            rows = connection.execute(
+                """
+                SELECT DISTINCT uc.id, uc.name
+                FROM unified_competitions uc
+                INNER JOIN tracked_competitions tc ON tc.unified_competition_id = uc.id
+                INNER JOIN competition_subscriptions cs ON cs.tracked_competition_id = tc.id
+                WHERE cs.telegram_chat_id = ?
+                  AND cs.enabled = 1
+                  AND tc.enabled = 1
+                ORDER BY uc.name
+                """,
+                (chat_id,),
+            ).fetchall()
+        return [{"id": r["id"], "name": r["name"]} for r in rows]
+
+    def list_tracked_competitions_for_unified(self, unified_competition_id: int) -> list[TrackedCompetition]:
+        """List all tracked competitions linked to a unified competition."""
+        with _connect() as connection:
+            _sanitize_tracking_state(connection)
+            rows = connection.execute(
+                """
+                SELECT
+                    id,
+                    platform,
+                    source_url,
+                    competition_external_id,
+                    competition_name,
+                    metadata_json,
+                    needs_name_resolution,
+                    enabled,
+                    last_refreshed_at,
+                    consecutive_unavailable_refreshes,
+                    last_unavailable_refresh_at,
+                    last_unavailable_reason,
+                    last_unavailable_notification_at,
+                    created_at,
+                    updated_at,
+                    unified_competition_id
+                FROM tracked_competitions
+                WHERE unified_competition_id = ?
+                  AND enabled = 1
+                """,
+                (unified_competition_id,),
+            ).fetchall()
+        return [_row_to_tracked_competition(row) for row in rows]
+
+    def link_tracked_competition_to_unified(self, tracked_competition_id: int, unified_competition_id: int) -> None:
+        """Link a tracked competition to a unified competition."""
+        now_iso = _utc_now_iso()
+        with _connect() as connection:
+            _ensure_tracked_competition_exists(connection, tracked_competition_id)
+            # Ensure unified competition exists
+            row = connection.execute(
+                "SELECT id FROM unified_competitions WHERE id = ?",
+                (unified_competition_id,),
+            ).fetchone()
+            if row is None:
+                raise ValueError(f"Unified competition ID {unified_competition_id} does not exist.")
+            connection.execute(
+                """
+                UPDATE tracked_competitions
+                SET unified_competition_id = ?, updated_at = ?
+                WHERE id = ?
+                """,
+                (unified_competition_id, now_iso, tracked_competition_id),
+            )
 
     def list_globally_active_competitions(self) -> list[TrackedCompetition]:
         """List globally active competitions with at least one enabled subscription."""
@@ -840,7 +927,8 @@ class SqliteTrackingRepository:
                     tc.last_unavailable_reason,
                     tc.last_unavailable_notification_at,
                     tc.created_at,
-                    tc.updated_at
+                    tc.updated_at,
+                    tc.unified_competition_id
                 FROM tracked_competitions tc
                 WHERE tc.enabled = 1
                   AND EXISTS (
@@ -2191,6 +2279,62 @@ class SqliteTrackingRepository:
             if _is_future_or_unscheduled(record.scheduled_at, now_utc) and not record.is_missing
         ]
 
+    def get_active_events_for_unified_competition(
+        self,
+        unified_competition_id: int,
+        *,
+        only_future: bool = True,
+    ) -> list[ActiveEventRecord]:
+        """Return the current active events for all tracked competitions linked to this unified competition."""
+
+        with _connect() as connection:
+            _sanitize_tracking_state(connection)
+            rows = connection.execute(
+                """
+                SELECT
+                    ae.id,
+                    ae.tracked_competition_id,
+                    ae.platform,
+                    ae.competition_external_id,
+                    ae.external_event_id,
+                    ae.home,
+                    ae.away,
+                    ae.scheduled_label_date,
+                    ae.scheduled_label_time,
+                    ae.scheduled_at,
+                    ae.event_url,
+                    ae.odds_home,
+                    ae.odds_draw,
+                    ae.odds_away,
+                    ae.markets_json,
+                    ae.raw_payload_json,
+                    ae.reminder_sent_at,
+                    ae.is_active,
+                    ae.first_seen_at,
+                    ae.last_seen_at,
+                    ae.created_at,
+                    ae.updated_at
+                FROM active_events ae
+                INNER JOIN tracked_competitions tc ON tc.id = ae.tracked_competition_id
+                WHERE tc.unified_competition_id = ?
+                  AND ae.is_active = 1
+                ORDER BY ae.scheduled_at IS NULL, ae.scheduled_at, ae.home, ae.away, ae.id
+                """,
+                (unified_competition_id,),
+            ).fetchall()
+
+        records = [_row_to_active_event_record(row) for row in rows]
+
+        if not only_future:
+            return records
+
+        now_utc = datetime.now(timezone.utc)
+        return [
+            record
+            for record in records
+            if _is_future_or_unscheduled(record.scheduled_at, now_utc) and not record.is_missing
+        ]
+
     def upsert_stats_league_link(
         self,
         tracked_competition_id: int,
@@ -2258,39 +2402,78 @@ class SqliteTrackingRepository:
         return _row_to_stats_league_link(row)
 
     def get_stats_league_link(self, tracked_competition_id: int, stats_provider: str | None = None) -> StatsLeagueLink | None:
-        """Return a specific stats-provider league link or the first one linked."""
-
-        with _connect() as connection:
-            _ensure_tracked_competition_exists(connection, tracked_competition_id)
-            row = _fetch_stats_league_link_row(connection, tracked_competition_id, stats_provider=stats_provider)
-
-        return _row_to_stats_league_link(row) if row is not None else None
+        """Return a specific stats-provider league link or the first one linked (supporting unified leagues)."""
+        links = self.list_stats_league_links(tracked_competition_id)
+        if not links:
+            return None
+        if stats_provider:
+            normalized = _normalize_platform(stats_provider)
+            for link in links:
+                if link.stats_provider == normalized:
+                    return link
+        return links[0]
 
     def list_stats_league_links(self, tracked_competition_id: int) -> list[StatsLeagueLink]:
-        """Return all stats-provider league links associated with a tracked competition."""
+        """Return all stats-provider league links associated with a tracked competition (and implicitly its unified league)."""
 
         with _connect() as connection:
             _ensure_tracked_competition_exists(connection, tracked_competition_id)
-            rows = connection.execute(
-                """
-                SELECT
-                    id,
-                    tracked_competition_id,
-                    stats_provider,
-                    stats_league_id,
-                    stats_league_name,
-                    stats_country_name,
-                    confidence,
-                    payload_json,
-                    created_at,
-                    updated_at
-                FROM stats_league_links
-                WHERE tracked_competition_id = ?
-                """,
+            uc_row = connection.execute(
+                "SELECT unified_competition_id FROM tracked_competitions WHERE id = ?",
                 (tracked_competition_id,),
-            ).fetchall()
+            ).fetchone()
+            
+            uc_id = uc_row["unified_competition_id"] if uc_row else None
+            
+            if uc_id is not None:
+                rows = connection.execute(
+                    """
+                    SELECT
+                        sll.id,
+                        sll.tracked_competition_id,
+                        sll.stats_provider,
+                        sll.stats_league_id,
+                        sll.stats_league_name,
+                        sll.stats_country_name,
+                        sll.confidence,
+                        sll.payload_json,
+                        sll.created_at,
+                        sll.updated_at
+                    FROM stats_league_links sll
+                    INNER JOIN tracked_competitions tc ON tc.id = sll.tracked_competition_id
+                    WHERE tc.unified_competition_id = ?
+                    """,
+                    (uc_id,),
+                ).fetchall()
+            else:
+                rows = connection.execute(
+                    """
+                    SELECT
+                        id,
+                        tracked_competition_id,
+                        stats_provider,
+                        stats_league_id,
+                        stats_league_name,
+                        stats_country_name,
+                        confidence,
+                        payload_json,
+                        created_at,
+                        updated_at
+                    FROM stats_league_links
+                    WHERE tracked_competition_id = ?
+                    """,
+                    (tracked_competition_id,),
+                ).fetchall()
 
-        return [_row_to_stats_league_link(row) for row in rows]
+        seen = set()
+        links = []
+        for row in rows:
+            link = _row_to_stats_league_link(row)
+            key = (link.stats_provider, link.stats_league_id)
+            if key not in seen:
+                seen.add(key)
+                links.append(link)
+        return links
 
     def upsert_stats_league_subscription(
         self,
@@ -3569,6 +3752,52 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
         _ensure_column(connection, "live_watch_entries", _live_watch_column, "TEXT")
     _ensure_column(connection, "live_watch_entries", "chat_local_id", "INTEGER")
 
+    # 1. Create unified_competitions table
+    connection.execute(
+        """
+        CREATE TABLE IF NOT EXISTS unified_competitions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+        );
+        """
+    )
+
+    # 2. Add unified_competition_id column to tracked_competitions
+    _ensure_column(
+        connection,
+        "tracked_competitions",
+        "unified_competition_id",
+        "INTEGER REFERENCES unified_competitions(id) ON DELETE SET NULL",
+    )
+
+    # 3. Backfill unified_competition_id for existing tracked_competitions
+    now_iso = _utc_now_iso()
+    rows = connection.execute(
+        "SELECT id, competition_name FROM tracked_competitions WHERE unified_competition_id IS NULL"
+    ).fetchall()
+    for row in rows:
+        tc_id = row["id"]
+        tc_name = row["competition_name"].strip()
+        # Find if a unified competition with this exact name already exists
+        uc_row = connection.execute(
+            "SELECT id FROM unified_competitions WHERE name = ?", (tc_name,)
+        ).fetchone()
+        if uc_row:
+            uc_id = uc_row["id"]
+        else:
+            cursor = connection.execute(
+                "INSERT INTO unified_competitions (name, created_at, updated_at) VALUES (?, ?, ?)",
+                (tc_name, now_iso, now_iso),
+            )
+            uc_id = cursor.lastrowid
+        connection.execute(
+            "UPDATE tracked_competitions SET unified_competition_id = ? WHERE id = ?",
+            (uc_id, tc_id),
+        )
+
+
 
 def _ensure_column(
     connection: sqlite3.Connection,
@@ -3636,7 +3865,8 @@ def _fetch_tracked_competition_row(
             last_unavailable_reason,
             last_unavailable_notification_at,
             created_at,
-            updated_at
+            updated_at,
+            unified_competition_id
         FROM tracked_competitions
         WHERE id = ?
         """,
@@ -3666,7 +3896,8 @@ def _fetch_tracked_competition_by_identity_row(
             last_unavailable_reason,
             last_unavailable_notification_at,
             created_at,
-            updated_at
+            updated_at,
+            unified_competition_id
         FROM tracked_competitions
         WHERE platform = ? AND competition_external_id = ?
         """,
@@ -3720,6 +3951,7 @@ def _fetch_tracked_competition_subscription_row(
             tc.last_unavailable_notification_at AS tracked_last_unavailable_notification_at,
             tc.created_at AS tracked_created_at,
             tc.updated_at AS tracked_updated_at,
+            tc.unified_competition_id AS tracked_unified_competition_id,
             cs.telegram_chat_id AS subscription_telegram_chat_id,
             cs.tracked_competition_id AS subscription_tracked_competition_id,
             cs.notify_new_events AS subscription_notify_new_events,
@@ -3761,6 +3993,7 @@ def _fetch_tracked_competition_subscription_by_identity_row(
             tc.last_unavailable_notification_at AS tracked_last_unavailable_notification_at,
             tc.created_at AS tracked_created_at,
             tc.updated_at AS tracked_updated_at,
+            tc.unified_competition_id AS tracked_unified_competition_id,
             cs.telegram_chat_id AS subscription_telegram_chat_id,
             cs.tracked_competition_id AS subscription_tracked_competition_id,
             cs.notify_new_events AS subscription_notify_new_events,
@@ -4319,6 +4552,103 @@ def _row_to_live_watch(row: sqlite3.Row) -> LiveWatchEntry:
         chat_local_id=row["chat_local_id"] if "chat_local_id" in row.keys() else None,
         live_state_json=row["live_state_json"] if "live_state_json" in row.keys() else None,
     )
+
+
+def _league_name_similarity(left: str, right: str) -> float:
+    """Loose similarity between two league names, ignoring case, prepositions, and translating Spanish terms to English."""
+    import re
+    import unicodedata
+    from difflib import SequenceMatcher
+
+    translation_map = {
+        "alemania": "germany",
+        "espana": "spain",
+        "inglaterra": "england",
+        "italia": "italy",
+        "francia": "france",
+        "occidental": "western",
+        "oriental": "eastern",
+        "sur": "south",
+        "norte": "north",
+        "central": "central",
+        "copa": "cup",
+        "liga": "league",
+        "campeonato": "championship",
+        "division": "division",
+        "primera": "premier",
+        "segunda": "second",
+        "tercera": "third",
+        "sub": "u",
+        "juvenil": "youth",
+        "reserva": "reserves",
+        "reservas": "reserves",
+        "femenino": "women",
+        "femenil": "women",
+        "mujeres": "women",
+        "fem": "women",
+        "nueva": "new",
+        "gales": "wales",
+        "australia": "australia",
+    }
+
+    stop_words = {"de", "la", "el", "del", "y", "a", "of", "and", "the", "in", "for", "fc", "club"}
+
+    def norm(value: str) -> str:
+        # Strip accents
+        folded = "".join(c for c in unicodedata.normalize('NFD', value) if unicodedata.category(c) != 'Mn')
+        folded = folded.lower()
+        # Normalize sub-XX or u-XX to uXX
+        folded = re.sub(r"\b(sub|u)-?(\d+)\b", r"u\2", folded)
+        cleaned = re.sub(r"[^a-z0-9]+", " ", folded).strip()
+        tokens = cleaned.split()
+        translated = [
+            translation_map.get(t, t)
+            for t in tokens
+            if t not in stop_words
+        ]
+        return " ".join(translated)
+
+    left_norm = norm(left)
+    right_norm = norm(right)
+    ratio = SequenceMatcher(a=left_norm, b=right_norm).ratio()
+    left_tokens = set(left_norm.split())
+    right_tokens = set(right_norm.split())
+    if not left_tokens or not right_tokens:
+        return ratio
+    overlap = len(left_tokens & right_tokens) / min(len(left_tokens), len(right_tokens))
+    return max(ratio, overlap)
+
+
+def _find_or_create_unified_competition_id(connection: sqlite3.Connection, name: str) -> int:
+    name_clean = name.strip()
+    # 1. Look for an exact match (case-insensitive) in unified_competitions
+    row = connection.execute(
+        "SELECT id FROM unified_competitions WHERE LOWER(name) = LOWER(?)",
+        (name_clean,),
+    ).fetchone()
+    if row:
+        return row["id"]
+
+    # 2. Look for fuzzy similarity match (>= 0.85) in all existing unified_competitions
+    rows = connection.execute("SELECT id, name FROM unified_competitions").fetchall()
+    best_id = None
+    best_score = 0.85  # minimum threshold
+    for r in rows:
+        score = _league_name_similarity(name_clean, r["name"])
+        if score >= best_score:
+            best_score = score
+            best_id = r["id"]
+
+    if best_id is not None:
+        return best_id
+
+    # 3. Create a new unified competition
+    now_iso = _utc_now_iso()
+    cursor = connection.execute(
+        "INSERT INTO unified_competitions (name, created_at, updated_at) VALUES (?, ?, ?)",
+        (name_clean, now_iso, now_iso),
+    )
+    return cursor.lastrowid
 
 
 tracking_repository = SqliteTrackingRepository()

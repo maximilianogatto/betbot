@@ -1759,6 +1759,30 @@ async def track_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     await reply_with_result(update, result)
 
 
+async def bulk_track_message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle text message starting with 'Ligas:' for bulk tracking."""
+    if update.message is None or update.message.text is None or update.effective_chat is None:
+        return
+
+    text = update.message.text.strip()
+    if not text.lower().startswith("ligas:"):
+        return
+
+    logger.info("Bulk track text block received.")
+    await update.message.reply_text("Iniciando importación masiva de ligas...")
+
+    tracking_service = get_tracking_service(context)
+    try:
+        result = await tracking_service.bulk_track_leagues(
+            chat_id=update.effective_chat.id,
+            leagues_text=text,
+        )
+        await update.message.reply_text(result.message, parse_mode=ParseMode.HTML)
+    except Exception as exc:
+        logger.exception("Bulk tracking failed")
+        await update.message.reply_text(f"❌ Ocurrió un error en la importación masiva: {exc}")
+
+
 async def track_league_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Start `/track_league` platform/country/league discovery."""
 
@@ -2673,6 +2697,29 @@ async def event_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     await _reply_text_chunks(update.message, result.message, parse_mode=ParseMode.HTML)
 
 
+def _build_unified_league_selection_message(prompt: str, leagues: list[dict[str, Any]]) -> str:
+    lines = [prompt]
+    for index, league in enumerate(leagues, start=1):
+        lines.append(f"{index} - {league['name']}")
+    return "\n".join(lines)
+
+
+def _build_grouped_match_selection_message(
+    unified_league_name: str,
+    grouped_matches: list[list[ActiveEventRecord]],
+) -> str:
+    """Build the second prompt used by `/matches` for unified leagues."""
+
+    lines = [f"Qué partido quiere ver de {unified_league_name}?"]
+    lines.append("1 - Ver todos")
+
+    for index, group in enumerate(grouped_matches, start=2):
+        rep = group[0]
+        lines.append(f"{index} - {rep.home} vs {rep.away}")
+
+    return "\n".join(lines)
+
+
 async def matches_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Start the interactive `/matches` flow."""
 
@@ -2693,60 +2740,58 @@ async def matches_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     context.user_data["matches_full_odds"] = full_odds
 
     tracking_service = get_tracking_service(context)
-    tracked_leagues = tracking_service.list_confirmed_tracks(update.effective_chat.id)
+    unified_leagues = tracking_service.repository.list_subscribed_unified_competitions(update.effective_chat.id)
 
-    if not tracked_leagues:
+    if not unified_leagues:
         await update.message.reply_text(
             "No tenés ligas trackeadas todavía.\n"
-            "Usá /track_url <url_de_plataforma> y después /confirm_track."
+            "Usá /track_url <url_de_plataforma> y después /confirm_track o pegá un bloque 'Ligas:'."
         )
         return ConversationHandler.END
 
-    context.user_data[MATCHES_TRACKS_CONTEXT_KEY] = tracked_leagues
+    context.user_data[MATCHES_TRACKS_CONTEXT_KEY] = unified_leagues
 
     if selected_track_num is not None:
-        if 1 <= selected_track_num <= len(tracked_leagues):
+        if 1 <= selected_track_num <= len(unified_leagues):
             selected_index = selected_track_num - 1
-            selected_track = tracked_leagues[selected_index]
-            try:
-                tracked_subscription, active_matches = tracking_service.get_matches_for_track(
-                    update.effective_chat.id,
-                    selected_track.tracked_league.id,
-                )
-            except ValueError as error:
-                await update.message.reply_text(
-                    str(error),
-                    reply_markup=ReplyKeyboardRemove(),
-                )
-                _clear_all_selection_context(context)
-                return ConversationHandler.END
+            selected_league = unified_leagues[selected_index]
+            
+            active_events = tracking_service.repository.get_active_events_for_unified_competition(
+                selected_league["id"],
+                only_future=True,
+            )
 
-            if not active_matches:
-                try:
-                    await tracking_service.refresh_tracked_league(selected_track.tracked_league.id)
-                    tracked_subscription, active_matches = tracking_service.get_matches_for_track(
-                        update.effective_chat.id,
-                        selected_track.tracked_league.id,
-                    )
-                except Exception:
-                    pass
+            if not active_events:
+                # Refresh all linked tracked leagues
+                tracked_links = tracking_service.repository.list_tracked_competitions_for_unified(selected_league["id"])
+                for link in tracked_links:
+                    try:
+                        await tracking_service.refresh_tracked_league(link.id)
+                    except Exception:
+                        pass
+                active_events = tracking_service.repository.get_active_events_for_unified_competition(
+                    selected_league["id"],
+                    only_future=True,
+                )
 
-            if active_matches:
-                context.user_data[MATCHES_ACTIVE_CONTEXT_KEY] = active_matches
-                context.user_data[MATCHES_SELECTED_TRACK_CONTEXT_KEY] = tracked_subscription
+            if active_events:
+                from bot.alerts import group_events_by_physical_match
+                grouped_matches = group_events_by_physical_match(active_events)
+                context.user_data[MATCHES_ACTIVE_CONTEXT_KEY] = grouped_matches
+                context.user_data[MATCHES_SELECTED_TRACK_CONTEXT_KEY] = selected_league
 
                 await update.message.reply_text(
-                    _build_match_selection_message(tracked_subscription, active_matches),
+                    _build_grouped_match_selection_message(selected_league["name"], grouped_matches),
                     reply_markup=_build_numeric_keyboard(
-                        len(active_matches) + 1,
+                        len(grouped_matches) + 1,
                         "Elegí el número del partido",
                     ),
                 )
                 return SELECT_MATCH_FOR_MATCHES
 
     await update.message.reply_text(
-        _build_track_selection_message("Qué liga quiere ver?", tracked_leagues),
-        reply_markup=_build_numeric_keyboard(len(tracked_leagues), "Elegí el número de la liga"),
+        _build_unified_league_selection_message("Qué liga quiere ver?", unified_leagues),
+        reply_markup=_build_numeric_keyboard(len(unified_leagues), "Elegí el número de la liga"),
     )
     return SELECT_LEAGUE_FOR_MATCHES
 
@@ -2757,8 +2802,8 @@ async def matches_select_league(update: Update, context: ContextTypes.DEFAULT_TY
     if update.message is None or update.effective_chat is None:
         return ConversationHandler.END
 
-    tracked_leagues = context.user_data.get(MATCHES_TRACKS_CONTEXT_KEY)
-    if not isinstance(tracked_leagues, list) or not tracked_leagues:
+    unified_leagues = context.user_data.get(MATCHES_TRACKS_CONTEXT_KEY)
+    if not isinstance(unified_leagues, list) or not unified_leagues:
         await update.message.reply_text(
             "No encontré la selección de ligas. Probá de nuevo con /matches.",
             reply_markup=ReplyKeyboardRemove(),
@@ -2766,65 +2811,37 @@ async def matches_select_league(update: Update, context: ContextTypes.DEFAULT_TY
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    selected_index = _parse_selection_number(update.message.text, len(tracked_leagues))
+    selected_index = _parse_selection_number(update.message.text, len(unified_leagues))
 
     if selected_index is None:
         await update.message.reply_text(
             "Elegí un número válido de la lista.",
-            reply_markup=_build_numeric_keyboard(len(tracked_leagues)),
+            reply_markup=_build_numeric_keyboard(len(unified_leagues)),
         )
         return SELECT_LEAGUE_FOR_MATCHES
 
-    selected_track = tracked_leagues[selected_index]
+    selected_league = unified_leagues[selected_index]
     tracking_service = get_tracking_service(context)
 
-    try:
-        tracked_subscription, active_matches = tracking_service.get_matches_for_track(
-            update.effective_chat.id,
-            selected_track.tracked_league.id,
-        )
-    except ValueError as error:
-        await update.message.reply_text(
-            str(error),
-            reply_markup=ReplyKeyboardRemove(),
-        )
-        _clear_all_selection_context(context)
-        return ConversationHandler.END
+    active_events = tracking_service.repository.get_active_events_for_unified_competition(
+        selected_league["id"],
+        only_future=True,
+    )
 
-    if not active_matches:
-        try:
-            await tracking_service.refresh_tracked_league(selected_track.tracked_league.id)
-            tracked_subscription, active_matches = tracking_service.get_matches_for_track(
-                update.effective_chat.id,
-                selected_track.tracked_league.id,
-            )
-        except CompetitionUnavailableError:
-            await update.message.reply_text(
-                build_competition_unavailable_warning_message(
-                    selected_track.tracked_league,
-                    track_number=selected_index + 1,
-                    title="⚠️ <b>No pude actualizar esa liga en este momento.</b>",
-                ),
-                reply_markup=ReplyKeyboardRemove(),
-                parse_mode=ParseMode.HTML,
-            )
-            _clear_all_selection_context(context)
-            return ConversationHandler.END
-        except (RuntimeError, ValueError) as error:
-            logger.exception(
-                "Failed to refresh tracked league %s for chat_id=%s.",
-                selected_track.tracked_league.id,
-                update.effective_chat.id,
-            )
-            await update.message.reply_text(
-                "⚠️ No pude actualizar esa liga en este momento.\n\n"
-                "Volvé a intentar en unos minutos.",
-                reply_markup=ReplyKeyboardRemove(),
-            )
-            _clear_all_selection_context(context)
-            return ConversationHandler.END
+    if not active_events:
+        # Try refreshing all linked tracked leagues
+        tracked_links = tracking_service.repository.list_tracked_competitions_for_unified(selected_league["id"])
+        for link in tracked_links:
+            try:
+                await tracking_service.refresh_tracked_league(link.id)
+            except Exception:
+                pass
+        active_events = tracking_service.repository.get_active_events_for_unified_competition(
+            selected_league["id"],
+            only_future=True,
+        )
 
-    if not active_matches:
+    if not active_events:
         await update.message.reply_text(
             "No encontré partidos activos o futuros para esa liga.",
             reply_markup=ReplyKeyboardRemove(),
@@ -2832,13 +2849,15 @@ async def matches_select_league(update: Update, context: ContextTypes.DEFAULT_TY
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    context.user_data[MATCHES_ACTIVE_CONTEXT_KEY] = active_matches
-    context.user_data[MATCHES_SELECTED_TRACK_CONTEXT_KEY] = tracked_subscription
+    from bot.alerts import group_events_by_physical_match
+    grouped_matches = group_events_by_physical_match(active_events)
+    context.user_data[MATCHES_ACTIVE_CONTEXT_KEY] = grouped_matches
+    context.user_data[MATCHES_SELECTED_TRACK_CONTEXT_KEY] = selected_league
 
     await update.message.reply_text(
-        _build_match_selection_message(tracked_subscription, active_matches),
+        _build_grouped_match_selection_message(selected_league["name"], grouped_matches),
         reply_markup=_build_numeric_keyboard(
-            len(active_matches) + 1,
+            len(grouped_matches) + 1,
             "Elegí el número del partido",
         ),
     )
@@ -2863,7 +2882,7 @@ async def matches_select_match(update: Update, context: ContextTypes.DEFAULT_TYP
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    if not isinstance(tracked_league, TrackedCompetitionSubscription):
+    if not isinstance(tracked_league, dict) or "id" not in tracked_league:
         await update.message.reply_text(
             "No encontré la liga seleccionada. Probá de nuevo con /matches.",
             reply_markup=ReplyKeyboardRemove(),
@@ -2889,17 +2908,25 @@ async def matches_select_match(update: Update, context: ContextTypes.DEFAULT_TYP
         return SELECT_MATCH_FOR_MATCHES
 
     if selected_index == 0:
+        from bot.alerts import build_comparison_match_card_message
+        parts = []
+        for match_group in active_matches:
+            card = build_comparison_match_card_message(match_group, full_odds=full_odds)
+            if card:
+                parts.append(card)
+        all_msg = "\n\n━━━━━━━━━━━━━━━━━━━━\n\n".join(parts)
         await _reply_text_chunks(
             update.message,
-            build_all_matches_message(tracked_league.tracked_league, active_matches),
+            all_msg,
             reply_markup=ReplyKeyboardRemove(),
             parse_mode=ParseMode.HTML,
         )
     else:
-        selected_match = active_matches[selected_index - 1]
+        selected_match_group = active_matches[selected_index - 1]
+        from bot.alerts import build_comparison_match_card_message
         await _reply_text_chunks(
             update.message,
-            build_match_card_message(tracked_league.tracked_league, selected_match, full_odds=full_odds),
+            build_comparison_match_card_message(selected_match_group, full_odds=full_odds),
             reply_markup=ReplyKeyboardRemove(),
             parse_mode=ParseMode.HTML,
         )
@@ -3254,6 +3281,9 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("resources", resources_command))
     application.add_handler(CommandHandler("echo", echo_command))
     application.add_handler(CommandHandler("track_url", track_url_command))
+    application.add_handler(
+        MessageHandler(filters.Regex(re.compile(r'^ligas:', re.IGNORECASE)), bulk_track_message_handler)
+    )
     application.add_handler(CommandHandler("confirm_track", confirm_track_command))
     application.add_handler(CommandHandler("confirm_empty_track", confirm_empty_track_command))
     application.add_handler(CommandHandler("list_tracks", list_tracks_command))

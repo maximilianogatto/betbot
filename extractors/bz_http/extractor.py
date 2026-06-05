@@ -31,6 +31,15 @@ from extractors.bz_http.settings import BzHttpSettings, load_bz_settings
 _SUPPORTED_HOSTS = ("bz.com",)
 _TOURNAMENT_SCHEME_RE = re.compile(r"^bz:tournament:(?:sr:tournament:)?(\d+)$", re.IGNORECASE)
 _SR_TOURNAMENT_RE = re.compile(r"sr:tournament:(\d+)", re.IGNORECASE)
+_SR_CATEGORY_RE = re.compile(r"sr:category:(\d+)", re.IGNORECASE)
+
+
+def _category_external_id(value: Any) -> str | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    return text.split(":")[-1] if text.startswith("sr:category:") else text
+
 
 
 class BzHttpExtractor(Extractor):
@@ -75,6 +84,43 @@ class BzHttpExtractor(Extractor):
 
         client = BzHttpClient(self.settings)
         search_data = await self._get_search(client)
+
+        if tournament_id.startswith("category:"):
+            cat_num = tournament_id.split(":")[-1]
+            tournaments = [
+                t for t in search_data
+                if isinstance(t, dict) and _category_external_id(t.get("categoryId")) == cat_num
+            ]
+            if not tournaments:
+                return build_competition_extraction(
+                    tournament_id=tournament_id,
+                    tournament={"name": "Unknown Category", "matches": []},
+                    odds_by_match={},
+                    source_url=url,
+                )
+            all_matches = []
+            country_name = "Category"
+            for t in tournaments:
+                if t.get("categoryName"):
+                    country_name = t["categoryName"]
+                for m in t.get("matches") or []:
+                    if isinstance(m, dict):
+                        all_matches.append(m)
+            match_ids = [str(m.get("id")) for m in all_matches if m.get("id")]
+            odds_by_match = await client.fetch_many_match_odds(match_ids)
+            merged_tournament = {
+                "id": tournament_id,
+                "name": country_name,
+                "categoryName": country_name,
+                "matches": all_matches
+            }
+            return build_competition_extraction(
+                tournament_id=tournament_id,
+                tournament=merged_tournament,
+                odds_by_match=odds_by_match,
+                source_url=url,
+            )
+
         tournament = find_tournament(search_data, tournament_id)
         if tournament is None:
             return build_competition_extraction(
@@ -150,6 +196,10 @@ def _tournament_id_from_url(url: str) -> str | None:
         return scheme_match.group(1)
 
     decoded = unquote(normalized)
+    cat_match = _SR_CATEGORY_RE.search(decoded)
+    if cat_match:
+        return f"category:{cat_match.group(1)}"
+
     sr_match = _SR_TOURNAMENT_RE.search(decoded)
     if sr_match:
         return sr_match.group(1)

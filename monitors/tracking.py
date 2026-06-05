@@ -405,6 +405,97 @@ class TrackingService:
 
         return await self.confirm_pending_track(chat_id)
 
+    async def bulk_track_leagues(
+        self,
+        chat_id: int,
+        leagues_text: str,
+    ) -> CommandResult:
+        """Process a bulk track list of leagues, searching and tracking matches across all platforms."""
+        import re
+        import html
+        from monitors.stats import _league_name_similarity
+
+        # 1. Parse the text block
+        lines = leagues_text.strip().split("\n")
+        queries = []
+        for line in lines:
+            line_clean = line.strip()
+            if not line_clean or line_clean.lower().startswith("ligas:"):
+                continue
+            # Remove common bullet points, emoji, etc.
+            line_clean = re.sub(r"^[📍\-*•+\s]+", "", line_clean).strip()
+            if not line_clean:
+                continue
+            if "." in line_clean:
+                parts = line_clean.split(".", 1)
+                country = parts[0].strip()
+                league = parts[1].strip()
+                queries.append((country, league))
+            else:
+                queries.append(("", line_clean))
+
+        if not queries:
+            return CommandResult(ok=False, message="No se encontraron líneas válidas después de 'Ligas:'.")
+
+        platforms = self.list_league_discovery_platforms()
+        results = []
+
+        for country, query in queries:
+            found_any = False
+            platform_matches = []
+            
+            # Search across all platforms
+            for platform_desc in platforms:
+                platform_key = platform_desc.key
+                try:
+                    # Try searching with country filter first
+                    options = await self.search_discoverable_leagues(
+                        platform=platform_key,
+                        country_name=country,
+                        query=query if country else None,
+                    )
+                    # Fallback to search without country filter if not found
+                    if not options and country:
+                        options = await self.search_discoverable_leagues(
+                            platform=platform_key,
+                            country_name="",
+                            query=query,
+                        )
+                    
+                    for opt in options:
+                        target_name = query
+                        score = _league_name_similarity(opt.league_name, target_name)
+                        if score >= 0.85:
+                            platform_matches.append((platform_desc.display_name, opt, score))
+                except Exception as e:
+                    logger.warning("Error searching leagues on platform %s: %s", platform_key, e)
+                    
+            if platform_matches:
+                seen_platforms = set()
+                tracked_platforms = []
+                for plat_name, opt, score in sorted(platform_matches, key=lambda x: x[2], reverse=True):
+                    if opt.platform in seen_platforms:
+                        continue
+                    seen_platforms.add(opt.platform)
+                    
+                    track_res = await self.track_discovered_league(chat_id, opt)
+                    if track_res.ok:
+                        tracked_platforms.append(f"{plat_name} ({score:.0%})")
+                
+                if tracked_platforms:
+                    found_any = True
+                    results.append(
+                        f"✅ <b>{html.escape(country + '.' if country else '')} {html.escape(query)}</b> -> Vigilando en: {html.escape(', '.join(tracked_platforms))}"
+                    )
+            
+            if not found_any:
+                results.append(
+                    f"❌ <b>{html.escape(country + '.' if country else '')} {html.escape(query)}</b> -> No se encontró coincidencia confiable (>=85%)"
+                )
+
+        msg = "📊 <b>Resultado de Importación Masiva:</b>\n\n" + "\n".join(results)
+        return CommandResult(ok=True, message=msg)
+
     def build_platforms_message(self) -> CommandResult:
         """Build the `/platforms` response from the extractor registry."""
 
@@ -1868,6 +1959,9 @@ def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+tracking_service = TrackingService()
+
+
 __all__ = [
     "CommandResult",
     "CompetitionRefreshResult",
@@ -1875,4 +1969,5 @@ __all__ = [
     "RefreshSummary",
     "SubscriptionOddsAlert",
     "TrackingService",
+    "tracking_service",
 ]
