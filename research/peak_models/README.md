@@ -122,13 +122,17 @@ Para cada uno: **qué predice** y **cómo se entrena**.
 
 ---
 
-## 7. Primer notebook sugerido
-1. Cargar master, EDA: distribución de goles, % H/D/A por liga, ventaja de local empírica.
-2. Implementar G0 (baseline) y medir RPS/log-loss con split temporal.
-3. Poisson (modelo 1) → batir el baseline. Mirar calibración.
-4. Dixon-Coles (decaimiento + corrección) → comparar.
-5. Si querés incertidumbre/muestra chica: jerárquico bayesiano. Si querés forma/tiempo: Kalman.
-6. Capa logística de calibración + definir el corte de "peak".
+## 7. Notebooks
+- **`g0_baseline.ipynb`** — G0 ya implementado y corrido: EDA, feature Δppg
+  point-in-time, curva empírica H/D/A, base-rate vs logística multinomial,
+  RPS/log-loss con split 2025→2026, calibración y predicción de hoy.
+  (Validado: RPS logística 0.220 < base 0.237.)
+
+Próximos:
+1. Poisson (modelo 1) → batir el baseline. Mirar calibración.
+2. Dixon-Coles (decaimiento + corrección) → comparar.
+3. Incertidumbre/muestra chica: jerárquico bayesiano. Forma/tiempo: Kalman.
+4. Capa logística de calibración + definir el corte de "peak".
 
 > El backtest del bot (`monitors/peak_backtest.py` en main) ya hace el walk-forward
 > point-in-time del modelo heurístico actual: úsalo como vara de comparación.
