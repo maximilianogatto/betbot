@@ -108,7 +108,7 @@ HELP_MESSAGE = (
     "• `/help stats` - Estadísticas y H2H\n"
     "• `/help especial` - Ligas especiales (Finlandia y Suecia)\n\n"
     "También podés usar los comandos directos de ayuda:\n"
-    "/help_general, /help_odds, /help_live, /help_stats, /help_especial"
+    "`/help_general`, `/help_odds`, `/help_live`, `/help_stats`, `/help_especial`"
 )
 
 HELP_GENERAL_MESSAGE = (
