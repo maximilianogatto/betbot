@@ -64,7 +64,7 @@ class TestHelpCommands(unittest.IsolatedAsyncioTestCase):
         self.assertIn("Stats y Estadísticas (Estándar)", text)
         self.assertIn("/link_stats", text)
         self.assertIn("Ligas Especiales (Stats de Federaciones)", text)
-        self.assertIn("/fin_help", text)
+        self.assertIn("[country]_help", text)
 
     async def test_direct_help_commands(self) -> None:
         commands = [

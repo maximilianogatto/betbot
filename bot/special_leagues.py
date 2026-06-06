@@ -727,3 +727,629 @@ class RomaniaLeagues(SpecialLeague):
         except Exception:
             return name, []
 
+
+# --------------------------------------------------------------------------- #
+# Slovakia adapter (Sportnet API)
+# --------------------------------------------------------------------------- #
+_SK_BRATISLAVA = ZoneInfo("Europe/Bratislava")
+
+
+class SlovakiaLeagues(SpecialLeague):
+    flag = "🇸🇰"
+    country = "Eslovacas"
+    prefix = "sk"
+
+    def __init__(self, client):
+        self.client = client
+        self.table = {
+            "SK1A": ("6849d25aeba10c40f7f8ff85", "69a0455e2d75b679881fcbd4", "I. Liga Ženy - Play-off", 1, "F"),
+            "SK1B": ("6849d25aeba10c40f7f8ff85", "69a045272d75b679881fcbd3", "I. Liga Ženy - Play-out", 1, "F"),
+        }
+
+    def close(self) -> None:
+        try:
+            self.client.close()
+        except Exception:
+            pass
+
+    def leagues(self) -> list[LeagueInfo]:
+        return [
+            LeagueInfo(code=code, name=info[2], tier=info[3], gender=info[4])
+            for code, info in self.table.items()
+        ]
+
+    def _convert_time(self, iso_str: str | None) -> tuple[str, str]:
+        if not iso_str:
+            return "N/A", "N/A"
+        try:
+            if iso_str.endswith("Z"):
+                clean = iso_str.replace("Z", "").split(".")[0].replace("T", " ").strip()
+                return _arg_time(clean, ZoneInfo("UTC"))
+            else:
+                clean = iso_str.split(".")[0].replace("T", " ").strip()
+                return _arg_time(clean, _SK_BRATISLAVA)
+        except Exception:
+            return "N/A", "N/A"
+
+    def today(self) -> tuple[list[MatchRow], int]:
+        from datetime import date
+        today_str = date.today().isoformat()
+        rows: list[MatchRow] = []
+        omitted = 0
+
+        comp_id = "6849d25aeba10c40f7f8ff85"
+        try:
+            data = self.client.get_matches(comp_id, limit=200)
+            matches = data.get("matches") or []
+        except Exception:
+            matches = []
+
+        for m in matches:
+            part_id = m.get("competitionPart", {}).get("_id")
+            code = next((k for k, v in self.table.items() if v[1] == part_id), None)
+            if not code:
+                omitted += 1
+                continue
+
+            d_arg, t_arg = self._convert_time(m.get("startDate"))
+            if d_arg == today_str:
+                home = next((t["name"] for t in m.get("teams", []) if t.get("additionalProperties", {}).get("homeaway") == "home"), "Local")
+                away = next((t["name"] for t in m.get("teams", []) if t.get("additionalProperties", {}).get("homeaway") == "away"), "Visitante")
+                score_list = m.get("score")
+                score = f"{score_list[0]}-{score_list[1]}" if score_list and len(score_list) == 2 else None
+
+                rows.append(MatchRow(
+                    match_id=m.get("_id", ""),
+                    time_arg=t_arg,
+                    date_arg=d_arg,
+                    home=home,
+                    away=away,
+                    score=score,
+                    is_live=False,
+                    league_code=code,
+                    league_name=self.table[code][2],
+                    league_tier=self.table[code][3]
+                ))
+
+        rows.sort(key=lambda r: r.time_arg)
+        return rows, omitted
+
+    def standings(self, code: str) -> StandingsResult:
+        code = code.upper()
+        info = self.table.get(code)
+        if not info:
+            return StandingsResult(title=code, found=False)
+
+        comp_id, part_id, name, tier, gender = info
+        try:
+            data = self.client.get_part(comp_id, part_id)
+            res = data.get("resultsTable", {}).get("results") or []
+            rows = []
+            for idx, r in enumerate(res, start=1):
+                team_name = r.get("team", {}).get("name", "?")
+                stats = r.get("stats", {})
+                played = stats.get("matches", {}).get("played") or 0
+                points = stats.get("points") or 0
+                gf = stats.get("goals", {}).get("given") or 0
+                ga = stats.get("goals", {}).get("received") or 0
+                goal_diff = gf - ga
+
+                rows.append(StandRow(
+                    position=idx,
+                    team=team_name,
+                    played=played,
+                    points=points,
+                    goal_diff=goal_diff
+                ))
+            return StandingsResult(title=f"{name} (2025/2026)", rows=rows)
+        except Exception:
+            return StandingsResult(title=name, found=True)
+
+    def fixtures(self, code: str) -> tuple[Optional[str], list[MatchRow]]:
+        code = code.upper()
+        info = self.table.get(code)
+        if not info:
+            return None, []
+
+        comp_id, part_id, name, tier, gender = info
+        try:
+            data = self.client.get_matches(comp_id, limit=200)
+            matches = data.get("matches") or []
+        except Exception:
+            matches = []
+
+        rows = []
+        for m in matches:
+            m_part_id = m.get("competitionPart", {}).get("_id")
+            if m_part_id != part_id:
+                continue
+
+            d_arg, t_arg = self._convert_time(m.get("startDate"))
+            home = next((t["name"] for t in m.get("teams", []) if t.get("additionalProperties", {}).get("homeaway") == "home"), "Local")
+            away = next((t["name"] for t in m.get("teams", []) if t.get("additionalProperties", {}).get("homeaway") == "away"), "Visitante")
+            score_list = m.get("score")
+            score = f"{score_list[0]}-{score_list[1]}" if score_list and len(score_list) == 2 else None
+
+            rows.append(MatchRow(
+                match_id=m.get("_id", ""),
+                time_arg=t_arg,
+                date_arg=d_arg,
+                home=home,
+                away=away,
+                score=score,
+                is_live=False,
+                league_code=code,
+                league_name=name,
+                league_tier=tier
+            ))
+
+        rows.sort(key=lambda r: (r.date_arg, r.time_arg))
+        return name, rows
+
+
+# --------------------------------------------------------------------------- #
+# Algeria adapter (LNFF Scraper)
+# --------------------------------------------------------------------------- #
+_AL_ALGIERS = ZoneInfo("Africa/Algiers")
+
+
+class AlgeriaLeagues(SpecialLeague):
+    flag = "🇩🇿"
+    country = "Argelinas"
+    prefix = "al"
+
+    def __init__(self, client):
+        self.client = client
+        self.table = {
+            "DZ1": "D1 Seniors Damas",
+        }
+
+    def close(self) -> None:
+        try:
+            self.client.close()
+        except Exception:
+            pass
+
+    def leagues(self) -> list[LeagueInfo]:
+        return [
+            LeagueInfo(code="DZ1", name="D1 Seniors Damas", tier=1, gender="F")
+        ]
+
+    def _al_arg_time(self, local: str | None) -> tuple[str, str]:
+        if not local:
+            return "N/A", "N/A"
+        raw = str(local).strip()
+        for fmt in ("%d-%m-%Y %H:%M", "%d-%m-%Y"):
+            try:
+                dt = datetime.strptime(raw, fmt).replace(tzinfo=_AL_ALGIERS)
+                a = dt.astimezone(_ARG)
+                time_str = a.strftime("%H:%M") if "%H:%M" in fmt else "N/A"
+                return a.strftime("%Y-%m-%d"), time_str
+            except ValueError:
+                continue
+        return "N/A", "N/A"
+
+    def today(self) -> tuple[list[MatchRow], int]:
+        from datetime import date
+        today_str = date.today().isoformat()
+        rows: list[MatchRow] = []
+        omitted = 0
+
+        try:
+            matches = self.client.get_matches()
+        except Exception:
+            matches = []
+
+        for m in matches:
+            div = str(m.get("division") or "").lower()
+            if "d1" not in div and "nationale une" not in div:
+                omitted += 1
+                continue
+
+            d_arg, t_arg = self._al_arg_time(m.get("date_raw"))
+            if d_arg == today_str:
+                score_raw = m.get("score_raw")
+                score = score_raw.replace(" ", "") if score_raw and "-" in score_raw else None
+                slug = m.get("match_url", "").rstrip("/").split("/")[-1] if m.get("match_url") else ""
+                if not slug:
+                    import uuid
+                    slug = str(uuid.uuid4())
+
+                rows.append(MatchRow(
+                    match_id=slug,
+                    time_arg=t_arg,
+                    date_arg=d_arg,
+                    home=m.get("home", "Local"),
+                    away=m.get("away", "Visitante"),
+                    score=score,
+                    is_live=False,
+                    league_code="DZ1",
+                    league_name="D1 Seniors Damas",
+                    league_tier=1,
+                ))
+        rows.sort(key=lambda r: r.time_arg)
+        return rows, omitted
+
+    def standings(self, code: str) -> StandingsResult:
+        code = code.upper()
+        if code != "DZ1":
+            return StandingsResult(title=code, found=False)
+
+        try:
+            matches = self.client.get_matches()
+        except Exception:
+            matches = []
+
+        teams_data = {}
+        for m in matches:
+            div = str(m.get("division") or "").lower()
+            if "d1" not in div and "nationale une" not in div:
+                continue
+
+            home = m.get("home", "").strip()
+            away = m.get("away", "").strip()
+            if not home or not away:
+                continue
+
+            for t in (home, away):
+                if t not in teams_data:
+                    teams_data[t] = {
+                        "team": t,
+                        "played": 0,
+                        "wins": 0,
+                        "draws": 0,
+                        "losses": 0,
+                        "gf": 0,
+                        "ga": 0,
+                        "points": 0
+                    }
+
+            score_raw = m.get("score_raw") or ""
+            import re
+            match = re.search(r"^\s*(\d+)\s*-\s*(\d+)\s*$", score_raw)
+            if match:
+                hg = int(match.group(1))
+                ag = int(match.group(2))
+
+                t_home = teams_data[home]
+                t_away = teams_data[away]
+
+                t_home["played"] += 1
+                t_away["played"] += 1
+
+                t_home["gf"] += hg
+                t_home["ga"] += ag
+                t_away["gf"] += ag
+                t_away["ga"] += hg
+
+                if hg > ag:
+                    t_home["wins"] += 1
+                    t_home["points"] += 3
+                    t_away["losses"] += 1
+                elif hg < ag:
+                    t_away["wins"] += 1
+                    t_away["points"] += 3
+                    t_home["losses"] += 1
+                else:
+                    t_home["draws"] += 1
+                    t_home["points"] += 1
+                    t_away["draws"] += 1
+                    t_away["points"] += 1
+
+        # Sort: 1. Points, 2. GD, 3. GF, 4. Name
+        sorted_teams = sorted(
+            teams_data.values(),
+            key=lambda x: (x["points"], x["gf"] - x["ga"], x["gf"], x["team"].lower()),
+            reverse=True
+        )
+
+        rows = []
+        for idx, t in enumerate(sorted_teams, start=1):
+            rows.append(StandRow(
+                position=idx,
+                team=t["team"],
+                played=t["played"],
+                points=t["points"],
+                goal_diff=t["gf"] - t["ga"]
+            ))
+
+        return StandingsResult(title="D1 Seniors Damas (2024/2025)", rows=rows)
+
+    def fixtures(self, code: str) -> tuple[Optional[str], list[MatchRow]]:
+        code = code.upper()
+        if code != "DZ1":
+            return None, []
+
+        try:
+            matches = self.client.get_matches()
+        except Exception:
+            matches = []
+
+        d1_matches = []
+        for m in matches:
+            div = str(m.get("division") or "").lower()
+            if "d1" not in div and "nationale une" not in div:
+                continue
+            d1_matches.append(m)
+
+        parsed_list = []
+        for m in d1_matches:
+            d_arg, t_arg = self._al_arg_time(m.get("date_raw"))
+            parsed_list.append((m, d_arg, t_arg))
+
+        parsed_list.sort(key=lambda x: (x[1] == "N/A", x[1], x[2]))
+
+        finished = []
+        upcoming = []
+        for m, d_arg, t_arg in parsed_list:
+            score_raw = m.get("score_raw")
+            import re
+            has_score = score_raw and re.search(r"\d+\s*-\s*\d+", score_raw)
+            score = score_raw.replace(" ", "") if has_score else None
+            slug = m.get("match_url", "").rstrip("/").split("/")[-1] if m.get("match_url") else ""
+            if not slug:
+                import uuid
+                slug = str(uuid.uuid4())
+
+            row = MatchRow(
+                match_id=slug,
+                time_arg=t_arg,
+                date_arg=d_arg,
+                home=m.get("home", "Local"),
+                away=m.get("away", "Visitante"),
+                score=score,
+                is_live=False,
+                league_code="DZ1",
+            )
+            if has_score:
+                finished.append(row)
+            else:
+                upcoming.append(row)
+
+        display = finished[-5:] + upcoming[:10]
+        return "D1 Seniors Damas", display
+
+
+# Norway adapter (NFF Scraper)
+# --------------------------------------------------------------------------- #
+_NO_OSLO = ZoneInfo("Europe/Oslo")
+
+
+class NorwayLeagues(SpecialLeague):
+    flag = "🇳🇴"
+    country = "Noruegas"
+    prefix = "no"
+
+    def __init__(self, client):
+        self.client = client
+        self.table = {
+            "NO1": "Toppserien",
+        }
+
+    def close(self) -> None:
+        try:
+            self.client.close()
+        except Exception:
+            pass
+
+    def leagues(self) -> list[LeagueInfo]:
+        return [
+            LeagueInfo(code="NO1", name="Toppserien", tier=1, gender="F")
+        ]
+
+    def _oslo_arg_time(self, date_str: str | None, time_str: str | None) -> tuple[str, str]:
+        if not date_str or not time_str:
+            return "N/A", "N/A"
+        raw_date = str(date_str).strip()
+        raw_time = str(time_str).strip()
+        
+        for fmt in ("%d.%m.%Y %H:%M", "%Y-%m-%d %H:%M"):
+            try:
+                dt = datetime.strptime(f"{raw_date} {raw_time}", fmt).replace(tzinfo=_NO_OSLO)
+                a = dt.astimezone(_ARG)
+                return a.strftime("%Y-%m-%d"), a.strftime("%H:%M")
+            except ValueError:
+                continue
+
+        for fmt in ("%d.%m.%Y", "%Y-%m-%d"):
+            try:
+                dt = datetime.strptime(raw_date, fmt).replace(tzinfo=_NO_OSLO)
+                a = dt.astimezone(_ARG)
+                return a.strftime("%Y-%m-%d"), "N/A"
+            except ValueError:
+                continue
+
+        return "N/A", "N/A"
+
+    def _extract_fiks_id(self, row: list[dict[str, Any]]) -> str:
+        import urllib.parse
+        for cell in row:
+            for href in cell.get("hrefs", []):
+                if "fiksId=" in href:
+                    try:
+                        parsed = urllib.parse.urlparse(href)
+                        qs = urllib.parse.parse_qs(parsed.query)
+                        if "fiksId" in qs:
+                            return qs["fiksId"][0]
+                    except Exception:
+                        pass
+        if len(row) > 8:
+            txt = row[8].get("text", "").strip()
+            if txt.isdigit():
+                return txt
+        import uuid
+        return str(uuid.uuid4())
+
+    def today(self) -> tuple[list[MatchRow], int]:
+        from datetime import date
+        today_date_str = date.today().strftime("%d.%m.%Y")
+        today_iso = date.today().isoformat()
+        rows: list[MatchRow] = []
+        omitted = 0
+
+        try:
+            tables = self.client.get_tables("https://www.fotball.no/fotballdata/dagens-kamper/")
+        except Exception:
+            tables = []
+
+        target_table = None
+        for t in tables:
+            first_row = t.get("rows", [[]])[0]
+            first_row_text = [cell.get("text", "").lower() for cell in first_row]
+            if "hjemmelag" in first_row_text and "bortelag" in first_row_text:
+                target_table = t
+                break
+
+        if target_table:
+            for row in target_table["rows"][1:]:
+                if len(row) < 5:
+                    continue
+                tournament = row[0].get("text", "")
+                if "toppserien" not in tournament.lower():
+                    omitted += 1
+                    continue
+
+                time_str = row[1].get("text", "")
+                home = row[2].get("text", "Local")
+                away = row[4].get("text", "Visitante")
+                score_raw = row[3].get("text", "")
+                
+                d_arg, t_arg = self._oslo_arg_time(today_date_str, time_str)
+                
+                import re
+                has_score = score_raw and re.search(r"\d+\s*-\s*\d+", score_raw)
+                score = score_raw.replace(" ", "") if has_score else None
+                match_id = self._extract_fiks_id(row)
+
+                rows.append(MatchRow(
+                    match_id=match_id,
+                    time_arg=t_arg,
+                    date_arg=d_arg,
+                    home=home,
+                    away=away,
+                    score=score,
+                    is_live=False,
+                    league_code="NO1",
+                    league_name="Toppserien",
+                    league_tier=1,
+                ))
+
+        rows.sort(key=lambda r: r.time_arg)
+        return rows, omitted
+
+    def standings(self, code: str) -> StandingsResult:
+        code = code.upper()
+        if code != "NO1":
+            return StandingsResult(title=code, found=False)
+
+        try:
+            tables = self.client.get_tables("https://www.fotball.no/turneringer/toppserien/")
+        except Exception:
+            tables = []
+
+        target_table = None
+        for t in tables:
+            first_row = t.get("rows", [[]])[0]
+            first_row_text = [cell.get("text", "").lower() for cell in first_row]
+            if "plass" in first_row_text and "lag" in first_row_text and "poeng" in first_row_text:
+                target_table = t
+                break
+
+        if not target_table:
+            return StandingsResult(title="Toppserien", found=True)
+
+        rows = []
+        for row in target_table["rows"]:
+            if len(row) < 7:
+                continue
+            plass_text = row[0].get("text", "").strip()
+            if not plass_text.isdigit():
+                continue
+
+            pos = int(plass_text)
+            team = row[1].get("text", "")
+            played = _to_int(row[2].get("text", "")) or 0
+            
+            points_text = row[len(row) - 1].get("text", "")
+            points = _to_int(points_text) or 0
+            
+            diff_text = row[len(row) - 2].get("text", "").replace("−", "-").strip()
+            goal_diff = _to_int(diff_text) or 0
+
+            rows.append(StandRow(
+                position=pos,
+                team=team,
+                played=played,
+                points=points,
+                goal_diff=goal_diff
+            ))
+
+        return StandingsResult(title="Toppserien (2026)", rows=rows)
+
+    def fixtures(self, code: str) -> tuple[Optional[str], list[MatchRow]]:
+        code = code.upper()
+        if code != "NO1":
+            return None, []
+
+        try:
+            tables = self.client.get_tables("https://www.fotball.no/turneringer/toppserien/")
+        except Exception:
+            tables = []
+
+        target_table = None
+        for t in tables:
+            first_row = t.get("rows", [[]])[0]
+            first_row_text = [cell.get("text", "").lower() for cell in first_row]
+            if "runde" in first_row_text and "dato" in first_row_text and "hjemmelag" in first_row_text:
+                target_table = t
+                break
+
+        if not target_table:
+            return "Toppserien", []
+
+        all_matches = []
+        for row in target_table["rows"]:
+            if len(row) < 7:
+                continue
+            runde_text = row[0].get("text", "").strip()
+            if not runde_text.isdigit():
+                continue
+
+            date_str = row[1].get("text", "")
+            time_str = row[3].get("text", "")
+            home = row[4].get("text", "Local")
+            score_raw = row[5].get("text", "")
+            away = row[6].get("text", "Visitante")
+            
+            d_arg, t_arg = self._oslo_arg_time(date_str, time_str)
+            match_id = self._extract_fiks_id(row)
+
+            import re
+            has_score = score_raw and re.search(r"\d+\s*-\s*\d+", score_raw)
+            score = score_raw.replace(" ", "") if has_score else None
+
+            all_matches.append((
+                MatchRow(
+                    match_id=match_id,
+                    time_arg=t_arg,
+                    date_arg=d_arg,
+                    home=home,
+                    away=away,
+                    score=score,
+                    is_live=False,
+                    league_code="NO1",
+                ),
+                has_score
+            ))
+
+        finished = []
+        upcoming = []
+        for row_match, has_score in all_matches:
+            if has_score:
+                finished.append(row_match)
+            else:
+                upcoming.append(row_match)
+
+        display = finished[-5:] + upcoming[:10]
+        return "Toppserien", display
+

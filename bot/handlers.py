@@ -170,21 +170,20 @@ HELP_STATS_MESSAGE = (
     "  <code>/platforms</code> - Muestra las plataformas de odds y proveedores de stats soportados\n\n"
     "🌍 <b>Ligas Especiales (Stats de Federaciones):</b>\n"
     "  <i>Ligas de ascenso/copas que no figuran en sitios comunes: las sacamos de las páginas oficiales.</i>\n"
-    "  🇫🇮 <b>Finlandia</b> (<code>tulospalvelu.palloliitto.fi</code>):\n"
-    "    <code>/fin_help</code> - Guía completa del módulo de Finlandia\n"
-    "    <code>/fin_leagues</code> - Escalafón oficial de ligas y copas\n"
-    "    <code>/fin_today</code> - Partidos de hoy con sus IDs\n"
-    "    <code>/fin_standings &lt;CÓDIGO&gt;</code> - Tabla de posiciones de una liga\n"
-    "    <code>/fin_fixtures &lt;CÓDIGO&gt;</code> - Calendario reciente y próximo de una liga\n"
-    "    <code>/fin_match &lt;ID&gt;</code> - Reporte del partido + Detector de Suplentes / B-Team\n"
-    "  🇸🇪 <b>Suecia</b> (<code>svenskfotboll.se</code>):\n"
-    "    <code>/swe_help</code> - Guía completa del módulo de Suecia\n"
-    "    <code>/swe_leagues</code> - Ligas disponibles y sus códigos\n"
-    "    <code>/swe_today</code> - Partidos de hoy con sus IDs\n"
-    "    <code>/swe_standings &lt;CÓDIGO&gt;</code> - Tabla de posiciones de una liga\n"
-    "    <code>/swe_fixtures &lt;CÓDIGO&gt;</code> - Próximos partidos de una liga\n"
-    "    <code>/swe_results &lt;CÓDIGO&gt;</code> - Últimos resultados de una liga\n"
-    "    <code>/swe_match &lt;ID&gt;</code> - Reporte detallado de un partido\n\n"
+    "  • <code>/[country]_help</code> - Guía completa del módulo del país\n"
+    "  • <code>/[country]_leagues</code> - Escalafón oficial de ligas y copas\n"
+    "  • <code>/[country]_today</code> - Partidos de hoy con sus IDs\n"
+    "  • <code>/[country]_standings &lt;CÓDIGO&gt;</code> - Tabla de posiciones de una liga\n"
+    "  • <code>/[country]_fixtures &lt;CÓDIGO&gt;</code> - Calendario reciente y próximo de una liga\n"
+    "  • <code>/[country]_results &lt;CÓDIGO&gt;</code> - Últimos resultados (sólo Suecia)\n"
+    "  • <code>/[country]_match &lt;ID&gt;</code> - Reporte del partido + Detector de Suplentes / B-Team (alineaciones sólo Fin/Swe)\n\n"
+    "  <i>Reemplazá <code>[country]</code> por el acrónimo del país que querés explorar:</i>\n"
+    "  🇫🇮 <b>Finlandia:</b> <code>fin</code>\n"
+    "  🇸🇪 <b>Suecia:</b> <code>swe</code>\n"
+    "  🇷🇴 <b>Rumania:</b> <code>ro</code>\n"
+    "  🇸🇰 <b>Eslovaquia:</b> <code>sk</code>\n"
+    "  🇩🇿 <b>Argelia:</b> <code>al</code>\n"
+    "  🇳🇴 <b>Noruega:</b> <code>no</code>\n\n"
     "Volver al menú principal: <code>/help</code>"
 )
 
@@ -3279,6 +3278,30 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("ro_today", ro_today_command))
     application.add_handler(CommandHandler("ro_match", ro_match_command))
 
+    # Slovak Football Leagues and stats commands
+    application.add_handler(CommandHandler("sk_help", sk_help_command))
+    application.add_handler(CommandHandler("sk_leagues", sk_leagues_command))
+    application.add_handler(CommandHandler("sk_standings", sk_standings_command))
+    application.add_handler(CommandHandler("sk_fixtures", sk_fixtures_command))
+    application.add_handler(CommandHandler("sk_today", sk_today_command))
+    application.add_handler(CommandHandler("sk_match", sk_match_command))
+
+    # Algerian Football Leagues and stats commands
+    application.add_handler(CommandHandler("al_help", al_help_command))
+    application.add_handler(CommandHandler("al_leagues", al_leagues_command))
+    application.add_handler(CommandHandler("al_standings", al_standings_command))
+    application.add_handler(CommandHandler("al_fixtures", al_fixtures_command))
+    application.add_handler(CommandHandler("al_today", al_today_command))
+    application.add_handler(CommandHandler("al_match", al_match_command))
+
+    # Norwegian Football Leagues and stats commands
+    application.add_handler(CommandHandler("no_help", no_help_command))
+    application.add_handler(CommandHandler("no_leagues", no_leagues_command))
+    application.add_handler(CommandHandler("no_standings", no_standings_command))
+    application.add_handler(CommandHandler("no_fixtures", no_fixtures_command))
+    application.add_handler(CommandHandler("no_today", no_today_command))
+    application.add_handler(CommandHandler("no_match", no_match_command))
+
     # Special-league daily peak scoring (Finland + Sweden)
     application.add_handler(CommandHandler("peak_today", peak_today_command))
     application.add_handler(CommandHandler("peak_on", peak_on_command))
@@ -3875,6 +3898,24 @@ def _romania_adapter():
     from bot.special_leagues import RomaniaLeagues
     from stats_providers.romania_http.client import RomaniaFRFHTTPClient
     return RomaniaLeagues(RomaniaFRFHTTPClient())
+
+
+def _slovakia_adapter():
+    from bot.special_leagues import SlovakiaLeagues
+    from stats_providers.slovakia_http.client import SlovakSportnetHTTPClient
+    return SlovakiaLeagues(SlovakSportnetHTTPClient())
+
+
+def _algeria_adapter():
+    from bot.special_leagues import AlgeriaLeagues
+    from stats_providers.algeria_http.client import AlgeriaLNFFHTTPClient
+    return AlgeriaLeagues(AlgeriaLNFFHTTPClient())
+
+
+def _norway_adapter():
+    from bot.special_leagues import NorwayLeagues
+    from stats_providers.norway_http.client import NorwayNFFHTTPClient
+    return NorwayLeagues(NorwayNFFHTTPClient())
 
 
 async def _run_special_leagues(message, adapter) -> None:
@@ -4550,6 +4591,279 @@ async def swe_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         + _swe_usage_guide(as_html=True)
     )
     await update.message.reply_text(help_text, parse_mode=ParseMode.HTML)
+
+
+_SK_LEAGUE_USAGE = "Escribí `/sk_standings [CÓDIGO]` o `/sk_fixtures [CÓDIGO]` con uno de estos códigos:\n- `SK1A` (I. Liga Ženy - Play-off)\n- `SK1B` (I. Liga Ženy - Play-out)"
+
+
+async def sk_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /sk_help: Display help for Slovak leagues."""
+    del context
+    if update.message is None:
+        return
+    help_text = (
+        "🇸🇰 *Guía de Estadísticas de la Federación de Eslovaquia* 🇸🇰\n\n"
+        "Comandos disponibles:\n"
+        "• `/sk_leagues` - Muestra la jerarquía de ligas y códigos\n"
+        "• `/sk_standings [CÓDIGO]` - Tabla de posiciones actual\n"
+        "• `/sk_fixtures [CÓDIGO]` - Calendario de partidos recientes/próximos\n"
+        "• `/sk_today` - Partidos programados para hoy\n\n"
+        + _SK_LEAGUE_USAGE
+    )
+    await update.message.reply_text(help_text, parse_mode="Markdown")
+
+
+async def sk_leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /sk_leagues: list Slovak leagues."""
+    del context
+    if update.message is None:
+        return
+    await _run_special_leagues(update.message, _slovakia_adapter())
+
+
+async def sk_standings_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /sk_standings [CÓDIGO]: standings for a Slovak league."""
+    if update.message is None:
+        return
+    usage = (
+        "❌ *Falta el código de liga.*\n\nUso: `/sk_standings [CÓDIGO_LIGA]`\n\n"
+        + _SK_LEAGUE_USAGE + "\n\nEjemplo: `/sk_standings SK1A`"
+    )
+    await _run_special_standings(update.message, (getattr(context, 'args', None) or []), _slovakia_adapter(), usage)
+
+
+async def sk_fixtures_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /sk_fixtures [CÓDIGO]: Display recent/upcoming fixtures."""
+    if update.message is None:
+        return
+    usage = (
+        "❌ *Falta el código de liga.*\n\nUso: `/sk_fixtures [CÓDIGO_LIGA]`\n\n"
+        + _SK_LEAGUE_USAGE + "\n\nEjemplo: `/sk_fixtures SK1A`"
+    )
+    await _run_special_fixtures(update.message, (getattr(context, 'args', None) or []), _slovakia_adapter(), usage)
+
+
+async def sk_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /sk_today: today's matches."""
+    if update.message is None:
+        return
+    await _run_special_today(update.message, (getattr(context, 'args', None) or []), _slovakia_adapter())
+
+
+async def sk_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /sk_match [match_id]: details for a match (not supported in detail)."""
+    del context
+    if update.message is None:
+        return
+    await update.message.reply_text("ℹ️ El detector de alineaciones no está disponible para la federación eslovaca.")
+
+
+_AL_LEAGUE_USAGE = "Escribí `/al_standings [CÓDIGO]` o `/al_fixtures [CÓDIGO]` con el código:\n- `DZ1` (D1 Seniors Damas)"
+
+
+async def al_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /al_help: Display help for Algerian leagues."""
+    del context
+    if update.message is None:
+        return
+    help_text = (
+        "🇩🇿 *Guía de Estadísticas de la Federación de Argelia* 🇩🇿\n\n"
+        "Comandos disponibles:\n"
+        "• `/al_leagues` - Muestra la jerarquía de ligas y códigos\n"
+        "• `/al_standings [CÓDIGO]` - Tabla de posiciones actual (calculada en tiempo real)\n"
+        "• `/al_fixtures [CÓDIGO]` - Calendario de partidos recientes/próximos\n"
+        "• `/al_today` - Partidos programados para hoy\n"
+        "• `/al_match [ID]` - Detalle del partido y enlace oficial\n\n"
+        + _AL_LEAGUE_USAGE
+    )
+    await update.message.reply_text(help_text, parse_mode="Markdown")
+
+
+async def al_leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /al_leagues: list Algerian leagues."""
+    del context
+    if update.message is None:
+        return
+    await _run_special_leagues(update.message, _algeria_adapter())
+
+
+async def al_standings_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /al_standings [CÓDIGO]: standings for an Algerian league."""
+    if update.message is None:
+        return
+    usage = (
+        "❌ *Falta el código de liga.*\n\nUso: `/al_standings [CÓDIGO_LIGA]`\n\n"
+        + _AL_LEAGUE_USAGE + "\n\nEjemplo: `/al_standings DZ1`"
+    )
+    await _run_special_standings(update.message, (getattr(context, 'args', None) or []), _algeria_adapter(), usage)
+
+
+async def al_fixtures_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /al_fixtures [CÓDIGO]: Display recent/upcoming fixtures."""
+    if update.message is None:
+        return
+    usage = (
+        "❌ *Falta el código de liga.*\n\nUso: `/al_fixtures [CÓDIGO_LIGA]`\n\n"
+        + _AL_LEAGUE_USAGE + "\n\nEjemplo: `/al_fixtures DZ1`"
+    )
+    await _run_special_fixtures(update.message, (getattr(context, 'args', None) or []), _algeria_adapter(), usage)
+
+
+async def al_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /al_today: today's matches."""
+    if update.message is None:
+        return
+    await _run_special_today(update.message, (getattr(context, 'args', None) or []), _algeria_adapter())
+
+
+async def al_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /al_match [match_id]: details for a match (not supported in detail, but displays info)."""
+    if update.message is None:
+        return
+    if not context.args:
+        await update.message.reply_text("❌ *Falta el ID del partido.*\n\nUso: `/al_match [ID_PARTIDO]`", parse_mode="Markdown")
+        return
+    match_id = context.args[0].strip()
+    adapter = _algeria_adapter()
+    try:
+        matches = await asyncio.to_thread(adapter.client.get_matches)
+        target = None
+        for m in matches:
+            slug = m.get("match_url", "").rstrip("/").split("/")[-1] if m.get("match_url") else ""
+            if slug == match_id:
+                target = m
+                break
+        if not target:
+            await update.message.reply_text("❌ No encontré un partido con ese ID.")
+            return
+
+        d_arg, t_arg = adapter._al_arg_time(target.get("date_raw"))
+        lines = [
+            f"🇩🇿 *{_md_escape(target.get('home', 'Local'))} vs {_md_escape(target.get('away', 'Visitante'))}*",
+            "━━━━━━━━━━━━━━━━━━━━",
+            f"🏆 Competencia: `{_md_escape(target.get('division'))}`",
+            f"🗓️ Fecha: `{d_arg}`",
+            f"🕒 Hora (Arg): `{t_arg}`",
+        ]
+        score_raw = target.get("score_raw")
+        if score_raw and "-" in score_raw:
+            lines.append(f"⚽ Marcador: *{score_raw.strip()}*")
+        if target.get("match_url"):
+            lines.append(f"🔗 [Enlace al partido]({target.get('match_url')})")
+        lines.append("━━━━━━━━━━━━━━━━━━━━")
+        lines.append("ℹ️ El detector de alineaciones no está disponible para la federación argelina.")
+        await update.message.reply_text("\n".join(lines), parse_mode="Markdown", disable_web_page_preview=True)
+    except Exception as e:
+        logger.exception("al_match failed")
+        await update.message.reply_text(f"❌ Error al consultar partido: {e}")
+    finally:
+        adapter.close()
+
+
+_NO_LEAGUE_USAGE = "Escribí `/no_standings [CÓDIGO]` o `/no_fixtures [CÓDIGO]` con el código:\n- `NO1` (Toppserien)"
+
+
+async def no_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /no_help: Display help for Norwegian leagues."""
+    del context
+    if update.message is None:
+        return
+    help_text = (
+        "🇳🇴 *Guía de Estadísticas de la Federación de Noruega* 🇳🇴\n\n"
+        "Comandos disponibles:\n"
+        "• `/no_leagues` - Muestra la jerarquía de ligas y códigos\n"
+        "• `/no_standings [CÓDIGO]` - Tabla de posiciones actual\n"
+        "• `/no_fixtures [CÓDIGO]` - Calendario de partidos recientes/próximos\n"
+        "• `/no_today` - Partidos programados para hoy\n"
+        "• `/no_match [ID]` - Detalle del partido y enlace oficial\n\n"
+        + _NO_LEAGUE_USAGE
+    )
+    await update.message.reply_text(help_text, parse_mode="Markdown")
+
+
+async def no_leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /no_leagues: list Norwegian leagues."""
+    del context
+    if update.message is None:
+        return
+    await _run_special_leagues(update.message, _norway_adapter())
+
+
+async def no_standings_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /no_standings [CÓDIGO]: standings for a Norwegian league."""
+    if update.message is None:
+        return
+    usage = (
+        "❌ *Falta el código de liga.*\n\nUso: `/no_standings [CÓDIGO_LIGA]`\n\n"
+        + _NO_LEAGUE_USAGE + "\n\nEjemplo: `/no_standings NO1`"
+    )
+    await _run_special_standings(update.message, (getattr(context, 'args', None) or []), _norway_adapter(), usage)
+
+
+async def no_fixtures_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /no_fixtures [CÓDIGO]: Display recent/upcoming fixtures."""
+    if update.message is None:
+        return
+    usage = (
+        "❌ *Falta el código de liga.*\n\nUso: `/no_fixtures [CÓDIGO_LIGA]`\n\n"
+        + _NO_LEAGUE_USAGE + "\n\nEjemplo: `/no_fixtures NO1`"
+    )
+    await _run_special_fixtures(update.message, (getattr(context, 'args', None) or []), _norway_adapter(), usage)
+
+
+async def no_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /no_today: today's matches."""
+    if update.message is None:
+        return
+    await _run_special_today(update.message, (getattr(context, 'args', None) or []), _norway_adapter())
+
+
+async def no_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /no_match [match_id]: details for a match (not supported in detail, but displays info)."""
+    if update.message is None:
+        return
+    if not context.args:
+        await update.message.reply_text("❌ *Falta el ID del partido.*\n\nUso: `/no_match [ID_PARTIDO]`", parse_mode="Markdown")
+        return
+    match_id = context.args[0].strip()
+    adapter = _norway_adapter()
+    try:
+        name, matches = await asyncio.to_thread(adapter.fixtures, "NO1")
+        target = None
+        for m in matches:
+            if m.match_id == match_id:
+                target = m
+                break
+
+        if not target:
+            today_matches, omitted = await asyncio.to_thread(adapter.today)
+            for m in today_matches:
+                if m.match_id == match_id:
+                    target = m
+                    break
+
+        if not target:
+            await update.message.reply_text("❌ No encontré un partido con ese ID en Toppserien.")
+            return
+
+        lines = [
+            f"🇳🇴 *{_md_escape(target.home)} vs {_md_escape(target.away)}*",
+            "━━━━━━━━━━━━━━━━━━━━",
+            f"🏆 Competencia: `Toppserien`",
+            f"🗓️ Fecha: `{target.date_arg}`",
+            f"🕒 Hora (Arg): `{target.time_arg}`",
+        ]
+        if target.score:
+            lines.append(f"⚽ Marcador: *{target.score}*")
+        lines.append(f"🔗 [Enlace al partido](https://www.fotball.no/fotballdata/kamp/?fiksId={match_id})")
+        lines.append("━━━━━━━━━━━━━━━━━━━━")
+        lines.append("ℹ️ El detector de alineaciones no está disponible para la federación noruega.")
+        await update.message.reply_text("\n".join(lines), parse_mode="Markdown", disable_web_page_preview=True)
+    except Exception as e:
+        logger.exception("no_match failed")
+        await update.message.reply_text(f"❌ Error al consultar partido: {e}")
+    finally:
+        adapter.close()
 
 
 # ===================== Peak digest (special-league daily scoring) =====================
