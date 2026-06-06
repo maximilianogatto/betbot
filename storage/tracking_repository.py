@@ -2962,6 +2962,71 @@ class SqliteTrackingRepository:
             ).fetchall()
         return [int(row["chat_id"]) for row in rows]
 
+    # ---- Canonical (physical) leagues: group per-platform tracked competitions ----
+    def create_canonical_league(self, name: str) -> int:
+        """Create a canonical league and return its id."""
+
+        with _connect() as connection:
+            cur = connection.execute(
+                "INSERT INTO canonical_leagues (name, created_at) VALUES (?, ?)",
+                (name, _utc_now_iso()),
+            )
+            return int(cur.lastrowid)
+
+    def get_canonical_league(self, canonical_league_id: int) -> dict | None:
+        with _connect() as connection:
+            row = connection.execute(
+                "SELECT id, name, created_at FROM canonical_leagues WHERE id = ?",
+                (canonical_league_id,),
+            ).fetchone()
+        return dict(row) if row is not None else None
+
+    def list_canonical_leagues(self) -> list[dict]:
+        with _connect() as connection:
+            rows = connection.execute(
+                "SELECT id, name, created_at FROM canonical_leagues ORDER BY name COLLATE NOCASE"
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+    def find_canonical_league_by_name(self, name: str) -> dict | None:
+        with _connect() as connection:
+            row = connection.execute(
+                "SELECT id, name, created_at FROM canonical_leagues WHERE name = ? COLLATE NOCASE",
+                (name,),
+            ).fetchone()
+        return dict(row) if row is not None else None
+
+    def set_competition_canonical_league(
+        self, tracked_competition_id: int, canonical_league_id: int | None
+    ) -> None:
+        """Assign (or clear) the canonical league of a tracked competition."""
+
+        with _connect() as connection:
+            connection.execute(
+                "UPDATE tracked_competitions SET canonical_league_id = ? WHERE id = ?",
+                (canonical_league_id, tracked_competition_id),
+            )
+
+    def get_canonical_league_id_for_competition(self, tracked_competition_id: int) -> int | None:
+        with _connect() as connection:
+            row = connection.execute(
+                "SELECT canonical_league_id FROM tracked_competitions WHERE id = ?",
+                (tracked_competition_id,),
+            ).fetchone()
+        if row is None or row["canonical_league_id"] is None:
+            return None
+        return int(row["canonical_league_id"])
+
+    def list_competitions_for_canonical_league(self, canonical_league_id: int) -> list[TrackedCompetition]:
+        """All tracked competitions (any platform) grouped under one canonical league."""
+
+        with _connect() as connection:
+            rows = connection.execute(
+                "SELECT * FROM tracked_competitions WHERE canonical_league_id = ?",
+                (canonical_league_id,),
+            ).fetchall()
+        return [_row_to_tracked_competition(r) for r in rows]
+
     def get_all_active_events_with_league(self) -> list[Any]:
         """Return all active events as SimpleNamespace objects with their tracked league name."""
         from types import SimpleNamespace
@@ -3619,6 +3684,16 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
             enabled INTEGER NOT NULL DEFAULT 1,
             updated_at TEXT NOT NULL
         );
+
+        -- A canonical (physical) league groups the per-platform tracked
+        -- competitions that are the same real-world league. Everything else
+        -- (league_id/name per platform, stats links) is reconstructed from the
+        -- grouped tracked_competitions, so we only store the grouping itself.
+        CREATE TABLE IF NOT EXISTS canonical_leagues (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        );
         """
     )
 
@@ -3751,6 +3826,8 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
     ):
         _ensure_column(connection, "live_watch_entries", _live_watch_column, "TEXT")
     _ensure_column(connection, "live_watch_entries", "chat_local_id", "INTEGER")
+    # Cross-platform league grouping (canonical/physical league).
+    _ensure_column(connection, "tracked_competitions", "canonical_league_id", "INTEGER")
 
     # 1. Create unified_competitions table
     connection.execute(
