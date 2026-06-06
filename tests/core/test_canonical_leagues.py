@@ -20,10 +20,10 @@ class FakeRepo:
         self._comps = comps
         self._stats = stats_by_comp or {}
 
-    def get_canonical_league(self, cid):
+    def get_unified_competition(self, cid):
         return self._meta if self._meta and cid == self._meta["id"] else None
 
-    def list_competitions_for_canonical_league(self, cid):
+    def list_tracked_competitions_for_unified(self, cid):
         return self._comps
 
     def list_stats_league_links(self, comp_id):

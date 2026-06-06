@@ -82,10 +82,10 @@ def _display(platform: str) -> str:
 def build_league_card(repo: Any, canonical_league_id: int) -> Optional[LeagueCard]:
     """Reconstruct the league card from the grouped tracked competitions + stats."""
 
-    meta = repo.get_canonical_league(canonical_league_id)
+    meta = repo.get_unified_competition(canonical_league_id)
     if not meta:
         return None
-    comps = repo.list_competitions_for_canonical_league(canonical_league_id)
+    comps = repo.list_tracked_competitions_for_unified(canonical_league_id)
     by_platform = {c.platform: c for c in comps}
 
     platforms: list[PlatformEntry] = []
