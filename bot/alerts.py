@@ -386,48 +386,39 @@ def build_comparison_match_card_message(
     if not matches:
         return ""
         
+    from storage.tracking_repository import tracking_repository
+
     representative = matches[0]
-    
     lines = [
         f"⚽ <b>{escape(representative.home)} vs {escape(representative.away)}</b>",
-        f"🕒 <b>{escape(format_kickoff_text(representative))}</b>",
-        "",
-        "💰 <b>Comparación de Odds 1X2:</b>",
+        f"🕒 {escape(format_kickoff_text(representative))}",
     ]
-    
+
     for match in matches:
-        from storage.tracking_repository import tracking_repository
         tracked = tracking_repository.get_tracked_competition(match.tracked_competition_id)
         plat_disp = escape(tracked.platform_display_name) if tracked else escape(match.platform.capitalize())
+        lines.append("")
+        lines.append(f"🏦 <b>{plat_disp}</b>")
         lines.append(
-            f"• <b>{plat_disp}:</b> "
-            f"1={format_odd_text(match.odds_home)} | "
-            f"X={format_odd_text(match.odds_draw)} | "
-            f"2={format_odd_text(match.odds_away)}"
+            f"   <b>1X2</b>  1={format_odd_text(match.odds_home)}  "
+            f"X={format_odd_text(match.odds_draw)}  2={format_odd_text(match.odds_away)}"
         )
-        
-    lines.append("")
-    lines.append("🔗 <b>Links directos:</b>")
-    for match in matches:
-        from storage.tracking_repository import tracking_repository
-        from monitors.tracking import tracking_service
-        tracked = tracking_repository.get_tracked_competition(match.tracked_competition_id)
-        if tracked:
-            extractor = tracking_service.extractor_registry.get_for_platform(match.platform)
-            event_url = extractor.build_event_url(
-                competition_external_id=tracked.competition_external_id,
-                external_event_id=match.external_event_id,
-                source_url=tracked.source_url,
-                event_url=match.event_url,
-                competition_metadata=json.loads(tracked.metadata_json) if tracked.metadata_json else None,
-                event_metadata=json.loads(match.raw_payload_json) if match.raw_payload_json else None,
-            )
-            plat_disp = escape(tracked.platform_display_name)
-            if event_url:
-                lines.append(f"• <a href=\"{escape(event_url)}\">{plat_disp}</a>")
+
+        markets_payload = _loads_optional_markets_json(match.markets_json)
+        if markets_payload:
+            if full_odds:
+                ah_lines = _format_all_handicap_lines(_collect_all_handicap_selections(markets_payload), match)
+                if ah_lines:
+                    lines.append("   📐 <b>Hándicap Asiático</b>")
+                    lines.extend(f"   {line}" for line in ah_lines)
+                gl_lines = _format_all_goal_lines(_collect_all_goal_line_selections(markets_payload))
+                if gl_lines:
+                    lines.append("   📏 <b>Línea de Goles</b>")
+                    lines.extend(f"   {line}" for line in gl_lines)
             else:
-                lines.append(f"• {plat_disp} (sin link directo)")
-                
+                for line in _build_extra_market_lines(match):
+                    lines.append(f"   {line}")
+
     return "\n".join(lines)
 
 

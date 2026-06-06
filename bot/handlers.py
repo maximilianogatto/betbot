@@ -2489,6 +2489,110 @@ async def list_tracks_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     result = tracking_service.build_tracks_list_message(update.effective_chat.id)
 
     await reply_with_result(update, result)
+    await update.message.reply_text(
+        "🏆 Vista cross-plataforma (qué libros/stats tiene cada liga): <code>/leagues</code>",
+        parse_mode=ParseMode.HTML,
+    )
+
+
+def _subscribed_unified(chat_id: int) -> list[dict]:
+    from storage.tracking_repository import tracking_repository
+    return tracking_repository.list_subscribed_unified_competitions(chat_id)
+
+
+async def leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /leagues: list the cross-platform (unified) leagues for this chat."""
+    del context
+    if update.message is None or update.effective_chat is None:
+        return
+    from storage.tracking_repository import tracking_repository
+    from bot.canonical_leagues import build_league_card, render_leagues_list
+    unified = _subscribed_unified(update.effective_chat.id)
+    cards = [c for c in (build_league_card(tracking_repository, u["id"]) for u in unified) if c]
+    await _reply_text_chunks(update.message, render_leagues_list(cards), parse_mode=ParseMode.HTML)
+
+
+async def league_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /league <N>: show the cross-platform card of the Nth league (from /leagues)."""
+    if update.message is None or update.effective_chat is None:
+        return
+    from storage.tracking_repository import tracking_repository
+    from bot.canonical_leagues import build_league_card, render_league_card
+    unified = _subscribed_unified(update.effective_chat.id)
+    if not context.args or not context.args[0].isdigit():
+        await update.message.reply_text("Uso: <code>/league [N]</code> (el N sale de /leagues).", parse_mode=ParseMode.HTML)
+        return
+    idx = int(context.args[0])
+    if not (1 <= idx <= len(unified)):
+        await update.message.reply_text("Número fuera de rango. Mirá <code>/leagues</code>.", parse_mode=ParseMode.HTML)
+        return
+    card = build_league_card(tracking_repository, unified[idx - 1]["id"])
+    if not card:
+        await update.message.reply_text("No encontré esa liga.")
+        return
+    await _reply_text_chunks(update.message, render_league_card(card), parse_mode=ParseMode.HTML)
+
+
+async def link_league_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /link_league <N> <M>: merge league M into N (same physical league)."""
+    if update.message is None or update.effective_chat is None:
+        return
+    from storage.tracking_repository import tracking_repository
+    from bot.canonical_leagues import build_league_card, render_league_card
+    unified = _subscribed_unified(update.effective_chat.id)
+    args = context.args or []
+    if len(args) != 2 or not all(a.isdigit() for a in args):
+        await update.message.reply_text(
+            "Uso: <code>/link_league [N] [M]</code> — fusiona la liga M dentro de la N "
+            "(mismos partidos en otra plataforma). Los números salen de <code>/leagues</code>.",
+            parse_mode=ParseMode.HTML,
+        )
+        return
+    n, m = int(args[0]), int(args[1])
+    if not (1 <= n <= len(unified)) or not (1 <= m <= len(unified)) or n == m:
+        await update.message.reply_text("Números inválidos. Mirá <code>/leagues</code>.", parse_mode=ParseMode.HTML)
+        return
+    into_id, from_id = unified[n - 1]["id"], unified[m - 1]["id"]
+    for comp in tracking_repository.list_tracked_competitions_for_unified(from_id):
+        tracking_repository.link_tracked_competition_to_unified(comp.id, into_id)
+    tracking_repository.delete_unified_competition(from_id)
+    card = build_league_card(tracking_repository, into_id)
+    msg = "✅ Ligas fusionadas.\n\n" + (render_league_card(card) if card else "")
+    await _reply_text_chunks(update.message, msg, parse_mode=ParseMode.HTML)
+
+
+async def unlink_league_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /unlink_league <N> <plataforma>: split a platform off league N into its own."""
+    if update.message is None or update.effective_chat is None:
+        return
+    from storage.tracking_repository import tracking_repository
+    unified = _subscribed_unified(update.effective_chat.id)
+    args = context.args or []
+    if len(args) < 2 or not args[0].isdigit():
+        await update.message.reply_text(
+            "Uso: <code>/unlink_league [N] [plataforma]</code> (ej: <code>/unlink_league 3 betovo</code>).",
+            parse_mode=ParseMode.HTML,
+        )
+        return
+    n = int(args[0])
+    plat_q = " ".join(args[1:]).lower()
+    if not (1 <= n <= len(unified)):
+        await update.message.reply_text("Número fuera de rango. Mirá <code>/leagues</code>.", parse_mode=ParseMode.HTML)
+        return
+    comps = tracking_repository.list_tracked_competitions_for_unified(unified[n - 1]["id"])
+    target = next((c for c in comps if plat_q in c.platform.lower()), None)
+    if target is None:
+        await update.message.reply_text(
+            f"No encontré la plataforma «{escape_html(plat_q)}» en esa liga. Mirá <code>/league {n}</code>.",
+            parse_mode=ParseMode.HTML,
+        )
+        return
+    new_uid = tracking_repository.create_unified_competition(target.competition_name)
+    tracking_repository.link_tracked_competition_to_unified(target.id, new_uid)
+    await update.message.reply_text(
+        f"✅ Saqué <b>{escape_html(target.platform.replace('_http', ''))}</b> de la liga; quedó como liga propia.",
+        parse_mode=ParseMode.HTML,
+    )
 
 
 async def stats_links_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -3318,6 +3422,10 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("confirm_track", confirm_track_command))
     application.add_handler(CommandHandler("confirm_empty_track", confirm_empty_track_command))
     application.add_handler(CommandHandler("list_tracks", list_tracks_command))
+    application.add_handler(CommandHandler("leagues", leagues_command))
+    application.add_handler(CommandHandler("league", league_command))
+    application.add_handler(CommandHandler("link_league", link_league_command))
+    application.add_handler(CommandHandler("unlink_league", unlink_league_command))
     application.add_handler(CommandHandler("stats_links", stats_links_command))
     application.add_handler(CommandHandler("stats_tracks", stats_tracks_command))
     application.add_handler(CommandHandler("competition_url", competition_url_command))

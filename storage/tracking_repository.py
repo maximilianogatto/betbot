@@ -2962,6 +2962,35 @@ class SqliteTrackingRepository:
             ).fetchall()
         return [int(row["chat_id"]) for row in rows]
 
+    # ---- Unified competition helpers (cross-platform league grouping) ----
+    def get_unified_competition(self, unified_competition_id: int) -> dict | None:
+        with _connect() as connection:
+            row = connection.execute(
+                "SELECT id, name FROM unified_competitions WHERE id = ?",
+                (unified_competition_id,),
+            ).fetchone()
+        return {"id": row["id"], "name": row["name"]} if row is not None else None
+
+    def create_unified_competition(self, name: str) -> int:
+        """Create a NEW unified competition (no fuzzy merge) and return its id."""
+
+        now_iso = _utc_now_iso()
+        with _connect() as connection:
+            cur = connection.execute(
+                "INSERT INTO unified_competitions (name, created_at, updated_at) VALUES (?, ?, ?)",
+                (name, now_iso, now_iso),
+            )
+            return int(cur.lastrowid)
+
+    def delete_unified_competition(self, unified_competition_id: int) -> None:
+        """Delete a unified competition (its competitions should be reassigned first)."""
+
+        with _connect() as connection:
+            connection.execute(
+                "DELETE FROM unified_competitions WHERE id = ?",
+                (unified_competition_id,),
+            )
+
     def get_all_active_events_with_league(self) -> list[Any]:
         """Return all active events as SimpleNamespace objects with their tracked league name."""
         from types import SimpleNamespace
