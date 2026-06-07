@@ -784,6 +784,126 @@ class SqliteTrackingRepository:
             subscription_created=subscription_created,
         )
 
+    def auto_track_live_detected_league(
+        self,
+        chat_id: int,
+        platform: str,
+        competition_external_id: str,
+        competition_name: str,
+        source_url: str,
+    ) -> int:
+        """Automatically expand tracked_competitions and subscribe the chat to this league."""
+
+        with _connect() as connection:
+            _sanitize_tracking_state(connection)
+            
+            tracked_row = _fetch_tracked_competition_by_identity_row(
+                connection,
+                platform,
+                competition_external_id,
+            )
+            now_iso = _utc_now_iso()
+            
+            if tracked_row is None:
+                uc_id = _find_or_create_unified_competition_id(connection, competition_name)
+                cursor = connection.execute(
+                    """
+                    INSERT INTO tracked_competitions (
+                        platform,
+                        competition_external_id,
+                        competition_name,
+                        source_url,
+                        metadata_json,
+                        needs_name_resolution,
+                        enabled,
+                        consecutive_unavailable_refreshes,
+                        last_unavailable_refresh_at,
+                        last_unavailable_reason,
+                        last_unavailable_notification_at,
+                        last_refreshed_at,
+                        unified_competition_id,
+                        created_at,
+                        updated_at
+                    )
+                    VALUES (?, ?, ?, ?, NULL, 0, 1, 0, NULL, NULL, NULL, NULL, ?, ?, ?)
+                    """,
+                    (
+                        _normalize_platform(platform),
+                        competition_external_id.strip(),
+                        competition_name.strip(),
+                        source_url.strip(),
+                        uc_id,
+                        now_iso,
+                        now_iso,
+                    ),
+                )
+                tracked_competition_id = int(cursor.lastrowid)
+            else:
+                existing = _row_to_tracked_competition(tracked_row)
+                tracked_competition_id = existing.id
+                uc_id = existing.unified_competition_id
+                if uc_id is None:
+                    uc_id = _find_or_create_unified_competition_id(connection, existing.competition_name)
+                
+                connection.execute(
+                    """
+                    UPDATE tracked_competitions
+                    SET
+                        enabled = 1,
+                        unified_competition_id = ?,
+                        updated_at = ?
+                    WHERE id = ?
+                    """,
+                    (
+                        uc_id,
+                        now_iso,
+                        tracked_competition_id,
+                    ),
+                )
+
+            subscription_row = _fetch_subscription_row(connection, chat_id, tracked_competition_id)
+            if subscription_row is None:
+                connection.execute(
+                    """
+                    INSERT INTO competition_subscriptions (
+                        telegram_chat_id,
+                        tracked_competition_id,
+                        notify_new_events,
+                        notify_odds_changes,
+                        change_threshold_percent,
+                        enabled,
+                        created_at,
+                        updated_at
+                    )
+                    VALUES (?, ?, 1, ?, ?, 1, ?, ?)
+                    """,
+                    (
+                        chat_id,
+                        tracked_competition_id,
+                        int(self.default_notify_odds_changes),
+                        self.default_change_threshold_percent,
+                        now_iso,
+                        now_iso,
+                    ),
+                )
+            else:
+                connection.execute(
+                    """
+                    UPDATE competition_subscriptions
+                    SET
+                        enabled = 1,
+                        updated_at = ?
+                    WHERE telegram_chat_id = ? AND tracked_competition_id = ?
+                    """,
+                    (
+                        now_iso,
+                        chat_id,
+                        tracked_competition_id,
+                    ),
+                )
+            
+            return tracked_competition_id
+
     def list_tracked_competitions(self, chat_id: int) -> list[TrackedCompetitionSubscription]:
         """List enabled tracked competitions for one Telegram chat."""
 

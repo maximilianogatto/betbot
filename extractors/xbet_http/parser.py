@@ -59,6 +59,7 @@ def live_events_from_1x2_vzip(payload: dict[str, Any]) -> list[LiveEventSnapshot
         full_score = sc.get("FS") if isinstance(sc.get("FS"), dict) else {}
         league = event.get("L") or event.get("LE")
         odds_1x2, _ = _extract_markets(event, home=home, away=away)
+        league_id = event.get("LI") or event.get("CI")
 
         live.append(
             LiveEventSnapshot(
@@ -79,7 +80,11 @@ def live_events_from_1x2_vzip(payload: dict[str, Any]) -> list[LiveEventSnapshot
                 source_url=f"https://spinbetter.com/service-api/LineFeed/GetGameZip?id={event_id}",
                 is_soccer=not bool(_VIRTUAL_LEAGUE_RE.search(str(league or ""))),
                 extracted_at=utc_now_iso(),
-                raw_payload={"sport_id": event.get("SI"), "current_period": sc.get("CP")},
+                raw_payload={
+                    "sport_id": event.get("SI"),
+                    "current_period": sc.get("CP"),
+                    "league_id": _safe_str(league_id) if league_id is not None else None,
+                },
             )
         )
     return live
@@ -107,6 +112,8 @@ def live_events_from_champ_zip(payload: dict[str, Any]) -> list[LiveEventSnapsho
             event["CN"] = country_name
         if "SI" not in event and sport_id:
             event["SI"] = sport_id
+        if "LI" not in event and value.get("LI"):
+            event["LI"] = value.get("LI")
         events.append(event)
 
     return live_events_from_1x2_vzip({"Value": events})

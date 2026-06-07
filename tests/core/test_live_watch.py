@@ -647,6 +647,60 @@ class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):
         tracking_repository_module.DB_FILE_PATH = self.old_db_path
         tracking_repository_module.DATA_DIR = self.old_data_dir
 
+    async def test_live_watch_auto_track_league(self) -> None:
+        from unittest.mock import MagicMock
+        service = LiveWatchService(repository=self.repository)
+        chat_id = 42
+        service.add_fixture_lines(chat_id, ["Victoria Premier Women | Melbourne University - Clifton Hill"])
+
+        mock_extractor = MagicMock()
+        mock_extractor.name = "bz_http"
+        mock_extractor.build_competition_url.return_value = "bz:tournament:1234"
+        
+        service.extractor_registry = SimpleNamespace(
+            list_registered=lambda: [
+                SimpleNamespace(
+                    name="bz_http",
+                    supports_live_detection=True,
+                    supports_prematch_listing=False,
+                    list_live_events=AsyncMock(
+                        return_value=[
+                            LiveEventSnapshot(
+                                platform="bz_http",
+                                external_event_id="match_99",
+                                home="Melbourne University SC",
+                                away="FC Clifton Hill",
+                                country_name="Australia",
+                                competition_name="Victoria Premier League, Women",
+                                source_url="bz:tournament:1234",
+                                minute="10'",
+                            )
+                        ]
+                    ),
+                )
+            ],
+            get_for_platform=lambda p: mock_extractor if p == "bz_http" else None,
+        )
+
+        tracked_before = self.repository.list_tracked_competitions(chat_id)
+        self.assertEqual(len(tracked_before), 0)
+
+        hits = await service.poll_once()
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(hits[0].phase, "live")
+
+        tracked_after = self.repository.list_tracked_competitions(chat_id)
+        self.assertEqual(len(tracked_after), 1)
+        sub = tracked_after[0]
+        self.assertEqual(sub.tracked_competition.platform, "bz_http")
+        self.assertEqual(sub.tracked_competition.competition_external_id, "1234")
+        self.assertEqual(sub.tracked_competition.competition_name, "Victoria Premier League, Women")
+        self.assertEqual(sub.tracked_competition.source_url, "bz:tournament:1234")
+
+        unified = self.repository.list_subscribed_unified_competitions(chat_id)
+        self.assertEqual(len(unified), 1)
+        self.assertEqual(unified[0]["name"], "Victoria Premier League, Women")
+
     async def test_prematch_listing_fires_pre_once_and_keeps_watching(self) -> None:
         service = LiveWatchService(repository=self.repository)
         service.add_fixture_lines(7, ["USL League Two | Olympia - Ballard"])

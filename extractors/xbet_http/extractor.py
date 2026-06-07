@@ -165,7 +165,20 @@ class XBetHttpExtractor(Extractor):
             if e.external_event_id not in seen:
                 seen.add(e.external_event_id)
                 deduped.append(e)
-        return deduped
+    def build_competition_url(
+        self,
+        *,
+        competition_external_id: str,
+        source_url: str | None = None,
+        metadata: dict[str, Any] | None = None,
+    ) -> str | None:
+        if source_url:
+            return source_url
+        return build_champ_url(
+            base_url=self.settings.base_url,
+            champ_id=competition_external_id,
+            language=self.settings.language,
+        )
 
     async def search_leagues(
         self,

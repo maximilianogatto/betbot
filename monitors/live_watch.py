@@ -443,6 +443,7 @@ class LiveWatchService:
                     platform=event.platform,
                     state=_event_live_state(event),
                 )
+                self._auto_track_matched_event_league(event, entry.chat_id)
                 hits.append(LiveWatchHit(entry=entry, event=event, score=score, phase="live"))
                 continue
 
@@ -483,6 +484,7 @@ class LiveWatchService:
                 self.repository.mark_live_watch_prematch_fired(
                     entry.id, platform=event.platform, event_id=event.external_event_id
                 )
+                self._auto_track_matched_event_league(event, entry.chat_id)
                 hits.append(LiveWatchHit(entry=entry, event=event, score=score, phase="pre"))
 
         return hits
@@ -542,6 +544,55 @@ class LiveWatchService:
                 except Exception:
                     pass
         return default_normal
+
+    def _auto_track_matched_event_league(self, event: LiveEventSnapshot, chat_id: int) -> None:
+        """Helper to extract competition external ID and automatically track/subscribe it."""
+        url = event.source_url or ""
+        external_id = None
+        if url.startswith("bz:tournament:"):
+            external_id = url.replace("bz:tournament:", "")
+        elif url.startswith("solcasino:tournament:"):
+            external_id = url.replace("solcasino:tournament:", "")
+        elif url.startswith("mrpunter:league:"):
+            external_id = url.replace("mrpunter:league:", "")
+        elif url.startswith("betwarrior:group:"):
+            external_id = url.replace("betwarrior:group:", "")
+        elif url.startswith("betovo:champ:"):
+            external_id = url.replace("betovo:champ:", "")
+        elif url.startswith("mystake:champ:"):
+            external_id = url.replace("mystake:champ:", "")
+        elif event.platform == "1xbet_http":
+            if event.raw_payload:
+                external_id = event.raw_payload.get("league_id")
+
+        if not external_id:
+            return
+
+        try:
+            extractor = self.extractor_registry.get_for_platform(event.platform)
+            source_url = extractor.build_competition_url(competition_external_id=external_id)
+        except Exception:
+            source_url = url
+
+        if not source_url:
+            source_url = f"{event.platform}:competition:{external_id}"
+
+        try:
+            comp_name = event.competition_name or f"Liga {external_id}"
+            self.repository.auto_track_live_detected_league(
+                chat_id=chat_id,
+                platform=event.platform,
+                competition_external_id=external_id,
+                competition_name=comp_name,
+                source_url=source_url,
+            )
+        except Exception as e:
+            logger.exception(
+                "Failed to auto-track live matched league: platform=%s external_id=%s error=%s",
+                event.platform,
+                external_id,
+                e,
+            )
 
 
 
@@ -906,11 +957,16 @@ def render_live_hit(hit: LiveWatchHit) -> str:
     event = hit.event
     book = event.platform.replace("_http", "")
     if hit.phase == "pre":
-        lines = ["📋 LISTADO EN PRE — apareció tu partido", f"⚽ {event.home} vs {event.away}"]
+        lines = [
+            "📋 LISTADO EN PRE",
+            "",
+            f"⚽ {event.home} vs {event.away}"
+        ]
         league_bits = " · ".join(b for b in (event.country_name, event.competition_name) if b)
         if league_bits:
             lines.append(f"🏆 {league_bits}")
-        lines.append(f"🏦 ya está en {book} (prematch) — sigo vigilando para el vivo")
+        lines.append("")
+        lines.append(f"🏦 {book} (prematch) — sigo vigilando para el vivo")
         if hit.entry.note and hit.entry.note.strip() not in (f"{event.home} - {event.away}",):
             lines.append(f"📝 {hit.entry.note.strip()}")
         return "\n".join(lines)
