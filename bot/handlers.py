@@ -2595,6 +2595,22 @@ async def unlink_league_command(update: Update, context: ContextTypes.DEFAULT_TY
     )
 
 
+async def relink_leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /relink_leagues: re-unify split leagues by canonical (normalized) name."""
+    del context
+    if update.message is None:
+        return
+    from storage.tracking_repository import tracking_repository
+    summary = tracking_repository.relink_unified_by_normalized_name()
+    await update.message.reply_text(
+        "🔗 <b>Re-unificación por nombre normalizado</b>\n"
+        f"• Ligas fusionadas: <b>{summary['groups_merged']}</b>\n"
+        f"• Competiciones reasignadas: <b>{summary['competitions_moved']}</b>\n\n"
+        "Mirá <code>/leagues</code>.",
+        parse_mode=ParseMode.HTML,
+    )
+
+
 async def stats_links_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle `/stats_links` by showing stored odds-league -> stats-league mappings."""
 
@@ -3426,6 +3442,7 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("league", league_command))
     application.add_handler(CommandHandler("link_league", link_league_command))
     application.add_handler(CommandHandler("unlink_league", unlink_league_command))
+    application.add_handler(CommandHandler("relink_leagues", relink_leagues_command))
     application.add_handler(CommandHandler("stats_links", stats_links_command))
     application.add_handler(CommandHandler("stats_tracks", stats_tracks_command))
     application.add_handler(CommandHandler("competition_url", competition_url_command))

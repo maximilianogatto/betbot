@@ -47,6 +47,30 @@ class UnifiedCompetitionRepoTests(unittest.TestCase):
         comps = self.repo.list_tracked_competitions_for_unified(uid)
         self.assertEqual({c.platform for c in comps}, {"1xbet_http", "betovo_http"})
 
+    def test_relink_merges_normalized_duplicates(self) -> None:
+        u1 = self.repo.create_unified_competition("USA. USL League Two")
+        u2 = self.repo.create_unified_competition("Estados Unidos · USL League 2")
+        c1 = self._add_comp("1xbet_http", "a", "USA. USL League Two")
+        c2 = self._add_comp("betwarrior_http", "b", "Estados Unidos · USL League 2")
+        self.repo.link_tracked_competition_to_unified(c1, u1)
+        self.repo.link_tracked_competition_to_unified(c2, u2)
+
+        summary = self.repo.relink_unified_by_normalized_name()
+        self.assertEqual(summary["groups_merged"], 1)
+        self.assertGreaterEqual(summary["competitions_moved"], 1)
+        target, other = min(u1, u2), max(u1, u2)
+        self.assertEqual(len(self.repo.list_tracked_competitions_for_unified(target)), 2)
+        self.assertIsNone(self.repo.get_unified_competition(other))  # emptied + deleted
+
+    def test_relink_keeps_genders_separate(self) -> None:
+        u1 = self.repo.create_unified_competition("NPL Northern NSW")
+        u2 = self.repo.create_unified_competition("NPL Northern NSW (F)")
+        self.repo.link_tracked_competition_to_unified(self._add_comp("1xbet_http", "a", "NPL Northern NSW"), u1)
+        self.repo.link_tracked_competition_to_unified(self._add_comp("betovo_http", "b", "NPL Northern NSW (F)"), u2)
+        self.repo.relink_unified_by_normalized_name()
+        self.assertIsNotNone(self.repo.get_unified_competition(u1))
+        self.assertIsNotNone(self.repo.get_unified_competition(u2))
+
     def test_fuzzy_auto_merge_on_get_or_create(self) -> None:
         uid1 = self.repo.get_or_create_unified_competition("Campeonato Brasiliense U20")
         # near-identical name should map to the SAME unified competition (>=0.85)

@@ -2991,6 +2991,68 @@ class SqliteTrackingRepository:
                 (unified_competition_id,),
             )
 
+    def relink_unified_by_normalized_name(self) -> dict:
+        """Re-unify tracked competitions whose names share the same canonical form.
+
+        Fixes leagues that were split across unified competitions because their
+        per-platform names differed ("USL League 2" vs "League Two", "Estados
+        Unidos" vs "USA"). Conservative: only merges EXACT canonical matches.
+        """
+
+        from core.league_naming import normalize_league_name
+
+        merged_groups = 0
+        moved = 0
+        now_iso = _utc_now_iso()
+        with _connect() as connection:
+            rows = connection.execute(
+                "SELECT id, competition_name, unified_competition_id FROM tracked_competitions WHERE enabled = 1"
+            ).fetchall()
+            groups: dict[str, list[tuple]] = {}
+            for r in rows:
+                norm = normalize_league_name(r["competition_name"])
+                if not norm:
+                    continue
+                groups.setdefault(norm, []).append(
+                    (r["id"], r["unified_competition_id"], r["competition_name"])
+                )
+
+            for _norm, members in groups.items():
+                if len(members) <= 1:
+                    continue
+                unified_ids = {u for _, u, _ in members if u is not None}
+                if unified_ids:
+                    target = min(unified_ids)
+                else:
+                    cur = connection.execute(
+                        "INSERT INTO unified_competitions (name, created_at, updated_at) VALUES (?, ?, ?)",
+                        (members[0][2], now_iso, now_iso),
+                    )
+                    target = int(cur.lastrowid)
+                changed = False
+                for comp_id, current, _name in members:
+                    if current != target:
+                        connection.execute(
+                            "UPDATE tracked_competitions SET unified_competition_id = ?, updated_at = ? WHERE id = ?",
+                            (target, now_iso, comp_id),
+                        )
+                        moved += 1
+                        changed = True
+                if changed:
+                    merged_groups += 1
+                # delete unified competitions left empty by the merge
+                for uid in unified_ids:
+                    if uid == target:
+                        continue
+                    remaining = connection.execute(
+                        "SELECT 1 FROM tracked_competitions WHERE unified_competition_id = ? LIMIT 1",
+                        (uid,),
+                    ).fetchone()
+                    if remaining is None:
+                        connection.execute("DELETE FROM unified_competitions WHERE id = ?", (uid,))
+
+        return {"groups_merged": merged_groups, "competitions_moved": moved}
+
     def get_all_active_events_with_league(self) -> list[Any]:
         """Return all active events as SimpleNamespace objects with their tracked league name."""
         from types import SimpleNamespace
@@ -4649,20 +4711,23 @@ def _league_name_similarity(left: str, right: str) -> float:
 
 
 def _find_or_create_unified_competition_id(connection: sqlite3.Connection, name: str) -> int:
-    name_clean = name.strip()
-    # 1. Look for an exact match (case-insensitive) in unified_competitions
-    row = connection.execute(
-        "SELECT id FROM unified_competitions WHERE LOWER(name) = LOWER(?)",
-        (name_clean,),
-    ).fetchone()
-    if row:
-        return row["id"]
+    from core.league_naming import normalize_league_name
 
-    # 2. Look for fuzzy similarity match (>= 0.85) in all existing unified_competitions
+    name_clean = name.strip()
+    target_norm = normalize_league_name(name_clean)
+
     rows = connection.execute("SELECT id, name FROM unified_competitions").fetchall()
     best_id = None
-    best_score = 0.85  # minimum threshold
+    best_score = 0.85  # minimum fuzzy threshold
     for r in rows:
+        # 1. Exact (case-insensitive).
+        if r["name"].strip().lower() == name_clean.lower():
+            return r["id"]
+        # 2. Canonical-normalized match: "USL League 2" == "USL League Two",
+        #    "Estados Unidos" == "USA", "Serie A II" == "Serie A 2", etc.
+        if target_norm and normalize_league_name(r["name"]) == target_norm:
+            return r["id"]
+        # 3. Fuzzy fallback.
         score = _league_name_similarity(name_clean, r["name"])
         if score >= best_score:
             best_score = score
