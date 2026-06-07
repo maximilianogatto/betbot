@@ -2611,6 +2611,82 @@ async def relink_leagues_command(update: Update, context: ContextTypes.DEFAULT_T
     )
 
 
+def _parse_on_off(value: str) -> bool | None:
+    v = (value or "").strip().lower()
+    if v in ("on", "si", "sí", "true", "1", "activar"):
+        return True
+    if v in ("off", "no", "false", "0", "desactivar"):
+        return False
+    return None
+
+
+async def reminders_league_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /reminders_league <N> on|off: toggle pre-kickoff reminders for a league."""
+    if update.message is None or update.effective_chat is None:
+        return
+    from storage.tracking_repository import tracking_repository
+    unified = _subscribed_unified(update.effective_chat.id)
+    args = context.args or []
+    enabled = _parse_on_off(args[1]) if len(args) >= 2 else None
+    if len(args) != 2 or not args[0].isdigit() or enabled is None:
+        await update.message.reply_text(
+            "Uso: <code>/reminders_league [N] on|off</code> (N de <code>/leagues</code>).\n"
+            "Activa/desactiva el recordatorio 5 min antes para TODOS los partidos de esa liga. Por defecto está OFF.",
+            parse_mode=ParseMode.HTML,
+        )
+        return
+    n = int(args[0])
+    if not (1 <= n <= len(unified)):
+        await update.message.reply_text("Número fuera de rango. Mirá <code>/leagues</code>.", parse_mode=ParseMode.HTML)
+        return
+    comps = tracking_repository.list_tracked_competitions_for_unified(unified[n - 1]["id"])
+    for comp in comps:
+        tracking_repository.set_competition_reminders(comp.id, enabled)
+    estado = "ACTIVADOS ✅" if enabled else "desactivados ⚪️"
+    await update.message.reply_text(
+        f"⏰ Recordatorios {estado} para <b>{escape_html(unified[n - 1]['name'])}</b> ({len(comps)} plataforma/s).",
+        parse_mode=ParseMode.HTML,
+    )
+
+
+async def reminders_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /reminders_match <n> on|off: toggle reminder for a match from the last /matches list."""
+    if update.message is None:
+        return
+    from storage.tracking_repository import tracking_repository
+    active_matches = context.user_data.get(MATCHES_ACTIVE_CONTEXT_KEY)
+    args = context.args or []
+    enabled = _parse_on_off(args[1]) if len(args) >= 2 else None
+    if len(args) != 2 or not args[0].isdigit() or enabled is None:
+        await update.message.reply_text(
+            "Uso: <code>/reminders_match [n] on|off</code> — el <code>n</code> es el del partido de la última lista de <code>/matches</code>.",
+            parse_mode=ParseMode.HTML,
+        )
+        return
+    if not isinstance(active_matches, list) or not active_matches:
+        await update.message.reply_text(
+            "No tengo una lista reciente de partidos. Corré <code>/matches</code>, elegí una liga y después <code>/reminders_match n on</code>.",
+            parse_mode=ParseMode.HTML,
+        )
+        return
+    selected_index = _parse_selection_number(args[0], len(active_matches) + 1)
+    if selected_index is None or selected_index == 0 or selected_index > len(active_matches):
+        await update.message.reply_text(
+            "Elegí el número de un partido individual de la última lista de <code>/matches</code>.",
+            parse_mode=ParseMode.HTML,
+        )
+        return
+    group = active_matches[selected_index - 1]
+    for ev in group:
+        tracking_repository.set_event_reminder(ev.tracked_competition_id, ev.external_event_id, enabled)
+    estado = "ACTIVADO ✅" if enabled else "desactivado ⚪️"
+    rep = group[0]
+    await update.message.reply_text(
+        f"⏰ Recordatorio {estado} para <b>{escape_html(rep.home)} vs {escape_html(rep.away)}</b>.",
+        parse_mode=ParseMode.HTML,
+    )
+
+
 async def stats_links_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle `/stats_links` by showing stored odds-league -> stats-league mappings."""
 
@@ -3443,6 +3519,8 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("link_league", link_league_command))
     application.add_handler(CommandHandler("unlink_league", unlink_league_command))
     application.add_handler(CommandHandler("relink_leagues", relink_leagues_command))
+    application.add_handler(CommandHandler("reminders_league", reminders_league_command))
+    application.add_handler(CommandHandler("reminders_match", reminders_match_command))
     application.add_handler(CommandHandler("stats_links", stats_links_command))
     application.add_handler(CommandHandler("stats_tracks", stats_tracks_command))
     application.add_handler(CommandHandler("competition_url", competition_url_command))
