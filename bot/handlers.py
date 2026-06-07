@@ -118,7 +118,8 @@ HELP_MESSAGE = (
     "📂 <b>Secciones de Ayuda Especializadas:</b>\n"
     "• <code>/help_matches</code> - Seguimiento de cuotas, odds y variaciones\n"
     "• <code>/help_live</code> - Monitoreo de partidos en vivo (live)\n"
-    "• <code>/help_stats</code> - Estadísticas H2H y ligas especiales (Finlandia y Suecia)"
+    "• <code>/help_stats</code> - Estadísticas H2H y ligas especiales (Finlandia y Suecia)\n"
+    "• <code>/help_leagues</code> - Ligas cross-plataforma (comparador), unificación y recordatorios"
 )
 
 HELP_MATCHES_MESSAGE = (
@@ -184,6 +185,20 @@ HELP_STATS_MESSAGE = (
     "  🇸🇰 <b>Eslovaquia:</b> <code>sk</code>\n"
     "  🇩🇿 <b>Argelia:</b> <code>al</code>\n"
     "  🇳🇴 <b>Noruega:</b> <code>no</code>\n\n"
+    "Volver al menú principal: <code>/help</code>"
+)
+
+HELP_LEAGUES_MESSAGE = (
+    "🏆 <b>Ligas cross-plataforma (comparador + unificación):</b>\n"
+    "  <code>/leagues</code> - Lista tus ligas unificadas (qué books y stats tiene cada una)\n"
+    "  <code>/league &lt;N&gt;</code> - Ficha de una liga: por plataforma su league_id + nombre, y stats linkeados\n"
+    "  <code>/link_league &lt;N&gt; &lt;M&gt;</code> - Fusiona la liga M dentro de la N (misma liga física en otra plataforma)\n"
+    "  <code>/unlink_league &lt;N&gt; &lt;plataforma&gt;</code> - Saca una plataforma de una liga (queda como liga propia)\n"
+    "  <code>/relink_leagues</code> - Re-unifica automáticamente las ligas separadas por nombre (ej: USL League 2 == League Two)\n\n"
+    "⏰ <b>Recordatorios</b> (5 min antes del inicio · por defecto OFF):\n"
+    "  <code>/reminders_league &lt;N&gt; on|off</code> - Recordatorio para TODOS los partidos de la liga N (de /leagues)\n"
+    "  <code>/reminders_match &lt;n&gt; on|off</code> - Recordatorio de un partido puntual (n de la última lista de /matches)\n\n"
+    "  <i>El comparador de /matches agrupa solo los books de la misma liga unificada.</i>\n\n"
     "Volver al menú principal: <code>/help</code>"
 )
 
@@ -1101,6 +1116,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         await update.message.reply_text(HELP_LIVE_MESSAGE, parse_mode=ParseMode.HTML)
     elif category in ("stats", "statistics", "especial", "especiales", "federaciones"):
         await update.message.reply_text(HELP_STATS_MESSAGE, parse_mode=ParseMode.HTML)
+    elif category in ("leagues", "ligas", "liga", "comparador", "reminders", "recordatorios"):
+        await update.message.reply_text(HELP_LEAGUES_MESSAGE, parse_mode=ParseMode.HTML)
     else:
         await update.message.reply_text(HELP_MESSAGE, parse_mode=ParseMode.HTML)
 
@@ -1124,6 +1141,13 @@ async def help_stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
     del context
     if update.message:
         await update.message.reply_text(HELP_STATS_MESSAGE, parse_mode=ParseMode.HTML)
+
+
+async def help_leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle the `/help_leagues` command."""
+    del context
+    if update.message:
+        await update.message.reply_text(HELP_LEAGUES_MESSAGE, parse_mode=ParseMode.HTML)
 
 
 async def guide_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -3446,6 +3470,7 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("help_matches", help_matches_command))
     application.add_handler(CommandHandler("help_live", help_live_command))
     application.add_handler(CommandHandler("help_stats", help_stats_command))
+    application.add_handler(CommandHandler("help_leagues", help_leagues_command))
     application.add_handler(CommandHandler("guide", guide_command))
     application.add_handler(CommandHandler("platforms", platforms_command))
     
