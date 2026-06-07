@@ -3053,6 +3053,39 @@ class SqliteTrackingRepository:
 
         return {"groups_merged": merged_groups, "competitions_moved": moved}
 
+    # ---- Pre-kickoff reminders opt-in (default OFF): per league + per match ----
+    def set_competition_reminders(self, tracked_competition_id: int, enabled: bool) -> None:
+        with _connect() as connection:
+            connection.execute(
+                "UPDATE tracked_competitions SET reminders_enabled = ?, updated_at = ? WHERE id = ?",
+                (1 if enabled else 0, _utc_now_iso(), tracked_competition_id),
+            )
+
+    def competition_reminders_enabled(self, tracked_competition_id: int) -> bool:
+        with _connect() as connection:
+            row = connection.execute(
+                "SELECT reminders_enabled FROM tracked_competitions WHERE id = ?",
+                (tracked_competition_id,),
+            ).fetchone()
+        return bool(row["reminders_enabled"]) if row is not None else False
+
+    def set_event_reminder(self, tracked_competition_id: int, external_event_id: str, enabled: bool) -> None:
+        with _connect() as connection:
+            connection.execute(
+                "UPDATE active_events SET reminder_enabled = ?, updated_at = ? "
+                "WHERE tracked_competition_id = ? AND external_event_id = ?",
+                (1 if enabled else 0, _utc_now_iso(), tracked_competition_id, str(external_event_id)),
+            )
+
+    def event_reminder_enabled_ids(self, tracked_competition_id: int) -> set[str]:
+        with _connect() as connection:
+            rows = connection.execute(
+                "SELECT external_event_id FROM active_events "
+                "WHERE tracked_competition_id = ? AND reminder_enabled = 1",
+                (tracked_competition_id,),
+            ).fetchall()
+        return {str(r["external_event_id"]) for r in rows}
+
     def get_all_active_events_with_league(self) -> list[Any]:
         """Return all active events as SimpleNamespace objects with their tracked league name."""
         from types import SimpleNamespace
@@ -3842,6 +3875,9 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
     ):
         _ensure_column(connection, "live_watch_entries", _live_watch_column, "TEXT")
     _ensure_column(connection, "live_watch_entries", "chat_local_id", "INTEGER")
+    # Pre-kickoff reminder opt-in (default OFF): per league + per match.
+    _ensure_column(connection, "tracked_competitions", "reminders_enabled", "INTEGER NOT NULL DEFAULT 0")
+    _ensure_column(connection, "active_events", "reminder_enabled", "INTEGER NOT NULL DEFAULT 0")
 
     # 1. Create unified_competitions table
     connection.execute(

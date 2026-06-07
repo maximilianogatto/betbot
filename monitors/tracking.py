@@ -1565,7 +1565,12 @@ class TrackingService:
             for fixture_id in current_event_ids
             if fixture_id in changed_fixture_ids and fixture_id in active_by_fixture
         ]
+        # Reminders are opt-in (default OFF): only fire for matches whose league
+        # has reminders enabled, or which were individually enabled.
         reminder_matches = select_due_reminders(active_matches)
+        if reminder_matches and not self.repository.competition_reminders_enabled(tracked_league_id):
+            enabled_ids = self.repository.event_reminder_enabled_ids(tracked_league_id)
+            reminder_matches = [m for m in reminder_matches if m.fixture_id in enabled_ids]
 
         return CompetitionRefreshResult(
             tracked_league=tracked_league,
