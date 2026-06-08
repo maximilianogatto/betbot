@@ -742,8 +742,10 @@ class SlovakiaLeagues(SpecialLeague):
     def __init__(self, client):
         self.client = client
         self.table = {
-            "SK1A": ("6849d25aeba10c40f7f8ff85", "69a0455e2d75b679881fcbd4", "I. Liga Ženy - Play-off", 1, "F"),
-            "SK1B": ("6849d25aeba10c40f7f8ff85", "69a045272d75b679881fcbd3", "I. Liga Ženy - Play-out", 1, "F"),
+            # Regular season (the main league shown on futbalsfz.sk/1.liga-zien).
+            "SK1": ("6849d25aeba10c40f7f8ff85", "6849d25a9db12b1dbe8c5287", "I. liga ženy", 1, "F"),
+            "SK1A": ("6849d25aeba10c40f7f8ff85", "69a0455e2d75b679881fcbd4", "I. liga ženy - Play-off", 1, "F"),
+            "SK1B": ("6849d25aeba10c40f7f8ff85", "69a045272d75b679881fcbd3", "I. liga ženy - Play-out", 1, "F"),
         }
 
     def close(self) -> None:
@@ -771,45 +773,49 @@ class SlovakiaLeagues(SpecialLeague):
         except Exception:
             return "N/A", "N/A"
 
+    def _match_row(self, m: dict, code: str, name: str, tier) -> MatchRow:
+        d_arg, t_arg = self._convert_time(m.get("startDate"))
+        teams = m.get("teams", []) or []
+        home = next((t["name"] for t in teams if t.get("additionalProperties", {}).get("homeaway") == "home"), None)
+        away = next((t["name"] for t in teams if t.get("additionalProperties", {}).get("homeaway") == "away"), None)
+        # Fallback to positional order if homeaway is missing.
+        if home is None:
+            home = teams[0]["name"] if len(teams) > 0 else "Local"
+        if away is None:
+            away = teams[1]["name"] if len(teams) > 1 else "Visitante"
+        score_list = m.get("score")
+        score = f"{score_list[0]}-{score_list[1]}" if score_list and len(score_list) == 2 else None
+        return MatchRow(
+            match_id=m.get("_id", ""), time_arg=t_arg, date_arg=d_arg,
+            home=home, away=away, score=score, is_live=False,
+            league_code=code, league_name=name, league_tier=tier,
+        )
+
     def today(self) -> tuple[list[MatchRow], int]:
         from datetime import date
         today_str = date.today().isoformat()
-        rows: list[MatchRow] = []
-        omitted = 0
-
-        comp_id = "6849d25aeba10c40f7f8ff85"
         try:
-            data = self.client.get_matches(comp_id, limit=200)
-            matches = data.get("matches") or []
+            matches = self.client.get_matches("6849d25aeba10c40f7f8ff85", limit=300).get("matches") or []
         except Exception:
             matches = []
 
+        by_part = {info[1]: (code, info[2], info[3]) for code, info in self.table.items()}
+        rows: list[MatchRow] = []
+        omitted = 0
         for m in matches:
-            part_id = m.get("competitionPart", {}).get("_id")
-            code = next((k for k, v in self.table.items() if v[1] == part_id), None)
-            if not code:
+            d_arg, _ = self._convert_time(m.get("startDate"))
+            if d_arg != today_str:
+                continue
+            part = m.get("competitionPart", {}) or {}
+            pid, pname = part.get("_id"), (part.get("name") or "Liga")
+            if any(x in pname.lower() for x in ("futsal", "beach", "halová")):
                 omitted += 1
                 continue
-
-            d_arg, t_arg = self._convert_time(m.get("startDate"))
-            if d_arg == today_str:
-                home = next((t["name"] for t in m.get("teams", []) if t.get("additionalProperties", {}).get("homeaway") == "home"), "Local")
-                away = next((t["name"] for t in m.get("teams", []) if t.get("additionalProperties", {}).get("homeaway") == "away"), "Visitante")
-                score_list = m.get("score")
-                score = f"{score_list[0]}-{score_list[1]}" if score_list and len(score_list) == 2 else None
-
-                rows.append(MatchRow(
-                    match_id=m.get("_id", ""),
-                    time_arg=t_arg,
-                    date_arg=d_arg,
-                    home=home,
-                    away=away,
-                    score=score,
-                    is_live=False,
-                    league_code=code,
-                    league_name=self.table[code][2],
-                    league_tier=self.table[code][3]
-                ))
+            if pid in by_part:
+                code, name, tier = by_part[pid]
+            else:
+                code, name, tier = (pid or pname), pname, None
+            rows.append(self._match_row(m, code, name, tier))
 
         rows.sort(key=lambda r: r.time_arg)
         return rows, omitted
@@ -846,6 +852,7 @@ class SlovakiaLeagues(SpecialLeague):
             return StandingsResult(title=name, found=True)
 
     def fixtures(self, code: str) -> tuple[Optional[str], list[MatchRow]]:
+        from datetime import date
         code = code.upper()
         info = self.table.get(code)
         if not info:
@@ -853,37 +860,20 @@ class SlovakiaLeagues(SpecialLeague):
 
         comp_id, part_id, name, tier, gender = info
         try:
-            data = self.client.get_matches(comp_id, limit=200)
-            matches = data.get("matches") or []
+            matches = self.client.get_matches(comp_id, limit=300).get("matches") or []
         except Exception:
             matches = []
 
-        rows = []
-        for m in matches:
-            m_part_id = m.get("competitionPart", {}).get("_id")
-            if m_part_id != part_id:
-                continue
+        sel = [m for m in matches if (m.get("competitionPart", {}) or {}).get("_id") == part_id]
+        today_str = date.today().isoformat()
 
-            d_arg, t_arg = self._convert_time(m.get("startDate"))
-            home = next((t["name"] for t in m.get("teams", []) if t.get("additionalProperties", {}).get("homeaway") == "home"), "Local")
-            away = next((t["name"] for t in m.get("teams", []) if t.get("additionalProperties", {}).get("homeaway") == "away"), "Visitante")
-            score_list = m.get("score")
-            score = f"{score_list[0]}-{score_list[1]}" if score_list and len(score_list) == 2 else None
+        def dkey(m: dict) -> str:
+            return self._convert_time(m.get("startDate"))[0]
 
-            rows.append(MatchRow(
-                match_id=m.get("_id", ""),
-                time_arg=t_arg,
-                date_arg=d_arg,
-                home=home,
-                away=away,
-                score=score,
-                is_live=False,
-                league_code=code,
-                league_name=name,
-                league_tier=tier
-            ))
-
-        rows.sort(key=lambda r: (r.date_arg, r.time_arg))
+        played = sorted([m for m in sel if dkey(m) != "N/A" and dkey(m) < today_str], key=dkey, reverse=True)
+        upcoming = sorted([m for m in sel if dkey(m) == "N/A" or dkey(m) >= today_str], key=dkey)
+        display = list(reversed(played[:5])) + upcoming[:15]
+        rows = [self._match_row(m, code, name, tier) for m in display]
         return name, rows
 
 
