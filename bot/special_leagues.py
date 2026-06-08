@@ -451,6 +451,20 @@ class SwedenLeagues(SpecialLeague):
                 return code
         return None
 
+    def _clean_comp_name(self, name: str) -> str:
+        out = name
+        for sep in (" herr", " Herr", " dam", " Dam", ", herr", ", dam"):
+            idx = out.find(sep)
+            if idx > 0:
+                out = out[:idx]
+        parts = out.rsplit(" ", 1)
+        if len(parts) == 2 and parts[1].isdigit() and len(parts[1]) == 4:
+            out = parts[0]
+        return out.strip(" ,·-") or name
+
+    def _slug(self, name: str) -> str:
+        return "SWE" + "".join(c for c in name.lower() if c.isalnum())[:18]
+
     def today(self) -> tuple[list[MatchRow], int]:
         try:
             matches = self.client.get_matches_today() or []
@@ -459,18 +473,26 @@ class SwedenLeagues(SpecialLeague):
         rows: list[MatchRow] = []
         omitted = 0
         for m in matches:
-            code = self._code_for(m.get("competition_name") or "")
-            if not code:
+            comp = m.get("competition_name") or ""
+            if any(h in comp.lower() for h in _SWE_NOISE):  # futsal / youth / selecciones
                 omitted += 1
                 continue
+            # Mapped leagues keep their short code; the rest are shown with their
+            # own (cleaned) league name so every league is differentiated.
+            code = self._code_for(comp)
+            if code:
+                name, tier = self.table[code][1], self._tier_num(self.table[code][2])
+            else:
+                name = self._clean_comp_name(comp)
+                code = self._slug(name)
+                tier = None
             _d, t_arg = _arg_time(m.get("start_time_local"), _STOCKHOLM)
             hs, as_ = m.get("home_score"), m.get("away_score")
             score = f"{hs}-{as_}" if hs is not None and as_ is not None else None
             rows.append(MatchRow(
                 match_id=str(m.get("match_id") or ""), time_arg=t_arg,
                 home=m.get("home") or "Local", away=m.get("away") or "Visitante",
-                score=score, league_code=code, league_name=self.table[code][1],
-                league_tier=self._tier_num(self.table[code][2]),
+                score=score, league_code=code, league_name=name, league_tier=tier,
             ))
         rows.sort(key=lambda r: r.time_arg)
         return rows, omitted
