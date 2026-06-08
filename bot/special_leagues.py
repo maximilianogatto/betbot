@@ -1218,22 +1218,33 @@ class NorwayLeagues(SpecialLeague):
                 target_table = t
                 break
 
+        noise = ("u21", "u19", "u17", "u16", "u15", "u14", "futsal", "landskamp",
+                 "norge ", "menn u", "kvinner u", "gutter", "jenter")
         if target_table:
             for row in target_table["rows"][1:]:
                 if len(row) < 5:
                     continue
                 tournament = row[0].get("text", "")
-                if "toppserien" not in tournament.lower():
+                t_low = tournament.lower()
+                if any(n in t_low for n in noise):  # selecciones / juveniles / futsal
                     omitted += 1
                     continue
+
+                # Toppserien keeps its code; the rest are shown differentiated.
+                if "toppserien" in t_low:
+                    code, name, tier = "NO1", "Toppserien", 1
+                else:
+                    name = tournament.strip()
+                    code = "NO" + "".join(c for c in t_low if c.isalnum())[:18]
+                    tier = None
 
                 time_str = row[1].get("text", "")
                 home = row[2].get("text", "Local")
                 away = row[4].get("text", "Visitante")
                 score_raw = row[3].get("text", "")
-                
+
                 d_arg, t_arg = self._oslo_arg_time(today_date_str, time_str)
-                
+
                 import re
                 has_score = score_raw and re.search(r"\d+\s*-\s*\d+", score_raw)
                 score = score_raw.replace(" ", "") if has_score else None
@@ -1247,9 +1258,9 @@ class NorwayLeagues(SpecialLeague):
                     away=away,
                     score=score,
                     is_live=False,
-                    league_code="NO1",
-                    league_name="Toppserien",
-                    league_tier=1,
+                    league_code=code,
+                    league_name=name,
+                    league_tier=tier,
                 ))
 
         rows.sort(key=lambda r: r.time_arg)
