@@ -677,55 +677,61 @@ class RomaniaLeagues(SpecialLeague):
         except Exception:
             return StandingsResult(title=name, found=True)
 
+    def _row_from_ro_match(self, m: dict, code: str, name: str, tier) -> MatchRow:
+        d_arg, t_arg = _arg_time(m.get("startDate"), _RO_BUCHAREST)
+        status = m.get("sysCompetitionMatchStatusId")
+        played, live = status == 3, status == 2
+        score = f"{m.get('homeGoals')}-{m.get('awayGoals')}" if (played or live) else None
+        return MatchRow(
+            match_id=str(m.get("matchId")), time_arg=t_arg, date_arg=d_arg,
+            home=m.get("homeClub", {}).get("name", "Local"),
+            away=m.get("awayClub", {}).get("name", "Visitante"),
+            score=score, is_live=live, league_code=code, league_name=name, league_tier=tier,
+        )
+
     def fixtures(self, code: str) -> tuple[Optional[str], list[MatchRow]]:
+        from datetime import datetime, timezone
         code = code.upper()
         info = self.table.get(code)
         if not info:
             return None, []
-
         comp_season_id, series_id, name, tier, gender = info
-        curr_round = self._resolve_round(series_id)
-        if not curr_round:
-            return name, []
 
         try:
-            res = self.client.get_matches(
-                season_id=curr_round["seasonId"],
-                stage_id=curr_round["stageId"],
-                series_id=series_id,
-                tour_round_id=curr_round["tourRoundId"]
-            )
-
-            resp_data = res.get("responseData", {})
-            matches_list = resp_data.get("matches", [])
-
-            rows = []
-            for m_group in matches_list:
-                for m in m_group.get("list", []):
-                    d_arg, t_arg = _arg_time(m.get("startDate"), _RO_BUCHAREST)
-                    status = m.get("sysCompetitionMatchStatusId")
-                    played = status == 3
-                    live = status == 2
-                    score = None
-                    if played or live:
-                        score = f"{m.get('homeGoals')}-{m.get('awayGoals')}"
-
-                    rows.append(MatchRow(
-                        match_id=str(m.get("matchId")),
-                        time_arg=t_arg,
-                        date_arg=d_arg,
-                        home=m.get("homeClub", {}).get("name", "Local"),
-                        away=m.get("awayClub", {}).get("name", "Visitante"),
-                        score=score,
-                        is_live=live,
-                        league_code=code,
-                        league_name=name,
-                        league_tier=tier
-                    ))
-            rows.sort(key=lambda r: (r.date_arg, r.time_arg))
-            return name, rows
+            filters = self.client.get_filters()
+            tours = [t for t in filters.get("responseData", {}).get("tours", []) if t.get("seriesId") == series_id]
         except Exception:
+            tours = []
+        if not tours:
             return name, []
+
+        tours.sort(key=lambda t: (t.get("startDate") or ""))
+        today_iso = datetime.now(timezone.utc).date().isoformat()
+        past = [t for t in tours if (t.get("startDate") or "")[:10] < today_iso]
+        future = [t for t in tours if (t.get("startDate") or "")[:10] >= today_iso]
+        # Recent results + upcoming rounds (not a single stale round).
+        selected = past[-3:] + future[:2]
+
+        rows: list[MatchRow] = []
+        seen: set[str] = set()
+        for t in selected:
+            try:
+                res = self.client.get_matches(
+                    season_id=t["seasonId"], stage_id=t["stageId"],
+                    series_id=series_id, tour_round_id=t["tourRoundId"],
+                )
+            except Exception:
+                continue
+            for m_group in res.get("responseData", {}).get("matches", []):
+                for m in m_group.get("list", []):
+                    mid = str(m.get("matchId"))
+                    if mid in seen:
+                        continue
+                    seen.add(mid)
+                    rows.append(self._row_from_ro_match(m, code, name, tier))
+
+        rows.sort(key=lambda r: (r.date_arg, r.time_arg))
+        return name, rows
 
 
 # --------------------------------------------------------------------------- #
