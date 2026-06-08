@@ -28,7 +28,7 @@ class SkCommandTests(unittest.IsolatedAsyncioTestCase):
         update, message = _update()
         await sk_leagues_command(update, SimpleNamespace())
         out = message.reply_text.await_args.args[0]
-        self.assertIn("I. Liga Ženy", out)
+        self.assertIn("I. liga ženy", out)
         self.assertIn("`SK1A`", out)
 
     async def test_standings_renders_table(self) -> None:
@@ -50,7 +50,7 @@ class SkCommandTests(unittest.IsolatedAsyncioTestCase):
         with self._patch_client(get_part=part_data):
             await sk_standings_command(update, SimpleNamespace(args=["SK1A"]))
         out = message.reply_text.await_args.args[0]
-        self.assertIn("Posiciones: I. Liga Ženy - Play-off", out)
+        self.assertIn("Posiciones: I. liga ženy - Play-off", out)
         self.assertIn("Spartak Myjava", out)
 
     async def test_fixtures_lists_matches_with_ids(self) -> None:
