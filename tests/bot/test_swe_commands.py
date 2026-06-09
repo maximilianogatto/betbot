@@ -121,5 +121,68 @@ class SweCommandTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("- 12' Goal Player A", out)
 
 
+_CUP_TREE = {
+    "seasonId": 0,
+    "competitions": [
+        {"category": "Svenska Cupen, herrar", "comps": [
+            {"id": 127930, "name": "Svenska Cupen 2025/26, Slutspel"},
+            {"id": 137810, "name": "Svenska Cupen 2026/27 omg. 1-2"},
+        ]},
+        {"category": "Svenska Cupen, damer", "comps": [
+            {"id": 137816, "name": "Svenska Cupen 2026/27 omg. 1-3"},
+        ]},
+    ],
+}
+
+
+class SweCupTests(unittest.IsolatedAsyncioTestCase):
+    def _patch_client(self, **methods):
+        client = MagicMock()
+        for name, value in methods.items():
+            getattr(client, name).return_value = value
+        client.close = MagicMock()
+        return patch("stats_providers.svenskfotboll_http.client.SvenskfotbollHTTPClient", return_value=client)
+
+    async def test_leagues_includes_cup(self) -> None:
+        update, message = _update()
+        with self._patch_client(get_competition_tree=_CUP_TREE):
+            await swe_leagues_command(update, SimpleNamespace())
+        out = message.reply_text.await_args.args[0]
+        self.assertIn("Svenska Cupen", out)
+        self.assertIn("`SC`", out)
+        self.assertIn("`SCD`", out)
+
+    async def test_cup_resolves_latest_season_only(self) -> None:
+        from bot.special_leagues import SwedenLeagues
+        from bot.handlers import _SWE_LEAGUES
+        client = MagicMock()
+        client.get_competition_tree.return_value = _CUP_TREE
+        s = SwedenLeagues(client, _SWE_LEAGUES)
+        cups = s._resolve_cups()
+        # 2026/27 wins over 2025/26: men's Slutspel id must be excluded.
+        self.assertEqual(cups["SC"][1], ["137810"])
+        self.assertEqual(cups["SCD"][1], ["137816"])
+
+    async def test_cup_standings_shows_knockout_note(self) -> None:
+        update, message = _update()
+        with self._patch_client(get_competition_tree=_CUP_TREE, get_standings={"teams": []}):
+            await swe_standings_command(update, SimpleNamespace(args=["SC"]))
+        out = message.reply_text.await_args.args[0]
+        self.assertIn("copa", out.lower())
+        self.assertIn("/swe_fixtures SC", out)
+
+    async def test_cup_today_maps_to_cup_code(self) -> None:
+        update, message = _update()
+        today = [{"match_id": "9", "competition_id": "137810",
+                  "competition_name": "Svenska Cupen 2026/27 omg. 1-2",
+                  "home": "Rappe", "away": "Hassleholm",
+                  "start_time_local": "2026-06-09T19:00:00"}]
+        with self._patch_client(get_competition_tree=_CUP_TREE, get_matches_today=today):
+            await swe_today_command(update, SimpleNamespace())
+        out = message.reply_text.await_args.args[0]
+        self.assertIn("Svenska Cupen", out)
+        self.assertNotIn("202627", out)  # season must not leak into name/slug
+
+
 if __name__ == "__main__":
     unittest.main()
