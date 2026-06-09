@@ -62,6 +62,7 @@ class StandingsResult:
     rows: list[StandRow] = field(default_factory=list)
     regional: bool = False     # True => no single national table (point user elsewhere)
     found: bool = True         # False => unknown code
+    note: Optional[str] = None  # custom message shown when there is no table (e.g. cups)
 
 
 def _to_int(v) -> Optional[int]:
@@ -229,6 +230,8 @@ def render_standings(adapter: SpecialLeague, code: str, result: StandingsResult)
             f"• Fixture completo: `/{adapter.prefix}_fixtures {code}`"
         )
     if not result.rows:
+        if result.note:
+            return result.note
         return "⚠️ No hay posiciones disponibles para esta liga en el sistema."
     lines = [f"📊 *Posiciones: {result.title}*", _DIV, " #  Equipo                PJ  Pts  Dif"]
     for r in result.rows:
@@ -413,9 +416,19 @@ class SwedenLeagues(SpecialLeague):
     country = "Suecas"
     prefix = "swe"
 
+    # Svenska Cupen is a cup, not a league: it has no fixed competition_id (it is
+    # split into per-season stage ids: omg. 1-N, Grupp 1-8, Slutspel) so we resolve
+    # the current season's stage ids dynamically from the competition tree.
+    # code -> (genderId in the tree, display name, gender letter, category keyword)
+    _CUP_DEFS = {
+        "SC": (2, "Svenska Cupen", "M", "herr"),
+        "SCD": (3, "Svenska Cupen", "F", "dam"),
+    }
+
     def __init__(self, client, league_table: dict[str, tuple[str, str, str]]):
         self.client = client
         self.table = league_table
+        self._cup_cache: Optional[dict[str, tuple[str, list[str]]]] = None
         # keyword -> code, longest keyword first (so 'damallsvenskan' beats 'allsvenskan')
         kw = {}
         for code, (_cid, name, _tier) in league_table.items():
@@ -435,12 +448,60 @@ class SwedenLeagues(SpecialLeague):
                 return n
         return None
 
+    def _resolve_cups(self) -> dict[str, tuple[str, list[str]]]:
+        """Resolve current-season stage ids per cup code from the competition tree.
+
+        Returns {code: (display_name, [stage_ids])}. Cached per instance.
+        """
+        if self._cup_cache is not None:
+            return self._cup_cache
+        import re
+        out: dict[str, tuple[str, list[str]]] = {
+            code: (defn[1], []) for code, defn in self._CUP_DEFS.items()
+        }
+        try:
+            tree = self.client.get_competition_tree() or {}
+        except Exception:
+            tree = {}
+        # code -> {season_year: set(stage_ids)}
+        buckets: dict[str, dict[str, set[str]]] = {c: {} for c in self._CUP_DEFS}
+        for cat in tree.get("competitions", []) or []:
+            cat_name = str(cat.get("category") or "").lower()
+            for code, (_gid, _name, _g, kw) in self._CUP_DEFS.items():
+                if kw not in cat_name:
+                    continue
+                for c in cat.get("comps", []) or []:
+                    nm = str(c.get("name") or "")
+                    if not nm.lower().startswith("svenska cupen"):
+                        continue
+                    m = re.search(r"(\d{4})\s*/\s*\d{2,4}", nm)
+                    season = m.group(1) if m else ""
+                    buckets[code].setdefault(season, set()).add(str(c.get("id")))
+        for code, seasons in buckets.items():
+            if not seasons:
+                continue
+            latest = max(seasons)  # newest season year wins
+            out[code] = (self._CUP_DEFS[code][1], sorted(seasons[latest]))
+        self._cup_cache = out
+        return out
+
+    def _cup_index(self) -> dict[str, tuple[str, str]]:
+        """competition_id -> (cup code, display name) for the current season."""
+        idx: dict[str, tuple[str, str]] = {}
+        for code, (name, ids) in self._resolve_cups().items():
+            for cid in ids:
+                idx[str(cid)] = (code, name)
+        return idx
+
     def leagues(self) -> list[LeagueInfo]:
-        return [
+        out = [
             LeagueInfo(code=code, name=name, tier=self._tier_num(tier),
                        gender="F" if "dam" in tier.lower() else "M")
             for code, (_cid, name, tier) in self.table.items()
         ]
+        for code, (_gid, name, gender, _kw) in self._CUP_DEFS.items():
+            out.append(LeagueInfo(code=code, name=name, gender=gender, kind="cup"))
+        return out
 
     def _code_for(self, competition_name: str) -> Optional[str]:
         low = str(competition_name or "").lower()
@@ -477,22 +538,29 @@ class SwedenLeagues(SpecialLeague):
             matches = self.client.get_matches_today() or []
         except Exception:
             matches = []
+        cup_idx = self._cup_index()
         rows: list[MatchRow] = []
         omitted = 0
         for m in matches:
             comp = m.get("competition_name") or ""
-            if any(h in comp.lower() for h in _SWE_NOISE):  # futsal / youth / selecciones
+            comp_id = str(m.get("competition_id") or "")
+            # Svenska Cupen: map to the cup code/gender via its season stage id.
+            if comp_id in cup_idx:
+                code, name = cup_idx[comp_id]
+                tier = None
+            elif any(h in comp.lower() for h in _SWE_NOISE):  # futsal / youth / selecciones
                 omitted += 1
                 continue
-            # Mapped leagues keep their short code; the rest are shown with their
-            # own (cleaned) league name so every league is differentiated.
-            code = self._code_for(comp)
-            if code:
-                name, tier = self.table[code][1], self._tier_num(self.table[code][2])
             else:
-                name = self._clean_comp_name(comp)
-                code = self._slug(name)
-                tier = None
+                # Mapped leagues keep their short code; the rest are shown with their
+                # own (cleaned) league name so every league is differentiated.
+                code = self._code_for(comp)
+                if code:
+                    name, tier = self.table[code][1], self._tier_num(self.table[code][2])
+                else:
+                    name = self._clean_comp_name(comp)
+                    code = self._slug(name)
+                    tier = None
             _d, t_arg = _arg_time(m.get("start_time_local"), _STOCKHOLM)
             hs, as_ = m.get("home_score"), m.get("away_score")
             score = f"{hs}-{as_}" if hs is not None and as_ is not None else None
@@ -504,18 +572,8 @@ class SwedenLeagues(SpecialLeague):
         rows.sort(key=lambda r: r.time_arg)
         return rows, omitted
 
-    def standings(self, code: str) -> StandingsResult:
-        code = code.upper()
-        entry = self.table.get(code)
-        if not entry:
-            return StandingsResult(title=code, found=False)
-        comp_id, name, _tier = entry
-        try:
-            data = self.client.get_standings(comp_id)
-            teams = data.get("teams") if isinstance(data, dict) else data
-        except Exception:
-            teams = []
-        rows = [
+    def _standrows(self, teams) -> list[StandRow]:
+        return [
             StandRow(
                 position=_to_int(t.get("position")) or i,
                 team=str(t.get("team") or "?"),
@@ -525,10 +583,54 @@ class SwedenLeagues(SpecialLeague):
             )
             for i, t in enumerate(teams or [], start=1)
         ]
-        return StandingsResult(title=f"{name} (2026)", rows=rows)
+
+    def _get_teams(self, comp_id: str) -> list:
+        try:
+            data = self.client.get_standings(comp_id)
+            return (data.get("teams") if isinstance(data, dict) else data) or []
+        except Exception:
+            return []
+
+    def standings(self, code: str) -> StandingsResult:
+        code = code.upper()
+        if code in self._CUP_DEFS:
+            name, ids = self._resolve_cups().get(code, (self._CUP_DEFS[code][1], []))
+            # Group stages have tables; show the only one if there is a single group,
+            # otherwise it's the knockout/early-round phase -> point to the fixture.
+            groups = [t for sid in ids if (t := self._get_teams(sid))]
+            if len(groups) == 1:
+                return StandingsResult(title=name, rows=self._standrows(groups[0]))
+            note = (
+                f"🥅 *{name}* es un torneo de copa (eliminatoria).\n"
+                + ("Está en fase de grupos múltiples; " if groups else "Está en fase de eliminatorias, ")
+                + "no tiene una tabla única.\n"
+                f"• Próximos partidos: `/{self.prefix}_fixtures {code}`\n"
+                f"• Partidos de hoy: `/{self.prefix}_today`"
+            )
+            return StandingsResult(title=name, rows=[], note=note)
+        entry = self.table.get(code)
+        if not entry:
+            return StandingsResult(title=code, found=False)
+        comp_id, name, _tier = entry
+        return StandingsResult(title=f"{name} (2026)", rows=self._standrows(self._get_teams(comp_id)))
+
+    def _cup_match_rows(self, fetch, code: str, name: str) -> tuple[str, list[MatchRow]]:
+        _name, ids = self._resolve_cups().get(code, (name, []))
+        rows: list[MatchRow] = []
+        seen: set[str] = set()
+        for sid in ids:
+            for r in self._match_rows(fetch, sid, code):
+                if r.match_id and r.match_id in seen:
+                    continue
+                seen.add(r.match_id)
+                rows.append(r)
+        rows.sort(key=lambda r: (r.date_arg or "", r.time_arg or ""))
+        return _name, rows[:30]
 
     def fixtures(self, code: str) -> tuple[Optional[str], list[MatchRow]]:
         code = code.upper()
+        if code in self._CUP_DEFS:
+            return self._cup_match_rows(self.client.get_upcoming_matches, code, self._CUP_DEFS[code][1])
         entry = self.table.get(code)
         if not entry:
             return None, []
@@ -537,6 +639,8 @@ class SwedenLeagues(SpecialLeague):
 
     def results(self, code: str) -> tuple[Optional[str], list[MatchRow]]:
         code = code.upper()
+        if code in self._CUP_DEFS:
+            return self._cup_match_rows(self.client.get_latest_results, code, self._CUP_DEFS[code][1])
         entry = self.table.get(code)
         if not entry:
             return None, []

@@ -4816,6 +4816,8 @@ async def swe_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         "• <code>/swe_results [CÓDIGO]</code> - Últimos resultados de la liga.\n"
         "• <code>/swe_today</code> - Partidos suecos de hoy (horario Argentina) con IDs.\n"
         "• <code>/swe_match [ID]</code> - Detalle/vivo de un partido (marcador, eventos vía FOGIS).\n\n"
+        "🥅 <b>Copa:</b> <code>SC</code> = Svenska Cupen (varones), <code>SCD</code> = Svenska Cupen (damas). "
+        "Se resuelven solas cada temporada; al ser eliminatoria, usá <code>/swe_fixtures SC</code> (no tiene tabla única).\n\n"
         + _swe_usage_guide(as_html=True)
     )
     await update.message.reply_text(help_text, parse_mode=ParseMode.HTML)
