@@ -452,18 +452,25 @@ class SwedenLeagues(SpecialLeague):
         return None
 
     def _clean_comp_name(self, name: str) -> str:
+        import re
         out = name
         for sep in (" herr", " Herr", " dam", " Dam", ", herr", ", dam"):
             idx = out.find(sep)
             if idx > 0:
                 out = out[:idx]
-        parts = out.rsplit(" ", 1)
-        if len(parts) == 2 and parts[1].isdigit() and len(parts[1]) == 4:
-            out = parts[0]
-        return out.strip(" ,·-") or name
+        # Quita el descriptor de jornada/ronda: "omg. 1-2", "omgång 3", etc.
+        out = re.sub(r"\bomg(?:ång)?\.?\s*[\d\-–]+.*$", "", out, flags=re.IGNORECASE)
+        # Quita la temporada: "2026", "2026/27", "2026/2027".
+        out = re.sub(r"\b\d{4}(?:\s*/\s*\d{2,4})?\b", "", out)
+        # Colapsa espacios y separadores sobrantes.
+        out = re.sub(r"\s{2,}", " ", out)
+        return out.strip(" ,·-/") or name
 
     def _slug(self, name: str) -> str:
-        return "SWE" + "".join(c for c in name.lower() if c.isalnum())[:18]
+        # Código estable: solo letras del nombre ya limpio, sin la temporada
+        # (la copa no debe quedar como "SWEsvenskacupen202627").
+        alnum = "".join(c for c in name.lower() if c.isalpha())
+        return "SWE" + alnum[:18]
 
     def today(self) -> tuple[list[MatchRow], int]:
         try:
