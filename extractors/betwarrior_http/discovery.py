@@ -89,3 +89,75 @@ def build_league_options(
 
     options.sort(key=lambda option: (option.country_name.lower(), option.league_name.lower()))
     return options[:limit]
+
+
+def _leaf_leagues(country_node: dict[str, Any]):
+    """Yield every leaf league (no child groups) with a prematch event."""
+
+    stack = list(country_node.get("groups") or [])
+    while stack:
+        node = stack.pop()
+        children = node.get("groups") or []
+        if children:
+            stack.extend(children)
+            continue
+        if (node.get("eventCount") or 0) > 0:
+            yield node
+
+
+def build_league_options_from_tree(
+    group_tree: dict[str, Any],
+    *,
+    platform: str,
+    platform_display_name: str,
+    country_name: str,
+    query: str | None = None,
+    limit: int = 80,
+    sport_term: str = "football",
+) -> list[LeagueDiscoveryOption]:
+    """Return leagues from Kambi's full group tree (complete, unlike listView).
+
+    The tree is sport -> country -> league; ``betoffer/group/<id>.json`` works on
+    any league id, so this gives full discovery coverage (every league with a
+    prematch event), not just the "starting soon" subset that listView returns.
+    """
+
+    country_filter = _normalize_text(country_name)
+    query_filter = _normalize_text(query)
+
+    root = group_tree.get("group") if isinstance(group_tree.get("group"), dict) else group_tree
+    sports = (root or {}).get("groups") or []
+    football = next(
+        (s for s in sports if str(s.get("termKey") or "").lower() == sport_term.lower()),
+        None,
+    )
+    if football is None:
+        return []
+
+    options: list[LeagueDiscoveryOption] = []
+    for country in football.get("groups") or []:
+        cname = country.get("name") or country.get("englishName") or "Desconocido"
+        if not _matches_country(cname, country_filter):
+            continue
+        country_id = str(country.get("id")) if country.get("id") is not None else None
+        for league in _leaf_leagues(country):
+            lname = str(league.get("name") or league.get("englishName") or league.get("id"))
+            if query_filter and query_filter not in _normalize_text(lname):
+                continue
+            league_id = str(league.get("id"))
+            options.append(
+                LeagueDiscoveryOption(
+                    platform=platform,
+                    platform_display_name=platform_display_name,
+                    country_id=country_id,
+                    country_name=cname,
+                    league_id=league_id,
+                    league_name=lname,
+                    source_url=f"betwarrior:group:{league_id}",
+                    games_count=int(league.get("eventCount") or 0),
+                    raw_payload={"source": "kambi_group_tree", "group_id": league_id},
+                )
+            )
+
+    options.sort(key=lambda option: (option.country_name.lower(), option.league_name.lower()))
+    return options[:limit]

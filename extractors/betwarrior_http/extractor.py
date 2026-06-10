@@ -44,7 +44,7 @@ class BetWarriorHttpExtractor(Extractor):
     supported_domains = _SUPPORTED_HOSTS
     supported_capabilities = ("ligas",)
     provider_capabilities = ProviderCapabilities(supports_http=True, supports_browserless=True)
-    supports_league_discovery = True  # via the Kambi listView feed
+    supports_league_discovery = True  # via the Kambi group tree (full league catalog)
     supports_live_detection = True  # via event/live/open.json
     supports_prematch_listing = True  # via listView (prematch day list)
 
@@ -57,6 +57,9 @@ class BetWarriorHttpExtractor(Extractor):
         self._list_view_cache: dict[str, Any] | None = None
         self._list_view_cached_at = 0.0
         self._list_view_lock = asyncio.Lock()
+        self._group_tree_cache: dict[str, Any] | None = None
+        self._group_tree_cached_at = 0.0
+        self._group_tree_lock = asyncio.Lock()
 
     @classmethod
     def can_handle_url(cls, url: str) -> bool:
@@ -102,6 +105,22 @@ class BetWarriorHttpExtractor(Extractor):
         limit: int = 80,
     ) -> list[LeagueDiscoveryOption]:
         client = BetWarriorHttpClient(self.settings)
+        # Prefer the full group tree (every league with a prematch event). listView
+        # only returns a "starting soon" subset, so it silently drops leagues whose
+        # next match is not imminent (e.g. Australia youth/Sub-20 leagues).
+        group_tree = await self._get_group_tree(client)
+        options = discovery_module.build_league_options_from_tree(
+            group_tree,
+            platform=self.name,
+            platform_display_name=self.display_name,
+            country_name=country_name,
+            query=query,
+            limit=limit,
+            sport_term=self.settings.sport_term,
+        )
+        if options:
+            return options
+        # Fallback: if the tree is unavailable, use the (partial) listView feed.
         list_view = await self._get_list_view(client)
         return discovery_module.build_league_options(
             list_view,
@@ -127,6 +146,19 @@ class BetWarriorHttpExtractor(Extractor):
             if data.get("events"):
                 self._list_view_cache = data
                 self._list_view_cached_at = now
+            return data
+
+    async def _get_group_tree(self, client: BetWarriorHttpClient) -> dict[str, Any]:
+        """Return the full group tree from a short-lived in-process cache."""
+
+        async with self._group_tree_lock:
+            now = time.monotonic()
+            if self._group_tree_cache is not None and (now - self._group_tree_cached_at) < self._LIST_VIEW_TTL_SECONDS:
+                return self._group_tree_cache
+            data = await client.fetch_group_tree()
+            if data.get("group"):
+                self._group_tree_cache = data
+                self._group_tree_cached_at = now
             return data
 
 

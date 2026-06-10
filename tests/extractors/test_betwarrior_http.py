@@ -145,6 +145,79 @@ class BetWarriorDiscoveryTests(unittest.TestCase):
         self.assertEqual(options, [])
 
 
+def _group_tree() -> dict:
+    return {
+        "group": {
+            "id": 1,
+            "groups": [
+                {
+                    "termKey": "football",
+                    "name": "Fútbol",
+                    "groups": [
+                        {
+                            "id": 100,
+                            "name": "Australia",
+                            "eventCount": 14,
+                            "groups": [
+                                {"id": 2000079748, "name": "Ligas juveniles Sub-20", "eventCount": 5},
+                                {"id": 2000064679, "name": "NPL NSW", "eventCount": 10},
+                                {"id": 9, "name": "Liga vacía", "eventCount": 0},  # no events -> skip
+                            ],
+                        },
+                        {
+                            "id": 200,
+                            "name": "Inglaterra",
+                            "eventCount": 1,
+                            "groups": [
+                                {"id": 999, "name": "Premier League", "eventCount": 1},
+                            ],
+                        },
+                    ],
+                },
+                {"termKey": "tennis", "name": "Tenis", "groups": []},
+            ],
+        }
+    }
+
+
+class BetWarriorTreeDiscoveryTests(unittest.TestCase):
+    def test_tree_includes_leagues_listview_would_drop(self) -> None:
+        options = discovery_module.build_league_options_from_tree(
+            _group_tree(),
+            platform="betwarrior_http",
+            platform_display_name="BetWarrior HTTP",
+            country_name="australia",
+        )
+        names = {o.league_name for o in options}
+        # The Sub-20 youth league must be discovered (listView omitted it).
+        self.assertIn("Ligas juveniles Sub-20", names)
+        self.assertIn("NPL NSW", names)
+        self.assertNotIn("Liga vacía", names)  # eventCount 0 -> excluded
+        sub20 = next(o for o in options if o.league_name == "Ligas juveniles Sub-20")
+        self.assertEqual(sub20.source_url, "betwarrior:group:2000079748")
+        self.assertEqual(sub20.games_count, 5)
+        self.assertEqual(sub20.country_name, "Australia")
+
+    def test_tree_filters_by_query(self) -> None:
+        options = discovery_module.build_league_options_from_tree(
+            _group_tree(),
+            platform="betwarrior_http",
+            platform_display_name="BetWarrior HTTP",
+            country_name="australia",
+            query="sub-20",
+        )
+        self.assertEqual([o.league_name for o in options], ["Ligas juveniles Sub-20"])
+
+    def test_tree_unknown_country_empty(self) -> None:
+        options = discovery_module.build_league_options_from_tree(
+            _group_tree(),
+            platform="betwarrior_http",
+            platform_display_name="BetWarrior HTTP",
+            country_name="Narnia",
+        )
+        self.assertEqual(options, [])
+
+
 class BetWarriorUrlTests(unittest.TestCase):
     def test_group_id_from_scheme(self) -> None:
         self.assertEqual(_group_id_from_url("betwarrior:group:1000450453"), "1000450453")
