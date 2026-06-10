@@ -2,7 +2,12 @@ from __future__ import annotations
 
 import unittest
 
-from core.league_naming import normalize_league_name, same_league
+from core.league_naming import (
+    extract_league_traits,
+    league_slug,
+    normalize_league_name,
+    same_league,
+)
 
 
 class LeagueNamingTests(unittest.TestCase):
@@ -44,6 +49,38 @@ class LeagueNamingTests(unittest.TestCase):
             normalize_league_name("USA USL League Two"),
             normalize_league_name("USL League 2 USA"),
         )
+
+
+class LeagueSlugTests(unittest.TestCase):
+    def test_slug_preserves_order_and_discriminators(self) -> None:
+        self.assertEqual(league_slug("USA. WPSL (F)"), "usa-wpsl-f")
+        self.assertEqual(league_slug("Inglaterra · Premier League"), "inglaterra-premier-league")
+        self.assertEqual(league_slug("Australia - NPL NSW Sub-20"), "australia-npl-nsw-sub-20")
+
+    def test_slug_strips_accents_and_collapses(self) -> None:
+        self.assertEqual(league_slug("SuperLiga Feminină"), "superliga-feminina")
+        self.assertEqual(league_slug("  Liga --- X  "), "liga-x")
+
+    def test_slug_empty_and_length(self) -> None:
+        self.assertEqual(league_slug(None), "")
+        self.assertEqual(league_slug(""), "")
+        self.assertLessEqual(len(league_slug("x" * 200)), 60)
+
+
+class LeagueTraitsTests(unittest.TestCase):
+    def test_traits_full(self) -> None:
+        traits = extract_league_traits("USA. WPSL (F)")
+        self.assertEqual(traits, {"country": "usa", "gender": "F", "age_group": None})
+
+    def test_traits_age_and_country_alias(self) -> None:
+        traits = extract_league_traits("Inglaterra Premier League Sub-20")
+        self.assertEqual(traits["country"], "england")
+        self.assertEqual(traits["age_group"], "U20")
+
+    def test_traits_unmarked_is_men(self) -> None:
+        traits = extract_league_traits("Superettan")
+        self.assertIsNone(traits["gender"])
+        self.assertIsNone(traits["age_group"])
 
 
 if __name__ == "__main__":

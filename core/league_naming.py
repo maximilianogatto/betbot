@@ -145,3 +145,40 @@ def same_league(a: str | None, b: str | None) -> bool:
 
     na = normalize_league_name(a)
     return bool(na) and na == normalize_league_name(b)
+
+
+_CANONICAL_COUNTRIES: set[str] = set(_COUNTRY_ALIASES.values())
+
+
+def league_slug(name: str | None, max_length: int = 60) -> str:
+    """Public, stable slug for a league name ("USA. WPSL (F)" -> "usa-wpsl-f").
+
+    Word order is preserved (unlike :func:`normalize_league_name`) because the
+    slug is an identifier shown to users; once assigned it must never change.
+    """
+
+    if not name:
+        return ""
+    s = _strip_accents(str(name).lower())
+    s = re.sub(r"[^a-z0-9]+", "-", s).strip("-")
+    s = re.sub(r"-{2,}", "-", s)
+    return s[:max_length].rstrip("-")
+
+
+def extract_league_traits(name: str | None) -> dict[str, str | None]:
+    """Best-effort country / gender / age_group from a league name.
+
+    Gender is "F" only when a women marker is present (unmarked == men == None,
+    matching the normalize convention). Age is the first U<NN> marker ("U20").
+    Country is the canonical alias token when one appears in the name.
+    """
+
+    tokens = normalize_league_name(name).split()
+    country = next((t for t in tokens if t in _CANONICAL_COUNTRIES), None)
+    gender = "F" if "women" in tokens else None
+    age = next((t for t in tokens if _AGE_RE.match(t)), None)
+    return {
+        "country": country,
+        "gender": gender,
+        "age_group": age.upper() if age else None,
+    }
