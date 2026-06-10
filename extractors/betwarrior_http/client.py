@@ -47,6 +47,18 @@ class BetWarriorHttpClient:
             data = await self._get(client, f"listView/{self.settings.sport_term}.json", self.settings.common_params)
         return data if isinstance(data, dict) else {}
 
+    async def fetch_group_tree(self) -> dict[str, Any]:
+        """Return Kambi's full group tree (sport -> country -> league, with counts).
+
+        Unlike ``listView`` (a limited "starting soon" window), this lists *every*
+        league with a prematch event, so it is the authoritative source for league
+        discovery.
+        """
+
+        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, headers=self._headers) as client:
+            data = await self._get(client, "group.json", self.settings.common_params)
+        return data if isinstance(data, dict) else {}
+
     async def fetch_group_bet_offers(self, group_id: str | int) -> dict[str, Any]:
         """Return every event + bet offer for one league (group) in one call."""
 
