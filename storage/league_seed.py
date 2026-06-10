@@ -28,6 +28,7 @@ from storage.tracking_repository import (
     DB_FILE_PATH,
     PROJECT_ROOT,
     _connect,
+    _insert_unified_competition,
     _utc_now_iso,
 )
 
@@ -163,11 +164,7 @@ def import_league_seed(data: dict[str, Any], *, overwrite: bool = False) -> dict
             if row is not None:
                 unified_ids[clean] = row["id"]
                 continue
-            cursor = connection.execute(
-                "INSERT INTO unified_competitions (name, created_at, updated_at) VALUES (?, ?, ?)",
-                (clean, now_iso, now_iso),
-            )
-            unified_ids[clean] = cursor.lastrowid
+            unified_ids[clean] = _insert_unified_competition(connection, clean)
             counts["unified_created"] += 1
 
         def _unified_id(name: str | None) -> int | None:
@@ -182,13 +179,9 @@ def import_league_seed(data: dict[str, Any], *, overwrite: bool = False) -> dict
             if row is not None:
                 unified_ids[clean] = row["id"]
                 return row["id"]
-            cursor = connection.execute(
-                "INSERT INTO unified_competitions (name, created_at, updated_at) VALUES (?, ?, ?)",
-                (clean, now_iso, now_iso),
-            )
-            unified_ids[clean] = cursor.lastrowid
+            unified_ids[clean] = _insert_unified_competition(connection, clean)
             counts["unified_created"] += 1
-            return cursor.lastrowid
+            return unified_ids[clean]
 
         # 2. Tracked competitions (by platform + external id).
         tracked_ids: dict[tuple[str, str], int] = {}
