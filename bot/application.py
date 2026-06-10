@@ -29,6 +29,7 @@ from monitors.live_watch import LiveWatchService
 from monitors.stats import StatsService
 from monitors.tracking import TrackingService
 from storage.tracking_repository import SqliteTrackingRepository
+from storage.league_seed import seed_if_empty
 
 
 def create_application(settings: Settings) -> Application:
@@ -42,6 +43,10 @@ def create_application(settings: Settings) -> Application:
         default_change_threshold_percent=settings.tracking_default_change_threshold_percent,
         default_notify_odds_changes=settings.tracking_default_notify_odds_changes,
     )
+    # Bootstrap a fresh DB (e.g. a new cloud deploy where the gitignored SQLite file
+    # didn't travel) from the committed league seed. No-op if the DB already has
+    # tracked competitions, so an existing install is never altered.
+    seed_if_empty()
 
     tracking_service = TrackingService(
         extractor_registry=extractor_registry,
