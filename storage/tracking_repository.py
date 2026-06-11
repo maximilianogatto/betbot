@@ -763,6 +763,10 @@ class SqliteTrackingRepository:
                     (now_iso, chat_id, tracked_competition_id),
                 )
 
+            # League-level subscription: the chat inherits every other platform of
+            # this league, and the league's subscribers inherit this platform.
+            _propagate_unified_subscriptions(connection, uc_id)
+
             connection.execute(
                 """
                 DELETE FROM pending_track_requests
@@ -901,7 +905,9 @@ class SqliteTrackingRepository:
                         tracked_competition_id,
                     ),
                 )
-            
+
+            _propagate_unified_subscriptions(connection, uc_id)
+
             return tracked_competition_id
 
     def list_tracked_competitions(self, chat_id: int) -> list[TrackedCompetitionSubscription]:
@@ -938,10 +944,11 @@ class SqliteTrackingRepository:
                     cs.updated_at AS subscription_updated_at
                 FROM competition_subscriptions cs
                 INNER JOIN tracked_competitions tc ON tc.id = cs.tracked_competition_id
+                LEFT JOIN unified_competitions uc ON uc.id = tc.unified_competition_id
                 WHERE cs.telegram_chat_id = ?
                   AND cs.enabled = 1
                   AND tc.enabled = 1
-                ORDER BY tc.platform, tc.competition_name, tc.id
+                ORDER BY COALESCE(uc.name, tc.competition_name), tc.platform, tc.id
                 """,
                 (chat_id,),
             ).fetchall()
@@ -1024,6 +1031,9 @@ class SqliteTrackingRepository:
                 """,
                 (unified_competition_id, now_iso, tracked_competition_id),
             )
+            # Subscribers of the league inherit the newly linked platform (and
+            # subscribers of the moved competition inherit the league's platforms).
+            _propagate_unified_subscriptions(connection, unified_competition_id)
 
     def list_globally_active_competitions(self) -> list[TrackedCompetition]:
         """List globally active competitions with at least one enabled subscription."""
@@ -1716,115 +1726,37 @@ class SqliteTrackingRepository:
     ) -> UntrackCompetitionResult:
         """Remove one chat subscription and disable the competition if orphaned."""
 
-        now_iso = _utc_now_iso()
+        with _connect() as connection:
+            _sanitize_tracking_state(connection)
+            return _remove_chat_subscription(connection, chat_id, tracked_competition_id)
+
+    def remove_unified_subscription(
+        self,
+        chat_id: int,
+        unified_competition_id: int,
+    ) -> list[UntrackCompetitionResult]:
+        """Untrack a whole unified league for one chat (all its platforms)."""
 
         with _connect() as connection:
             _sanitize_tracking_state(connection)
-            tracked_row = _fetch_tracked_competition_row(connection, tracked_competition_id)
-
-            if tracked_row is None:
-                raise ValueError(f"No tracked competition found with id={tracked_competition_id}.")
-
-            cursor = connection.execute(
+            rows = connection.execute(
                 """
-                DELETE FROM competition_subscriptions
-                WHERE telegram_chat_id = ? AND tracked_competition_id = ?
+                SELECT cs.tracked_competition_id
+                FROM competition_subscriptions cs
+                INNER JOIN tracked_competitions tc ON tc.id = cs.tracked_competition_id
+                WHERE cs.telegram_chat_id = ? AND tc.unified_competition_id = ?
+                ORDER BY cs.tracked_competition_id
                 """,
-                (chat_id, tracked_competition_id),
-            )
-
-            if cursor.rowcount == 0:
+                (chat_id, unified_competition_id),
+            ).fetchall()
+            if not rows:
                 raise ValueError(
-                    f"No subscription found for chat_id={chat_id} and tracked_competition_id={tracked_competition_id}."
+                    f"No subscriptions found for chat_id={chat_id} in unified league {unified_competition_id}."
                 )
-
-            connection.execute(
-                """
-                DELETE FROM user_event_baselines
-                WHERE chat_id = ?
-                  AND active_event_id IN (
-                      SELECT id
-                      FROM active_events
-                      WHERE tracked_competition_id = ?
-                  )
-                """,
-                (chat_id, tracked_competition_id),
-            )
-            connection.execute(
-                """
-                DELETE FROM small_changes
-                WHERE chat_id = ?
-                  AND active_event_id IN (
-                      SELECT id
-                      FROM active_events
-                      WHERE tracked_competition_id = ?
-                  )
-                """,
-                (chat_id, tracked_competition_id),
-            )
-            connection.execute(
-                """
-                DELETE FROM sent_alerts
-                WHERE chat_id = ?
-                  AND active_event_id IN (
-                      SELECT id
-                      FROM active_events
-                      WHERE tracked_competition_id = ?
-                  )
-                """,
-                (chat_id, tracked_competition_id),
-            )
-
-            remaining_enabled_subscriptions = _count_enabled_subscriptions(
-                connection,
-                tracked_competition_id,
-            )
-            competition_disabled = False
-            removed_active_events = 0
-
-            if remaining_enabled_subscriptions == 0:
-                competition_disabled = True
-                connection.execute(
-                    """
-                    UPDATE tracked_competitions
-                    SET
-                        enabled = 0,
-                        updated_at = ?
-                    WHERE id = ?
-                    """,
-                    (now_iso, tracked_competition_id),
-                )
-                obsolete_rows = connection.execute(
-                    """
-                    SELECT external_event_id
-                    FROM active_events
-                    WHERE tracked_competition_id = ?
-                    ORDER BY external_event_id
-                    """,
-                    (tracked_competition_id,),
-                ).fetchall()
-                removed_active_events = connection.execute(
-                    """
-                    DELETE FROM active_events
-                    WHERE tracked_competition_id = ?
-                    """,
-                    (tracked_competition_id,),
-                ).rowcount
-                for row in obsolete_rows:
-                    logger.info("Deleted obsolete match: %s", str(row["external_event_id"]))
-
-            tracked_row = _fetch_tracked_competition_row(connection, tracked_competition_id)
-
-        if tracked_row is None:
-            raise RuntimeError("Tracked competition could not be reloaded after untracking.")
-
-        return UntrackCompetitionResult(
-            tracked_competition=_row_to_tracked_competition(tracked_row),
-            removed_subscription=True,
-            competition_disabled=competition_disabled,
-            removed_active_events=removed_active_events,
-            remaining_enabled_subscriptions=remaining_enabled_subscriptions,
-        )
+            return [
+                _remove_chat_subscription(connection, chat_id, int(row["tracked_competition_id"]))
+                for row in rows
+            ]
 
     def update_tracked_competition(
         self,
@@ -3193,6 +3125,7 @@ class SqliteTrackingRepository:
                         changed = True
                 if changed:
                     merged_groups += 1
+                    _propagate_unified_subscriptions(connection, target)
                 # delete unified competitions left empty by the merge
                 for uid in unified_ids:
                     if uid == target:
@@ -4988,6 +4921,142 @@ def _league_name_similarity(left: str, right: str) -> float:
         return ratio
     overlap = len(left_tokens & right_tokens) / min(len(left_tokens), len(right_tokens))
     return max(ratio, overlap)
+
+
+def _remove_chat_subscription(
+    connection: sqlite3.Connection,
+    chat_id: int,
+    tracked_competition_id: int,
+) -> UntrackCompetitionResult:
+    """Remove one chat subscription (within a connection) and disable orphans."""
+
+    now_iso = _utc_now_iso()
+    tracked_row = _fetch_tracked_competition_row(connection, tracked_competition_id)
+    if tracked_row is None:
+        raise ValueError(f"No tracked competition found with id={tracked_competition_id}.")
+
+    cursor = connection.execute(
+        """
+        DELETE FROM competition_subscriptions
+        WHERE telegram_chat_id = ? AND tracked_competition_id = ?
+        """,
+        (chat_id, tracked_competition_id),
+    )
+    if cursor.rowcount == 0:
+        raise ValueError(
+            f"No subscription found for chat_id={chat_id} and tracked_competition_id={tracked_competition_id}."
+        )
+
+    for table in ("user_event_baselines", "small_changes", "sent_alerts"):
+        connection.execute(
+            f"""
+            DELETE FROM {table}
+            WHERE chat_id = ?
+              AND active_event_id IN (
+                  SELECT id
+                  FROM active_events
+                  WHERE tracked_competition_id = ?
+              )
+            """,
+            (chat_id, tracked_competition_id),
+        )
+
+    remaining_enabled_subscriptions = _count_enabled_subscriptions(
+        connection,
+        tracked_competition_id,
+    )
+    competition_disabled = False
+    removed_active_events = 0
+
+    if remaining_enabled_subscriptions == 0:
+        competition_disabled = True
+        connection.execute(
+            """
+            UPDATE tracked_competitions
+            SET
+                enabled = 0,
+                updated_at = ?
+            WHERE id = ?
+            """,
+            (now_iso, tracked_competition_id),
+        )
+        obsolete_rows = connection.execute(
+            """
+            SELECT external_event_id
+            FROM active_events
+            WHERE tracked_competition_id = ?
+            ORDER BY external_event_id
+            """,
+            (tracked_competition_id,),
+        ).fetchall()
+        removed_active_events = connection.execute(
+            """
+            DELETE FROM active_events
+            WHERE tracked_competition_id = ?
+            """,
+            (tracked_competition_id,),
+        ).rowcount
+        for row in obsolete_rows:
+            logger.info("Deleted obsolete match: %s", str(row["external_event_id"]))
+
+    tracked_row = _fetch_tracked_competition_row(connection, tracked_competition_id)
+    if tracked_row is None:
+        raise RuntimeError("Tracked competition could not be reloaded after untracking.")
+
+    return UntrackCompetitionResult(
+        tracked_competition=_row_to_tracked_competition(tracked_row),
+        removed_subscription=True,
+        competition_disabled=competition_disabled,
+        removed_active_events=removed_active_events,
+        remaining_enabled_subscriptions=remaining_enabled_subscriptions,
+    )
+
+
+def _propagate_unified_subscriptions(
+    connection: sqlite3.Connection,
+    unified_competition_id: int | None,
+) -> int:
+    """Spread each chat's league subscription to EVERY platform of the league.
+
+    Subscriptions are conceptually per unified league (decision: track via one
+    platform -> inherit all current and future platform links). Storage stays in
+    ``competition_subscriptions`` (per tracked comp) so the poller/alerts pipeline
+    is untouched; this keeps that storage consistent with the league-level model.
+    Returns the number of subscriptions created.
+    """
+
+    if unified_competition_id is None:
+        return 0
+    now_iso = _utc_now_iso()
+    cursor = connection.execute(
+        """
+        INSERT INTO competition_subscriptions (
+            telegram_chat_id, tracked_competition_id, notify_new_events,
+            notify_odds_changes, change_threshold_percent, enabled, created_at, updated_at
+        )
+        SELECT s.telegram_chat_id, tc.id, s.notify_new_events,
+               s.notify_odds_changes, s.change_threshold_percent, 1, ?, ?
+        FROM (
+            SELECT cs.telegram_chat_id,
+                   MAX(cs.notify_new_events) AS notify_new_events,
+                   MAX(cs.notify_odds_changes) AS notify_odds_changes,
+                   MAX(cs.change_threshold_percent) AS change_threshold_percent
+            FROM competition_subscriptions cs
+            INNER JOIN tracked_competitions x ON x.id = cs.tracked_competition_id
+            WHERE x.unified_competition_id = ? AND cs.enabled = 1
+            GROUP BY cs.telegram_chat_id
+        ) s
+        CROSS JOIN tracked_competitions tc
+        WHERE tc.unified_competition_id = ? AND tc.enabled = 1
+          AND NOT EXISTS (
+            SELECT 1 FROM competition_subscriptions e
+            WHERE e.telegram_chat_id = s.telegram_chat_id
+              AND e.tracked_competition_id = tc.id
+          )
+        """,
+        (now_iso, now_iso, unified_competition_id, unified_competition_id),
+    )
+    return int(cursor.rowcount or 0)
 
 
 def _insert_unified_competition(connection: sqlite3.Connection, name: str) -> int:

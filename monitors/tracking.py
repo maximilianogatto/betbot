@@ -776,23 +776,36 @@ class TrackingService:
         return self.repository.delete_pending_competition_request(chat_id)
 
     def untrack_chat(self, chat_id: int, tracked_league_id: int) -> CommandResult:
-        """Remove one chat subscription from a tracked competition."""
+        """Remove the chat's subscription to the whole unified league (all platforms)."""
 
         try:
-            result = self.repository.remove_tracked_competition_subscription(chat_id, tracked_league_id)
+            tracked = self.repository.get_tracked_competition(tracked_league_id)
+            unified_id = tracked.unified_competition_id if tracked is not None else None
+            if unified_id is not None:
+                results = self.repository.remove_unified_subscription(chat_id, unified_id)
+            else:
+                results = [
+                    self.repository.remove_tracked_competition_subscription(chat_id, tracked_league_id)
+                ]
         except ValueError as error:
             return CommandResult(ok=False, message=str(error))
 
-        lines = [f"Dejaste de trackear {result.tracked_league.league_name}."]
+        platforms = sorted({r.tracked_league.platform for r in results})
+        league_name = results[0].tracked_league.league_name
+        if len(platforms) > 1:
+            lines = [
+                f"Dejaste de trackear {league_name} en {len(platforms)} plataformas: {', '.join(platforms)}."
+            ]
+        else:
+            lines = [f"Dejaste de trackear {league_name}."]
 
-        if result.league_disabled:
+        if all(r.league_disabled for r in results):
             lines.append(
                 "Como no quedaron más chats suscriptos, la liga se desactivó y se limpió su estado scrapeado."
             )
         else:
-            lines.append(
-                f"Suscripciones activas restantes para esa liga: {result.remaining_enabled_subscriptions}"
-            )
+            remaining = max(r.remaining_enabled_subscriptions for r in results)
+            lines.append(f"Suscripciones activas restantes para esa liga: {remaining}")
 
         return CommandResult(ok=True, message="\n".join(lines))
 
@@ -1296,7 +1309,34 @@ class TrackingService:
                 "El monitor lo volverá a intentar automáticamente."
             )
 
+        lines.extend(self._build_known_league_lines(tracked_league))
+
         return "\n".join(lines)
+
+    def _build_known_league_lines(self, tracked_league) -> list[str]:
+        """Registry card: what the bot already knows about this unified league.
+
+        When the league exists in the registry with other platforms or stats
+        links, the new subscriber inherits everything automatically — tell them.
+        """
+
+        unified_id = getattr(tracked_league, "unified_competition_id", None)
+        if unified_id is None:
+            return []
+        try:
+            siblings = self.repository.list_tracked_competitions_for_unified(unified_id)
+            stats_links = self.repository.list_stats_league_links(tracked_league.id)
+        except Exception:
+            return []
+        others = [s for s in siblings if s.id != tracked_league.id]
+        if not others and not stats_links:
+            return []
+        lines = ["", "✨ Liga conocida en el registro — heredás automáticamente:"]
+        for sibling in others:
+            lines.append(f"  🏦 {sibling.platform}: {sibling.league_name}")
+        for link in stats_links:
+            lines.append(f"  📊 {link.stats_provider}: {link.stats_league_name}")
+        return lines
 
     def _build_empty_confirmation_message(
         self,
@@ -1325,6 +1365,8 @@ class TrackingService:
             lines.append(
                 "Se usó un nombre provisorio y se reemplazará automáticamente cuando la plataforma muestre eventos reales."
             )
+
+        lines.extend(self._build_known_league_lines(tracked_league))
 
         return "\n".join(lines)
 
