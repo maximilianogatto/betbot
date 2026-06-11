@@ -1443,13 +1443,32 @@ class TrackingService:
         except Exception:
             return []
         others = [s for s in siblings if s.id != tracked_league.id]
-        if not others and not stats_links:
+        lines: list[str] = []
+        if others or stats_links:
+            lines.append("")
+            lines.append("✨ Liga conocida en el registro — heredás automáticamente:")
+            for sibling in others:
+                lines.append(f"  🏦 {sibling.platform}: {sibling.league_name}")
+            for link in stats_links:
+                lines.append(f"  📊 {link.stats_provider}: {link.stats_league_name}")
+        lines.extend(self._build_merge_suggestion_lines(tracked_league, unified_id))
+        return lines
+
+    def _build_merge_suggestion_lines(self, tracked_league, unified_id: int) -> list[str]:
+        """Suggest (never auto-link) leagues that look similar, for the user to confirm."""
+
+        try:
+            suggestions = self.repository.suggest_similar_unified(
+                tracked_league.league_name, exclude_unified_id=unified_id
+            )
+        except Exception:
             return []
-        lines = ["", "✨ Liga conocida en el registro — heredás automáticamente:"]
-        for sibling in others:
-            lines.append(f"  🏦 {sibling.platform}: {sibling.league_name}")
-        for link in stats_links:
-            lines.append(f"  📊 {link.stats_provider}: {link.stats_league_name}")
+        if not suggestions:
+            return []
+        lines = ["", "💡 ¿Es la misma liga que alguna de estas? (NO las uní automáticamente)"]
+        for s in suggestions:
+            lines.append(f"  • {s['name']}")
+        lines.append("Si coincide, fusionalas con /link_league (mirá /leagues para los números).")
         return lines
 
     def _build_empty_confirmation_message(

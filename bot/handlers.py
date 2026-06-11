@@ -2602,22 +2602,39 @@ async def unlink_league_command(update: Update, context: ContextTypes.DEFAULT_TY
         )
         return
     n = int(args[0])
-    plat_q = " ".join(args[1:]).lower()
+    plat_q = args[1].lower()
+    extra_q = " ".join(args[2:]).lower()  # id o fragmento del nombre, opcional
     if not (1 <= n <= len(unified)):
         await update.message.reply_text("Número fuera de rango. Mirá <code>/leagues</code>.", parse_mode=ParseMode.HTML)
         return
     comps = tracking_repository.list_tracked_competitions_for_unified(unified[n - 1]["id"])
-    target = next((c for c in comps if plat_q in c.platform.lower()), None)
-    if target is None:
+    matches = [c for c in comps if plat_q in c.platform.lower()]
+    if extra_q:
+        matches = [
+            c for c in matches
+            if extra_q in str(c.competition_external_id).lower() or extra_q in c.competition_name.lower()
+        ]
+    if not matches:
         await update.message.reply_text(
             f"No encontré la plataforma «{escape_html(plat_q)}» en esa liga. Mirá <code>/league {n}</code>.",
             parse_mode=ParseMode.HTML,
         )
         return
+    if len(matches) > 1:
+        lines = [f"Esa liga tiene {len(matches)} competencias de «{escape_html(plat_q)}». ¿Cuál separo?"]
+        for comp in matches:
+            lines.append(
+                f"  • <code>{escape_html(str(comp.competition_external_id))}</code> — {escape_html(comp.competition_name)}"
+            )
+        lines.append(f"\nUsá: <code>/unlink_league {n} {escape_html(plat_q)} [id_o_nombre]</code>")
+        await update.message.reply_text("\n".join(lines), parse_mode=ParseMode.HTML)
+        return
+    target = matches[0]
     new_uid = tracking_repository.create_unified_competition(target.competition_name)
     tracking_repository.link_tracked_competition_to_unified(target.id, new_uid)
     await update.message.reply_text(
-        f"✅ Saqué <b>{escape_html(target.platform.replace('_http', ''))}</b> de la liga; quedó como liga propia.",
+        f"✅ Saqué <b>{escape_html(target.platform.replace('_http', ''))}</b> "
+        f"({escape_html(target.competition_name)}) de la liga; quedó como liga propia.",
         parse_mode=ParseMode.HTML,
     )
 
