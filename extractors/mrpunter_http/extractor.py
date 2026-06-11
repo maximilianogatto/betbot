@@ -24,7 +24,7 @@ from core.extractor_base import Extractor, LeagueDiscoveryOption
 from core.models import CompetitionExtraction, EventSnapshot, LiveEventSnapshot, ProviderCapabilities
 from extractors.mrpunter_http import discovery as discovery_module
 from extractors.mrpunter_http.client import MrPunterHttpClient
-from extractors.mrpunter_http.parser import build_competition_extraction, live_events_from_initial
+from extractors.mrpunter_http.parser import build_competition_extraction, live_events_from_league_odds
 from extractors.mrpunter_http.settings import MrPunterHttpSettings, load_mrpunter_settings
 
 _SUPPORTED_HOSTS = ("mrpunter.com", "fssb.io")
@@ -101,8 +101,24 @@ class MrPunterHttpExtractor(Extractor):
         )
 
     async def list_live_events(self) -> list[LiveEventSnapshot]:
-        payload = await self._client.fetch_live_initial()
-        return live_events_from_initial(payload, sport_id=self.settings.sport_id)
+        # The events/v2/live/initial feed returns an empty data array even when
+        # live football exists (navigation's liveEventsQuantity proves it), so we
+        # gather live events per league: navigation -> live football leagues ->
+        # their gameOdds with IsLive=true (same positional array shape).
+        navigation = await self._get_navigation()
+        sport_id = str(self.settings.sport_id)
+        sport = next((s for s in navigation or [] if str(s.get("_id")) == sport_id), None)
+        if sport is None:
+            return []
+        master_ids: list[str] = []
+        for country in sport.get("countries", []) or []:
+            for league in country.get("Leagues", []) or []:
+                if (league.get("liveEventsQuantity") or 0) > 0 and league.get("MasterLeagueId") is not None:
+                    master_ids.append(str(league["MasterLeagueId"]))
+        if not master_ids:
+            return []
+        events_by_league = await self._client.fetch_many_league_odds(master_ids, is_live=True)
+        return live_events_from_league_odds(events_by_league, sport_id=sport_id)
 
     def build_competition_url(self, *, competition_external_id, source_url=None, metadata=None) -> str | None:
         del source_url, metadata

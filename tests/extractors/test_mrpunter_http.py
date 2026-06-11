@@ -107,6 +107,18 @@ class MrPunterParserTests(unittest.TestCase):
         self.assertEqual(e.minute, "34")
         self.assertEqual(e.competition_name, "Brasileirao")
 
+    def test_live_from_league_odds_dedupes_and_maps(self) -> None:
+        from extractors.mrpunter_http.parser import live_events_from_league_odds
+
+        soccer = _live_payload()["events"]["data"][0]  # Flamengo vs Palmeiras
+        # Same event returned by two leagues' gameOdds must dedupe to one.
+        live = live_events_from_league_odds(
+            {"5579": [soccer], "9999": [soccer]}, sport_id="1"
+        )
+        self.assertEqual(len(live), 1)
+        self.assertEqual((live[0].home, live[0].away), ("Flamengo", "Palmeiras"))
+        self.assertTrue(live[0].is_soccer)
+
 
 class MrPunterDiscoveryTests(unittest.TestCase):
     def _nav(self) -> list:

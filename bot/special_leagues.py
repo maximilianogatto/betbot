@@ -1292,22 +1292,28 @@ class NorwayLeagues(SpecialLeague):
 
     def _extract_fiks_id(self, row: list[dict[str, Any]]) -> str:
         import urllib.parse
+
+        def _fiks_from(href: str) -> str | None:
+            try:
+                qs = urllib.parse.parse_qs(urllib.parse.urlparse(href).query)
+                return qs["fiksId"][0] if "fiksId" in qs else None
+            except Exception:
+                return None
+
+        # The MATCH id lives in the /fotballdata/kamp/ link. A row also carries
+        # fiksId for the tournament, teams and venue; grabbing the first match
+        # returned the TOURNAMENT id, which 404s on the match-detail URL.
         for cell in row:
             for href in cell.get("hrefs", []):
-                if "fiksId=" in href:
-                    try:
-                        parsed = urllib.parse.urlparse(href)
-                        qs = urllib.parse.parse_qs(parsed.query)
-                        if "fiksId" in qs:
-                            return qs["fiksId"][0]
-                    except Exception:
-                        pass
+                if "/fotballdata/kamp/" in href:
+                    fiks = _fiks_from(href)
+                    if fiks:
+                        return fiks
         if len(row) > 8:
             txt = row[8].get("text", "").strip()
             if txt.isdigit():
                 return txt
-        import uuid
-        return str(uuid.uuid4())
+        return ""
 
     def today(self) -> tuple[list[MatchRow], int]:
         from datetime import date

@@ -284,6 +284,41 @@ def build_competition_extraction(
     )
 
 
+def _live_snapshot_from_array(ev: Any, *, sport_id: str) -> LiveEventSnapshot | None:
+    """Map one FSB positional event array to a live snapshot (or None)."""
+
+    if not isinstance(ev, list) or len(ev) <= IDX_NAME:
+        return None
+    home, away, _, _ = _competitors(ev)
+    event_id = ev[IDX_EVENT_ID]
+    if not home or not away or event_id is None:
+        return None
+    ev_sport = str(ev[3]) if len(ev) > 3 else ""
+    s1, s2 = _score(ev)
+    clock = ev[IDX_CLOCK] if len(ev) > IDX_CLOCK and isinstance(ev[IDX_CLOCK], dict) else {}
+    minute = None
+    for key in ("Minute", "MatchTime", "GameTime", "Time"):
+        if clock.get(key) is not None:
+            minute = str(clock.get(key))
+            break
+    return LiveEventSnapshot(
+        platform=PLATFORM,
+        external_event_id=str(event_id),
+        home=home,
+        away=away,
+        competition_name=str(ev[2]) if len(ev) > 2 else None,
+        country_name=str(ev[7]) if len(ev) > 7 else None,
+        minute=minute,
+        home_score=s1,
+        away_score=s2,
+        scheduled_at=_kickoff_iso(ev[IDX_START] if len(ev) > IDX_START else None),
+        source_url=f"mrpunter:league:{ev[31]}" if len(ev) > 31 else None,
+        is_soccer=(ev_sport == str(sport_id)),
+        extracted_at=utc_now_iso(),
+        raw_payload={"sport_id": ev_sport},
+    )
+
+
 def live_events_from_initial(payload: dict[str, Any], *, sport_id: str = "1") -> list[LiveEventSnapshot]:
     """Map a live/initial payload's event arrays to live snapshots."""
 
@@ -293,36 +328,31 @@ def live_events_from_initial(payload: dict[str, Any], *, sport_id: str = "1") ->
         return []
     live: list[LiveEventSnapshot] = []
     for ev in data:
-        if not isinstance(ev, list) or len(ev) <= IDX_NAME:
+        snapshot = _live_snapshot_from_array(ev, sport_id=sport_id)
+        if snapshot is not None:
+            live.append(snapshot)
+    return live
+
+
+def live_events_from_league_odds(
+    events_by_league: dict[str, list[list[Any]]], *, sport_id: str = "1"
+) -> list[LiveEventSnapshot]:
+    """Map per-league live gameOdds arrays to deduped live snapshots.
+
+    The ``events/v2/live/initial`` feed returns an empty ``data`` array even when
+    live football exists, so live detection gathers each live league's gameOdds
+    (``IsLive=true``) instead — same positional array shape.
+    """
+
+    live: list[LiveEventSnapshot] = []
+    seen: set[str] = set()
+    for events in events_by_league.values():
+        if not isinstance(events, list):
             continue
-        home, away, _, _ = _competitors(ev)
-        event_id = ev[IDX_EVENT_ID]
-        if not home or not away or event_id is None:
-            continue
-        ev_sport = str(ev[3]) if len(ev) > 3 else ""
-        s1, s2 = _score(ev)
-        clock = ev[IDX_CLOCK] if len(ev) > IDX_CLOCK and isinstance(ev[IDX_CLOCK], dict) else {}
-        minute = None
-        for key in ("Minute", "MatchTime", "GameTime", "Time"):
-            if clock.get(key) is not None:
-                minute = str(clock.get(key))
-                break
-        live.append(
-            LiveEventSnapshot(
-                platform=PLATFORM,
-                external_event_id=str(event_id),
-                home=home,
-                away=away,
-                competition_name=str(ev[2]) if len(ev) > 2 else None,
-                country_name=str(ev[7]) if len(ev) > 7 else None,
-                minute=minute,
-                home_score=s1,
-                away_score=s2,
-                scheduled_at=_kickoff_iso(ev[IDX_START] if len(ev) > IDX_START else None),
-                source_url=f"mrpunter:league:{ev[31]}" if len(ev) > 31 else None,
-                is_soccer=(ev_sport == str(sport_id)),
-                extracted_at=utc_now_iso(),
-                raw_payload={"sport_id": ev_sport},
-            )
-        )
+        for ev in events:
+            snapshot = _live_snapshot_from_array(ev, sport_id=sport_id)
+            if snapshot is None or snapshot.external_event_id in seen:
+                continue
+            seen.add(snapshot.external_event_id)
+            live.append(snapshot)
     return live
