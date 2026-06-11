@@ -5080,9 +5080,11 @@ async def no_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     try:
         name, matches = await asyncio.to_thread(adapter.fixtures, "NO1")
         target = None
+        competition = None
         for m in matches:
             if m.match_id == match_id:
                 target = m
+                competition = name  # fixtures("NO1") -> Toppserien
                 break
 
         if not target:
@@ -5090,16 +5092,21 @@ async def no_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             for m in today_matches:
                 if m.match_id == match_id:
                     target = m
+                    competition = m.league_name  # today() carries the real league
                     break
 
         if not target:
-            await update.message.reply_text("❌ No encontré un partido con ese ID en Toppserien.")
+            await update.message.reply_text(
+                "❌ No encontré un partido con ese ID. Mirá los IDs vigentes con `/no_today`.",
+                parse_mode="Markdown",
+            )
             return
 
+        competition = competition or "Noruega"
         lines = [
             f"🇳🇴 *{_md_escape(target.home)} vs {_md_escape(target.away)}*",
             "━━━━━━━━━━━━━━━━━━━━",
-            f"🏆 Competencia: `Toppserien`",
+            f"🏆 Competencia: `{_md_escape(competition)}`",
             f"🗓️ Fecha: `{target.date_arg}`",
             f"🕒 Hora (Arg): `{target.time_arg}`",
         ]

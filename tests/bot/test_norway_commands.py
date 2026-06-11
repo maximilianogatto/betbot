@@ -134,5 +134,57 @@ class NoCommandTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("Hønefoss BK", out)
         self.assertIn("no está disponible", out)
 
+    async def test_today_uses_match_id_not_tournament_id(self) -> None:
+        # The Turnering cell carries the TOURNAMENT fiksId; only /fotballdata/kamp/
+        # is the match id. /no_today must show the match id (else /no_match 404s).
+        update, message = _update()
+        tables = [
+            {
+                "rows": [
+                    [{"text": "Turnering"}, {"text": "Tid"}, {"text": "Hjemmelag"}, {"text": "Resultat"}, {"text": "Bortelag"}, {"text": "Bane"}, {"text": "Referat"}],
+                    [
+                        {"text": "Norsk Tipping-ligaen avd. 5", "hrefs": ["/fotballdata/turnering/hjem/?fiksId=205690"]},
+                        {"text": "19:00"},
+                        {"text": "Ulfstind", "hrefs": ["/fotballdata/lag/hjem/?fiksId=206664"]},
+                        {"text": "3 - 0", "hrefs": ["/fotballdata/kamp/?fiksId=8995864"]},
+                        {"text": "Fløya", "hrefs": ["/fotballdata/lag/hjem/?fiksId=651"]},
+                        {"text": "Tønsnes", "hrefs": ["/fotballdata/anlegg/hjem/?fiksId=14918"]},
+                        {"text": "Kampfakta", "hrefs": ["/fotballdata/kamp/?fiksId=8995864"]},
+                    ],
+                ]
+            }
+        ]
+        with self._patch_client(tables):
+            await no_today_command(update, SimpleNamespace())
+        out = message.reply_text.await_args.args[0]
+        self.assertIn("8995864", out)       # match id
+        self.assertNotIn("205690", out)     # NOT the tournament id
+
+    async def test_match_shows_real_league_not_hardcoded_toppserien(self) -> None:
+        update, message = _update()
+        tables = [
+            {
+                "rows": [
+                    [{"text": "Turnering"}, {"text": "Tid"}, {"text": "Hjemmelag"}, {"text": "Resultat"}, {"text": "Bortelag"}, {"text": "Bane"}, {"text": "Referat"}],
+                    [
+                        {"text": "Norsk Tipping-ligaen avd. 5", "hrefs": ["/fotballdata/turnering/hjem/?fiksId=205690"]},
+                        {"text": "19:00"},
+                        {"text": "Ulfstind"},
+                        {"text": "3 - 0", "hrefs": ["/fotballdata/kamp/?fiksId=8995864"]},
+                        {"text": "Fløya"},
+                        {"text": "Tønsnes"},
+                        {"text": "Kampfakta", "hrefs": ["/fotballdata/kamp/?fiksId=8995864"]},
+                    ],
+                ]
+            }
+        ]
+        with self._patch_client(tables):
+            await no_match_command(update, SimpleNamespace(args=["8995864"]))
+        out = message.reply_text.await_args.args[0]
+        self.assertIn("Norsk Tipping-ligaen avd. 5", out)
+        self.assertNotIn("Toppserien", out)
+        self.assertIn("fiksId=8995864", out)  # working match link
+
+
 if __name__ == "__main__":
     unittest.main()
