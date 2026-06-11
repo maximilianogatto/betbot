@@ -2481,40 +2481,77 @@ class SqliteTrackingRepository:
 
         with _connect() as connection:
             _ensure_tracked_competition_exists(connection, tracked_competition_id)
-            connection.execute(
-                """
-                INSERT INTO stats_league_links (
-                    tracked_competition_id,
-                    stats_provider,
-                    stats_league_id,
-                    stats_league_name,
-                    stats_country_name,
-                    confidence,
-                    payload_json,
-                    created_at,
-                    updated_at
+            uc_row = connection.execute(
+                "SELECT unified_competition_id FROM tracked_competitions WHERE id = ?",
+                (tracked_competition_id,),
+            ).fetchone()
+            uc_id = uc_row["unified_competition_id"] if uc_row else None
+
+            # The link belongs to the unified league: updating it from any platform
+            # updates the single shared row (inheritance across platforms).
+            existing = None
+            if uc_id is not None:
+                existing = connection.execute(
+                    "SELECT id FROM stats_league_links WHERE unified_competition_id = ? AND stats_provider = ?",
+                    (uc_id, normalized_provider),
+                ).fetchone()
+            if existing is None:
+                existing = connection.execute(
+                    "SELECT id FROM stats_league_links WHERE tracked_competition_id = ? AND stats_provider = ?",
+                    (tracked_competition_id, normalized_provider),
+                ).fetchone()
+
+            if existing is not None:
+                connection.execute(
+                    """
+                    UPDATE stats_league_links
+                    SET tracked_competition_id = ?, unified_competition_id = ?,
+                        stats_league_id = ?, stats_league_name = ?, stats_country_name = ?,
+                        confidence = ?, payload_json = ?, updated_at = ?
+                    WHERE id = ?
+                    """,
+                    (
+                        tracked_competition_id,
+                        uc_id,
+                        normalized_league_id,
+                        normalized_league_name,
+                        _normalize_optional_text(stats_country_name),
+                        float(confidence),
+                        payload_json,
+                        now_iso,
+                        existing["id"],
+                    ),
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(tracked_competition_id, stats_provider) DO UPDATE SET
-                    stats_league_id = excluded.stats_league_id,
-                    stats_league_name = excluded.stats_league_name,
-                    stats_country_name = excluded.stats_country_name,
-                    confidence = excluded.confidence,
-                    payload_json = excluded.payload_json,
-                    updated_at = excluded.updated_at
-                """,
-                (
-                    tracked_competition_id,
-                    normalized_provider,
-                    normalized_league_id,
-                    normalized_league_name,
-                    _normalize_optional_text(stats_country_name),
-                    float(confidence),
-                    payload_json,
-                    now_iso,
-                    now_iso,
-                ),
-            )
+            else:
+                connection.execute(
+                    """
+                    INSERT INTO stats_league_links (
+                        tracked_competition_id,
+                        unified_competition_id,
+                        stats_provider,
+                        stats_league_id,
+                        stats_league_name,
+                        stats_country_name,
+                        confidence,
+                        payload_json,
+                        created_at,
+                        updated_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        tracked_competition_id,
+                        uc_id,
+                        normalized_provider,
+                        normalized_league_id,
+                        normalized_league_name,
+                        _normalize_optional_text(stats_country_name),
+                        float(confidence),
+                        payload_json,
+                        now_iso,
+                        now_iso,
+                    ),
+                )
             row = _fetch_stats_league_link_row(connection, tracked_competition_id, stats_provider=normalized_provider)
 
         if row is None:
@@ -2546,22 +2583,24 @@ class SqliteTrackingRepository:
             uc_id = uc_row["unified_competition_id"] if uc_row else None
             
             if uc_id is not None:
+                # Direct unified-level read: links belong to the league, so every
+                # platform of the league sees them (also covers legacy rows whose
+                # unified column was backfilled from their tracked competition).
                 rows = connection.execute(
                     """
                     SELECT
-                        sll.id,
-                        sll.tracked_competition_id,
-                        sll.stats_provider,
-                        sll.stats_league_id,
-                        sll.stats_league_name,
-                        sll.stats_country_name,
-                        sll.confidence,
-                        sll.payload_json,
-                        sll.created_at,
-                        sll.updated_at
-                    FROM stats_league_links sll
-                    INNER JOIN tracked_competitions tc ON tc.id = sll.tracked_competition_id
-                    WHERE tc.unified_competition_id = ?
+                        id,
+                        tracked_competition_id,
+                        stats_provider,
+                        stats_league_id,
+                        stats_league_name,
+                        stats_country_name,
+                        confidence,
+                        payload_json,
+                        created_at,
+                        updated_at
+                    FROM stats_league_links
+                    WHERE unified_competition_id = ?
                     """,
                     (uc_id,),
                 ).fetchall()
@@ -3086,21 +3125,19 @@ class SqliteTrackingRepository:
     def get_unified_competition(self, unified_competition_id: int) -> dict | None:
         with _connect() as connection:
             row = connection.execute(
-                "SELECT id, name FROM unified_competitions WHERE id = ?",
+                """
+                SELECT id, name, public_id, display_name, country, gender, age_group
+                FROM unified_competitions WHERE id = ?
+                """,
                 (unified_competition_id,),
             ).fetchone()
-        return {"id": row["id"], "name": row["name"]} if row is not None else None
+        return dict(row) if row is not None else None
 
     def create_unified_competition(self, name: str) -> int:
         """Create a NEW unified competition (no fuzzy merge) and return its id."""
 
-        now_iso = _utc_now_iso()
         with _connect() as connection:
-            cur = connection.execute(
-                "INSERT INTO unified_competitions (name, created_at, updated_at) VALUES (?, ?, ?)",
-                (name, now_iso, now_iso),
-            )
-            return int(cur.lastrowid)
+            return _insert_unified_competition(connection, name)
 
     def delete_unified_competition(self, unified_competition_id: int) -> None:
         """Delete a unified competition (its competitions should be reassigned first)."""
@@ -3144,11 +3181,7 @@ class SqliteTrackingRepository:
                 if unified_ids:
                     target = min(unified_ids)
                 else:
-                    cur = connection.execute(
-                        "INSERT INTO unified_competitions (name, created_at, updated_at) VALUES (?, ?, ?)",
-                        (members[0][2], now_iso, now_iso),
-                    )
-                    target = int(cur.lastrowid)
+                    target = _insert_unified_competition(connection, members[0][2])
                 changed = False
                 for comp_id, current, _name in members:
                     if current != target:
@@ -4011,6 +4044,19 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
         """
     )
 
+    # 1b. League registry fields: public slug + traits (country / gender / age).
+    _ensure_column(connection, "unified_competitions", "public_id", "TEXT")
+    _ensure_column(connection, "unified_competitions", "display_name", "TEXT")
+    _ensure_column(connection, "unified_competitions", "country", "TEXT")
+    _ensure_column(connection, "unified_competitions", "gender", "TEXT")
+    _ensure_column(connection, "unified_competitions", "age_group", "TEXT")
+    connection.execute(
+        """
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_unified_competitions_public_id
+        ON unified_competitions(public_id) WHERE public_id IS NOT NULL
+        """
+    )
+
     # 2. Add unified_competition_id column to tracked_competitions
     _ensure_column(
         connection,
@@ -4034,15 +4080,93 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
         if uc_row:
             uc_id = uc_row["id"]
         else:
-            cursor = connection.execute(
-                "INSERT INTO unified_competitions (name, created_at, updated_at) VALUES (?, ?, ?)",
-                (tc_name, now_iso, now_iso),
-            )
-            uc_id = cursor.lastrowid
+            uc_id = _insert_unified_competition(connection, tc_name)
         connection.execute(
             "UPDATE tracked_competitions SET unified_competition_id = ? WHERE id = ?",
             (uc_id, tc_id),
         )
+
+    # 4. Registry backfill: rows created before the registry get slug + traits.
+    #    Runs on every connect (cheap when empty) so it also self-heals rows
+    #    inserted by older code paths.
+    pending_registry = connection.execute(
+        "SELECT id, name FROM unified_competitions WHERE public_id IS NULL ORDER BY id"
+    ).fetchall()
+    if pending_registry:
+        from core.league_naming import extract_league_traits, league_slug
+
+        for row in pending_registry:
+            base = league_slug(row["name"]) or f"league-{row['id']}"
+            slug = base
+            suffix = 2
+            while connection.execute(
+                "SELECT 1 FROM unified_competitions WHERE public_id = ?", (slug,)
+            ).fetchone() is not None:
+                slug = f"{base}-{suffix}"
+                suffix += 1
+            traits = extract_league_traits(row["name"])
+            connection.execute(
+                """
+                UPDATE unified_competitions
+                SET public_id = ?, display_name = COALESCE(display_name, name),
+                    country = ?, gender = ?, age_group = ?, updated_at = ?
+                WHERE id = ?
+                """,
+                (slug, traits["country"], traits["gender"], traits["age_group"], now_iso, row["id"]),
+            )
+
+    # 5. Stats links live at the unified-league level so every platform of the
+    #    same league inherits them. Backfill from the tracked competition, then
+    #    resolve duplicates per (unified, provider) keeping the best link.
+    _ensure_column(
+        connection,
+        "stats_league_links",
+        "unified_competition_id",
+        "INTEGER REFERENCES unified_competitions(id) ON DELETE CASCADE",
+    )
+    # Dedupe BEFORE backfilling: the unique index may already exist, so the
+    # backfill UPDATE must not produce (unified, provider) collisions. Resolve
+    # each row's unified via its tracked competition and keep the best link.
+    connection.execute(
+        """
+        DELETE FROM stats_league_links
+        WHERE id IN (
+            SELECT sll.id
+            FROM stats_league_links sll
+            LEFT JOIN tracked_competitions tc ON tc.id = sll.tracked_competition_id
+            WHERE COALESCE(sll.unified_competition_id, tc.unified_competition_id) IS NOT NULL
+        )
+        AND id NOT IN (
+            SELECT keep_id FROM (
+                SELECT sll.id AS keep_id, ROW_NUMBER() OVER (
+                    PARTITION BY COALESCE(sll.unified_competition_id, tc.unified_competition_id),
+                                 sll.stats_provider
+                    ORDER BY sll.confidence DESC, sll.updated_at DESC, sll.id DESC
+                ) AS rn
+                FROM stats_league_links sll
+                LEFT JOIN tracked_competitions tc ON tc.id = sll.tracked_competition_id
+                WHERE COALESCE(sll.unified_competition_id, tc.unified_competition_id) IS NOT NULL
+            ) WHERE rn = 1
+        )
+        """
+    )
+    connection.execute(
+        """
+        UPDATE stats_league_links
+        SET unified_competition_id = (
+            SELECT tc.unified_competition_id FROM tracked_competitions tc
+            WHERE tc.id = stats_league_links.tracked_competition_id
+        )
+        WHERE unified_competition_id IS NULL
+        """
+    )
+    connection.execute(
+        """
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_stats_league_links_unified_provider
+        ON stats_league_links(unified_competition_id, stats_provider)
+        WHERE unified_competition_id IS NOT NULL
+        """
+    )
 
 
 
@@ -4866,6 +4990,37 @@ def _league_name_similarity(left: str, right: str) -> float:
     return max(ratio, overlap)
 
 
+def _insert_unified_competition(connection: sqlite3.Connection, name: str) -> int:
+    """Insert a unified competition with its registry fields (public slug + traits).
+
+    Every code path that creates a unified competition must go through here so the
+    league registry (public_id / country / gender / age_group) stays complete.
+    """
+
+    from core.league_naming import extract_league_traits, league_slug
+
+    clean = str(name).strip()
+    now_iso = _utc_now_iso()
+    base = league_slug(clean) or "league"
+    slug = base
+    suffix = 2
+    while connection.execute(
+        "SELECT 1 FROM unified_competitions WHERE public_id = ?", (slug,)
+    ).fetchone() is not None:
+        slug = f"{base}-{suffix}"
+        suffix += 1
+    traits = extract_league_traits(clean)
+    cursor = connection.execute(
+        """
+        INSERT INTO unified_competitions (
+            name, public_id, display_name, country, gender, age_group, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (clean, slug, clean, traits["country"], traits["gender"], traits["age_group"], now_iso, now_iso),
+    )
+    return int(cursor.lastrowid)
+
+
 def _find_or_create_unified_competition_id(connection: sqlite3.Connection, name: str) -> int:
     from core.league_naming import normalize_league_name
 
@@ -4893,12 +5048,7 @@ def _find_or_create_unified_competition_id(connection: sqlite3.Connection, name:
         return best_id
 
     # 3. Create a new unified competition
-    now_iso = _utc_now_iso()
-    cursor = connection.execute(
-        "INSERT INTO unified_competitions (name, created_at, updated_at) VALUES (?, ?, ?)",
-        (name_clean, now_iso, now_iso),
-    )
-    return cursor.lastrowid
+    return _insert_unified_competition(connection, name_clean)
 
 
 tracking_repository = SqliteTrackingRepository()
