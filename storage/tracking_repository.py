@@ -2481,40 +2481,77 @@ class SqliteTrackingRepository:
 
         with _connect() as connection:
             _ensure_tracked_competition_exists(connection, tracked_competition_id)
-            connection.execute(
-                """
-                INSERT INTO stats_league_links (
-                    tracked_competition_id,
-                    stats_provider,
-                    stats_league_id,
-                    stats_league_name,
-                    stats_country_name,
-                    confidence,
-                    payload_json,
-                    created_at,
-                    updated_at
+            uc_row = connection.execute(
+                "SELECT unified_competition_id FROM tracked_competitions WHERE id = ?",
+                (tracked_competition_id,),
+            ).fetchone()
+            uc_id = uc_row["unified_competition_id"] if uc_row else None
+
+            # The link belongs to the unified league: updating it from any platform
+            # updates the single shared row (inheritance across platforms).
+            existing = None
+            if uc_id is not None:
+                existing = connection.execute(
+                    "SELECT id FROM stats_league_links WHERE unified_competition_id = ? AND stats_provider = ?",
+                    (uc_id, normalized_provider),
+                ).fetchone()
+            if existing is None:
+                existing = connection.execute(
+                    "SELECT id FROM stats_league_links WHERE tracked_competition_id = ? AND stats_provider = ?",
+                    (tracked_competition_id, normalized_provider),
+                ).fetchone()
+
+            if existing is not None:
+                connection.execute(
+                    """
+                    UPDATE stats_league_links
+                    SET tracked_competition_id = ?, unified_competition_id = ?,
+                        stats_league_id = ?, stats_league_name = ?, stats_country_name = ?,
+                        confidence = ?, payload_json = ?, updated_at = ?
+                    WHERE id = ?
+                    """,
+                    (
+                        tracked_competition_id,
+                        uc_id,
+                        normalized_league_id,
+                        normalized_league_name,
+                        _normalize_optional_text(stats_country_name),
+                        float(confidence),
+                        payload_json,
+                        now_iso,
+                        existing["id"],
+                    ),
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(tracked_competition_id, stats_provider) DO UPDATE SET
-                    stats_league_id = excluded.stats_league_id,
-                    stats_league_name = excluded.stats_league_name,
-                    stats_country_name = excluded.stats_country_name,
-                    confidence = excluded.confidence,
-                    payload_json = excluded.payload_json,
-                    updated_at = excluded.updated_at
-                """,
-                (
-                    tracked_competition_id,
-                    normalized_provider,
-                    normalized_league_id,
-                    normalized_league_name,
-                    _normalize_optional_text(stats_country_name),
-                    float(confidence),
-                    payload_json,
-                    now_iso,
-                    now_iso,
-                ),
-            )
+            else:
+                connection.execute(
+                    """
+                    INSERT INTO stats_league_links (
+                        tracked_competition_id,
+                        unified_competition_id,
+                        stats_provider,
+                        stats_league_id,
+                        stats_league_name,
+                        stats_country_name,
+                        confidence,
+                        payload_json,
+                        created_at,
+                        updated_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        tracked_competition_id,
+                        uc_id,
+                        normalized_provider,
+                        normalized_league_id,
+                        normalized_league_name,
+                        _normalize_optional_text(stats_country_name),
+                        float(confidence),
+                        payload_json,
+                        now_iso,
+                        now_iso,
+                    ),
+                )
             row = _fetch_stats_league_link_row(connection, tracked_competition_id, stats_provider=normalized_provider)
 
         if row is None:
@@ -2546,22 +2583,24 @@ class SqliteTrackingRepository:
             uc_id = uc_row["unified_competition_id"] if uc_row else None
             
             if uc_id is not None:
+                # Direct unified-level read: links belong to the league, so every
+                # platform of the league sees them (also covers legacy rows whose
+                # unified column was backfilled from their tracked competition).
                 rows = connection.execute(
                     """
                     SELECT
-                        sll.id,
-                        sll.tracked_competition_id,
-                        sll.stats_provider,
-                        sll.stats_league_id,
-                        sll.stats_league_name,
-                        sll.stats_country_name,
-                        sll.confidence,
-                        sll.payload_json,
-                        sll.created_at,
-                        sll.updated_at
-                    FROM stats_league_links sll
-                    INNER JOIN tracked_competitions tc ON tc.id = sll.tracked_competition_id
-                    WHERE tc.unified_competition_id = ?
+                        id,
+                        tracked_competition_id,
+                        stats_provider,
+                        stats_league_id,
+                        stats_league_name,
+                        stats_country_name,
+                        confidence,
+                        payload_json,
+                        created_at,
+                        updated_at
+                    FROM stats_league_links
+                    WHERE unified_competition_id = ?
                     """,
                     (uc_id,),
                 ).fetchall()
@@ -4075,6 +4114,59 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
                 """,
                 (slug, traits["country"], traits["gender"], traits["age_group"], now_iso, row["id"]),
             )
+
+    # 5. Stats links live at the unified-league level so every platform of the
+    #    same league inherits them. Backfill from the tracked competition, then
+    #    resolve duplicates per (unified, provider) keeping the best link.
+    _ensure_column(
+        connection,
+        "stats_league_links",
+        "unified_competition_id",
+        "INTEGER REFERENCES unified_competitions(id) ON DELETE CASCADE",
+    )
+    # Dedupe BEFORE backfilling: the unique index may already exist, so the
+    # backfill UPDATE must not produce (unified, provider) collisions. Resolve
+    # each row's unified via its tracked competition and keep the best link.
+    connection.execute(
+        """
+        DELETE FROM stats_league_links
+        WHERE id IN (
+            SELECT sll.id
+            FROM stats_league_links sll
+            LEFT JOIN tracked_competitions tc ON tc.id = sll.tracked_competition_id
+            WHERE COALESCE(sll.unified_competition_id, tc.unified_competition_id) IS NOT NULL
+        )
+        AND id NOT IN (
+            SELECT keep_id FROM (
+                SELECT sll.id AS keep_id, ROW_NUMBER() OVER (
+                    PARTITION BY COALESCE(sll.unified_competition_id, tc.unified_competition_id),
+                                 sll.stats_provider
+                    ORDER BY sll.confidence DESC, sll.updated_at DESC, sll.id DESC
+                ) AS rn
+                FROM stats_league_links sll
+                LEFT JOIN tracked_competitions tc ON tc.id = sll.tracked_competition_id
+                WHERE COALESCE(sll.unified_competition_id, tc.unified_competition_id) IS NOT NULL
+            ) WHERE rn = 1
+        )
+        """
+    )
+    connection.execute(
+        """
+        UPDATE stats_league_links
+        SET unified_competition_id = (
+            SELECT tc.unified_competition_id FROM tracked_competitions tc
+            WHERE tc.id = stats_league_links.tracked_competition_id
+        )
+        WHERE unified_competition_id IS NULL
+        """
+    )
+    connection.execute(
+        """
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_stats_league_links_unified_provider
+        ON stats_league_links(unified_competition_id, stats_provider)
+        WHERE unified_competition_id IS NOT NULL
+        """
+    )
 
 
 
