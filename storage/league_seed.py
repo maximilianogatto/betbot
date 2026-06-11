@@ -34,79 +34,106 @@ from storage.tracking_repository import (
 
 logger = logging.getLogger(__name__)
 
-SEED_VERSION = 1
+SEED_VERSION = 2
 SEED_FILE_PATH = PROJECT_ROOT / "seeds" / "leagues.json"
 
 
 # --------------------------------------------------------------------------- #
 # Export
 # --------------------------------------------------------------------------- #
+def _platform_dict(row) -> dict[str, Any]:
+    return {
+        "platform": row["platform"],
+        "competition_external_id": row["competition_external_id"],
+        "competition_name": row["competition_name"],
+        "source_url": row["source_url"],
+        "metadata_json": row["metadata_json"],
+        "needs_name_resolution": int(row["needs_name_resolution"] or 0),
+        "enabled": int(row["enabled"] or 0),
+        "reminders_enabled": int(row["reminders_enabled"] or 0),
+    }
+
+
 def export_league_seed() -> dict[str, Any]:
-    """Read the generic league data out of the live DB into a plain dict."""
+    """Read the registry (leagues + platform links + stats links) into a dict.
+
+    Format v2 is registry-centric: one entry per unified league (keyed by its
+    ``public_id``) holding its platform links and league-level stats links.
+    Platforms without a unified league go under ``unlinked_platforms``.
+    """
 
     with _connect() as connection:
-        unified = [
-            row["name"]
-            for row in connection.execute(
-                "SELECT name FROM unified_competitions ORDER BY name"
+        leagues: list[dict[str, Any]] = []
+        for uc in connection.execute(
+            """
+            SELECT id, name, public_id, display_name, country, gender, age_group
+            FROM unified_competitions ORDER BY name
+            """
+        ).fetchall():
+            platforms = [
+                _platform_dict(r)
+                for r in connection.execute(
+                    """
+                    SELECT platform, competition_external_id, competition_name,
+                           source_url, metadata_json, needs_name_resolution,
+                           enabled, reminders_enabled
+                    FROM tracked_competitions
+                    WHERE unified_competition_id = ?
+                    ORDER BY platform, competition_external_id
+                    """,
+                    (uc["id"],),
+                ).fetchall()
+            ]
+            stats_links = [
+                {
+                    "stats_provider": r["stats_provider"],
+                    "stats_league_id": r["stats_league_id"],
+                    "stats_league_name": r["stats_league_name"],
+                    "stats_country_name": r["stats_country_name"],
+                    "confidence": r["confidence"],
+                    "payload_json": r["payload_json"],
+                }
+                for r in connection.execute(
+                    """
+                    SELECT stats_provider, stats_league_id, stats_league_name,
+                           stats_country_name, confidence, payload_json
+                    FROM stats_league_links
+                    WHERE unified_competition_id = ?
+                    ORDER BY stats_provider
+                    """,
+                    (uc["id"],),
+                ).fetchall()
+            ]
+            leagues.append({
+                "public_id": uc["public_id"],
+                "name": uc["name"],
+                "display_name": uc["display_name"],
+                "country": uc["country"],
+                "gender": uc["gender"],
+                "age_group": uc["age_group"],
+                "platforms": platforms,
+                "stats_links": stats_links,
+            })
+
+        unlinked = [
+            _platform_dict(r)
+            for r in connection.execute(
+                """
+                SELECT platform, competition_external_id, competition_name,
+                       source_url, metadata_json, needs_name_resolution,
+                       enabled, reminders_enabled
+                FROM tracked_competitions
+                WHERE unified_competition_id IS NULL
+                ORDER BY platform, competition_external_id
+                """
             ).fetchall()
-        ]
-
-        tracked_rows = connection.execute(
-            """
-            SELECT tc.platform, tc.competition_external_id, tc.competition_name,
-                   tc.source_url, tc.metadata_json, tc.needs_name_resolution,
-                   tc.enabled, tc.reminders_enabled, uc.name AS unified_name
-            FROM tracked_competitions tc
-            LEFT JOIN unified_competitions uc ON uc.id = tc.unified_competition_id
-            ORDER BY tc.platform, tc.competition_external_id
-            """
-        ).fetchall()
-        tracked = [
-            {
-                "platform": r["platform"],
-                "competition_external_id": r["competition_external_id"],
-                "competition_name": r["competition_name"],
-                "source_url": r["source_url"],
-                "metadata_json": r["metadata_json"],
-                "needs_name_resolution": int(r["needs_name_resolution"] or 0),
-                "enabled": int(r["enabled"] or 0),
-                "reminders_enabled": int(r["reminders_enabled"] or 0),
-                "unified_name": r["unified_name"],
-            }
-            for r in tracked_rows
-        ]
-
-        stats_rows = connection.execute(
-            """
-            SELECT tc.platform, tc.competition_external_id,
-                   sll.stats_provider, sll.stats_league_id, sll.stats_league_name,
-                   sll.stats_country_name, sll.confidence, sll.payload_json
-            FROM stats_league_links sll
-            INNER JOIN tracked_competitions tc ON tc.id = sll.tracked_competition_id
-            ORDER BY tc.platform, tc.competition_external_id, sll.stats_provider
-            """
-        ).fetchall()
-        stats_links = [
-            {
-                "platform": r["platform"],
-                "competition_external_id": r["competition_external_id"],
-                "stats_provider": r["stats_provider"],
-                "stats_league_id": r["stats_league_id"],
-                "stats_league_name": r["stats_league_name"],
-                "stats_country_name": r["stats_country_name"],
-                "confidence": r["confidence"],
-                "payload_json": r["payload_json"],
-            }
-            for r in stats_rows
         ]
 
     return {
         "version": SEED_VERSION,
         "exported_at": _utc_now_iso(),
-        "unified_competitions": unified,
-        "tracked_competitions": tracked,
-        "stats_league_links": stats_links,
+        "leagues": leagues,
+        "unlinked_platforms": unlinked,
     }
 
 
@@ -132,13 +159,101 @@ def load_seed_file(path: Path | None = None) -> dict[str, Any] | None:
     return json.loads(target.read_text(encoding="utf-8"))
 
 
+def _flatten_v2(data: dict[str, Any]) -> dict[str, Any]:
+    """Convert a v2 (registry-centric) seed into the flat v1 import shape."""
+
+    unified_names: list[str] = []
+    tracked: list[dict[str, Any]] = []
+    stats_links: list[dict[str, Any]] = []
+    for league in data.get("leagues") or []:
+        name = str(league.get("name") or "").strip()
+        if not name:
+            continue
+        unified_names.append(name)
+        platforms = league.get("platforms") or []
+        for platform_entry in platforms:
+            tracked.append({**platform_entry, "unified_name": name})
+        # Stats links are league-level; anchor them to the league's first
+        # platform (the link's tracked_competition_id column is NOT NULL).
+        anchor = platforms[0] if platforms else None
+        if anchor is None:
+            continue
+        for link in league.get("stats_links") or []:
+            stats_links.append({
+                **link,
+                "platform": anchor.get("platform"),
+                "competition_external_id": anchor.get("competition_external_id"),
+            })
+    for platform_entry in data.get("unlinked_platforms") or []:
+        tracked.append({**platform_entry, "unified_name": None})
+    return {
+        "unified_competitions": unified_names,
+        "tracked_competitions": tracked,
+        "stats_league_links": stats_links,
+    }
+
+
+def _apply_registry_fields(data: dict[str, Any], *, overwrite: bool) -> None:
+    """Apply v2 registry fields (public_id / traits) to the unified leagues."""
+
+    now_iso = _utc_now_iso()
+    with _connect() as connection:
+        for league in data.get("leagues") or []:
+            name = str(league.get("name") or "").strip()
+            public_id = str(league.get("public_id") or "").strip()
+            if not name:
+                continue
+            row = connection.execute(
+                "SELECT id, public_id FROM unified_competitions WHERE name = ?", (name,)
+            ).fetchone()
+            if row is None:
+                continue
+            if public_id and (overwrite or not row["public_id"]):
+                taken = connection.execute(
+                    "SELECT 1 FROM unified_competitions WHERE public_id = ? AND id != ?",
+                    (public_id, row["id"]),
+                ).fetchone()
+                if taken is None:
+                    connection.execute(
+                        "UPDATE unified_competitions SET public_id = ?, updated_at = ? WHERE id = ?",
+                        (public_id, now_iso, row["id"]),
+                    )
+            assignments = []
+            values: list[Any] = []
+            for field in ("display_name", "country", "gender", "age_group"):
+                value = league.get(field)
+                if value is None:
+                    continue
+                if overwrite:
+                    assignments.append(f"{field} = ?")
+                else:
+                    assignments.append(f"{field} = COALESCE({field}, ?)")
+                values.append(value)
+            if assignments:
+                connection.execute(
+                    f"UPDATE unified_competitions SET {', '.join(assignments)}, updated_at = ? WHERE id = ?",
+                    (*values, now_iso, row["id"]),
+                )
+
+
 def import_league_seed(data: dict[str, Any], *, overwrite: bool = False) -> dict[str, int]:
-    """Upsert the generic league data into the DB using natural keys.
+    """Upsert the seed into the DB using natural keys (accepts formats v1 and v2).
 
     ``overwrite=False`` (default) preserves rows that already exist (only fills in
     a missing unified link); ``overwrite=True`` refreshes their generic fields too.
     Subscriptions / active events / any user data are never touched.
     """
+
+    version = int(data.get("version") or 1)
+    flat = _flatten_v2(data) if version >= 2 else data
+    counts = _import_flat(flat, overwrite=overwrite)
+    if version >= 2:
+        _apply_registry_fields(data, overwrite=overwrite)
+    return counts
+
+
+def _import_flat(data: dict[str, Any], *, overwrite: bool = False) -> dict[str, int]:
+    """Upsert flat (v1-shaped) league data into the DB."""
 
     counts = {
         "unified_created": 0,
@@ -267,21 +382,35 @@ def import_league_seed(data: dict[str, Any], *, overwrite: bool = False) -> dict
                 counts["stats_skipped"] += 1
                 continue
 
-            existing = connection.execute(
-                "SELECT id FROM stats_league_links WHERE tracked_competition_id = ? AND stats_provider = ?",
-                (tracked_id, provider),
+            # The link belongs to the unified league: look it up (and insert it)
+            # at league level so other platforms of the league share one row.
+            uc_row = connection.execute(
+                "SELECT unified_competition_id FROM tracked_competitions WHERE id = ?",
+                (tracked_id,),
             ).fetchone()
+            link_uid = uc_row["unified_competition_id"] if uc_row else None
+            existing = None
+            if link_uid is not None:
+                existing = connection.execute(
+                    "SELECT id FROM stats_league_links WHERE unified_competition_id = ? AND stats_provider = ?",
+                    (link_uid, provider),
+                ).fetchone()
+            if existing is None:
+                existing = connection.execute(
+                    "SELECT id FROM stats_league_links WHERE tracked_competition_id = ? AND stats_provider = ?",
+                    (tracked_id, provider),
+                ).fetchone()
             if existing is None:
                 connection.execute(
                     """
                     INSERT INTO stats_league_links (
-                        tracked_competition_id, stats_provider, stats_league_id,
-                        stats_league_name, stats_country_name, confidence, payload_json,
-                        created_at, updated_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        tracked_competition_id, unified_competition_id, stats_provider,
+                        stats_league_id, stats_league_name, stats_country_name,
+                        confidence, payload_json, created_at, updated_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
-                        tracked_id, provider,
+                        tracked_id, link_uid, provider,
                         str(link.get("stats_league_id") or ""),
                         str(link.get("stats_league_name") or ""),
                         link.get("stats_country_name"),
