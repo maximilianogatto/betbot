@@ -40,3 +40,10 @@ class SlovakSportnetHTTPClient:
         resp = self.client.get(url, params=params)
         resp.raise_for_status()
         return resp.json()
+
+    def get_match_detail(self, match_id: str) -> dict[str, Any]:
+        url = f"https://sutaze.api.sportnet.online/api/v1/matches/{match_id}"
+        resp = self.client.get(url)
+        resp.raise_for_status()
+        return resp.json()
+

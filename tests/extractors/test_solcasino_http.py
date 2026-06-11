@@ -54,7 +54,7 @@ class SolcasinoParserTests(unittest.TestCase):
             tournament_id="100", snapshot=_snapshot(), source_url="solcasino:tournament:100"
         )
         self.assertEqual(extraction.platform, "solcasino_http")
-        self.assertEqual(extraction.competition_name, "Brasileiro Serie A")
+        self.assertEqual(extraction.competition_name, "Brazil · Brasileiro Serie A")
         self.assertEqual(len(extraction.events), 1)
         event = extraction.events[0]
         self.assertEqual(event.home, "Palmeiras")
@@ -88,7 +88,7 @@ class SolcasinoDiscoveryTests(unittest.TestCase):
         # Tennis (200) and event-less league (300) excluded; only Serie A remains.
         self.assertEqual(len(options), 1)
         opt = options[0]
-        self.assertEqual(opt.league_name, "Brasileiro Serie A")
+        self.assertEqual(opt.league_name, "Brazil · Brasileiro Serie A")
         self.assertEqual(opt.country_name, "Brazil")
         self.assertEqual(opt.source_url, "solcasino:tournament:100")
         self.assertEqual(opt.games_count, 1)

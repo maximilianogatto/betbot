@@ -102,6 +102,8 @@ def _extract_options_from_node(
     country_id = _safe_str(node.get("CI")) or parent_country_id
     source_url = build_champ_url(base_url=base_url, champ_id=league_id, language=language)
 
+    disp_name = f"{country_name} · {league_name}" if country_name and country_name != "Desconocido" and country_name.lower() not in league_name.lower() else league_name
+
     return [
         LeagueDiscoveryOption(
             platform=platform,
@@ -109,7 +111,7 @@ def _extract_options_from_node(
             country_id=country_id,
             country_name=country_name,
             league_id=league_id,
-            league_name=league_name,
+            league_name=disp_name,
             source_url=source_url,
             games_count=_coerce_int(node.get("GC")),
             raw_payload={

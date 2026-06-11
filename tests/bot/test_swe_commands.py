@@ -100,25 +100,55 @@ class SweCommandTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_swe_match_success(self) -> None:
         update, message = _update()
-        game_info = {
-            "home": "AIK",
-            "away": "GAIS",
-            "score": "2-1",
-            "status": "In Play",
-            "events": [
-                {"minute": "12'", "type": "Goal", "player": "Player A"},
-                {"minute": "45'", "type": "Yellow Card", "player": "Player B"},
-            ]
-        }
-        with self._patch_client(get_live_game_info=game_info):
+        game_info_xml = """<game-info><game competition-id="133348" date="2026-07-03" start="19:00">
+  <tournament name="Allsvenskan"/>
+  <status desc="In Play"/>
+  <score home-team="2" away-team="1"/>
+  <stadium name="Friends Arena" spectators="15000"/>
+  <teams>
+    <team home-team="true" id="AIK" name="AIK" long-name="AIK Solna"/>
+    <team home-team="false" id="GAIS" name="GAIS" long-name="GAIS Göteborg"/>
+  </teams>
+  <events>
+    <event type="G" game-minute-for-web="12" home-team="true">
+      <participant type="S" given-name="Player" surname="A"/>
+    </event>
+    <event type="P" game-minute-for-web="45" home-team="false">
+      <participant type="Y" surname="Player B" type-desc="Yellow Card"/>
+    </event>
+  </events>
+</game></game-info>"""
+        lineup_xml = """<team-lineups>
+  <team id="AIK" name="AIK" home-team="true">
+    <player given-name="Player" surname="A" number="10" position="9" goals="1" bookings="0" red-card="0"/>
+  </team>
+  <team id="GAIS" name="GAIS" home-team="false">
+    <player given-name="Player" surname="B" number="5" position="Sub" goals="0" bookings="1" red-card="0"/>
+  </team>
+</team-lineups>"""
+
+        client = MagicMock()
+        client.endpoints.live_game_info_pattern = "game-{match_id}.xml"
+        client.live_xml_base_url = "http://mock"
+        
+        mock_resp = MagicMock()
+        mock_resp.text = game_info_xml
+        mock_resp.status_code = 200
+        client.client.get.return_value = mock_resp
+        
+        client.get_live_lineup_xml.return_value = lineup_xml
+        client.get_latest_results.return_value = {"matches": []}
+        client.get_upcoming_matches.return_value = {"matches": []}
+        client.get_standings.return_value = {"teams": []}
+        client.close = MagicMock()
+
+        with patch("stats_providers.svenskfotboll_http.client.SvenskfotbollHTTPClient", return_value=client):
             await swe_match_command(update, SimpleNamespace(args=["6529915"]))
         
-        # Note: _reply_text_chunks uses Message.reply_text to reply, so the mock assertions hold
-        message.reply_text.assert_awaited_once()
+        self.assertGreaterEqual(message.reply_text.await_count, 2)
         out = message.reply_text.await_args.args[0]
-        self.assertIn("AIK vs GAIS", out)
-        self.assertIn("Marcador: 2-1", out)
-        self.assertIn("- 12' Goal Player A", out)
+        self.assertIn("AIK Solna 2-1 GAIS Göteborg", out)
+        self.assertIn("12' ⚽ *Player A* (AIK Solna)", out)
 
 
 _CUP_TREE = {

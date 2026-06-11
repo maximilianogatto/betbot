@@ -54,14 +54,17 @@ def prematch_events_from_snapshot(snapshot: dict[str, Any], *, sport_id: str = "
             continue
         tournament = tournaments.get(str(desc.get("tournament"))) or {}
         category = categories.get(str(tournament.get("category_id"))) or {}
+        t_name = tournament.get("name")
+        c_name = category.get("name")
+        comp_name = f"{c_name} · {t_name}" if c_name and t_name and c_name.lower() not in t_name.lower() else t_name
         out.append(
             LiveEventSnapshot(
                 platform=PLATFORM,
                 external_event_id=str(event_id),
                 home=str(competitors[0].get("name") or "").strip(),
                 away=str(competitors[1].get("name") or "").strip(),
-                competition_name=tournament.get("name"),
-                country_name=category.get("name"),
+                competition_name=comp_name,
+                country_name=c_name,
                 minute=None,
                 scheduled_at=_kickoff_iso(desc.get("scheduled")),
                 source_url=f"solcasino:tournament:{desc.get('tournament')}",
@@ -94,6 +97,9 @@ def live_events_from_snapshot(snapshot: dict[str, Any], *, sport_id: str = "1") 
             continue
         tournament = tournaments.get(str(desc.get("tournament"))) or {}
         category = categories.get(str(tournament.get("category_id"))) or {}
+        t_name = tournament.get("name")
+        c_name = category.get("name")
+        comp_name = f"{c_name} · {t_name}" if c_name and t_name and c_name.lower() not in t_name.lower() else t_name
         markets = event.get("markets") or {}
         if not isinstance(markets, dict):
             markets = {}
@@ -104,8 +110,8 @@ def live_events_from_snapshot(snapshot: dict[str, Any], *, sport_id: str = "1") 
                 external_event_id=str(event_id),
                 home=str(competitors[0].get("name") or "").strip(),
                 away=str(competitors[1].get("name") or "").strip(),
-                competition_name=tournament.get("name"),
-                country_name=category.get("name"),
+                competition_name=comp_name,
+                country_name=c_name,
                 minute=str(clock.get("match_time")) if clock.get("match_time") is not None else None,
                 home_score=_extract_score_value(state, side="home"),
                 away_score=_extract_score_value(state, side="away"),
@@ -319,7 +325,18 @@ def build_competition_extraction(
     tournaments = snapshot.get("tournaments") or {}
     tournament = tournaments.get(str(tournament_id)) if isinstance(tournaments, dict) else None
     tournament = tournament if isinstance(tournament, dict) else {}
-    resolved_name = competition_name or tournament.get("name") or f"Solcasino liga {tournament_id}"
+    categories = snapshot.get("categories") or {}
+    category = categories.get(str(tournament.get("category_id"))) or {}
+    country = category.get("name")
+    
+    t_name = tournament.get("name")
+    if t_name:
+        resolved_name = f"{country} · {t_name}" if country and country.lower() not in t_name.lower() else t_name
+    else:
+        resolved_name = f"Solcasino liga {tournament_id}"
+        
+    if competition_name:
+        resolved_name = competition_name
 
     events: list[EventSnapshot] = []
     for event_id, event in (snapshot.get("events") or {}).items():

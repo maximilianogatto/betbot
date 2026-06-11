@@ -2607,7 +2607,13 @@ async def unlink_league_command(update: Update, context: ContextTypes.DEFAULT_TY
         await update.message.reply_text("Número fuera de rango. Mirá <code>/leagues</code>.", parse_mode=ParseMode.HTML)
         return
     comps = tracking_repository.list_tracked_competitions_for_unified(unified[n - 1]["id"])
-    target = next((c for c in comps if plat_q in c.platform.lower()), None)
+    matching_comps = [c for c in comps if plat_q in c.platform.lower()]
+    if not matching_comps:
+        target = None
+    else:
+        unified_name = unified[n - 1]["name"]
+        target = next((c for c in matching_comps if c.competition_name != unified_name), matching_comps[0])
+
     if target is None:
         await update.message.reply_text(
             f"No encontré la plataforma «{escape_html(plat_q)}» en esa liga. Mirá <code>/league {n}</code>.",
@@ -4219,6 +4225,25 @@ async def _run_special_fixtures(message, args, adapter, usage: str, *, results: 
         adapter.close()
 
 
+async def _run_special_match(message, args, adapter, usage: str) -> None:
+    import asyncio
+    if not args:
+        await message.reply_text(usage, parse_mode="Markdown")
+        adapter.close()
+        return
+    match_id = args[0].strip()
+    await message.reply_text("🔍 Recuperando datos detallados de alineación y estadísticas...")
+    try:
+        report = await asyncio.to_thread(adapter.match_report, match_id)
+        await _reply_text_chunks(message, report, parse_mode="Markdown")
+    except Exception as e:  # noqa: BLE001
+        logger.exception("special match failed")
+        await message.reply_text(f"❌ Error al generar reporte del partido: {e}")
+    finally:
+        adapter.close()
+
+
+
 async def fin_leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle /fin_leagues: List Finnish leagues hierarchy."""
     del context
@@ -4307,128 +4332,7 @@ async def fin_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         "• Corré `/fin_fixtures [LIGA]` para ver fixtures de una liga.\n\n"
         "Ejemplo: `/fin_match 4036852`"
     )
-
-    if not context.args or not context.args[0].isdigit():
-        await update.message.reply_text(usage_guide, parse_mode="Markdown")
-        return
-
-    match_id = context.args[0]
-    from stats_providers.palloliitto.api_client import PalloliittoAPI
-    api = PalloliittoAPI()
-    
-    await update.message.reply_text("🔍 Recuperando datos detallados de alineación y estadísticas...")
-    try:
-        # 1. Fetch match details
-        m = api.get_match_details(match_id)
-        if not m:
-            await update.message.reply_text("❌ No encontré un partido con ese ID. Por favor, verificá el número.")
-            return
-
-        home = m.get("club_A_name") or m.get("team_A_name") or "Local"
-        away = m.get("club_B_name") or m.get("team_B_name") or "Visitante"
-        orig_date = m.get("date")
-        orig_time = m.get("time")
-        date_val, time = _convert_fin_to_arg_datetime(orig_date, orig_time)
-        venue = m.get("venue_name") or "N/A"
-        attendance = m.get("attendance") or "0"
-        status = m.get("status") or "Scheduled"
-        
-        # General details
-        lines = [
-            f"⚽ *{home} vs {away}*",
-            f"📍 Estadio: {venue} | Asistencia: {attendance}",
-            f"📅 Fecha: {date_val} {time} | Estado: {status}",
-            "━━━━━━━━━━━━━━━━━━━━"
-        ]
-        
-        if m.get("walkover") == 1:
-            lines.append("\n❌ *Partido Perdido / Walkover*")
-            winner = home if m.get("winner") == "Home" else away
-            score = f"{m.get('fs_A')}-{m.get('fs_B')}"
-            lines.append(f"Ganador adjudicado: *{winner}* (Resultado: {score})")
-            await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
-            return
-            
-        if m.get("fs_A") is not None:
-            lines.append(f"⚽ *Marcador final: {m.get('fs_A')} - {m.get('fs_B')}*")
-            
-        # Goals List
-        goals = m.get("goals", [])
-        if goals:
-            lines.append("\n⚽ *Goles:*")
-            for g in goals:
-                scorer = g.get("player_name") or "Jugador"
-                minute = g.get("time_min") or g.get("minute") or "?"
-                team = home if g.get("team_id") == m.get("team_A_id") else away
-                lines.append(f" • {minute}': *{scorer}* ({team})")
-                
-        # Cards List
-        bookings = m.get("bookings", [])
-        if bookings:
-            lines.append("\n🟨🟥 *Tarjetas:*")
-            for b in bookings:
-                player = b.get("player_name") or "Jugador"
-                minute = b.get("time_min") or b.get("minute") or "?"
-                card = b.get("card_type") or "Yellow"
-                card_icon = "🟨" if "yellow" in card.lower() else "🟥"
-                team = home if b.get("team_id") == m.get("team_A_id") else away
-                lines.append(f" • {minute}': {card_icon} *{player}* ({team})")
-                
-        # Half-time score + referee (extra context).
-        if m.get("hts_A") not in (None, ""):
-            lines.append(f"⏱️ Entretiempo: {m.get('hts_A')} - {m.get('hts_B')}")
-        if m.get("referee_1_name"):
-            lines.append(f"👨‍⚖️ Árbitro: {m.get('referee_1_name')}")
-
-        # Pre-match analytics: standings, form (last 5), H2H, goal averages.
-        try:
-            from datetime import datetime as _dt, timezone as _tz
-            from monitors.match_analytics import build_analytics, render_analytics
-            from monitors.special_peak import build_finland_model
-            _model = build_finland_model(
-                api,
-                str(m.get("competition_id") or ""),
-                str(m.get("category_id") or ""),
-                now=_dt.now(tz=_tz.utc),
-                include_previous=True,
-                group_id=str(m.get("group_id") or "1"),
-            )
-            _an = build_analytics(_model, str(m.get("team_A_id") or ""), str(m.get("team_B_id") or ""), home, away)
-            lines.extend(render_analytics(_an, home, away, escape=_md_escape))
-        except Exception:
-            logger.exception("fin_match analytics block failed")
-
-        # Lineups: full XI + bench (richer than just a count) + B-Team detector.
-        lineups = m.get("lineups", [])
-        home_id = m.get("team_A_id")
-        away_id = m.get("team_B_id")
-        if not lineups:
-            lines.append("\n⚠️ *Alineaciones:* aún no publicadas (salen ~1h antes del inicio).")
-        else:
-            home_players = [p for p in lineups if p.get("team_id") == home_id]
-            away_players = [p for p in lineups if p.get("team_id") == away_id]
-            lines.extend(_format_fin_squad(home, home_players, "🏠"))
-            lines.extend(_format_fin_squad(away, away_players, "✈️"))
-
-            home_starters = [p for p in home_players if str(p.get("start")) == "1"]
-            away_starters = [p for p in away_players if str(p.get("start")) == "1"]
-            lines.append("\n🔍 *Detector de Suplentes / B-Team:*")
-            home_primary = m.get("team_A_primary_category_id") or m.get("category_id")
-            away_primary = m.get("team_B_primary_category_id") or m.get("category_id")
-            lines.append("🏠 *%s:* %s" % (home, _calculate_rotation_for_team(
-                api, home_name=home, team_id=home_id, primary_category=home_primary,
-                competition_id=m.get("competition_id"), starters=home_starters, target_match_id=match_id)))
-            lines.append("✈️ *%s:* %s" % (away, _calculate_rotation_for_team(
-                api, home_name=away, team_id=away_id, primary_category=away_primary,
-                competition_id=m.get("competition_id"), starters=away_starters, target_match_id=match_id)))
-            lines.append("\n💡 _Regularidad <45% 🚨 = B-Team/rotación masiva → posible valor vs cuotas pre-partido._")
-
-        await _reply_text_chunks(update.message, "\n".join(lines), parse_mode="Markdown")
-    except Exception as e:
-        logger.exception("Failed in /fin_match")
-        await update.message.reply_text(f"❌ Error al consultar partido: {e}")
-    finally:
-        api.close()
+    await _run_special_match(update.message, (getattr(context, 'args', None) or []), _finland_adapter(), usage_guide)
 
 
 def _calculate_rotation_for_team(api: PalloliittoAPI, home_name: str, team_id: str, primary_category: str, competition_id: str, starters: list, target_match_id: str) -> str:
@@ -4668,11 +4572,17 @@ async def ro_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
 
 async def ro_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle /ro_match [match_id]: details for a match (not supported in detail)."""
-    del context
+    """Handle /ro_match [match_id]: details for a match (score, events, form, stats)."""
     if update.message is None:
         return
-    await update.message.reply_text("ℹ️ El detector de alineaciones no está disponible para la federación rumana.")
+    usage_guide = (
+        "❌ *ID de partido ausente o inválido.*\n\n"
+        "Uso: `/ro_match [ID_PARTIDO]`\n\n"
+        "💡 *¿Cómo conseguir el ID?*\n"
+        "• Corré `/ro_today` para ver los partidos de hoy.\n"
+        "• Corré `/ro_fixtures [LIGA]` para ver fixtures de una liga."
+    )
+    await _run_special_match(update.message, (getattr(context, 'args', None) or []), _romania_adapter(), usage_guide)
 
 
 async def swe_leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -4733,73 +4643,17 @@ async def swe_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
 
 async def swe_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle /swe_match [ID]: live/FOGIS detail for one match (score, events)."""
-
+    """Handle /swe_match [ID]: live/FOGIS detail for one match (score, events, form, stats)."""
     if update.message is None:
         return
-    if not context.args:
-        await update.message.reply_text("Uso: <code>/swe_match [ID_PARTIDO]</code> (los IDs salen de /swe_today o /swe_fixtures).", parse_mode=ParseMode.HTML)
-        return
-    match_id = context.args[0].strip()
-    from stats_providers.svenskfotboll_http.client import SvenskfotbollHTTPClient
-
-    client = SvenskfotbollHTTPClient()
-    try:
-        info = client.get_live_game_info(match_id)
-        if not info or not info.get("home") and not info.get("away"):
-            await update.message.reply_text("⚠️ Sin datos en vivo para ese partido (puede no haber empezado o no tener cobertura FOGIS).")
-            return
-        def _swe_name(val, default):
-            if isinstance(val, dict):
-                return val.get("name") or val.get("short_name") or default
-            return val or default
-
-        home = _swe_name(info.get("home") or info.get("home_team"), "Local")
-        away = _swe_name(info.get("away") or info.get("away_team"), "Visitante")
-        lines = [f"🇸🇪 <b>{escape_html(home)} vs {escape_html(away)}</b>", "━━━━━━━━━━━━━━━━━━━━"]
-        score = info.get("score")
-        if isinstance(score, dict):
-            hs, aw_s = score.get("home-team"), score.get("away-team")
-            if hs is not None and aw_s is not None:
-                lines.append(f"⚽ Marcador: {escape_html(str(hs))} - {escape_html(str(aw_s))}")
-            ht_h, ht_a = score.get("home-team-half-time"), score.get("away-team-half-time")
-            if ht_h is not None and ht_a is not None:
-                lines.append(f"⏱️ Entretiempo: {escape_html(str(ht_h))} - {escape_html(str(ht_a))}")
-        elif score:
-            lines.append(f"⚽ Marcador: {escape_html(str(score))}")
-        status = info.get("status")
-        status_desc = status.get("desc") if isinstance(status, dict) else status
-        if status_desc:
-            lines.append(f"⏱️ Estado: {escape_html(str(status_desc))}")
-        events = info.get("events") or []
-        if events:
-            lines.append("\nEventos:")
-            for ev in events[:15]:
-                m = ev.get('minute','')
-                t = ev.get('type','')
-                p = ev.get('player','')
-                lines.append(escape_html(f"- {m} {t} {p}".rstrip()))
-
-        # Pre-match analytics: standings, form (last 5), H2H, goal averages.
-        try:
-            from monitors.match_analytics import build_analytics, render_analytics
-            from monitors.special_peak import build_sweden_model, _norm_team
-            cid = _swe_resolve_comp_for_teams(client, home, away)
-            if cid:
-                _model = build_sweden_model(client, cid)
-                _an = build_analytics(_model, _norm_team(home), _norm_team(away), home, away)
-                lines.extend(render_analytics(_an, home, away, escape=escape_html))
-            else:
-                lines.append("\n📊 _Análisis pre-match no disponible (no ubiqué la liga de estos equipos)._")
-        except Exception:
-            logger.exception("swe_match analytics block failed")
-
-        await _reply_text_chunks(update.message, "\n".join(lines), parse_mode=ParseMode.HTML)
-    except Exception as e:
-        logger.exception("Failed in /swe_match")
-        await update.message.reply_text(f"❌ Error: {e}")
-    finally:
-        client.close()
+    usage_guide = (
+        "❌ *ID de partido ausente o inválido.*\n\n"
+        "Uso: `/swe_match [ID_PARTIDO]`\n\n"
+        "💡 *¿Cómo conseguir el ID?*\n"
+        "• Corré `/swe_today` para ver los partidos de hoy.\n"
+        "• Corré `/swe_fixtures [LIGA]` para ver fixtures de una liga."
+    )
+    await _run_special_match(update.message, (getattr(context, 'args', None) or []), _sweden_adapter(), usage_guide)
 
 
 async def swe_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -4884,11 +4738,17 @@ async def sk_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
 
 async def sk_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle /sk_match [match_id]: details for a match (not supported in detail)."""
-    del context
+    """Handle /sk_match [match_id]: details for a match (score, lineups, events, form, stats)."""
     if update.message is None:
         return
-    await update.message.reply_text("ℹ️ El detector de alineaciones no está disponible para la federación eslovaca.")
+    usage_guide = (
+        "❌ *ID de partido ausente o inválido.*\n\n"
+        "Uso: `/sk_match [ID_PARTIDO]`\n\n"
+        "💡 *¿Cómo conseguir el ID?*\n"
+        "• Corré `/sk_today` para ver los partidos de hoy.\n"
+        "• Corré `/sk_fixtures [LIGA]` para ver fixtures de una liga."
+    )
+    await _run_special_match(update.message, (getattr(context, 'args', None) or []), _slovakia_adapter(), usage_guide)
 
 
 _AL_LEAGUE_USAGE = "Escribí `/al_standings [CÓDIGO]` o `/al_fixtures [CÓDIGO]` con el código:\n- `DZ1` (D1 Seniors Damas)"
@@ -4950,47 +4810,17 @@ async def al_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
 
 async def al_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle /al_match [match_id]: details for a match (not supported in detail, but displays info)."""
+    """Handle /al_match [match_id]: details for a match (score, form, stats)."""
     if update.message is None:
         return
-    if not context.args:
-        await update.message.reply_text("❌ *Falta el ID del partido.*\n\nUso: `/al_match [ID_PARTIDO]`", parse_mode="Markdown")
-        return
-    match_id = context.args[0].strip()
-    adapter = _algeria_adapter()
-    try:
-        matches = await asyncio.to_thread(adapter.client.get_matches)
-        target = None
-        for m in matches:
-            slug = m.get("match_url", "").rstrip("/").split("/")[-1] if m.get("match_url") else ""
-            if slug == match_id:
-                target = m
-                break
-        if not target:
-            await update.message.reply_text("❌ No encontré un partido con ese ID.")
-            return
-
-        d_arg, t_arg = adapter._al_arg_time(target.get("date_raw"))
-        lines = [
-            f"🇩🇿 *{_md_escape(target.get('home', 'Local'))} vs {_md_escape(target.get('away', 'Visitante'))}*",
-            "━━━━━━━━━━━━━━━━━━━━",
-            f"🏆 Competencia: `{_md_escape(target.get('division'))}`",
-            f"🗓️ Fecha: `{d_arg}`",
-            f"🕒 Hora (Arg): `{t_arg}`",
-        ]
-        score_raw = target.get("score_raw")
-        if score_raw and "-" in score_raw:
-            lines.append(f"⚽ Marcador: *{score_raw.strip()}*")
-        if target.get("match_url"):
-            lines.append(f"🔗 [Enlace al partido]({target.get('match_url')})")
-        lines.append("━━━━━━━━━━━━━━━━━━━━")
-        lines.append("ℹ️ El detector de alineaciones no está disponible para la federación argelina.")
-        await update.message.reply_text("\n".join(lines), parse_mode="Markdown", disable_web_page_preview=True)
-    except Exception as e:
-        logger.exception("al_match failed")
-        await update.message.reply_text(f"❌ Error al consultar partido: {e}")
-    finally:
-        adapter.close()
+    usage_guide = (
+        "❌ *ID de partido ausente o inválido.*\n\n"
+        "Uso: `/al_match [ID_PARTIDO]`\n\n"
+        "💡 *¿Cómo conseguir el ID?*\n"
+        "• Corré `/al_today` para ver los partidos de hoy.\n"
+        "• Corré `/al_fixtures [LIGA]` para ver fixtures de una liga."
+    )
+    await _run_special_match(update.message, (getattr(context, 'args', None) or []), _algeria_adapter(), usage_guide)
 
 
 _NO_LEAGUE_USAGE = "Escribí `/no_standings [CÓDIGO]` o `/no_fixtures [CÓDIGO]` con el código:\n- `NO1` (Toppserien)"
@@ -5052,51 +4882,17 @@ async def no_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
 
 async def no_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle /no_match [match_id]: details for a match (not supported in detail, but displays info)."""
+    """Handle /no_match [match_id]: details for a match (score, lineups, events, form, stats)."""
     if update.message is None:
         return
-    if not context.args:
-        await update.message.reply_text("❌ *Falta el ID del partido.*\n\nUso: `/no_match [ID_PARTIDO]`", parse_mode="Markdown")
-        return
-    match_id = context.args[0].strip()
-    adapter = _norway_adapter()
-    try:
-        name, matches = await asyncio.to_thread(adapter.fixtures, "NO1")
-        target = None
-        for m in matches:
-            if m.match_id == match_id:
-                target = m
-                break
-
-        if not target:
-            today_matches, omitted = await asyncio.to_thread(adapter.today)
-            for m in today_matches:
-                if m.match_id == match_id:
-                    target = m
-                    break
-
-        if not target:
-            await update.message.reply_text("❌ No encontré un partido con ese ID en Toppserien.")
-            return
-
-        lines = [
-            f"🇳🇴 *{_md_escape(target.home)} vs {_md_escape(target.away)}*",
-            "━━━━━━━━━━━━━━━━━━━━",
-            f"🏆 Competencia: `Toppserien`",
-            f"🗓️ Fecha: `{target.date_arg}`",
-            f"🕒 Hora (Arg): `{target.time_arg}`",
-        ]
-        if target.score:
-            lines.append(f"⚽ Marcador: *{target.score}*")
-        lines.append(f"🔗 [Enlace al partido](https://www.fotball.no/fotballdata/kamp/?fiksId={match_id})")
-        lines.append("━━━━━━━━━━━━━━━━━━━━")
-        lines.append("ℹ️ El detector de alineaciones no está disponible para la federación noruega.")
-        await update.message.reply_text("\n".join(lines), parse_mode="Markdown", disable_web_page_preview=True)
-    except Exception as e:
-        logger.exception("no_match failed")
-        await update.message.reply_text(f"❌ Error al consultar partido: {e}")
-    finally:
-        adapter.close()
+    usage_guide = (
+        "❌ *ID de partido ausente o inválido.*\n\n"
+        "Uso: `/no_match [ID_PARTIDO]`\n\n"
+        "💡 *¿Cómo conseguir el ID?*\n"
+        "• Corré `/no_today` para ver los partidos de hoy.\n"
+        "• Corré `/no_fixtures [LIGA]` para ver fixtures de una liga."
+    )
+    await _run_special_match(update.message, (getattr(context, 'args', None) or []), _norway_adapter(), usage_guide)
 
 
 # ===================== Peak digest (special-league daily scoring) =====================

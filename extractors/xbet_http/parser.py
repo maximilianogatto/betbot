@@ -60,6 +60,8 @@ def live_events_from_1x2_vzip(payload: dict[str, Any]) -> list[LiveEventSnapshot
         league = event.get("L") or event.get("LE")
         odds_1x2, _ = _extract_markets(event, home=home, away=away)
         league_id = event.get("LI") or event.get("CI")
+        country_name = event.get("CN")
+        comp_name = f"{country_name} · {league}" if country_name and league and country_name.lower() not in league.lower() else league
 
         live.append(
             LiveEventSnapshot(
@@ -67,8 +69,8 @@ def live_events_from_1x2_vzip(payload: dict[str, Any]) -> list[LiveEventSnapshot
                 external_event_id=str(event_id),
                 home=home,
                 away=away,
-                competition_name=league,
-                country_name=event.get("CN"),
+                competition_name=comp_name,
+                country_name=country_name,
                 minute=sls or status_text or None,
                 home_score=_coerce_int(full_score.get("S1")),
                 away_score=_coerce_int(full_score.get("S2")),
@@ -226,13 +228,18 @@ def parse_champ_zip_snapshot(payload: dict[str, Any], *, source_url: str) -> XBe
         if fixture is not None
     ]
 
+    country_name = _safe_str(value.get("CN"))
+    l_name = league_name or f"1xBet liga {league_id}"
+    if country_name and country_name.lower() not in l_name.lower():
+        l_name = f"{country_name} · {l_name}"
+
     return XBetLeagueSnapshot(
         platform=PLATFORM,
         source_url=source_url,
         league_id=league_id,
-        league_name=league_name or f"1xBet liga {league_id}",
+        league_name=l_name,
         sport_id=_safe_str(value.get("SI")),
-        country=_safe_str(value.get("CN")),
+        country=country_name,
         extracted_at=extracted_at,
         fixtures=fixtures,
         raw_payload={

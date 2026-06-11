@@ -49,7 +49,7 @@ _COUNTRY_ALIASES: dict[str, str] = {
     "eslovaquia": "slovakia",
     "slovakia": "slovakia",
     "argelia": "algeria",
-    "algeria": "algeria",
+    "algeria": "algeria"
 }
 
 # Number words (en + es) and roman numerals → digit string.
@@ -62,7 +62,7 @@ _NUMBER_WORDS: dict[str, str] = {
     "first": "1", "second": "2", "third": "3",
     "i": "1", "ii": "2", "iii": "3", "iv": "4", "v": "5",
     "vi": "6", "vii": "7", "viii": "8", "ix": "9", "x": "10",
-    "xi": "11", "xii": "12",
+    "xi": "11", "xii": "12", "xiii": "13", "xiv": "14", "xv": "15", "xvi": "16", "xvii": "17", "xviii": "18", "xix": "19", "xx": "20",
 }
 
 # Token canonicalization (synonyms → one form). Discriminators (women/age) live here too.
@@ -75,7 +75,7 @@ _TOKEN_ALIASES: dict[str, str] = {
     "división": "div",
     "femenino": "women", "femenina": "women", "women": "women", "woman": "women",
     "damas": "women", "dam": "women", "mujeres": "women", "féminas": "women", "feminas": "women",
-    "f": "women", "w": "women",
+    "f": "women", "w": "women", 'femenil': "women",
 }
 
 # Tokens dropped as noise (incl. men markers → treat unmarked as men).

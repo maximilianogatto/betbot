@@ -872,9 +872,12 @@ class TrackingService:
 
         def _parse(raw):
             try:
-                return datetime.fromisoformat(str(raw).strip())
+                parsed = datetime.fromisoformat(str(raw).strip())
             except (TypeError, ValueError):
                 return None
+            if parsed.tzinfo is None:
+                parsed = parsed.replace(tzinfo=timezone.utc)
+            return parsed.astimezone(timezone.utc)
 
         count = 0
         used_b: set[int] = set()

@@ -97,7 +97,7 @@ class MystakeHeaderTests(unittest.TestCase):
         )
         self.assertEqual(len(options), 1)
         opt = options[0]
-        self.assertEqual(opt.league_name, "NSW League Two")
+        self.assertEqual(opt.league_name, "Australia · NSW League Two")
         self.assertEqual(opt.source_url, "mystake:champ:37364")
         self.assertEqual(opt.games_count, 2)
 

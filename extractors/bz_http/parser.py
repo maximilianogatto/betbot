@@ -51,7 +51,7 @@ def live_events_from_search(search_data: list[dict[str, Any]]) -> list[LiveEvent
                     external_event_id=str(match.get("id")),
                     home=home,
                     away=away,
-                    competition_name=league,
+                    competition_name=f"{country} · {league}" if country and league and country.lower() not in league.lower() else (league or "Unknown"),
                     country_name=country,
                     minute=match.get("matchStatusName") or match.get("statusName"),
                     home_score=_int(ses.get("homeScore")) if isinstance(ses, dict) else None,

@@ -81,6 +81,39 @@ class UnifiedCompetitionRepoTests(unittest.TestCase):
         # uid2 may or may not merge depending on similarity; just ensure it's an int id
         self.assertIsInstance(uid2, int)
 
+    def test_create_unified_competition_deduplicates_name(self) -> None:
+        uid1 = self.repo.create_unified_competition("Cup")
+        uid2 = self.repo.create_unified_competition("Cup")
+        uid3 = self.repo.create_unified_competition("Cup")
+
+        self.assertEqual(self.repo.get_unified_competition(uid1)["name"], "Cup")
+        self.assertEqual(self.repo.get_unified_competition(uid2)["name"], "Cup (2)")
+        self.assertEqual(self.repo.get_unified_competition(uid3)["name"], "Cup (3)")
+
+    def test_unlink_league_handles_name_collision(self) -> None:
+        # Create a unified competition named "Cup"
+        uid_existing = self.repo.create_unified_competition("Cup")
+
+        # Create a unified competition named "Svenska Cup"
+        uid_svenska = self.repo.create_unified_competition("Svenska Cup")
+
+        # Add a tracked competition for solcasino with name "Cup" under Svenska Cup (false positive match)
+        c_id = self._add_comp("solcasino_http", "123", "Cup")
+        self.repo.link_tracked_competition_to_unified(c_id, uid_svenska)
+
+        # Simulate unlinking:
+        # We split the "Cup" tracked competition out of "Svenska Cup".
+        # This will try to create a unified competition named "Cup".
+        # Since "Cup" already exists (uid_existing), it should deduplicate to "Cup (2)" without crashing.
+        new_uid = self.repo.create_unified_competition("Cup")
+        self.repo.link_tracked_competition_to_unified(c_id, new_uid)
+
+        # Verify it successfully linked to the new unified competition
+        comps = self.repo.list_tracked_competitions_for_unified(new_uid)
+        self.assertEqual(len(comps), 1)
+        self.assertEqual(comps[0].id, c_id)
+        self.assertEqual(self.repo.get_unified_competition(new_uid)["name"], "Cup (2)")
+
 
 if __name__ == "__main__":
     unittest.main()

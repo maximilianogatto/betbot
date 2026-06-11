@@ -439,6 +439,21 @@ class LiveWatchServiceTests(unittest.IsolatedAsyncioTestCase):
         hits3 = await service.poll_once()
         self.assertEqual(len(hits3), 0)
 
+    async def test_collect_live_events_ignores_none_results(self) -> None:
+        service = LiveWatchService(repository=self.repository)
+        mock_extractor = SimpleNamespace(
+            name="betovo",
+            display_name="Betovo",
+            supports_live_detection=True,
+            list_live_events=AsyncMock(return_value=None),
+        )
+        service.extractor_registry = SimpleNamespace(
+            list_registered=lambda: [mock_extractor]
+        )
+
+        events = await service.collect_live_events()
+        self.assertEqual(events, [])
+
     async def test_goal_alert_is_deduplicated_across_platforms(self) -> None:
         service = LiveWatchService(repository=self.repository)
         chat_id = 889

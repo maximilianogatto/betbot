@@ -129,10 +129,10 @@ class NoCommandTests(unittest.IsolatedAsyncioTestCase):
         ]
         with self._patch_client(tables):
             await no_match_command(update, SimpleNamespace(args=["8998012"]))
+        self.assertGreaterEqual(message.reply_text.await_count, 2)
         out = message.reply_text.await_args.args[0]
-        self.assertIn("Bodø/Glimt", out)
-        self.assertIn("Hønefoss BK", out)
-        self.assertIn("no está disponible", out)
+        self.assertIn("Bodø/Glimt 0-0 Hønefoss BK", out)
+        self.assertIn("FORMA", out)
 
 if __name__ == "__main__":
     unittest.main()
