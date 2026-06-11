@@ -3080,6 +3080,60 @@ class SqliteTrackingRepository:
                 (unified_competition_id,),
             )
 
+    def merge_unified_competitions(self, from_id: int, into_id: int) -> dict:
+        """Merge league ``from_id`` into ``into_id`` atomically.
+
+        Moves tracked competitions and stats links (on provider conflict the
+        target's link wins), propagates subscriptions to the merged platform set,
+        and deletes the source league. This is THE merge primitive — deleting the
+        source unified directly would cascade-delete its stats links.
+        """
+
+        if from_id == into_id:
+            raise ValueError("Cannot merge a unified competition into itself.")
+        now_iso = _utc_now_iso()
+        with _connect() as connection:
+            for uid in (from_id, into_id):
+                if connection.execute(
+                    "SELECT 1 FROM unified_competitions WHERE id = ?", (uid,)
+                ).fetchone() is None:
+                    raise ValueError(f"Unified competition ID {uid} does not exist.")
+
+            moved_links = connection.execute(
+                """
+                UPDATE stats_league_links
+                SET unified_competition_id = ?, updated_at = ?
+                WHERE unified_competition_id = ?
+                  AND stats_provider NOT IN (
+                      SELECT stats_provider FROM stats_league_links
+                      WHERE unified_competition_id = ?
+                  )
+                """,
+                (into_id, now_iso, from_id, into_id),
+            ).rowcount
+            connection.execute(
+                "DELETE FROM stats_league_links WHERE unified_competition_id = ?",
+                (from_id,),
+            )
+            moved_comps = connection.execute(
+                """
+                UPDATE tracked_competitions
+                SET unified_competition_id = ?, updated_at = ?
+                WHERE unified_competition_id = ?
+                """,
+                (into_id, now_iso, from_id),
+            ).rowcount
+            new_subscriptions = _propagate_unified_subscriptions(connection, into_id)
+            connection.execute(
+                "DELETE FROM unified_competitions WHERE id = ?",
+                (from_id,),
+            )
+        return {
+            "moved_competitions": moved_comps,
+            "moved_stats_links": moved_links,
+            "new_subscriptions": new_subscriptions,
+        }
+
     def relink_unified_by_normalized_name(self) -> dict:
         """Re-unify tracked competitions whose names share the same canonical form.
 
