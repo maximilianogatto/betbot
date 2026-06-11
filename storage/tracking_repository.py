@@ -944,10 +944,11 @@ class SqliteTrackingRepository:
                     cs.updated_at AS subscription_updated_at
                 FROM competition_subscriptions cs
                 INNER JOIN tracked_competitions tc ON tc.id = cs.tracked_competition_id
+                LEFT JOIN unified_competitions uc ON uc.id = tc.unified_competition_id
                 WHERE cs.telegram_chat_id = ?
                   AND cs.enabled = 1
                   AND tc.enabled = 1
-                ORDER BY tc.platform, tc.competition_name, tc.id
+                ORDER BY COALESCE(uc.name, tc.competition_name), tc.platform, tc.id
                 """,
                 (chat_id,),
             ).fetchall()
