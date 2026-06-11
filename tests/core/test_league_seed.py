@@ -103,14 +103,39 @@ class LeagueSeedTests(unittest.TestCase):
         self.assertEqual(db["competition_subscriptions"], 0)
         self.assertEqual(db["active_events"], 0)
 
+        # Export is registry-centric (v2): one entry per league with its
+        # platform links + league-level stats links.
         exported = league_seed.export_league_seed()
-        self.assertEqual(set(exported["unified_competitions"]), {"Premier League", "Serie A"})
-        keys = {(t["platform"], t["competition_external_id"]) for t in exported["tracked_competitions"]}
-        self.assertEqual(keys, {("1xbet_http", "PL-1X"), ("betovo_http", "PL-BV"), ("1xbet_http", "SA-1X")})
-        # The two Premier League platforms share one unified group.
-        pl = [t for t in exported["tracked_competitions"] if t["unified_name"] == "Premier League"]
-        self.assertEqual(len(pl), 2)
-        self.assertEqual(len(exported["stats_league_links"]), 1)
+        self.assertEqual(exported["version"], 2)
+        by_name = {league["name"]: league for league in exported["leagues"]}
+        self.assertEqual(set(by_name), {"Premier League", "Serie A"})
+        pl = by_name["Premier League"]
+        self.assertEqual(
+            {(p["platform"], p["competition_external_id"]) for p in pl["platforms"]},
+            {("1xbet_http", "PL-1X"), ("betovo_http", "PL-BV")},
+        )
+        self.assertEqual(pl["public_id"], "premier-league")
+        self.assertEqual(len(pl["stats_links"]), 1)
+        self.assertEqual(pl["stats_links"][0]["stats_provider"], "sofascore_http")
+        self.assertEqual(exported["unlinked_platforms"], [])
+
+        # And a v2 export imports cleanly into a fresh DB (full roundtrip).
+        with tempfile.TemporaryDirectory() as tmp2:
+            tracking_repository_module.DB_FILE_PATH = Path(tmp2) / "fresh.sqlite3"
+            counts2 = league_seed.import_league_seed(exported, overwrite=False)
+            self.assertEqual(counts2["unified_created"], 2)
+            self.assertEqual(counts2["tracked_inserted"], 3)
+            self.assertEqual(counts2["stats_inserted"], 1)
+            with tracking_repository_module._connect() as c:
+                row = c.execute(
+                    "SELECT public_id FROM unified_competitions WHERE name = 'Premier League'"
+                ).fetchone()
+                self.assertEqual(row["public_id"], "premier-league")
+                link = c.execute(
+                    "SELECT unified_competition_id FROM stats_league_links"
+                ).fetchone()
+                self.assertIsNotNone(link["unified_competition_id"])
+            tracking_repository_module.DB_FILE_PATH = Path(self.tmp.name) / "tracking.sqlite3"
 
     def test_import_is_idempotent(self) -> None:
         league_seed.import_league_seed(_sample_seed(), overwrite=False)

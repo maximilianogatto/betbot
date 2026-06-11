@@ -31,11 +31,15 @@ from storage.league_seed import (  # noqa: E402
 def _cmd_export(args: argparse.Namespace) -> int:
     target = write_seed_file(args.path)
     data = load_seed_file(target) or {}
+    leagues = data.get("leagues") or []
+    platforms = sum(len(league.get("platforms") or []) for league in leagues)
+    stats = sum(len(league.get("stats_links") or []) for league in leagues)
+    unlinked = len(data.get("unlinked_platforms") or [])
     print(
-        f"✅ Exportado a {target}\n"
-        f"   {len(data.get('unified_competitions') or [])} ligas unificadas\n"
-        f"   {len(data.get('tracked_competitions') or [])} ligas trackeadas\n"
-        f"   {len(data.get('stats_league_links') or [])} links de stats"
+        f"✅ Exportado a {target} (v{data.get('version')})\n"
+        f"   {len(leagues)} ligas en el registro\n"
+        f"   {platforms} links de plataforma" + (f" (+{unlinked} sin liga)" if unlinked else "") + "\n"
+        f"   {stats} links de stats"
     )
     return 0
 
