@@ -147,6 +147,26 @@ def same_league(a: str | None, b: str | None) -> bool:
     return bool(na) and na == normalize_league_name(b)
 
 
+def anagram_key(name: str | None) -> str:
+    """Order-free fingerprint: the canonical form with spaces dropped, chars sorted.
+
+    Built on top of :func:`normalize_league_name`, so it inherits the canonical
+    aliases AND the discriminators (women / U20 produce different characters, so
+    they never share an anagram key). Catches equivalences that differ only by
+    word/character order or spacing ("NPL League" vs "League NPL").
+    """
+
+    canonical = normalize_league_name(name)
+    return "".join(sorted(canonical.replace(" ", "")))
+
+
+def same_league_anagram(a: str | None, b: str | None) -> bool:
+    """True when two names share a non-empty anagram key."""
+
+    ka = anagram_key(a)
+    return bool(ka) and ka == anagram_key(b)
+
+
 _CANONICAL_COUNTRIES: set[str] = set(_COUNTRY_ALIASES.values())
 
 
