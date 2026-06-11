@@ -76,6 +76,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
             tracked_subscription=tracked_subscription,
             matches=[match],
             event_number=1,
+            provider_filter=None,
         )
         self.assertEqual(message.reply_text.await_args_list[0].args, ("Generando reporte de stats...",))
         self.assertEqual(message.reply_text.await_args_list[1].args, ("Reporte stats listo",))

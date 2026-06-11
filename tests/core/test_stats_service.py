@@ -375,10 +375,36 @@ class StatsServiceTests(unittest.TestCase):
         match_link_sr = self.repository.get_stats_match_link(event.id, stats_provider="sportradar_statshub")
         self.assertIsNotNone(match_link_sr)
         self.assertEqual(match_link_sr.stats_match_id, "61624678")
-        
+
         match_link_fs = self.repository.get_stats_match_link(event.id, stats_provider="footystats_http")
         self.assertIsNotNone(match_link_fs)
         self.assertEqual(match_link_fs.stats_match_id, "fs-match-1")
+
+        # --- Provider selector (/stats <n> <provider>) ---
+        # Filtering to one provider returns ONLY that provider's report.
+        only_fs = asyncio.run(
+            self.service.build_match_stats_report(
+                tracked_subscription=self.subscription,
+                matches=[event],
+                event_number=1,
+                provider_filter="footystats",
+            )
+        )
+        self.assertTrue(only_fs.ok)
+        self.assertIn("Goals avg: 3.5", only_fs.message)
+        self.assertNotIn("Form: 7.5 vs 5.2", only_fs.message)
+
+        # Unknown provider -> helpful error listing the available ones.
+        unknown = asyncio.run(
+            self.service.build_match_stats_report(
+                tracked_subscription=self.subscription,
+                matches=[event],
+                event_number=1,
+                provider_filter="noexiste",
+            )
+        )
+        self.assertFalse(unknown.ok)
+        self.assertIn("Providers disponibles", unknown.message)
 
     def _create_track(self):
         chat_id = 123
