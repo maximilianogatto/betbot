@@ -2841,16 +2841,14 @@ class NorwayLeagues(SpecialLeague):
         rows.sort(key=lambda r: r.time_arg)
         return rows, omitted
 
-    def standings(self, code: str) -> StandingsResult:
-        code = code.upper()
-        if code != "NO1":
-            return StandingsResult(title=code, found=False)
+    # fotball.no serves the SAME table layouts (standings + full-season fixtures)
+    # on every tournament page, keyed by the tournament fiksId. Toppserien uses a
+    # vanity URL; any other division is reachable by its fiksId — so the parsing
+    # is shared and works for every Norwegian league, not just Toppserien.
+    def _tournament_url(self, fiks_id: str) -> str:
+        return f"https://www.fotball.no/fotballdata/turnering/terminliste/?fiksId={fiks_id}"
 
-        try:
-            tables = self.client.get_tables("https://www.fotball.no/turneringer/toppserien/")
-        except Exception:
-            tables = []
-
+    def _standings_from_tables(self, tables: list, title: str, code: str = "") -> StandingsResult:
         target_table = None
         for t in tables:
             first_row = t.get("rows", [[]])[0]
@@ -2858,10 +2856,8 @@ class NorwayLeagues(SpecialLeague):
             if "plass" in first_row_text and "lag" in first_row_text and "poeng" in first_row_text:
                 target_table = t
                 break
-
         if not target_table:
-            return StandingsResult(title="Toppserien", found=True)
-
+            return StandingsResult(title=title, found=True)
         rows = []
         for row in target_table["rows"]:
             if len(row) < 7:
@@ -2869,37 +2865,17 @@ class NorwayLeagues(SpecialLeague):
             plass_text = row[0].get("text", "").strip()
             if not plass_text.isdigit():
                 continue
-
-            pos = int(plass_text)
-            team = row[1].get("text", "")
-            played = _to_int(row[2].get("text", "")) or 0
-            
-            points_text = row[len(row) - 1].get("text", "")
-            points = _to_int(points_text) or 0
-            
-            diff_text = row[len(row) - 2].get("text", "").replace("−", "-").strip()
-            goal_diff = _to_int(diff_text) or 0
-
             rows.append(StandRow(
-                position=pos,
-                team=team,
-                played=played,
-                points=points,
-                goal_diff=goal_diff
+                position=int(plass_text),
+                team=row[1].get("text", ""),
+                played=_to_int(row[2].get("text", "")) or 0,
+                points=_to_int(row[len(row) - 1].get("text", "")) or 0,
+                goal_diff=_to_int(row[len(row) - 2].get("text", "").replace("−", "-").strip()) or 0,
             ))
+        return StandingsResult(title=title, rows=rows)
 
-        return StandingsResult(title="Toppserien (2026)", rows=rows)
-
-    def fixtures(self, code: str) -> tuple[Optional[str], list[MatchRow]]:
-        code = code.upper()
-        if code != "NO1":
-            return None, []
-
-        try:
-            tables = self.client.get_tables("https://www.fotball.no/turneringer/toppserien/")
-        except Exception:
-            tables = []
-
+    def _fixtures_from_tables(self, tables: list, code: str, *, limit: bool = True) -> list[MatchRow]:
+        import re
         target_table = None
         for t in tables:
             first_row = t.get("rows", [[]])[0]
@@ -2907,55 +2883,51 @@ class NorwayLeagues(SpecialLeague):
             if "runde" in first_row_text and "dato" in first_row_text and "hjemmelag" in first_row_text:
                 target_table = t
                 break
-
         if not target_table:
-            return "Toppserien", []
-
-        all_matches = []
+            return []
+        finished: list[MatchRow] = []
+        upcoming: list[MatchRow] = []
         for row in target_table["rows"]:
             if len(row) < 7:
                 continue
-            runde_text = row[0].get("text", "").strip()
-            if not runde_text.isdigit():
+            if not row[0].get("text", "").strip().isdigit():
                 continue
-
-            date_str = row[1].get("text", "")
-            time_str = row[3].get("text", "")
-            home = row[4].get("text", "Local")
             score_raw = row[5].get("text", "")
-            away = row[6].get("text", "Visitante")
-            
-            d_arg, t_arg = self._oslo_arg_time(date_str, time_str)
-            match_id = self._extract_fiks_id(row)
+            has_score = bool(score_raw and re.search(r"\d+\s*-\s*\d+", score_raw))
+            d_arg, t_arg = self._oslo_arg_time(row[1].get("text", ""), row[3].get("text", ""))
+            mr = MatchRow(
+                match_id=self._extract_fiks_id(row),
+                time_arg=t_arg, date_arg=d_arg,
+                home=row[4].get("text", "Local"),
+                away=row[6].get("text", "Visitante"),
+                score=score_raw.replace(" ", "") if has_score else None,
+                is_live=False, league_code=code,
+            )
+            (finished if has_score else upcoming).append(mr)
+        if not limit:
+            # All matches (analyzer needs every finished game for form/H2H/goals).
+            return finished + upcoming
+        return finished[-5:] + upcoming[:10]
 
-            import re
-            has_score = score_raw and re.search(r"\d+\s*-\s*\d+", score_raw)
-            score = score_raw.replace(" ", "") if has_score else None
+    def standings(self, code: str) -> StandingsResult:
+        code = code.upper()
+        if code != "NO1":
+            return StandingsResult(title=code, found=False)
+        try:
+            tables = self.client.get_tables("https://www.fotball.no/turneringer/toppserien/")
+        except Exception:
+            tables = []
+        return self._standings_from_tables(tables, "Toppserien (2026)", code)
 
-            all_matches.append((
-                MatchRow(
-                    match_id=match_id,
-                    time_arg=t_arg,
-                    date_arg=d_arg,
-                    home=home,
-                    away=away,
-                    score=score,
-                    is_live=False,
-                    league_code="NO1",
-                ),
-                has_score
-            ))
-
-        finished = []
-        upcoming = []
-        for row_match, has_score in all_matches:
-            if has_score:
-                finished.append(row_match)
-            else:
-                upcoming.append(row_match)
-
-        display = finished[-5:] + upcoming[:10]
-        return "Toppserien", display
+    def fixtures(self, code: str) -> tuple[Optional[str], list[MatchRow]]:
+        code = code.upper()
+        if code != "NO1":
+            return None, []
+        try:
+            tables = self.client.get_tables("https://www.fotball.no/turneringer/toppserien/")
+        except Exception:
+            tables = []
+        return "Toppserien", self._fixtures_from_tables(tables, code)
 
     def match_report(self, match_id: str) -> str:
         url = f"https://www.fotball.no/fotballdata/kamp/?fiksId={match_id}"
@@ -3070,10 +3042,10 @@ class NorwayLeagues(SpecialLeague):
         if time_match:
             time_arg = time_match.group(1)
 
-        # Resolve the league this match actually belongs to. today() carries the
-        # real league per match; only Toppserien (NO1) exposes a standings table
-        # and a full-season fixtures list, so the table/form context is only
-        # meaningful there — for lower tiers we use today()'s matches as context.
+        # Resolve the league this match belongs to. today() carries the real
+        # league name per match; the kamp page links its tournament by fiksId,
+        # which exposes the SAME standings + full-season fixtures layout as
+        # Toppserien — so table/form/H2H now work for ANY Norwegian division.
         try:
             today_matches, _ = self.today()
         except Exception:
@@ -3082,17 +3054,31 @@ class NorwayLeagues(SpecialLeague):
         league_code = (today_target.league_code if today_target else None) or "NO1"
         league_name = (today_target.league_name if today_target else None) or "Toppserien"
 
-        if league_code == "NO1":
+        # Tournament fiksId from the kamp page (e.g. /fotballdata/turnering/hjem/?fiksId=205689).
+        tour_match = re.search(r"/fotballdata/turnering/\w+/?\?fiksId=(\d+)", html)
+        tournament_id = tour_match.group(1) if tour_match else None
+        # Prefer the cleaner tournament name from the kamp page when present.
+        tour_name = re.search(r"turnering/hjem/?\?fiksId=\d+\"[^>]*>([^<]+)<", html)
+        if tour_name and tour_name.group(1).strip():
+            league_name = _html.unescape(tour_name.group(1).strip())
+
+        standings = StandingsResult(title=league_name, found=True)
+        all_matches: list[MatchRow] = today_matches
+        if tournament_id:
+            try:
+                tour_tables = self.client.get_tables(self._tournament_url(tournament_id))
+                standings = self._standings_from_tables(tour_tables, f"{league_name} (2026)", league_code)
+                tour_fixtures = self._fixtures_from_tables(tour_tables, league_code, limit=False)
+                if tour_fixtures:
+                    all_matches = tour_fixtures
+            except Exception:
+                pass
+        elif league_code == "NO1":
             standings = self.standings("NO1")
             try:
                 _, all_matches = self.fixtures("NO1")
             except Exception:
-                all_matches = []
-            if not all_matches:
-                all_matches = today_matches
-        else:
-            standings = StandingsResult(title=league_name, found=True)
-            all_matches = today_matches
+                all_matches = today_matches or []
 
         for m in all_matches:
             if m.match_id == match_id:
