@@ -3018,18 +3018,16 @@ class NorwayLeagues(SpecialLeague):
             home_team = parts[0]
             away_team = parts[1]
             
+        # Score ONLY from the dedicated score elements. The old title fallback
+        # `\b\d+-\d+\b` parsed garbage ("Tromsø 2 - 12.06.2026" -> "2-12"); when
+        # those elements are absent the authoritative score is taken from the
+        # fixtures row below (None == not played yet).
         score = None
         score_match = re.search(r'<h3 class="a_matchScore">[^<]*(\d+)\s*-\s*(\d+)[^<]*</h3>', html, re.IGNORECASE)
+        if not score_match:
+            score_match = re.search(r'<span class="a_score">[^<]*(\d+)\s*-\s*(\d+)[^<]*</span>', html, re.IGNORECASE)
         if score_match:
             score = f"{score_match.group(1)}-{score_match.group(2)}"
-        else:
-            score_match = re.search(r'<span class="a_score">[^<]*(\d+)\s*-\s*(\d+)[^<]*</span>', html, re.IGNORECASE)
-            if score_match:
-                score = f"{score_match.group(1)}-{score_match.group(2)}"
-            else:
-                score_match = re.search(r'\b(\d+)\s*-\s*(\d+)\b', title_text)
-                if score_match:
-                    score = f"{score_match.group(1)}-{score_match.group(2)}"
 
         date_arg = "N/A"
         time_arg = "N/A"
@@ -3086,6 +3084,9 @@ class NorwayLeagues(SpecialLeague):
                     home_team = m.home
                 if away_team in ("Local", "Visitante", "Kamp", ""):
                     away_team = m.away
+                # Authoritative score from fotball.no's Resultat column.
+                if score is None and m.score:
+                    score = m.score
                 break
 
         details = SpecialMatchDetail(
