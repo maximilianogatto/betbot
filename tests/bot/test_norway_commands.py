@@ -185,6 +185,42 @@ class NoCommandTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("Toppserien", out)
         self.assertIn("FORMA", out)  # match_report (lineup detector) corrió
 
+    async def test_match_pulls_standings_from_match_tournament(self) -> None:
+        # The kamp page links its tournament by fiksId; match_report must fetch
+        # THAT tournament's standings/fixtures so the table shows positions for
+        # ANY division, not just Toppserien.
+        from bot.special_leagues import NorwayLeagues
+
+        kamp_html = (
+            "<html><title>Varhaug - Viking 2 - 11.06.2026 19:00</title>"
+            '<a href="/fotballdata/turnering/hjem/?fiksId=205689">Norsk Tipping-ligaen avd. 4</a>'
+            "</html>"
+        )
+        tour_tables = [
+            {  # standings
+                "rows": [
+                    [{"text": "Plass"}, {"text": "Lag"}, {"text": "Kamper"}, {"text": "V"}, {"text": "U"}, {"text": "T"}, {"text": "Diff"}, {"text": "Poeng"}],
+                    [{"text": "3"}, {"text": "Varhaug"}, {"text": "9"}, {"text": "4"}, {"text": "3"}, {"text": "2"}, {"text": "5"}, {"text": "15"}],
+                    [{"text": "4"}, {"text": "Viking 2"}, {"text": "9"}, {"text": "4"}, {"text": "2"}, {"text": "3"}, {"text": "2"}, {"text": "14"}],
+                ]
+            },
+            {  # fixtures
+                "rows": [
+                    [{"text": "Runde"}, {"text": "Dato"}, {"text": "Dag"}, {"text": "Tid"}, {"text": "Hjemmelag"}, {"text": "Resultat"}, {"text": "Bortelag"}, {"text": "Bane"}, {"text": "Kampnr."}],
+                    [{"text": "8"}, {"text": "01.06.2026"}, {"text": "søn"}, {"text": "14:00"}, {"text": "Varhaug"}, {"text": "2 - 1"}, {"text": "Bryne 2"}, {"text": "X"}, {"text": "1", "hrefs": ["/fotballdata/kamp/?fiksId=1"]}],
+                ]
+            },
+        ]
+        client = MagicMock()
+        client.get_html.return_value = kamp_html
+        client.get_tables.return_value = tour_tables
+        client.close = MagicMock()
+        no = NorwayLeagues(client)
+        report = no.match_report("8992950")
+        self.assertIn("Norsk Tipping-ligaen avd. 4", report)
+        self.assertIn("3rd", report)   # Varhaug standings position
+        self.assertIn("4th", report)   # Viking 2 standings position
+
 
 if __name__ == "__main__":
     unittest.main()
