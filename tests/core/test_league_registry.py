@@ -53,6 +53,14 @@ class LeagueRegistryTests(unittest.TestCase):
         self.assertEqual(pa, "liga-x")
         self.assertEqual(pb, "liga-x-2")
 
+    def test_duplicate_name_gets_suffixed(self) -> None:
+        # /unlink_league re-creates a unified with the same name; the UNIQUE name
+        # column must not crash (this was the "error inesperado" bug).
+        a = self.repo.create_unified_competition("Svenska Cup")
+        b = self.repo.create_unified_competition("Svenska Cup")
+        self.assertNotEqual(a, b)
+        self.assertEqual(self.repo.get_unified_competition(b)["name"], "Svenska Cup (2)")
+
     def test_stats_link_inherited_by_other_platform(self) -> None:
         tc_a = self._track("1xbet_http", "100", "Premier League")
         tc_b = self._track("betovo_http", "200", "Premier League")  # same unified
@@ -112,6 +120,63 @@ class LeagueRegistryTests(unittest.TestCase):
         links = self.repo.list_stats_league_links(tc_a)
         self.assertEqual([(l.stats_provider, l.stats_league_id) for l in links],
                          [("sofascore_http", "99")])
+
+
+class LeagueMatchingTests(unittest.TestCase):
+    """Hotfix: auto-merge only on safe signals; fuzzy is a suggestion."""
+
+    def setUp(self) -> None:
+        self.old_db_path = tracking_repository_module.DB_FILE_PATH
+        self.tmp = tempfile.TemporaryDirectory()
+        tracking_repository_module.DB_FILE_PATH = Path(self.tmp.name) / "tracking.sqlite3"
+        self.repo = tracking_repository_module.SqliteTrackingRepository()
+
+    def tearDown(self) -> None:
+        tracking_repository_module.DB_FILE_PATH = self.old_db_path
+        self.tmp.cleanup()
+
+    def _track(self, platform: str, ext_id: str, name: str):
+        self.repo.create_pending_competition_request(
+            1, platform=platform, source_url=f"u/{ext_id}",
+            competition_external_id=ext_id, competition_name=name,
+        )
+        return self.repo.confirm_pending_competition_request(1).tracked_competition
+
+    def test_women_and_u20_are_not_merged(self) -> None:
+        u20 = self._track("1xbet_http", "1", "Australia. New South Wales Premier League U20")
+        women = self._track("1xbet_http", "2", "Australia. New South Wales Premier League. Women")
+        self.assertNotEqual(u20.unified_competition_id, women.unified_competition_id)
+
+    def test_same_named_cup_different_countries_not_merged(self) -> None:
+        aus = self._track("1xbet_http", "1", "Australia Cup")
+        swe = self._track("bz_http", "2", "Sweden · Svenska Cup")
+        self.assertNotEqual(aus.unified_competition_id, swe.unified_competition_id)
+
+    def test_word_shuffle_is_merged(self) -> None:
+        a = self._track("1xbet_http", "1", "NPL League Tasmania")
+        b = self._track("betovo_http", "2", "Tasmania League NPL")
+        self.assertEqual(a.unified_competition_id, b.unified_competition_id)
+
+    def test_canonical_number_words_merged(self) -> None:
+        a = self._track("1xbet_http", "1", "USL League Two")
+        b = self._track("betovo_http", "2", "USL League 2")
+        self.assertEqual(a.unified_competition_id, b.unified_competition_id)
+
+    def test_fuzzy_near_dup_is_suggested_not_merged(self) -> None:
+        a = self._track("1xbet_http", "1", "Australia. Victoria Premier League 1")
+        b = self._track("1xbet_http", "2", "Australia. Victoria Premier League One Extra")
+        self.assertNotEqual(a.unified_competition_id, b.unified_competition_id)
+        suggestions = self.repo.suggest_similar_unified(
+            "Australia. Victoria Premier League 1", exclude_unified_id=a.unified_competition_id
+        )
+        self.assertIn(b.unified_competition_id, {s["id"] for s in suggestions})
+
+    def test_suggestion_respects_discriminators(self) -> None:
+        u20 = self._track("1xbet_http", "1", "Australia. NSW Premier League U20")
+        suggestions = self.repo.suggest_similar_unified(
+            "Australia. NSW Premier League Women", exclude_unified_id=-1
+        )
+        self.assertNotIn(u20.unified_competition_id, {s["id"] for s in suggestions})
 
 
 if __name__ == "__main__":

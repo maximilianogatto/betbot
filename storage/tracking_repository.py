@@ -3071,6 +3071,52 @@ class SqliteTrackingRepository:
         with _connect() as connection:
             return _insert_unified_competition(connection, name)
 
+    def suggest_similar_unified(
+        self,
+        name: str,
+        *,
+        exclude_unified_id: int | None = None,
+        min_score: float = 0.8,
+        limit: int = 3,
+    ) -> list[dict[str, Any]]:
+        """Loosely-similar unified leagues, to *suggest* (not auto-merge).
+
+        Guarded by the discriminators so it never proposes leagues that differ in
+        gender or age (e.g. Women vs U20) or in an explicit country. Returns
+        ``[{id, name, public_id, score}]`` sorted by descending score.
+        """
+
+        from core.league_naming import extract_league_traits, normalize_league_name
+
+        name_clean = name.strip()
+        target_norm = normalize_league_name(name_clean)
+        if len(target_norm.split()) < 2:
+            return []  # too generic to suggest anything meaningful
+        target = extract_league_traits(name_clean)
+
+        suggestions: list[dict[str, Any]] = []
+        with _connect() as connection:
+            rows = connection.execute(
+                "SELECT id, name, public_id FROM unified_competitions"
+            ).fetchall()
+        for r in rows:
+            if exclude_unified_id is not None and r["id"] == exclude_unified_id:
+                continue
+            cand = extract_league_traits(r["name"])
+            if target["gender"] != cand["gender"] or target["age_group"] != cand["age_group"]:
+                continue
+            if target["country"] and cand["country"] and target["country"] != cand["country"]:
+                continue
+            if normalize_league_name(r["name"]) == target_norm:
+                continue  # identical canonical -> would have auto-merged already
+            score = _league_name_similarity(name_clean, r["name"])
+            if score >= min_score:
+                suggestions.append(
+                    {"id": r["id"], "name": r["name"], "public_id": r["public_id"], "score": score}
+                )
+        suggestions.sort(key=lambda s: s["score"], reverse=True)
+        return suggestions[:limit]
+
     def delete_unified_competition(self, unified_competition_id: int) -> None:
         """Delete a unified competition (its competitions should be reassigned first)."""
 
@@ -5124,6 +5170,15 @@ def _insert_unified_competition(connection: sqlite3.Connection, name: str) -> in
 
     clean = str(name).strip()
     now_iso = _utc_now_iso()
+    # The name column is UNIQUE too: suffix it when taken (e.g. /unlink_league
+    # splits a platform off a league that keeps the same name).
+    base_name = clean
+    name_suffix = 2
+    while connection.execute(
+        "SELECT 1 FROM unified_competitions WHERE name = ?", (clean,)
+    ).fetchone() is not None:
+        clean = f"{base_name} ({name_suffix})"
+        name_suffix += 1
     base = league_slug(clean) or "league"
     slug = base
     suffix = 2
@@ -5145,32 +5200,47 @@ def _insert_unified_competition(connection: sqlite3.Connection, name: str) -> in
 
 
 def _find_or_create_unified_competition_id(connection: sqlite3.Connection, name: str) -> int:
-    from core.league_naming import normalize_league_name
+    """Auto-merge a league into an existing unified ONLY on safe signals.
+
+    Safe = identical name, canonical-equal (word order/aliases, preserving the
+    gender/age discriminators), or anagram-equal. The loose fuzzy similarity is
+    NO LONGER an auto-merge signal — it caused false positives (Women vs U20,
+    Australia "Cup" vs "Svenska Cup"); it is exposed as a *suggestion* instead
+    (see :meth:`suggest_similar_unified`), so the user confirms with /link_league.
+    """
+
+    from core.league_naming import anagram_key, extract_league_traits, normalize_league_name
 
     name_clean = name.strip()
     target_norm = normalize_league_name(name_clean)
+    target_anagram = anagram_key(name_clean)
+    target_traits = extract_league_traits(name_clean)
+    # A name with <2 canonical tokens and no country ("Cup") is too generic to
+    # auto-merge: every country has one. Require an exact-name match for those.
+    too_generic = len(target_norm.split()) < 2 and not target_traits["country"]
 
     rows = connection.execute("SELECT id, name FROM unified_competitions").fetchall()
-    best_id = None
-    best_score = 0.85  # minimum fuzzy threshold
     for r in rows:
-        # 1. Exact (case-insensitive).
+        cand_traits = extract_league_traits(r["name"])
+        # Hard guard: explicit different countries are different leagues.
+        if target_traits["country"] and cand_traits["country"] and target_traits["country"] != cand_traits["country"]:
+            continue
+        # 1. Exact (case-insensitive) — strongest signal, always wins.
         if r["name"].strip().lower() == name_clean.lower():
             return r["id"]
-        # 2. Canonical-normalized match: "USL League 2" == "USL League Two",
-        #    "Estados Unidos" == "USA", "Serie A II" == "Serie A 2", etc.
+        if too_generic:
+            continue
+        # 2. Canonical match: "USL League 2" == "USL League Two", word shuffle
+        #    ("NPL League" == "League NPL"), "Estados Unidos" == "USA". Preserves
+        #    gender/age, so Women never equals U20.
         if target_norm and normalize_league_name(r["name"]) == target_norm:
             return r["id"]
-        # 3. Fuzzy fallback.
-        score = _league_name_similarity(name_clean, r["name"])
-        if score >= best_score:
-            best_score = score
-            best_id = r["id"]
+        # 3. Anagram match: same characters once canonicalised (extra tolerance to
+        #    spacing/order). Discriminators are encoded in the chars, so it is safe.
+        if target_anagram and anagram_key(r["name"]) == target_anagram:
+            return r["id"]
 
-    if best_id is not None:
-        return best_id
-
-    # 3. Create a new unified competition
+    # No safe match -> new unified competition (fuzzy stays a suggestion only).
     return _insert_unified_competition(connection, name_clean)
 
 

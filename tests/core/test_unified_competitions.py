@@ -163,20 +163,33 @@ class UnifiedCompetitionsTests(unittest.IsolatedAsyncioTestCase):
         # Verify unified competition is created
         self.assertIsNotNone(tracked_1.unified_competition_id)
 
-        # 2. Track second league with similar name (fuzzy similarity >= 0.85)
+        # 2. Track the SAME league on another platform (canonical-equal name).
         self.repository.create_pending_competition_request(
             chat_id,
             platform="platform_b",
-            source_url="https://platform_b.test/npl-vic-femenil",
+            source_url="https://platform_b.test/npl-vic-b",
             competition_external_id="l2",
-            competition_name="Australia. NPL Victoria (F)",
+            competition_name="NPL Victoria, Australia",  # word shuffle -> same league
         )
         confirmed_2 = self.repository.confirm_pending_competition_request(chat_id)
         self.assertIsNotNone(confirmed_2)
         tracked_2 = confirmed_2.tracked_competition
 
-        # They should share the same unified_competition_id
+        # Canonical-equal names share the same unified competition.
         self.assertEqual(tracked_1.unified_competition_id, tracked_2.unified_competition_id)
+
+        # 2b. The WOMEN variant is a different league (gender is a discriminator):
+        #     it must NOT auto-merge into the men/unmarked one.
+        self.repository.create_pending_competition_request(
+            chat_id,
+            platform="platform_b",
+            source_url="https://platform_b.test/npl-vic-femenil",
+            competition_external_id="l2f",
+            competition_name="Australia. NPL Victoria (F)",
+        )
+        confirmed_2f = self.repository.confirm_pending_competition_request(chat_id)
+        tracked_2f = confirmed_2f.tracked_competition
+        self.assertNotEqual(tracked_1.unified_competition_id, tracked_2f.unified_competition_id)
 
         # Verify that a completely different league gets a different unified_competition_id
         self.repository.create_pending_competition_request(
