@@ -167,7 +167,7 @@ HELP_STATS_MESSAGE = (
     "  <code>/track_stats</code> - Sigue una liga únicamente para estadísticas y cache diario\n"
     "  <code>/stats_tracks</code> - Lista las ligas seguidas exclusivamente por estadísticas\n"
     "  <code>/explore_stats</code> - Explora tabla, partidos anteriores, fixture y goleadores de stats\n"
-    "  <code>/stats &lt;n&gt;</code> - Genera reporte H2H del partido elegido de la lista de /matches\n"
+    "  <code>/stats &lt;n&gt; [provider]</code> - Reporte H2H del partido de /matches (sin provider combina todos)\n"
     "  <code>/platforms</code> - Muestra las plataformas de odds y proveedores de stats soportados\n\n"
     "🌍 <b>Ligas Especiales (Stats de Federaciones):</b>\n"
     "  <i>Ligas de ascenso/copas que no figuran en sitios comunes: las sacamos de las páginas oficiales.</i>\n"
@@ -256,10 +256,12 @@ EVENT_URL_USAGE_MESSAGE = (
 )
 
 STATS_URL_USAGE_MESSAGE = (
-    "Usá /stats <número_visible_en_/matches>.\n"
+    "Usá /stats <número_visible_en_/matches> [provider].\n"
     "Primero corré /matches, elegí una liga y después pedí las stats del partido.\n"
-    "Ejemplo:\n"
-    "/stats 3"
+    "Sin provider combina TODOS los linkeados a la liga; con provider usa solo ese.\n"
+    "Ejemplos:\n"
+    "/stats 3\n"
+    "/stats 3 sofascore"
 )
 
 
@@ -1253,9 +1255,11 @@ async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         )
         return SELECT_LEAGUE_FOR_STATS
 
-    if len(context.args) != 1 or not context.args[0].isdigit():
+    if len(context.args) > 2 or not context.args[0].isdigit():
         await update.message.reply_text(STATS_URL_USAGE_MESSAGE)
         return ConversationHandler.END
+    # /stats <n> [provider] — sin provider combina todos los linkeados a la liga.
+    provider_filter = context.args[1] if len(context.args) == 2 else None
 
     active_matches = context.user_data.get(MATCHES_ACTIVE_CONTEXT_KEY)
     tracked_subscription = context.user_data.get(MATCHES_SELECTED_TRACK_CONTEXT_KEY)
@@ -1292,6 +1296,7 @@ async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         tracked_subscription=tracked_subscription,
         matches=active_matches,
         event_number=selected_index,
+        provider_filter=provider_filter,
     )
     await _reply_text_chunks(update.message, result.message)
     return ConversationHandler.END

@@ -487,18 +487,21 @@ class StatsService:
         tracked_subscription: TrackedCompetitionSubscription,
         matches: Sequence[ActiveEventRecord],
         event_number: int,
+        provider_filter: str | None = None,
     ) -> CommandResult:
         """Resolve a listed odds event to stats and return a compact report.
 
-        Non-interactive entry point (`/stats <n>`). When the match cannot be
-        auto-resolved but plausible candidates exist, it asks the user to run the
-        interactive `/stats` flow, which can show a selectable list.
+        Non-interactive entry point (`/stats <n> [provider]`). Without a provider
+        the report combines every linked provider; with one, only that provider is
+        queried. When the match cannot be auto-resolved but plausible candidates
+        exist, it asks the user to run the interactive `/stats` flow.
         """
 
         resolution = await self.resolve_event(
             tracked_subscription=tracked_subscription,
             matches=matches,
             event_number=event_number,
+            provider_filter=provider_filter,
         )
         if resolution.kind == "choose":
             return CommandResult(
@@ -516,11 +519,14 @@ class StatsService:
         tracked_subscription: TrackedCompetitionSubscription,
         matches: Sequence[ActiveEventRecord],
         event_number: int,
+        provider_filter: str | None = None,
     ) -> StatsResolution:
         """Resolve one listed odds event to a stats match.
 
         Returns a `StatsResolution` describing whether a report is ready, a manual
-        choice is needed, or resolution failed.
+        choice is needed, or resolution failed. ``provider_filter`` narrows the
+        report to one provider (by key or display-name substring); without it the
+        report combines every provider linked to the league.
         """
 
         if event_number <= 0 or event_number > len(matches):
@@ -530,19 +536,44 @@ class StatsService:
             )
 
         match = matches[event_number - 1]
-        
+
         # 1. Collect all providers we should query
         direct_provider_key = _provider_key_from_stats_url(match.stats_url)
         league_links = self.repository.list_stats_league_links(tracked_subscription.tracked_league.id)
-        
+
         providers_to_query: list[tuple[str, str | None]] = []
         if direct_provider_key:
             providers_to_query.append((direct_provider_key, None))
-            
+
         for link in league_links:
             if not any(p[0] == link.stats_provider for p in providers_to_query):
                 providers_to_query.append((link.stats_provider, link.stats_league_id))
-                
+
+        if provider_filter:
+            wanted = provider_filter.strip().lower()
+            filtered = [
+                entry for entry in providers_to_query
+                if wanted in entry[0].lower()
+                or wanted in _provider_display_name(self.provider_registry, entry[0]).lower()
+            ]
+            if not filtered and providers_to_query:
+                available = ", ".join(
+                    _provider_display_name(self.provider_registry, key)
+                    for key, _ in providers_to_query
+                )
+                return StatsResolution(
+                    kind="error",
+                    result=CommandResult(
+                        ok=False,
+                        message=(
+                            f"Esa liga no tiene el provider «{provider_filter}».\n"
+                            f"Providers disponibles: {available}.\n"
+                            "Sin provider, /stats <n> combina todos."
+                        ),
+                    ),
+                )
+            providers_to_query = filtered
+
         if not providers_to_query:
             return StatsResolution(
                 kind="error",
