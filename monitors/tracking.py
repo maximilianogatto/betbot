@@ -809,6 +809,117 @@ class TrackingService:
 
         return CommandResult(ok=True, message="\n".join(lines))
 
+    def learn_unified_merges(self) -> list[dict]:
+        """Fusiona ligas unificadas que comparten partidos físicos en otra plataforma.
+
+        Aprendizaje automático del registro (decisión: ejecutar; /unlink_league
+        repara). Umbral deliberadamente alto para evitar falsos positivos:
+        equipos >=0.85 de similitud, kickoffs a <=30 min (o >=0.92 sin horario),
+        plataformas distintas y >=2 partidos coincidentes entre ambas ligas.
+        """
+
+        repository = self.repository
+        events_by_unified: dict[int, list] = {}
+        league_names: dict[int, str] = {}
+        for comp in repository.list_globally_active_competitions():
+            unified_id = comp.unified_competition_id
+            if unified_id is None:
+                continue
+            try:
+                events = repository.get_active_events(comp.id, only_future=True)
+            except Exception:
+                continue
+            events_by_unified.setdefault(unified_id, []).extend(events)
+            league_names.setdefault(unified_id, comp.league_name)
+
+        merges: list[dict] = []
+        unified_ids = sorted(events_by_unified)
+        merged_away: set[int] = set()
+        for i, target_id in enumerate(unified_ids):
+            if target_id in merged_away:
+                continue
+            for source_id in unified_ids[i + 1:]:
+                if source_id in merged_away:
+                    continue
+                coincidences = self._coinciding_matches(
+                    events_by_unified[target_id], events_by_unified[source_id]
+                )
+                if coincidences < 2:
+                    continue
+                try:
+                    repository.merge_unified_competitions(source_id, target_id)
+                except ValueError:
+                    continue
+                merged_away.add(source_id)
+                events_by_unified[target_id].extend(events_by_unified[source_id])
+                merges.append({
+                    "into_id": target_id,
+                    "into_name": league_names.get(target_id, str(target_id)),
+                    "from_name": league_names.get(source_id, str(source_id)),
+                    "matches": coincidences,
+                })
+                logger.info(
+                    "League learning: merged unified %s («%s») into %s («%s») on %s coinciding matches.",
+                    source_id, merges[-1]["from_name"], target_id, merges[-1]["into_name"], coincidences,
+                )
+        return merges
+
+    @staticmethod
+    def _coinciding_matches(events_a: list, events_b: list) -> int:
+        """Count physical matches shared by two leagues across DIFFERENT platforms."""
+
+        from bot.alerts import _physical_match_similarity
+
+        def _parse(raw):
+            try:
+                return datetime.fromisoformat(str(raw).strip())
+            except (TypeError, ValueError):
+                return None
+
+        count = 0
+        used_b: set[int] = set()
+        for event_a in events_a:
+            for j, event_b in enumerate(events_b):
+                if j in used_b or event_a.platform == event_b.platform:
+                    continue
+                similarity = _physical_match_similarity(event_a, event_b)
+                if similarity < 0.85:
+                    continue
+                dt_a, dt_b = _parse(event_a.scheduled_at), _parse(event_b.scheduled_at)
+                if dt_a is not None and dt_b is not None:
+                    if abs((dt_a - dt_b).total_seconds()) > 1800:
+                        continue
+                elif similarity < 0.92:
+                    continue  # sin horario confiable, exigir similitud más alta
+                used_b.add(j)
+                count += 1
+                break
+        return count
+
+    async def learn_and_notify_league_merges(self, bot: Bot) -> None:
+        """Run league-merge learning and tell the merged league's subscribers."""
+
+        try:
+            merges = await asyncio.to_thread(self.learn_unified_merges)
+        except Exception:
+            logger.exception("League-merge learning failed.")
+            return
+        for merge in merges:
+            chats: set[int] = set()
+            for comp in self.repository.list_tracked_competitions_for_unified(merge["into_id"]):
+                for sub in self.repository.get_subscriptions_for_competition(comp.id, only_enabled=True):
+                    chats.add(sub.telegram_chat_id)
+            text = (
+                f"🧠 Aprendí: «{merge['from_name']}» es la misma liga que «{merge['into_name']}» "
+                f"({merge['matches']} partidos coincidentes en otra plataforma) — las unifiqué.\n"
+                "Heredás sus links de odds y stats. Si está mal, separala con /unlink_league."
+            )
+            for chat_id in sorted(chats):
+                try:
+                    await bot.send_message(chat_id=chat_id, text=text)
+                except Exception:
+                    logger.warning("Could not notify chat %s about a league merge.", chat_id)
+
     async def refresh_chat_tracks(self, chat_id: int) -> RefreshSummary:
         """Refresh the unique leagues currently subscribed by one chat."""
 
@@ -873,6 +984,9 @@ class TrackingService:
                 summary,
                 notify_failures=False,
             )
+            # Registry learning: leagues sharing physical matches across
+            # platforms get merged automatically (subscribers are notified).
+            await self.learn_and_notify_league_merges(bot)
             return summary
         finally:
             await self.finish_refresh("automatic")

@@ -2577,9 +2577,7 @@ async def link_league_command(update: Update, context: ContextTypes.DEFAULT_TYPE
         await update.message.reply_text("Números inválidos. Mirá <code>/leagues</code>.", parse_mode=ParseMode.HTML)
         return
     into_id, from_id = unified[n - 1]["id"], unified[m - 1]["id"]
-    for comp in tracking_repository.list_tracked_competitions_for_unified(from_id):
-        tracking_repository.link_tracked_competition_to_unified(comp.id, into_id)
-    tracking_repository.delete_unified_competition(from_id)
+    tracking_repository.merge_unified_competitions(from_id, into_id)
     card = build_league_card(tracking_repository, into_id)
     msg = "✅ Ligas fusionadas.\n\n" + (render_league_card(card) if card else "")
     await _reply_text_chunks(update.message, msg, parse_mode=ParseMode.HTML)
