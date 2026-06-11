@@ -137,6 +137,22 @@ class LeagueLearningTests(unittest.TestCase):
         self.assertEqual([(l.stats_provider, l.stats_league_id) for l in links],
                          [("sofascore_http", "17")])
 
+    def test_merges_with_mixed_naive_and_aware_kickoffs(self) -> None:
+        a = self._track("1xbet_http", "100", "Inglaterra. Liga Premier")
+        b = self._track("betovo_http", "200", "English Top Flight Special")
+        self.repo.upsert_active_events(a.id, [
+            _event("a1", "Arsenal FC", "Chelsea FC", "2030-01-01T15:00:00"),
+            _event("a2", "Liverpool FC", "Everton FC", "2030-01-01T17:30:00"),
+        ])
+        self.repo.upsert_active_events(b.id, [
+            _event("b1", "Arsenal", "Chelsea", "2030-01-01T15:00:00+00:00"),
+            _event("b2", "Liverpool", "Everton", "2030-01-01T17:30:00+00:00"),
+        ])
+
+        merges = self.service.learn_unified_merges()
+        self.assertEqual(len(merges), 1)
+        self.assertEqual(merges[0]["matches"], 2)
+
 
 if __name__ == "__main__":
     unittest.main()

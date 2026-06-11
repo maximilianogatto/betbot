@@ -129,10 +129,10 @@ class NoCommandTests(unittest.IsolatedAsyncioTestCase):
         ]
         with self._patch_client(tables):
             await no_match_command(update, SimpleNamespace(args=["8998012"]))
+        self.assertGreaterEqual(message.reply_text.await_count, 2)
         out = message.reply_text.await_args.args[0]
-        self.assertIn("Bodø/Glimt", out)
-        self.assertIn("Hønefoss BK", out)
-        self.assertIn("no está disponible", out)
+        self.assertIn("Bodø/Glimt 0-0 Hønefoss BK", out)
+        self.assertIn("FORMA", out)
 
     async def test_today_uses_match_id_not_tournament_id(self) -> None:
         # The Turnering cell carries the TOURNAMENT fiksId; only /fotballdata/kamp/
@@ -181,9 +181,9 @@ class NoCommandTests(unittest.IsolatedAsyncioTestCase):
         with self._patch_client(tables):
             await no_match_command(update, SimpleNamespace(args=["8995864"]))
         out = message.reply_text.await_args.args[0]
-        self.assertIn("Norsk Tipping-ligaen avd. 5", out)
+        self.assertIn("Norsk Tipping-ligaen avd. 5", out)  # liga real, no hardcoded
         self.assertNotIn("Toppserien", out)
-        self.assertIn("fiksId=8995864", out)  # working match link
+        self.assertIn("FORMA", out)  # match_report (lineup detector) corrió
 
 
 if __name__ == "__main__":

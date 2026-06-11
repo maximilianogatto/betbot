@@ -100,11 +100,47 @@ class SkCommandTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("Presov Today", out)
         self.assertIn("today_match_id", out)
 
-    async def test_sk_match_returns_not_supported(self) -> None:
+    async def test_sk_match_success(self) -> None:
         update, message = _update()
-        await sk_match_command(update, SimpleNamespace(args=["123456"]))
+        match_detail = {
+            "competitionId": "6849d25aeba10c40f7f8ff85",
+            "competitionPart": {"_id": "part_123", "name": "I. liga ženy"},
+            "startDate": "2026-06-11T16:00:00.000Z",
+            "status": "ODOHRATY",
+            "score": [3, 0],
+            "teams": [
+                {"_id": "team_home", "name": "TJ Družstevník Hlboké", "additionalProperties": {"homeaway": "home"}},
+                {"_id": "team_away", "name": "FC Družstevník Rybky", "additionalProperties": {"homeaway": "away"}},
+            ],
+            "nominations": [
+                {
+                    "team": {"_id": "team_home"},
+                    "athletes": [
+                        {"name": "Michal Hrušecký", "shirtNo": 10, "position": "GK", "substitute": False},
+                    ]
+                },
+                {
+                    "team": {"_id": "team_away"},
+                    "athletes": [
+                        {"name": "Jaroslav Paszko", "shirtNo": 14, "position": "FW", "substitute": False},
+                    ]
+                }
+            ],
+            "protocol": {
+                "events": [
+                    {"eventType": "goal", "player": {"name": "Michal Hrušecký"}, "team": "team_home", "phase": "1HT", "eventTime": "10:00"},
+                    {"eventType": "yellow_card", "player": {"name": "Jaroslav Paszko"}, "team": "team_away", "phase": "1HT", "eventTime": "34:00"},
+                ]
+            }
+        }
+        with self._patch_client(get_match_detail=match_detail, get_matches={"matches": []}):
+            await sk_match_command(update, SimpleNamespace(args=["123456"]))
+            
+        self.assertGreaterEqual(message.reply_text.await_count, 2)
         out = message.reply_text.await_args.args[0]
-        self.assertIn("no está disponible", out)
+        self.assertIn("TJ Družstevník Hlboké 3-0 FC Družstevník Rybky", out)
+        self.assertIn("Michal Hrušecký", out)
+        self.assertIn("10:00", out)
 
 if __name__ == "__main__":
     unittest.main()

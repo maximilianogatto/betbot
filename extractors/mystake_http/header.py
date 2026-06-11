@@ -162,7 +162,8 @@ def build_league_options(
     for league in parse_leagues(tree, sport_id=sport_id):
         if not _matches_country(league.region_name, country_filter):
             continue
-        if query_filter and query_filter not in _normalize_text(league.champ_name):
+        disp_name = f"{league.region_name} · {league.champ_name}" if league.region_name.lower() not in league.champ_name.lower() else league.champ_name
+        if query_filter and query_filter not in _normalize_text(disp_name):
             continue
         options.append(
             LeagueDiscoveryOption(
@@ -171,7 +172,7 @@ def build_league_options(
                 country_id=league.region_id,
                 country_name=league.region_name,
                 league_id=league.champ_id,
-                league_name=league.champ_name,
+                league_name=disp_name,
                 source_url=f"mystake:champ:{league.champ_id}",
                 games_count=league.games_count,
                 raw_payload={

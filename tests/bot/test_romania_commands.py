@@ -126,11 +126,41 @@ class RoCommandTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("Tampa Today", out)
         self.assertIn("99999", out)
 
-    async def test_ro_match_returns_not_supported(self) -> None:
+    async def test_ro_match_success(self) -> None:
         update, message = _update()
-        await ro_match_command(update, SimpleNamespace(args=["123456"]))
+        filters = {
+            "responseData": {
+                "tours": [
+                    {"tourRoundId": 43614, "seriesId": 3895, "seasonId": 20, "stageId": 94, "isCurrent": True, "startDate": "2026-06-01"}
+                ]
+            }
+        }
+        matches_data = {
+            "responseData": {
+                "matches": [
+                    {
+                        "list": [
+                            {
+                                "matchId": 123456,
+                                "startDate": "2026-05-30T14:00:00",
+                                "homeClub": {"name": "Kids Tampa"},
+                                "awayClub": {"name": "Alexandria"},
+                                "homeGoals": 0,
+                                "awayGoals": 1,
+                                "sysCompetitionMatchStatusId": 3
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+        with self._patch_client(get_filters=filters, get_matches=matches_data):
+            await ro_match_command(update, SimpleNamespace(args=["123456"]))
+            
+        self.assertGreaterEqual(message.reply_text.await_count, 2)
         out = message.reply_text.await_args.args[0]
-        self.assertIn("no está disponible", out)
+        self.assertIn("Kids Tampa 0-1 Alexandria", out)
+        self.assertIn("FORMA", out)
 
 if __name__ == "__main__":
     unittest.main()

@@ -83,6 +83,8 @@ def build_league_options(
             continue
 
         league_name = str(tournament.get("name") or tour_id)
+        if country and country.lower() not in league_name.lower():
+            league_name = f"{country} · {league_name}"
         if query_filter and query_filter not in _normalize_text(league_name):
             continue
 

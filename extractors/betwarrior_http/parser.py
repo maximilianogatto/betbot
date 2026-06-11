@@ -53,13 +53,15 @@ def prematch_events_from_listview(payload: dict[str, Any]) -> list[LiveEventSnap
             continue
         is_soccer = not any("esport" in str(p.get("termKey", "")).lower() for p in path)
         country = path[-2].get("name") if len(path) >= 2 else None
+        t_name = event.get("group")
+        comp_name = f"{country} · {t_name}" if country and t_name and country.lower() not in t_name.lower() else t_name
         out.append(
             LiveEventSnapshot(
                 platform=PLATFORM,
                 external_event_id=str(event.get("id")),
                 home=home,
                 away=away,
-                competition_name=event.get("group"),
+                competition_name=comp_name,
                 country_name=country,
                 minute=None,
                 scheduled_at=_kickoff_iso(event.get("start")),
@@ -89,6 +91,8 @@ def live_events_from_open(payload: dict[str, Any]) -> list[LiveEventSnapshot]:
             continue
         is_soccer = not any("esport" in str(p.get("termKey", "")).lower() for p in path)
         country = path[-2].get("name") if len(path) >= 2 else None
+        t_name = event.get("group")
+        comp_name = f"{country} · {t_name}" if country and t_name and country.lower() not in t_name.lower() else t_name
         live_data = item.get("liveData") or {}
         clock = live_data.get("matchClock") or {}
         score = live_data.get("score") or {}
@@ -103,7 +107,7 @@ def live_events_from_open(payload: dict[str, Any]) -> list[LiveEventSnapshot]:
                 external_event_id=str(event.get("id")),
                 home=home,
                 away=away,
-                competition_name=event.get("group"),
+                competition_name=comp_name,
                 country_name=country,
                 minute=minute,
                 home_score=_int(score.get("home")),

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from datetime import datetime
+from datetime import datetime, timezone
 from html import escape
 import json
 from typing import TYPE_CHECKING
@@ -332,23 +332,29 @@ def build_match_card_message(
 
 def _physical_match_similarity(event_a: ActiveEventRecord, event_b: ActiveEventRecord) -> float:
     from datetime import datetime
+
     def parse_dt(dt_val):
         if not dt_val:
             return None
         if isinstance(dt_val, datetime):
-            return dt_val
-        try:
-            return datetime.fromisoformat(dt_val.strip())
-        except ValueError:
-            return None
-            
+            parsed = dt_val
+        else:
+            try:
+                parsed = datetime.fromisoformat(dt_val.strip())
+            except ValueError:
+                return None
+
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        return parsed.astimezone(timezone.utc)
+
     dt_a = parse_dt(event_a.scheduled_at)
     dt_b = parse_dt(event_b.scheduled_at)
     if dt_a and dt_b:
         diff_hours = abs((dt_a - dt_b).total_seconds()) / 3600.0
         if diff_hours > 3.0:
             return 0.0
-            
+
     from monitors.live_watch import _name_similarity
     home_sim = _name_similarity(event_a.home, event_b.home)
     away_sim = _name_similarity(event_a.away, event_b.away)

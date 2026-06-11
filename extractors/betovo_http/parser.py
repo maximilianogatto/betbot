@@ -47,6 +47,9 @@ def live_events_from_livenow(payload: dict[str, Any]) -> list[LiveEventSnapshot]
             continue
         category = categories.get(event.get("catId")) or {}
         champ = champs.get(event.get("champId")) or {}
+        t_name = champ.get("name")
+        c_name = category.get("name")
+        comp_name = f"{c_name} · {t_name}" if c_name and t_name and c_name.lower() not in t_name.lower() else t_name
         score = event.get("score") if isinstance(event.get("score"), list) else [None, None]
         live.append(
             LiveEventSnapshot(
@@ -54,8 +57,8 @@ def live_events_from_livenow(payload: dict[str, Any]) -> list[LiveEventSnapshot]
                 external_event_id=str(event.get("id")),
                 home=home,
                 away=away,
-                competition_name=champ.get("name"),
-                country_name=category.get("name"),
+                competition_name=comp_name,
+                country_name=c_name,
                 minute=event.get("liveTime") if event.get("liveTime") not in (None, "Not started") else event.get("ls"),
                 home_score=_int(score[0]) if len(score) > 0 else None,
                 away_score=_int(score[1]) if len(score) > 1 else None,

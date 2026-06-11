@@ -301,13 +301,16 @@ def _live_snapshot_from_array(ev: Any, *, sport_id: str) -> LiveEventSnapshot | 
         if clock.get(key) is not None:
             minute = str(clock.get(key))
             break
+    t_name = str(ev[2]) if len(ev) > 2 else None
+    c_name = str(ev[7]) if len(ev) > 7 else None
+    comp_name = f"{c_name} · {t_name}" if c_name and t_name and c_name.lower() not in t_name.lower() else t_name
     return LiveEventSnapshot(
         platform=PLATFORM,
         external_event_id=str(event_id),
         home=home,
         away=away,
-        competition_name=str(ev[2]) if len(ev) > 2 else None,
-        country_name=str(ev[7]) if len(ev) > 7 else None,
+        competition_name=comp_name,
+        country_name=c_name,
         minute=minute,
         home_score=s1,
         away_score=s2,

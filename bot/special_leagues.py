@@ -15,7 +15,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Any
 from zoneinfo import ZoneInfo
 
 _ARG = ZoneInfo("America/Argentina/Buenos_Aires")
@@ -65,6 +65,483 @@ class StandingsResult:
     note: Optional[str] = None  # custom message shown when there is no table (e.g. cups)
 
 
+@dataclass
+class SpecialPlayer:
+    name: str
+    shirt_number: str = ""
+    position: str = ""  # "GK" | "DF" | "MF" | "FW" | "N/A"
+    is_starter: bool = True
+    goals: int = 0
+    yellow_cards: int = 0
+    red_cards: int = 0
+
+
+@dataclass
+class SpecialEvent:
+    minute: str
+    type: str  # "Goal" | "YellowCard" | "RedCard" | "Sub" | "Other"
+    player_name: str
+    team_name: str
+    detail: str = ""  # e.g. "Assist: X" or "Penalty"
+
+
+@dataclass
+class SpecialMatchDetail:
+    match_id: str
+    home_team: str
+    away_team: str
+    league_code: str
+    league_name: str
+    date_arg: str  # YYYY-MM-DD (Arg time)
+    time_arg: str  # HH:MM (Arg time)
+    status: str
+    score: Optional[str] = None
+    venue: str = "N/A"
+    attendance: str = "N/A"
+    home_lineup: list[SpecialPlayer] = field(default_factory=list)
+    away_lineup: list[SpecialPlayer] = field(default_factory=list)
+    events: list[SpecialEvent] = field(default_factory=list)
+
+
+class SpecialLeagueAnalyzer:
+    def __init__(self, home_team: str, away_team: str, matches: list[MatchRow], standings: StandingsResult):
+        self.home_team = home_team.strip()
+        self.away_team = away_team.strip()
+        self.matches = matches
+        self.standings = standings
+        
+        # Helper to normalise names for comparison
+        def norm(name: str) -> str:
+            return " ".join(name.strip().lower().split())
+        self.norm_home = norm(self.home_team)
+        self.norm_away = norm(self.away_team)
+        
+        # Separate matches: played vs upcoming
+        self.played_matches = []
+        for m in matches:
+            if m.score and "-" in m.score:
+                self.played_matches.append(m)
+        
+    def _is_home(self, team_name: str) -> bool:
+        return " ".join(team_name.strip().lower().split()) == self.norm_home
+        
+    def _is_away(self, team_name: str) -> bool:
+        return " ".join(team_name.strip().lower().split()) == self.norm_away
+
+    def get_form(self) -> dict[str, Any]:
+        # Calculate recent W/D/L for both teams
+        def team_form(norm_name: str) -> dict[str, Any]:
+            rel = [m for m in self.played_matches if norm_name in (
+                " ".join(m.home.strip().lower().split()),
+                " ".join(m.away.strip().lower().split())
+            )]
+            # Sort by date descending
+            rel.sort(key=lambda m: (m.date_arg or "", m.time_arg or ""), reverse=True)
+            sequence = []
+            last_matches = []
+            recent_points = 0
+            for m in rel[:5]:
+                try:
+                    hs, as_ = map(int, m.score.split("-"))
+                except ValueError:
+                    continue
+                is_home = " ".join(m.home.strip().lower().split()) == norm_name
+                # Determine result for this team
+                if hs == as_:
+                    res = "D"
+                    recent_points += 1
+                elif (hs > as_ and is_home) or (as_ > hs and not is_home):
+                    res = "W"
+                    recent_points += 3
+                else:
+                    res = "L"
+                sequence.append(res)
+                last_matches.append({
+                    "date_display": m.date_arg.split("-")[-1] + "/" + m.date_arg.split("-")[-2] + "/" + m.date_arg.split("-")[0][2:] if len(m.date_arg.split("-")) == 3 else m.date_arg,
+                    "home": m.home,
+                    "away": m.away,
+                    "score": m.score
+                })
+            
+            rating_10 = round(recent_points / (len(sequence) * 3) * 10, 2) if sequence else 0.0
+            return {
+                "sequence": sequence[::-1],  # oldest to newest
+                "rating_10": rating_10,
+                "last_matches": last_matches
+            }
+            
+        return {
+            "home": team_form(self.norm_home),
+            "away": team_form(self.norm_away)
+        }
+
+    def get_h2h(self) -> dict[str, Any]:
+        rel = [m for m in self.played_matches if {self.norm_home, self.norm_away} == {
+            " ".join(m.home.strip().lower().split()),
+            " ".join(m.away.strip().lower().split())
+        }]
+        rel.sort(key=lambda m: (m.date_arg or "", m.time_arg or ""), reverse=True)
+        
+        home_wins = 0
+        away_wins = 0
+        draws = 0
+        recent = []
+        
+        for m in rel:
+            try:
+                hs, as_ = map(int, m.score.split("-"))
+            except ValueError:
+                continue
+            is_home_home = " ".join(m.home.strip().lower().split()) == self.norm_home
+            if hs == as_:
+                draws += 1
+            elif (hs > as_ and is_home_home) or (as_ > hs and not is_home_home):
+                home_wins += 1
+            else:
+                away_wins += 1
+                
+            recent.append({
+                "date_display": m.date_arg.split("-")[-1] + "/" + m.date_arg.split("-")[-2] + "/" + m.date_arg.split("-")[0][2:] if len(m.date_arg.split("-")) == 3 else m.date_arg,
+                "home": m.home,
+                "away": m.away,
+                "score": m.score
+            })
+            
+        total = home_wins + away_wins + draws
+        edge_value = 0.0
+        edge_label = "Sin ventaja clara"
+        if total > 0:
+            edge_value = round((home_wins - away_wins) / total, 4)
+            if edge_value > 0.05:
+                edge_label = self.home_team
+            elif edge_value < -0.05:
+                edge_label = self.away_team
+                
+        return {
+            "edge_label": edge_label,
+            "edge_value": edge_value,
+            "recent_matches": recent[:5]
+        }
+
+    def get_goals(self) -> dict[str, Any]:
+        def team_goals(norm_name: str) -> dict[str, Any]:
+            played = [m for m in self.played_matches if norm_name in (
+                " ".join(m.home.strip().lower().split()),
+                " ".join(m.away.strip().lower().split())
+            )]
+            home_games = [m for m in self.played_matches if " ".join(m.home.strip().lower().split()) == norm_name]
+            away_games = [m for m in self.played_matches if " ".join(m.away.strip().lower().split()) == norm_name]
+            
+            gf_total = gf_home = gf_away = 0
+            ga_total = ga_home = ga_away = 0
+            btts_count = 0
+            
+            for m in played:
+                try:
+                    hs, as_ = map(int, m.score.split("-"))
+                except ValueError:
+                    continue
+                is_home = " ".join(m.home.strip().lower().split()) == norm_name
+                gf = hs if is_home else as_
+                ga = as_ if is_home else hs
+                gf_total += gf
+                ga_total += ga
+                if hs > 0 and as_ > 0:
+                    btts_count += 1
+                    
+            for m in home_games:
+                try:
+                    hs, as_ = map(int, m.score.split("-"))
+                except ValueError:
+                    continue
+                gf_home += hs
+                ga_home += as_
+                
+            for m in away_games:
+                try:
+                    hs, as_ = map(int, m.score.split("-"))
+                except ValueError:
+                    continue
+                gf_away += as_
+                ga_away += hs
+                
+            n_played = len(played)
+            n_home = len(home_games)
+            n_away = len(away_games)
+            
+            return {
+                "scored_avg": gf_total / n_played if n_played else 0.0,
+                "conceded_avg": ga_total / n_played if n_played else 0.0,
+                "scored_split": gf_home / n_home if n_home else (gf_total / n_played if n_played else 0.0),
+                "conceded_split": ga_home / n_home if n_home else (ga_total / n_played if n_played else 0.0),
+                "scored_away_split": gf_away / n_away if n_away else (gf_total / n_played if n_played else 0.0),
+                "conceded_away_split": ga_away / n_away if n_away else (ga_total / n_played if n_played else 0.0),
+                "btts_rate": btts_count / n_played if n_played else 0.0,
+                "n_home": n_home,
+                "n_away": n_away
+            }
+            
+        home_stats = team_goals(self.norm_home)
+        away_stats = team_goals(self.norm_away)
+        
+        # League-wide averages
+        tot_home_g = 0
+        tot_away_g = 0
+        tot_played = len(self.played_matches)
+        for m in self.played_matches:
+            try:
+                hs, as_ = map(int, m.score.split("-"))
+                tot_home_g += hs
+                tot_away_g += as_
+            except ValueError:
+                continue
+                
+        league_home_avg = tot_home_g / tot_played if tot_played else 1.5
+        league_away_avg = tot_away_g / tot_played if tot_played else 1.2
+        
+        home_attack_strength = (home_stats["scored_split"] / league_home_avg) if league_home_avg else 1.0
+        home_defense_weakness = (home_stats["conceded_split"] / league_away_avg) if league_away_avg else 1.0
+        away_attack_strength = (away_stats["scored_away_split"] / league_away_avg) if league_away_avg else 1.0
+        away_defense_weakness = (away_stats["conceded_away_split"] / league_home_avg) if league_home_avg else 1.0
+        
+        def to10(val: float) -> float:
+            return round(max(0.0, min(10.0, val / 2.5 * 10)), 2)
+            
+        home_strength_10 = round((to10(home_attack_strength) + (10.0 - to10(home_defense_weakness))) / 2.0, 2)
+        away_defense_weakness_10 = to10(away_defense_weakness)
+        
+        min_home_scored = 90.0 / home_stats["scored_split"] if home_stats["scored_split"] else 90.0
+        min_away_conceded = 90.0 / away_stats["conceded_away_split"] if away_stats["conceded_away_split"] else 90.0
+        projected_home_minute = round((min_home_scored + min_away_conceded) / 2.0, 1)
+        
+        min_away_scored = 90.0 / away_stats["scored_away_split"] if away_stats["scored_away_split"] else 90.0
+        min_home_conceded = 90.0 / home_stats["conceded_split"] if home_stats["conceded_split"] else 90.0
+        projected_away_minute = round((min_away_scored + min_home_conceded) / 2.0, 1)
+        
+        btts_combined = round((home_stats["btts_rate"] + away_stats["btts_rate"]) / 2.0, 4)
+        
+        return {
+            "home_scored": home_stats["scored_avg"],
+            "home_scored_home": home_stats["scored_split"],
+            "away_scored": away_stats["scored_avg"],
+            "away_scored_away": away_stats["scored_away_split"],
+            
+            "home_conceded": home_stats["conceded_avg"],
+            "home_conceded_home": home_stats["conceded_split"],
+            "away_conceded": away_stats["conceded_avg"],
+            "away_conceded_away": away_stats["conceded_away_split"],
+            
+            "btts": btts_combined,
+            "home_strength_10": home_strength_10,
+            "away_defense_weakness_10": away_defense_weakness_10,
+            
+            "projected_home_minute": projected_home_minute,
+            "projected_away_minute": projected_away_minute
+        }
+
+    def get_table_context(self) -> dict[str, Any]:
+        home_row = None
+        away_row = None
+        
+        def match_team(t_name: str, ref_name: str) -> bool:
+            return " ".join(t_name.strip().lower().split()) == " ".join(ref_name.strip().lower().split())
+            
+        for r in self.standings.rows:
+            if match_team(r.team, self.home_team):
+                home_row = r
+            if match_team(r.team, self.away_team):
+                away_row = r
+                
+        def ordinal(n: int) -> str:
+            if 11 <= n % 100 <= 13:
+                suffix = "th"
+            else:
+                suffix = {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
+            return f"{n}{suffix}"
+            
+        home_pos = f"{ordinal(home_row.position)} ({home_row.points} pts, {home_row.played}P)" if home_row else "n/d"
+        away_pos = f"{ordinal(away_row.position)} ({away_row.points} pts, {away_row.played}P)" if away_row else "n/d"
+        
+        return {
+            "home_display": home_pos,
+            "away_display": away_pos
+        }
+
+    def get_common_opponents(self) -> list[dict[str, Any]]:
+        def opponents_for(norm_name: str) -> dict[str, MatchRow]:
+            out = {}
+            for m in self.played_matches:
+                hn = " ".join(m.home.strip().lower().split())
+                an = " ".join(m.away.strip().lower().split())
+                if hn == norm_name:
+                    out[an] = m
+                elif an == norm_name:
+                    out[hn] = m
+            return out
+            
+        home_opps = opponents_for(self.norm_home)
+        away_opps = opponents_for(self.norm_away)
+        common_norms = set(home_opps.keys()) & set(away_opps.keys())
+        
+        common = []
+        for c_norm in list(common_norms)[:4]:
+            m_home = home_opps[c_norm]
+            m_away = away_opps[c_norm]
+            
+            opp_name = m_home.away if " ".join(m_home.home.strip().lower().split()) == self.norm_home else m_home.home
+            
+            def date_display(date_str: str) -> str:
+                parts = date_str.split("-")
+                return f"{parts[-1]}/{parts[-2]}/{parts[0][2:]}" if len(parts) == 3 else date_str
+                
+            common.append({
+                "common_opponent": opp_name,
+                "home_team_evidence": {
+                    "date_display": date_display(m_home.date_arg),
+                    "scoreline": f"{m_home.home} {m_home.score} {m_home.away}"
+                },
+                "away_team_evidence": {
+                    "date_display": date_display(m_away.date_arg),
+                    "scoreline": f"{m_away.home} {m_away.score} {m_away.away}"
+                }
+            })
+        return common
+
+
+def render_special_match_report(details: SpecialMatchDetail, stats: dict[str, Any]) -> str:
+    home = details.home_team
+    away = details.away_team
+    
+    home_seq = " ".join(stats["form"]["home"]["sequence"]) or "—"
+    away_seq = " ".join(stats["form"]["away"]["sequence"]) or "—"
+    
+    def form_emoji(val: float) -> str:
+        if val < 4.0:
+            return "🔴"
+        if val < 6.5:
+            return "🟡"
+        return "🟢"
+        
+    title = f"{home} vs {away}"
+    if details.score:
+        title = f"{home} {details.score} {away}"
+    competition_line = [f"🏆 {details.league_name}"] if details.league_name else []
+    lines = [
+        f"⚽ *{title}*",
+        *competition_line,
+        f"📍 Estadio: {details.venue} | Asistencia: {details.attendance}",
+        f"📅 Fecha: {details.date_arg} {details.time_arg} | Estado: {details.status}",
+        _DIV,
+        "",
+        "📊 *FORMA*",
+        f"   {home}:  {form_emoji(stats['form']['home']['rating_10'])} {stats['form']['home']['rating_10']:.2f}/10 - {home_seq}",
+        f"   {away}:  {form_emoji(stats['form']['away']['rating_10'])} {stats['form']['away']['rating_10']:.2f}/10 - {away_seq}",
+        "",
+        "🤝 *H2H*",
+        f"   Ventaja: {stats['h2h']['edge_label']} ({stats['h2h']['edge_value']:.4f})",
+    ]
+    
+    for m in stats["h2h"]["recent_matches"]:
+        lines.append(f"   • {m['date_display']}  {m['home']} {m['score']} {m['away']}")
+    if not stats["h2h"]["recent_matches"]:
+        lines.append("   • Sin enfrentamientos recientes.")
+        
+    lines.extend([
+        "",
+        "🥅 *GOLES (promedio)*",
+        "   Marcados:",
+        f"      {home}: {stats['goals']['home_scored']:.2f} ({stats['goals']['home_scored_home']:.2f} local)",
+        f"      {away}: {stats['goals']['away_scored']:.2f} ({stats['goals']['away_scored_away']:.2f} visita)",
+        "   Recibidos:",
+        f"      {home}: {stats['goals']['home_conceded']:.2f} ({stats['goals']['home_conceded_home']:.2f} local)",
+        f"      {away}: {stats['goals']['away_conceded']:.2f} ({stats['goals']['away_conceded_away']:.2f} visita)",
+        "",
+        f"   BTTS: {stats['goals']['btts'] * 100:.0f}%",
+        "",
+        "💪 *ÍNDICES*",
+        f"   Fuerza local ({home}): {stats['goals']['home_strength_10']:.2f}/10",
+        f"   Debilidad visitante ({away}): {stats['goals']['away_defense_weakness_10']:.2f}/10",
+        "",
+        "📋 *TABLA*",
+        f"   {home}: {stats['table']['home_display']}  ·  {away}: {stats['table']['away_display']}",
+        "",
+        "🔄 *ÚLTIMOS PARTIDOS*",
+        f"   {home}: {home_seq}",
+    ])
+    for m in stats["form"]["home"]["last_matches"]:
+        lines.append(f"   • {m['date_display']}  {m['home']} {m['score']} {m['away']}")
+    lines.append(f"   {away}: {away_seq}")
+    for m in stats["form"]["away"]["last_matches"]:
+        lines.append(f"   • {m['date_display']}  {m['home']} {m['score']} {m['away']}")
+        
+    lines.extend([
+        "",
+        "👤 *GOLEADOR*",
+        f"   {home}: n/a",
+        f"   {away}: n/a",
+        "",
+        "🩹 *LESIONES*",
+        f"   {home}: 0  ·  {away}: 0",
+        "",
+        "⏱️ *FRECUENCIA DE GOL (min por gol · menor = marca más seguido)*",
+        f"   {home}: ~{stats['goals']['projected_home_minute']:.1f}' (~{90.0 / stats['goals']['projected_home_minute']:.2f} g/partido)" if stats['goals']['projected_home_minute'] > 0 else f"   {home}: n/a",
+        f"   {away}: ~{stats['goals']['projected_away_minute']:.1f}' (~{90.0 / stats['goals']['projected_away_minute']:.2f} g/partido)" if stats['goals']['projected_away_minute'] > 0 else f"   {away}: n/a",
+    ])
+    
+    if stats["common_opponents"]:
+        lines.extend([
+            "",
+            "🔎 *RIVALES EN COMÚN*",
+            "   (contexto, no predicción)",
+        ])
+        for opp in stats["common_opponents"]:
+            lines.append(f"   🆚 {opp['common_opponent']}")
+            lines.append(f"      {opp['home_team_evidence']['date_display']}  {opp['home_team_evidence']['scoreline']}")
+            lines.append(f"      {opp['away_team_evidence']['date_display']}  {opp['away_team_evidence']['scoreline']}")
+            
+    if details.home_lineup or details.away_lineup:
+        lines.extend([
+            "",
+            _DIV,
+            "📋 *ALINEACIONES DE HOY*",
+        ])
+        
+        def format_squad(team_name: str, players: list[SpecialPlayer]) -> list[str]:
+            starters = [p for p in players if p.is_starter]
+            bench = [p for p in players if not p.is_starter]
+            squad_lines = [f"\n   *{team_name}* (Titulares):"]
+            for p in starters:
+                num = p.shirt_number or "?"
+                pos = f" _{p.position}_" if p.position else ""
+                goals = f" {p.goals}⚽" if p.goals > 0 else ""
+                yellow = "🟨" * p.yellow_cards
+                red = "🟥" * p.red_cards
+                cards = f" {yellow}{red}" if (p.yellow_cards + p.red_cards) > 0 else ""
+                squad_lines.append(f"      `{num}` {p.name}{pos}{goals}{cards}")
+            if bench:
+                bench_names = ", ".join(f"{p.shirt_number or '?'} {p.name}" for p in bench)
+                squad_lines.append(f"      🔁 _Banco:_ {bench_names}")
+            return squad_lines
+            
+        if details.home_lineup:
+            lines.extend(format_squad(home, details.home_lineup))
+        if details.away_lineup:
+            lines.extend(format_squad(away, details.away_lineup))
+            
+    if details.events:
+        lines.extend([
+            "",
+            _DIV,
+            "⚡ *EVENTOS DEL PARTIDO*",
+        ])
+        for ev in details.events:
+            icon = "⚽" if ev.type == "Goal" else "🟨" if ev.type == "YellowCard" else "🟥" if ev.type == "RedCard" else "🔁" if ev.type == "Sub" else "✨"
+            detail_str = f" ({ev.detail})" if ev.detail else ""
+            lines.append(f"   • {ev.minute}' {icon} *{ev.player_name}* ({ev.team_name}){detail_str}")
+            
+    return "\n".join(lines)
+
+
 def _to_int(v) -> Optional[int]:
     try:
         return int(str(v).strip())
@@ -77,7 +554,7 @@ def _arg_time(local: Optional[str], tz: ZoneInfo) -> tuple[str, str]:
     if not local:
         return "N/A", "N/A"
     raw = str(local).strip().replace("T", " ")
-    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M"):
+    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%d-%m-%Y %H:%M", "%d-%m-%Y"):
         try:
             dt = datetime.strptime(raw, fmt).replace(tzinfo=tz)
             a = dt.astimezone(_ARG)
@@ -113,8 +590,13 @@ class SpecialLeague(ABC):
     def fixtures(self, code: str) -> tuple[Optional[str], list[MatchRow]]:
         """Return (league_name_or_None, rows). None name => unknown code."""
 
+    @abstractmethod
+    def match_report(self, match_id: str) -> str:
+        """Build and render a complete SporHub-style match report."""
+
     def close(self) -> None:  # adapters holding a client override this
         pass
+
 
 
 # --------------------------------------------------------------------------- #
@@ -399,6 +881,181 @@ class FinlandLeagues(SpecialLeague):
             ))
         return code, rows
 
+    def match_report(self, match_id: str) -> str:
+        try:
+            m = self.api.get_match_details(match_id)
+        except Exception as e:
+            return f"❌ Error al consultar partido en la federación finlandesa: {e}"
+            
+        if not m:
+            return f"❌ No encontré un partido con ID {match_id} en la federación finlandesa."
+
+        home_team = m.get("club_A_name") or m.get("team_A_name") or "Local"
+        away_team = m.get("club_B_name") or m.get("team_B_name") or "Visitante"
+        orig_date = m.get("date")
+        orig_time = m.get("time")
+        
+        date_val, time_val = _arg_time(f"{orig_date} {orig_time}", _HELSINKI)
+        
+        venue = m.get("venue_name") or "N/A"
+        attendance = str(m.get("attendance") or "N/A")
+        status = m.get("status") or "Scheduled"
+        score = f"{m.get('fs_A')}-{m.get('fs_B')}" if m.get("fs_A") is not None else None
+
+        home_players = []
+        away_players = []
+        home_id = m.get("team_A_id")
+        away_id = m.get("team_B_id")
+        
+        lineups = m.get("lineups", []) or []
+        for p in lineups:
+            is_starter = str(p.get("start")) == "1"
+            goals_count = 0
+            for g in m.get("goals", []) or []:
+                if str(g.get("player_id")) == str(p.get("player_id")):
+                    goals_count += 1
+            yellow_count = 0
+            red_count = 0
+            for b in m.get("bookings", []) or []:
+                if str(b.get("player_id")) == str(p.get("player_id")):
+                    card = str(b.get("card_type") or "").lower()
+                    if "yellow" in card:
+                        yellow_count += 1
+                    else:
+                        red_count += 1
+                        
+            player_obj = SpecialPlayer(
+                name=p.get("player_name") or "",
+                shirt_number=str(p.get("shirt_number") or ""),
+                position=p.get("position") or "",
+                is_starter=is_starter,
+                goals=goals_count,
+                yellow_cards=yellow_count,
+                red_cards=red_count
+            )
+            if str(p.get("team_id")) == str(home_id):
+                home_players.append(player_obj)
+            else:
+                away_players.append(player_obj)
+
+        events = []
+        for g in m.get("goals", []) or []:
+            min_str = str(g.get("time_min") or g.get("minute") or "?")
+            team_name = home_team if str(g.get("team_id")) == str(home_id) else away_team
+            events.append(SpecialEvent(
+                minute=min_str,
+                type="Goal",
+                player_name=g.get("player_name") or "Jugador",
+                team_name=team_name
+            ))
+        for b in m.get("bookings", []) or []:
+            min_str = str(b.get("time_min") or b.get("minute") or "?")
+            card = str(b.get("card_type") or "").lower()
+            card_type = "YellowCard" if "yellow" in card else "RedCard"
+            team_name = home_team if str(b.get("team_id")) == str(home_id) else away_team
+            events.append(SpecialEvent(
+                minute=min_str,
+                type=card_type,
+                player_name=b.get("player_name") or "Jugador",
+                team_name=team_name
+            ))
+            
+        def ev_key(ev: SpecialEvent) -> int:
+            try:
+                clean = "".join(c for c in ev.minute if c.isdigit())
+                return int(clean)
+            except ValueError:
+                return 999
+        events.sort(key=ev_key)
+
+        code = str(m.get("category_id") or "")
+        name = m.get("category_name") or "Liiga"
+
+        details = SpecialMatchDetail(
+            match_id=match_id,
+            home_team=home_team,
+            away_team=away_team,
+            league_code=code,
+            league_name=name,
+            date_arg=date_val,
+            time_arg=time_val,
+            status=status,
+            score=score,
+            venue=venue,
+            attendance=attendance,
+            home_lineup=home_players,
+            away_lineup=away_players,
+            events=events
+        )
+
+        standings = self.standings(code)
+        
+        comp_id = str(m.get("competition_id") or "")
+        try:
+            raw_matches = self.api.get_matches_by_league(comp_id, code) or []
+        except Exception:
+            raw_matches = []
+            
+        mapped_matches = []
+        for rm in raw_matches:
+            played_match = rm.get("status") in ("Finished", "Played")
+            m_score = f"{rm.get('fs_A')}-{rm.get('fs_B')}" if played_match and rm.get("fs_A") is not None else None
+            d_m, t_m = _arg_time(f"{rm.get('date')} {rm.get('time')}", _HELSINKI)
+            mapped_matches.append(MatchRow(
+                match_id=str(rm.get("match_id")),
+                time_arg=t_m,
+                date_arg=d_m,
+                home=rm.get("team_A_name") or rm.get("club_A_name") or "Local",
+                away=rm.get("team_B_name") or rm.get("club_B_name") or "Visitante",
+                score=m_score,
+                league_code=code
+            ))
+            
+        analyzer = SpecialLeagueAnalyzer(home_team, away_team, mapped_matches, standings)
+        stats = {
+            "form": analyzer.get_form(),
+            "h2h": analyzer.get_h2h(),
+            "goals": analyzer.get_goals(),
+            "table": analyzer.get_table_context(),
+            "common_opponents": analyzer.get_common_opponents()
+        }
+
+        report = render_special_match_report(details, stats)
+        
+        if lineups:
+            home_raw_starters = [p for p in lineups if str(p.get("team_id")) == str(home_id) and str(p.get("start")) == "1"]
+            away_raw_starters = [p for p in lineups if str(p.get("team_id")) == str(away_id) and str(p.get("start")) == "1"]
+            
+            home_primary = m.get("team_A_primary_category_id") or m.get("category_id")
+            away_primary = m.get("team_B_primary_category_id") or m.get("category_id")
+            
+            from monitors.special_peak import compute_rotation_ratio
+            home_rot = compute_rotation_ratio(
+                self.api, team_id=home_id, primary_category=home_primary,
+                competition_id=comp_id, starters=home_raw_starters, target_match_id=match_id
+            )
+            away_rot = compute_rotation_ratio(
+                self.api, team_id=away_id, primary_category=away_primary,
+                competition_id=comp_id, starters=away_raw_starters, target_match_id=match_id
+            )
+            
+            def format_rot(name: str, rot) -> str:
+                if rot.ratio is None:
+                    return "⚠️ Sin datos para comparar."
+                badge = " 🚨" if rot.ratio < 0.45 else ""
+                desc = f"*{rot.ratio:.0%}*{badge} habituales"
+                if rot.new_starters:
+                    desc += f" (Nuevos: {', '.join(rot.new_starters[:4])})"
+                return desc
+                
+            report += "\n\n🔍 *Detector de Suplentes / B-Team:*"
+            report += f"\n   🏠 *{home_team}:* {format_rot(home_team, home_rot)}"
+            report += f"\n   ✈️ *{away_team}:* {format_rot(away_team, away_rot)}"
+            report += "\n💡 _Regularidad <45% 🚨 = B-Team/rotación masiva → posible valor vs cuotas pre-partido._"
+            
+        return report
+
+
 
 # --------------------------------------------------------------------------- #
 # Sweden adapter (Svenskfotboll). league_table: {code: (comp_id, name, tier_label)}
@@ -665,6 +1322,345 @@ class SwedenLeagues(SpecialLeague):
             ))
         return rows
 
+    def _parse_swe_score(self, value: Any) -> tuple[Optional[int], Optional[int]]:
+        try:
+            parts = str(value).replace("–", "-").split("-")
+            return int(parts[0].strip()), int(parts[1].strip())
+        except (TypeError, ValueError, IndexError):
+            return None, None
+
+    def _to_match_row(self, m: dict[str, Any], comp_id: str, comp_name: str, comp_tier: Optional[int]) -> MatchRow:
+        d_arg, t_arg = _arg_time(m.get("start_time_local"), _STOCKHOLM)
+        hs, as_ = m.get("home_score"), m.get("away_score")
+        if hs is None and as_ is None and "score" in m and isinstance(m["score"], str):
+            gh, ga = self._parse_swe_score(m["score"])
+            if gh is not None and ga is not None:
+                hs, as_ = gh, ga
+        score = f"{hs}-{as_}" if hs is not None and as_ is not None else None
+        return MatchRow(
+            match_id=str(m.get("match_id") or ""),
+            time_arg=t_arg,
+            date_arg=d_arg,
+            home=m.get("home") or "Local",
+            away=m.get("away") or "Visitante",
+            score=score,
+            league_code=comp_id,
+            league_name=comp_name,
+            league_tier=comp_tier
+        )
+
+    def _calculate_sweden_rotation(self, team_name: str, comp_id: str, starters: list[SpecialPlayer], target_match_id: str) -> RotationResult:
+        import xml.etree.ElementTree as ET
+        from monitors.special_peak import RotationResult
+        if not starters:
+            return RotationResult(None)
+        try:
+            latest_data = self.client.get_latest_results(comp_id, limit=100)
+            matches = latest_data.get("matches") if isinstance(latest_data, dict) else latest_data
+        except Exception:
+            return RotationResult(None)
+            
+        recent = []
+        def norm(n: str) -> str:
+            return " ".join(n.strip().lower().split())
+        norm_team = norm(team_name)
+        
+        for m in matches or []:
+            mid = str(m.get("match_id") or "")
+            if mid == str(target_match_id):
+                continue
+            h_norm = norm(m.get("home") or "")
+            a_norm = norm(m.get("away") or "")
+            if h_norm == norm_team or a_norm == norm_team:
+                recent.append(m)
+                
+        recent.sort(key=lambda x: x.get("start_time_local", ""), reverse=True)
+        recent = recent[:3]
+        if not recent:
+            return RotationResult(None)
+            
+        starter_counts: dict[str, int] = {}
+        for rm in recent:
+            rm_id = rm.get("match_id")
+            if not rm_id:
+                continue
+            try:
+                xml_text = self.client.get_live_lineup_xml(rm_id)
+                past_root = ET.fromstring(xml_text)
+                for t_node in past_root.findall(".//team"):
+                    t_name = t_node.attrib.get("name") or ""
+                    if norm(t_name) == norm_team:
+                        for p in t_node.findall(".//player"):
+                            pos = p.attrib.get("position")
+                            if pos and pos != "Sub":
+                                p_name = f"{p.attrib.get('given-name', '')} {p.attrib.get('surname', '')}".strip()
+                                starter_counts[p_name] = starter_counts.get(p_name, 0) + 1
+            except Exception:
+                continue
+                
+        min_starts = max(1, len(recent) // 2 + (1 if len(recent) % 2 != 0 else 0))
+        regular_names = {name for name, count in starter_counts.items() if count >= min_starts}
+        
+        current_names = {p.name for p in starters}
+        matching = current_names & regular_names
+        
+        denom = 11 if len(matching) <= 11 else len(starters)
+        ratio = len(matching) / denom if denom else None
+        
+        new_starters = [
+            f"{p.shirt_number} {p.name}".strip()
+            for p in starters
+            if p.name not in regular_names
+        ]
+        return RotationResult(ratio, new_starters)
+
+    def match_report(self, match_id: str) -> str:
+        import xml.etree.ElementTree as ET
+        try:
+            path = self.client.endpoints.live_game_info_pattern.format(match_id=match_id)
+            url = f"{self.client.live_xml_base_url}/{path}"
+            resp = self.client.client.get(url, headers={"Accept": "application/xml,text/xml,*/*"})
+            resp.raise_for_status()
+            xml_text = resp.text
+        except Exception as e:
+            return f"❌ Error al consultar partido en la federación sueca: {e}"
+
+        try:
+            root = ET.fromstring(xml_text)
+            game_node = root.find(".//game")
+        except Exception as e:
+            return f"❌ Error al procesar XML del partido: {e}"
+
+        if game_node is None:
+            return f"❌ No encontré un partido con ID {match_id} en la federación sueca."
+
+        tournament_node = game_node.find("tournament")
+        league_name = tournament_node.attrib.get("name") if tournament_node is not None else "Allsvenskan"
+        comp_id = game_node.attrib.get("competition-id") or ""
+        
+        status_node = game_node.find("status")
+        status = status_node.attrib.get("desc") if status_node is not None else "Scheduled"
+        
+        score_node = game_node.find("score")
+        score = None
+        if score_node is not None:
+            hs = score_node.attrib.get("home-team")
+            aw_s = score_node.attrib.get("away-team")
+            if hs is not None and aw_s is not None:
+                score = f"{hs}-{aw_s}"
+                
+        stadium_node = game_node.find("stadium")
+        venue = stadium_node.attrib.get("name") if stadium_node is not None else "N/A"
+        attendance = stadium_node.attrib.get("spectators") if stadium_node is not None else "N/A"
+
+        teams_node = game_node.find("teams")
+        home_node = None
+        away_node = None
+        if teams_node is not None:
+            for t in teams_node.findall("team"):
+                if t.attrib.get("home-team") == "true":
+                    home_node = t
+                else:
+                    away_node = t
+        
+        home_team = (home_node.attrib.get("long-name") or home_node.attrib.get("name") or "Local") if home_node is not None else "Local"
+        away_team = (away_node.attrib.get("long-name") or away_node.attrib.get("name") or "Visitante") if away_node is not None else "Visitante"
+        
+        home_id = home_node.attrib.get("id") if home_node is not None else ""
+        away_id = away_node.attrib.get("id") if away_node is not None else ""
+
+        orig_date = game_node.attrib.get("date")
+        orig_time = game_node.attrib.get("start")
+        date_val, time_val = _arg_time(f"{orig_date} {orig_time}" if orig_date and orig_time else None, _STOCKHOLM)
+
+        events = []
+        events_node = game_node.find("events")
+        if events_node is not None:
+            for ev in events_node.findall("event"):
+                ev_type = ev.attrib.get("type")
+                minute = ev.attrib.get("game-minute-for-web") or ev.attrib.get("game-time-for-web") or "?"
+                is_home = ev.attrib.get("home-team") == "true"
+                team_name = home_team if is_home else away_team
+                
+                scorer_name = ""
+                card_player = ""
+                card_type = ""
+                sub_in = ""
+                sub_out = ""
+                
+                for p in ev.findall(".//participant"):
+                    p_type = p.attrib.get("type")
+                    p_name = f"{p.attrib.get('given-name', '')} {p.attrib.get('surname', '')}".strip()
+                    p_desc = p.attrib.get("type-desc") or ""
+                    
+                    if ev_type == "G" and p_type == "S":
+                        scorer_name = p_name
+                    elif ev_type == "P":
+                        card_player = p_name
+                        card_type = "YellowCard" if "yellow" in p_desc.lower() else "RedCard"
+                    elif ev_type == "S":
+                        if p_type == "I":
+                            sub_in = p_name
+                        elif p_type == "O":
+                            sub_out = p_name
+                            
+                if ev_type == "G" and scorer_name:
+                    events.append(SpecialEvent(
+                        minute=minute,
+                        type="Goal",
+                        player_name=scorer_name,
+                        team_name=team_name
+                    ))
+                elif ev_type == "P" and card_player:
+                    events.append(SpecialEvent(
+                        minute=minute,
+                        type=card_type,
+                        player_name=card_player,
+                        team_name=team_name
+                    ))
+                elif ev_type == "S" and sub_in:
+                    detail = f"Sale: {sub_out}" if sub_out else ""
+                    events.append(SpecialEvent(
+                        minute=minute,
+                        type="Sub",
+                        player_name=sub_in,
+                        team_name=team_name,
+                        detail=detail
+                    ))
+
+        def ev_key(ev: SpecialEvent) -> int:
+            try:
+                clean = "".join(c for c in ev.minute if c.isdigit())
+                return int(clean)
+            except ValueError:
+                return 999
+        events.sort(key=ev_key)
+
+        home_players = []
+        away_players = []
+        try:
+            lineup_xml = self.client.get_live_lineup_xml(match_id)
+            lineup_root = ET.fromstring(lineup_xml)
+            for t_node in lineup_root.findall(".//team"):
+                t_id = t_node.attrib.get("id") or ""
+                is_home = (t_id == home_id) if home_id else (t_node.attrib.get("home-team") == "true")
+                target_list = home_players if is_home else away_players
+                
+                for p in t_node.findall(".//player"):
+                    p_name = f"{p.attrib.get('given-name', '')} {p.attrib.get('surname', '')}".strip()
+                    shirt_number = p.attrib.get("number") or ""
+                    position_raw = p.attrib.get("position") or ""
+                    is_starter = (position_raw != "Sub")
+                    
+                    is_gk = p.attrib.get("is-goalkeeper") == "true"
+                    if is_gk:
+                        position = "GK"
+                    elif is_starter:
+                        try:
+                            pos_val = int(position_raw)
+                            if 2 <= pos_val <= 5:
+                                position = "DF"
+                            elif 6 <= pos_val <= 9:
+                                position = "MF"
+                            else:
+                                position = "FW"
+                        except ValueError:
+                            position = "N/A"
+                    else:
+                        position = "N/A"
+                        
+                    goals = int(p.attrib.get("goals") or 0)
+                    yellow = int(p.attrib.get("bookings") or 0)
+                    red = int(p.attrib.get("red-card") or 0)
+                    
+                    target_list.append(SpecialPlayer(
+                        name=p_name,
+                        shirt_number=shirt_number,
+                        position=position,
+                        is_starter=is_starter,
+                        goals=goals,
+                        yellow_cards=yellow,
+                        red_cards=red
+                    ))
+        except Exception:
+            pass
+
+        code = "AL"
+        for k, entry in self.table.items():
+            if str(entry[0]) == str(comp_id):
+                code = k
+                break
+
+        standings = self.standings(code)
+        
+        mapped_matches = []
+        if comp_id:
+            try:
+                latest_data = self.client.get_latest_results(comp_id, limit=300)
+                results = latest_data.get("matches") if isinstance(latest_data, dict) else latest_data
+            except Exception:
+                results = []
+                
+            try:
+                upcoming_data = self.client.get_upcoming_matches(comp_id, limit=100)
+                upcoming = upcoming_data.get("matches") if isinstance(upcoming_data, dict) else upcoming_data
+            except Exception:
+                upcoming = []
+                
+            for rm in (results or []) + (upcoming or []):
+                mapped_matches.append(self._to_match_row(rm, comp_id, league_name, self._tier_num(self.table.get(code, ("", "", ""))[2])))
+
+        details = SpecialMatchDetail(
+            match_id=match_id,
+            home_team=home_team,
+            away_team=away_team,
+            league_code=code,
+            league_name=league_name,
+            date_arg=date_val,
+            time_arg=time_val,
+            status=status,
+            score=score,
+            venue=venue,
+            attendance=attendance,
+            home_lineup=home_players,
+            away_lineup=away_players,
+            events=events
+        )
+
+        analyzer = SpecialLeagueAnalyzer(home_team, away_team, mapped_matches, standings)
+        stats = {
+            "form": analyzer.get_form(),
+            "h2h": analyzer.get_h2h(),
+            "goals": analyzer.get_goals(),
+            "table": analyzer.get_table_context(),
+            "common_opponents": analyzer.get_common_opponents()
+        }
+
+        report = render_special_match_report(details, stats)
+        
+        if home_players or away_players:
+            home_starters = [p for p in home_players if p.is_starter]
+            away_starters = [p for p in away_players if p.is_starter]
+            
+            home_rot = self._calculate_sweden_rotation(home_team, comp_id, home_starters, match_id)
+            away_rot = self._calculate_sweden_rotation(away_team, comp_id, away_starters, match_id)
+            
+            def format_rot(rot) -> str:
+                if rot.ratio is None:
+                    return "⚠️ Sin datos para comparar."
+                badge = " 🚨" if rot.ratio < 0.45 else ""
+                desc = f"*{rot.ratio:.0%}*{badge} habituales"
+                if rot.new_starters:
+                    desc += f" (Nuevos: {', '.join(rot.new_starters[:4])})"
+                return desc
+                
+            report += "\n\n🔍 *Detector de Suplentes / B-Team:*"
+            report += f"\n   🏠 *{home_team}:* {format_rot(home_rot)}"
+            report += f"\n   ✈️ *{away_team}:* {format_rot(away_rot)}"
+            report += "\n💡 _Regularidad <45% 🚨 = B-Team/rotación masiva → posible valor vs cuotas pre-partido._"
+
+        return report
+
 
 # --------------------------------------------------------------------------- #
 # Romania adapter (FRF Datalake)
@@ -866,6 +1862,115 @@ class RomaniaLeagues(SpecialLeague):
         rows.sort(key=lambda r: (r.date_arg, r.time_arg))
         return name, rows
 
+    def match_report(self, match_id: str) -> str:
+        try:
+            filters = self.client.get_filters()
+            tours = filters.get("responseData", {}).get("tours", [])
+        except Exception as e:
+            return f"❌ Error al consultar filtros de la federación rumana: {e}"
+
+        target_match = None
+        series_id = None
+        code = None
+        name = None
+        tier = None
+        
+        tours.sort(key=lambda t: (t.get("startDate") or ""), reverse=True)
+        
+        for t in tours:
+            try:
+                res = self.client.get_matches(
+                    season_id=t["seasonId"], stage_id=t["stageId"],
+                    series_id=t["seriesId"], tour_round_id=t["tourRoundId"]
+                )
+                matches_list = res.get("responseData", {}).get("matches", [])
+                for m_group in matches_list:
+                    for m in m_group.get("list", []):
+                        if str(m.get("matchId")) == match_id:
+                            target_match = m
+                            series_id = t["seriesId"]
+                            break
+                if target_match:
+                    break
+            except Exception:
+                continue
+
+        if not target_match:
+            return f"❌ No encontré un partido con ID {match_id} en la federación rumana."
+
+        for k, info in self.table.items():
+            if info[1] == series_id:
+                code = k
+                name = info[2]
+                tier = info[3]
+                break
+        if not code:
+            code = f"RO_{series_id}"
+            name = "SuperLiga"
+            tier = 1
+
+        d_arg, t_arg = _arg_time(target_match.get("startDate"), _RO_BUCHAREST)
+        status = target_match.get("sysCompetitionMatchStatusId")
+        played = status == 3
+        live = status == 2
+        score = f"{target_match.get('homeGoals')}-{target_match.get('awayGoals')}" if (played or live) else None
+        
+        home_team = target_match.get("homeClub", {}).get("name", "Local")
+        away_team = target_match.get("awayClub", {}).get("name", "Visitante")
+
+        series_tours = [t for t in tours if t.get("seriesId") == series_id]
+        series_tours.sort(key=lambda t: (t.get("startDate") or ""))
+        
+        all_series_matches = []
+        seen = set()
+        for t in series_tours:
+            try:
+                res = self.client.get_matches(
+                    season_id=t["seasonId"], stage_id=t["stageId"],
+                    series_id=series_id, tour_round_id=t["tourRoundId"]
+                )
+                for m_group in res.get("responseData", {}).get("matches", []):
+                    for m in m_group.get("list", []):
+                        mid = str(m.get("matchId"))
+                        if mid in seen:
+                            continue
+                        seen.add(mid)
+                        all_series_matches.append(self._row_from_ro_match(m, code, name, tier))
+            except Exception:
+                continue
+
+        details = SpecialMatchDetail(
+            match_id=match_id,
+            home_team=home_team,
+            away_team=away_team,
+            league_code=code,
+            league_name=name,
+            date_arg=d_arg,
+            time_arg=t_arg,
+            status="Played" if played else "Scheduled",
+            score=score,
+            venue="N/A",
+            attendance="N/A",
+            home_lineup=[],
+            away_lineup=[],
+            events=[]
+        )
+
+        standings = self.standings(code)
+        analyzer = SpecialLeagueAnalyzer(home_team, away_team, all_series_matches, standings)
+        stats = {
+            "form": analyzer.get_form(),
+            "h2h": analyzer.get_h2h(),
+            "goals": analyzer.get_goals(),
+            "table": analyzer.get_table_context(),
+            "common_opponents": analyzer.get_common_opponents()
+        }
+
+        report = render_special_match_report(details, stats)
+        report += "\n\nℹ️ _El detector de alineaciones y eventos en vivo no está disponible para la federación rumana._"
+        return report
+
+
 
 # --------------------------------------------------------------------------- #
 # Slovakia adapter (Sportnet API)
@@ -1014,6 +2119,154 @@ class SlovakiaLeagues(SpecialLeague):
         display = list(reversed(played[:5])) + upcoming[:15]
         rows = [self._match_row(m, code, name, tier) for m in display]
         return name, rows
+
+    def match_report(self, match_id: str) -> str:
+        try:
+            m = self.client.get_match_detail(match_id)
+        except Exception as e:
+            return f"❌ Error al consultar partido en la federación eslovaca: {e}"
+
+        comp_id = m.get("competitionId") or "6849d25aeba10c40f7f8ff85"
+        part = m.get("competitionPart", {}) or {}
+        part_id = part.get("_id")
+        
+        code = "SK1"
+        for k, info in self.table.items():
+            if info[1] == part_id:
+                code = k
+                break
+        
+        name = part.get("name") or "I. liga ženy"
+        tier = 1
+
+        d_arg, t_arg = self._convert_time(m.get("startDate"))
+        status = m.get("status") or "Scheduled"
+        score_list = m.get("score")
+        score = f"{score_list[0]}-{score_list[1]}" if score_list and len(score_list) == 2 else None
+        
+        teams = m.get("teams", []) or []
+        home_team = next((t["name"] for t in teams if t.get("additionalProperties", {}).get("homeaway") == "home"), None)
+        away_team = next((t["name"] for t in teams if t.get("additionalProperties", {}).get("homeaway") == "away"), None)
+        if home_team is None:
+            home_team = teams[0]["name"] if len(teams) > 0 else "Local"
+        if away_team is None:
+            away_team = teams[1]["name"] if len(teams) > 1 else "Visitante"
+            
+        home_id = next((t["_id"] for t in teams if t.get("additionalProperties", {}).get("homeaway") == "home"), None)
+        away_id = next((t["_id"] for t in teams if t.get("additionalProperties", {}).get("homeaway") == "away"), None)
+        if home_id is None:
+            home_id = teams[0]["_id"] if len(teams) > 0 else ""
+        if away_id is None:
+            away_id = teams[1]["_id"] if len(teams) > 1 else ""
+
+        home_players = []
+        away_players = []
+        nominations = m.get("nominations", []) or []
+        for side in nominations:
+            side_team_id = side.get("team", {}).get("_id")
+            athletes = side.get("athletes", []) or []
+            target_list = home_players if str(side_team_id) == str(home_id) else away_players
+            for a in athletes:
+                is_sub = a.get("substitute")
+                pos_map = {"GK": "GK", "DF": "DF", "MF": "MF", "FW": "FW"}
+                pos_raw = a.get("position") or ""
+                position = pos_map.get(pos_raw, "N/A")
+                
+                target_list.append(SpecialPlayer(
+                    name=a.get("name") or "",
+                    shirt_number=str(a.get("shirtNo") or ""),
+                    position=position,
+                    is_starter=not is_sub
+                ))
+
+        events = []
+        protocol = m.get("protocol", {}) or {}
+        raw_events = protocol.get("events", []) or []
+        for ev in raw_events:
+            ev_type = ev.get("eventType") or ev.get("type") or ""
+            mapped_type = "Other"
+            if "goal" in ev_type.lower():
+                mapped_type = "Goal"
+            elif "yellow" in ev_type.lower():
+                mapped_type = "YellowCard"
+            elif "red" in ev_type.lower():
+                mapped_type = "RedCard"
+            elif "sub" in ev_type.lower():
+                mapped_type = "Sub"
+                
+            minute = str(ev.get("eventTime") or ev.get("time") or "")
+            phase = ev.get("phase")
+            if phase and phase != "1" and phase != "2":
+                minute = f"{minute} ({phase})"
+                
+            ev_team = ev.get("team")
+            if isinstance(ev_team, dict):
+                ev_team_id = ev_team.get("_id")
+            else:
+                ev_team_id = ev_team
+            team_name = home_team if str(ev_team_id) == str(home_id) else away_team
+            
+            p_name = ev.get("player", {}).get("name") or ""
+            detail = ""
+            if mapped_type == "Sub":
+                p_in = ev.get("replacement", {}).get("name") or ""
+                p_out = ev.get("playerOut", {}).get("name") or ""
+                if p_in:
+                    detail = f"Entra: {p_in}"
+                elif p_out:
+                    detail = f"Sale: {p_out}"
+                    
+            events.append(SpecialEvent(
+                minute=minute,
+                type=mapped_type,
+                player_name=p_name,
+                team_name=team_name,
+                detail=detail
+            ))
+
+        venue = m.get("venue", {}).get("name") or "N/A"
+        attendance = str(m.get("attendance") or "N/A")
+
+        details = SpecialMatchDetail(
+            match_id=match_id,
+            home_team=home_team,
+            away_team=away_team,
+            league_code=code,
+            league_name=name,
+            date_arg=d_arg,
+            time_arg=t_arg,
+            status=status,
+            score=score,
+            venue=venue,
+            attendance=attendance,
+            home_lineup=home_players,
+            away_lineup=away_players,
+            events=events
+        )
+
+        standings = self.standings(code)
+        try:
+            matches_resp = self.client.get_matches(comp_id, limit=300)
+            raw_matches = matches_resp.get("matches") or []
+        except Exception:
+            raw_matches = []
+            
+        mapped_matches = []
+        for rm in raw_matches:
+            if (rm.get("competitionPart", {}) or {}).get("_id") == part_id:
+                mapped_matches.append(self._match_row(rm, code, name, tier))
+                
+        analyzer = SpecialLeagueAnalyzer(home_team, away_team, mapped_matches, standings)
+        stats = {
+            "form": analyzer.get_form(),
+            "h2h": analyzer.get_h2h(),
+            "goals": analyzer.get_goals(),
+            "table": analyzer.get_table_context(),
+            "common_opponents": analyzer.get_common_opponents()
+        }
+        
+        return render_special_match_report(details, stats)
+
 
 
 # --------------------------------------------------------------------------- #
@@ -1238,10 +2491,215 @@ class AlgeriaLeagues(SpecialLeague):
         display = finished[-5:] + upcoming[:10]
         return "D1 Seniors Damas", display
 
+    def match_report(self, match_id: str) -> str:
+        try:
+            matches = self.client.get_matches()
+        except Exception as e:
+            return f"❌ Error al consultar partidos de la federación argelina: {e}"
+
+        target = None
+        for m in matches:
+            slug = m.get("match_url", "").rstrip("/").split("/")[-1] if m.get("match_url") else ""
+            if slug == match_id:
+                target = m
+                break
+        if not target:
+            return f"❌ No encontré un partido con ID {match_id} en la federación argelina."
+
+        d_arg, t_arg = self._al_arg_time(target.get("date_raw"))
+        score_raw = target.get("score_raw")
+        import re
+        has_score = score_raw and re.search(r"\d+\s*-\s*\d+", score_raw)
+        score = score_raw.replace(" ", "") if has_score else None
+        
+        home_team = target.get("home", "Local").strip()
+        away_team = target.get("away", "Visitante").strip()
+
+        details = SpecialMatchDetail(
+            match_id=match_id,
+            home_team=home_team,
+            away_team=away_team,
+            league_code="DZ1",
+            league_name="D1 Seniors Damas",
+            date_arg=d_arg,
+            time_arg=t_arg,
+            status="Played" if score else "Scheduled",
+            score=score,
+            venue="N/A",
+            attendance="N/A",
+            home_lineup=[],
+            away_lineup=[],
+            events=[]
+        )
+
+        standings = self.standings("DZ1")
+        
+        d1_matches = []
+        for m in matches:
+            div = str(m.get("division") or "").lower()
+            if "d1" not in div and "nationale une" not in div:
+                continue
+            
+            d_m, t_m = self._al_arg_time(m.get("date_raw"))
+            s_raw = m.get("score_raw")
+            h_s = s_raw.replace(" ", "") if s_raw and "-" in s_raw else None
+            
+            d1_matches.append(MatchRow(
+                match_id=m.get("match_url", ""),
+                time_arg=t_m,
+                date_arg=d_m,
+                home=m.get("home", "Local"),
+                away=m.get("away", "Visitante"),
+                score=h_s,
+                league_code="DZ1",
+            ))
+
+        analyzer = SpecialLeagueAnalyzer(home_team, away_team, d1_matches, standings)
+        stats = {
+            "form": analyzer.get_form(),
+            "h2h": analyzer.get_h2h(),
+            "goals": analyzer.get_goals(),
+            "table": analyzer.get_table_context(),
+            "common_opponents": analyzer.get_common_opponents()
+        }
+
+        report = render_special_match_report(details, stats)
+        report += "\n\nℹ️ _El detector de alineaciones y eventos en vivo no está disponible para la federación argelina._"
+        return report
+
+
 
 # Norway adapter (NFF Scraper)
 # --------------------------------------------------------------------------- #
 _NO_OSLO = ZoneInfo("Europe/Oslo")
+
+
+from html.parser import HTMLParser
+
+class NorwayMatchDetailParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.in_player_list = False
+        self.current_list_index = 0  # 0: Home starters, 1: Home subs, 2: Away starters, 3: Away subs
+        self.players = {0: [], 1: [], 2: [], 3: []}
+        
+        self.in_player_item = False
+        self.current_player = None
+        
+        self.in_h4 = False
+        self.h4_text = []
+        
+        self.in_shirt_number = False
+        self.shirt_text = []
+        
+        self.in_player_link = False
+        self.player_name_parts = []
+        
+        self.venue = "N/A"
+        self.attendance = "N/A"
+        self.in_meta_label = False
+        self.meta_label = ""
+        self.in_meta_value = False
+        self.meta_value_parts = []
+
+    def handle_starttag(self, tag, attrs):
+        attrs_dict = dict(attrs)
+        cls = attrs_dict.get("class", "")
+        
+        if tag == "h4":
+            self.in_h4 = True
+            self.h4_text = []
+        elif tag in ("ul", "ol") and "a_matchPlayerList" in cls:
+            self.in_player_list = True
+        elif tag == "li" and self.in_player_list:
+            self.in_player_item = True
+            self.current_player = {
+                "name": "",
+                "shirt_number": "",
+                "goals": 0,
+                "yellow_cards": 0,
+                "red_cards": 0,
+                "events": []
+            }
+        elif tag == "span" and "a_playerNumber" in cls and self.in_player_item:
+            self.in_shirt_number = True
+            self.shirt_text = []
+        elif tag == "a" and "/person/profil/" in attrs_dict.get("href", "") and self.in_player_item:
+            self.in_player_link = True
+            self.player_name_parts = []
+        elif tag == "svg" and self.in_player_item:
+            icon = attrs_dict.get("data-icon", "").lower() or cls.lower()
+            if "yellowcard" in icon:
+                self.current_player["yellow_cards"] += 1
+            elif "redcard" in icon:
+                self.current_player["red_cards"] += 1
+            elif "soccer" in icon or "ball" in icon or "goal" in icon:
+                self.current_player["goals"] += 1
+        elif tag == "i" and self.in_player_item:
+            icon = cls.lower()
+            if "yellow" in icon:
+                self.current_player["yellow_cards"] += 1
+            elif "red" in icon:
+                self.current_player["red_cards"] += 1
+            elif "soccer" in icon or "ball" in icon or "goal" in icon:
+                self.current_player["goals"] += 1
+        elif tag == "span" and "a_matchInfoLabel" in cls:
+            self.in_meta_label = True
+            self.meta_label = ""
+        elif tag == "span" and "a_matchInfoValue" in cls:
+            self.in_meta_value = True
+            self.meta_value_parts = []
+
+    def handle_endtag(self, tag):
+        if tag == "h4":
+            self.in_h4 = False
+            txt = "".join(self.h4_text).strip().lower()
+            if "innbyttere" in txt:
+                if self.current_list_index == 0:
+                    self.current_list_index = 1
+                elif self.current_list_index == 2:
+                    self.current_list_index = 3
+        elif tag in ("ul", "ol") and self.in_player_list:
+            self.in_player_list = False
+            if self.current_list_index == 1:
+                self.current_list_index = 2
+            elif self.current_list_index == 0:
+                self.current_list_index = 2
+        elif tag == "li" and self.in_player_item:
+            self.in_player_item = False
+            if self.current_player and self.current_player["name"]:
+                self.players[self.current_list_index].append(self.current_player)
+            self.current_player = None
+        elif tag == "span" and self.in_shirt_number:
+            self.in_shirt_number = False
+            if self.current_player:
+                self.current_player["shirt_number"] = "".join(self.shirt_text).strip()
+        elif tag == "a" and self.in_player_link:
+            self.in_player_link = False
+            if self.current_player:
+                self.current_player["name"] = "".join(self.player_name_parts).strip()
+        elif tag == "span" and self.in_meta_label:
+            self.in_meta_label = False
+        elif tag == "span" and self.in_meta_value:
+            self.in_meta_value = False
+            val = "".join(self.meta_value_parts).strip()
+            lbl = self.meta_label.strip().lower()
+            if "tilskuere" in lbl or "attendance" in lbl or "tilskuer" in lbl:
+                self.attendance = val
+            elif "stadion" in lbl or "stadium" in lbl or "bane" in lbl:
+                self.venue = val
+
+    def handle_data(self, data):
+        if self.in_h4:
+            self.h4_text.append(data)
+        elif self.in_shirt_number:
+            self.shirt_text.append(data)
+        elif self.in_player_link:
+            self.player_name_parts.append(data)
+        elif self.in_meta_label:
+            self.meta_label += data
+        elif self.in_meta_value:
+            self.meta_value_parts.append(data)
 
 
 class NorwayLeagues(SpecialLeague):
@@ -1498,4 +2956,178 @@ class NorwayLeagues(SpecialLeague):
 
         display = finished[-5:] + upcoming[:10]
         return "Toppserien", display
+
+    def match_report(self, match_id: str) -> str:
+        url = f"https://www.fotball.no/fotballdata/kamp/?fiksId={match_id}"
+        try:
+            html = self.client.get_html(url)
+        except Exception as e:
+            return f"❌ Error al consultar partido en la federación noruega: {e}"
+
+        if not html or not isinstance(html, str):
+            html = "<html><title>Local - Visitante</title></html>"
+
+        parser = NorwayMatchDetailParser()
+        parser.feed(html)
+
+        home_lineup = []
+        away_lineup = []
+        events = []
+
+        for p in parser.players[0]:
+            home_lineup.append(SpecialPlayer(
+                name=p["name"],
+                shirt_number=p["shirt_number"],
+                is_starter=True,
+                goals=p["goals"],
+                yellow_cards=p["yellow_cards"],
+                red_cards=p["red_cards"]
+            ))
+        for p in parser.players[1]:
+            home_lineup.append(SpecialPlayer(
+                name=p["name"],
+                shirt_number=p["shirt_number"],
+                is_starter=False,
+                goals=p["goals"],
+                yellow_cards=p["yellow_cards"],
+                red_cards=p["red_cards"]
+            ))
+
+        for p in parser.players[2]:
+            away_lineup.append(SpecialPlayer(
+                name=p["name"],
+                shirt_number=p["shirt_number"],
+                is_starter=True,
+                goals=p["goals"],
+                yellow_cards=p["yellow_cards"],
+                red_cards=p["red_cards"]
+            ))
+        for p in parser.players[3]:
+            away_lineup.append(SpecialPlayer(
+                name=p["name"],
+                shirt_number=p["shirt_number"],
+                is_starter=False,
+                goals=p["goals"],
+                yellow_cards=p["yellow_cards"],
+                red_cards=p["red_cards"]
+            ))
+
+        for p in home_lineup:
+            if p.goals > 0:
+                for _ in range(p.goals):
+                    events.append(SpecialEvent(minute="--", type="Goal", player_name=p.name, team_name="Local"))
+            if p.yellow_cards > 0:
+                for _ in range(p.yellow_cards):
+                    events.append(SpecialEvent(minute="--", type="YellowCard", player_name=p.name, team_name="Local"))
+            if p.red_cards > 0:
+                for _ in range(p.red_cards):
+                    events.append(SpecialEvent(minute="--", type="RedCard", player_name=p.name, team_name="Local"))
+                    
+        for p in away_lineup:
+            if p.goals > 0:
+                for _ in range(p.goals):
+                    events.append(SpecialEvent(minute="--", type="Goal", player_name=p.name, team_name="Visitante"))
+            if p.yellow_cards > 0:
+                for _ in range(p.yellow_cards):
+                    events.append(SpecialEvent(minute="--", type="YellowCard", player_name=p.name, team_name="Visitante"))
+            if p.red_cards > 0:
+                for _ in range(p.red_cards):
+                    events.append(SpecialEvent(minute="--", type="RedCard", player_name=p.name, team_name="Visitante"))
+
+        import html as _html
+        import re
+        title_match = re.search(r"<title>\s*([^<]+)\s*</title>", html, re.IGNORECASE)
+        title_text = _html.unescape(title_match.group(1)) if title_match else "Kamp"
+        parts = [p.strip() for p in title_text.split("-")]
+        
+        home_team = "Local"
+        away_team = "Visitante"
+        if len(parts) >= 2:
+            home_team = parts[0]
+            away_team = parts[1]
+            
+        score = None
+        score_match = re.search(r'<h3 class="a_matchScore">[^<]*(\d+)\s*-\s*(\d+)[^<]*</h3>', html, re.IGNORECASE)
+        if score_match:
+            score = f"{score_match.group(1)}-{score_match.group(2)}"
+        else:
+            score_match = re.search(r'<span class="a_score">[^<]*(\d+)\s*-\s*(\d+)[^<]*</span>', html, re.IGNORECASE)
+            if score_match:
+                score = f"{score_match.group(1)}-{score_match.group(2)}"
+            else:
+                score_match = re.search(r'\b(\d+)\s*-\s*(\d+)\b', title_text)
+                if score_match:
+                    score = f"{score_match.group(1)}-{score_match.group(2)}"
+
+        date_arg = "N/A"
+        time_arg = "N/A"
+        date_match = re.search(r'\b(\d{2}\.\d{2}\.\d{4})\b', title_text)
+        if date_match:
+            dparts = date_match.group(1).split(".")
+            date_arg = f"{dparts[2]}-{dparts[1]}-{dparts[0]}"
+            
+        time_match = re.search(r'\b(\d{2}:\d{2})\b', html)
+        if time_match:
+            time_arg = time_match.group(1)
+
+        # Resolve the league this match actually belongs to. today() carries the
+        # real league per match; only Toppserien (NO1) exposes a standings table
+        # and a full-season fixtures list, so the table/form context is only
+        # meaningful there — for lower tiers we use today()'s matches as context.
+        try:
+            today_matches, _ = self.today()
+        except Exception:
+            today_matches = []
+        today_target = next((m for m in today_matches if m.match_id == match_id), None)
+        league_code = (today_target.league_code if today_target else None) or "NO1"
+        league_name = (today_target.league_name if today_target else None) or "Toppserien"
+
+        if league_code == "NO1":
+            standings = self.standings("NO1")
+            try:
+                _, all_matches = self.fixtures("NO1")
+            except Exception:
+                all_matches = []
+            if not all_matches:
+                all_matches = today_matches
+        else:
+            standings = StandingsResult(title=league_name, found=True)
+            all_matches = today_matches
+
+        for m in all_matches:
+            if m.match_id == match_id:
+                if home_team in ("Local", "Visitante", "Kamp", ""):
+                    home_team = m.home
+                if away_team in ("Local", "Visitante", "Kamp", ""):
+                    away_team = m.away
+                break
+
+        details = SpecialMatchDetail(
+            match_id=match_id,
+            home_team=home_team,
+            away_team=away_team,
+            league_code=league_code,
+            league_name=league_name,
+            date_arg=date_arg,
+            time_arg=time_arg,
+            status="Played" if score else "Scheduled",
+            score=score,
+            venue=parser.venue,
+            attendance=parser.attendance,
+            home_lineup=home_lineup,
+            away_lineup=away_lineup,
+            events=events
+        )
+
+        analyzer = SpecialLeagueAnalyzer(home_team, away_team, all_matches, standings)
+        stats = {
+            "form": analyzer.get_form(),
+            "h2h": analyzer.get_h2h(),
+            "goals": analyzer.get_goals(),
+            "table": analyzer.get_table_context(),
+            "common_opponents": analyzer.get_common_opponents()
+        }
+
+        return render_special_match_report(details, stats)
+
 

@@ -101,7 +101,7 @@ class MystakeHttpExtractor(Extractor):
         except Exception:  # header is best-effort; fall back to topgames
             league = None
         if league is not None:
-            name = league.champ_name
+            name = f"{league.region_name} · {league.champ_name}" if league.region_name.lower() not in league.champ_name.lower() else league.champ_name
             ids = list(league.game_ids)
 
         if not ids:
@@ -148,7 +148,9 @@ class MystakeHttpExtractor(Extractor):
             )
         except Exception:
             return None
-        return league.champ_name if league is not None else None
+        if league is None:
+            return None
+        return f"{league.region_name} · {league.champ_name}" if league.region_name.lower() not in league.champ_name.lower() else league.champ_name
 
     async def _get_header(self, client: MystakeHttpClient) -> dict[str, Any]:
         """Return the header tree, served from a short-lived in-process cache."""

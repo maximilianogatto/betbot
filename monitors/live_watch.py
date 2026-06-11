@@ -339,7 +339,11 @@ class LiveWatchService:
         async def _fetch(extractor: Extractor) -> list[LiveEventSnapshot]:
             try:
                 method = getattr(extractor, method_name)
-                return list(await method())
+                raw_events = await method()
+                if raw_events is None:
+                    logger.warning("%s extractor returned no events platform=%s", label, extractor.name)
+                    return []
+                return list(raw_events)
             except Exception:
                 logger.exception("%s fetch failed platform=%s", label, extractor.name)
                 return []

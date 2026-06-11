@@ -5169,6 +5169,14 @@ def _insert_unified_competition(connection: sqlite3.Connection, name: str) -> in
     from core.league_naming import extract_league_traits, league_slug
 
     clean = str(name).strip()
+    base_name = clean
+    suffix = 2
+    while connection.execute(
+        "SELECT 1 FROM unified_competitions WHERE name = ?", (clean,)
+    ).fetchone() is not None:
+        clean = f"{base_name} ({suffix})"
+        suffix += 1
+
     now_iso = _utc_now_iso()
     # The name column is UNIQUE too: suffix it when taken (e.g. /unlink_league
     # splits a platform off a league that keeps the same name).
