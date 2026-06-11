@@ -221,6 +221,33 @@ class NoCommandTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("3rd", report)   # Varhaug standings position
         self.assertIn("4th", report)   # Viking 2 standings position
 
+    async def test_match_score_not_invented_from_title(self) -> None:
+        # Title "Alta - Tromsø 2 - 12.06.2026 ..." must NOT yield a "2-12" score;
+        # an unplayed match (Resultat "-") stays Scheduled with no score.
+        from bot.special_leagues import NorwayLeagues
+
+        kamp_html = (
+            "<html><title>Alta - Troms&#xF8; 2 - 12.06.2026 18:30 - Norges Fotballforbund</title>"
+            '<a href="/fotballdata/turnering/hjem/?fiksId=205690">Norsk Tipping-ligaen avd. 5</a>'
+            "</html>"
+        )
+        tour_tables = [
+            {
+                "rows": [
+                    [{"text": "Runde"}, {"text": "Dato"}, {"text": "Dag"}, {"text": "Tid"}, {"text": "Hjemmelag"}, {"text": "Resultat"}, {"text": "Bortelag"}, {"text": "Bane"}, {"text": "Kampnr."}],
+                    [{"text": "10"}, {"text": "12.06.2026"}, {"text": "fre"}, {"text": "18:30"}, {"text": "Alta"}, {"text": "-"}, {"text": "Tromsø 2"}, {"text": "X"}, {"text": "8995862", "hrefs": ["/fotballdata/kamp/?fiksId=8995862"]}],
+                ]
+            }
+        ]
+        client = MagicMock()
+        client.get_html.return_value = kamp_html
+        client.get_tables.return_value = tour_tables
+        client.close = MagicMock()
+        report = NorwayLeagues(client).match_report("8995862")
+        self.assertNotIn("2-12", report.replace(" ", ""))
+        self.assertIn("Scheduled", report)
+        self.assertNotIn("Marcador", report)
+
 
 if __name__ == "__main__":
     unittest.main()
