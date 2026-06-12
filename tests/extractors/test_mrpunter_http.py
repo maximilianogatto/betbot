@@ -104,8 +104,17 @@ class MrPunterParserTests(unittest.TestCase):
         e = real[0]
         self.assertEqual((e.home, e.away), ("Flamengo", "Palmeiras"))
         self.assertEqual((e.home_score, e.away_score), (2, 1))
-        self.assertEqual(e.minute, "34")
+        self.assertEqual(e.minute, "34'")  # Minute key -> minutes
         self.assertEqual(e.competition_name, "Brasileirao")
+
+    def test_clock_minute_from_gametime_seconds(self) -> None:
+        # FSB serves the clock in SECONDS (GameTime); show minutes, not "5690".
+        from extractors.mrpunter_http.parser import _clock_minute
+
+        self.assertEqual(_clock_minute({"GameTime": 2700}), "45'")
+        self.assertEqual(_clock_minute({"GameTime": 5690}), "94'")
+        self.assertEqual(_clock_minute({"Minute": 12}), "12'")  # already minutes
+        self.assertIsNone(_clock_minute({}))
 
     def test_live_from_league_odds_dedupes_and_maps(self) -> None:
         from extractors.mrpunter_http.parser import live_events_from_league_odds

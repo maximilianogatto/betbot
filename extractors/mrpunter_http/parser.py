@@ -284,6 +284,30 @@ def build_competition_extraction(
     )
 
 
+def _clock_minute(clock: dict) -> str | None:
+    """Human match minute from the FSB clock dict.
+
+    FSB exposes the game clock in SECONDS (``GameTime``/``MatchTime``), e.g.
+    2700 -> 45', 5690 -> 94'. The raw value was being shown as the "minute"
+    ("5690"); convert it. A ``Minute`` key (already in minutes) wins if present.
+    """
+
+    if not isinstance(clock, dict):
+        return None
+    raw_minute = clock.get("Minute")
+    if raw_minute is not None:
+        return f"{raw_minute}'"
+    for key in ("GameTime", "MatchTime", "Time"):
+        value = clock.get(key)
+        if value is None:
+            continue
+        try:
+            return f"{int(value) // 60}'"
+        except (TypeError, ValueError):
+            return str(value)
+    return None
+
+
 def _live_snapshot_from_array(ev: Any, *, sport_id: str) -> LiveEventSnapshot | None:
     """Map one FSB positional event array to a live snapshot (or None)."""
 
@@ -296,11 +320,7 @@ def _live_snapshot_from_array(ev: Any, *, sport_id: str) -> LiveEventSnapshot | 
     ev_sport = str(ev[3]) if len(ev) > 3 else ""
     s1, s2 = _score(ev)
     clock = ev[IDX_CLOCK] if len(ev) > IDX_CLOCK and isinstance(ev[IDX_CLOCK], dict) else {}
-    minute = None
-    for key in ("Minute", "MatchTime", "GameTime", "Time"):
-        if clock.get(key) is not None:
-            minute = str(clock.get(key))
-            break
+    minute = _clock_minute(clock)
     t_name = str(ev[2]) if len(ev) > 2 else None
     c_name = str(ev[7]) if len(ev) > 7 else None
     comp_name = f"{c_name} · {t_name}" if c_name and t_name and c_name.lower() not in t_name.lower() else t_name
