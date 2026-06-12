@@ -171,6 +171,10 @@ class FakeXBetHttpClient:
         self.requested_urls.append(url)
         return self.sports_payload
 
+    async def fetch_live_1x2_zip(self, url: str) -> dict[str, object]:
+        self.requested_urls.append(url)
+        return self.payload
+
 
 class XBetHttpExtractorTests(unittest.TestCase):
     def test_can_handle_spinbetter_get_champ_zip(self) -> None:
@@ -343,6 +347,21 @@ class XBetHttpExtractionTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(extraction.is_empty)
         self.assertEqual(extraction.events, [])
         self.assertEqual(extraction.competition_external_id, "2872359")
+
+    async def test_list_live_events_returns_a_list(self) -> None:
+        # Regression: list_live_events dropped its `return deduped`, so it always
+        # returned None -> the monitor logged "returned no events platform=1xbet_http"
+        # and never detected 1xBet live events.
+        from unittest.mock import patch
+
+        client = FakeXBetHttpClient(EMPTY_CHAMP_PAYLOAD)
+        extractor = XBetHttpExtractor(client=client)
+        with patch(
+            "storage.tracking_repository.tracking_repository.list_globally_active_competitions",
+            return_value=[],
+        ):
+            result = await extractor.list_live_events()
+        self.assertIsInstance(result, list)
 
     async def test_search_leagues_discovers_country_leagues(self) -> None:
         client = FakeXBetHttpClient(CHAMP_PAYLOAD)
