@@ -165,6 +165,8 @@ class XBetHttpExtractor(Extractor):
             if e.external_event_id not in seen:
                 seen.add(e.external_event_id)
                 deduped.append(e)
+        return deduped
+
     def build_competition_url(
         self,
         *,
