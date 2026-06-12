@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import re
 import unicodedata
 from datetime import datetime, UTC
@@ -19,6 +20,15 @@ from core.stats_models import (
 from core.stats_provider_base import StatsProvider
 from stats_providers.palloliitto.api_client import PalloliittoAPI
 from difflib import SequenceMatcher
+
+def _title_from_markdown(markdown: str) -> str:
+    """First non-empty line of a federation report ('⚽ *Home vs Away*' -> 'Home vs Away')."""
+    for line in (markdown or "").splitlines():
+        stripped = line.strip().lstrip("⚽").strip().strip("*").strip()
+        if stripped:
+            return stripped
+    return "Reporte"
+
 
 # Helper matching routines (copied from standard similarity metrics)
 def _normalize_text(value: Any) -> str:
@@ -355,83 +365,26 @@ class PalloliittoStatsProvider(StatsProvider):
         )
 
     async def build_match_report(self, stats_match_id: str) -> MatchStatsReport:
-        """Build a beautifully formatted Telegram markdown report for one match."""
-        
-        with PalloliittoAPI() as api:
-            m = api.get_match_details(stats_match_id)
-            
-        if not m:
-            return MatchStatsReport(
-                provider=self.name,
-                match_id=stats_match_id,
-                title="Partido no encontrado",
-                markdown="No se pudieron recuperar las estadísticas de este partido.",
-                data={},
-                generated_at=datetime.now(UTC).isoformat(),
-            )
+        """Unified federation report: delegates to the FinlandLeagues adapter so the
+        ``/stats`` output matches ``/fin_match`` and every other federation (same
+        FORMA/H2H/GOLES/TABLA layout)."""
 
-        home = m.get("club_A_name") or m.get("team_A_name") or "Local"
-        away = m.get("club_B_name") or m.get("team_B_name") or "Visitante"
-        date = m.get("date") or "N/A"
-        time = m.get("time") or ""
-        venue = m.get("venue_name") or "N/A"
-        attendance = m.get("attendance") or "0"
-        status = m.get("status") or "Scheduled"
-        
-        # Build Report Markdown
-        lines = []
-        lines.append(f"📍 Estadio: {venue} | Asistencia: {attendance}")
-        lines.append(f"📅 Fecha: {date} {time} | Estado: {status}")
-        
-        # If match is forfeited or walkover, show notice
-        if m.get("walkover") == 1:
-            lines.append("\n❌ *Partido Perdido / Walkover*")
-            winner = home if m.get("winner") == "Home" else away
-            score = f"{m.get('fs_A')}-{m.get('fs_B')}"
-            lines.append(f"Ganador adjudicado: *{winner}* (Resultado: {score})")
-        else:
-            # Score
-            if m.get("fs_A") is not None:
-                lines.append(f"⚽ Marcador final: *{m.get('fs_A')} - {m.get('fs_B')}*")
-                
-            # Goals List
-            goals = m.get("goals", [])
-            if goals:
-                lines.append("\n⚽ *Goles:*")
-                for g in goals:
-                    scorer = g.get("player_name") or "Jugador"
-                    minute = g.get("minute") or "N/A"
-                    team = home if g.get("team_id") == m.get("team_A_id") else away
-                    lines.append(f" - {minute}': *{scorer}* ({team})")
-                    
-            # Cards List
-            bookings = m.get("bookings", [])
-            if bookings:
-                lines.append("\n🟨🟥 *Tarjetas:*")
-                for b in bookings:
-                    player = b.get("player_name") or "Jugador"
-                    minute = b.get("minute") or "N/A"
-                    card = b.get("card_type") or "Yellow"
-                    card_icon = "🟨" if "yellow" in card.lower() else "🟥"
-                    team = home if b.get("team_id") == m.get("team_A_id") else away
-                    lines.append(f" - {minute}': {card_icon} *{player}* ({team})")
-                    
-            # Lineups overview
-            lineups = m.get("lineups", [])
-            if lineups:
-                # Count starters
-                home_starters = [p for p in lineups if p.get("team_id") == m.get("team_A_id") and p.get("start") == "1"]
-                away_starters = [p for p in lineups if p.get("team_id") == m.get("team_B_id") and p.get("start") == "1"]
-                lines.append(f"\n📋 *Alineaciones confirmadas:*")
-                lines.append(f" - {home}: {len(home_starters)} titulares en cancha.")
-                lines.append(f" - {away}: {len(away_starters)} titulares en cancha.")
+        def _render() -> str:
+            from bot.special_leagues import FinlandLeagues
 
+            adapter = FinlandLeagues(PalloliittoAPI())
+            try:
+                return adapter.match_report(str(stats_match_id))
+            finally:
+                adapter.close()
+
+        markdown = await asyncio.to_thread(_render)
         return MatchStatsReport(
             provider=self.name,
-            match_id=stats_match_id,
-            title=f"{home} vs {away}",
-            markdown="\n".join(lines),
-            data=m,
+            match_id=str(stats_match_id),
+            title=_title_from_markdown(markdown),
+            markdown=markdown,
+            data={"stats_match_id": str(stats_match_id)},
             generated_at=datetime.now(UTC).isoformat(),
         )
 
