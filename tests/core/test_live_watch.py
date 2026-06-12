@@ -856,18 +856,38 @@ class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):
         from datetime import timezone
         service = LiveWatchService(repository=self.repository)
         
-        # 1. No active watches -> should return normal interval (30s)
-        self.assertEqual(service.get_recommended_poll_interval(), 30.0)
-        
-        # 2. Has watch, but kickoff is far in the future (e.g. 5 hours) -> should return normal (30s)
+        # 1. No active watches -> normal interval (now 15s).
+        self.assertEqual(service.get_recommended_poll_interval(), 15.0)
+
+        # 2. Has watch, but kickoff is far in the future (e.g. 5 hours) -> normal (15s).
         far_future = (_dt.datetime.now(timezone.utc) + _dt.timedelta(hours=5)).isoformat()
         self.repository.add_live_watch(123, home="A", away="B", kickoff_at=far_future)
-        self.assertEqual(service.get_recommended_poll_interval(), 30.0)
-        
-        # 3. Has watch starting in 1 minute (within the 2-minute fast-polling window) -> should return fast (10s)
+        self.assertEqual(service.get_recommended_poll_interval(), 15.0)
+
+        # 3. Has watch starting in 1 minute (within the 2-minute fast window) -> fast (10s).
         near_future = (_dt.datetime.now(timezone.utc) + _dt.timedelta(minutes=1)).isoformat()
         self.repository.add_live_watch(123, home="C", away="D", kickoff_at=near_future)
         self.assertEqual(service.get_recommended_poll_interval(), 10.0)
+
+    def test_recommended_interval_fast_for_full_match(self) -> None:
+        # A match at 90' (kicked off 90 min ago) must STILL poll fast, so
+        # goals/cards keep being caught late in the game (was a bug: after +15m
+        # it dropped back to the normal cadence).
+        import datetime as _dt
+        from datetime import timezone
+        service = LiveWatchService(repository=self.repository)
+        in_play = (_dt.datetime.now(timezone.utc) - _dt.timedelta(minutes=90)).isoformat()
+        self.repository.add_live_watch(123, home="E", away="F", kickoff_at=in_play)
+        self.assertEqual(service.get_recommended_poll_interval(), 10.0)
+
+    def test_recommended_interval_normal_when_match_long_over(self) -> None:
+        # A match that kicked off 3 hours ago is surely finished -> normal cadence.
+        import datetime as _dt
+        from datetime import timezone
+        service = LiveWatchService(repository=self.repository)
+        long_over = (_dt.datetime.now(timezone.utc) - _dt.timedelta(hours=3)).isoformat()
+        self.repository.add_live_watch(125, home="G", away="H", kickoff_at=long_over)
+        self.assertEqual(service.get_recommended_poll_interval(), 15.0)
 
     def test_spanish_name_similarity_normalization(self) -> None:
         # Femenino normalization

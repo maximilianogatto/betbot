@@ -523,12 +523,17 @@ class LiveWatchService:
 
         return self.repository.purge_expired_live_watches()
 
-    def get_recommended_poll_interval(self, default_normal: float = 30.0, default_fast: float = 10.0) -> float:
-        """Determine the next sleep interval based on active watch kickoffs.
+    def get_recommended_poll_interval(self, default_normal: float = 15.0, default_fast: float = 10.0) -> float:
+        """Determine the next sleep interval based on active watch state.
 
-        Returns default_fast (10s) if any watched fixture is in the
-        [kickoff-2m, kickoff+15m] window. After +15m, entries fall back to the
-        normal cadence (30s by default) even if a platform never listed them live.
+        Returns default_fast while a watched fixture is plausibly in play, so
+        goals/cards are caught quickly for the WHOLE match (not just the first
+        minutes). Fast applies when a watch is:
+          - in the kickoff window [kickoff-2m, kickoff+140m] (covers 90' + HT +
+            stoppage + extra time), or
+          - already detected live on some platform (fired_platforms) without a
+            known kickoff time.
+        Otherwise the normal cadence is used.
         """
 
         watches = self.repository.list_all_active_live_watches()
@@ -540,13 +545,15 @@ class LiveWatchService:
             if w.kickoff_at:
                 try:
                     ko = datetime.fromisoformat(w.kickoff_at)
-                    # Fast window: [ko - 2 min, ko + 15 min]
-                    start_fast = ko - timedelta(minutes=2)
-                    end_fast = ko + timedelta(minutes=15)
-                    if start_fast <= now <= end_fast:
+                    # Fast for the full match: [ko - 2 min, ko + 140 min].
+                    if (ko - timedelta(minutes=2)) <= now <= (ko + timedelta(minutes=140)):
                         return default_fast
+                    continue
                 except Exception:
                     pass
+            if w.fired_platforms_list:
+                # No usable kickoff time but already live on a book -> poll fast.
+                return default_fast
         return default_normal
 
     def _auto_track_matched_event_league(self, event: LiveEventSnapshot, chat_id: int) -> None:

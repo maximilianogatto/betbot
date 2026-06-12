@@ -710,7 +710,7 @@ async def live_status_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     chat_id = update.effective_chat.id
     settings = service.get_alert_settings(chat_id)
     watches = service.list_watches(chat_id, status="watching")
-    interval = service.get_recommended_poll_interval(default_normal=30.0, default_fast=10.0)
+    interval = service.get_recommended_poll_interval(default_normal=15.0, default_fast=10.0)
 
     lines = [
         "🔴 *Estado Live Watch*",
