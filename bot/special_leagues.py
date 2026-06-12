@@ -2910,24 +2910,37 @@ class NorwayLeagues(SpecialLeague):
         return finished[-5:] + upcoming[:10]
 
     def standings(self, code: str) -> StandingsResult:
-        code = code.upper()
-        if code != "NO1":
+        code = code.strip()
+        # A numeric code is a tournament fiksId (any division); NO1 = Toppserien.
+        if code.isdigit():
+            try:
+                tables = self.client.get_tables(self._tournament_url(code))
+            except Exception:
+                tables = []
+            return self._standings_from_tables(tables, code, code)
+        if code.upper() != "NO1":
             return StandingsResult(title=code, found=False)
         try:
             tables = self.client.get_tables("https://www.fotball.no/turneringer/toppserien/")
         except Exception:
             tables = []
-        return self._standings_from_tables(tables, "Toppserien (2026)", code)
+        return self._standings_from_tables(tables, "Toppserien (2026)", "NO1")
 
     def fixtures(self, code: str) -> tuple[Optional[str], list[MatchRow]]:
-        code = code.upper()
-        if code != "NO1":
+        code = code.strip()
+        if code.isdigit():  # tournament fiksId -> any Norwegian division
+            try:
+                tables = self.client.get_tables(self._tournament_url(code))
+            except Exception:
+                tables = []
+            return code, self._fixtures_from_tables(tables, code, limit=False)
+        if code.upper() != "NO1":
             return None, []
         try:
             tables = self.client.get_tables("https://www.fotball.no/turneringer/toppserien/")
         except Exception:
             tables = []
-        return "Toppserien", self._fixtures_from_tables(tables, code)
+        return "Toppserien", self._fixtures_from_tables(tables, "NO1")
 
     def match_report(self, match_id: str) -> str:
         url = f"https://www.fotball.no/fotballdata/kamp/?fiksId={match_id}"
