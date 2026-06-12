@@ -1067,6 +1067,17 @@ _SWE_NOISE = (
     "akademi", "landskamp", "vm-kval", "em-kval", "nations", "träningsmatch", "futsal",
 )
 
+# Default mapped Swedish leagues (competition_id, name, tier). Used when a
+# SwedenLeagues is built without an explicit table (e.g. by the stats provider).
+DEFAULT_SWEDEN_LEAGUES: dict[str, tuple[str, str, str]] = {
+    "AL": ("133348", "Allsvenskan", "Tier 1 · Varones"),
+    "SE": ("133340", "Superettan", "Tier 2 · Varones"),
+    "EN": ("133338", "Ettan Norra", "Tier 3 · Varones"),
+    "ES": ("133339", "Ettan Södra", "Tier 3 · Varones"),
+    "DA": ("133440", "OBOS Damallsvenskan", "Tier 1 · Damas"),
+    "EE": ("133439", "Elitettan", "Tier 2 · Damas"),
+}
+
 
 class SwedenLeagues(SpecialLeague):
     flag = "🇸🇪"
@@ -1082,13 +1093,13 @@ class SwedenLeagues(SpecialLeague):
         "SCD": (3, "Svenska Cupen", "F", "dam"),
     }
 
-    def __init__(self, client, league_table: dict[str, tuple[str, str, str]]):
+    def __init__(self, client, league_table: dict[str, tuple[str, str, str]] | None = None):
         self.client = client
-        self.table = league_table
+        self.table = league_table if league_table is not None else dict(DEFAULT_SWEDEN_LEAGUES)
         self._cup_cache: Optional[dict[str, tuple[str, list[str]]]] = None
         # keyword -> code, longest keyword first (so 'damallsvenskan' beats 'allsvenskan')
         kw = {}
-        for code, (_cid, name, _tier) in league_table.items():
+        for code, (_cid, name, _tier) in self.table.items():
             kw[name.lower().replace("obos ", "").strip()] = code
         self._keywords = sorted(kw.items(), key=lambda kv: len(kv[0]), reverse=True)
 

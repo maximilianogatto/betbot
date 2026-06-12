@@ -201,16 +201,23 @@ class SvenskfotbollHttpStatsProviderTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(link.method, "league_fixture_similarity")
         self.assertGreaterEqual(link.confidence, 0.78)
 
-    async def test_build_match_report_includes_live_table_and_recent_results(self) -> None:
-        report = await self.provider.build_match_report("133348:6529914")
+    async def test_build_match_report_delegates_to_unified_adapter(self) -> None:
+        # The /stats report now uses the SAME unified federation report as
+        # /swe_match (the SwedenLeagues adapter), so it matches every other
+        # special federation. The provider extracts the bare match_id from the
+        # compound id and wraps the adapter's markdown.
+        from unittest.mock import patch
 
+        unified = "⚽ *IK Sirius FK vs Mjällby AIF*\n📊 FORMA\n📋 TABLA\n🤝 H2H"
+        with patch("bot.special_leagues.SwedenLeagues.match_report", return_value=unified) as mr:
+            report = await self.provider.build_match_report("133348:6529914")
+
+        mr.assert_called_once_with("6529914")  # bare match id, not the compound
         self.assertEqual(report.provider, "svenskfotboll_http")
         self.assertEqual(report.match_id, "133348:6529914")
         self.assertEqual(report.title, "IK Sirius FK vs Mjällby AIF")
-        self.assertIn("Estado live: HALFTIME", report.markdown)
-        self.assertIn("Marcador: 2 - 1", report.markdown)
-        self.assertIn("Tabla:", report.markdown)
-        self.assertIn("Resultados recientes:", report.markdown)
+        self.assertIn("FORMA", report.markdown)
+        self.assertIn("TABLA", report.markdown)
 
 
 if __name__ == "__main__":

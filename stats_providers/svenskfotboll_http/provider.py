@@ -282,55 +282,27 @@ class SvenskfotbollHttpStatsProvider(StatsProvider):
         )
 
     async def build_match_report(self, stats_match_id: str) -> MatchStatsReport:
-        """Build Telegram-ready report for one Svenskfotboll fixture."""
+        """Unified federation report: delegates to the SwedenLeagues adapter so the
+        ``/stats`` output matches ``/swe_match`` and every other federation (same
+        FORMA/H2H/GOLES/TABLA layout)."""
 
-        competition_id, match_id = _split_stats_match_id(stats_match_id)
-        data: dict[str, Any] = {"stats_match_id": stats_match_id, "competition_id": competition_id, "match_id": match_id}
-        live = await self._try_live_game_info(match_id) if match_id else None
-        data["live"] = live
+        _competition_id, match_id = _split_stats_match_id(stats_match_id)
+        report_id = match_id or stats_match_id
 
-        standings = upcoming = latest = None
-        if competition_id:
-            standings, upcoming, latest = await asyncio.gather(
-                self._cached_payload(
-                    f"league:{competition_id}:standings",
-                    self._client.get_standings,
-                    competition_id,
-                    ttl=self._cache_ttl_seconds,
-                ),
-                self._cached_payload(
-                    f"league:{competition_id}:upcoming",
-                    self._client.get_upcoming_matches,
-                    competition_id,
-                    ttl=self._cache_ttl_seconds,
-                ),
-                self._cached_payload(
-                    f"league:{competition_id}:latest",
-                    self._client.get_latest_results,
-                    competition_id,
-                    ttl=self._cache_ttl_seconds,
-                ),
-            )
-            data.update({"standings": standings, "upcoming": upcoming, "latest": latest})
+        def _render() -> str:
+            from bot.special_leagues import SwedenLeagues
 
-        fixture = _find_match(match_id, upcoming) or _find_match(match_id, latest)
-        home = _pick_team_name(live, fixture, "home") or "Local"
-        away = _pick_team_name(live, fixture, "away") or "Visitante"
-        title = f"{home} vs {away}"
-        markdown = _render_report(
-            title=title,
-            fixture=fixture,
-            live=live,
-            standings=standings,
-            latest=latest,
-            provider_url=self.build_match_url(stats_match_id),
-        )
+            # Reuse the provider's configured client (DI + tests); don't close it
+            # since the provider owns its lifecycle.
+            return SwedenLeagues(self._client).match_report(str(report_id))
+
+        markdown = await asyncio.to_thread(_render)
         return MatchStatsReport(
             provider=self.name,
-            match_id=stats_match_id,
-            title=title,
+            match_id=str(stats_match_id),
+            title=_title_from_markdown(markdown),
             markdown=markdown,
-            data=data,
+            data={"stats_match_id": str(stats_match_id), "match_id": match_id},
             generated_at=datetime.now(UTC).isoformat(),
         )
 
@@ -373,6 +345,15 @@ class SvenskfotbollHttpStatsProvider(StatsProvider):
 
     async def _call(self, func: Callable[..., _T], *args: Any, **kwargs: Any) -> _T:
         return await asyncio.to_thread(func, *args, **kwargs)
+
+
+def _title_from_markdown(markdown: str) -> str:
+    """First non-empty line of a federation report ('⚽ *Home vs Away*' -> 'Home vs Away')."""
+    for line in (markdown or "").splitlines():
+        stripped = line.strip().lstrip("⚽").strip().strip("*").strip()
+        if stripped:
+            return stripped
+    return "Reporte"
 
 
 def _render_report(
