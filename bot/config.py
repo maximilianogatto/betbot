@@ -52,7 +52,7 @@ class Settings:
     stats_prefetch_interval_seconds: int = 86400
     stats_prefetch_ttl_seconds: float = 90000.0
     live_watch_enabled: bool = True
-    live_watch_interval_seconds: int = 30
+    live_watch_interval_seconds: int = 15
     peak_digest_enabled: bool = True
     peak_digest_hour_arg: int = 8
 
@@ -214,7 +214,7 @@ def load_settings() -> Settings:
     )
     live_watch_enabled = _parse_bool(os.getenv("LIVE_WATCH_ENABLED", "true"))
     live_watch_interval_seconds = _parse_positive_int(
-        os.getenv("LIVE_WATCH_INTERVAL_SECONDS", "30"),
+        os.getenv("LIVE_WATCH_INTERVAL_SECONDS", "15"),
         variable_name="LIVE_WATCH_INTERVAL_SECONDS",
     )
     peak_digest_enabled = _parse_bool(os.getenv("PEAK_DIGEST_ENABLED", "true"))
