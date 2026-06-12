@@ -16,6 +16,12 @@ from stats_providers.palloliitto.provider import PalloliittoStatsProvider
 from stats_providers.sofascore_http import SofaScoreHttpStatsProvider
 from stats_providers.flashscore_http import FlashscoreHttpStatsProvider
 from stats_providers.svenskfotboll_http import SvenskfotbollHttpStatsProvider
+from stats_providers.special_federation import (
+    AlgeriaFederationStatsProvider,
+    NorwayFederationStatsProvider,
+    RomaniaFederationStatsProvider,
+    SlovakiaFederationStatsProvider,
+)
 
 
 def register_default_stats_providers(
@@ -72,5 +78,9 @@ __all__ = [
     "SofaScoreHttpStatsProvider",
     "FlashscoreHttpStatsProvider",
     "SvenskfotbollHttpStatsProvider",
+    "NorwayFederationStatsProvider",
+    "RomaniaFederationStatsProvider",
+    "SlovakiaFederationStatsProvider",
+    "AlgeriaFederationStatsProvider",
     "register_default_stats_providers",
 ]
