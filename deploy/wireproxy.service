@@ -1,0 +1,14 @@
+[Unit]
+Description=wireproxy (ProtonVPN WireGuard userspace -> SOCKS5 local para BetBot)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=maximilianogatto
+ExecStart=/usr/local/bin/wireproxy -c /etc/wireguard/wireproxy.conf
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

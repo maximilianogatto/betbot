@@ -1,0 +1,19 @@
+# Config de wireproxy = tu WireGuard de ProtonVPN + un bloque [Socks5].
+# Copiá los valores de tu config de Proton (account.protonvpn.com -> WireGuard)
+# y agregá el [Socks5] del final. Guardalo en /etc/wireguard/wireproxy.conf (chmod 600).
+# NO lo commitees: tiene tu clave privada.
+
+[Interface]
+PrivateKey = TU_PRIVATE_KEY
+Address = 10.2.0.2/32
+DNS = 10.2.0.1
+
+[Peer]
+PublicKey = PUBLIC_KEY_DEL_PEER
+Endpoint = 103.106.58.163:51820
+AllowedIPs = 0.0.0.0/0, ::/0
+PersistentKeepalive = 25
+
+# Proxy SOCKS5 local que expone el túnel. El bot apunta acá con BOT_PROXY_URL.
+[Socks5]
+BindAddress = 127.0.0.1:25344

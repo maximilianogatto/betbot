@@ -1,57 +1,68 @@
-# Correr el bot detrás de ProtonVPN (sin lockear el SSH)
+# Sacar el tráfico del bot por ProtonVPN (sin lockear el SSH)
 
-Algunas casas (MrPunter/FSB, Solcasino/sptpub) bloquean la IP de datacenter de
-la VM. Solución robusta: meter **solo el bot** en un *network namespace* con
-WireGuard. El bot sale por ProtonVPN; SSH y el resto del host siguen por la red
-directa, así que un full-tunnel **nunca** te deja afuera y una caída de VPN solo
-afecta al bot.
+Algunas casas (MrPunter/FSB, Solcasino/sptpub) bloquean la IP de datacenter de la
+VM. Para alcanzarlas, el tráfico del bot tiene que salir por una VPN.
 
-## Requisitos
-- `sudo apt install -y wireguard`
-- La config de Proton en `/etc/wireguard/proton.conf` (chmod 600). Generala en
-  account.protonvpn.com → Downloads → WireGuard (Linux). **No la commitees.**
+## ✅ Opción A — wireproxy + BOT_PROXY_URL (recomendada)
 
-## Instalación (una vez)
+WireGuard en **espacio de usuario** (`wireproxy`) levanta el túnel Proton y expone
+un **SOCKS5 local**; el bot manda todo su HTTP por ahí con una env. Sin root, sin
+tocar el ruteo del host, **sin riesgo de cortar el SSH**, y si la VPN se cae solo
+afecta al bot (no tu acceso).
+
+### 1) Instalar wireproxy (binario único)
+```bash
+cd /tmp
+curl -L -o wireproxy.tar.gz https://github.com/whyvl/wireproxy/releases/latest/download/wireproxy_linux_amd64.tar.gz
+tar xzf wireproxy.tar.gz
+sudo install -m755 wireproxy /usr/local/bin/wireproxy
+wireproxy --version
+```
+
+### 2) Config (tu WireGuard de Proton + bloque [Socks5])
+Tomá `deploy/wireproxy.conf.example`, completá con tus valores de Proton y guardalo:
+```bash
+sudo cp ~/betbot/deploy/wireproxy.conf.example /etc/wireguard/wireproxy.conf
+sudo nano /etc/wireguard/wireproxy.conf      # pegá PrivateKey/PublicKey/Endpoint reales
+sudo chmod 600 /etc/wireguard/wireproxy.conf
+```
+> Si ya tenés `/etc/wireguard/proton.conf`, podés copiarlo y solo agregarle el
+> bloque `[Socks5]`. **No lo commitees** (tiene tu clave privada).
+
+### 3) Servicio + probar el SOCKS
+```bash
+sudo cp ~/betbot/deploy/wireproxy.service /etc/systemd/system/wireproxy.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now wireproxy
+# probar que el SOCKS sale por Proton y destraba:
+curl -s --socks5-hostname 127.0.0.1:25344 https://api.ipify.org; echo
+curl -s -o /dev/null -w "fssb: %{http_code}\n" --socks5-hostname 127.0.0.1:25344 https://prod20296-144090624.fssb.io/es/spbk/
+```
+
+### 4) Decirle al bot que use el proxy
+En `~/betbot/.env`:
+```ini
+BOT_PROXY_URL=socks5://127.0.0.1:25344
+```
+y reiniciar:
 ```bash
 cd ~/betbot && git pull
-chmod +x deploy/botvpn-netns.sh
-
-# 1) Probar que levanta el namespace y destraba las casas:
-sudo deploy/botvpn-netns.sh up
-sudo ip netns exec botvpn curl -s -o /dev/null -w "fssb: %{http_code}\n"  https://prod20296-144090624.fssb.io/es/spbk/
-sudo ip netns exec botvpn curl -s -o /dev/null -w "sptpub: %{http_code}\n" "https://api-g-c7818b61-607.sptpub.com/api/v4/live/brand/2392759269461204992/en/0"
-# Tu SSH NO debería cortarse (el túnel está aislado en el netns).
-sudo deploy/botvpn-netns.sh down
-
-# 2) Instalar los servicios:
-sudo cp deploy/botvpn.service /etc/systemd/system/betbot-vpn.service
-sudo cp deploy/betbot.service /etc/systemd/system/betbot.service
-sudo systemctl daemon-reload
-sudo systemctl enable --now betbot-vpn.service     # crea el netns al boot
-sudo systemctl restart betbot                       # el bot ahora corre dentro del netns
-journalctl -u betbot -f                             # ya no deberías ver 403 fssb / 503 sptpub
-```
-> El unit del netns se instala como `betbot-vpn.service` (el archivo se llama
-> `botvpn.service` en el repo). `betbot.service` depende de él vía `Requires=`.
-
-## Verificar
-```bash
-systemctl status betbot-vpn betbot
-# IP de salida del bot (debe ser la de Proton, no la de la VM):
-sudo ip netns exec botvpn curl -s https://api.ipify.org; echo
-```
-
-## Apagar la VPN (volver a salida directa)
-```bash
-sudo sed -i 's#NetworkNamespacePath=.*##; s#BindReadOnlyPaths=.*##' /etc/systemd/system/betbot.service
-sudo sed -i 's#Requires=botvpn.service##' /etc/systemd/system/betbot.service
-sudo systemctl daemon-reload
-sudo systemctl disable --now betbot-vpn.service
+betbot/bin/pip install -r requirements.txt   # instala socksio (soporte SOCKS de httpx)
 sudo systemctl restart betbot
+journalctl -u betbot -f                        # ya no deberías ver 403 fssb / 503 sptpub
 ```
+
+Listo: TODO el HTTP del bot (extractores + stats) sale por Proton. El SSH y el host
+quedan en la red directa. (El bootstrap de Sportradar via Chromium sigue directo;
+si statshub te bloqueara, avisá y le agrego el proxy al navegador también.)
+
+## Opción B — network namespace (avanzada)
+Aísla al bot en un netns con WireGuard de kernel (`deploy/botvpn-netns.sh` +
+`deploy/botvpn.service` + `deploy/betbot.service`). Más robusta a nivel red pero
+con más piezas y requiere root. Usala solo si la Opción A no te alcanza.
 
 ## Notas
-- **Seguridad**: si tu `proton.conf` se filtró (clave privada), regeneralo en Proton.
-- **Si el bot queda sin red** (handshake falla), revisá `sudo ip netns exec botvpn wg`
-  (debe mostrar `latest handshake`). El SSH no se ve afectado pase lo que pase.
-- Reconexión: si la VPN se cae, `sudo systemctl restart betbot-vpn betbot` la rearma.
+- **Seguridad**: si tu clave privada se filtró, regeneralá en Proton.
+- **Reconexión**: `wireproxy.service` tiene `Restart=always`; si Proton corta, vuelve solo.
+- **Volver a directo**: comentá `BOT_PROXY_URL` en `.env` y `sudo systemctl restart betbot`
+  (y opcional `sudo systemctl disable --now wireproxy`).
