@@ -5,7 +5,9 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=maximilianogatto
+# Corre como root: el config vive en /etc/wireguard (700 root) y un User= no-root
+# no puede ni entrar a esa carpeta -> "permission denied". wireproxy solo abre UDP
+# saliente + un SOCKS en 127.0.0.1, así que como root es seguro y canónico.
 ExecStart=/usr/local/bin/wireproxy -c /etc/wireguard/wireproxy.conf
 Restart=always
 RestartSec=5
