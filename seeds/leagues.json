@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "exported_at": "2026-06-11T03:39:37.079905+00:00",
+  "exported_at": "2026-06-14T01:38:22.542947+00:00",
   "leagues": [
     {
       "public_id": "asean-football-championship-u19",
@@ -148,68 +148,6 @@
       "stats_links": []
     },
     {
-      "public_id": "australia-u23-victoria-premier-league-1",
-      "name": "Australia · U23 Victoria Premier League 1",
-      "display_name": "Australia · U23 Victoria Premier League 1",
-      "country": null,
-      "gender": null,
-      "age_group": "U23",
-      "platforms": [
-        {
-          "platform": "betovo_http",
-          "competition_external_id": "45665",
-          "competition_name": "Australia · U23 Victoria Premier League 1",
-          "source_url": "betovo:champ:45665",
-          "metadata_json": "{}",
-          "needs_name_resolution": 0,
-          "enabled": 1,
-          "reminders_enabled": 0
-        },
-        {
-          "platform": "bz_http",
-          "competition_external_id": "45675",
-          "competition_name": "Australia · U23 Victoria Premier League 1",
-          "source_url": "bz:tournament:45675",
-          "metadata_json": "{}",
-          "needs_name_resolution": 0,
-          "enabled": 1,
-          "reminders_enabled": 0
-        },
-        {
-          "platform": "mrpunter_http",
-          "competition_external_id": "542768130418925568",
-          "competition_name": "Australia · Australia - Liga Premier de Victoria 1 U23",
-          "source_url": "mrpunter:league:542768130418925568",
-          "metadata_json": "{}",
-          "needs_name_resolution": 0,
-          "enabled": 1,
-          "reminders_enabled": 0
-        }
-      ],
-      "stats_links": []
-    },
-    {
-      "public_id": "australia-victoria-npl-1-sub-23",
-      "name": "Australia · Victoria NPL 1 sub-23",
-      "display_name": "Australia · Victoria NPL 1 sub-23",
-      "country": null,
-      "gender": null,
-      "age_group": "U23",
-      "platforms": [
-        {
-          "platform": "betwarrior_http",
-          "competition_external_id": "2010206401",
-          "competition_name": "Australia · Victoria NPL 1 sub-23",
-          "source_url": "betwarrior:group:2010206401",
-          "metadata_json": "{}",
-          "needs_name_resolution": 0,
-          "enabled": 1,
-          "reminders_enabled": 0
-        }
-      ],
-      "stats_links": []
-    },
-    {
       "public_id": "australia-act-national-premier-league",
       "name": "Australia. ACT National Premier League",
       "display_name": "Australia. ACT National Premier League",
@@ -321,6 +259,47 @@
       ]
     },
     {
+      "public_id": "australia-npl-tasmania",
+      "name": "Australia. NPL Tasmania",
+      "display_name": "Australia. NPL Tasmania",
+      "country": null,
+      "gender": null,
+      "age_group": null,
+      "platforms": [
+        {
+          "platform": "1xbet_http",
+          "competition_external_id": "35401",
+          "competition_name": "Australia. NPL Tasmania",
+          "source_url": "https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=35401&lng=en",
+          "metadata_json": "{\"country\": null, \"events_count\": 5, \"game_detail_failures\": 0, \"game_detail_limit_reached\": false, \"game_detail_markets_enriched\": 5, \"game_detail_requests\": 5, \"league_id\": \"35401\", \"league_name\": \"Australia. NPL Tasmania\", \"source\": \"GetChampZip\", \"sport_id\": \"1\"}",
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        },
+        {
+          "platform": "betovo_http",
+          "competition_external_id": "5164",
+          "competition_name": "Australia · NPL, Tasmania",
+          "source_url": "betovo:champ:5164",
+          "metadata_json": "{}",
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        },
+        {
+          "platform": "solcasino_http",
+          "competition_external_id": "1712792922409275392",
+          "competition_name": "Australia · Tasmania NPL",
+          "source_url": "solcasino:tournament:1712792922409275392",
+          "metadata_json": "{}",
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        }
+      ],
+      "stats_links": []
+    },
+    {
       "public_id": "australia-npl-victoria-women",
       "name": "Australia. NPL Victoria. Women",
       "display_name": "Australia. NPL Victoria. Women",
@@ -334,6 +313,27 @@
           "competition_name": "Australia. NPL Victoria. Women",
           "source_url": "https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=2870526&lng=en",
           "metadata_json": "{\"country\": null, \"events_count\": 1, \"game_detail_failures\": 0, \"game_detail_limit_reached\": false, \"game_detail_markets_enriched\": 1, \"game_detail_requests\": 1, \"league_id\": \"2870526\", \"league_name\": \"Australia. NPL Victoria. Women\", \"source\": \"GetChampZip\", \"sport_id\": \"1\"}",
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        }
+      ],
+      "stats_links": []
+    },
+    {
+      "public_id": "australia-new-south-wales-premier-league-women",
+      "name": "Australia. New South Wales Premier League. Women",
+      "display_name": "Australia. New South Wales Premier League. Women",
+      "country": null,
+      "gender": "F",
+      "age_group": null,
+      "platforms": [
+        {
+          "platform": "1xbet_http",
+          "competition_external_id": "232919",
+          "competition_name": "Australia. New South Wales Premier League. Women",
+          "source_url": "https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=232919&lng=en",
+          "metadata_json": "{\"country\": null, \"events_count\": 4, \"game_detail_failures\": 0, \"game_detail_limit_reached\": false, \"game_detail_markets_enriched\": 4, \"game_detail_requests\": 4, \"league_id\": \"232919\", \"league_name\": \"Australia. New South Wales Premier League. Women\", \"source\": \"GetChampZip\", \"sport_id\": \"1\"}",
           "needs_name_resolution": 0,
           "enabled": 1,
           "reminders_enabled": 0
@@ -393,6 +393,140 @@
       ]
     },
     {
+      "public_id": "brazil-baiano-serie-b",
+      "name": "Brazil · Baiano, Serie B",
+      "display_name": "Brazil · Baiano, Serie B",
+      "country": "brazil",
+      "gender": null,
+      "age_group": null,
+      "platforms": [
+        {
+          "platform": "betovo_http",
+          "competition_external_id": "8406",
+          "competition_name": "Brazil · Baiano, Serie B",
+          "source_url": "betovo:champ:8406",
+          "metadata_json": null,
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        },
+        {
+          "platform": "bz_http",
+          "competition_external_id": "39789",
+          "competition_name": "Brazil · Baiano, Serie B",
+          "source_url": "bz:tournament:39789",
+          "metadata_json": null,
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        },
+        {
+          "platform": "solcasino_http",
+          "competition_external_id": "2269442747322740754",
+          "competition_name": "Brazil · Baiano, Serie B",
+          "source_url": "solcasino:tournament:2269442747322740754",
+          "metadata_json": null,
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        }
+      ],
+      "stats_links": []
+    },
+    {
+      "public_id": "brazil-u20-acreano",
+      "name": "Brazil · U20 Acreano",
+      "display_name": "Brazil · U20 Acreano",
+      "country": "brazil",
+      "gender": null,
+      "age_group": "U20",
+      "platforms": [
+        {
+          "platform": "betovo_http",
+          "competition_external_id": "32373",
+          "competition_name": "Brazil · U20 Acreano",
+          "source_url": "betovo:champ:32373",
+          "metadata_json": null,
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        },
+        {
+          "platform": "bz_http",
+          "competition_external_id": "sr:simple_tournament:77706",
+          "competition_name": "Brazil · U20 Acreano",
+          "source_url": "bz:tournament:77706",
+          "metadata_json": null,
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        },
+        {
+          "platform": "mrpunter_http",
+          "competition_external_id": "18640",
+          "competition_name": "Brasil - Acreano U20",
+          "source_url": "mrpunter:league:18640",
+          "metadata_json": null,
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        },
+        {
+          "platform": "solcasino_http",
+          "competition_external_id": "2036963000044367872",
+          "competition_name": "Brazil · U20 Acreano",
+          "source_url": "solcasino:tournament:2036963000044367872",
+          "metadata_json": null,
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        }
+      ],
+      "stats_links": []
+    },
+    {
+      "public_id": "brazil-u20-amazonense",
+      "name": "Brazil · U20 Amazonense",
+      "display_name": "Brazil · U20 Amazonense",
+      "country": "brazil",
+      "gender": null,
+      "age_group": "U20",
+      "platforms": [
+        {
+          "platform": "bz_http",
+          "competition_external_id": "sr:simple_tournament:173252",
+          "competition_name": "Brazil · U20 Amazonense",
+          "source_url": "bz:tournament:173252",
+          "metadata_json": null,
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        }
+      ],
+      "stats_links": []
+    },
+    {
+      "public_id": "brazil-campeonato-amazonense-u20",
+      "name": "Brazil. Campeonato Amazonense U20",
+      "display_name": "Brazil. Campeonato Amazonense U20",
+      "country": "brazil",
+      "gender": null,
+      "age_group": "U20",
+      "platforms": [
+        {
+          "platform": "1xbet_http",
+          "competition_external_id": "2235330",
+          "competition_name": "Brazil. Campeonato Amazonense U20",
+          "source_url": "https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=2235330&lng=en",
+          "metadata_json": null,
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        }
+      ],
+      "stats_links": []
+    },
+    {
       "public_id": "brazil-campeonato-brasiliense-u20",
       "name": "Brazil. Campeonato Brasiliense U20",
       "display_name": "Brazil. Campeonato Brasiliense U20",
@@ -423,7 +557,7 @@
         {
           "platform": "solcasino_http",
           "competition_external_id": "2025626254765596672",
-          "competition_name": "U20 Brasiliense",
+          "competition_name": "Brazil · U20 Brasiliense",
           "source_url": "solcasino:tournament:2025626254765596672",
           "metadata_json": "{}",
           "needs_name_resolution": 0,
@@ -518,6 +652,48 @@
       "stats_links": []
     },
     {
+      "public_id": "new-zealand-cup-women",
+      "name": "New Zealand Cup. Women",
+      "display_name": "New Zealand Cup. Women",
+      "country": null,
+      "gender": "F",
+      "age_group": null,
+      "platforms": [
+        {
+          "platform": "1xbet_http",
+          "competition_external_id": "1075281",
+          "competition_name": "New Zealand Cup. Women",
+          "source_url": "https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=1075281&lng=en",
+          "metadata_json": null,
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        }
+      ],
+      "stats_links": []
+    },
+    {
+      "public_id": "new-zealand-kate-sheppard-cup-women",
+      "name": "New Zealand · Kate Sheppard Cup, Women",
+      "display_name": "New Zealand · Kate Sheppard Cup, Women",
+      "country": null,
+      "gender": "F",
+      "age_group": null,
+      "platforms": [
+        {
+          "platform": "betovo_http",
+          "competition_external_id": "10150",
+          "competition_name": "New Zealand · Kate Sheppard Cup, Women",
+          "source_url": "betovo:champ:10150",
+          "metadata_json": null,
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        }
+      ],
+      "stats_links": []
+    },
+    {
       "public_id": "northern-territory-women",
       "name": "Northern Territory, Women",
       "display_name": "Northern Territory, Women",
@@ -554,6 +730,27 @@
           "payload_json": "{\"country_name\": \"Australia\", \"league_id\": \"33650:91941\", \"league_name\": \"Northern Territory Premier League, Women\", \"provider\": \"sofascore_http\", \"provider_display_name\": \"SofaScore HTTP\", \"raw_payload\": {\"input\": \"https://www.sofascore.com/es-la/football/tournament/australia/northern-territory-premier-league-women/33650#id:91941...\", \"parsed_identity\": {\"country_slug\": \"australia\", \"season_id\": \"91941\", \"tournament_id\": \"33650\", \"tournament_slug\": \"northern-territory-premier-league-women\"}, \"public_page\": {\"country_name\": \"Australia\", \"country_slug\": \"australia\", \"has_events\": true, \"has_home_away_standings\": true, \"league_name\": \"Northern Territory Premier League, Women\", \"league_slug\": \"northern-territory-premier-league-women\", \"season_id\": 91941, \"season_name\": \"2026\", \"tournament_id\": 33650}}, \"season_id\": \"91941\", \"source_url\": \"https://www.sofascore.com/es-la/football/tournament/australia/northern-territory-premier-league-women/33650#id:91941...\"}"
         }
       ]
+    },
+    {
+      "public_id": "norway-division-4",
+      "name": "Norway. Division 4",
+      "display_name": "Norway. Division 4",
+      "country": "norway",
+      "gender": null,
+      "age_group": null,
+      "platforms": [
+        {
+          "platform": "1xbet_http",
+          "competition_external_id": "208075",
+          "competition_name": "Norway. Division 4",
+          "source_url": "https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=208075&lng=en",
+          "metadata_json": "{\"country\": null, \"events_count\": 41, \"game_detail_failures\": 0, \"game_detail_limit_reached\": false, \"game_detail_markets_enriched\": 41, \"game_detail_requests\": 41, \"league_id\": \"208075\", \"league_name\": \"Norway. Division 4\", \"source\": \"GetChampZip\", \"sport_id\": \"1\"}",
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        }
+      ],
+      "stats_links": []
     },
     {
       "public_id": "spanish-primera",
@@ -597,9 +794,19 @@
         {
           "platform": "solcasino_http",
           "competition_external_id": "1676614197150171136",
-          "competition_name": "Svenska Cup",
+          "competition_name": "Sweden · Svenska Cup",
           "source_url": "solcasino:tournament:1676614197150171136",
           "metadata_json": null,
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        },
+        {
+          "platform": "solcasino_http",
+          "competition_external_id": "1713813739289055232",
+          "competition_name": "Australia · Cup",
+          "source_url": "solcasino:tournament:1713813739289055232",
+          "metadata_json": "{}",
           "needs_name_resolution": 0,
           "enabled": 1,
           "reminders_enabled": 0
@@ -616,11 +823,72 @@
       "age_group": "U23",
       "platforms": [
         {
+          "platform": "betovo_http",
+          "competition_external_id": "45665",
+          "competition_name": "Australia · U23 Victoria Premier League 1",
+          "source_url": "betovo:champ:45665",
+          "metadata_json": "{}",
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        },
+        {
+          "platform": "betwarrior_http",
+          "competition_external_id": "2010206401",
+          "competition_name": "Australia · Victoria NPL 1 sub-23",
+          "source_url": "betwarrior:group:2010206401",
+          "metadata_json": "{}",
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        },
+        {
+          "platform": "bz_http",
+          "competition_external_id": "45675",
+          "competition_name": "Australia · U23 Victoria Premier League 1",
+          "source_url": "bz:tournament:45675",
+          "metadata_json": "{}",
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        },
+        {
+          "platform": "mrpunter_http",
+          "competition_external_id": "542768130418925568",
+          "competition_name": "Australia · Australia - Liga Premier de Victoria 1 U23",
+          "source_url": "mrpunter:league:542768130418925568",
+          "metadata_json": "{}",
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        },
+        {
           "platform": "mystake_http",
           "competition_external_id": "83712",
-          "competition_name": "U23 Victoria Premier League 1",
+          "competition_name": "Australia · U23 Victoria Premier League 1",
           "source_url": "mystake:champ:83712",
           "metadata_json": "{}",
+          "needs_name_resolution": 0,
+          "enabled": 1,
+          "reminders_enabled": 0
+        }
+      ],
+      "stats_links": []
+    },
+    {
+      "public_id": "usa-national-premier-soccer-league",
+      "name": "USA · National Premier Soccer League",
+      "display_name": "USA · National Premier Soccer League",
+      "country": "usa",
+      "gender": null,
+      "age_group": null,
+      "platforms": [
+        {
+          "platform": "betovo_http",
+          "competition_external_id": "4833",
+          "competition_name": "USA · National Premier Soccer League",
+          "source_url": "betovo:champ:4833",
+          "metadata_json": null,
           "needs_name_resolution": 0,
           "enabled": 1,
           "reminders_enabled": 0
@@ -700,7 +968,7 @@
         {
           "platform": "solcasino_http",
           "competition_external_id": "1736987183165874176",
-          "competition_name": "USL League Two",
+          "competition_name": "USA · USL League Two",
           "source_url": "solcasino:tournament:1736987183165874176",
           "metadata_json": "{}",
           "needs_name_resolution": 0,
