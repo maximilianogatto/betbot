@@ -522,8 +522,7 @@ async def import_sheet_command(update: Update, context: ContextTypes.DEFAULT_TYP
 
     import os
     import httpx
-    import csv
-    from io import StringIO
+    from monitors.live_watch import parse_sheet_fixture_lines
 
     url = os.getenv(
         "LIVE_WATCH_SHEET_URL",
@@ -540,52 +539,11 @@ async def import_sheet_command(update: Update, context: ContextTypes.DEFAULT_TYP
             await loading_msg.edit_text(f"❌ Error al descargar planilla (HTTP {response.status_code}).")
             return
 
-        csv_data = response.text
-        f = StringIO(csv_data)
-        reader = csv.DictReader(f)
-
-        headers = reader.fieldnames or []
-        
-        def clean_header(h: str) -> str:
-            import unicodedata
-            folded = "".join(c for c in unicodedata.normalize('NFD', h) if unicodedata.category(c) != 'Mn')
-            return folded.lower().strip()
-
-        required_clean = {"horario", "competicion", "partido", "detalle"}
-        clean_map = {clean_header(h): h for h in headers}
-
-        if not required_clean.issubset(set(clean_map.keys())):
-            required_cols = {"Horario", "Competición", "Partido", "Detalle"}
-            await loading_msg.edit_text(
-                f"❌ El formato de la planilla no es correcto. Debe contener las columnas: {', '.join(required_cols)}.\n"
-                f"Columnas encontradas: {', '.join(headers)}"
-            )
+        try:
+            lines_to_add = parse_sheet_fixture_lines(response.text)
+        except ValueError as err:
+            await loading_msg.edit_text(f"❌ {err}")
             return
-
-        col_horario = clean_map["horario"]
-        col_competicion = clean_map["competicion"]
-        col_partido = clean_map["partido"]
-        col_detalle = clean_map["detalle"]
-
-        lines_to_add = []
-        for row in reader:
-            horario = (row.get(col_horario) or "").strip()
-            competicion = (row.get(col_competicion) or "").strip()
-            partido = (row.get(col_partido) or "").strip()
-            detalle = (row.get(col_detalle) or "").strip()
-
-            if not partido:
-                continue
-
-            line = ""
-            if horario:
-                line += f"{horario} "
-            if competicion:
-                line += f"{competicion} | "
-            line += partido
-            if detalle:
-                line += f" ({detalle})"
-            lines_to_add.append(line)
 
         if not lines_to_add:
             await loading_msg.edit_text("⚠️ No se encontraron partidos válidos en la planilla.")

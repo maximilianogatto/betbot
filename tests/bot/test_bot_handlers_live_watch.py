@@ -501,7 +501,7 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
             await import_sheet_command(update, context)
 
         loading_msg.edit_text.assert_awaited_once()
-        self.assertIn("formato de la planilla no es correcto", loading_msg.edit_text.await_args[0][0])
+        self.assertIn("columnas", loading_msg.edit_text.await_args[0][0].lower())
 
     async def test_import_sheet_no_added(self) -> None:
         csv_content = (
