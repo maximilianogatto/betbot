@@ -344,8 +344,16 @@ class LiveWatchService:
                     logger.warning("%s extractor returned no events platform=%s", label, extractor.name)
                     return []
                 return list(raw_events)
-            except Exception:
-                logger.exception("%s fetch failed platform=%s", label, extractor.name)
+            except Exception as err:
+                # External feeds flap (a book blocks the datacenter IP -> 403/503,
+                # times out, etc.). Those are expected and best-effort, so log a
+                # concise one-liner instead of a full traceback every cycle.
+                import httpx
+
+                if isinstance(err, (httpx.HTTPError, ConnectionError, TimeoutError, OSError)):
+                    logger.warning("%s fetch failed platform=%s: %s", label, extractor.name, err)
+                else:
+                    logger.exception("%s fetch failed platform=%s", label, extractor.name)
                 return []
 
         if not extractors:
