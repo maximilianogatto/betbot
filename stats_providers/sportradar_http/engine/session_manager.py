@@ -437,6 +437,11 @@ async def bootstrap_sportradar_session(config: BootstrapConfig) -> SportradarSes
             args=[
                 "--disable-blink-features=AutomationControlled",
                 "--disable-features=IsolateOrigins,site-per-process",
+                # Low-memory hardening so the token bootstrap survives on tiny VMs
+                # (e.g. GCE e2-micro, 1 GB): /dev/shm is small there and Chromium
+                # crashes/balloons without --disable-dev-shm-usage; GPU is dead weight.
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
             ],
             ignore_default_args=["--enable-automation"],
             extra_http_headers={"Accept-Language": "en-US,en;q=0.9"},
