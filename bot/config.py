@@ -53,6 +53,11 @@ class Settings:
     stats_prefetch_ttl_seconds: float = 90000.0
     live_watch_enabled: bool = True
     live_watch_interval_seconds: int = 15
+    live_watch_sheet_url: str = (
+        "https://docs.google.com/spreadsheets/d/17QRnS_BmmAz_7F4hvpUytPoD66U65W2f1pgF6q9y7fY/export?format=csv&gid=0"
+    )
+    live_watch_sheet_chat_id: int | None = None
+    live_watch_sheet_interval_seconds: int = 900
     peak_digest_enabled: bool = True
     peak_digest_hour_arg: int = 8
 
@@ -217,6 +222,19 @@ def load_settings() -> Settings:
         os.getenv("LIVE_WATCH_INTERVAL_SECONDS", "15"),
         variable_name="LIVE_WATCH_INTERVAL_SECONDS",
     )
+    _default_sheet_url = (
+        "https://docs.google.com/spreadsheets/d/17QRnS_BmmAz_7F4hvpUytPoD66U65W2f1pgF6q9y7fY/export?format=csv&gid=0"
+    )
+    live_watch_sheet_url = (os.getenv("LIVE_WATCH_SHEET_URL") or _default_sheet_url).strip()
+    _sheet_chat_raw = (os.getenv("LIVE_WATCH_SHEET_CHAT_ID") or "").strip()
+    try:
+        live_watch_sheet_chat_id = int(_sheet_chat_raw) if _sheet_chat_raw else None
+    except ValueError:
+        live_watch_sheet_chat_id = None
+    live_watch_sheet_interval_seconds = _parse_positive_int(
+        os.getenv("LIVE_WATCH_SHEET_INTERVAL_SECONDS", "900"),
+        variable_name="LIVE_WATCH_SHEET_INTERVAL_SECONDS",
+    )
     peak_digest_enabled = _parse_bool(os.getenv("PEAK_DIGEST_ENABLED", "true"))
     peak_digest_hour_arg = _parse_positive_int(
         os.getenv("PEAK_DIGEST_HOUR_ARG", "8"),
@@ -267,6 +285,9 @@ def load_settings() -> Settings:
         stats_prefetch_interval_seconds=stats_prefetch_interval_seconds,
         live_watch_enabled=live_watch_enabled,
         live_watch_interval_seconds=live_watch_interval_seconds,
+        live_watch_sheet_url=live_watch_sheet_url,
+        live_watch_sheet_chat_id=live_watch_sheet_chat_id,
+        live_watch_sheet_interval_seconds=live_watch_sheet_interval_seconds,
         stats_prefetch_ttl_seconds=stats_prefetch_ttl_seconds,
         peak_digest_enabled=peak_digest_enabled,
         peak_digest_hour_arg=peak_digest_hour_arg,

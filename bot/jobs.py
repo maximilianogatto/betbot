@@ -17,7 +17,7 @@ from monitoring import (
     get_metric_warnings,
     get_system_metrics,
 )
-from monitors.live_watch import LiveWatchService, render_live_hit
+from monitors.live_watch import LiveWatchService, parse_sheet_fixture_lines, render_live_hit
 from monitors.stats import StatsService
 from monitors.tracking import TrackingService, format_duration
 
@@ -28,6 +28,7 @@ RESOURCE_MONITOR_TASK_KEY = "resource_monitor_task"
 STATS_SESSION_TASK_KEY = "stats_session_refresh_task"
 STATS_PREFETCH_TASK_KEY = "stats_prefetch_task"
 LIVE_WATCH_TASK_KEY = "live_watch_task"
+SHEET_IMPORT_TASK_KEY = "sheet_import_task"
 PEAK_DIGEST_TASK_KEY = "peak_digest_task"
 TRACKING_SERVICE_KEY = "tracking_service"
 STATS_SERVICE_KEY = "stats_service"
@@ -70,6 +71,93 @@ async def stop_live_watch_monitor(application: Application) -> None:
     except asyncio.CancelledError:
         logger.info("Live-watch monitor loop stopped.")
     application.bot_data.pop(LIVE_WATCH_TASK_KEY, None)
+
+
+async def start_sheet_import_monitor(
+    application: Application,
+    *,
+    chat_id: int | None,
+    url: str,
+    interval_seconds: int = 900,
+) -> None:
+    """Auto-import the shared Google Sheet into one chat's watchlist on change.
+
+    Disabled unless a target chat id is configured (LIVE_WATCH_SHEET_CHAT_ID).
+    """
+
+    if not chat_id:
+        logger.info("Sheet auto-import disabled (no LIVE_WATCH_SHEET_CHAT_ID).")
+        return
+    existing = application.bot_data.get(SHEET_IMPORT_TASK_KEY)
+    if isinstance(existing, asyncio.Task) and not existing.done():
+        return
+    task = asyncio.create_task(
+        _sheet_import_loop(application, chat_id=chat_id, url=url, interval_seconds=interval_seconds),
+        name="sheet-import-loop",
+    )
+    application.bot_data[SHEET_IMPORT_TASK_KEY] = task
+    logger.info(
+        "Sheet auto-import loop started chat_id=%s interval_seconds=%s.", chat_id, interval_seconds
+    )
+
+
+async def stop_sheet_import_monitor(application: Application) -> None:
+    task = application.bot_data.get(SHEET_IMPORT_TASK_KEY)
+    if not isinstance(task, asyncio.Task):
+        return
+    task.cancel()
+    try:
+        await task
+    except asyncio.CancelledError:
+        logger.info("Sheet auto-import loop stopped.")
+    application.bot_data.pop(SHEET_IMPORT_TASK_KEY, None)
+
+
+async def _sheet_import_loop(
+    application: Application, *, chat_id: int, url: str, interval_seconds: int
+) -> None:
+    """Poll the sheet; on content change, import new fixtures and notify the chat."""
+
+    import hashlib
+    import httpx
+
+    last_hash: str | None = None
+    while True:
+        try:
+            service = application.bot_data.get(LIVE_WATCH_SERVICE_KEY)
+            if isinstance(service, LiveWatchService):
+                async with httpx.AsyncClient(follow_redirects=True) as client:
+                    resp = await client.get(url, timeout=20.0)
+                if resp.status_code == 200:
+                    digest = hashlib.sha256(resp.text.encode("utf-8")).hexdigest()
+                    if digest != last_hash:
+                        last_hash = digest
+                        try:
+                            lines = parse_sheet_fixture_lines(resp.text)
+                        except ValueError as err:
+                            logger.warning("Sheet auto-import: %s", err)
+                            lines = []
+                        added = service.add_fixture_lines(chat_id, lines) if lines else []
+                        if added:
+                            msg = [f"📥 *Auto-import de planilla:* +{len(added)} partido(s) en vigilancia."]
+                            for entry in added:
+                                hint = f" ({entry.league_hint})" if entry.league_hint else ""
+                                disp_id = entry.chat_local_id if entry.chat_local_id is not None else entry.id
+                                msg.append(f"  *#{disp_id}* · `{entry.home}` vs `{entry.away}`{hint}")
+                            try:
+                                await application.bot.send_message(
+                                    chat_id=chat_id, text="\n".join(msg), parse_mode="Markdown"
+                                )
+                            except Exception:
+                                logger.exception("Sheet auto-import: failed to notify chat %s", chat_id)
+                        logger.info("Sheet auto-import: change detected, %s new fixture(s).", len(added))
+                else:
+                    logger.warning("Sheet auto-import: HTTP %s downloading sheet.", resp.status_code)
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            logger.exception("Unhandled error during sheet auto-import cycle.")
+        await asyncio.sleep(interval_seconds)
 
 
 async def _live_watch_loop(application: Application, *, interval_seconds: int) -> None:

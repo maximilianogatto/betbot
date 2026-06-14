@@ -1047,3 +1047,30 @@ class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SheetParseTests(unittest.TestCase):
+    def test_parse_sheet_fixture_lines(self) -> None:
+        from monitors.live_watch import parse_sheet_fixture_lines
+        csv = (
+            "Horario,Competición,Partido,Detalle\n"
+            "14:00,Premier League,Arsenal vs Chelsea,clásico\n"
+            ",Liga X,Equipo A vs Equipo B,\n"
+            ",, ,\n"  # fila vacía -> ignorada
+        )
+        lines = parse_sheet_fixture_lines(csv)
+        self.assertEqual(lines, [
+            "14:00 Premier League | Arsenal vs Chelsea (clásico)",
+            "Liga X | Equipo A vs Equipo B",
+        ])
+
+    def test_parse_sheet_accent_insensitive_headers(self) -> None:
+        from monitors.live_watch import parse_sheet_fixture_lines
+        # "Competicion" sin tilde también vale
+        csv = "horario,competicion,partido,detalle\n,,X vs Y,\n"
+        self.assertEqual(parse_sheet_fixture_lines(csv), ["X vs Y"])
+
+    def test_parse_sheet_missing_columns_raises(self) -> None:
+        from monitors.live_watch import parse_sheet_fixture_lines
+        with self.assertRaises(ValueError):
+            parse_sheet_fixture_lines("Foo,Bar\n1,2\n")

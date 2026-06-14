@@ -1078,3 +1078,55 @@ def parse_fixture_line(raw: str) -> tuple[str | None, str, str, str | None] | No
             if home and away:
                 return league_hint, home, away, kickoff_at
     return None
+
+
+# --------------------------------------------------------------------------- #
+# Google Sheet import (shared by /import_sheet and the auto-import job)
+# --------------------------------------------------------------------------- #
+def parse_sheet_fixture_lines(csv_text: str) -> list[str]:
+    """Parse the shared Google Sheet CSV into watch fixture lines.
+
+    Expects columns Horario / Competición / Partido / Detalle (accent-insensitive).
+    Returns the same "HH:MM Liga | Home vs Away (detalle)" lines that
+    ``LiveWatchService.add_fixture_lines`` consumes. Empty/invalid rows skipped.
+    Raises ValueError when the required columns are missing.
+    """
+
+    import csv as _csv
+    from io import StringIO
+
+    reader = _csv.DictReader(StringIO(csv_text))
+    headers = reader.fieldnames or []
+
+    def _clean(h: str) -> str:
+        folded = "".join(c for c in unicodedata.normalize("NFD", h) if unicodedata.category(c) != "Mn")
+        return folded.lower().strip()
+
+    clean_map = {_clean(h): h for h in headers}
+    required = {"horario", "competicion", "partido", "detalle"}
+    if not required.issubset(set(clean_map)):
+        raise ValueError(
+            "La planilla debe tener las columnas Horario, Competición, Partido, Detalle. "
+            f"Encontradas: {', '.join(headers)}"
+        )
+
+    col_h, col_c = clean_map["horario"], clean_map["competicion"]
+    col_p, col_d = clean_map["partido"], clean_map["detalle"]
+    lines: list[str] = []
+    for row in reader:
+        partido = (row.get(col_p) or "").strip()
+        if not partido:
+            continue
+        horario = (row.get(col_h) or "").strip()
+        competicion = (row.get(col_c) or "").strip()
+        detalle = (row.get(col_d) or "").strip()
+        line = ""
+        if horario:
+            line += f"{horario} "
+        if competicion:
+            line += f"{competicion} | "
+        line += partido
+        if detalle:
+            line += f" ({detalle})"
+        lines.append(line)
+    return lines
