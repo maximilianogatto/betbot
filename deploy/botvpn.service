@@ -1,0 +1,13 @@
+[Unit]
+Description=BetBot VPN network namespace (ProtonVPN/WireGuard)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/home/maximilianogatto/betbot/deploy/botvpn-netns.sh up
+ExecStop=/home/maximilianogatto/betbot/deploy/botvpn-netns.sh down
+
+[Install]
+WantedBy=multi-user.target
