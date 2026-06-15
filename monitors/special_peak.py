@@ -27,6 +27,7 @@ from datetime import datetime, timedelta
 from typing import Any, Callable, Optional
 from zoneinfo import ZoneInfo
 
+from core.timezones import current_display_timezone, tz_offset_label
 from monitors.peak_model import (
     LeagueModel,
     PastMatch,
@@ -1027,11 +1028,20 @@ def _rank_key(score: SpecialMatchScore) -> tuple[float, datetime]:
 # --------------------------------------------------------------------------- #
 # Rendering (Sportradar-style markdown digest)
 # --------------------------------------------------------------------------- #
-def render_peak_digest(scores: list[SpecialMatchScore], *, now: Optional[datetime] = None) -> str:
-    """Render the daily ranked digest as Telegram Markdown."""
+def _kickoff_label_for_display(score: "SpecialMatchScore", tz: ZoneInfo) -> str:
+    """Re-render a score's kickoff in ``tz`` (kickoff_arg is an absolute instant)."""
 
-    now = now or datetime.now(tz=_ARG)
-    date_label = now.astimezone(_ARG).strftime("%d/%m/%Y")
+    if score.kickoff_arg is not None:
+        return score.kickoff_arg.astimezone(tz).strftime("%H:%M")
+    return score.kickoff_label
+
+
+def render_peak_digest(scores: list[SpecialMatchScore], *, now: Optional[datetime] = None) -> str:
+    """Render the daily ranked digest as Telegram Markdown (active display tz)."""
+
+    tz = current_display_timezone()
+    now = now or datetime.now(tz=tz)
+    date_label = now.astimezone(tz).strftime("%d/%m/%Y")
     header = [
         f"🎯 *Peak del día — Ligas Especiales* ({date_label})",
         "_Detección + análisis + puntaje 1–10 de Finlandia 🇫🇮 y Suecia 🇸🇪._",
@@ -1051,14 +1061,14 @@ def render_peak_digest(scores: list[SpecialMatchScore], *, now: Optional[datetim
     if peaks:
         lines.append("⭐ *PEAKS (listos para apostar / vigilar):*")
         for score in peaks:
-            lines.extend(_render_entry(score))
+            lines.extend(_render_entry(score, tz))
         lines.append("")
 
     if rest:
         lines.append("📋 *Resto del radar:*")
         for score in rest:
             lines.append(
-                f"  {score.badge} *{score.score_int}/10* · `{score.kickoff_label}` "
+                f"  {score.badge} *{score.score_int}/10* · `{_kickoff_label_for_display(score, tz)}` "
                 f"{score.home} vs {score.away} — {score.detail_command}"
             )
 
@@ -1067,11 +1077,11 @@ def render_peak_digest(scores: list[SpecialMatchScore], *, now: Optional[datetim
     return "\n".join(lines)
 
 
-def _render_entry(score: SpecialMatchScore) -> list[str]:
+def _render_entry(score: SpecialMatchScore, tz: ZoneInfo) -> list[str]:
     out = [
         f"\n{score.badge} *{score.score_int}/10* — {score.source}",
         f"🏆 {score.competition}",
-        f"⚽ *{score.home} vs {score.away}* · 🕒 `{score.kickoff_label}` (ARG)",
+        f"⚽ *{score.home} vs {score.away}* · 🕒 `{_kickoff_label_for_display(score, tz)}` ({tz_offset_label(tz)})",
     ]
     if score.favorite:
         out.append(f"⭐ Favorito: *{score.favorite}*")
@@ -1089,12 +1099,13 @@ def _render_entry(score: SpecialMatchScore) -> list[str]:
 def render_match_report(score: SpecialMatchScore) -> str:
     """Render a single match's scored report (Sportradar-style)."""
 
+    tz = current_display_timezone()
     lines = [
         f"{score.badge} *Reporte de Peak — {score.score_int}/10*",
         f"{score.source} · 🏆 {score.competition}",
         "━━━━━━━━━━━━━━━━━━━━",
         f"⚽ *{score.home} vs {score.away}*",
-        f"🕒 Inicio: `{score.kickoff_label}` (ARG)",
+        f"🕒 Inicio: `{_kickoff_label_for_display(score, tz)}` ({tz_offset_label(tz)})",
         f"⭐ Favorito: *{score.favorite}*" if score.favorite else "⭐ Favorito: sin desnivel claro",
         f"🎯 Peak: {'SÍ ✅' if score.is_peak else 'No ⚪️'} — {score.peak_window}",
     ]

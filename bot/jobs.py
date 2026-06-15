@@ -502,9 +502,13 @@ async def _peak_digest_loop(application: Application, *, hour_arg: int) -> None:
                 fin_api.close()
                 swe_client.close()
 
-            digest = render_peak_digest(scores)
+            from core.timezones import resolve_chat_timezone, use_timezone
+
             for chat_id in chat_ids:
                 try:
+                    # Render each chat's digest in its own display timezone.
+                    with use_timezone(resolve_chat_timezone(chat_id)):
+                        digest = render_peak_digest(scores)
                     await application.bot.send_message(
                         chat_id=chat_id, text=digest, parse_mode="Markdown"
                     )

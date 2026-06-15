@@ -7,8 +7,8 @@ from datetime import datetime, timezone
 from html import escape
 import json
 from typing import TYPE_CHECKING
-from zoneinfo import ZoneInfo
 
+from core.timezones import current_display_timezone
 from storage.tracking_repository import (
     ActiveEventRecord,
     SmallChangeRecord,
@@ -20,7 +20,6 @@ if TYPE_CHECKING:
 
 MAX_GROUPED_ALERT_ITEMS = 10
 TELEGRAM_SAFE_MESSAGE_LIMIT = 3900
-DISPLAY_TIMEZONE = ZoneInfo("America/Argentina/Buenos_Aires")
 SPANISH_WEEKDAY_ABBREVIATIONS = (
     "Lun",
     "Mar",
@@ -580,9 +579,9 @@ def format_kickoff_text(match: ActiveEventRecord) -> str:
     """Format kickoff text for Telegram output, in the local display timezone.
 
     Prefer the offset-aware `kickoff_at` (true UTC) so it converts correctly to
-    DISPLAY_TIMEZONE. The raw date/time labels are naive UTC wall-clock strings;
-    rendering them directly showed the UTC hour (e.g. 23:15) instead of the local
-    hour (20:15 in Argentina). Labels are only a fallback when no timestamp exists.
+    the chat's display timezone. The raw date/time labels are naive UTC wall-clock
+    strings; rendering them directly showed the UTC hour (e.g. 23:15) instead of
+    the local hour. Labels are only a fallback when no timestamp exists.
     """
 
     if match.kickoff_at:
@@ -636,7 +635,7 @@ def format_display_datetime(value: datetime | str | None, *, with_year: bool = F
     if parsed is None:
         return None
 
-    localized = parsed.astimezone(DISPLAY_TIMEZONE)
+    localized = parsed.astimezone(current_display_timezone())
     weekday = SPANISH_WEEKDAY_ABBREVIATIONS[localized.weekday()]
     pattern = "%d/%m/%Y %H:%M" if with_year else "%d/%m %H:%M"
     return f"{weekday} {localized.strftime(pattern)}"
@@ -678,7 +677,9 @@ def _parse_display_datetime(value: datetime | str) -> datetime | None:
         return None
 
     if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=DISPLAY_TIMEZONE)
+        # Naive labels are the source's wall-clock (unknown zone): render them as
+        # given by anchoring to the active display tz (no shift).
+        parsed = parsed.replace(tzinfo=current_display_timezone())
 
     return parsed
 

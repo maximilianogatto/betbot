@@ -22,6 +22,7 @@ from zoneinfo import ZoneInfo
 
 from core.extractor_base import Extractor
 from core.models import LiveEventSnapshot
+from core.timezones import default_timezone, resolve_chat_timezone
 from core.registry import ExtractorRegistry, extractor_registry as global_extractor_registry
 from storage.tracking_repository import (
     LiveWatchEntry,
@@ -216,9 +217,11 @@ class LiveWatchService:
 
         added: list[LiveWatchEntry] = []
         existing_watches = self.repository.list_live_watches(chat_id, status="watching")
+        # A leading "HH:MM" in a pasted line is the user's local wall-clock time.
+        chat_tz = resolve_chat_timezone(chat_id)
 
         for raw in lines:
-            parsed = parse_fixture_line(raw)
+            parsed = parse_fixture_line(raw, tz=chat_tz)
             if parsed is None:
                 continue
             league_hint, home, away, kickoff_at = parsed
@@ -1042,29 +1045,38 @@ def render_live_hit(hit: LiveWatchHit) -> str:
 
 
 _FIXTURE_SEPARATORS = (" - ", " – ", " vs. ", " vs ", " v ", " x ")
-# Optional leading "HH:MM" (Argentina local time), e.g. "21:00 Olympia - Ballard".
+# Optional leading "HH:MM" (local wall-clock time), e.g. "21:00 Olympia - Ballard".
 _LEADING_TIME_RE = re.compile(r"^\s*(\d{1,2})[:.](\d{2})\s+(.*)$")
+# Backwards-compatible alias; the actual zone is now resolved per chat.
 _ARG_TZ = ZoneInfo("America/Argentina/Buenos_Aires")
 
 
-def _kickoff_from_arg_time(hour: int, minute: int) -> str | None:
-    """Build today's (or tomorrow's if in the past) Argentina kickoff as a UTC ISO timestamp."""
+def _kickoff_from_arg_time(hour: int, minute: int, tz: ZoneInfo | None = None) -> str | None:
+    """Build today's (or tomorrow's if past) kickoff in ``tz`` as a UTC ISO timestamp.
+
+    ``tz`` is the chat's display timezone (defaults to the configured default,
+    Argentina), i.e. the wall-clock the user typed the time in.
+    """
 
     if not (0 <= hour < 24 and 0 <= minute < 60):
         return None
-    now_arg = datetime.now(_ARG_TZ)
-    kickoff = now_arg.replace(hour=hour, minute=minute, second=0, microsecond=0)
+    local_tz = tz or default_timezone()
+    now_local = datetime.now(local_tz)
+    kickoff = now_local.replace(hour=hour, minute=minute, second=0, microsecond=0)
     # If the kickoff is in the past by more than 2.5 hours, it belongs to tomorrow.
-    if kickoff < now_arg and (now_arg - kickoff) > timedelta(hours=2.5):
+    if kickoff < now_local and (now_local - kickoff) > timedelta(hours=2.5):
         kickoff += timedelta(days=1)
     return kickoff.astimezone(timezone.utc).isoformat()
 
 
-def parse_fixture_line(raw: str) -> tuple[str | None, str, str, str | None] | None:
+def parse_fixture_line(
+    raw: str, tz: ZoneInfo | None = None
+) -> tuple[str | None, str, str, str | None] | None:
     """Parse one fixture line into (league_hint, home, away, kickoff_utc) or None.
 
-    Accepts an optional leading ``HH:MM`` (Argentina time) and an optional
-    ``League | Home - Away`` prefix. Separators: ' - ', ' vs ', ' vs. ', etc.
+    Accepts an optional leading ``HH:MM`` (interpreted in ``tz``, the chat's
+    display timezone) and an optional ``League | Home - Away`` prefix.
+    Separators: ' - ', ' vs ', ' vs. ', etc.
     """
 
     text = (raw or "").strip()
@@ -1073,7 +1085,9 @@ def parse_fixture_line(raw: str) -> tuple[str | None, str, str, str | None] | No
     kickoff_at: str | None = None
     time_match = _LEADING_TIME_RE.match(text)
     if time_match:
-        kickoff_at = _kickoff_from_arg_time(int(time_match.group(1)), int(time_match.group(2)))
+        kickoff_at = _kickoff_from_arg_time(
+            int(time_match.group(1)), int(time_match.group(2)), tz=tz
+        )
         text = time_match.group(3).strip()
     league_hint: str | None = None
     if "|" in text:

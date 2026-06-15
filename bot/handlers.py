@@ -17,6 +17,7 @@ from telegram.ext import (
     ContextTypes,
     ConversationHandler,
     MessageHandler,
+    TypeHandler,
     filters,
 )
 
@@ -30,6 +31,14 @@ from bot.alerts import (
 )
 from core.extractor_base import CompetitionUnavailableError, LeagueDiscoveryOption
 from core.models import PlatformDescriptor
+from core.timezones import (
+    COMMON_TIMEZONES,
+    current_display_timezone,
+    get_zoneinfo,
+    resolve_chat_timezone,
+    set_display_timezone,
+    tz_offset_label,
+)
 from core.stats_models import MatchIdentityCandidate, StatsLeagueOption, StatsProviderDescriptor
 from monitoring import format_system_metrics_message, get_system_metrics
 from monitors.stats import (
@@ -41,7 +50,11 @@ from monitors.stats import (
     render_top_scorers,
 )
 from monitors.tracking import CommandResult, TrackingService
-from storage.tracking_repository import ActiveEventRecord, TrackedCompetitionSubscription
+from storage.tracking_repository import (
+    ActiveEventRecord,
+    TrackedCompetitionSubscription,
+    tracking_repository,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -112,6 +125,7 @@ HELP_MESSAGE = (
     "  <code>/guide</code> - Guía rápida paso a paso del flujo completo\n"
     "  <code>/ping</code> - Verifica si el bot responde (pong)\n"
     "  <code>/status</code> - Estado del servidor y del bot (online)\n"
+    "  <code>/timezone [Zona]</code> - Define la zona horaria del chat (partidos, avisos y lives). Default Argentina\n"
     "  <code>/resources</code> - Estadísticas de consumo de CPU/RAM del VPS\n"
     "  <code>/echo &lt;texto&gt;</code> - Devuelve el mismo texto enviado\n"
     "  <code>/cancel</code> - Cancela la selección interactiva en curso\n\n"
@@ -605,10 +619,9 @@ async def watching_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             if e.kickoff_at:
                 try:
                     from datetime import datetime
-                    from zoneinfo import ZoneInfo
                     dt = datetime.fromisoformat(e.kickoff_at)
-                    dt_arg = dt.astimezone(ZoneInfo("America/Argentina/Buenos_Aires"))
-                    time_lbl = dt_arg.strftime('%H:%M')
+                    dt_local = dt.astimezone(current_display_timezone())
+                    time_lbl = dt_local.strftime('%H:%M')
                 except Exception:
                     pass
             disp_id = e.chat_local_id if e.chat_local_id is not None else e.id
@@ -1119,6 +1132,79 @@ async def guide_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         return
 
     await update.message.reply_text(GUIDE_MESSAGE)
+
+
+async def apply_chat_timezone_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Set the active display timezone for the chat handling this update.
+
+    Registered in an early handler group so every command response is rendered
+    in the chat's configured timezone (default Argentina).
+    """
+
+    del context
+    chat = update.effective_chat
+    set_display_timezone(resolve_chat_timezone(chat.id) if chat is not None else None)
+
+
+async def timezone_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Show or change this chat's display timezone (partidos, avisos y lives)."""
+
+    if update.message is None or update.effective_chat is None:
+        return
+
+    from datetime import datetime
+
+    chat_id = update.effective_chat.id
+    args = context.args or []
+
+    if not args:
+        saved = tracking_repository.get_chat_timezone(chat_id)
+        tz = resolve_chat_timezone(chat_id)
+        now_local = datetime.now(tz)
+        current_name = saved if saved else "por defecto (Argentina)"
+        examples = "\n".join(f"  • <code>{name}</code>" for name in COMMON_TIMEZONES)
+        await update.message.reply_text(
+            "🕒 <b>Zona horaria de este chat</b>\n"
+            f"Actual: <b>{current_name}</b> ({tz_offset_label(tz)})\n"
+            f"Hora local ahora: <b>{now_local.strftime('%H:%M')}</b>\n\n"
+            "Cambiala con <code>/timezone &lt;Zona&gt;</code> (nombre IANA). Ejemplos:\n"
+            f"{examples}\n\n"
+            "Volver al default: <code>/timezone reset</code>",
+            parse_mode=ParseMode.HTML,
+        )
+        return
+
+    arg = " ".join(args).strip()
+    if arg.lower() in {"reset", "default", "defecto", "arg", "argentina"}:
+        tracking_repository.clear_chat_timezone(chat_id)
+        set_display_timezone(None)
+        tz = resolve_chat_timezone(chat_id)
+        await update.message.reply_text(
+            f"✅ Zona horaria restablecida al default ({tz_offset_label(tz)}).",
+            parse_mode=ParseMode.HTML,
+        )
+        return
+
+    tz = get_zoneinfo(arg)
+    if tz is None:
+        examples = ", ".join(COMMON_TIMEZONES[:4])
+        await update.message.reply_text(
+            f"❌ No reconozco la zona horaria <code>{arg}</code>.\n"
+            f"Usá un nombre IANA válido, por ej: <code>{examples}</code>.\n"
+            "Ver lista y zona actual: <code>/timezone</code>",
+            parse_mode=ParseMode.HTML,
+        )
+        return
+
+    tracking_repository.set_chat_timezone(chat_id, arg)
+    set_display_timezone(tz)
+    now_local = datetime.now(tz)
+    await update.message.reply_text(
+        f"✅ Zona horaria de este chat: <b>{arg}</b> ({tz_offset_label(tz)}).\n"
+        f"Hora local ahora: <b>{now_local.strftime('%H:%M')}</b>.\n"
+        "Se aplica a horarios de partidos, avisos y lives.",
+        parse_mode=ParseMode.HTML,
+    )
 
 
 async def platforms_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -3443,8 +3529,15 @@ async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 def register_handlers(application: Application) -> None:
     """Register all Telegram command handlers in the application."""
 
+    # Runs before every command (group -1): pins the chat's display timezone so
+    # all responses render kickoff times/alerts in the user's configured zone.
+    application.add_handler(TypeHandler(Update, apply_chat_timezone_context), group=-1)
+
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("help", help_command))
+    application.add_handler(
+        CommandHandler(["timezone", "tz", "zona_horaria"], timezone_command)
+    )
     application.add_handler(CommandHandler("help_matches", help_matches_command))
     application.add_handler(CommandHandler("help_live", help_live_command))
     application.add_handler(CommandHandler("help_stats", help_stats_command))

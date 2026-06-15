@@ -3053,6 +3053,53 @@ class SqliteTrackingRepository:
             ).fetchall()
         return [int(row["chat_id"]) for row in rows]
 
+    # ---- Per-chat settings (display timezone, ...) ----
+
+    def get_chat_timezone(self, chat_id: int) -> str | None:
+        """Return the IANA timezone name saved for a chat, or None if unset."""
+
+        with _connect() as connection:
+            row = connection.execute(
+                "SELECT timezone FROM chat_settings WHERE chat_id = ?",
+                (chat_id,),
+            ).fetchone()
+        if row is None:
+            return None
+        value = row["timezone"]
+        return value.strip() if isinstance(value, str) and value.strip() else None
+
+    def set_chat_timezone(self, chat_id: int, timezone_name: str) -> None:
+        """Persist the display timezone (IANA name) for a chat."""
+
+        now_iso = _utc_now_iso()
+        with _connect() as connection:
+            connection.execute(
+                """
+                INSERT INTO chat_settings (chat_id, timezone, updated_at)
+                VALUES (?, ?, ?)
+                ON CONFLICT(chat_id) DO UPDATE SET
+                    timezone = excluded.timezone,
+                    updated_at = excluded.updated_at
+                """,
+                (chat_id, timezone_name.strip(), now_iso),
+            )
+
+    def clear_chat_timezone(self, chat_id: int) -> None:
+        """Drop a chat's timezone override (falls back to the default)."""
+
+        now_iso = _utc_now_iso()
+        with _connect() as connection:
+            connection.execute(
+                """
+                INSERT INTO chat_settings (chat_id, timezone, updated_at)
+                VALUES (?, NULL, ?)
+                ON CONFLICT(chat_id) DO UPDATE SET
+                    timezone = NULL,
+                    updated_at = excluded.updated_at
+                """,
+                (chat_id, now_iso),
+            )
+
     # ---- Unified competition helpers (cross-platform league grouping) ----
     def get_unified_competition(self, unified_competition_id: int) -> dict | None:
         with _connect() as connection:
@@ -3927,6 +3974,12 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
         CREATE TABLE IF NOT EXISTS peak_digest_subscriptions (
             chat_id INTEGER PRIMARY KEY,
             enabled INTEGER NOT NULL DEFAULT 1,
+            updated_at TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS chat_settings (
+            chat_id INTEGER PRIMARY KEY,
+            timezone TEXT,
             updated_at TEXT NOT NULL
         );
         """

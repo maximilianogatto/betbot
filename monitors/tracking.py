@@ -35,6 +35,7 @@ from bot.alerts import (
     split_telegram_message,
 )
 from core.extractor_base import CompetitionUnavailableError, LeagueDiscoveryOption
+from core.timezones import resolve_chat_timezone, set_display_timezone
 from monitors.change_detection import (
     evaluate_subscription_odds_change,
     select_due_reminders,
@@ -1031,6 +1032,8 @@ class TrackingService:
             return
 
         for subscription in subscriptions:
+            # Render every message for this subscriber in their display timezone.
+            set_display_timezone(resolve_chat_timezone(subscription.telegram_chat_id))
             self.repository.initialize_event_baselines(
                 subscription.telegram_chat_id,
                 result.tracked_league.id,
@@ -1148,6 +1151,9 @@ class TrackingService:
                     build_match_reminder_alert_message(result.tracked_league, match),
                     parse_mode=ParseMode.HTML,
                 )
+
+        # Don't let the last subscriber's timezone leak to later work in this task.
+        set_display_timezone(None)
 
         if result.reminder_matches:
             self.repository.mark_events_alerted(
