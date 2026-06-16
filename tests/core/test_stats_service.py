@@ -512,5 +512,20 @@ class StatsExploreRenderTests(unittest.TestCase):
         self.assertIn("Sin datos de goleadores", out)
 
 
+class PickRepresentativeEventTests(unittest.TestCase):
+    def test_prefers_event_with_stats_url(self) -> None:
+        from types import SimpleNamespace
+
+        from monitors.stats import _pick_representative_event
+
+        no_url = SimpleNamespace(stats_url=None, home="A", away="B")
+        with_url = SimpleNamespace(stats_url="https://x/match/1", home="A", away="B")
+        self.assertIs(_pick_representative_event([no_url, with_url]), with_url)
+        # Falls back to the first when none carries a stats URL.
+        self.assertIs(_pick_representative_event([no_url]), no_url)
+        with self.assertRaises(ValueError):
+            _pick_representative_event([])
+
+
 if __name__ == "__main__":
     unittest.main()

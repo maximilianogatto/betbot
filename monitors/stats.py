@@ -13,6 +13,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from difflib import SequenceMatcher
+from types import SimpleNamespace
 from typing import Any
 
 from core.stats_models import (
@@ -707,6 +708,63 @@ class StatsService:
             ),
         )
 
+    async def resolve_unified_event(
+        self,
+        *,
+        league_name: str,
+        match_group: Sequence[ActiveEventRecord],
+        provider_filter: str | None = None,
+    ) -> tuple[StatsResolution, ActiveEventRecord]:
+        """Resolve stats for a cross-book match group (the union of platforms).
+
+        A group is the same physical match seen on several books. Stats links live
+        at the unified-league level, so any platform of the league resolves the
+        same providers; we pick a representative event (preferring one that carries
+        a stats URL) and reuse the per-event resolver. Returns the resolution plus
+        the representative event (so the caller can persist a manual choice).
+        """
+
+        representative = _pick_representative_event(match_group)
+        # Duck-typed stand-in: resolve_event only reads .tracked_league.id (to fetch
+        # the unified-level links) and .tracked_league.competition_name.
+        shim = SimpleNamespace(
+            tracked_league=SimpleNamespace(
+                id=representative.tracked_competition_id,
+                competition_name=league_name,
+            )
+        )
+        resolution = await self.resolve_event(
+            tracked_subscription=shim,  # type: ignore[arg-type]
+            matches=[representative],
+            event_number=1,
+            provider_filter=provider_filter,
+        )
+        return resolution, representative
+
+    async def build_unified_match_stats_report(
+        self,
+        *,
+        league_name: str,
+        match_group: Sequence[ActiveEventRecord],
+        provider_filter: str | None = None,
+    ) -> CommandResult:
+        """Non-interactive stats report for a cross-book match group."""
+
+        resolution, _ = await self.resolve_unified_event(
+            league_name=league_name,
+            match_group=match_group,
+            provider_filter=provider_filter,
+        )
+        if resolution.kind == "choose":
+            return CommandResult(
+                ok=False,
+                message=(
+                    "Encontré varios partidos de stats posibles para ese evento.\n"
+                    "Corré /stats (sin número) y elegí de la lista para confirmar el vínculo."
+                ),
+            )
+        return resolution.result or CommandResult(ok=False, message="No pude generar el reporte de stats.")
+
     async def build_report_for_chosen_candidate(
         self,
         *,
@@ -967,6 +1025,21 @@ def _provider_key_from_stats_url(stats_url: str | None) -> str | None:
     if "sportradar.com" in normalized or "sir.sportradar.com" in normalized:
         return "sportradar_statshub"
     return None
+
+
+def _pick_representative_event(match_group: Sequence[ActiveEventRecord]) -> ActiveEventRecord:
+    """Pick the event that best represents a cross-book group for stats resolution.
+
+    Prefer one carrying a direct stats URL (it can resolve without a league link),
+    then any with a stats URL fallback, else the first event.
+    """
+
+    if not match_group:
+        raise ValueError("match_group vacío")
+    for event in match_group:
+        if getattr(event, "stats_url", None):
+            return event
+    return match_group[0]
 
 
 def _render_report_message(
