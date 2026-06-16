@@ -153,6 +153,10 @@ class LiveEventSnapshot:
     away_yellow_cards: int | None = None
     scheduled_at: str | None = None
     odds_1x2: Odds1X2 | None = None
+    # Optional extra markets (same shape as a parsed ActiveEventRecord.markets_json):
+    # {"asian_handicap": {...}, "goal_line": {...}, ...}. Populated by the live
+    # parsers when the in-play feed exposes them, for richer live alerts.
+    markets_payload: dict[str, Any] | None = None
     source_url: str | None = None
     is_soccer: bool = True  # False for eSports football and similar virtual feeds
     extracted_at: str = ""

@@ -1074,3 +1074,57 @@ class SheetParseTests(unittest.TestCase):
         from monitors.live_watch import parse_sheet_fixture_lines
         with self.assertRaises(ValueError):
             parse_sheet_fixture_lines("Foo,Bar\n1,2\n")
+
+
+class RenderLiveHitMarketsTests(unittest.TestCase):
+    def _entry(self, home: str, away: str):
+        from storage.tracking_repository import LiveWatchEntry
+
+        return LiveWatchEntry(
+            id=1, chat_id=10, home=home, away=away, league_hint=None, note=None,
+            status="watching", matched_platform=None, matched_event_id=None,
+            matched_minute=None, created_at="", fired_at=None,
+        )
+
+    def test_live_render_shows_handicap_and_goals(self) -> None:
+        from monitors.live_watch import LiveWatchHit
+
+        event = LiveEventSnapshot(
+            platform="mrpunter_http",
+            external_event_id="e1",
+            home="Olympia",
+            away="Ballard",
+            minute="55'",
+            home_score=1,
+            away_score=0,
+            markets_payload={
+                "asian_handicap": {
+                    "selections": [
+                        {"selection": "Olympia", "line": -0.5, "odds": 1.90},
+                        {"selection": "Ballard", "line": 0.5, "odds": 1.95},
+                    ]
+                },
+                "goal_line": {
+                    "selections": [
+                        {"selection": "Más de", "line": 2.5, "odds": 1.85},
+                        {"selection": "Menos de", "line": 2.5, "odds": 1.95},
+                    ]
+                },
+            },
+        )
+        hit = LiveWatchHit(entry=self._entry("Olympia", "Ballard"), event=event, phase="live")
+        text = render_live_hit(hit)
+        self.assertIn("📐", text)  # asian handicap line
+        self.assertIn("📏", text)  # goal line
+        self.assertIn("1.90", text)
+
+    def test_live_render_without_markets_is_graceful(self) -> None:
+        from monitors.live_watch import LiveWatchHit
+
+        event = LiveEventSnapshot(
+            platform="bz_http", external_event_id="e2", home="A", away="B", minute="10'"
+        )
+        text = render_live_hit(LiveWatchHit(entry=self._entry("A", "B"), event=event, phase="live"))
+        self.assertIn("EN VIVO", text)
+        self.assertNotIn("📐", text)
+        self.assertNotIn("📏", text)

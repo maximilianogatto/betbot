@@ -854,14 +854,31 @@ def _live_stats_lines(event: LiveEventSnapshot) -> list[str]:
     return lines
 
 
+def _event_markets_dict(event: Any) -> dict[str, Any] | None:
+    """Return an event's markets as a dict, from markets_json (str) or markets_payload (dict)."""
+
+    raw = getattr(event, "markets_json", None)
+    if raw:
+        try:
+            parsed = json.loads(raw)
+        except Exception:
+            return None
+        return parsed if isinstance(parsed, dict) else None
+    payload = getattr(event, "markets_payload", None)
+    return payload if isinstance(payload, dict) else None
+
+
 def _format_handicap(event: Any) -> str | None:
-    if not getattr(event, "markets_json", None):
+    markets = _event_markets_dict(event)
+    if markets is None:
         return None
-    try:
-        markets = json.loads(event.markets_json)
-    except Exception:
-        return None
-    ah = markets.get("asian_handicap")
+    return _format_handicap_from_markets(
+        markets, home=getattr(event, "home", ""), away=getattr(event, "away", "")
+    )
+
+
+def _format_handicap_from_markets(markets: dict[str, Any], *, home: str, away: str) -> str | None:
+    ah = markets.get("asian_handicap") if isinstance(markets, dict) else None
     if not ah or not isinstance(ah, dict):
         return None
     selections = ah.get("selections")
@@ -870,8 +887,8 @@ def _format_handicap(event: Any) -> str | None:
 
     home_sel = None
     away_sel = None
-    home_norm = _normalize(event.home)
-    away_norm = _normalize(event.away)
+    home_norm = _normalize(home)
+    away_norm = _normalize(away)
     for sel in selections:
         if not isinstance(sel, dict):
             continue
@@ -900,13 +917,14 @@ def _format_handicap(event: Any) -> str | None:
 
 
 def _format_goals(event: Any) -> str | None:
-    if not getattr(event, "markets_json", None):
+    markets = _event_markets_dict(event)
+    if markets is None:
         return None
-    try:
-        markets = json.loads(event.markets_json)
-    except Exception:
-        return None
-    gl = markets.get("goal_line")
+    return _format_goals_from_markets(markets)
+
+
+def _format_goals_from_markets(markets: dict[str, Any]) -> str | None:
+    gl = markets.get("goal_line") if isinstance(markets, dict) else None
     if not gl or not isinstance(gl, dict):
         return None
     selections = gl.get("selections")
@@ -1032,13 +1050,25 @@ def render_live_hit(hit: LiveWatchHit) -> str:
         lines.append("")
         lines.append(f"📝 {hit.entry.note.strip()}")
 
+    odds_lines: list[str] = []
     if event.odds_1x2 and any(v is not None for v in (event.odds_1x2.home, event.odds_1x2.draw, event.odds_1x2.away)):
         o = event.odds_1x2
         h = str(o.home) if o.home is not None else "-"
         d = str(o.draw) if o.draw is not None else "-"
         a = str(o.away) if o.away is not None else "-"
+        odds_lines.append(f"💰 1X2: {h} / {d} / {a}")
+
+    markets = event.markets_payload if isinstance(event.markets_payload, dict) else {}
+    handicap_str = _format_handicap_from_markets(markets, home=event.home, away=event.away)
+    if handicap_str:
+        odds_lines.append(handicap_str)
+    goals_str = _format_goals_from_markets(markets)
+    if goals_str:
+        odds_lines.append(goals_str)
+
+    if odds_lines:
         lines.append("")
-        lines.append(f"💰 1X2: {h} / {d} / {a}")
+        lines.extend(odds_lines)
 
     return "\n".join(lines)
 
