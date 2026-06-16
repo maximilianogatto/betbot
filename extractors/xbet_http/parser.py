@@ -58,7 +58,7 @@ def live_events_from_1x2_vzip(payload: dict[str, Any]) -> list[LiveEventSnapshot
 
         full_score = sc.get("FS") if isinstance(sc.get("FS"), dict) else {}
         league = event.get("L") or event.get("LE")
-        odds_1x2, _ = _extract_markets(event, home=home, away=away)
+        odds_1x2, markets_payload = _extract_markets(event, home=home, away=away)
         league_id = event.get("LI") or event.get("CI")
         country_name = event.get("CN")
         comp_name = f"{country_name} · {league}" if country_name and league and country_name.lower() not in league.lower() else league
@@ -79,6 +79,7 @@ def live_events_from_1x2_vzip(payload: dict[str, Any]) -> list[LiveEventSnapshot
                 home_yellow_cards=_extract_card_value(sc, side=1, color="yellow"),
                 away_yellow_cards=_extract_card_value(sc, side=2, color="yellow"),
                 odds_1x2=odds_1x2,
+                markets_payload=markets_payload,
                 source_url=f"https://spinbetter.com/service-api/LineFeed/GetGameZip?id={event_id}",
                 is_soccer=not bool(_VIRTUAL_LEAGUE_RE.search(str(league or ""))),
                 extracted_at=utc_now_iso(),

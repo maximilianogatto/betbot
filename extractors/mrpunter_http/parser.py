@@ -324,6 +324,16 @@ def _live_snapshot_from_array(ev: Any, *, sport_id: str) -> LiveEventSnapshot | 
     t_name = str(ev[2]) if len(ev) > 2 else None
     c_name = str(ev[7]) if len(ev) > 7 else None
     comp_name = f"{c_name} · {t_name}" if c_name and t_name and c_name.lower() not in t_name.lower() else t_name
+    # Markets live at [19] in gameOdds arrays (live_events_from_league_odds); the
+    # live/initial feed has none, so _markets returns [] and these stay empty.
+    markets = _markets(ev)
+    markets_payload: dict[str, Any] = {}
+    ah = _asian_handicap(markets, home=home, away=away)
+    if ah is not None:
+        markets_payload["asian_handicap"] = ah
+    gl = _goal_line(markets)
+    if gl is not None:
+        markets_payload["goal_line"] = gl
     return LiveEventSnapshot(
         platform=PLATFORM,
         external_event_id=str(event_id),
@@ -335,6 +345,7 @@ def _live_snapshot_from_array(ev: Any, *, sport_id: str) -> LiveEventSnapshot | 
         home_score=s1,
         away_score=s2,
         scheduled_at=_kickoff_iso(ev[IDX_START] if len(ev) > IDX_START else None),
+        markets_payload=markets_payload or None,
         source_url=f"mrpunter:league:{ev[31]}" if len(ev) > 31 else None,
         is_soccer=(ev_sport == str(sport_id)),
         extracted_at=utc_now_iso(),

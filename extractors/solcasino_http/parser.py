@@ -104,6 +104,13 @@ def live_events_from_snapshot(snapshot: dict[str, Any], *, sport_id: str = "1") 
         if not isinstance(markets, dict):
             markets = {}
 
+        # Betby gates Asian handicap out of the broad snapshot; totals (goal line)
+        # are present, so we surface those for live alerts.
+        markets_payload: dict[str, Any] = {}
+        goal_line = _goal_line(markets)
+        if goal_line is not None:
+            markets_payload["goal_line"] = goal_line
+
         live.append(
             LiveEventSnapshot(
                 platform=PLATFORM,
@@ -120,6 +127,7 @@ def live_events_from_snapshot(snapshot: dict[str, Any], *, sport_id: str = "1") 
                 home_yellow_cards=_extract_card_value(state, side="home", color="yellow"),
                 away_yellow_cards=_extract_card_value(state, side="away", color="yellow"),
                 odds_1x2=_odds_1x2(markets),
+                markets_payload=markets_payload or None,
                 source_url=f"solcasino:tournament:{desc.get('tournament')}",
                 is_soccer=True,
                 extracted_at=utc_now_iso(),
