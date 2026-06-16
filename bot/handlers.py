@@ -181,7 +181,8 @@ HELP_STATS_MESSAGE = (
     "  <code>/track_stats</code> - Sigue una liga únicamente para estadísticas y cache diario\n"
     "  <code>/stats_tracks</code> - Lista las ligas seguidas exclusivamente por estadísticas\n"
     "  <code>/explore_stats</code> - Explora tabla, partidos anteriores, fixture y goleadores de stats\n"
-    "  <code>/stats &lt;n&gt; [provider]</code> - Reporte H2H del partido de /matches (sin provider combina todos)\n"
+    "  <code>/stats</code> - Reporte H2H por liga: elegís liga y partido (unión de todas las casas, sin repetidos)\n"
+    "  <code>/stats &lt;n&gt; [provider]</code> - Reporte del partido n de /matches (sin provider combina todos)\n"
     "  <code>/platforms</code> - Muestra las plataformas de odds y proveedores de stats soportados\n\n"
     "🌍 <b>Ligas Especiales (Stats de Federaciones):</b>\n"
     "  <i>Ligas de ascenso/copas que no figuran en sitios comunes: las sacamos de las páginas oficiales.</i>\n"
@@ -1272,6 +1273,33 @@ async def resources_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     await update.message.reply_text(format_system_metrics_message(metrics))
 
 
+async def _send_unified_stats_report(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE,
+    *,
+    match_group: list[ActiveEventRecord],
+    league_name: str,
+    provider_filter: str | None = None,
+) -> None:
+    """Send the cross-book card (qué casas lo tienen + odds) and the stats report."""
+
+    from bot.alerts import build_comparison_match_card_message
+
+    stats_service = get_stats_service(context)
+    await update.message.reply_text("Generando reporte de stats...", reply_markup=ReplyKeyboardRemove())
+
+    card = build_comparison_match_card_message(match_group, full_odds=False)
+    if card:
+        await _reply_text_chunks(update.message, card, parse_mode=ParseMode.HTML)
+
+    report = await stats_service.build_unified_match_stats_report(
+        league_name=league_name,
+        match_group=match_group,
+        provider_filter=provider_filter,
+    )
+    await _reply_text_chunks(update.message, report.message, reply_markup=ReplyKeyboardRemove())
+
+
 async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle `/stats` interactive or `/stats <event_number>` from `/matches`."""
 
@@ -1284,65 +1312,68 @@ async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         if update.effective_chat is None:
             return ConversationHandler.END
         tracking_service = get_tracking_service(context)
-        tracked_leagues = tracking_service.list_confirmed_tracks(update.effective_chat.id)
-        if not tracked_leagues:
+        unified_leagues = tracking_service.repository.list_subscribed_unified_competitions(
+            update.effective_chat.id
+        )
+        if not unified_leagues:
             await update.message.reply_text(
                 "No tenés ligas trackeadas todavía.\n"
                 "Usá /track_league o /track_url primero.",
                 reply_markup=ReplyKeyboardRemove(),
             )
             return ConversationHandler.END
-        context.user_data[STATS_TRACKS_CONTEXT_KEY] = tracked_leagues
+        context.user_data[STATS_TRACKS_CONTEXT_KEY] = unified_leagues
         await update.message.reply_text(
-            _build_track_selection_message("De qué liga querés ver stats?", tracked_leagues),
-            reply_markup=_build_numeric_keyboard(len(tracked_leagues), "Elegí la liga"),
+            _build_unified_league_selection_message("De qué liga querés ver stats?", unified_leagues),
+            reply_markup=_build_numeric_keyboard(len(unified_leagues), "Elegí la liga"),
         )
         return SELECT_LEAGUE_FOR_STATS
 
     if len(context.args) > 2 or not context.args[0].isdigit():
         await update.message.reply_text(STATS_URL_USAGE_MESSAGE)
         return ConversationHandler.END
-    # /stats <n> [provider] — sin provider combina todos los linkeados a la liga.
+    # /stats <n> [provider] — n indexa la última lista de /matches (unión cross-book,
+    # sin repetidos). Sin provider combina todos los linkeados a la liga.
     provider_filter = context.args[1] if len(context.args) == 2 else None
 
-    active_matches = context.user_data.get(MATCHES_ACTIVE_CONTEXT_KEY)
-    tracked_subscription = context.user_data.get(MATCHES_SELECTED_TRACK_CONTEXT_KEY)
+    grouped_matches = context.user_data.get(MATCHES_ACTIVE_CONTEXT_KEY)
+    selected_league = context.user_data.get(MATCHES_SELECTED_TRACK_CONTEXT_KEY)
 
-    if not isinstance(active_matches, list) or not active_matches:
+    if not isinstance(grouped_matches, list) or not grouped_matches:
         await update.message.reply_text(
             "No tengo una lista reciente de partidos para este chat.\n\n"
             "Usá /matches, elegí una liga y después /stats <n>."
         )
         return ConversationHandler.END
 
-    if not isinstance(tracked_subscription, TrackedCompetitionSubscription):
+    if not isinstance(selected_league, dict) or "id" not in selected_league:
         await update.message.reply_text(
             "No tengo una liga seleccionada recientemente.\n\n"
             "Usá /matches, elegí una liga y después /stats <n>."
         )
         return ConversationHandler.END
 
-    selected_index = _parse_selection_number(context.args[0], len(active_matches) + 1)
-    if selected_index is None:
-        await update.message.reply_text(STATS_URL_USAGE_MESSAGE)
-        return ConversationHandler.END
-
-    if selected_index == 0:
+    # /matches numera con "1 - Ver todos", así que el partido N de la lista es
+    # grouped_matches[N-2]. Aceptamos ese mismo número acá.
+    if context.args[0] == "1":
         await update.message.reply_text(
             "El número 1 corresponde a \"Ver todos\".\n\n"
             "Elegí el número visible de un partido individual de la última lista de /matches."
         )
         return ConversationHandler.END
 
-    stats_service = get_stats_service(context)
-    await update.message.reply_text("Generando reporte de stats...")
-    result = await stats_service.build_match_stats_report(
-        tracked_subscription=tracked_subscription,
-        matches=active_matches,
-        event_number=selected_index,
+    group_index = int(context.args[0]) - 2
+    if group_index < 0 or group_index >= len(grouped_matches):
+        await update.message.reply_text(STATS_URL_USAGE_MESSAGE)
+        return ConversationHandler.END
+
+    await _send_unified_stats_report(
+        update,
+        context,
+        match_group=grouped_matches[group_index],
+        league_name=selected_league.get("name") or "la liga",
         provider_filter=provider_filter,
     )
-    await _reply_text_chunks(update.message, result.message)
     return ConversationHandler.END
 
 
@@ -1352,8 +1383,8 @@ async def stats_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE
     if update.message is None or update.effective_chat is None:
         return ConversationHandler.END
 
-    tracked_leagues = context.user_data.get(STATS_TRACKS_CONTEXT_KEY)
-    if not isinstance(tracked_leagues, list) or not tracked_leagues:
+    unified_leagues = context.user_data.get(STATS_TRACKS_CONTEXT_KEY)
+    if not isinstance(unified_leagues, list) or not unified_leagues:
         await update.message.reply_text(
             "No encontré la selección de ligas. Probá de nuevo con /stats.",
             reply_markup=ReplyKeyboardRemove(),
@@ -1361,64 +1392,37 @@ async def stats_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    selected_index = _parse_selection_number(update.message.text, len(tracked_leagues))
+    selected_index = _parse_selection_number(update.message.text, len(unified_leagues))
     if selected_index is None:
         await update.message.reply_text(
             "Elegí un número válido de liga.",
-            reply_markup=_build_numeric_keyboard(len(tracked_leagues), "Elegí la liga"),
+            reply_markup=_build_numeric_keyboard(len(unified_leagues), "Elegí la liga"),
         )
         return SELECT_LEAGUE_FOR_STATS
 
-    selected_track = tracked_leagues[selected_index]
+    selected_league = unified_leagues[selected_index]
     tracking_service = get_tracking_service(context)
 
-    try:
-        tracked_subscription, active_matches = tracking_service.get_matches_for_track(
-            update.effective_chat.id,
-            selected_track.tracked_league.id,
+    # Unión de partidos de TODAS las plataformas de la liga (sin repetidos).
+    active_events = tracking_service.repository.get_active_events_for_unified_competition(
+        selected_league["id"],
+        only_future=True,
+    )
+    if not active_events:
+        tracked_links = tracking_service.repository.list_tracked_competitions_for_unified(
+            selected_league["id"]
         )
-    except ValueError as error:
-        await update.message.reply_text(
-            str(error),
-            reply_markup=ReplyKeyboardRemove(),
+        for link in tracked_links:
+            try:
+                await tracking_service.refresh_tracked_league(link.id)
+            except Exception:
+                pass
+        active_events = tracking_service.repository.get_active_events_for_unified_competition(
+            selected_league["id"],
+            only_future=True,
         )
-        _clear_all_selection_context(context)
-        return ConversationHandler.END
 
-    if not active_matches:
-        try:
-            await tracking_service.refresh_tracked_league(selected_track.tracked_league.id)
-            tracked_subscription, active_matches = tracking_service.get_matches_for_track(
-                update.effective_chat.id,
-                selected_track.tracked_league.id,
-            )
-        except CompetitionUnavailableError:
-            await update.message.reply_text(
-                build_competition_unavailable_warning_message(
-                    selected_track.tracked_league,
-                    track_number=selected_index + 1,
-                    title="⚠️ <b>No pude actualizar esa liga en este momento.</b>",
-                ),
-                reply_markup=ReplyKeyboardRemove(),
-                parse_mode=ParseMode.HTML,
-            )
-            _clear_all_selection_context(context)
-            return ConversationHandler.END
-        except (RuntimeError, ValueError):
-            logger.exception(
-                "Failed to refresh tracked league %s for stats chat_id=%s.",
-                selected_track.tracked_league.id,
-                update.effective_chat.id,
-            )
-            await update.message.reply_text(
-                "⚠️ No pude actualizar esa liga en este momento.\n\n"
-                "Volvé a intentar en unos minutos.",
-                reply_markup=ReplyKeyboardRemove(),
-            )
-            _clear_all_selection_context(context)
-            return ConversationHandler.END
-
-    if not active_matches:
+    if not active_events:
         await update.message.reply_text(
             "No encontré partidos activos o futuros para esa liga.",
             reply_markup=ReplyKeyboardRemove(),
@@ -1426,11 +1430,14 @@ async def stats_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    context.user_data[STATS_ACTIVE_CONTEXT_KEY] = active_matches
-    context.user_data[STATS_SELECTED_TRACK_CONTEXT_KEY] = tracked_subscription
+    from bot.alerts import group_events_by_physical_match
+
+    grouped_matches = group_events_by_physical_match(active_events)
+    context.user_data[STATS_ACTIVE_CONTEXT_KEY] = grouped_matches
+    context.user_data[STATS_SELECTED_TRACK_CONTEXT_KEY] = selected_league
     await update.message.reply_text(
-        _build_stats_match_selection_message(tracked_subscription, active_matches),
-        reply_markup=_build_numeric_keyboard(len(active_matches), "Elegí el partido"),
+        _build_unified_stats_match_selection_message(selected_league["name"], grouped_matches),
+        reply_markup=_build_numeric_keyboard(len(grouped_matches), "Elegí el partido"),
     )
     return SELECT_MATCH_FOR_STATS
 
@@ -1441,10 +1448,10 @@ async def stats_select_match(update: Update, context: ContextTypes.DEFAULT_TYPE)
     if update.message is None:
         return ConversationHandler.END
 
-    active_matches = context.user_data.get(STATS_ACTIVE_CONTEXT_KEY)
-    tracked_subscription = context.user_data.get(STATS_SELECTED_TRACK_CONTEXT_KEY)
+    grouped_matches = context.user_data.get(STATS_ACTIVE_CONTEXT_KEY)
+    selected_league = context.user_data.get(STATS_SELECTED_TRACK_CONTEXT_KEY)
 
-    if not isinstance(active_matches, list) or not active_matches:
+    if not isinstance(grouped_matches, list) or not grouped_matches:
         await update.message.reply_text(
             "No encontré la selección de partidos. Probá de nuevo con /stats.",
             reply_markup=ReplyKeyboardRemove(),
@@ -1452,7 +1459,7 @@ async def stats_select_match(update: Update, context: ContextTypes.DEFAULT_TYPE)
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    if not isinstance(tracked_subscription, TrackedCompetitionSubscription):
+    if not isinstance(selected_league, dict) or "id" not in selected_league:
         await update.message.reply_text(
             "No encontré la liga seleccionada. Probá de nuevo con /stats.",
             reply_markup=ReplyKeyboardRemove(),
@@ -1460,25 +1467,33 @@ async def stats_select_match(update: Update, context: ContextTypes.DEFAULT_TYPE)
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    selected_index = _parse_selection_number(update.message.text, len(active_matches))
+    selected_index = _parse_selection_number(update.message.text, len(grouped_matches))
     if selected_index is None:
         await update.message.reply_text(
             "Elegí un número válido de partido.",
-            reply_markup=_build_numeric_keyboard(len(active_matches), "Elegí el partido"),
+            reply_markup=_build_numeric_keyboard(len(grouped_matches), "Elegí el partido"),
         )
         return SELECT_MATCH_FOR_STATS
 
+    match_group = grouped_matches[selected_index]
+    league_name = selected_league.get("name") or "la liga"
     stats_service = get_stats_service(context)
     await update.message.reply_text("Generando reporte de stats...", reply_markup=ReplyKeyboardRemove())
-    resolution = await stats_service.resolve_event(
-        tracked_subscription=tracked_subscription,
-        matches=active_matches,
-        event_number=selected_index + 1,
+
+    from bot.alerts import build_comparison_match_card_message
+
+    card = build_comparison_match_card_message(match_group, full_odds=False)
+    if card:
+        await _reply_text_chunks(update.message, card, parse_mode=ParseMode.HTML)
+
+    resolution, representative = await stats_service.resolve_unified_event(
+        league_name=league_name,
+        match_group=match_group,
     )
 
     if resolution.kind == "choose":
         context.user_data[STATS_CANDIDATES_CONTEXT_KEY] = list(resolution.candidates)
-        context.user_data[STATS_CANDIDATE_MATCH_CONTEXT_KEY] = active_matches[resolution.event_index]
+        context.user_data[STATS_CANDIDATE_MATCH_CONTEXT_KEY] = representative
         context.user_data[STATS_CANDIDATE_PROVIDER_CONTEXT_KEY] = resolution.provider_key
         lines = [
             "No estoy seguro de cuál es el partido de stats. Elegí el correcto:",
@@ -3000,6 +3015,26 @@ def _build_grouped_match_selection_message(
         rep = group[0]
         lines.append(f"{index} - {rep.home} vs {rep.away}")
 
+    return "\n".join(lines)
+
+
+def _book_label(platform: str) -> str:
+    """Short bookmaker label from a platform key (e.g. ``betovo_http`` -> ``betovo``)."""
+
+    return (platform or "").replace("_http", "").replace("_", " ").strip() or platform
+
+
+def _build_unified_stats_match_selection_message(
+    unified_league_name: str,
+    grouped_matches: list[list[ActiveEventRecord]],
+) -> str:
+    """Stats match picker: union of matches across books, with the books per row."""
+
+    lines = [f"De qué partido de {unified_league_name} querés ver stats?"]
+    for index, group in enumerate(grouped_matches, start=1):
+        rep = group[0]
+        books = ", ".join(sorted({_book_label(e.platform) for e in group}))
+        lines.append(f"{index} - {rep.home} vs {rep.away}  🏦 {books}")
     return "\n".join(lines)
 
 
