@@ -46,6 +46,12 @@ def configure_logging(log_level: str) -> None:
         format="%(asctime)s | %(name)s | %(levelname)s | %(message)s",
     )
 
+    # Silence chatty third-party loggers: httpx/httpcore log one INFO line PER
+    # request, which floods journald/disk on a small VPS (this already filled the
+    # disk once). App loggers keep the configured level.
+    for noisy in ("httpx", "httpcore", "telegram", "telegram.ext", "hpack", "asyncio"):
+        logging.getLogger(noisy).setLevel(logging.WARNING)
+
 
 def main() -> None:
     """Start the Telegram bot application.

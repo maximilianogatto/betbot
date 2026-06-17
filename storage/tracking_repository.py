@@ -2749,6 +2749,21 @@ class SqliteTrackingRepository:
                 (cache_key, _json_dumps(payload), fetched.isoformat(), expires.isoformat()),
             )
 
+    def purge_expired_stats_payloads(self) -> int:
+        """Delete cached stats payloads past their TTL. Returns rows removed.
+
+        Expired rows are only skipped on read (get_cached_stats_payload), never
+        deleted, so without this they linger. Run periodically (daily job).
+        """
+
+        now_iso = datetime.now(timezone.utc).isoformat()
+        with _connect() as connection:
+            cursor = connection.execute(
+                "DELETE FROM stats_payload_cache WHERE expires_at < ?",
+                (now_iso,),
+            )
+            return cursor.rowcount
+
     # ----- live watch -----
 
     def add_live_watch(
@@ -3735,10 +3750,20 @@ def _connect():
     """Open a repository connection and always close it after use."""
 
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    connection = sqlite3.connect(DB_FILE_PATH)
+    connection = sqlite3.connect(DB_FILE_PATH, timeout=30)
     try:
         connection.row_factory = sqlite3.Row
         connection.execute("PRAGMA foreign_keys = ON")
+        # WAL: better read/write concurrency and fewer fsyncs than the default
+        # rollback journal (idempotent: a no-op once the DB file is already WAL).
+        # synchronous=NORMAL is safe under WAL; busy_timeout avoids spurious
+        # "database is locked" errors. All cheap to re-assert per connection.
+        connection.execute("PRAGMA journal_mode = WAL")
+        connection.execute("PRAGMA synchronous = NORMAL")
+        connection.execute("PRAGMA busy_timeout = 5000")
+        # _initialize_schema is an idempotent self-heal (creates missing tables
+        # and runs legacy-data migrations); it must run on each connect so a DB
+        # that drifts into a legacy state gets repaired.
         _initialize_schema(connection)
         yield connection
         connection.commit()

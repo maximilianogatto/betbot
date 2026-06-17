@@ -157,7 +157,9 @@ def event_snapshot_from_game(
         odds_1x2=_odds_1x2(ev),
         extracted_at=utc_now_iso(),
         markets_payload=markets_payload or None,
-        raw_payload=game,
+        # Persist only identity keys, not the whole game blob (the rest is
+        # reconstructable from a re-fetch and never read back for features).
+        raw_payload={k: game.get(k) for k in ("id", "st") if k in game},
     )
 
 

@@ -406,12 +406,18 @@ async def _stats_prefetch_loop(
     while True:
         try:
             summary = await stats_service.warm_tracked_leagues(ttl_seconds=ttl_seconds)
+            # Reclaim space: drop cached stats payloads past their TTL (otherwise
+            # they're only skipped on read and accumulate forever).
+            from storage.tracking_repository import tracking_repository
+
+            purged = await asyncio.to_thread(tracking_repository.purge_expired_stats_payloads)
             logger.info(
-                "Stats prefetch cycle finished leagues=%s reports=%s skipped=%s errors=%s",
+                "Stats prefetch cycle finished leagues=%s reports=%s skipped=%s errors=%s purged_cache=%s",
                 summary.get("leagues"),
                 summary.get("reports"),
                 summary.get("skipped"),
                 summary.get("errors"),
+                purged,
             )
         except asyncio.CancelledError:
             raise
