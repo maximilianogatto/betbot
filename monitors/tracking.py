@@ -71,6 +71,51 @@ UNAVAILABLE_COMPETITION_MESSAGE = (
 UNAVAILABLE_WARNING_FAILURE_THRESHOLD = 2
 UNAVAILABLE_WARNING_COOLDOWN_SECONDS = 12 * 60 * 60
 
+# Tiered refresh: how often (seconds) to re-fetch a league's odds based on how
+# close its next kickoff is. Far-future leagues barely change, so refreshing them
+# every cycle wastes requests/CPU/network. Near-kickoff leagues stay reactive.
+_REFRESH_DUE_GRACE_SECONDS = 15.0
+
+
+def _parse_iso_utc(raw: str | None) -> datetime | None:
+    """Parse an ISO timestamp to an aware UTC datetime (naive treated as UTC)."""
+
+    if not raw:
+        return None
+    try:
+        parsed = datetime.fromisoformat(str(raw).strip())
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def _refresh_interval_seconds(now: datetime, earliest_kickoff: datetime | None) -> float:
+    """Minimum seconds between refreshes given the league's next kickoff."""
+
+    if earliest_kickoff is None:
+        return 3600.0  # no upcoming match: check hourly
+    delta = (earliest_kickoff - now).total_seconds()
+    if delta <= 900:           # in-play or within 15 min of kickoff
+        return 60.0
+    if delta <= 3 * 3600:      # within 3 h
+        return 120.0
+    if delta <= 24 * 3600:     # within a day
+        return 600.0
+    return 3600.0              # more than a day away
+
+
+def _is_refresh_due(
+    now: datetime, last_synced: datetime | None, earliest_kickoff: datetime | None
+) -> bool:
+    """True when a league should be refreshed this cycle (tier-based)."""
+
+    if last_synced is None:
+        return True
+    interval = _refresh_interval_seconds(now, earliest_kickoff)
+    return (now - last_synced).total_seconds() >= interval - _REFRESH_DUE_GRACE_SECONDS
+
 
 def format_duration(seconds: float) -> str:
     """Format one elapsed duration in a compact user-facing representation."""
@@ -932,12 +977,39 @@ class TrackingService:
         return await self._refresh_leagues(tracked_league_ids)
 
     async def refresh_all_active_leagues(self) -> RefreshSummary:
-        """Refresh all globally active tracked competitions once."""
+        """Refresh all globally active tracked competitions once (full sweep)."""
 
         tracked_league_ids = [
             competition.id for competition in self.repository.list_globally_active_competitions()
         ]
         return await self._refresh_leagues(tracked_league_ids)
+
+    async def refresh_due_leagues(self) -> RefreshSummary:
+        """Refresh only the leagues whose tier is due this cycle (tiered cadence).
+
+        Leagues far from their next kickoff are refreshed infrequently; leagues
+        near kickoff or in-play every cycle. Cuts redundant requests/CPU without
+        losing reactivity near events. Manual refresh paths still do a full sweep.
+        """
+
+        competitions = self.repository.list_globally_active_competitions()
+        if not competitions:
+            return await self._refresh_leagues([])
+
+        now = datetime.now(timezone.utc)
+        kickoffs = self.repository.get_earliest_kickoffs([c.id for c in competitions])
+        due_ids = [
+            c.id
+            for c in competitions
+            if _is_refresh_due(
+                now, _parse_iso_utc(c.last_synced_at), _parse_iso_utc(kickoffs.get(c.id))
+            )
+        ]
+        if len(due_ids) != len(competitions):
+            logger.info(
+                "Refresh tiering: %s/%s leagues due this cycle", len(due_ids), len(competitions)
+            )
+        return await self._refresh_leagues(due_ids)
 
     async def refresh_tracked_league(self, tracked_league_id: int) -> CompetitionRefreshResult:
         """Refresh active event state for one globally tracked competition."""
@@ -982,15 +1054,16 @@ class TrackingService:
             return self._build_empty_refresh_summary()
 
         try:
-            summary = await self.refresh_all_active_leagues()
+            summary = await self.refresh_due_leagues()
             await self.dispatch_notifications(
                 bot,
                 summary,
                 notify_failures=False,
             )
-            # Registry learning: leagues sharing physical matches across
-            # platforms get merged automatically (subscribers are notified).
-            await self.learn_and_notify_league_merges(bot)
+            # Registry learning is an O(n²) fuzzy scan; only worth running when
+            # this cycle actually refreshed leagues (idle cycles change nothing).
+            if summary.league_results:
+                await self.learn_and_notify_league_merges(bot)
             return summary
         finally:
             await self.finish_refresh("automatic")

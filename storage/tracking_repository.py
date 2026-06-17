@@ -1073,6 +1073,40 @@ class SqliteTrackingRepository:
 
         return [_row_to_tracked_competition(row) for row in rows]
 
+    def get_earliest_kickoffs(
+        self, competition_ids: Sequence[int]
+    ) -> dict[int, str | None]:
+        """Map each competition id to its earliest active-event kickoff (UTC ISO).
+
+        Used to schedule refreshes by proximity to kickoff. Events that already
+        finished (older than IN_PLAY_GRACE) are excluded so they don't pin a
+        league to the fast tier; ``None`` means no upcoming/in-play event.
+        """
+
+        ids = [int(cid) for cid in dict.fromkeys(competition_ids)]
+        result: dict[int, str | None] = {cid: None for cid in ids}
+        if not ids:
+            return result
+
+        floor_iso = (datetime.now(timezone.utc) - timedelta(hours=3)).isoformat()
+        placeholders = ",".join("?" for _ in ids)
+        with _connect() as connection:
+            rows = connection.execute(
+                f"""
+                SELECT tracked_competition_id AS cid, MIN(scheduled_at) AS earliest
+                FROM active_events
+                WHERE is_active = 1
+                  AND scheduled_at IS NOT NULL
+                  AND scheduled_at >= ?
+                  AND tracked_competition_id IN ({placeholders})
+                GROUP BY tracked_competition_id
+                """,
+                (floor_iso, *ids),
+            ).fetchall()
+        for row in rows:
+            result[int(row["cid"])] = row["earliest"]
+        return result
+
     def get_subscriptions_for_competition(
         self,
         tracked_competition_id: int,
