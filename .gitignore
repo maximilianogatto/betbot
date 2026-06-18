@@ -44,6 +44,20 @@ sandbox/flashscore_http/captures/
 # FootyStats research network dumps (regenerate via capture_traffic.py)
 sandbox/footystats_http/captures/
 
-#agents metadata
+# Temp scratch dumps (responses, captures, experiments). Folder kept, contents ignored.
+/temp/*
+!/temp/.gitkeep
+!/temp/README.md
+/scratch/
+
+# Loose research/runtime dumps that land at the repo root
+active_response.bin
+all_responses.json
+captured_requests.json
+menu_response.txt
+playwright_captures/
+extractors/*.zip
+
+# agents metadata
 *.claude
 *.antigravitycli
