@@ -44,7 +44,7 @@ class BetssonHttpExtractor(Extractor):
     """HTTP extractor for Betsson (OBG) prematch + live soccer leagues."""
 
     name = "betsson_http"
-    display_name = "Betsson HTTP"
+    display_name = "Betsson"
     supported_domains = _SUPPORTED_HOSTS
     supported_capabilities = ("ligas", "eventos 1X2", "handicap", "totales")
     provider_capabilities = ProviderCapabilities(supports_http=True, supports_browserless=True)

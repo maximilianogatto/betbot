@@ -100,7 +100,7 @@ class BetovoDiscoveryTests(unittest.TestCase):
         options = discovery_module.build_league_options(
             _events_payload(),
             platform="betovo_http",
-            platform_display_name="Betovo HTTP",
+            platform_display_name="Betovo",
             country_name="brazil",
         )
         self.assertEqual(len(options), 1)
@@ -113,7 +113,7 @@ class BetovoDiscoveryTests(unittest.TestCase):
         options = discovery_module.build_league_options(
             _events_payload(),
             platform="betovo_http",
-            platform_display_name="Betovo HTTP",
+            platform_display_name="Betovo",
             country_name="Atlantis",
         )
         self.assertEqual(options, [])

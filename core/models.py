@@ -178,6 +178,11 @@ def platform_display_name(platform_key: str) -> str:
     if not normalized_key:
         return "Desconocida"
 
+    # Drop the internal "_http" transport suffix; users don't care how the bot
+    # fetches data ("bz_http" -> "Bz", not "Bz Http").
+    if normalized_key.endswith("_http"):
+        normalized_key = normalized_key[: -len("_http")]
+
     return normalized_key.replace("_", " ").replace("-", " ").title()
 
 

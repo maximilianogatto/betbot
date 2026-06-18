@@ -125,7 +125,7 @@ class BetWarriorDiscoveryTests(unittest.TestCase):
         options = discovery_module.build_league_options(
             _list_view(),
             platform="betwarrior_http",
-            platform_display_name="BetWarrior HTTP",
+            platform_display_name="BetWarrior",
             country_name="uruguay",
         )
         self.assertEqual(len(options), 1)
@@ -139,7 +139,7 @@ class BetWarriorDiscoveryTests(unittest.TestCase):
         options = discovery_module.build_league_options(
             _list_view(),
             platform="betwarrior_http",
-            platform_display_name="BetWarrior HTTP",
+            platform_display_name="BetWarrior",
             country_name="Narnia",
         )
         self.assertEqual(options, [])
@@ -185,7 +185,7 @@ class BetWarriorTreeDiscoveryTests(unittest.TestCase):
         options = discovery_module.build_league_options_from_tree(
             _group_tree(),
             platform="betwarrior_http",
-            platform_display_name="BetWarrior HTTP",
+            platform_display_name="BetWarrior",
             country_name="australia",
         )
         names = {o.league_name for o in options}
@@ -202,7 +202,7 @@ class BetWarriorTreeDiscoveryTests(unittest.TestCase):
         options = discovery_module.build_league_options_from_tree(
             _group_tree(),
             platform="betwarrior_http",
-            platform_display_name="BetWarrior HTTP",
+            platform_display_name="BetWarrior",
             country_name="australia",
             query="sub-20",
         )
@@ -212,7 +212,7 @@ class BetWarriorTreeDiscoveryTests(unittest.TestCase):
         options = discovery_module.build_league_options_from_tree(
             _group_tree(),
             platform="betwarrior_http",
-            platform_display_name="BetWarrior HTTP",
+            platform_display_name="BetWarrior",
             country_name="Narnia",
         )
         self.assertEqual(options, [])

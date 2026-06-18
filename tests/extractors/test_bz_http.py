@@ -162,7 +162,7 @@ class BzDiscoveryTests(unittest.TestCase):
         options = discovery_module.build_league_options(
             _search_data(),
             platform="bz_http",
-            platform_display_name="BZ HTTP",
+            platform_display_name="BZ",
             country_name="brazil",
         )
         self.assertEqual(len(options), 1)
@@ -175,7 +175,7 @@ class BzDiscoveryTests(unittest.TestCase):
         options = discovery_module.build_league_options(
             _search_data(),
             platform="bz_http",
-            platform_display_name="BZ HTTP",
+            platform_display_name="BZ",
             country_name="Narnia",
         )
         self.assertEqual(options, [])

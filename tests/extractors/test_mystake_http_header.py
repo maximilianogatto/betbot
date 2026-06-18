@@ -91,7 +91,7 @@ class MystakeHeaderTests(unittest.TestCase):
         options = header_module.build_league_options(
             self.tree,
             platform="mystake_http",
-            platform_display_name="Mystake HTTP",
+            platform_display_name="Mystake",
             sport_id=1,
             country_name="australia",  # case/accent-insensitive
         )
@@ -105,7 +105,7 @@ class MystakeHeaderTests(unittest.TestCase):
         options = header_module.build_league_options(
             self.tree,
             platform="mystake_http",
-            platform_display_name="Mystake HTTP",
+            platform_display_name="Mystake",
             sport_id=1,
             country_name="Marte",
         )

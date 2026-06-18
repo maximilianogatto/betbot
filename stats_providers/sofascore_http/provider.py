@@ -68,7 +68,7 @@ class SofaScoreHttpStatsProvider(StatsProvider):
     """Validate SofaScore behind BetBot's stable stats-provider interface."""
 
     name = "sofascore_http"
-    display_name = "SofaScore HTTP"
+    display_name = "SofaScore"
     capabilities = StatsProviderCapabilities(
         supports_league_discovery=True,
         supports_fixture_discovery=True,

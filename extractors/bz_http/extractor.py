@@ -46,7 +46,7 @@ class BzHttpExtractor(Extractor):
     """HTTP extractor for BZ (m.bz.com) prematch soccer leagues."""
 
     name = "bz_http"
-    display_name = "BZ HTTP"
+    display_name = "BZ"
     supported_domains = _SUPPORTED_HOSTS
     supported_capabilities = ("ligas",)
     provider_capabilities = ProviderCapabilities(supports_http=True, supports_browserless=True)

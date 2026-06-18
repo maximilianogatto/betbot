@@ -220,7 +220,7 @@ class BetssonDiscoveryTests(unittest.TestCase):
         options = discovery_module.build_league_options_from_tree(
             _tree(),
             platform="betsson_http",
-            platform_display_name="Betsson HTTP",
+            platform_display_name="Betsson",
             category_id="1",
             country_name="alemania",
         )
@@ -235,7 +235,7 @@ class BetssonDiscoveryTests(unittest.TestCase):
         options = discovery_module.build_league_options_from_tree(
             _tree(),
             platform="betsson_http",
-            platform_display_name="Betsson HTTP",
+            platform_display_name="Betsson",
             category_id="1",
             country_name="germany",
         )
@@ -245,7 +245,7 @@ class BetssonDiscoveryTests(unittest.TestCase):
         options = discovery_module.build_league_options_from_tree(
             _tree(),
             platform="betsson_http",
-            platform_display_name="Betsson HTTP",
+            platform_display_name="Betsson",
             category_id="1",
             country_name="Narnia",
         )

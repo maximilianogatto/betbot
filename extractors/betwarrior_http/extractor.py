@@ -40,7 +40,7 @@ class BetWarriorHttpExtractor(Extractor):
     """HTTP extractor for BetWarrior (Kambi) prematch soccer leagues."""
 
     name = "betwarrior_http"
-    display_name = "BetWarrior HTTP"
+    display_name = "BetWarrior"
     supported_domains = _SUPPORTED_HOSTS
     supported_capabilities = ("ligas",)
     provider_capabilities = ProviderCapabilities(supports_http=True, supports_browserless=True)

@@ -59,7 +59,7 @@ class XBetHttpExtractor(Extractor):
     """Expose 1xBet/SpinBetter prematch LineFeed data through the common interface."""
 
     name = "1xbet_http"
-    display_name = "1xBet HTTP"
+    display_name = "1xBet"
     supported_domains = tuple(sorted(SUPPORTED_HOSTS))
     supported_capabilities = ("ligas", "eventos 1X2", "handicap", "totales")
     provider_capabilities = ProviderCapabilities(

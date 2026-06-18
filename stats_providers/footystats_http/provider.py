@@ -55,7 +55,7 @@ class FootyStatsHttpStatsProvider(StatsProvider):
     """
 
     name = "footystats_http"
-    display_name = "FootyStats HTTP"
+    display_name = "FootyStats"
     capabilities = StatsProviderCapabilities(
         supports_league_discovery=True,
         supports_fixture_discovery=True,

@@ -51,7 +51,7 @@ class FlashscoreHttpStatsProvider(StatsProvider):
     """Flashscore behind BetBot's stable stats-provider interface (HTTP-only)."""
 
     name = "flashscore_http"
-    display_name = "Flashscore HTTP"
+    display_name = "Flashscore"
     capabilities = StatsProviderCapabilities(
         supports_league_discovery=True,
         supports_fixture_discovery=True,

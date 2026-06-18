@@ -284,7 +284,7 @@ class StatsServiceTests(unittest.TestCase):
         # Create a second fake provider
         class SecondFakeProvider(StatsProvider):
             name = "footystats_http"
-            display_name = "FootyStats HTTP"
+            display_name = "FootyStats"
             capabilities = StatsProviderCapabilities(supports_league_discovery=True, supports_fixture_discovery=True)
 
             async def search_leagues(self, *, country_name: str, query: str | None = None, limit: int = 80):
@@ -330,7 +330,7 @@ class StatsServiceTests(unittest.TestCase):
         # 2. Link SecondFakeProvider
         option2 = StatsLeagueOption(
             provider="footystats_http",
-            provider_display_name="FootyStats HTTP",
+            provider_display_name="FootyStats",
             country_name="Spain",
             league_id="fs-123",
             league_name="LaLiga FS",

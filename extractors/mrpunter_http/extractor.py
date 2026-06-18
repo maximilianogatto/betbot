@@ -36,7 +36,7 @@ class MrPunterHttpExtractor(Extractor):
     """HTTP extractor for MrPunter (FSB) prematch + live soccer leagues."""
 
     name = "mrpunter_http"
-    display_name = "MrPunter HTTP"
+    display_name = "MrPunter"
     supported_domains = _SUPPORTED_HOSTS
     supported_capabilities = ("ligas",)
     provider_capabilities = ProviderCapabilities(supports_http=True, supports_live=True, supports_browserless=True)

@@ -173,7 +173,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         )
         option = StatsLeagueOption(
             provider="sofascore_http",
-            provider_display_name="SofaScore HTTP",
+            provider_display_name="SofaScore",
             country_name="Australia",
             league_id="33650:91941",
             league_name="Northern Territory Premier League, Women",
@@ -186,7 +186,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         )
         provider = StatsProviderDescriptor(
             key="sofascore_http",
-            display_name="SofaScore HTTP",
+            display_name="SofaScore",
             capabilities=StatsProviderCapabilities(supports_league_discovery=True),
         )
         message = SimpleNamespace(text=sofa_url, reply_text=AsyncMock())
@@ -268,7 +268,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
     async def test_track_stats_discovers_and_persists_standalone_league(self) -> None:
         option = StatsLeagueOption(
             provider="footystats_http",
-            provider_display_name="FootyStats HTTP",
+            provider_display_name="FootyStats",
             country_name="Australia",
             league_id="australia/northern-nsw-npl",
             league_name="Northern NSW NPL",
@@ -279,7 +279,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         )
         provider = StatsProviderDescriptor(
             key="footystats_http",
-            display_name="FootyStats HTTP",
+            display_name="FootyStats",
             capabilities=StatsProviderCapabilities(supports_league_discovery=True),
         )
         message = SimpleNamespace(text="Australia", reply_text=AsyncMock())

@@ -35,7 +35,7 @@ class BetovoHttpExtractor(Extractor):
     """HTTP extractor for Betovo (Altenar) prematch soccer leagues."""
 
     name = "betovo_http"
-    display_name = "Betovo HTTP"
+    display_name = "Betovo"
     supported_domains = _SUPPORTED_HOSTS
     supported_capabilities = ("ligas",)
     provider_capabilities = ProviderCapabilities(supports_http=True, supports_browserless=True)

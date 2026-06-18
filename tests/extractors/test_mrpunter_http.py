@@ -149,7 +149,7 @@ class MrPunterDiscoveryTests(unittest.TestCase):
 
     def test_build_league_options_by_country(self) -> None:
         opts = discovery_module.build_league_options(
-            self._nav(), platform="mrpunter_http", platform_display_name="MrPunter HTTP",
+            self._nav(), platform="mrpunter_http", platform_display_name="MrPunter",
             sport_id="1", country_name="brasil",
         )
         self.assertEqual(len(opts), 2)
@@ -160,7 +160,7 @@ class MrPunterDiscoveryTests(unittest.TestCase):
     def test_unknown_country_empty(self) -> None:
         self.assertEqual(
             discovery_module.build_league_options(
-                self._nav(), platform="mrpunter_http", platform_display_name="MrPunter HTTP",
+                self._nav(), platform="mrpunter_http", platform_display_name="MrPunter",
                 sport_id="1", country_name="Narnia",
             ),
             [],

@@ -81,7 +81,7 @@ class SolcasinoDiscoveryTests(unittest.TestCase):
         options = discovery_module.build_league_options(
             _snapshot(),
             platform="solcasino_http",
-            platform_display_name="Solcasino HTTP",
+            platform_display_name="Solcasino",
             sport_id="1",
             country_name="brazil",
         )
@@ -97,7 +97,7 @@ class SolcasinoDiscoveryTests(unittest.TestCase):
         options = discovery_module.build_league_options(
             _snapshot(),
             platform="solcasino_http",
-            platform_display_name="Solcasino HTTP",
+            platform_display_name="Solcasino",
             sport_id="1",
             country_name="Marte",
         )

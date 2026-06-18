@@ -42,7 +42,7 @@ class MystakeHttpExtractor(Extractor):
     """HTTP extractor for Mystake prematch soccer leagues (championship id)."""
 
     name = "mystake_http"
-    display_name = "Mystake HTTP"
+    display_name = "Mystake"
     supported_domains = _SUPPORTED_HOSTS
     supported_capabilities = ("ligas",)
     provider_capabilities = ProviderCapabilities(supports_http=True, supports_browserless=True)

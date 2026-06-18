@@ -41,7 +41,7 @@ class SolcasinoHttpExtractor(Extractor):
     """HTTP extractor for Solcasino (Betby) prematch soccer leagues."""
 
     name = "solcasino_http"
-    display_name = "Solcasino HTTP"
+    display_name = "Solcasino"
     supported_domains = _SUPPORTED_HOSTS
     supported_capabilities = ("ligas",)
     provider_capabilities = ProviderCapabilities(supports_http=True, supports_browserless=True)
