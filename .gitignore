@@ -61,3 +61,14 @@ extractors/*.zip
 # agents metadata
 *.claude
 *.antigravitycli
+
+# Capturas crudas de research committeadas antes (ahora ignoradas; ver temp/ y sandbox/<x>/HALLAZGOS.md)
+sandbox/**/captures/
+sandbox/bet365/API/
+sandbox/bet365/bet365_capture_*/
+sandbox/bet365/playwright_captures/
+sandbox/sportradar_stats/http_research/
+sandbox/sportradar_stats/sandbox/
+sandbox/sportradar_stats/discovery/
+sandbox/solca/
+sandbox/solcasino_research/
