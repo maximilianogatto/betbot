@@ -119,164 +119,155 @@ TRACK_STATS_OPTIONS_CONTEXT_KEY = "track_stats_options"
 MANUAL_REFRESH_TASK_KEY = "manual_refresh_task"
 
 HELP_MESSAGE = (
-    "🤖 <b>Ayuda de BetBot - Comandos Generales y de Configuración:</b>\n"
-    "  <code>/start</code> - Mensaje de bienvenida y presentación\n"
-    "  <code>/help</code> - Muestra este menú principal de ayuda\n"
-    "  <code>/guide</code> - Guía rápida paso a paso del flujo completo\n"
-    "  <code>/ping</code> - Verifica si el bot responde (pong)\n"
-    "  <code>/status</code> - Estado del servidor y del bot (online)\n"
-    "  <code>/timezone [Zona]</code> - Define la zona horaria del chat (partidos, avisos y lives). Default Argentina\n"
-    "  <code>/resources</code> - Estadísticas de consumo de CPU/RAM del VPS\n"
-    "  <code>/echo &lt;texto&gt;</code> - Devuelve el mismo texto enviado\n"
-    "  <code>/cancel</code> - Cancela la selección interactiva en curso\n\n"
-    "📂 <b>Secciones de Ayuda Especializadas:</b>\n"
-    "• <code>/help_matches</code> - Seguimiento de cuotas, odds y variaciones\n"
-    "• <code>/help_live</code> - Monitoreo de partidos en vivo (live)\n"
-    "• <code>/help_stats</code> - Estadísticas H2H y ligas especiales (Finlandia y Suecia)\n"
-    "• <code>/help_leagues</code> - Ligas cross-plataforma (comparador), unificación y recordatorios"
+    "🤖 <b>BetBot · Ayuda</b>\n"
+    "<i>Tocá un /comando para ejecutarlo · copiá los que llevan &lt;dato&gt;.</i>\n\n"
+    "<b>⚙️ General</b>\n"
+    "  /guide — guía paso a paso del flujo completo\n"
+    "  /platforms — casas de odds y proveedores de stats\n"
+    "  /status — estado del bot · /ping — responde pong\n"
+    "  /resources — consumo de CPU/RAM del server\n"
+    "  <code>/timezone &lt;zona&gt;</code> — zona horaria del chat (def. Argentina)\n"
+    "  /cancel — cancela la selección en curso\n\n"
+    "<b>📂 Secciones</b>\n"
+    "  /help_matches — odds y seguimiento de partidos\n"
+    "  /help_live — partidos en vivo\n"
+    "  /help_stats — estadísticas H2H y ligas especiales\n"
+    "  /help_leagues — ligas cross-plataforma y recordatorios\n\n"
+    "💡 <i>Primer paso:</i> /track_league"
 )
 
 HELP_MATCHES_MESSAGE = (
-    "📈 <b>Comandos para Odds y Seguimiento de Partidos (Matches):</b>\n"
-    "  <code>/track_league</code> - Agrega una liga de odds de forma interactiva (plataforma -&gt; país -&gt; liga)\n"
-    "  <code>/track_url &lt;url&gt;</code> - Agrega una liga de odds usando un link directo y la deja pendiente\n"
-    "  <code>/confirm_track</code> - Confirma la última liga pendiente\n"
-    "  <code>/confirm_empty_track</code> - Confirma la liga pendiente aunque no tenga partidos hoy\n"
-    "  <code>/list_tracks</code> - Lista todas las ligas de odds en seguimiento activo\n"
-    "  <code>/competition_url &lt;n&gt;</code> - Muestra el link original de una liga trackeada\n"
-    "  <code>/refresh_tracks</code> - Actualiza manualmente los partidos y detecta eventos nuevos\n"
-    "  <code>/update_track_url &lt;n&gt; &lt;url&gt;</code> - Actualiza el link de una liga trackeada\n"
-    "  <code>/untrack</code> - Deja de seguir y borra una liga de tu lista\n"
-    "  <code>/matches</code> - Muestra partidos de una liga para elegir uno\n"
-    "  <code>/event_url &lt;n&gt;</code> - Muestra la URL directa del partido seleccionado previamente en /matches\n"
-    "  <code>/odds_on</code> - Activa alertas automáticas de caída de cuotas en una liga\n"
-    "  <code>/odds_off</code> - Desactiva alertas automáticas de caída de cuotas en una liga\n"
-    "  <code>/set_change_percent &lt;n&gt;</code> - Configura el % de variación mínima para alertar\n"
-    "  <code>/check_little_changes</code> - Lista cambios pequeños de cuotas pendientes de aprobación\n"
-    "  <code>/confirm_change &lt;n&gt;</code> - Aprueba un cambio pequeño individual y actualiza su baseline\n"
-    "  <code>/confirm_all_little_changes</code> - Aprueba todos los cambios pequeños pendientes\n\n"
-    "🎯 <b>Peak del día</b> (detección + scoring 1–10):\n"
-    "  <code>/peak_today</code> - Detecta y puntúa los partidos especiales con flag de peak y cuándo entrar\n"
-    "  <code>/peak_on</code> - Activa el envío automático del Peak del día cada mañana\n"
-    "  <code>/peak_off</code> - Desactiva el envío automático del Peak del día\n\n"
-    "Volver al menú principal: <code>/help</code>"
+    "📈 <b>Odds y seguimiento de partidos</b>\n\n"
+    "<b>Seguir ligas</b>\n"
+    "  /track_league — agregar liga (interactivo: casa → país → liga)\n"
+    "  <code>/track_url &lt;url&gt;</code> — agregar liga por link directo\n"
+    "  /confirm_track — confirmar la liga pendiente\n"
+    "  /confirm_empty_track — confirmar aunque no tenga partidos hoy\n"
+    "  /list_tracks — tus ligas en seguimiento\n"
+    "  <code>/competition_url &lt;n&gt;</code> — link original de una liga\n"
+    "  <code>/update_track_url &lt;n&gt; &lt;url&gt;</code> — actualizar el link\n"
+    "  /refresh_tracks — refrescar partidos y detectar nuevos\n"
+    "  /untrack — dejar de seguir una liga\n\n"
+    "<b>Partidos y odds</b>\n"
+    "  /matches — ver partidos de una liga\n"
+    "  <code>/event_url &lt;n&gt;</code> — link directo del partido elegido\n"
+    "  /odds_on · /odds_off — alertas de caída de cuotas\n"
+    "  <code>/set_change_percent &lt;n&gt;</code> — % mínimo para alertar\n"
+    "  /check_little_changes — cambios chicos pendientes\n"
+    "  <code>/confirm_change &lt;n&gt;</code> — aprobar un cambio chico\n"
+    "  /confirm_all_little_changes — aprobar todos\n\n"
+    "<b>🎯 Peak del día</b> <i>(scoring 1–10)</i>\n"
+    "  /peak_today — partidos especiales y cuándo entrar\n"
+    "  /peak_on · /peak_off — envío automático cada mañana\n\n"
+    "↩︎ /help"
 )
 
 HELP_LIVE_MESSAGE = (
-    "🔴 <b>Live Commands (En vivo):</b>\n"
-    "  <code>/watch_live</code> - Pone partidos en vigilancia en vivo (escribí los equipos o subí foto del fixture)\n"
-    "  <code>/import_sheet</code> - Importa partidos en vigilancia directamente desde la planilla de Google Drive\n"
-    "  <code>/watching</code> - Lista tus partidos en vigilancia activa y los que ya salieron\n"
-    "  <code>/view_match &lt;id&gt;</code> - Muestra estadísticas en tiempo real y cuotas de un partido vigilado\n"
-    "  <code>/live_status</code> - Muestra cadencia, partidos activos y último estado live detectado\n"
-    "  <code>/live_settings</code> - Configura alertas live: goles, rojas y amarillas\n"
-    "  <code>/unwatch &lt;id&gt;</code> - Saca un partido de la vigilancia en vivo (o /unwatch all)\n\n"
-    "Volver al menú principal: <code>/help</code>"
+    "🔴 <b>Partidos en vivo</b>\n\n"
+    "  /watch_live — vigilar partidos (escribí los equipos o subí el fixture)\n"
+    "  /import_sheet — importar la planilla de Google Drive\n"
+    "  /watching — tus partidos en vigilancia (activos y salidos)\n"
+    "  <code>/view_match &lt;id&gt;</code> — stats en vivo y cuotas de un partido\n"
+    "  /live_status — cadencia, activos y último estado detectado\n"
+    "  /live_settings — alertas live: goles, rojas y amarillas\n"
+    "  <code>/unwatch &lt;id&gt;</code> — sacar de la vigilancia <i>(o /unwatch all)</i>\n\n"
+    "↩︎ /help"
 )
 
 HELP_STATS_MESSAGE = (
-    "📊 <b>Stats y Estadísticas (Estándar):</b>\n"
-    "  <code>/link_stats</code> - Vincula una liga de odds con un proveedor de estadísticas\n"
-    "  <code>/stats_links</code> - Muestra los vínculos activos entre odds y stats\n"
-    "  <code>/track_stats</code> - Sigue una liga únicamente para estadísticas y cache diario\n"
-    "  <code>/stats_tracks</code> - Lista las ligas seguidas exclusivamente por estadísticas\n"
-    "  <code>/explore_stats</code> - Explora tabla, partidos anteriores, fixture y goleadores de stats\n"
-    "  <code>/stats</code> - Reporte H2H por liga: elegís liga y partido (unión de todas las casas, sin repetidos)\n"
-    "  <code>/stats &lt;n&gt; [provider]</code> - Reporte del partido n de /matches (sin provider combina todos)\n"
-    "  <code>/platforms</code> - Muestra las plataformas de odds y proveedores de stats soportados\n\n"
-    "🌍 <b>Ligas Especiales (Stats de Federaciones):</b>\n"
-    "  <i>Ligas de ascenso/copas que no figuran en sitios comunes: las sacamos de las páginas oficiales.</i>\n"
-    "  • <code>/[country]_help</code> - Guía completa del módulo del país\n"
-    "  • <code>/[country]_leagues</code> - Escalafón oficial de ligas y copas\n"
-    "  • <code>/[country]_today</code> - Partidos de hoy con sus IDs\n"
-    "  • <code>/[country]_standings &lt;CÓDIGO&gt;</code> - Tabla de posiciones de una liga\n"
-    "  • <code>/[country]_fixtures &lt;CÓDIGO&gt;</code> - Calendario reciente y próximo de una liga\n"
-    "  • <code>/[country]_results &lt;CÓDIGO&gt;</code> - Últimos resultados (sólo Suecia)\n"
-    "  • <code>/[country]_match &lt;ID&gt;</code> - Reporte del partido + Detector de Suplentes / B-Team (alineaciones sólo Fin/Swe)\n\n"
-    "  <i>Reemplazá <code>[country]</code> por el acrónimo del país que querés explorar:</i>\n"
-    "  🇫🇮 <b>Finlandia:</b> <code>fin</code>\n"
-    "  🇸🇪 <b>Suecia:</b> <code>swe</code>\n"
-    "  🇷🇴 <b>Rumania:</b> <code>ro</code>\n"
-    "  🇸🇰 <b>Eslovaquia:</b> <code>sk</code>\n"
-    "  🇩🇿 <b>Argelia:</b> <code>al</code>\n"
-    "  🇳🇴 <b>Noruega:</b> <code>no</code>\n\n"
-    "Volver al menú principal: <code>/help</code>"
+    "📊 <b>Estadísticas (Estándar)</b>\n\n"
+    "  /link_stats — vincular una liga de odds con un proveedor de stats\n"
+    "  /stats_links — vínculos activos odds ↔ stats\n"
+    "  /track_stats — seguir una liga solo por stats (cache diario)\n"
+    "  /stats_tracks — ligas seguidas solo por stats\n"
+    "  /explore_stats — tabla, partidos previos, fixture y goleadores\n"
+    "  /stats — reporte H2H por liga (elegís liga y partido)\n"
+    "  <code>/stats &lt;n&gt; [provider]</code> — reporte del partido n de /matches\n"
+    "  /platforms — casas de odds y proveedores de stats\n\n"
+    "🌍 <b>Ligas especiales</b> <i>(federaciones oficiales)</i>\n"
+    "  <i>Ascensos/copas que no figuran en sitios comunes.</i>\n"
+    "  <code>/[país]_help</code> — guía del módulo del país\n"
+    "  <code>/[país]_leagues</code> — escalafón de ligas y copas\n"
+    "  <code>/[país]_today</code> — partidos de hoy con sus IDs\n"
+    "  <code>/[país]_standings &lt;CÓDIGO&gt;</code> — tabla de posiciones\n"
+    "  <code>/[país]_fixtures &lt;CÓDIGO&gt;</code> — calendario de una liga\n"
+    "  <code>/[país]_results &lt;CÓDIGO&gt;</code> — últimos resultados <i>(solo Suecia)</i>\n"
+    "  <code>/[país]_match &lt;ID&gt;</code> — reporte + detector B-Team <i>(alineaciones Fin/Swe)</i>\n\n"
+    "  <i>Reemplazá [país] por:</i> "
+    "🇫🇮 <code>fin</code> · 🇸🇪 <code>swe</code> · 🇷🇴 <code>ro</code> · "
+    "🇸🇰 <code>sk</code> · 🇩🇿 <code>al</code> · 🇳🇴 <code>no</code>\n\n"
+    "↩︎ /help"
 )
 
 HELP_LEAGUES_MESSAGE = (
-    "🏆 <b>Ligas cross-plataforma (comparador + unificación):</b>\n"
-    "  <code>/leagues</code> - Lista tus ligas unificadas (qué books y stats tiene cada una)\n"
-    "  <code>/league &lt;N&gt;</code> - Ficha de una liga: por plataforma su league_id + nombre, y stats linkeados\n"
-    "  <code>/link_league &lt;N&gt; &lt;M&gt;</code> - Fusiona la liga M dentro de la N (misma liga física en otra plataforma)\n"
-    "  <code>/unlink_league &lt;N&gt; &lt;plataforma&gt;</code> - Saca una plataforma de una liga (queda como liga propia)\n"
-    "  <code>/relink_leagues</code> - Re-unifica automáticamente las ligas separadas por nombre (ej: USL League 2 == League Two)\n\n"
-    "⏰ <b>Recordatorios</b> (5 min antes del inicio · por defecto OFF):\n"
-    "  <code>/reminders_league &lt;N&gt; on|off</code> - Recordatorio para TODOS los partidos de la liga N (de /leagues)\n"
-    "  <code>/reminders_match &lt;n&gt; on|off</code> - Recordatorio de un partido puntual (n de la última lista de /matches)\n\n"
-    "  <i>El comparador de /matches agrupa solo los books de la misma liga unificada.</i>\n\n"
-    "Volver al menú principal: <code>/help</code>"
+    "🏆 <b>Ligas cross-plataforma</b> <i>(comparador + unificación)</i>\n\n"
+    "  /leagues — tus ligas unificadas (qué casas y stats tiene cada una)\n"
+    "  <code>/league &lt;N&gt;</code> — ficha: league_id + nombre por casa, y stats\n"
+    "  <code>/link_league &lt;N&gt; &lt;M&gt;</code> — fusionar la liga M dentro de la N\n"
+    "  <code>/unlink_league &lt;N&gt; &lt;casa&gt;</code> — separar una casa de una liga\n"
+    "  /relink_leagues — re-unificar automáticamente por nombre\n\n"
+    "⏰ <b>Recordatorios</b> <i>(5 min antes · def. OFF)</i>\n"
+    "  <code>/reminders_league &lt;N&gt; on|off</code> — todos los partidos de la liga N\n"
+    "  <code>/reminders_match &lt;n&gt; on|off</code> — un partido puntual (de /matches)\n\n"
+    "  <i>El comparador de /matches agrupa solo las casas de la misma liga.</i>\n\n"
+    "↩︎ /help"
 )
 
 GUIDE_MESSAGE = (
-    "Guía rápida\n\n"
-    "1. /platforms\n"
-    "2. /track_url <url>\n"
-    "3. /confirm_track\n"
-    "3b. /link_stats si la plataforma no trae stats directas\n"
-    "3c. /stats_links para revisar vínculos activos\n"
-    "3d. /track_stats para seguir una liga aunque no tenga colector de odds\n"
-    "4. /list_tracks\n"
-    "5. /competition_url <n>\n"
-    "6. /matches\n"
-    "7. /event_url <n>\n"
-    "8. /stats <n>\n"
-    "9. /update_track_url <n> <url> si el link cambió\n"
-    "10. /odds_on\n"
-    "11. /set_change_percent 20\n"
-    "12. /check_little_changes\n"
-    "13. /confirm_change <n> o /confirm_all_little_changes"
+    "🧭 <b>Guía rápida</b>\n\n"
+    "<b>1 · Seguir una liga</b>\n"
+    "  /track_league <i>(interactivo)</i> o <code>/track_url &lt;url&gt;</code> → /confirm_track\n"
+    "  /list_tracks — revisá lo que seguís\n\n"
+    "<b>2 · Ver partidos y odds</b>\n"
+    "  /matches → <code>/event_url &lt;n&gt;</code> para el link del partido\n\n"
+    "<b>3 · Alertas de cuotas</b>\n"
+    "  /odds_on · <code>/set_change_percent 20</code>\n"
+    "  /check_little_changes → <code>/confirm_change &lt;n&gt;</code> o /confirm_all_little_changes\n\n"
+    "<b>4 · Estadísticas</b>\n"
+    "  <code>/stats &lt;n&gt;</code> · si la casa no trae stats: /link_stats → /stats_links\n\n"
+    "<b>5 · En vivo</b>\n"
+    "  /watch_live → /watching\n\n"
+    "💡 <i>Si un link cambia:</i> <code>/update_track_url &lt;n&gt; &lt;url&gt;</code>"
 )
 
 TRACK_URL_USAGE_MESSAGE = (
-    "Usá /track_url <url_de_plataforma>.\n"
-    "Primero podés usar /platforms para ver las plataformas disponibles\n"
-    "y después pegar la URL de una competencia.\n\n"
-    "Opcional: agregá un nombre con | al final (útil en Mystake):\n"
-    "/track_url <url> | Australia NPL Northern NSW"
+    "📌 <b>Seguir una liga por link</b>\n"
+    "<code>/track_url &lt;url&gt;</code>\n"
+    "<i>Pegá la URL de una competencia · casas en</i> /platforms\n\n"
+    "Opcional, nombre al final con <code>|</code> <i>(útil en Mystake)</i>:\n"
+    "<code>/track_url &lt;url&gt; | Australia NPL Northern NSW</code>"
 )
 
 SET_CHANGE_PERCENT_USAGE_MESSAGE = (
-    "Usá /set_change_percent <porcentaje>.\n"
-    "Ejemplo:\n"
-    "/set_change_percent 20"
+    "📊 <b>% mínimo de variación para alertar</b>\n"
+    "<code>/set_change_percent &lt;n&gt;</code>\n"
+    "Ejemplo: <code>/set_change_percent 20</code>"
 )
 
 UPDATE_TRACK_URL_USAGE_MESSAGE = (
-    "Usá /update_track_url <número_de_/list_tracks> <nuevo_link>.\n"
-    "Ejemplo:\n"
-    "/update_track_url 2 https://www.bet365.es/#/AC/B1/C1/D1002/E123/G40/"
+    "🔗 <b>Actualizar el link de una liga</b>\n"
+    "<code>/update_track_url &lt;n&gt; &lt;url&gt;</code>  <i>(n de</i> /list_tracks<i>)</i>\n"
+    "Ejemplo: <code>/update_track_url 2 https://www.bet365.es/#/AC/B1/C1/D1002/E123/G40/</code>"
 )
 
 COMPETITION_URL_USAGE_MESSAGE = (
-    "Usá /competition_url <número_de_/list_tracks>.\n"
-    "Ejemplo:\n"
-    "/competition_url 2"
+    "🔗 <b>Link original de una liga</b>\n"
+    "<code>/competition_url &lt;n&gt;</code>  <i>(n de</i> /list_tracks<i>)</i>\n"
+    "Ejemplo: <code>/competition_url 2</code>"
 )
 
 EVENT_URL_USAGE_MESSAGE = (
-    "Usá /event_url <número_visible_en_/matches>.\n"
-    "Primero corré /matches, elegí una liga y después pedí el link del partido.\n"
-    "Ejemplo:\n"
-    "/event_url 3"
+    "🔗 <b>Link directo de un partido</b>\n"
+    "<code>/event_url &lt;n&gt;</code>  <i>(n de</i> /matches<i>)</i>\n"
+    "<i>Corré</i> /matches <i>y elegí una liga primero.</i>\n"
+    "Ejemplo: <code>/event_url 3</code>"
 )
 
 STATS_URL_USAGE_MESSAGE = (
-    "Usá /stats <número_visible_en_/matches> [provider].\n"
-    "Primero corré /matches, elegí una liga y después pedí las stats del partido.\n"
-    "Sin provider combina TODOS los linkeados a la liga; con provider usa solo ese.\n"
-    "Ejemplos:\n"
-    "/stats 3\n"
-    "/stats 3 sofascore"
+    "📊 <b>Reporte de stats de un partido</b>\n"
+    "<code>/stats &lt;n&gt; [provider]</code>  <i>(n de</i> /matches<i>)</i>\n"
+    "<i>Sin provider combina todos los linkeados; con provider usa solo ese.</i>\n"
+    "Ejemplos: <code>/stats 3</code> · <code>/stats 3 sofascore</code>"
 )
 
 
@@ -1066,12 +1057,15 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         first_name = update.effective_user.first_name
 
     welcome_message = (
-        f"Hola, {first_name}. Soy tu bot de tracking de plataformas de apuestas.\n\n"
-        "Podés registrar ligas con /track_url, confirmarlas con /confirm_track, "
-        "verlas con /list_tracks, consultar partidos con /matches y ver plataformas con /platforms."
+        f"⚽ <b>BetBot</b> — odds, stats y live de tus ligas.\n\n"
+        f"Hola, {escape_html(first_name)}. Empezá acá:\n"
+        "  /track_league — seguí una liga\n"
+        "  /matches — mirá los partidos\n"
+        "  /watch_live — vigilá un partido en vivo\n\n"
+        "📚 Todo: /help   ·   🌐 Casas: /platforms"
     )
 
-    await update.message.reply_text(welcome_message)
+    await update.message.reply_text(welcome_message, parse_mode=ParseMode.HTML)
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -1132,7 +1126,7 @@ async def guide_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     if update.message is None:
         return
 
-    await update.message.reply_text(GUIDE_MESSAGE)
+    await update.message.reply_text(GUIDE_MESSAGE, parse_mode=ParseMode.HTML)
 
 
 async def apply_chat_timezone_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -1220,25 +1214,30 @@ async def platforms_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     odds_platforms = tracking_service.list_supported_platforms()
     stats_providers = stats_service.list_providers()
 
-    lines = ["🌐 *Plataformas de Odds (Bookmakers):*"]
+    def _name(display: str) -> str:
+        cleaned = (display or "").removesuffix(" HTTP").removesuffix(" Http")
+        return escape_html(cleaned or display)
+
+    lines = ["🌐 <b>Plataformas soportadas</b>", ""]
+    lines.append("<b>🏦 Casas de odds</b>")
     for platform in odds_platforms:
         prefix = "✅" if platform.implemented else "⚪️"
-        lines.append(f"  {prefix} *{platform.display_name}* (`{platform.key}`)")
-        if platform.domains:
-            lines.append(f"     Dominios: {', '.join(platform.domains)}")
+        lines.append(f"{prefix} <b>{_name(platform.display_name)}</b>  <code>{escape_html(platform.key)}</code>")
         if platform.supports:
-            lines.append(f"     Soporta: {', '.join(platform.supports)}")
-        lines.append("")
+            lines.append(f"   <i>{escape_html(' · '.join(platform.supports))}</i>")
 
-    lines.append("\n📊 *Plataformas de Stats (Proveedores):*")
+    lines.append("")
+    lines.append("<b>📊 Proveedores de stats</b>")
     for provider in stats_providers:
         prefix = "✅" if provider.implemented else "⚪️"
-        lines.append(f"  {prefix} *{provider.display_name}* (`{provider.key}`)")
+        lines.append(f"{prefix} <b>{_name(provider.display_name)}</b>  <code>{escape_html(provider.key)}</code>")
         if provider.capabilities.supports_h2h:
-            lines.append("     Soporta: Comparación H2H, Reportes estadísticos, Tablas y Fixtures")
-        lines.append("")
+            lines.append("   <i>H2H · reportes · tablas · fixtures</i>")
 
-    await update.message.reply_text("\n".join(lines), parse_mode=ParseMode.MARKDOWN)
+    lines.append("")
+    lines.append("💡 <i>Seguí una liga con</i> /track_league")
+
+    await update.message.reply_text("\n".join(lines), parse_mode=ParseMode.HTML)
 
 
 async def ping_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -1330,7 +1329,7 @@ async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         return SELECT_LEAGUE_FOR_STATS
 
     if len(context.args) > 2 or not context.args[0].isdigit():
-        await update.message.reply_text(STATS_URL_USAGE_MESSAGE)
+        await update.message.reply_text(STATS_URL_USAGE_MESSAGE, parse_mode=ParseMode.HTML)
         return ConversationHandler.END
     # /stats <n> [provider] — n indexa la última lista de /matches (unión cross-book,
     # sin repetidos). Sin provider combina todos los linkeados a la liga.
@@ -1364,7 +1363,7 @@ async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
 
     group_index = int(context.args[0]) - 2
     if group_index < 0 or group_index >= len(grouped_matches):
-        await update.message.reply_text(STATS_URL_USAGE_MESSAGE)
+        await update.message.reply_text(STATS_URL_USAGE_MESSAGE, parse_mode=ParseMode.HTML)
         return ConversationHandler.END
 
     await _send_unified_stats_report(
@@ -1822,7 +1821,7 @@ async def track_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     logger.info("Comando /track_url recibido.")
 
     if not context.args:
-        await update.message.reply_text(TRACK_URL_USAGE_MESSAGE)
+        await update.message.reply_text(TRACK_URL_USAGE_MESSAGE, parse_mode=ParseMode.HTML)
         return
 
     raw = " ".join(context.args).strip()
@@ -2826,12 +2825,12 @@ async def competition_url_command(update: Update, context: ContextTypes.DEFAULT_
     logger.info("Comando /competition_url recibido.")
 
     if len(context.args) != 1 or not context.args[0].isdigit():
-        await update.message.reply_text(COMPETITION_URL_USAGE_MESSAGE)
+        await update.message.reply_text(COMPETITION_URL_USAGE_MESSAGE, parse_mode=ParseMode.HTML)
         return
 
     track_number = int(context.args[0])
     if track_number <= 0:
-        await update.message.reply_text(COMPETITION_URL_USAGE_MESSAGE)
+        await update.message.reply_text(COMPETITION_URL_USAGE_MESSAGE, parse_mode=ParseMode.HTML)
         return
 
     tracking_service = get_tracking_service(context)
@@ -2852,14 +2851,14 @@ async def update_track_url_command(update: Update, context: ContextTypes.DEFAULT
     logger.info("Comando /update_track_url recibido.")
 
     if len(context.args) < 2 or not context.args[0].isdigit():
-        await update.message.reply_text(UPDATE_TRACK_URL_USAGE_MESSAGE)
+        await update.message.reply_text(UPDATE_TRACK_URL_USAGE_MESSAGE, parse_mode=ParseMode.HTML)
         return
 
     track_number = int(context.args[0])
     new_url = " ".join(context.args[1:]).strip()
 
     if track_number <= 0 or not new_url:
-        await update.message.reply_text(UPDATE_TRACK_URL_USAGE_MESSAGE)
+        await update.message.reply_text(UPDATE_TRACK_URL_USAGE_MESSAGE, parse_mode=ParseMode.HTML)
         return
 
     tracking_service = get_tracking_service(context)
@@ -2953,7 +2952,7 @@ async def event_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     logger.info("Comando /event_url recibido.")
 
     if len(context.args) != 1 or not context.args[0].isdigit():
-        await update.message.reply_text(EVENT_URL_USAGE_MESSAGE)
+        await update.message.reply_text(EVENT_URL_USAGE_MESSAGE, parse_mode=ParseMode.HTML)
         return
 
     active_matches = context.user_data.get(MATCHES_ACTIVE_CONTEXT_KEY)
@@ -2975,7 +2974,7 @@ async def event_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
     selected_index = _parse_selection_number(context.args[0], len(active_matches) + 1)
     if selected_index is None:
-        await update.message.reply_text(EVENT_URL_USAGE_MESSAGE)
+        await update.message.reply_text(EVENT_URL_USAGE_MESSAGE, parse_mode=ParseMode.HTML)
         return
 
     if selected_index == 0:
@@ -3382,6 +3381,7 @@ async def set_change_percent_command(update: Update, context: ContextTypes.DEFAU
         await update.message.reply_text(
             SET_CHANGE_PERCENT_USAGE_MESSAGE,
             reply_markup=ReplyKeyboardRemove(),
+            parse_mode=ParseMode.HTML,
         )
         return ConversationHandler.END
 
@@ -3389,9 +3389,10 @@ async def set_change_percent_command(update: Update, context: ContextTypes.DEFAU
         percent = float(context.args[0].replace(",", "."))
     except ValueError:
         await update.message.reply_text(
-            "El porcentaje debe ser un número válido.\n\n"
+            "⚠️ El porcentaje debe ser un número válido.\n\n"
             f"{SET_CHANGE_PERCENT_USAGE_MESSAGE}",
             reply_markup=ReplyKeyboardRemove(),
+            parse_mode=ParseMode.HTML,
         )
         return ConversationHandler.END
 

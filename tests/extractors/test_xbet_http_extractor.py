@@ -245,6 +245,7 @@ class XBetHttpExtractorTests(unittest.TestCase):
                 "betovo_http",
                 "betwarrior_http",
                 "mrpunter_http",
+                "betsson_http",
                 "bet365",
             },
         )
