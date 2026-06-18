@@ -24,6 +24,7 @@ PLATFORM_ORDER: list[str] = [
     "bet365",
     "mystake_http",
     "mrpunter_http",
+    "betsson_http",
 ]
 
 _DISPLAY_NAMES: dict[str, str] = {
@@ -35,6 +36,7 @@ _DISPLAY_NAMES: dict[str, str] = {
     "bet365": "Bet365",
     "mystake_http": "Mystake",
     "mrpunter_http": "MrPunter",
+    "betsson_http": "Betsson",
 }
 
 

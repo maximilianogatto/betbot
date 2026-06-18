@@ -583,6 +583,8 @@ class LiveWatchService:
             external_id = url.replace("betovo:champ:", "")
         elif url.startswith("mystake:champ:"):
             external_id = url.replace("mystake:champ:", "")
+        elif url.startswith("betsson:competition:"):
+            external_id = url.replace("betsson:competition:", "")
         elif event.platform == "1xbet_http":
             if event.raw_payload:
                 external_id = event.raw_payload.get("league_id")
