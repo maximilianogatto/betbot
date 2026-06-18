@@ -1,5 +1,0 @@
-    <svg width="23px" height="21px" viewBox="0 0 23 21" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <g id="Twitter----Grey" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <path class="fm-SVGComponent_SocialPath" d="M8.92184578,11.5703628 L9.84377343,12.7782455 L2.03854867,21 L0,21 L8.92184578,11.5703628 Z M6.91054895,0.0412259771 L23,21 L16.1191832,21 L0.122030279,0.0412259771 L6.91054895,0.0412259771 Z M6.16175193,1.50588101 L3.10921258,1.50588101 L16.8705231,19.5353267 L20.0024647,19.5353267 L6.16175193,1.50588101 Z M21.9747746,0 L13.6282087,8.79191222 L12.6976199,7.57968133 L19.869187,0 L21.9747746,0 Z" id="Shape" fill="#999999"></path>
-    </g>
-</svg>
