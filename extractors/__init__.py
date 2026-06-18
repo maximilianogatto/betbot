@@ -8,6 +8,7 @@ from core.extractor_base import Extractor
 from core.registry import ExtractorRegistry
 from extractors.bet365 import Bet365Extractor, Bet365ExtractorSettings
 from extractors.betovo_http import BetovoHttpExtractor, betovo_is_configured
+from extractors.betsson_http import BetssonHttpExtractor, betsson_is_configured
 from extractors.betwarrior_http import BetWarriorHttpExtractor, betwarrior_is_configured
 from extractors.bz_http import BzHttpExtractor, bz_is_configured
 from extractors.mrpunter_http import MrPunterHttpExtractor, mrpunter_is_configured
@@ -62,6 +63,11 @@ def register_default_extractors(
         MrPunterHttpExtractor, browser_enabled=browser_enabled
     ):
         registered.append(registry.register(MrPunterHttpExtractor()))
+    # Betsson (OBG) registers once a brand id + market code are available.
+    if betsson_is_configured() and _should_register_provider(
+        BetssonHttpExtractor, browser_enabled=browser_enabled
+    ):
+        registered.append(registry.register(BetssonHttpExtractor()))
 
     return registered
 
