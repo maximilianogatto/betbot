@@ -49,6 +49,10 @@ class Settings:
     monitor_log_to_file: bool = False
     monitor_chromium_ram_alert_mb: float = 800.0
     stats_prefetch_enabled: bool = True
+    # The Sportradar token pre-refresh opens a browser (Chrome). On a tiny VM
+    # where Chrome is heavy/blocked, set STATS_SESSION_REFRESH_ENABLED=false so the
+    # token is minted only on-demand (a real /stats call) instead of in a loop.
+    stats_session_refresh_enabled: bool = True
     stats_prefetch_interval_seconds: int = 86400
     stats_prefetch_ttl_seconds: float = 90000.0
     live_watch_enabled: bool = True
@@ -219,6 +223,9 @@ def load_settings() -> Settings:
         variable_name="MONITOR_CHROMIUM_RAM_ALERT_MB",
     )
     stats_prefetch_enabled = _parse_bool(os.getenv("STATS_PREFETCH_ENABLED", "true"))
+    stats_session_refresh_enabled = _parse_bool(
+        os.getenv("STATS_SESSION_REFRESH_ENABLED", "true")
+    )
     stats_prefetch_interval_seconds = _parse_positive_int(
         os.getenv("STATS_PREFETCH_INTERVAL_SECONDS", "86400"),
         variable_name="STATS_PREFETCH_INTERVAL_SECONDS",
@@ -292,6 +299,7 @@ def load_settings() -> Settings:
         monitor_log_to_file=monitor_log_to_file,
         monitor_chromium_ram_alert_mb=monitor_chromium_ram_alert_mb,
         stats_prefetch_enabled=stats_prefetch_enabled,
+        stats_session_refresh_enabled=stats_session_refresh_enabled,
         stats_prefetch_interval_seconds=stats_prefetch_interval_seconds,
         live_watch_enabled=live_watch_enabled,
         live_watch_interval_seconds=live_watch_interval_seconds,

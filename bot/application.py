@@ -86,7 +86,7 @@ def create_application(settings: Settings) -> Application:
         # the token-bootstrap browser never opens during a user-facing /stats.
         await start_stats_session_refresh(
             application,
-            enabled=True,
+            enabled=settings.stats_session_refresh_enabled,
             interval_seconds=1800,
             min_ttl_seconds=5400.0,
         )
