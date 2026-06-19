@@ -60,6 +60,11 @@ class BetWarriorHttpExtractor(Extractor):
         self._group_tree_cache: dict[str, Any] | None = None
         self._group_tree_cached_at = 0.0
         self._group_tree_lock = asyncio.Lock()
+        # One reused client per extractor (singleton) -> persistent keep-alive pool.
+        self._client = BetWarriorHttpClient(self.settings)
+
+    async def stop(self) -> None:
+        await self._client.aclose()
 
     @classmethod
     def can_handle_url(cls, url: str) -> bool:
@@ -78,7 +83,7 @@ class BetWarriorHttpExtractor(Extractor):
                 "Could not determine the BetWarrior league from the URL. Use "
                 "'betwarrior:group:<id>'."
             )
-        client = BetWarriorHttpClient(self.settings)
+        client = self._client
         group_payload = await client.fetch_group_bet_offers(group_id)
         return build_competition_extraction(
             group_id=group_id, group_payload=group_payload, source_url=url
@@ -88,12 +93,12 @@ class BetWarriorHttpExtractor(Extractor):
         raise NotImplementedError(f"{self.name} does not support direct match URLs yet.")
 
     async def list_live_events(self) -> list[LiveEventSnapshot]:
-        client = BetWarriorHttpClient(self.settings)
+        client = self._client
         payload = await client.fetch_live_open()
         return live_events_from_open(payload)
 
     async def list_prematch_events(self) -> list[LiveEventSnapshot]:
-        client = BetWarriorHttpClient(self.settings)
+        client = self._client
         list_view = await self._get_list_view(client)
         return prematch_events_from_listview(list_view)
 
@@ -104,7 +109,7 @@ class BetWarriorHttpExtractor(Extractor):
         query: str | None = None,
         limit: int = 80,
     ) -> list[LeagueDiscoveryOption]:
-        client = BetWarriorHttpClient(self.settings)
+        client = self._client
         # Prefer the full group tree (every league with a prematch event). listView
         # only returns a "starting soon" subset, so it silently drops leagues whose
         # next match is not imminent (e.g. Australia youth/Sub-20 leagues).

@@ -28,6 +28,23 @@ class SolcasinoHttpClient:
         if not settings.api_host or not settings.brand_id:
             raise ValueError("Solcasino api_host/brand_id are not configured.")
         self.settings = settings
+        self._http: httpx.AsyncClient | None = None
+
+    def _get_client(self) -> httpx.AsyncClient:
+        """Lazily build and reuse one keep-alive client (headers are sent per request)."""
+
+        if self._http is None or self._http.is_closed:
+            self._http = httpx.AsyncClient(
+                timeout=self.settings.timeout_seconds,
+                follow_redirects=True,
+                limits=httpx.Limits(max_keepalive_connections=4, max_connections=8),
+            )
+        return self._http
+
+    async def aclose(self) -> None:
+        if self._http is not None and not self._http.is_closed:
+            await self._http.aclose()
+        self._http = None
 
     @property
     def _headers(self) -> dict[str, str]:
@@ -50,18 +67,18 @@ class SolcasinoHttpClient:
         """
 
         merged = _empty_snapshot()
-        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, follow_redirects=True) as client:
-            manifest = await self._get(client, self.settings.feed_url(0, feed=feed))
-            versions = _versions_from_manifest(manifest)
+        client = self._get_client()
+        manifest = await self._get(client, self.settings.feed_url(0, feed=feed))
+        versions = _versions_from_manifest(manifest)
 
-            # Some manifests already carry the data inline (no separate chunks).
-            if not versions and any(isinstance(manifest.get(key), dict) for key in ("events", "tournaments")):
-                _deep_merge(merged, manifest)
-                return merged
+        # Some manifests already carry the data inline (no separate chunks).
+        if not versions and any(isinstance(manifest.get(key), dict) for key in ("events", "tournaments")):
+            _deep_merge(merged, manifest)
+            return merged
 
-            for version in versions:
-                chunk = await self._get(client, self.settings.feed_url(version, feed=feed))
-                _deep_merge(merged, chunk)
+        for version in versions:
+            chunk = await self._get(client, self.settings.feed_url(version, feed=feed))
+            _deep_merge(merged, chunk)
         return merged
 
     async def _get(self, client: httpx.AsyncClient, url: str) -> dict[str, Any]:

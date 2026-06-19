@@ -52,6 +52,11 @@ class BetovoHttpExtractor(Extractor):
         self._events_cache: dict[str, Any] | None = None
         self._events_cached_at = 0.0
         self._events_lock = asyncio.Lock()
+        # One reused client per extractor (singleton) -> persistent keep-alive pool.
+        self._client = BetovoHttpClient(self.settings)
+
+    async def stop(self) -> None:
+        await self._client.aclose()
 
     @classmethod
     def can_handle_url(cls, url: str) -> bool:
@@ -71,7 +76,7 @@ class BetovoHttpExtractor(Extractor):
                 "'betovo:champ:<id>' or a betovo URL carrying 'champids=<id>'."
             )
 
-        client = BetovoHttpClient(self.settings)
+        client = self._client
         events_payload = await client.fetch_events(champ_id=champ_id)
         events = [e for e in events_payload.get("events") or [] if str(e.get("champId")) == str(champ_id)]
         event_ids = [str(e.get("id")) for e in events if e.get("id") is not None]
@@ -87,12 +92,12 @@ class BetovoHttpExtractor(Extractor):
         raise NotImplementedError(f"{self.name} does not support direct match URLs yet.")
 
     async def list_live_events(self) -> list[LiveEventSnapshot]:
-        client = BetovoHttpClient(self.settings)
+        client = self._client
         payload = await client.fetch_livenow()
         return live_events_from_livenow(payload)
 
     async def list_prematch_events(self) -> list[LiveEventSnapshot]:
-        client = BetovoHttpClient(self.settings)
+        client = self._client
         payload = await client.fetch_events()  # whole-sport GetEvents (prematch)
         return live_events_from_livenow(payload)
 
@@ -103,7 +108,7 @@ class BetovoHttpExtractor(Extractor):
         query: str | None = None,
         limit: int = 80,
     ) -> list[LeagueDiscoveryOption]:
-        client = BetovoHttpClient(self.settings)
+        client = self._client
         events_payload = await self._get_events(client)
         return discovery_module.build_league_options(
             events_payload,

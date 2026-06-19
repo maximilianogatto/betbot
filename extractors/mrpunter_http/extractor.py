@@ -52,6 +52,9 @@ class MrPunterHttpExtractor(Extractor):
         self._nav_cached_at = 0.0
         self._nav_lock = asyncio.Lock()
 
+    async def stop(self) -> None:
+        await self._client.aclose()
+
     @classmethod
     def can_handle_url(cls, url: str) -> bool:
         normalized = (url or "").strip()

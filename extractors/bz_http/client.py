@@ -27,6 +27,24 @@ class BzHttpClient:
         if not settings.base_url:
             raise ValueError("BZ_API_BASE_URL is not configured.")
         self.settings = settings
+        self._http: httpx.AsyncClient | None = None
+
+    def _get_client(self) -> httpx.AsyncClient:
+        """Lazily build and reuse one keep-alive client (avoids a TLS handshake
+        per request across polling cycles). Headers are static for BZ."""
+
+        if self._http is None or self._http.is_closed:
+            self._http = httpx.AsyncClient(
+                timeout=self.settings.timeout_seconds,
+                headers=self._headers,
+                limits=httpx.Limits(max_keepalive_connections=4, max_connections=8),
+            )
+        return self._http
+
+    async def aclose(self) -> None:
+        if self._http is not None and not self._http.is_closed:
+            await self._http.aclose()
+        self._http = None
 
     @property
     def _headers(self) -> dict[str, str]:
@@ -51,8 +69,7 @@ class BzHttpClient:
             f"sports/match/search?statusList={self.settings.status_list}"
             f"&sportId={self.settings.sport_id}&pageSize={self.settings.page_size}&marketMode=0"
         )
-        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, headers=self._headers) as client:
-            data = await self._get(client, path)
+        data = await self._get(self._get_client(), path)
         return data if isinstance(data, list) else []
 
     async def fetch_live_search(self) -> list[dict[str, Any]]:
@@ -62,16 +79,14 @@ class BzHttpClient:
             f"sports/match/search?statusList=1"
             f"&sportId={self.settings.sport_id}&pageSize={self.settings.page_size}&marketMode=0"
         )
-        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, headers=self._headers) as client:
-            data = await self._get(client, path)
+        data = await self._get(self._get_client(), path)
         return data if isinstance(data, list) else []
 
     async def fetch_match_odds(self, match_id: str) -> list[dict[str, Any]]:
         """Return the full market tabs for one match id."""
 
         path = f"odds/v2/bz/all?sportId={self.settings.sport_id}&matchId={match_id}"
-        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, headers=self._headers) as client:
-            data = await self._get(client, path)
+        data = await self._get(self._get_client(), path)
         return data if isinstance(data, list) else []
 
     async def fetch_many_match_odds(self, match_ids: list[str]) -> dict[str, list[dict[str, Any]]]:
@@ -80,18 +95,19 @@ class BzHttpClient:
         semaphore = asyncio.Semaphore(self.settings.odds_fetch_concurrency)
         results: dict[str, list[dict[str, Any]]] = {}
 
-        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, headers=self._headers) as client:
-            async def worker(match_id: str) -> None:
-                async with semaphore:
-                    path = f"odds/v2/bz/all?sportId={self.settings.sport_id}&matchId={match_id}"
-                    try:
-                        data = await self._get(client, path)
-                        results[match_id] = data if isinstance(data, list) else []
-                    except Exception:  # one failed match must not abort the league
-                        logger.exception("BZ odds fetch failed match_id=%s", match_id)
-                        results[match_id] = []
+        client = self._get_client()
 
-            await asyncio.gather(*(worker(match_id) for match_id in match_ids))
+        async def worker(match_id: str) -> None:
+            async with semaphore:
+                path = f"odds/v2/bz/all?sportId={self.settings.sport_id}&matchId={match_id}"
+                try:
+                    data = await self._get(client, path)
+                    results[match_id] = data if isinstance(data, list) else []
+                except Exception:  # one failed match must not abort the league
+                    logger.exception("BZ odds fetch failed match_id=%s", match_id)
+                    results[match_id] = []
+
+        await asyncio.gather(*(worker(match_id) for match_id in match_ids))
         return results
 
     async def _get(self, client: httpx.AsyncClient, path: str) -> Any:

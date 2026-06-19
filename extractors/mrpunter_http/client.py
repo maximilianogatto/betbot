@@ -59,6 +59,23 @@ class MrPunterHttpClient:
         self._tokens: tuple[str, str] | None = None
         self._tokens_at = 0.0
         self._token_lock = asyncio.Lock()
+        self._http: httpx.AsyncClient | None = None
+
+    def _get_client(self) -> httpx.AsyncClient:
+        """Lazily build and reuse one keep-alive client (headers/tokens per request)."""
+
+        if self._http is None or self._http.is_closed:
+            self._http = httpx.AsyncClient(
+                timeout=self.settings.timeout_seconds,
+                follow_redirects=True,
+                limits=httpx.Limits(max_keepalive_connections=4, max_connections=8),
+            )
+        return self._http
+
+    async def aclose(self) -> None:
+        if self._http is not None and not self._http.is_closed:
+            await self._http.aclose()
+        self._http = None
 
     async def _ensure_tokens(self, *, force: bool = False) -> tuple[str, str]:
         async with self._token_lock:
@@ -70,10 +87,10 @@ class MrPunterHttpClient:
             ):
                 return self._tokens
             headers = {"accept": "text/html,*/*", "user-agent": _UA, "accept-language": "es-AR,es;q=0.9"}
-            async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, follow_redirects=True) as client:
-                response = await client.get(self.settings.spbk_url, headers=headers)
-                response.raise_for_status()
-                tokens = extract_tokens_from_html(response.text)
+            client = self._get_client()
+            response = await client.get(self.settings.spbk_url, headers=headers)
+            response.raise_for_status()
+            tokens = extract_tokens_from_html(response.text)
             if tokens is None:
                 raise RuntimeError("Could not bootstrap MrPunter tokens from the spbk HTML.")
             self._tokens, self._tokens_at = tokens, now
@@ -115,8 +132,7 @@ class MrPunterHttpClient:
         """Return the sports -> countries -> leagues navigation tree."""
 
         path = f"navigation/v2/sports?regionCode={self.settings.region_code}"
-        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, follow_redirects=True) as client:
-            data = await self._get(client, path)
+        data = await self._get(self._get_client(), path)
         return data.get("data") if isinstance(data, dict) else []
 
     async def fetch_league_odds(self, master_league_id: str, *, is_live: bool = False) -> list[list[Any]]:
@@ -126,8 +142,7 @@ class MrPunterHttpClient:
             f"leagues/v2/{master_league_id}/gameOdds"
             f"?marketTypeIds={self.settings.market_type_ids}&IsLive={'true' if is_live else 'false'}"
         )
-        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, follow_redirects=True) as client:
-            data = await self._get(client, path)
+        data = await self._get(self._get_client(), path)
         events = data.get("data") if isinstance(data, dict) else None
         return events if isinstance(events, list) else []
 
@@ -138,8 +153,7 @@ class MrPunterHttpClient:
             f"events/v2/live/initial?regionCode={self.settings.region_code}"
             f"&sportId={self.settings.sport_id}"
         )
-        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, follow_redirects=True) as client:
-            data = await self._get(client, path)
+        data = await self._get(self._get_client(), path)
         return data if isinstance(data, dict) else {}
 
     async def fetch_many_league_odds(

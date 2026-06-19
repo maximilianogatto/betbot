@@ -27,6 +27,23 @@ class BetWarriorHttpClient:
         if not settings.api_host or not settings.offering:
             raise ValueError("BetWarrior api_host/offering are not configured.")
         self.settings = settings
+        self._http: httpx.AsyncClient | None = None
+
+    def _get_client(self) -> httpx.AsyncClient:
+        """Lazily build and reuse one keep-alive client (static headers)."""
+
+        if self._http is None or self._http.is_closed:
+            self._http = httpx.AsyncClient(
+                timeout=self.settings.timeout_seconds,
+                headers=self._headers,
+                limits=httpx.Limits(max_keepalive_connections=4, max_connections=8),
+            )
+        return self._http
+
+    async def aclose(self) -> None:
+        if self._http is not None and not self._http.is_closed:
+            await self._http.aclose()
+        self._http = None
 
     @property
     def _headers(self) -> dict[str, str]:
@@ -43,8 +60,7 @@ class BetWarriorHttpClient:
     async def fetch_list_view(self) -> dict[str, Any]:
         """Return the prematch listView for the configured sport (events + paths)."""
 
-        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, headers=self._headers) as client:
-            data = await self._get(client, f"listView/{self.settings.sport_term}.json", self.settings.common_params)
+        data = await self._get(self._get_client(), f"listView/{self.settings.sport_term}.json", self.settings.common_params)
         return data if isinstance(data, dict) else {}
 
     async def fetch_group_tree(self) -> dict[str, Any]:
@@ -55,22 +71,19 @@ class BetWarriorHttpClient:
         discovery.
         """
 
-        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, headers=self._headers) as client:
-            data = await self._get(client, "group.json", self.settings.common_params)
+        data = await self._get(self._get_client(), "group.json", self.settings.common_params)
         return data if isinstance(data, dict) else {}
 
     async def fetch_group_bet_offers(self, group_id: str | int) -> dict[str, Any]:
         """Return every event + bet offer for one league (group) in one call."""
 
-        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, headers=self._headers) as client:
-            data = await self._get(client, f"betoffer/group/{group_id}.json", self.settings.common_params)
+        data = await self._get(self._get_client(), f"betoffer/group/{group_id}.json", self.settings.common_params)
         return data if isinstance(data, dict) else {}
 
     async def fetch_live_open(self) -> dict[str, Any]:
         """Return all currently in-play events (with score + match clock)."""
 
-        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, headers=self._headers) as client:
-            data = await self._get(client, "event/live/open.json", self.settings.common_params)
+        data = await self._get(self._get_client(), "event/live/open.json", self.settings.common_params)
         return data if isinstance(data, dict) else {}
 
     async def _get(self, client: httpx.AsyncClient, path: str, params: dict[str, str]) -> Any:

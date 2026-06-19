@@ -63,6 +63,11 @@ class BzHttpExtractor(Extractor):
         self._search_cache: list[dict[str, Any]] | None = None
         self._search_cached_at = 0.0
         self._search_lock = asyncio.Lock()
+        # One reused client per extractor (singleton) -> persistent keep-alive pool.
+        self._client = BzHttpClient(self.settings)
+
+    async def stop(self) -> None:
+        await self._client.aclose()
 
     @classmethod
     def can_handle_url(cls, url: str) -> bool:
@@ -82,7 +87,7 @@ class BzHttpExtractor(Extractor):
                 "'bz:tournament:<id>' or an m.bz.com URL carrying 'sr:tournament:<id>'."
             )
 
-        client = BzHttpClient(self.settings)
+        client = self._client
         search_data = await self._get_search(client)
 
         if tournament_id.startswith("category:"):
@@ -143,12 +148,12 @@ class BzHttpExtractor(Extractor):
         raise NotImplementedError(f"{self.name} does not support direct match URLs yet.")
 
     async def list_live_events(self) -> list[LiveEventSnapshot]:
-        client = BzHttpClient(self.settings)
+        client = self._client
         search_data = await client.fetch_live_search()
         return live_events_from_search(search_data)
 
     async def list_prematch_events(self) -> list[LiveEventSnapshot]:
-        client = BzHttpClient(self.settings)
+        client = self._client
         search_data = await client.fetch_match_search()  # statusList=0 (not started)
         return live_events_from_search(search_data)
 
@@ -159,7 +164,7 @@ class BzHttpExtractor(Extractor):
         query: str | None = None,
         limit: int = 80,
     ) -> list[LeagueDiscoveryOption]:
-        client = BzHttpClient(self.settings)
+        client = self._client
         search_data = await self._get_search(client)
         return discovery_module.build_league_options(
             search_data,

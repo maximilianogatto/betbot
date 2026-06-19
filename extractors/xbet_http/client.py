@@ -127,6 +127,24 @@ class XBetHttpClient:
         self.settings = settings or XBetHttpSettings()
         self._request_lock = asyncio.Lock()
         self._last_request_at = 0.0
+        self._http: httpx.AsyncClient | None = None
+
+    def _get_client(self) -> httpx.AsyncClient:
+        """Lazily build and reuse one keep-alive client (headers vary per URL, so
+        they're passed per request rather than baked into the client)."""
+
+        if self._http is None or self._http.is_closed:
+            self._http = httpx.AsyncClient(
+                timeout=httpx.Timeout(self.settings.timeout_seconds),
+                follow_redirects=True,
+                limits=httpx.Limits(max_keepalive_connections=4, max_connections=8),
+            )
+        return self._http
+
+    async def aclose(self) -> None:
+        if self._http is not None and not self._http.is_closed:
+            await self._http.aclose()
+        self._http = None
 
     async def fetch_champ_zip(self, url: str) -> dict[str, Any]:
         return await self._fetch_json(url)
@@ -172,10 +190,7 @@ class XBetHttpClient:
 
     async def _request_json(self, url: str) -> dict[str, Any]:
         headers = _headers_for_url(url)
-        timeout = httpx.Timeout(self.settings.timeout_seconds)
-
-        async with httpx.AsyncClient(headers=headers, timeout=timeout, follow_redirects=True) as client:
-            response = await client.get(url)
+        response = await self._get_client().get(url, headers=headers)
 
         if response.status_code >= 500:
             raise XBetHttpClientError(f"LineFeed server returned {response.status_code}")

@@ -28,6 +28,23 @@ class BetovoHttpClient:
         if not settings.frontend_host or not settings.integration:
             raise ValueError("Betovo frontend_host/integration are not configured.")
         self.settings = settings
+        self._http: httpx.AsyncClient | None = None
+
+    def _get_client(self) -> httpx.AsyncClient:
+        """Lazily build and reuse one keep-alive client (static headers)."""
+
+        if self._http is None or self._http.is_closed:
+            self._http = httpx.AsyncClient(
+                timeout=self.settings.timeout_seconds,
+                headers=self._headers,
+                limits=httpx.Limits(max_keepalive_connections=4, max_connections=8),
+            )
+        return self._http
+
+    async def aclose(self) -> None:
+        if self._http is not None and not self._http.is_closed:
+            await self._http.aclose()
+        self._http = None
 
     @property
     def _headers(self) -> dict[str, str]:
@@ -47,24 +64,21 @@ class BetovoHttpClient:
         params = {**self.settings.common_params, "sportId": str(self.settings.sport_id)}
         if champ_id is not None:
             params["champIds"] = str(champ_id)
-        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, headers=self._headers) as client:
-            data = await self._get(client, "widget/GetEvents", params)
+        data = await self._get(self._get_client(), "widget/GetEvents", params)
         return data if isinstance(data, dict) else {}
 
     async def fetch_livenow(self) -> dict[str, Any]:
         """Return all currently in-play events for the configured sport."""
 
         params = {**self.settings.common_params, "sportId": str(self.settings.sport_id), "eventCount": "0"}
-        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, headers=self._headers) as client:
-            data = await self._get(client, "widget/GetLivenow", params)
+        data = await self._get(self._get_client(), "widget/GetLivenow", params)
         return data if isinstance(data, dict) else {}
 
     async def fetch_event_details(self, event_id: str | int) -> dict[str, Any]:
         """Return the full market list for one event id."""
 
         params = {**self.settings.common_params, "eventId": str(event_id), "showNonBoosts": "false"}
-        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, headers=self._headers) as client:
-            data = await self._get(client, "widget/GetEventDetails", params)
+        data = await self._get(self._get_client(), "widget/GetEventDetails", params)
         return data if isinstance(data, dict) else {}
 
     async def fetch_many_event_details(self, event_ids: list[str]) -> dict[str, dict[str, Any]]:
@@ -73,22 +87,23 @@ class BetovoHttpClient:
         semaphore = asyncio.Semaphore(self.settings.detail_fetch_concurrency)
         results: dict[str, dict[str, Any]] = {}
 
-        async with httpx.AsyncClient(timeout=self.settings.timeout_seconds, headers=self._headers) as client:
-            async def worker(event_id: str) -> None:
-                async with semaphore:
-                    params = {
-                        **self.settings.common_params,
-                        "eventId": str(event_id),
-                        "showNonBoosts": "false",
-                    }
-                    try:
-                        data = await self._get(client, "widget/GetEventDetails", params)
-                        results[event_id] = data if isinstance(data, dict) else {}
-                    except Exception:  # one failed event must not abort the league
-                        logger.exception("Betovo event detail fetch failed event_id=%s", event_id)
-                        results[event_id] = {}
+        client = self._get_client()
 
-            await asyncio.gather(*(worker(event_id) for event_id in event_ids))
+        async def worker(event_id: str) -> None:
+            async with semaphore:
+                params = {
+                    **self.settings.common_params,
+                    "eventId": str(event_id),
+                    "showNonBoosts": "false",
+                }
+                try:
+                    data = await self._get(client, "widget/GetEventDetails", params)
+                    results[event_id] = data if isinstance(data, dict) else {}
+                except Exception:  # one failed event must not abort the league
+                    logger.exception("Betovo event detail fetch failed event_id=%s", event_id)
+                    results[event_id] = {}
+
+        await asyncio.gather(*(worker(event_id) for event_id in event_ids))
         return results
 
     async def _get(self, client: httpx.AsyncClient, path: str, params: dict[str, str]) -> Any:

@@ -58,6 +58,11 @@ class SolcasinoHttpExtractor(Extractor):
         self._snapshot_cache: dict[str, Any] | None = None
         self._snapshot_cached_at = 0.0
         self._snapshot_lock = asyncio.Lock()
+        # One reused client per extractor (singleton) -> persistent keep-alive pool.
+        self._client = SolcasinoHttpClient(self.settings)
+
+    async def stop(self) -> None:
+        await self._client.aclose()
 
     @classmethod
     def can_handle_url(cls, url: str) -> bool:
@@ -77,7 +82,7 @@ class SolcasinoHttpExtractor(Extractor):
                 "'solcasino:tournament:<id>' or a solcasino.io URL whose bt-path "
                 "ends in '-<tournament_id>'."
             )
-        client = SolcasinoHttpClient(self.settings)
+        client = self._client
         snapshot = await self._get_snapshot(client)
         return build_competition_extraction(
             tournament_id=tournament_id, snapshot=snapshot, source_url=url
@@ -87,12 +92,12 @@ class SolcasinoHttpExtractor(Extractor):
         raise NotImplementedError(f"{self.name} does not support direct match URLs yet.")
 
     async def list_live_events(self) -> list[LiveEventSnapshot]:
-        client = SolcasinoHttpClient(self.settings)
+        client = self._client
         snapshot = await client.fetch_snapshot(feed="live")
         return live_events_from_snapshot(snapshot, sport_id=self.settings.sport_id)
 
     async def list_prematch_events(self) -> list[LiveEventSnapshot]:
-        client = SolcasinoHttpClient(self.settings)
+        client = self._client
         snapshot = await self._get_snapshot(client)  # cached prematch snapshot
         return prematch_events_from_snapshot(snapshot, sport_id=self.settings.sport_id)
 
@@ -103,7 +108,7 @@ class SolcasinoHttpExtractor(Extractor):
         query: str | None = None,
         limit: int = 80,
     ) -> list[LeagueDiscoveryOption]:
-        client = SolcasinoHttpClient(self.settings)
+        client = self._client
         snapshot = await self._get_snapshot(client)
         return discovery_module.build_league_options(
             snapshot,

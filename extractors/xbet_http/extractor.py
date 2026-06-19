@@ -79,6 +79,12 @@ class XBetHttpExtractor(Extractor):
         self.settings = settings or XBetHttpSettings()
         self._client = client or XBetHttpClient(self.settings)
 
+    async def stop(self) -> None:
+        # The client may be an injected stub (tests); only close real ones.
+        aclose = getattr(self._client, "aclose", None)
+        if aclose is not None:
+            await aclose()
+
     @classmethod
     def can_handle_url(cls, url: str) -> bool:
         parsed = urlparse((url or "").strip())
