@@ -1,6 +1,7 @@
 python-telegram-bot>=21.0,<22.0
 python-dotenv>=1.0,<2.0
 socksio>=1.0,<2.0
+h2>=4.0,<5.0
 playwright>=1.52,<2.0
 psutil>=5.9,<7.0
 curl_cffi==0.15.0

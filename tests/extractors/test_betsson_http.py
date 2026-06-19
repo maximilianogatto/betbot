@@ -295,5 +295,26 @@ class BetssonUrlTests(unittest.TestCase):
         self.assertIn("sessiontoken", headers)
 
 
+class BetssonHttp2FallbackTests(unittest.IsolatedAsyncioTestCase):
+    async def test_open_does_not_crash_regardless_of_h2(self) -> None:
+        # _open() must build a client whether or not the optional h2 package is
+        # present (hardcoded http2=True crashed with ImportError when h2 missing).
+        import httpx
+
+        from extractors.betsson_http import client as client_module
+        from extractors.betsson_http.client import BetssonHttpClient
+
+        c = BetssonHttpClient(BetssonHttpSettings(brand_id="brand-x", market_code="ag"))
+        original = client_module._HTTP2_AVAILABLE
+        try:
+            for available in (True, False):
+                client_module._HTTP2_AVAILABLE = available
+                http_client = c._open()
+                self.assertIsInstance(http_client, httpx.AsyncClient)
+                await http_client.aclose()
+        finally:
+            client_module._HTTP2_AVAILABLE = original
+
+
 if __name__ == "__main__":
     unittest.main()

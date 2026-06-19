@@ -11,6 +11,7 @@ Endpoints (host cba.betsson.bet.ar; plain HTTP, static brand headers only):
 from __future__ import annotations
 
 import asyncio
+import importlib.util
 import logging
 from typing import Any
 
@@ -19,6 +20,10 @@ import httpx
 from extractors.betsson_http.settings import BetssonHttpSettings
 
 logger = logging.getLogger(__name__)
+
+# HTTP/2 needs the optional 'h2' package; use it when present, else fall back to
+# HTTP/1.1 so the extractor never crashes on a host without h2 installed.
+_HTTP2_AVAILABLE = importlib.util.find_spec("h2") is not None
 
 # How many markets per event the events-table should return. The main coupon
 # markets we parse (1X2, totals, BTTS) sit near the top of the popularity sort,
@@ -102,7 +107,7 @@ class BetssonHttpClient:
         return httpx.AsyncClient(
             timeout=self.settings.timeout_seconds,
             headers=self.settings.headers,
-            http2=True,
+            http2=_HTTP2_AVAILABLE,
         )
 
     async def _get(self, client: httpx.AsyncClient, path: str, params: dict[str, str] | None) -> Any:
