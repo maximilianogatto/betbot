@@ -517,9 +517,20 @@ def _extract_match_id(url: str | None) -> str | None:
 
 
 def _default_runtime_config() -> BotReadyRuntimeConfig:
-    """Build runtime config honoring `SPORTRADAR_BOOTSTRAP_MODE` from `.env`."""
+    """Build runtime config honoring `SPORTRADAR_BOOTSTRAP_MODE` from `.env`.
 
-    return BotReadyRuntimeConfig(bootstrap_mode=normalize_bootstrap_mode(None))
+    Akamai blocks headless Chromium on Statshub (it returns no signed token),
+    while headed works. On a server, run headed under a virtual display (Xvfb)
+    and set `SPORTRADAR_BOOTSTRAP_MODE=headed`: that mode now also drives the
+    background/startup pre-refresh, so it stops failing every cycle. A real
+    desktop can keep the boot pre-refresh quiet with
+    `SPORTRADAR_BACKGROUND_BOOTSTRAP_MODE=headless`.
+    """
+
+    mode = normalize_bootstrap_mode(None)
+    background_raw = os.getenv("SPORTRADAR_BACKGROUND_BOOTSTRAP_MODE")
+    background = normalize_bootstrap_mode(background_raw) if background_raw else mode
+    return BotReadyRuntimeConfig(bootstrap_mode=mode, background_bootstrap_mode=background)
 
 
 def _fixture_status(status: dict[str, Any]) -> str | None:
