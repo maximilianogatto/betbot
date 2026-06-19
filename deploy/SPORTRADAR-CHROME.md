@@ -1,15 +1,53 @@
-# Sportradar / Statshub — Chrome en un server (Xvfb)
+# Sportradar / Statshub — token en un server
 
 El token de Statshub se "mintea" con JavaScript, así que el bootstrap necesita un
 navegador real (Playwright/Chromium). **Hallazgo clave:** Akamai **bloquea el
 Chromium headless** (devuelve sin token, `usable=False fetch_count=0`), mientras
 que el **headed funciona** (verificado local: `usable=True fetch_count=41`).
 
-En un server sin monitor la solución es correr Chromium **headed bajo un display
-virtual (Xvfb)**: Chrome cree que tiene pantalla, Akamai lo ve como browser real,
-y no se abre ninguna ventana visible.
+Hay dos formas de operarlo en un server. En una **VPS chica (1 GB)** Chrome es
+pesado y colisiona el perfil cuando se lanza varias veces → **recomendado: Opción A
+(replay-only)**. La Opción B (Xvfb) sirve en VMs con más RAM.
 
-## Pasos en la VM (una sola vez)
+---
+
+## Opción A — replay-only (recomendada para VPS chica)
+
+El server **nunca** abre navegador. Generás el token en tu PC (donde el navegador
+funciona) y se lo pasás al bot, que hace HTTP puro.
+
+1. **En el server**, en `~/betbot/.env`:
+   ```ini
+   SPORTRADAR_REPLAY_ONLY=true
+   STATS_SESSION_REFRESH_ENABLED=false
+   STATS_PREFETCH_ENABLED=false
+   ```
+   (Si tenías `xvfb-run` en el `ExecStart`, sacalo: en replay-only no hace falta.)
+   `sudo systemctl restart betbot`.
+
+2. **En tu PC** (dentro del repo, una vez por día / cuando venza):
+   ```bash
+   python -m stats_providers.sportradar_http.engine.session_manager --headed --seconds 8
+   ```
+   Genera `stats_providers/sportradar_http/engine/reports/session_state_headed.json`.
+
+3. **Subir el token al bot:** mandá ese `.json` por Telegram **como archivo**, con el
+   texto `/sportradar_token` en el pie (caption). El bot responde con la fecha de
+   vencimiento. (Alternativa: `scp` el archivo al mismo path en la VM.)
+
+4. `/sportradar_token` (sin archivo) muestra el estado del token vigente.
+
+El token dura ~24h; cuando venza, repetí los pasos 2-3. Si está vencido y pedís
+`/stats`, el bot te avisa que lo renueves (no abre navegador).
+
+---
+
+## Opción B — Chrome headed bajo Xvfb (VMs con más RAM)
+
+Correr Chromium **headed bajo un display virtual (Xvfb)**: Chrome cree que tiene
+pantalla, Akamai lo ve como browser real, y no se abre ninguna ventana visible.
+
+### Pasos en la VM (una sola vez)
 
 1. **Librerías de Chromium + Xvfb:**
    ```bash

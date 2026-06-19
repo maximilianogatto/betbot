@@ -34,6 +34,11 @@ from stats_providers.sportradar_http.engine.bot_ready.provider import (
 )
 from stats_providers.sportradar_http.engine.endpoints.discovery import get_config_tree_mini
 from stats_providers.sportradar_http.engine.runtime import normalize_bootstrap_mode
+from stats_providers.sportradar_http.engine.session_manager import (
+    SportradarSessionState,
+    load_session_state,
+    save_session_state,
+)
 from stats_providers.sportradar_http.engine.tournament_navigation import build_tournament_tree
 
 
@@ -106,6 +111,45 @@ class SportradarHttpStatsProvider(StatsProvider):
         # Optional disk/DB-backed cache for expensive payloads (anti-ban + speed).
         self._cache = payload_cache
         self._cache_ttl = cache_ttl_seconds if cache_ttl_seconds is not None else _default_cache_ttl()
+
+    def session_token_expiration(self) -> str | None:
+        """UTC ISO expiration of the cached token, or None if no usable state."""
+
+        path = self._runtime_config.session_state_path
+        if not path.exists():
+            return None
+        try:
+            return load_session_state(path).token_expiration()
+        except Exception:
+            return None
+
+    def import_session_state(self, raw: str | bytes) -> str:
+        """Validate and persist an externally-generated session_state JSON.
+
+        Lets a host that can't run a browser (Akamai blocks headless / tiny VM)
+        replay a token minted elsewhere. Returns the token's UTC expiration ISO.
+        Raises ValueError on invalid/expired payloads.
+        """
+
+        import json
+
+        try:
+            payload = json.loads(raw)
+        except Exception as err:
+            raise ValueError("El archivo no es un JSON válido.") from err
+        try:
+            state = SportradarSessionState.from_json_dict(payload)
+        except Exception as err:
+            raise ValueError(
+                "El JSON no tiene el formato de un session_state de Sportradar."
+            ) from err
+        token = state.signed_token
+        if token is None:
+            raise ValueError("El session_state no trae token.")
+        if token.is_expired():
+            raise ValueError("El token ya está vencido; generá uno nuevo en tu PC.")
+        save_session_state(state, self._runtime_config.session_state_path)
+        return state.token_expiration() or "desconocida"
 
     async def _cached_payload(
         self,
@@ -516,6 +560,12 @@ def _extract_match_id(url: str | None) -> str | None:
     return match.group(1) if match else None
 
 
+def _replay_only_from_env() -> bool:
+    return (os.getenv("SPORTRADAR_REPLAY_ONLY") or "").strip().lower() in {
+        "1", "true", "yes", "on", "si", "sí",
+    }
+
+
 def _default_runtime_config() -> BotReadyRuntimeConfig:
     """Build runtime config honoring `SPORTRADAR_BOOTSTRAP_MODE` from `.env`.
 
@@ -530,7 +580,11 @@ def _default_runtime_config() -> BotReadyRuntimeConfig:
     mode = normalize_bootstrap_mode(None)
     background_raw = os.getenv("SPORTRADAR_BACKGROUND_BOOTSTRAP_MODE")
     background = normalize_bootstrap_mode(background_raw) if background_raw else mode
-    return BotReadyRuntimeConfig(bootstrap_mode=mode, background_bootstrap_mode=background)
+    return BotReadyRuntimeConfig(
+        bootstrap_mode=mode,
+        background_bootstrap_mode=background,
+        replay_only=_replay_only_from_env(),
+    )
 
 
 def _fixture_status(status: dict[str, Any]) -> str | None:

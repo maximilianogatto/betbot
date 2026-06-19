@@ -92,6 +92,11 @@ class BotReadyRuntimeConfig:
     # successful headed run warms the shared profile so later headless refreshes
     # reuse its Akamai cookies and stay invisible.
     background_bootstrap_mode: BootstrapMode = "headless"
+    # Replay-only: never launch a browser. Use the cached/uploaded session state
+    # as-is; if it's missing or expired, raise instead of opening Chrome. For
+    # hosts where Playwright is unusable (Akamai blocks headless, tiny VM): the
+    # token is minted elsewhere and fed in (e.g. via /sportradar_token).
+    replay_only: bool = False
     timeout_seconds: float = 25.0
     retries: int = 1
     lastx: int = 8
@@ -276,6 +281,10 @@ class SportradarBotReadyProvider:
         user-facing `/stats` path.
         """
 
+        if self.config.replay_only:
+            # Never mint here; the token is supplied externally.
+            return False
+
         state = None
         if self.config.session_state_path.exists():
             state = load_session_state(self.config.session_state_path)
@@ -296,12 +305,18 @@ class SportradarBotReadyProvider:
         if self.config.session_state_path.exists():
             state = load_session_state(self.config.session_state_path)
         if state is None or state.signed_token is None or state.signed_token.is_expired():
+            if self.config.replay_only:
+                raise RuntimeError(
+                    "Token de Sportradar ausente o vencido. Generá uno nuevo en tu PC "
+                    "y subilo con /sportradar_token (esta instancia no abre navegador)."
+                )
             state = self.session_manager.refresh_session()
             save_session_state(state, self.config.session_state_path)
         return SportradarHTTPClient(
             session_state=state,
             session_manager=self.session_manager,
-            auto_refresh=True,
+            # In replay-only mode a mid-flight 403 must NOT trigger a browser refresh.
+            auto_refresh=not self.config.replay_only,
             retries=self.config.retries,
             timeout_seconds=self.config.timeout_seconds,
         )
