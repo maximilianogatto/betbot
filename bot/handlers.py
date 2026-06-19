@@ -127,6 +127,7 @@ HELP_MESSAGE = (
     "  /status — estado del bot · /ping — responde pong\n"
     "  /resources — consumo de CPU/RAM del server\n"
     "  <code>/timezone &lt;zona&gt;</code> — zona horaria del chat (def. Argentina)\n"
+    "  /sportradar_token — estado del token de Sportradar y cómo renovarlo\n"
     "  /cancel — cancela la selección en curso\n\n"
     "<b>📂 Secciones</b>\n"
     "  /help_matches — odds y seguimiento de partidos\n"
@@ -1127,6 +1128,70 @@ async def guide_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         return
 
     await update.message.reply_text(GUIDE_MESSAGE, parse_mode=ParseMode.HTML)
+
+
+def _get_sportradar_provider(context: ContextTypes.DEFAULT_TYPE):
+    """Return the registered Sportradar stats provider, or None if absent."""
+
+    try:
+        return get_stats_service(context).provider_registry.get("sportradar_statshub")
+    except Exception:
+        return None
+
+
+_SPORTRADAR_TOKEN_HELP = (
+    "Como Akamai bloquea el navegador headless en el server, el token de Statshub "
+    "se genera en tu PC (donde el navegador funciona) y se sube acá:\n"
+    "1) En tu compu, dentro del repo:\n"
+    "<code>python -m stats_providers.sportradar_http.engine.session_manager --headed --seconds 8</code>\n"
+    "2) Se crea <code>stats_providers/sportradar_http/engine/reports/session_state_headed.json</code>\n"
+    "3) Mandámelo acá <b>como archivo</b> con el texto <code>/sportradar_token</code> en el pie (caption).\n\n"
+    "Dura ~24h; volvé a subirlo cuando venza."
+)
+
+
+async def sportradar_token_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Show the Sportradar token status and how to refresh it (replay-only hosts)."""
+
+    if update.message is None:
+        return
+    provider = _get_sportradar_provider(context)
+    if provider is None or not hasattr(provider, "session_token_expiration"):
+        await update.message.reply_text("Sportradar no está disponible en esta instancia.")
+        return
+    expiration = provider.session_token_expiration()
+    estado = f"vigente hasta (UTC): <b>{expiration}</b>" if expiration else "<b>ausente o vencido</b>"
+    await update.message.reply_text(
+        f"🔑 <b>Token de Sportradar</b>\nEstado: {estado}\n\n{_SPORTRADAR_TOKEN_HELP}",
+        parse_mode=ParseMode.HTML,
+    )
+
+
+async def sportradar_token_upload(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Receive an uploaded session_state JSON (caption /sportradar_token) and store it."""
+
+    if update.message is None or update.message.document is None:
+        return
+    provider = _get_sportradar_provider(context)
+    if provider is None or not hasattr(provider, "import_session_state"):
+        await update.message.reply_text("Sportradar no está disponible en esta instancia.")
+        return
+    try:
+        tg_file = await context.bot.get_file(update.message.document.file_id)
+        raw = bytes(await tg_file.download_as_bytearray())
+    except Exception:
+        logger.exception("Failed to download Sportradar token document.")
+        await update.message.reply_text("No pude descargar el archivo. Probá de nuevo.")
+        return
+    try:
+        expiration = provider.import_session_state(raw)
+    except ValueError as error:
+        await update.message.reply_text(f"❌ {error}")
+        return
+    await update.message.reply_text(
+        f"✅ Token de Sportradar actualizado. Vence (UTC): <b>{expiration}</b>.",
+        parse_mode=ParseMode.HTML,
+    )
 
 
 async def apply_chat_timezone_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -3580,7 +3645,15 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("help_leagues", help_leagues_command))
     application.add_handler(CommandHandler("guide", guide_command))
     application.add_handler(CommandHandler("platforms", platforms_command))
-    
+    # Sportradar token: status command + JSON upload (document with caption).
+    application.add_handler(CommandHandler("sportradar_token", sportradar_token_command))
+    application.add_handler(
+        MessageHandler(
+            filters.Document.ALL & filters.CaptionRegex(r"(?i)^/sportradar_token"),
+            sportradar_token_upload,
+        )
+    )
+
     # Finnish Football Leagues and stats commands
     application.add_handler(CommandHandler("fin_help", fin_help_command))
     application.add_handler(CommandHandler("fin_leagues", fin_leagues_command))
