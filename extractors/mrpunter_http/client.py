@@ -18,6 +18,8 @@ from typing import Any
 
 import httpx
 
+from core.net import proxy_for_platform
+
 from extractors.mrpunter_http.settings import MrPunterHttpSettings
 
 logger = logging.getLogger(__name__)
@@ -68,6 +70,7 @@ class MrPunterHttpClient:
             self._http = httpx.AsyncClient(
                 timeout=self.settings.timeout_seconds,
                 follow_redirects=True,
+                proxy=proxy_for_platform("mrpunter_http"),
                 limits=httpx.Limits(max_keepalive_connections=4, max_connections=8),
             )
         return self._http

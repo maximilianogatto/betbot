@@ -11,6 +11,8 @@ from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 # pyrefly: ignore [missing-import]
 import httpx
 
+from core.net import proxy_for_platform
+
 from extractors.xbet_http.settings import XBetHttpSettings
 
 logger = logging.getLogger(__name__)
@@ -137,6 +139,7 @@ class XBetHttpClient:
             self._http = httpx.AsyncClient(
                 timeout=httpx.Timeout(self.settings.timeout_seconds),
                 follow_redirects=True,
+                proxy=proxy_for_platform("1xbet_http"),
                 limits=httpx.Limits(max_keepalive_connections=4, max_connections=8),
             )
         return self._http

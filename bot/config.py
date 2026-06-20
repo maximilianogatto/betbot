@@ -74,13 +74,17 @@ def load_settings() -> Settings:
             f"No se pudo cargar el archivo .env desde la ruta: {PATH_TO_ENV}"
         )
 
-    # Optional egress proxy: route ALL the bot's HTTP traffic through it (e.g. a
-    # userspace WireGuard via `wireproxy` -> ProtonVPN) so books that block the
-    # datacenter IP become reachable. Exported as the standard proxy env BEFORE
-    # any httpx/curl_cffi client is built, so every client picks it up
-    # automatically (both honour ALL_PROXY). Ej: BOT_PROXY_URL=socks5://127.0.0.1:25344
+    # Optional egress proxy (e.g. a userspace WireGuard via `wireproxy` -> VPN) so
+    # books that block the datacenter IP become reachable.
+    #   - LEGACY (BOT_PROXY_PLATFORMS empty): export ALL_PROXY so EVERY client uses
+    #     the proxy (old all-or-nothing behaviour).
+    #   - SELECTIVE (BOT_PROXY_PLATFORMS set): do NOT export ALL_PROXY; only the
+    #     listed platforms egress through it (see core.net.proxy_for_platform).
+    #     Needed because geo-locked AR books (Betsson/BetWarrior) break through a
+    #     foreign VPN exit, while MrPunter/Solcasino need it.
     bot_proxy_url = (os.getenv("BOT_PROXY_URL") or "").strip()
-    if bot_proxy_url:
+    proxy_platforms = (os.getenv("BOT_PROXY_PLATFORMS") or "").strip()
+    if bot_proxy_url and not proxy_platforms:
         for _var in ("ALL_PROXY", "all_proxy"):
             os.environ[_var] = bot_proxy_url
 

@@ -15,6 +15,8 @@ from typing import Any
 
 import httpx
 
+from core.net import proxy_for_platform
+
 from extractors.bz_http.settings import BzHttpSettings
 
 logger = logging.getLogger(__name__)
@@ -37,6 +39,7 @@ class BzHttpClient:
             self._http = httpx.AsyncClient(
                 timeout=self.settings.timeout_seconds,
                 headers=self._headers,
+                proxy=proxy_for_platform("bz_http"),
                 limits=httpx.Limits(max_keepalive_connections=4, max_connections=8),
             )
         return self._http

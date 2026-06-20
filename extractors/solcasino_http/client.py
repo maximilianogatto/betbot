@@ -16,6 +16,8 @@ from typing import Any
 
 import httpx
 
+from core.net import proxy_for_platform
+
 from extractors.solcasino_http.settings import SolcasinoHttpSettings
 
 logger = logging.getLogger(__name__)
@@ -37,6 +39,7 @@ class SolcasinoHttpClient:
             self._http = httpx.AsyncClient(
                 timeout=self.settings.timeout_seconds,
                 follow_redirects=True,
+                proxy=proxy_for_platform("solcasino_http"),
                 limits=httpx.Limits(max_keepalive_connections=4, max_connections=8),
             )
         return self._http
