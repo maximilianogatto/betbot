@@ -301,6 +301,19 @@ class LiveWatchServiceTests(unittest.IsolatedAsyncioTestCase):
         tracking_repository_module.DB_FILE_PATH = self.old_db_path
         tracking_repository_module.DATA_DIR = self.old_data_dir
 
+    def test_recently_started_match_is_kept(self) -> None:
+        # A match that kicked off ~30 min ago is in play and must still be added
+        # (previously it was skipped just because kickoff was in the past).
+        from datetime import datetime, timedelta
+
+        from core.timezones import default_timezone
+
+        service = LiveWatchService(repository=self.repository)
+        recent = (datetime.now(default_timezone()) - timedelta(minutes=30)).strftime("%H:%M")
+        added = service.add_fixture_lines(4242, [f"{recent} Recent Home - Recent Away"])
+        self.assertEqual(len(added), 1)
+        self.assertIsNotNone(added[0].kickoff_at)
+
     async def test_live_watch_poller_matches_and_fires_alerts(self) -> None:
         service = LiveWatchService(repository=self.repository)
 
@@ -1021,15 +1034,21 @@ class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):
         service = LiveWatchService(repository=self.repository)
         chat_id = 111
 
-        past_iso = (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat()
+        finished_iso = (datetime.now(timezone.utc) - timedelta(hours=3)).isoformat()
+        in_play_iso = (datetime.now(timezone.utc) - timedelta(minutes=30)).isoformat()
         future_iso = (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat()
 
-        # 1. Past kickoff filter
-        with patch("monitors.live_watch.parse_fixture_line", return_value=(None, "Past", "Match", past_iso)):
-            added_past = service.add_fixture_lines(chat_id, ["some line"])
-            self.assertEqual(len(added_past), 0)
+        # 1. Finished match (kickoff > 2h ago) is filtered out.
+        with patch("monitors.live_watch.parse_fixture_line", return_value=(None, "Finished", "Match", finished_iso)):
+            added_finished = service.add_fixture_lines(chat_id, ["some line"])
+            self.assertEqual(len(added_finished), 0)
 
-        # 2. Future kickoff filter (should succeed)
+        # 2. Recently started match (in play) is kept — this is the fix.
+        with patch("monitors.live_watch.parse_fixture_line", return_value=(None, "InPlay", "Match", in_play_iso)):
+            added_in_play = service.add_fixture_lines(chat_id, ["some line"])
+            self.assertEqual(len(added_in_play), 1)
+
+        # 3. Future kickoff is kept.
         with patch("monitors.live_watch.parse_fixture_line", return_value=(None, "Future", "Match", future_iso)):
             added_future = service.add_fixture_lines(chat_id, ["some line"])
             self.assertEqual(len(added_future), 1)

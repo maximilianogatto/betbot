@@ -36,6 +36,10 @@ logger = logging.getLogger(__name__)
 # Per-side similarity floor and combined floor for a confident auto-match.
 SIDE_FLOOR = 0.62
 COMBINED_FLOOR = 0.70
+# A match is considered finished (and not worth adding/keeping) this long after
+# kickoff: 90' + halftime + stoppage. Kept in sync with the 2h purge grace in
+# SqliteTrackingRepository.purge_expired_live_watches.
+_MATCH_OVER_GRACE = timedelta(hours=2)
 
 
 _TEAM_TRANSLATION_MAP = {
@@ -226,15 +230,18 @@ class LiveWatchService:
                 continue
             league_hint, home, away, kickoff_at = parsed
 
-            # 1. Skip past kickoff times
+            # 1. Skip only matches that are already OVER (kickoff + full match
+            # window). A match that kicked off recently is still worth watching
+            # (it's in play). The grace matches purge_expired_live_watches so an
+            # added entry isn't immediately purged.
             if kickoff_at:
                 try:
                     ko = datetime.fromisoformat(kickoff_at)
                     if ko.tzinfo is None:
                         ko = ko.replace(tzinfo=timezone.utc)
                     now = datetime.now(timezone.utc)
-                    if ko < now:
-                        logger.info("Skipping watch entry because kickoff %s is in the past", kickoff_at)
+                    if ko < now - _MATCH_OVER_GRACE:
+                        logger.info("Skipping watch entry because match %s already finished", kickoff_at)
                         continue
                 except Exception:
                     pass
