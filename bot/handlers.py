@@ -124,6 +124,7 @@ HELP_MESSAGE = (
     "<b>⚙️ General</b>\n"
     "  /guide — guía paso a paso del flujo completo\n"
     "  /platforms — casas de odds y proveedores de stats\n"
+    "  /sportradar_token — estado/importar token de stats\n"
     "  /status — estado del bot · /ping — responde pong\n"
     "  /resources — consumo de CPU/RAM del server\n"
     "  <code>/timezone &lt;zona&gt;</code> — zona horaria del chat (def. Argentina)\n"
@@ -1127,6 +1128,124 @@ async def guide_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         return
 
     await update.message.reply_text(GUIDE_MESSAGE, parse_mode=ParseMode.HTML)
+
+
+async def sportradar_token_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle the `/sportradar_token` command.
+
+    - No args: show current token status (expiry, validity).
+    - With text arg: import a raw Sportradar token string.
+    - With a .json file attachment (caption = /sportradar_token): import full
+      session state JSON.
+    """
+
+    if update.message is None or update.effective_chat is None:
+        return
+
+    # --- File attachment (user sends .json with caption /sportradar_token) ---
+    doc = update.message.document
+    if doc is not None:
+        file_name = (doc.file_name or "").lower()
+        if not file_name.endswith(".json"):
+            await update.message.reply_text(
+                "⚠️ Solo se acepta un archivo <code>.json</code> de session state.",
+                parse_mode=ParseMode.HTML,
+            )
+            return
+        try:
+            tg_file = await doc.get_file()
+            raw_bytes = await tg_file.download_as_bytearray()
+            json_text = raw_bytes.decode("utf-8")
+        except Exception as exc:
+            await update.message.reply_text(f"❌ Error al descargar el archivo: {exc}")
+            return
+        provider = _get_sportradar_provider(context)
+        if provider is None:
+            await update.message.reply_text("❌ Sportradar no está registrado como provider.")
+            return
+        result = await asyncio.to_thread(provider.import_session_json, json_text)
+        if result.get("ok"):
+            hours = round(result["seconds_left"] / 3600, 1) if result.get("seconds_left") else "?"
+            await update.message.reply_text(
+                f"✅ <b>Session state importado</b>\n"
+                f"Expira: <code>{result.get('expires_at_utc', '?')}</code>\n"
+                f"Quedan ~{hours}h",
+                parse_mode=ParseMode.HTML,
+            )
+        else:
+            await update.message.reply_text(f"❌ {result.get('error', 'Error desconocido')}")
+        return
+
+    # --- Text arg: raw token string ---
+    args_text = " ".join(context.args) if context.args else ""
+    if args_text.strip():
+        provider = _get_sportradar_provider(context)
+        if provider is None:
+            await update.message.reply_text("❌ Sportradar no está registrado como provider.")
+            return
+        result = await asyncio.to_thread(provider.import_token_string, args_text)
+        if result.get("ok"):
+            hours = round(result["seconds_left"] / 3600, 1) if result.get("seconds_left") else "?"
+            await update.message.reply_text(
+                f"✅ <b>Token importado</b>\n"
+                f"Expira: <code>{result.get('expires_at_utc', '?')}</code>\n"
+                f"Quedan ~{hours}h",
+                parse_mode=ParseMode.HTML,
+            )
+        else:
+            await update.message.reply_text(f"❌ {result.get('error', 'Error desconocido')}")
+        return
+
+    # --- No args: show status ---
+    provider = _get_sportradar_provider(context)
+    if provider is None:
+        await update.message.reply_text("❌ Sportradar no está registrado como provider.")
+        return
+    status = await asyncio.to_thread(provider.get_token_status)
+    if not status.get("has_token"):
+        await update.message.reply_text(
+            "🔑 <b>Sin token de Sportradar</b>\n\n"
+            "Generá el token en tu PC:\n"
+            "<code>python -m stats_providers.sportradar_http.engine.session_manager --headed --seconds 8</code>\n\n"
+            "Después pegá el token:\n"
+            "<code>/sportradar_token &lt;token&gt;</code>\n\n"
+            "O subí el <code>.json</code> como archivo.",
+            parse_mode=ParseMode.HTML,
+        )
+        return
+    emoji = "✅" if status.get("usable") else "⚠️"
+    state_label = "vigente" if status.get("usable") else "vencido"
+    hours = status.get("hours_left", "?")
+    replay_label = " (replay-only)" if status.get("replay_only") else ""
+    await update.message.reply_text(
+        f"{emoji} <b>Token Sportradar{replay_label}</b>\n"
+        f"Estado: <b>{state_label}</b>\n"
+        f"Expira: <code>{status.get('expires_at_utc', '?')}</code>\n"
+        f"Quedan: ~{hours}h\n\n"
+        "Renovar: <code>/sportradar_token &lt;token&gt;</code>",
+        parse_mode=ParseMode.HTML,
+    )
+
+
+def _get_sportradar_provider(context: ContextTypes.DEFAULT_TYPE):
+    """Resolve the Sportradar BotReadyProvider from the stats service."""
+
+    from stats_providers.sportradar_http.engine.bot_ready.provider import SportradarBotReadyProvider
+
+    stats_service = context.application.bot_data.get("stats_service")
+    if stats_service is None:
+        return None
+    for provider in getattr(stats_service, "_providers", {}).values():
+        runtime = getattr(provider, "_runtime", None)
+        if isinstance(runtime, SportradarBotReadyProvider):
+            return runtime
+    # Fallback: iterate the provider registry directly.
+    from core.stats_provider_base import stats_provider_registry
+    for provider in stats_provider_registry.providers:
+        runtime = getattr(provider, "_runtime", None)
+        if isinstance(runtime, SportradarBotReadyProvider):
+            return runtime
+    return None
 
 
 async def apply_chat_timezone_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -2956,7 +3075,7 @@ async def event_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         return
 
     active_matches = context.user_data.get(MATCHES_ACTIVE_CONTEXT_KEY)
-    tracked_subscription = context.user_data.get(MATCHES_SELECTED_TRACK_CONTEXT_KEY)
+    selected_league = context.user_data.get(MATCHES_SELECTED_TRACK_CONTEXT_KEY)
 
     if not isinstance(active_matches, list) or not active_matches:
         await update.message.reply_text(
@@ -2965,13 +3084,15 @@ async def event_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         )
         return
 
-    if not isinstance(tracked_subscription, TrackedCompetitionSubscription):
+    if not isinstance(selected_league, dict) or "id" not in selected_league:
         await update.message.reply_text(
             "No tengo una liga seleccionada recientemente.\n\n"
             "Usá /matches, elegí una liga y después /event_url <n>."
         )
         return
 
+    # `/matches` numbers the list as "1 - Ver todos" then one entry per grouped
+    # match, so the displayed number N maps to the group at active_matches[N-2].
     selected_index = _parse_selection_number(context.args[0], len(active_matches) + 1)
     if selected_index is None:
         await update.message.reply_text(EVENT_URL_USAGE_MESSAGE, parse_mode=ParseMode.HTML)
@@ -2984,14 +3105,15 @@ async def event_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         )
         return
 
-    tracking_service = get_tracking_service(context)
-    result = tracking_service.build_event_url_message(
-        tracked_subscription,
-        active_matches,
-        selected_index,
-    )
+    group = active_matches[selected_index - 1]
+    from bot.alerts import build_grouped_event_url_message
 
-    await _reply_text_chunks(update.message, result.message, parse_mode=ParseMode.HTML)
+    message = build_grouped_event_url_message(group)
+    if not message:
+        await update.message.reply_text("No encontré URLs para ese partido.")
+        return
+
+    await _reply_text_chunks(update.message, message, parse_mode=ParseMode.HTML)
 
 
 def _build_unified_league_selection_message(prompt: str, leagues: list[dict[str, Any]]) -> str:
@@ -3579,6 +3701,14 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("help_stats", help_stats_command))
     application.add_handler(CommandHandler("help_leagues", help_leagues_command))
     application.add_handler(CommandHandler("guide", guide_command))
+    application.add_handler(CommandHandler("sportradar_token", sportradar_token_command))
+    # Also handle .json file uploads with /sportradar_token as the caption.
+    application.add_handler(
+        MessageHandler(
+            filters.Document.FileExtension("json") & filters.CaptionRegex(re.compile(r"^/sportradar_token", re.IGNORECASE)),
+            sportradar_token_command,
+        )
+    )
     application.add_handler(CommandHandler("platforms", platforms_command))
     
     # Finnish Football Leagues and stats commands

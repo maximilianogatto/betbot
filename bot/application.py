@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+
 from telegram.ext import Application, ApplicationBuilder
 
 from bot.config import Settings
@@ -84,9 +86,12 @@ def create_application(settings: Settings) -> Application:
         )
         # Mint/refresh the Sportradar token at startup and well before expiry so
         # the token-bootstrap browser never opens during a user-facing /stats.
+        # In replay-only mode (no Chrome) this is disabled; the token comes from
+        # /sportradar_token in Telegram.
+        replay_only = os.getenv("SPORTRADAR_REPLAY_ONLY", "false").strip().lower() in {"true", "1", "yes"}
         await start_stats_session_refresh(
             application,
-            enabled=True,
+            enabled=not replay_only,
             interval_seconds=1800,
             min_ttl_seconds=5400.0,
         )
@@ -94,7 +99,7 @@ def create_application(settings: Settings) -> Application:
         # tracked matches) into the cache so /stats never hits the provider on demand.
         await start_stats_prefetch(
             application,
-            enabled=settings.stats_prefetch_enabled,
+            enabled=settings.stats_prefetch_enabled and not replay_only,
             interval_seconds=settings.stats_prefetch_interval_seconds,
             ttl_seconds=settings.stats_prefetch_ttl_seconds,
         )
