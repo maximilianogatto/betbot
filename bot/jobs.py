@@ -16,6 +16,7 @@ from monitoring import (
     format_monitor_log_block,
     get_metric_warnings,
     get_system_metrics,
+    kill_chromium_child_processes,
 )
 from monitors.live_watch import LiveWatchService, parse_sheet_fixture_lines, render_live_hit
 from monitors.stats import StatsService
@@ -30,6 +31,7 @@ STATS_PREFETCH_TASK_KEY = "stats_prefetch_task"
 LIVE_WATCH_TASK_KEY = "live_watch_task"
 SHEET_IMPORT_TASK_KEY = "sheet_import_task"
 PEAK_DIGEST_TASK_KEY = "peak_digest_task"
+DB_PRUNING_TASK_KEY = "db_pruning_task"
 TRACKING_SERVICE_KEY = "tracking_service"
 STATS_SERVICE_KEY = "stats_service"
 LIVE_WATCH_SERVICE_KEY = "live_watch_service"
@@ -608,6 +610,17 @@ async def _resource_monitor_loop(
             if log_to_file:
                 append_monitor_log(monitor_block)
 
+            # P0.2 Chromium RAM recovery
+            chromium_ram_mb = metrics.get("chromium_child_processes_ram_mb", 0.0)
+            if chromium_ram_mb > chromium_ram_alert_mb:
+                logger.warning(
+                    "[MONITOR] Memory warning threshold breached: %.1f MB > %.1f MB. Initiating Chromium RAM recovery...",
+                    chromium_ram_mb,
+                    chromium_ram_alert_mb,
+                )
+                killed = kill_chromium_child_processes()
+                logger.warning("[MONITOR] Chromium RAM recovery terminated %d process(es).", killed)
+
             for warning in get_metric_warnings(
                 metrics,
                 chromium_ram_warning_mb=chromium_ram_alert_mb,
@@ -618,4 +631,63 @@ async def _resource_monitor_loop(
         except Exception:
             logger.exception("Unhandled error during resource monitor cycle.")
 
+        await asyncio.sleep(interval_seconds)
+
+
+async def start_db_pruning(
+    application: Application,
+    *,
+    enabled: bool = True,
+    interval_seconds: int = 86400,  # 24 hours
+    days_threshold: int = 14,
+) -> None:
+    """Start the background database pruning loop."""
+    if not enabled:
+        logger.info("Database pruning is disabled.")
+        return
+
+    existing = application.bot_data.get(DB_PRUNING_TASK_KEY)
+    if isinstance(existing, asyncio.Task) and not existing.done():
+        return
+
+    task = asyncio.create_task(
+        _db_pruning_loop(application, interval_seconds=interval_seconds, days_threshold=days_threshold),
+        name="db-pruning-loop",
+    )
+    application.bot_data[DB_PRUNING_TASK_KEY] = task
+    logger.info("Database pruning loop started interval_seconds=%s days_threshold=%s.", interval_seconds, days_threshold)
+
+
+async def stop_db_pruning(application: Application) -> None:
+    """Stop the background database pruning loop if running."""
+    task = application.bot_data.pop(DB_PRUNING_TASK_KEY, None)
+    if isinstance(task, asyncio.Task):
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            logger.info("Database pruning loop stopped.")
+
+
+async def _db_pruning_loop(
+    application: Application,
+    *,
+    interval_seconds: int,
+    days_threshold: int,
+) -> None:
+    """Prune database old records periodically."""
+    from storage.tracking_repository import tracking_repository
+
+    while True:
+        try:
+            logger.info("Starting periodic database pruning cycle...")
+            stats = await asyncio.to_thread(
+                tracking_repository.prune_old_data,
+                days_threshold=days_threshold
+            )
+            logger.info("Database pruning finished: %s", stats)
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            logger.exception("Unhandled error during database pruning cycle.")
         await asyncio.sleep(interval_seconds)

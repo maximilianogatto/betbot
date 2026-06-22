@@ -3779,6 +3779,58 @@ class SqliteTrackingRepository:
         with _connect() as connection:
             _sanitize_tracking_state(connection)
 
+    def prune_old_data(self, days_threshold: int = 14) -> dict[str, int]:
+        """Prune inactive events, old sent alerts, expired cache, and execute VACUUM.
+
+        Returns a dictionary with the counts of deleted rows per table.
+        """
+        now = datetime.now(timezone.utc)
+        cutoff_iso = (now - timedelta(days=days_threshold)).isoformat()
+        now_iso = now.isoformat()
+
+        stats = {}
+        with _connect() as conn:
+            # 1. Delete inactive active_events older than threshold.
+            cursor = conn.execute(
+                "DELETE FROM active_events WHERE is_active = 0 AND last_seen_at < ?",
+                (cutoff_iso,),
+            )
+            stats["active_events_pruned"] = cursor.rowcount
+
+            # 2. Delete sent_alerts older than threshold.
+            cursor = conn.execute(
+                "DELETE FROM sent_alerts WHERE sent_at < ?",
+                (cutoff_iso,),
+            )
+            stats["sent_alerts_pruned"] = cursor.rowcount
+
+            # 3. Delete expired stats payload caches.
+            cursor = conn.execute(
+                "DELETE FROM stats_payload_cache WHERE expires_at < ?",
+                (now_iso,),
+            )
+            stats["expired_cache_pruned"] = cursor.rowcount
+
+            # 4. Clean up expired live watches.
+            cursor = conn.execute(
+                "DELETE FROM live_watch_entries WHERE created_at < ?",
+                (cutoff_iso,),
+            )
+            stats["expired_live_watches_pruned"] = cursor.rowcount
+
+        # Run VACUUM outside the transaction block
+        try:
+            conn = sqlite3.connect(DB_FILE_PATH, timeout=30)
+            conn.isolation_level = None  # autocommit mode
+            conn.execute("VACUUM")
+            conn.close()
+            stats["vacuum_executed"] = 1
+        except Exception as e:
+            logger.exception("Failed to execute VACUUM: %s", e)
+            stats["vacuum_executed"] = 0
+
+        return stats
+
 @contextmanager
 def _connect():
     """Open a repository connection and always close it after use."""

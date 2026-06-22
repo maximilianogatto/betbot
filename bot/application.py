@@ -17,6 +17,7 @@ from bot.jobs import (
     start_stats_session_refresh,
     start_tracking_monitor,
     start_resource_monitor,
+    start_db_pruning,
     stop_live_watch_monitor,
     stop_peak_digest,
     stop_sheet_import_monitor,
@@ -24,6 +25,7 @@ from bot.jobs import (
     stop_stats_session_refresh,
     stop_tracking_monitor,
     stop_resource_monitor,
+    stop_db_pruning,
 )
 from core.registry import extractor_registry
 from core.stats_provider_base import stats_provider_registry
@@ -84,6 +86,13 @@ def create_application(settings: Settings) -> Application:
             log_to_file=settings.monitor_log_to_file,
             chromium_ram_alert_mb=settings.monitor_chromium_ram_alert_mb,
         )
+        # Daily DB pruning and vacuum
+        await start_db_pruning(
+            application,
+            enabled=True,
+            interval_seconds=86400,  # 24 hours
+            days_threshold=14,
+        )
         # Mint/refresh the Sportradar token at startup and well before expiry so
         # the token-bootstrap browser never opens during a user-facing /stats.
         # In replay-only mode (no Chrome) this is disabled; the token comes from
@@ -131,6 +140,7 @@ def create_application(settings: Settings) -> Application:
         await stop_live_watch_monitor(application)
         await stop_stats_prefetch(application)
         await stop_stats_session_refresh(application)
+        await stop_db_pruning(application)
         await stop_resource_monitor(application)
         await stop_tracking_monitor(application)
         for extractor in reversed(registered_extractors):
