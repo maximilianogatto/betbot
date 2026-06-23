@@ -459,7 +459,7 @@ class TrackingService:
         """Process a bulk track list of leagues, searching and tracking matches across all platforms."""
         import re
         import html
-        from monitors.stats import _league_name_similarity
+        from core.league_naming import league_name_similarity as _league_name_similarity
 
         # 1. Parse the text block
         lines = leagues_text.strip().split("\n")
@@ -1648,15 +1648,24 @@ class TrackingService:
 
                     if isinstance(extraction_or_error, Exception):
                         failed_leagues.append(tracked_league.league_name)
-                        logger.error(
-                            "Failed to refresh tracked competition id=%s, continuing with remaining competitions.",
-                            tracked_league.id,
-                            exc_info=(
-                                type(extraction_or_error),
-                                extraction_or_error,
-                                extraction_or_error.__traceback__,
-                            ),
-                        )
+                        import httpx
+                        if isinstance(extraction_or_error, httpx.HTTPStatusError) and extraction_or_error.response.status_code in (403, 503):
+                            logger.warning(
+                                "Failed to refresh tracked competition id=%s due to HTTP %d (WAF/Cloud IP Block) platform=%s. Running from a cloud provider (GCP/AWS) often causes this.",
+                                tracked_league.id,
+                                extraction_or_error.response.status_code,
+                                tracked_league.platform,
+                            )
+                        else:
+                            logger.error(
+                                "Failed to refresh tracked competition id=%s, continuing with remaining competitions.",
+                                tracked_league.id,
+                                exc_info=(
+                                    type(extraction_or_error),
+                                    extraction_or_error,
+                                    extraction_or_error.__traceback__,
+                                ),
+                            )
                         continue
 
                     if extraction_or_error.is_empty:

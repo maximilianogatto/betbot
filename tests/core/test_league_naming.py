@@ -85,3 +85,17 @@ class LeagueTraitsTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+from core.league_naming import league_name_similarity, team_name_similarity
+
+class FuzzySimilarityTests(unittest.TestCase):
+    def test_league_name_similarity(self) -> None:
+        self.assertGreater(league_name_similarity("Alemania Primera", "Germany Premier"), 0.8)
+        self.assertGreater(league_name_similarity("Copa de Suecia", "Sweden Cup"), 0.8)
+        self.assertEqual(league_name_similarity("", "Sweden Cup"), 0.0)
+
+    def test_team_name_similarity(self) -> None:
+        self.assertGreater(team_name_similarity("Fenix Femenino", "Fenix Women"), 0.8)
+        self.assertGreater(team_name_similarity("Boca Juniors SC", "Boca Juniors"), 0.8)
+        self.assertEqual(team_name_similarity("Boca Juniors", ""), 0.0)

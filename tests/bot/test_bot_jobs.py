@@ -20,7 +20,7 @@ class TrackingMonitorLoopTests(unittest.IsolatedAsyncioTestCase):
             bot=object(),
         )
 
-        with patch("bot.jobs.asyncio.sleep", new=AsyncMock(side_effect=asyncio.CancelledError)):
+        with patch("bot.jobs.legacy.asyncio.sleep", new=AsyncMock(side_effect=asyncio.CancelledError)):
             with self.assertRaises(asyncio.CancelledError):
                 await _tracking_monitor_loop(application, interval_seconds=120)
 
@@ -50,7 +50,7 @@ class TrackingMonitorLoopTests(unittest.IsolatedAsyncioTestCase):
 
         with (
             self.assertLogs("bot.jobs", level="INFO") as captured_logs,
-            patch("bot.jobs.asyncio.sleep", new=AsyncMock(side_effect=asyncio.CancelledError)),
+            patch("bot.jobs.legacy.asyncio.sleep", new=AsyncMock(side_effect=asyncio.CancelledError)),
         ):
             with self.assertRaises(asyncio.CancelledError):
                 await _tracking_monitor_loop(

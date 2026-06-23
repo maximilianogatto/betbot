@@ -8,9 +8,9 @@ from bot.jobs import _resource_monitor_loop
 
 
 class ChromiumMemoryRecoveryTests(unittest.IsolatedAsyncioTestCase):
-    @patch("bot.jobs.get_system_metrics")
-    @patch("bot.jobs.kill_chromium_child_processes")
-    @patch("bot.jobs.asyncio.sleep")
+    @patch("bot.jobs.legacy.get_system_metrics")
+    @patch("bot.jobs.legacy.kill_chromium_child_processes")
+    @patch("bot.jobs.legacy.asyncio.sleep")
     async def test_chromium_ram_recovery_triggers_when_threshold_breached(
         self, mock_sleep, mock_kill, mock_metrics
     ) -> None:
@@ -40,9 +40,9 @@ class ChromiumMemoryRecoveryTests(unittest.IsolatedAsyncioTestCase):
         # Verify that kill_chromium_child_processes was called once
         mock_kill.assert_called_once()
 
-    @patch("bot.jobs.get_system_metrics")
-    @patch("bot.jobs.kill_chromium_child_processes")
-    @patch("bot.jobs.asyncio.sleep")
+    @patch("bot.jobs.legacy.get_system_metrics")
+    @patch("bot.jobs.legacy.kill_chromium_child_processes")
+    @patch("bot.jobs.legacy.asyncio.sleep")
     async def test_chromium_ram_recovery_does_not_trigger_when_below_threshold(
         self, mock_sleep, mock_kill, mock_metrics
     ) -> None:

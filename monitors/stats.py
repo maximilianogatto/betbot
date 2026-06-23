@@ -24,6 +24,7 @@ from core.stats_models import (
     StatsProviderDescriptor,
 )
 from core.stats_provider_base import StatsProviderRegistry, stats_provider_registry
+from core.league_naming import league_name_similarity
 from monitors.models import CommandResult
 from storage.tracking_repository import (
     ActiveEventRecord,
@@ -153,7 +154,7 @@ class StatsService:
         if odds_league_name:
             options = sorted(
                 options,
-                key=lambda option: _league_name_similarity(odds_league_name, option.league_name),
+                key=lambda option: league_name_similarity(odds_league_name, option.league_name),
                 reverse=True,
             )
 
@@ -823,70 +824,7 @@ class StatsService:
         )
 
 
-def _league_name_similarity(left: str, right: str) -> float:
-    """Loose similarity between two league names, ignoring case, prepositions, and translating Spanish terms to English."""
 
-    import re
-    import unicodedata
-    from difflib import SequenceMatcher
-
-    translation_map = {
-        "alemania": "germany",
-        "espana": "spain",
-        "inglaterra": "england",
-        "italia": "italy",
-        "francia": "france",
-        "occidental": "western",
-        "oriental": "eastern",
-        "sur": "south",
-        "norte": "north",
-        "central": "central",
-        "copa": "cup",
-        "liga": "league",
-        "campeonato": "championship",
-        "division": "division",
-        "primera": "premier",
-        "segunda": "second",
-        "tercera": "third",
-        "sub": "u",
-        "juvenil": "youth",
-        "reserva": "reserves",
-        "reservas": "reserves",
-        "femenino": "women",
-        "femenil": "women",
-        "mujeres": "women",
-        "fem": "women",
-        "nueva": "new",
-        "gales": "wales",
-        "australia": "australia",
-    }
-
-    stop_words = {"de", "la", "el", "del", "y", "a", "of", "and", "the", "in", "for", "fc", "club"}
-
-    def norm(value: str) -> str:
-        # Strip accents
-        folded = "".join(c for c in unicodedata.normalize('NFD', value) if unicodedata.category(c) != 'Mn')
-        folded = folded.lower()
-        # Normalize sub-XX or u-XX to uXX
-        folded = re.sub(r"\b(sub|u)-?(\d+)\b", r"u\2", folded)
-        cleaned = re.sub(r"[^a-z0-9]+", " ", folded).strip()
-        tokens = cleaned.split()
-        translated = [
-            translation_map.get(t, t)
-            for t in tokens
-            if t not in stop_words
-        ]
-        return " ".join(translated)
-
-    left_norm = norm(left)
-    right_norm = norm(right)
-    ratio = SequenceMatcher(a=left_norm, b=right_norm).ratio()
-    left_tokens = set(left_norm.split())
-    right_tokens = set(right_norm.split())
-    if not left_tokens or not right_tokens:
-        return ratio
-    overlap = len(left_tokens & right_tokens) / min(len(left_tokens), len(right_tokens))
-    return max(ratio, overlap)
 
 
 def _overview_header(overview: dict[str, Any]) -> str:

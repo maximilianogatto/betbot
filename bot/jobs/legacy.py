@@ -1,8 +1,4 @@
-"""Background monitoring loops for the bot runtime.
-
-The project intentionally uses a small async loop instead of a heavier
-scheduler so the runtime stays easy to understand and easy to change.
-"""
+"""Legacy background monitoring loops and start/stop wrappers for test compatibility."""
 
 from __future__ import annotations
 
@@ -44,7 +40,6 @@ async def start_live_watch_monitor(
     interval_seconds: int = 30,
 ) -> None:
     """Start the live-watch poller loop (detect watched fixtures going in-play)."""
-
     if not enabled:
         logger.info("Live-watch monitor is disabled.")
         return
@@ -63,7 +58,6 @@ async def start_live_watch_monitor(
 
 async def stop_live_watch_monitor(application: Application) -> None:
     """Stop the live-watch poller loop if running."""
-
     task = application.bot_data.get(LIVE_WATCH_TASK_KEY)
     if not isinstance(task, asyncio.Task):
         return
@@ -82,11 +76,7 @@ async def start_sheet_import_monitor(
     url: str,
     interval_seconds: int = 900,
 ) -> None:
-    """Auto-import the shared Google Sheet into one chat's watchlist on change.
-
-    Disabled unless a target chat id is configured (LIVE_WATCH_SHEET_CHAT_ID).
-    """
-
+    """Auto-import the shared Google Sheet into one chat's watchlist on change."""
     if not chat_id:
         logger.info("Sheet auto-import disabled (no LIVE_WATCH_SHEET_CHAT_ID).")
         return
@@ -119,7 +109,6 @@ async def _sheet_import_loop(
     application: Application, *, chat_id: int, url: str, interval_seconds: int
 ) -> None:
     """Poll the sheet; on content change, import new fixtures and notify the chat."""
-
     import hashlib
     import httpx
 
@@ -164,7 +153,6 @@ async def _sheet_import_loop(
 
 async def _live_watch_loop(application: Application, *, interval_seconds: int) -> None:
     """Poll live feeds and alert each chat when a watched fixture goes in-play."""
-
     service = application.bot_data.get(LIVE_WATCH_SERVICE_KEY)
     if not isinstance(service, LiveWatchService):
         logger.error("LiveWatchService is not configured; live-watch loop will not run.")
@@ -196,9 +184,7 @@ async def _live_watch_loop(application: Application, *, interval_seconds: int) -
 
 async def start_tracking_monitor(application: Application, interval_seconds: int) -> None:
     """Start the background tracking monitor loop once."""
-
     existing_task = application.bot_data.get(TRACKING_MONITOR_TASK_KEY)
-
     if isinstance(existing_task, asyncio.Task) and not existing_task.done():
         return
 
@@ -211,7 +197,6 @@ async def start_tracking_monitor(application: Application, interval_seconds: int
         name="tracking-monitor-loop",
     )
     application.bot_data[TRACKING_MONITOR_TASK_KEY] = task
-
     logger.info(
         "Tracking monitor loop started with interval_seconds=%s initial_delay_seconds=%s.",
         interval_seconds,
@@ -221,19 +206,14 @@ async def start_tracking_monitor(application: Application, interval_seconds: int
 
 async def stop_tracking_monitor(application: Application) -> None:
     """Stop the background tracking monitor loop if it is running."""
-
     task = application.bot_data.get(TRACKING_MONITOR_TASK_KEY)
-
     if not isinstance(task, asyncio.Task):
         return
-
     task.cancel()
-
     try:
         await task
     except asyncio.CancelledError:
         logger.info("Tracking monitor loop stopped.")
-
     application.bot_data.pop(TRACKING_MONITOR_TASK_KEY, None)
 
 
@@ -246,13 +226,11 @@ async def start_resource_monitor(
     chromium_ram_alert_mb: float,
 ) -> None:
     """Start the periodic resource monitor if it is enabled."""
-
     if not enabled:
         logger.info("Resource monitoring is disabled.")
         return
 
     existing_task = application.bot_data.get(RESOURCE_MONITOR_TASK_KEY)
-
     if isinstance(existing_task, asyncio.Task) and not existing_task.done():
         return
 
@@ -265,7 +243,6 @@ async def start_resource_monitor(
         name="resource-monitor-loop",
     )
     application.bot_data[RESOURCE_MONITOR_TASK_KEY] = task
-
     logger.info(
         "Resource monitor loop started with interval_seconds=%s log_to_file=%s chromium_ram_alert_mb=%s.",
         interval_seconds,
@@ -276,19 +253,14 @@ async def start_resource_monitor(
 
 async def stop_resource_monitor(application: Application) -> None:
     """Stop the periodic resource monitor if it is running."""
-
     task = application.bot_data.get(RESOURCE_MONITOR_TASK_KEY)
-
     if not isinstance(task, asyncio.Task):
         return
-
     task.cancel()
-
     try:
         await task
     except asyncio.CancelledError:
         logger.info("Resource monitor loop stopped.")
-
     application.bot_data.pop(RESOURCE_MONITOR_TASK_KEY, None)
 
 
@@ -300,7 +272,6 @@ async def start_stats_session_refresh(
     min_ttl_seconds: float,
 ) -> None:
     """Start the background Sportradar token pre-refresh loop if enabled."""
-
     if not enabled:
         logger.info("Stats session pre-refresh is disabled.")
         return
@@ -327,7 +298,6 @@ async def start_stats_session_refresh(
 
 async def stop_stats_session_refresh(application: Application) -> None:
     """Stop the background stats session pre-refresh loop if running."""
-
     task = application.bot_data.get(STATS_SESSION_TASK_KEY)
     if not isinstance(task, asyncio.Task):
         return
@@ -348,7 +318,6 @@ async def start_stats_prefetch(
     initial_delay_seconds: float = 90.0,
 ) -> None:
     """Start the daily stats prefetch loop (warm tracked leagues) if enabled."""
-
     if not enabled:
         logger.info("Stats daily prefetch is disabled.")
         return
@@ -376,7 +345,6 @@ async def start_stats_prefetch(
 
 async def stop_stats_prefetch(application: Application) -> None:
     """Stop the daily stats prefetch loop if running."""
-
     task = application.bot_data.get(STATS_PREFETCH_TASK_KEY)
     if not isinstance(task, asyncio.Task):
         return
@@ -396,7 +364,6 @@ async def _stats_prefetch_loop(
     initial_delay_seconds: float,
 ) -> None:
     """Warm all stats-linked tracked leagues into the cache once per interval."""
-
     stats_service = application.bot_data.get(STATS_SERVICE_KEY)
     if not isinstance(stats_service, StatsService):
         logger.error("StatsService is not configured; daily prefetch will not run.")
@@ -408,8 +375,6 @@ async def _stats_prefetch_loop(
     while True:
         try:
             summary = await stats_service.warm_tracked_leagues(ttl_seconds=ttl_seconds)
-            # Reclaim space: drop cached stats payloads past their TTL (otherwise
-            # they're only skipped on read and accumulate forever).
             from storage.tracking_repository import tracking_repository
 
             purged = await asyncio.to_thread(tracking_repository.purge_expired_stats_payloads)
@@ -435,7 +400,6 @@ async def start_peak_digest(
     hour_arg: int,
 ) -> None:
     """Start the daily special-league peak digest push loop if enabled."""
-
     if not enabled:
         logger.info("Peak digest push is disabled.")
         return
@@ -454,7 +418,6 @@ async def start_peak_digest(
 
 async def stop_peak_digest(application: Application) -> None:
     """Stop the daily peak digest push loop if running."""
-
     task = application.bot_data.get(PEAK_DIGEST_TASK_KEY)
     if not isinstance(task, asyncio.Task):
         return
@@ -467,8 +430,7 @@ async def stop_peak_digest(application: Application) -> None:
 
 
 def _seconds_until_arg_hour(hour_arg: int) -> float:
-    """Seconds from now until the next occurrence of ``hour_arg`` in ARG time."""
-
+    """Seconds from now until the next occurrence of hour_arg in ARG time."""
     from datetime import datetime, timedelta
     from zoneinfo import ZoneInfo
 
@@ -482,7 +444,6 @@ def _seconds_until_arg_hour(hour_arg: int) -> float:
 
 async def _peak_digest_loop(application: Application, *, hour_arg: int) -> None:
     """Push the special-league peak digest to subscribed chats once per day."""
-
     from monitors.special_peak import build_peak_scores, render_peak_digest
     from storage.tracking_repository import tracking_repository
 
@@ -514,7 +475,6 @@ async def _peak_digest_loop(application: Application, *, hour_arg: int) -> None:
 
             for chat_id in chat_ids:
                 try:
-                    # Render each chat's digest in its own display timezone.
                     with use_timezone(resolve_chat_timezone(chat_id)):
                         digest = render_peak_digest(scores)
                     await application.bot.send_message(
@@ -535,7 +495,6 @@ async def _stats_session_refresh_loop(
     min_ttl_seconds: float,
 ) -> None:
     """Keep the stats provider token fresh so it is never minted during /stats."""
-
     stats_service = application.bot_data.get(STATS_SERVICE_KEY)
     if not isinstance(stats_service, StatsService):
         logger.error("StatsService is not configured; session pre-refresh will not run.")
@@ -543,7 +502,6 @@ async def _stats_session_refresh_loop(
 
     while True:
         try:
-            # Mint/refresh at startup and well before expiry, off the request path.
             await stats_service.ensure_provider_sessions_fresh(min_ttl_seconds=min_ttl_seconds)
         except asyncio.CancelledError:
             raise
@@ -559,9 +517,7 @@ async def _tracking_monitor_loop(
     initial_delay_seconds: float | None = None,
 ) -> None:
     """Run the periodic scrape and notification cycle forever."""
-
     tracking_service = application.bot_data.get(TRACKING_SERVICE_KEY)
-
     if not isinstance(tracking_service, TrackingService):
         logger.error("TrackingService is not configured; monitor loop will not run.")
         return
@@ -593,6 +549,7 @@ async def _tracking_monitor_loop(
 
         await asyncio.sleep(interval_seconds)
 
+
 async def _resource_monitor_loop(
     *,
     interval_seconds: int,
@@ -600,7 +557,6 @@ async def _resource_monitor_loop(
     chromium_ram_alert_mb: float,
 ) -> None:
     """Log runtime resource metrics in the background forever."""
-
     while True:
         try:
             metrics = get_system_metrics()
@@ -610,7 +566,6 @@ async def _resource_monitor_loop(
             if log_to_file:
                 append_monitor_log(monitor_block)
 
-            # P0.2 Chromium RAM recovery
             chromium_ram_mb = metrics.get("chromium_child_processes_ram_mb", 0.0)
             if chromium_ram_mb > chromium_ram_alert_mb:
                 logger.warning(
@@ -638,7 +593,7 @@ async def start_db_pruning(
     application: Application,
     *,
     enabled: bool = True,
-    interval_seconds: int = 86400,  # 24 hours
+    interval_seconds: int = 86400,
     days_threshold: int = 14,
 ) -> None:
     """Start the background database pruning loop."""

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import asyncio
 from datetime import date
-from difflib import SequenceMatcher
 import logging
 import re
 import unicodedata
@@ -2007,9 +2006,15 @@ async def track_league_command(update: Update, context: ContextTypes.DEFAULT_TYP
         return ConversationHandler.END
 
     context.user_data[TRACK_LEAGUE_PLATFORMS_CONTEXT_KEY] = platforms
+    
+    keyboard = []
+    for i, p in enumerate(platforms):
+        keyboard.append([InlineKeyboardButton(p.display_name, callback_data=f"tl_platform:{i}")])
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
     await update.message.reply_text(
         _build_discovery_platform_selection_message(platforms),
-        reply_markup=_build_numeric_keyboard(len(platforms), "Elegí la plataforma"),
+        reply_markup=reply_markup,
     )
     return SELECT_PLATFORM_FOR_TRACK_LEAGUE
 
@@ -2020,29 +2025,42 @@ async def track_league_select_platform(
 ) -> int:
     """Handle platform selection for `/track_league`."""
 
-    if update.message is None:
+    query = update.callback_query
+    msg_obj = query.message if query else update.message
+    if msg_obj is None:
         return ConversationHandler.END
 
     platforms = context.user_data.get(TRACK_LEAGUE_PLATFORMS_CONTEXT_KEY)
     if not isinstance(platforms, list) or not platforms:
-        await update.message.reply_text(
+        await msg_obj.reply_text(
             "No encontré la selección de plataformas. Probá de nuevo con /track_league.",
             reply_markup=ReplyKeyboardRemove(),
         )
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    selected_index = _parse_selection_number(update.message.text, len(platforms))
+    selected_index = None
+    if query is not None:
+        await query.answer()
+        data = query.data
+        if data.startswith("tl_platform:"):
+            selected_index = int(data.split(":")[1])
+    else:
+        selected_index = _parse_selection_number(update.message.text, len(platforms))
+
     if selected_index is None:
-        await update.message.reply_text(
-            "Elegí un número válido de plataforma.",
-            reply_markup=_build_numeric_keyboard(len(platforms), "Elegí la plataforma"),
+        keyboard = []
+        for i, p in enumerate(platforms):
+            keyboard.append([InlineKeyboardButton(p.display_name, callback_data=f"tl_platform:{i}")])
+        await msg_obj.reply_text(
+            "Elegí un número o botón válido de plataforma.",
+            reply_markup=InlineKeyboardMarkup(keyboard),
         )
         return SELECT_PLATFORM_FOR_TRACK_LEAGUE
 
     selected_platform = platforms[selected_index]
     if not isinstance(selected_platform, PlatformDescriptor):
-        await update.message.reply_text(
+        await msg_obj.reply_text(
             "La plataforma seleccionada no es válida. Probá de nuevo con /track_league.",
             reply_markup=ReplyKeyboardRemove(),
         )
@@ -2050,7 +2068,7 @@ async def track_league_select_platform(
         return ConversationHandler.END
 
     context.user_data[TRACK_LEAGUE_SELECTED_PLATFORM_CONTEXT_KEY] = selected_platform
-    await update.message.reply_text(
+    await msg_obj.reply_text(
         (
             f"Plataforma elegida: {selected_platform.display_name}\n\n"
             "Escribí el país para buscar ligas.\n"
@@ -2114,9 +2132,15 @@ async def track_league_enter_country(
         return ENTER_COUNTRY_FOR_TRACK_LEAGUE
 
     context.user_data[TRACK_LEAGUE_OPTIONS_CONTEXT_KEY] = league_options
+    
+    keyboard = []
+    for i, option in enumerate(league_options[:20]):
+        keyboard.append([InlineKeyboardButton(option.league_name, callback_data=f"tl_league:{i}")])
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
     await update.message.reply_text(
         _build_discovered_league_selection_message(league_options),
-        reply_markup=_build_numeric_keyboard(len(league_options), "Elegí la liga"),
+        reply_markup=reply_markup,
     )
     return SELECT_LEAGUE_FOR_TRACK_LEAGUE
 
@@ -2127,29 +2151,42 @@ async def track_league_select_league(
 ) -> int:
     """Track the league selected during `/track_league`."""
 
-    if update.message is None or update.effective_chat is None:
+    query = update.callback_query
+    msg_obj = query.message if query else update.message
+    if msg_obj is None or update.effective_chat is None:
         return ConversationHandler.END
 
     league_options = context.user_data.get(TRACK_LEAGUE_OPTIONS_CONTEXT_KEY)
     if not isinstance(league_options, list) or not league_options:
-        await update.message.reply_text(
+        await msg_obj.reply_text(
             "No encontré la selección de ligas. Probá de nuevo con /track_league.",
             reply_markup=ReplyKeyboardRemove(),
         )
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    selected_index = _parse_selection_number(update.message.text, len(league_options))
+    selected_index = None
+    if query is not None:
+        await query.answer()
+        data = query.data
+        if data.startswith("tl_league:"):
+            selected_index = int(data.split(":")[1])
+    else:
+        selected_index = _parse_selection_number(update.message.text, len(league_options))
+
     if selected_index is None:
-        await update.message.reply_text(
-            "Elegí un número válido de liga.",
-            reply_markup=_build_numeric_keyboard(len(league_options), "Elegí la liga"),
+        keyboard = []
+        for i, option in enumerate(league_options[:20]):
+            keyboard.append([InlineKeyboardButton(option.league_name, callback_data=f"tl_league:{i}")])
+        await msg_obj.reply_text(
+            "Elegí un número o botón válido de liga.",
+            reply_markup=InlineKeyboardMarkup(keyboard),
         )
         return SELECT_LEAGUE_FOR_TRACK_LEAGUE
 
     selected_option = league_options[selected_index]
     if not isinstance(selected_option, LeagueDiscoveryOption):
-        await update.message.reply_text(
+        await msg_obj.reply_text(
             "La liga seleccionada no es válida. Probá de nuevo con /track_league.",
             reply_markup=ReplyKeyboardRemove(),
         )
@@ -2157,7 +2194,7 @@ async def track_league_select_league(
         return ConversationHandler.END
 
     tracking_service = get_tracking_service(context)
-    await update.message.reply_text(
+    await msg_obj.reply_text(
         f"Guardando tracking de {selected_option.league_name}...",
         reply_markup=ReplyKeyboardRemove(),
     )
@@ -2166,7 +2203,7 @@ async def track_league_select_league(
         selected_option,
     )
 
-    await _reply_text_chunks(update.message, result.message, reply_markup=ReplyKeyboardRemove())
+    await _reply_text_chunks(msg_obj, result.message, reply_markup=ReplyKeyboardRemove())
     _clear_all_selection_context(context)
     return ConversationHandler.END
 
@@ -2361,9 +2398,15 @@ async def link_stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
         return ConversationHandler.END
 
     context.user_data[LINK_STATS_TRACKS_CONTEXT_KEY] = tracked_leagues
+    
+    keyboard = []
+    for i, track in enumerate(tracked_leagues):
+        keyboard.append([InlineKeyboardButton(track.tracked_league.competition_name, callback_data=f"ls_track:{i}")])
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
     await update.message.reply_text(
         _build_track_selection_message("Qué liga de odds querés vincular con stats?", tracked_leagues),
-        reply_markup=_build_numeric_keyboard(len(tracked_leagues), "Elegí la liga"),
+        reply_markup=reply_markup,
     )
     return SELECT_TRACK_FOR_LINK_STATS
 
@@ -2371,29 +2414,42 @@ async def link_stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
 async def link_stats_select_track(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle tracked odds league selection for `/link_stats`."""
 
-    if update.message is None:
+    query = update.callback_query
+    msg_obj = query.message if query else update.message
+    if msg_obj is None:
         return ConversationHandler.END
 
     tracked_leagues = context.user_data.get(LINK_STATS_TRACKS_CONTEXT_KEY)
     if not isinstance(tracked_leagues, list) or not tracked_leagues:
-        await update.message.reply_text(
+        await msg_obj.reply_text(
             "No encontré la selección de ligas. Probá de nuevo con /link_stats.",
             reply_markup=ReplyKeyboardRemove(),
         )
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    selected_index = _parse_selection_number(update.message.text, len(tracked_leagues))
+    selected_index = None
+    if query is not None:
+        await query.answer()
+        data = query.data
+        if data.startswith("ls_track:"):
+            selected_index = int(data.split(":")[1])
+    else:
+        selected_index = _parse_selection_number(update.message.text, len(tracked_leagues))
+
     if selected_index is None:
-        await update.message.reply_text(
-            "Elegí un número válido de liga.",
-            reply_markup=_build_numeric_keyboard(len(tracked_leagues), "Elegí la liga"),
+        keyboard = []
+        for i, track in enumerate(tracked_leagues):
+            keyboard.append([InlineKeyboardButton(track.tracked_league.competition_name, callback_data=f"ls_track:{i}")])
+        await msg_obj.reply_text(
+            "Elegí un número o botón válido de liga.",
+            reply_markup=InlineKeyboardMarkup(keyboard),
         )
         return SELECT_TRACK_FOR_LINK_STATS
 
     selected_track = tracked_leagues[selected_index]
     if not isinstance(selected_track, TrackedCompetitionSubscription):
-        await update.message.reply_text(
+        await msg_obj.reply_text(
             "La liga seleccionada no es válida. Probá de nuevo con /link_stats.",
             reply_markup=ReplyKeyboardRemove(),
         )
@@ -2403,7 +2459,7 @@ async def link_stats_select_track(update: Update, context: ContextTypes.DEFAULT_
     stats_service = get_stats_service(context)
     providers = stats_service.list_providers()
     if not providers:
-        await update.message.reply_text(
+        await msg_obj.reply_text(
             "No hay providers de stats con discovery habilitado.",
             reply_markup=ReplyKeyboardRemove(),
         )
@@ -2412,9 +2468,15 @@ async def link_stats_select_track(update: Update, context: ContextTypes.DEFAULT_
 
     context.user_data[LINK_STATS_SELECTED_TRACK_CONTEXT_KEY] = selected_track
     context.user_data[LINK_STATS_PROVIDERS_CONTEXT_KEY] = providers
-    await update.message.reply_text(
+    
+    keyboard = []
+    for i, prov in enumerate(providers):
+        keyboard.append([InlineKeyboardButton(prov.display_name, callback_data=f"ls_provider:{i}")])
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    await msg_obj.reply_text(
         _build_stats_provider_selection_message(providers),
-        reply_markup=_build_numeric_keyboard(len(providers), "Elegí provider de stats"),
+        reply_markup=reply_markup,
     )
     return SELECT_PROVIDER_FOR_LINK_STATS
 
@@ -2422,29 +2484,42 @@ async def link_stats_select_track(update: Update, context: ContextTypes.DEFAULT_
 async def link_stats_select_provider(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle stats provider selection for `/link_stats`."""
 
-    if update.message is None:
+    query = update.callback_query
+    msg_obj = query.message if query else update.message
+    if msg_obj is None:
         return ConversationHandler.END
 
     providers = context.user_data.get(LINK_STATS_PROVIDERS_CONTEXT_KEY)
     if not isinstance(providers, list) or not providers:
-        await update.message.reply_text(
+        await msg_obj.reply_text(
             "No encontré la selección de providers. Probá de nuevo con /link_stats.",
             reply_markup=ReplyKeyboardRemove(),
         )
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    selected_index = _parse_selection_number(update.message.text, len(providers))
+    selected_index = None
+    if query is not None:
+        await query.answer()
+        data = query.data
+        if data.startswith("ls_provider:"):
+            selected_index = int(data.split(":")[1])
+    else:
+        selected_index = _parse_selection_number(update.message.text, len(providers))
+
     if selected_index is None:
-        await update.message.reply_text(
-            "Elegí un número válido de provider.",
-            reply_markup=_build_numeric_keyboard(len(providers), "Elegí provider"),
+        keyboard = []
+        for i, prov in enumerate(providers):
+            keyboard.append([InlineKeyboardButton(prov.display_name, callback_data=f"ls_provider:{i}")])
+        await msg_obj.reply_text(
+            "Elegí un número o botón válido de provider.",
+            reply_markup=InlineKeyboardMarkup(keyboard),
         )
         return SELECT_PROVIDER_FOR_LINK_STATS
 
     selected_provider = providers[selected_index]
     if not isinstance(selected_provider, StatsProviderDescriptor):
-        await update.message.reply_text(
+        await msg_obj.reply_text(
             "El provider seleccionado no es válido. Probá de nuevo con /link_stats.",
             reply_markup=ReplyKeyboardRemove(),
         )
@@ -2452,7 +2527,7 @@ async def link_stats_select_provider(update: Update, context: ContextTypes.DEFAU
         return ConversationHandler.END
 
     context.user_data[LINK_STATS_SELECTED_PROVIDER_CONTEXT_KEY] = selected_provider
-    await update.message.reply_text(
+    await msg_obj.reply_text(
         _build_stats_provider_input_message(selected_provider),
         reply_markup=ReplyKeyboardRemove(),
     )
@@ -2482,8 +2557,7 @@ async def link_stats_enter_country(update: Update, context: ContextTypes.DEFAULT
     stats_service = get_stats_service(context)
     selected_track = context.user_data.get(LINK_STATS_SELECTED_TRACK_CONTEXT_KEY)
 
-    # Direct provider URL, bypassing country discovery (some providers omit valid
-    # leagues from search or expose a richer public tournament page).
+    # Direct provider URL, bypassing country discovery
     direct_reference = _extract_direct_stats_league_reference(country_name)
     if direct_reference is not None:
         if not isinstance(selected_track, TrackedCompetitionSubscription):
@@ -2560,7 +2634,7 @@ async def link_stats_enter_country(update: Update, context: ContextTypes.DEFAULT
             await update.message.reply_text(
                 "No pude renovar la sesión de Sportradar en modo headless.\n\n"
                 "Para usarlo localmente, configurá SPORTRADAR_BOOTSTRAP_MODE=auto en .env "
-                "y reiniciá el bot. Auto prueba headless primero y solo abre navegador visible si Statshub lo bloquea.",
+                "y reiniciá el bot.",
                 reply_markup=ReplyKeyboardRemove(),
             )
         else:
@@ -2594,10 +2668,16 @@ async def link_stats_enter_country(update: Update, context: ContextTypes.DEFAULT
     intro = ""
     if sample_events:
         intro = "🔢 Ordenadas por relevancia: la #1 es la que más coincide con tus partidos.\n\n"
+        
+    keyboard = []
+    for i, opt in enumerate(options[:20]):
+        keyboard.append([InlineKeyboardButton(opt.league_name, callback_data=f"ls_league:{i}")])
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
     await _reply_text_chunks(
         update.message,
         intro + _build_stats_league_selection_message(options, limit=25),
-        reply_markup=_build_numeric_keyboard(min(len(options), 25), "Elegí la liga stats"),
+        reply_markup=reply_markup,
     )
     return SELECT_LEAGUE_FOR_LINK_STATS
 
@@ -2605,14 +2685,16 @@ async def link_stats_enter_country(update: Update, context: ContextTypes.DEFAULT
 async def link_stats_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Persist the selected stats league link."""
 
-    if update.message is None:
+    query = update.callback_query
+    msg_obj = query.message if query else update.message
+    if msg_obj is None:
         return ConversationHandler.END
 
     selected_track = context.user_data.get(LINK_STATS_SELECTED_TRACK_CONTEXT_KEY)
     options = context.user_data.get(LINK_STATS_OPTIONS_CONTEXT_KEY)
 
     if not isinstance(selected_track, TrackedCompetitionSubscription):
-        await update.message.reply_text(
+        await msg_obj.reply_text(
             "No encontré la liga de odds seleccionada. Probá de nuevo con /link_stats.",
             reply_markup=ReplyKeyboardRemove(),
         )
@@ -2620,24 +2702,35 @@ async def link_stats_select_league(update: Update, context: ContextTypes.DEFAULT
         return ConversationHandler.END
 
     if not isinstance(options, list) or not options:
-        await update.message.reply_text(
+        await msg_obj.reply_text(
             "No encontré la selección de ligas stats. Probá de nuevo con /link_stats.",
             reply_markup=ReplyKeyboardRemove(),
         )
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    selected_index = _parse_selection_number(update.message.text, len(options))
+    selected_index = None
+    if query is not None:
+        await query.answer()
+        data = query.data
+        if data.startswith("ls_league:"):
+            selected_index = int(data.split(":")[1])
+    else:
+        selected_index = _parse_selection_number(update.message.text, len(options))
+
     if selected_index is None:
-        await update.message.reply_text(
-            "Elegí un número válido de liga stats.",
-            reply_markup=_build_numeric_keyboard(len(options), "Elegí la liga stats"),
+        keyboard = []
+        for i, opt in enumerate(options[:20]):
+            keyboard.append([InlineKeyboardButton(opt.league_name, callback_data=f"ls_league:{i}")])
+        await msg_obj.reply_text(
+            "Elegí un número o botón válido de liga stats.",
+            reply_markup=InlineKeyboardMarkup(keyboard),
         )
         return SELECT_LEAGUE_FOR_LINK_STATS
 
     selected_option = options[selected_index]
     if not isinstance(selected_option, StatsLeagueOption):
-        await update.message.reply_text(
+        await msg_obj.reply_text(
             "La liga stats seleccionada no es válida. Probá de nuevo con /link_stats.",
             reply_markup=ReplyKeyboardRemove(),
         )
@@ -2650,7 +2743,7 @@ async def link_stats_select_league(update: Update, context: ContextTypes.DEFAULT
         option=selected_option,
     )
 
-    await _reply_text_chunks(update.message, result.message, reply_markup=ReplyKeyboardRemove())
+    await _reply_text_chunks(msg_obj, result.message, reply_markup=ReplyKeyboardRemove())
     _clear_all_selection_context(context)
     return ConversationHandler.END
 
@@ -3711,6 +3804,21 @@ def register_handlers(application: Application) -> None:
     )
     application.add_handler(CommandHandler("platforms", platforms_command))
     
+    # Generic Stats Commands
+    application.add_handler(CommandHandler("stats_help", stats_help_command))
+    application.add_handler(CommandHandler("stats_leagues", stats_leagues_command))
+    application.add_handler(CommandHandler("standings", standings_command))
+    application.add_handler(CommandHandler("fixtures", fixtures_command))
+    application.add_handler(CommandHandler("today", today_command))
+    application.add_handler(CommandHandler("match", match_command))
+    
+    # Generic Peaks Command
+    application.add_handler(CommandHandler("peaks", peaks_command))
+    
+    # Callback query handlers for generic stats and peaks
+    application.add_handler(CallbackQueryHandler(stats_callback_query_handler, pattern="^(stats_co|stats_le|stats_ma):"))
+    application.add_handler(CallbackQueryHandler(peaks_callback_query_handler, pattern="^peaks_filter:"))
+    
     # Finnish Football Leagues and stats commands
     application.add_handler(CommandHandler("fin_help", fin_help_command))
     application.add_handler(CommandHandler("fin_leagues", fin_leagues_command))
@@ -3808,12 +3916,14 @@ def register_handlers(application: Application) -> None:
         entry_points=[CommandHandler(["track_league", "tracl_league"], track_league_command)],
         states={
             SELECT_PLATFORM_FOR_TRACK_LEAGUE: [
+                CallbackQueryHandler(track_league_select_platform, pattern="^tl_platform:"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, track_league_select_platform)
             ],
             ENTER_COUNTRY_FOR_TRACK_LEAGUE: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, track_league_enter_country)
             ],
             SELECT_LEAGUE_FOR_TRACK_LEAGUE: [
+                CallbackQueryHandler(track_league_select_league, pattern="^tl_league:"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, track_league_select_league)
             ],
         },
@@ -3827,15 +3937,18 @@ def register_handlers(application: Application) -> None:
         entry_points=[CommandHandler("link_stats", link_stats_command)],
         states={
             SELECT_TRACK_FOR_LINK_STATS: [
+                CallbackQueryHandler(link_stats_select_track, pattern="^ls_track:"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, link_stats_select_track)
             ],
             SELECT_PROVIDER_FOR_LINK_STATS: [
+                CallbackQueryHandler(link_stats_select_provider, pattern="^ls_provider:"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, link_stats_select_provider)
             ],
             ENTER_COUNTRY_FOR_LINK_STATS: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, link_stats_enter_country)
             ],
             SELECT_LEAGUE_FOR_LINK_STATS: [
+                CallbackQueryHandler(link_stats_select_league, pattern="^ls_league:"),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, link_stats_select_league)
             ],
         },
@@ -5189,3 +5302,542 @@ async def peak_off_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         "🔕 Desactivé el envío automático del Peak del día. Igual podés consultarlo con `/peak_today`.",
         parse_mode="Markdown",
     )
+
+
+# ===================== Generic Stats & Peaks Consolidation =====================
+from datetime import date
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+
+_PEAK_SCORES_CACHE = {}  # date_str -> list[SpecialMatchScore]
+
+def _get_cached_peaks() -> list[SpecialMatchScore] | None:
+    today_str = date.today().isoformat()
+    return _PEAK_SCORES_CACHE.get(today_str)
+
+def _set_cached_peaks(scores: list[SpecialMatchScore]) -> None:
+    today_str = date.today().isoformat()
+    _PEAK_SCORES_CACHE[today_str] = scores
+
+def filter_peaks(scores: list[SpecialMatchScore], market: str) -> list[SpecialMatchScore]:
+    market = market.lower().strip()
+    if market == "wins":
+        return [s for s in scores if s.favorite is not None or abs(s.edge) > 0.2]
+    elif market == "goals":
+        return [s for s in scores if s.score_int >= 5]
+    elif market == "handicaps":
+        return [s for s in scores if abs(s.edge) >= 0.4 or any(f.name == "Desnivel" for f in s.factors)]
+    elif market == "btts":
+        return [s for s in scores if s.score_int >= 5 and (s.favorite is None or abs(s.edge) < 0.6)]
+    return scores
+
+def render_filtered_peak_digest(scores: list[SpecialMatchScore], market: str) -> str:
+    from monitors.special_peak import current_display_timezone, tz_offset_label
+    
+    tz = current_display_timezone()
+    date_label = date.today().strftime("%d/%m/%Y")
+    
+    market_title = {
+        "wins": "Wins (Favoritos) ✌️",
+        "goals": "Goles (Over/Under) ⚽",
+        "handicaps": "Hándicaps 📉",
+        "btts": "BTTS (Ambos Anotan) 🥅",
+        "all": "Todos"
+    }.get(market, "Filtrados")
+    
+    header = [
+        f"🎯 *Peak del día — Ligas Especiales* ({date_label})",
+        f"🔍 *Filtro activo: {market_title}*",
+        "━━━━━━━━━━━━━━━━━━━━",
+    ]
+    
+    if not scores:
+        header.append("\n📭 No hay partidos que cumplan con este criterio de filtro hoy.")
+        return "\n".join(header)
+        
+    peaks = [s for s in scores if s.is_peak]
+    rest = [s for s in scores if not s.is_peak]
+    
+    lines = list(header)
+    lines.append(f"\n🔝 *{len(peaks)} oportunidad(es) destacada(s)* en este filtro.\n")
+    
+    if peaks:
+        lines.append("⭐ *PEAKS (listos para apostar / vigilar):*")
+        from monitors.special_peak import _render_entry
+        for score in peaks:
+            lines.extend(_render_entry(score, tz))
+        lines.append("")
+        
+    if rest:
+        lines.append("📋 *Resto del radar:*")
+        from monitors.special_peak import _kickoff_label_for_display
+        for score in rest:
+            lines.append(
+                f"  {score.badge} *{score.score_int}/10* · `{_kickoff_label_for_display(score, tz)}` "
+                f"{score.home} vs {score.away} — {score.detail_command}"
+            )
+            
+    lines.append("\n━━━━━━━━━━━━━━━━━━━━")
+    lines.append("💡 Para el reporte completo de un partido usá su comando (ej `/fin_match <ID>`).")
+    return "\n".join(lines)
+
+
+async def peaks_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /peaks: interactive peaks display with market filter buttons."""
+    if update.message is None:
+        return
+        
+    scores = _get_cached_peaks()
+    if scores is None:
+        await update.message.reply_text(
+            "🎯 Analizando partidos de ligas especiales del día (Finlandia 🇫🇮 + Suecia 🇸🇪)..."
+        )
+        import asyncio
+        from monitors.special_peak import build_peak_scores
+        from stats_providers.palloliitto.api_client import PalloliittoAPI
+        from stats_providers.svenskfotboll_http.client import SvenskfotbollHTTPClient
+        
+        fin_api = PalloliittoAPI()
+        swe_client = SvenskfotbollHTTPClient()
+        try:
+            scores = await asyncio.to_thread(
+                build_peak_scores, finland_api=fin_api, sweden_client=swe_client
+            )
+            _set_cached_peaks(scores)
+        except Exception as e:
+            logger.exception("Failed to build peak scores")
+            await update.message.reply_text(f"❌ Error al armar el peak del día: {e}")
+            return
+        finally:
+            fin_api.close()
+            swe_client.close()
+            
+    from monitors.special_peak import render_peak_digest
+    digest = render_peak_digest(scores)
+    
+    keyboard = [
+        [
+            InlineKeyboardButton("Wins ✌️", callback_data="peaks_filter:wins"),
+            InlineKeyboardButton("Goles ⚽", callback_data="peaks_filter:goals"),
+        ],
+        [
+            InlineKeyboardButton("Hándicaps 📉", callback_data="peaks_filter:handicaps"),
+            InlineKeyboardButton("BTTS 🥅", callback_data="peaks_filter:btts"),
+        ],
+        [
+            InlineKeyboardButton("Mostrar Todos 📋", callback_data="peaks_filter:all")
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await _reply_text_chunks(update.message, digest, reply_markup=reply_markup, parse_mode="Markdown")
+
+
+async def peaks_callback_query_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle callback queries for peak digest filtering."""
+    query = update.callback_query
+    if query is None:
+        return
+    await query.answer()
+    
+    data = query.data
+    market = data.split(":")[1]
+    
+    scores = _get_cached_peaks()
+    if scores is None:
+        await query.edit_message_text("⚠️ Los datos han expirado. Por favor corré `/peaks` de nuevo.")
+        return
+        
+    filtered = filter_peaks(scores, market)
+    digest = render_filtered_peak_digest(filtered, market)
+    
+    keyboard = [
+        [
+            InlineKeyboardButton("Wins ✌️" if market != "wins" else "Wins ✌️ (Activo)", callback_data="peaks_filter:wins"),
+            InlineKeyboardButton("Goles ⚽" if market != "goals" else "Goles ⚽ (Activo)", callback_data="peaks_filter:goals"),
+        ],
+        [
+            InlineKeyboardButton("Hándicaps 📉" if market != "handicaps" else "Hándicaps 📉 (Activo)", callback_data="peaks_filter:handicaps"),
+            InlineKeyboardButton("BTTS 🥅" if market != "btts" else "BTTS 🥅 (Activo)", callback_data="peaks_filter:btts"),
+        ],
+        [
+            InlineKeyboardButton("Mostrar Todos 📋" if market != "all" else "Mostrar Todos 📋 (Activo)", callback_data="peaks_filter:all")
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await query.edit_message_text(digest, reply_markup=reply_markup, parse_mode="Markdown")
+
+
+# Generic Stats Assistant Helpers & Commands
+COUNTRIES_MAP = {
+    "Finlandia 🇫🇮": "fin",
+    "Suecia 🇸🇪": "swe",
+    "Rumania 🇷🇴": "ro",
+    "Eslovaquia 🇸🇰": "sk",
+    "Argelia 🇩🇿": "al",
+    "Noruega 🇳🇴": "no"
+}
+
+def get_country_selector_keyboard(cmd: str) -> InlineKeyboardMarkup:
+    keyboard = []
+    row = []
+    for label, code in COUNTRIES_MAP.items():
+        row.append(InlineKeyboardButton(label, callback_data=f"stats_co:{cmd}:{code}"))
+        if len(row) == 2:
+            keyboard.append(row)
+            row = []
+    if row:
+        keyboard.append(row)
+    return InlineKeyboardMarkup(keyboard)
+
+def _get_country_adapter(country_code: str):
+    code = country_code.lower().strip()
+    if code in ("fin", "finlandia", "finland"):
+        return _finland_adapter()
+    elif code in ("swe", "suecia", "sweden"):
+        return _sweden_adapter()
+    elif code in ("ro", "rumania", "romania"):
+        return _romania_adapter()
+    elif code in ("sk", "eslovaquia", "slovakia"):
+        return _slovakia_adapter()
+    elif code in ("al", "argelia", "algeria"):
+        return _algeria_adapter()
+    elif code in ("no", "noruega", "norway"):
+        return _norway_adapter()
+    return None
+
+async def _show_country_help(message, code: str) -> None:
+    code = code.lower().strip()
+    if code in ("fin", "finlandia", "finland"):
+        help_text = (
+            "🇫🇮 <b>Guía de Estadísticas de la Federación de Finlandia</b> 🇫🇮\n\n"
+            "Consultá estadísticas oficiales directo de la Asociación de Fútbol de Finlandia.\n\n"
+            "📖 <b>Comandos disponibles:</b>\n"
+            "• <code>/stats_leagues fin</code> - Jerarquía de ligas masculinas, femeninas y copas.\n"
+            "• <code>/today fin</code> - Partidos programados para hoy.\n"
+            "• <code>/standings fin [CÓDIGO]</code> - Tabla de posiciones (Ej: <code>VL</code>).\n"
+            "• <code>/fixtures fin [CÓDIGO]</code> - Calendario de partidos y sus IDs.\n"
+            "• <code>/match fin [ID_PARTIDO]</code> - Detalle del partido y análisis B-Team.\n"
+        )
+        await message.reply_text(help_text, parse_mode="HTML")
+    elif code in ("swe", "suecia", "sweden"):
+        help_text = (
+            "🇸🇪 <b>Guía de Estadísticas de la Federación de Suecia</b> 🇸🇪\n\n"
+            "Consultá datos oficiales directo de la Asociación Sueca de Fútbol (FOGIS).\n\n"
+            "📖 <b>Comandos disponibles:</b>\n"
+            "• <code>/stats_leagues swe</code> - Ligas suecas.\n"
+            "• <code>/today swe</code> - Partidos suecos de hoy.\n"
+            "• <code>/standings swe [CÓDIGO]</code> - Tabla de posiciones sueca.\n"
+            "• <code>/fixtures swe [CÓDIGO]</code> - Fixtures suecos.\n"
+            "• <code>/match swe [ID]</code> - Detalle de partido y análisis.\n"
+        )
+        await message.reply_text(help_text, parse_mode="HTML")
+    elif code in ("ro", "rumania", "romania"):
+        help_text = (
+            "🇷🇴 <b>Guía de Estadísticas de la Federación de Rumania</b> 🇷🇴\n\n"
+            "Consultá datos oficiales de la Federación Rumana de Fútbol (FRF).\n\n"
+            "📖 <b>Comandos disponibles:</b>\n"
+            "• <code>/stats_leagues ro</code> - Ligas rumanas.\n"
+            "• <code>/today ro</code> - Partidos rumanos de hoy.\n"
+            "• <code>/standings ro [CÓDIGO]</code> - Tabla de posiciones rumana.\n"
+            "• <code>/fixtures ro [CÓDIGO]</code> - Fixtures rumanos.\n"
+            "• <code>/match ro [ID]</code> - Detalle de partido.\n"
+        )
+        await message.reply_text(help_text, parse_mode="HTML")
+    elif code in ("sk", "eslovaquia", "slovakia"):
+        help_text = (
+            "🇸🇰 <b>Guía de Estadísticas de la Federación de Eslovaquia</b> 🇸🇰\n\n"
+            "Consultá datos oficiales de la Federación Eslovaca de Fútbol (Sportnet).\n\n"
+            "📖 <b>Comandos disponibles:</b>\n"
+            "• <code>/stats_leagues sk</code> - Ligas eslovacas.\n"
+            "• <code>/today sk</code> - Partidos eslovacos de hoy.\n"
+            "• <code>/standings sk [CÓDIGO]</code> - Tabla de posiciones eslovaca.\n"
+            "• <code>/fixtures sk [CÓDIGO]</code> - Fixtures eslovacos.\n"
+            "• <code>/match sk [ID]</code> - Detalle de partido.\n"
+        )
+        await message.reply_text(help_text, parse_mode="HTML")
+    elif code in ("al", "argelia", "algeria"):
+        help_text = (
+            "🇩🇿 <b>Guía de Estadísticas de la Federación de Argelia</b> 🇩🇿\n\n"
+            "Consultá datos oficiales de la Liga Nacional de Fútbol de Argelia (LNFF).\n\n"
+            "📖 <b>Comandos disponibles:</b>\n"
+            "• <code>/stats_leagues al</code> - Ligas argelinas.\n"
+            "• <code>/today al</code> - Partidos argelinos de hoy.\n"
+            "• <code>/standings al [CÓDIGO]</code> - Tabla de posiciones argelina.\n"
+            "• <code>/fixtures al [CÓDIGO]</code> - Fixtures argelinos.\n"
+            "• <code>/match al [ID]</code> - Detalle de partido.\n"
+        )
+        await message.reply_text(help_text, parse_mode="HTML")
+    elif code in ("no", "noruega", "norway"):
+        help_text = (
+            "🇳🇴 <b>Guía de Estadísticas de la Federación de Noruega</b> 🇳🇴\n\n"
+            "Consultá datos oficiales de la Federación Noruega de Fútbol (NFF).\n\n"
+            "📖 <b>Comandos disponibles:</b>\n"
+            "• <code>/stats_leagues no</code> - Ligas noruegas.\n"
+            "• <code>/today no</code> - Partidos noruegos de hoy.\n"
+            "• <code>/standings no [CÓDIGO]</code> - Tabla de posiciones noruega.\n"
+            "• <code>/fixtures no [CÓDIGO]</code> - Fixtures noruegos.\n"
+            "• <code>/match no [ID]</code> - Detalle de partido.\n"
+        )
+        await message.reply_text(help_text, parse_mode="HTML")
+    else:
+        await message.reply_text("❌ País no soportado. Países válidos: fin, swe, ro, sk, al, no")
+
+async def _show_league_selector(update_or_query, country_code: str, cmd: str) -> None:
+    adapter = _get_country_adapter(country_code)
+    if not adapter:
+        return
+    import asyncio
+    try:
+        leagues = await asyncio.to_thread(adapter.leagues)
+        if not leagues:
+            text = "⚠️ No se encontraron ligas para este país."
+            if hasattr(update_or_query, "message") and update_or_query.message:
+                await update_or_query.message.reply_text(text)
+            else:
+                await update_or_query.edit_message_text(text)
+            return
+        
+        keyboard = []
+        for lg in leagues[:20]:
+            keyboard.append([InlineKeyboardButton(f"{lg.name} ({lg.code})", callback_data=f"stats_le:{cmd}:{country_code}:{lg.code}")])
+        
+        text = f"🏆 Seleccioná una liga de {adapter.country}:"
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        
+        if hasattr(update_or_query, "message") and update_or_query.message:
+            await update_or_query.message.reply_text(text, reply_markup=reply_markup)
+        else:
+            await update_or_query.edit_message_text(text, reply_markup=reply_markup)
+    except Exception as e:
+        logger.exception("Failed to show league selector")
+        msg = f"❌ Error al cargar ligas: {e}"
+        if hasattr(update_or_query, "message") and update_or_query.message:
+            await update_or_query.message.reply_text(msg)
+        else:
+            await update_or_query.edit_message_text(msg)
+    finally:
+        adapter.close()
+
+async def _show_today_matches_selector(update_or_query, country_code: str) -> None:
+    adapter = _get_country_adapter(country_code)
+    if not adapter:
+        return
+    import asyncio
+    try:
+        rows, omitted = await asyncio.to_thread(adapter.today)
+        if not rows:
+            text = f"⚽ No hay partidos de hoy programados para {adapter.country}."
+            if hasattr(update_or_query, "message") and update_or_query.message:
+                await update_or_query.message.reply_text(text)
+            else:
+                await update_or_query.edit_message_text(text)
+            return
+        
+        keyboard = []
+        for row in rows[:20]:
+            label = f"{row.home} vs {row.away}"
+            if row.score:
+                label += f" ({row.score})"
+            keyboard.append([InlineKeyboardButton(label, callback_data=f"stats_ma:{country_code}:{row.id}")])
+            
+        text = f"⚽ Partidos de hoy de {adapter.country}. Seleccioná uno para ver estadísticas:"
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        
+        if hasattr(update_or_query, "message") and update_or_query.message:
+            await update_or_query.message.reply_text(text, reply_markup=reply_markup)
+        else:
+            await update_or_query.edit_message_text(text, reply_markup=reply_markup)
+    except Exception as e:
+        logger.exception("Failed to show today matches selector")
+        msg = f"❌ Error al cargar partidos de hoy: {e}"
+        if hasattr(update_or_query, "message") and update_or_query.message:
+            await update_or_query.message.reply_text(msg)
+        else:
+            await update_or_query.edit_message_text(msg)
+    finally:
+        adapter.close()
+
+
+async def stats_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /stats_help: portal to country-specific stats help."""
+    if update.message is None:
+        return
+        
+    args = context.args or []
+    if args:
+        code = args[0].lower().strip()
+        await _show_country_help(update.message, code)
+        return
+        
+    text = (
+        "📈 <b>Portal de Estadísticas de Federaciones BetBot</b> 📈\n\n"
+        "BetBot integra datos de federaciones oficiales de varios países para darte información de primera mano "
+        "directamente de las asociaciones nacionales de fútbol.\n\n"
+        "📖 <b>Comandos genéricos disponibles:</b>\n"
+        "• <code>/stats_leagues [PAÍS]</code> - Lista las ligas del país seleccionado.\n"
+        "• <code>/standings [PAÍS] [CÓDIGO]</code> - Muestra la tabla de posiciones de una liga.\n"
+        "• <code>/fixtures [PAÍS] [CÓDIGO]</code> - Muestra los partidos de una liga.\n"
+        "• <code>/today [PAÍS]</code> - Lista los partidos del día.\n"
+        "• <code>/match [PAÍS] [ID]</code> - Detalle de alineación, rotación y eventos.\n\n"
+        "Seleccioná un país a continuación para ver su guía y comandos específicos:"
+    )
+    await update.message.reply_text(
+        text,
+        reply_markup=get_country_selector_keyboard("help"),
+        parse_mode="HTML"
+    )
+
+async def stats_leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if update.message is None:
+        return
+    args = context.args or []
+    if args:
+        code = args[0].lower().strip()
+        adapter = _get_country_adapter(code)
+        if adapter:
+            await _run_special_leagues(update.message, adapter)
+            return
+    await update.message.reply_text(
+        "Seleccioná un país para ver sus ligas:",
+        reply_markup=get_country_selector_keyboard("leagues")
+    )
+
+async def today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if update.message is None:
+        return
+    args = context.args or []
+    if args:
+        code = args[0].lower().strip()
+        adapter = _get_country_adapter(code)
+        if adapter:
+            await _run_special_today(update.message, args[1:], adapter)
+            return
+    await update.message.reply_text(
+        "Seleccioná un país para ver los partidos de hoy:",
+        reply_markup=get_country_selector_keyboard("today")
+    )
+
+async def standings_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if update.message is None:
+        return
+    args = context.args or []
+    if len(args) >= 2:
+        code = args[0].lower().strip()
+        adapter = _get_country_adapter(code)
+        if adapter:
+            usage = f"❌ *Falta el código de liga.*\n\nUso: `/standings {code} [CÓDIGO]`"
+            await _run_special_standings(update.message, args[1:], adapter, usage)
+            return
+    elif len(args) == 1:
+        code = args[0].lower().strip()
+        adapter = _get_country_adapter(code)
+        if adapter:
+            await _show_league_selector(update, code, "standings")
+            return
+    await update.message.reply_text(
+        "Seleccioná un país para ver la tabla de posiciones:",
+        reply_markup=get_country_selector_keyboard("standings")
+    )
+
+async def fixtures_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if update.message is None:
+        return
+    args = context.args or []
+    if len(args) >= 2:
+        code = args[0].lower().strip()
+        adapter = _get_country_adapter(code)
+        if adapter:
+            usage = f"❌ *Falta el código de liga.*\n\nUso: `/fixtures {code} [CÓDIGO]`"
+            await _run_special_fixtures(update.message, args[1:], adapter, usage)
+            return
+    elif len(args) == 1:
+        code = args[0].lower().strip()
+        adapter = _get_country_adapter(code)
+        if adapter:
+            await _show_league_selector(update, code, "fixtures")
+            return
+    await update.message.reply_text(
+        "Seleccioná un país para ver el fixture:",
+        reply_markup=get_country_selector_keyboard("fixtures")
+    )
+
+async def match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if update.message is None:
+        return
+    args = context.args or []
+    if len(args) >= 2:
+        code = args[0].lower().strip()
+        adapter = _get_country_adapter(code)
+        if adapter:
+            usage = f"❌ *Falta el ID del partido.*\n\nUso: `/match {code} [ID]`"
+            await _run_special_match(update.message, args[1:], adapter, usage)
+            return
+    elif len(args) == 1:
+        code = args[0].lower().strip()
+        adapter = _get_country_adapter(code)
+        if adapter:
+            await _show_today_matches_selector(update, code)
+            return
+    await update.message.reply_text(
+        "Seleccioná un país para ver los partidos y elegir uno:",
+        reply_markup=get_country_selector_keyboard("match")
+    )
+
+async def stats_callback_query_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle callback queries for consolidated generic stats commands."""
+    query = update.callback_query
+    if query is None:
+        return
+    await query.answer()
+    
+    data = query.data
+    parts = data.split(":")
+    prefix = parts[0]
+    
+    if prefix == "stats_co":
+        cmd = parts[1]
+        code = parts[2]
+        
+        adapter = _get_country_adapter(code)
+        if not adapter:
+            await query.edit_message_text("❌ País no soportado.")
+            return
+            
+        if cmd == "help":
+            await _show_country_help(query.message, code)
+        elif cmd == "leagues":
+            await _run_special_leagues(query.message, adapter)
+        elif cmd == "today":
+            await _run_special_today(query.message, [], adapter)
+        elif cmd in ("standings", "fixtures"):
+            await _show_league_selector(query, code, cmd)
+        elif cmd == "match":
+            await _show_today_matches_selector(query, code)
+            
+    elif prefix == "stats_le":
+        cmd = parts[1]
+        code = parts[2]
+        league_code = parts[3]
+        
+        adapter = _get_country_adapter(code)
+        if not adapter:
+            await query.edit_message_text("❌ País no soportado.")
+            return
+            
+        if cmd == "standings":
+            usage = f"❌ *Falta el código de liga.*\n\nUso: `/standings {code} [CÓDIGO]`"
+            await _run_special_standings(query.message, [league_code], adapter, usage)
+        elif cmd == "fixtures":
+            usage = f"❌ *Falta el código de liga.*\n\nUso: `/fixtures {code} [CÓDIGO]`"
+            await _run_special_fixtures(query.message, [league_code], adapter, usage)
+            
+    elif prefix == "stats_ma":
+        code = parts[1]
+        match_id = parts[2]
+        
+        adapter = _get_country_adapter(code)
+        if not adapter:
+            await query.edit_message_text("❌ País no soportado.")
+            return
+            
+        usage_guide = f"❌ *ID de partido ausente o inválido.*\n\nUso: `/match {code} [ID]`"
+        await _run_special_match(query.message, [match_id], adapter, usage_guide)
