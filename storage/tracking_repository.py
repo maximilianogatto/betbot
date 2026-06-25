@@ -4206,6 +4206,18 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
             timezone TEXT,
             updated_at TEXT NOT NULL
         );
+
+        CREATE INDEX IF NOT EXISTS idx_user_event_baselines_active_event
+        ON user_event_baselines(active_event_id);
+
+        CREATE INDEX IF NOT EXISTS idx_small_changes_active_event
+        ON small_changes(active_event_id);
+
+        CREATE INDEX IF NOT EXISTS idx_sent_alerts_active_event
+        ON sent_alerts(active_event_id);
+
+        CREATE INDEX IF NOT EXISTS idx_stats_match_links_active_event
+        ON stats_match_links(active_event_id);
         """
     )
 

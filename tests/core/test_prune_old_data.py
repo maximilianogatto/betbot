@@ -165,6 +165,17 @@ class PruneOldDataTests(unittest.TestCase):
         size_after_vacuum = os.path.getsize(tracking_repository_module.DB_FILE_PATH)
         self.assertLess(size_after_vacuum, size_before_delete)
 
+    def test_cascading_foreign_key_indexes_created(self) -> None:
+        # Force database schema initialization
+        with tracking_repository_module._connect() as con:
+            rows = con.execute("SELECT name FROM sqlite_master WHERE type='index'").fetchall()
+            index_names = {r["name"] for r in rows}
+
+        self.assertIn("idx_user_event_baselines_active_event", index_names)
+        self.assertIn("idx_small_changes_active_event", index_names)
+        self.assertIn("idx_sent_alerts_active_event", index_names)
+        self.assertIn("idx_stats_match_links_active_event", index_names)
+
 
 if __name__ == "__main__":
     unittest.main()
