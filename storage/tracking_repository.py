@@ -48,6 +48,7 @@ DATA_DIR = PROJECT_ROOT / "data"
 DB_FILE_PATH = DATA_DIR / "tracking.sqlite3"
 DEFAULT_CHANGE_THRESHOLD_PERCENT = 20.0
 DEFAULT_NOTIFY_ODDS_CHANGES = True
+STATS_PAYLOAD_CACHE_MAX_ROWS = 200
 
 
 @dataclass(frozen=True)
@@ -2797,6 +2798,7 @@ class SqliteTrackingRepository:
                 """,
                 (cache_key, _json_dumps(payload), fetched.isoformat(), expires.isoformat()),
             )
+            _enforce_stats_payload_cache_limit(connection)
 
     def purge_expired_stats_payloads(self) -> int:
         """Delete cached stats payloads past their TTL. Returns rows removed.
@@ -3940,6 +3942,34 @@ def _connect():
         raise
     finally:
         connection.close()
+
+
+def _enforce_stats_payload_cache_limit(connection: sqlite3.Connection) -> int:
+    """Keep only the newest stats payload cache rows.
+
+    The cache already has TTL pruning, but long TTLs across many providers can
+    still grow the table. This FIFO cap removes oldest fetched rows first.
+    Returns the number of rows deleted.
+    """
+
+    row = connection.execute("SELECT COUNT(*) AS total FROM stats_payload_cache").fetchone()
+    total = int(row["total"] if row is not None else 0)
+    overflow = max(0, total - STATS_PAYLOAD_CACHE_MAX_ROWS)
+    if overflow <= 0:
+        return 0
+    cursor = connection.execute(
+        """
+        DELETE FROM stats_payload_cache
+        WHERE cache_key IN (
+            SELECT cache_key
+            FROM stats_payload_cache
+            ORDER BY fetched_at ASC, cache_key ASC
+            LIMIT ?
+        )
+        """,
+        (overflow,),
+    )
+    return cursor.rowcount
 
 
 # Inizializate database schema
