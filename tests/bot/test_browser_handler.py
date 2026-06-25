@@ -36,6 +36,19 @@ class BrowserHandlerTests(unittest.IsolatedAsyncioTestCase):
             "idle_ttl_exceeded:10",
         )
 
+    async def test_requested_restart_waits_until_no_active_pages(self) -> None:
+        handler = BrowserHandler()
+        handler._browser = object()
+
+        await handler._mark_page_opened()
+        try:
+            await handler.request_restart(reason="ram_limit")
+            self.assertIsNone(await handler._restart_reason())
+        finally:
+            await handler._mark_page_closed()
+
+        self.assertEqual(await handler._restart_reason(), "restart_requested:ram_limit")
+
 
 if __name__ == "__main__":
     unittest.main()

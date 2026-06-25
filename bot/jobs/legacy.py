@@ -13,8 +13,8 @@ from monitoring import (
     format_monitor_log_block,
     get_metric_warnings,
     get_system_metrics,
-    kill_chromium_child_processes,
 )
+from bot.jobs.resource_monitor import request_chromium_restart
 from monitors.live_watch import LiveWatchService, parse_sheet_fixture_lines, render_live_hit
 from monitors.stats import StatsService
 from monitors.tracking import TrackingService, format_duration
@@ -237,6 +237,7 @@ async def start_resource_monitor(
 
     task = asyncio.create_task(
         _resource_monitor_loop(
+            application,
             interval_seconds=interval_seconds,
             log_to_file=log_to_file,
             chromium_ram_alert_mb=chromium_ram_alert_mb,
@@ -552,6 +553,7 @@ async def _tracking_monitor_loop(
 
 
 async def _resource_monitor_loop(
+    application: Application | None = None,
     *,
     interval_seconds: int,
     log_to_file: bool,
@@ -570,12 +572,15 @@ async def _resource_monitor_loop(
             chromium_ram_mb = metrics.get("chromium_child_processes_ram_mb", 0.0)
             if chromium_ram_mb > chromium_ram_alert_mb:
                 logger.warning(
-                    "[MONITOR] Memory warning threshold breached: %.1f MB > %.1f MB. Initiating Chromium RAM recovery...",
+                    "[MONITOR] Memory warning threshold breached: %.1f MB > %.1f MB. Requesting graceful Chromium restart...",
                     chromium_ram_mb,
                     chromium_ram_alert_mb,
                 )
-                killed = kill_chromium_child_processes()
-                logger.warning("[MONITOR] Chromium RAM recovery terminated %d process(es).", killed)
+                requested = await request_chromium_restart(
+                    application,
+                    reason=f"chromium_ram_mb={chromium_ram_mb:.1f}>{chromium_ram_alert_mb:.1f}",
+                )
+                logger.warning("[MONITOR] Chromium RAM recovery requested for %d runtime(s).", requested)
 
             for warning in get_metric_warnings(
                 metrics,

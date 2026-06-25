@@ -44,7 +44,7 @@ class Settings:
     odds_change_confirmation_refreshes: int = 2
     odds_flap_window_minutes: int = 10
     odds_flap_epsilon: float = 0.01
-    enable_monitoring: bool = False
+    enable_monitoring: bool = True
     monitor_interval_seconds: int = 60
     monitor_log_to_file: bool = False
     monitor_chromium_ram_alert_mb: float = 800.0
@@ -208,7 +208,7 @@ def load_settings() -> Settings:
         os.getenv("ODDS_FLAP_EPSILON", "0.01"),
         variable_name="ODDS_FLAP_EPSILON",
     )
-    enable_monitoring = _parse_bool(os.getenv("ENABLE_MONITORING", "false"))
+    enable_monitoring = _parse_bool(os.getenv("ENABLE_MONITORING", "true"))
     monitor_interval_seconds = _parse_positive_int(
         os.getenv("MONITOR_INTERVAL_SECONDS", "60"),
         variable_name="MONITOR_INTERVAL_SECONDS",

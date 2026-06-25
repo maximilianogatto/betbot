@@ -16,11 +16,11 @@ from monitoring import (
     format_monitor_log_block,
     get_metric_warnings,
     get_system_metrics,
-    kill_chromium_child_processes,
 )
 from monitors.live_watch import LiveWatchService, parse_sheet_fixture_lines, render_live_hit
 from monitors.stats import StatsService
 from monitors.tracking import TrackingService, format_duration
+from bot.jobs.resource_monitor import request_chromium_restart
 
 logger = logging.getLogger(__name__)
 
@@ -66,12 +66,15 @@ class ResourceMonitorJob(ScheduledJob):
         chromium_ram_mb = metrics.get("chromium_child_processes_ram_mb", 0.0)
         if chromium_ram_mb > settings.monitor_chromium_ram_alert_mb:
             logger.warning(
-                "[MONITOR] Memory warning threshold breached: %.1f MB > %.1f MB. Initiating Chromium RAM recovery...",
+                "[MONITOR] Memory warning threshold breached: %.1f MB > %.1f MB. Requesting graceful Chromium restart...",
                 chromium_ram_mb,
                 settings.monitor_chromium_ram_alert_mb,
             )
-            killed = kill_chromium_child_processes()
-            logger.warning("[MONITOR] Chromium RAM recovery terminated %d process(es).", killed)
+            requested = await request_chromium_restart(
+                application,
+                reason=f"chromium_ram_mb={chromium_ram_mb:.1f}>{settings.monitor_chromium_ram_alert_mb:.1f}",
+            )
+            logger.warning("[MONITOR] Chromium RAM recovery requested for %d runtime(s).", requested)
         for warning in get_metric_warnings(metrics, chromium_ram_warning_mb=settings.monitor_chromium_ram_alert_mb):
             logger.warning("[MONITOR] %s", warning)
 
