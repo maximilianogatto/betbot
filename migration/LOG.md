@@ -106,3 +106,31 @@
 - **Notas/Bloqueos:** Ninguno.
 - **Siguiente sugerido:** Realizar smoke tests según `migration/SMOKE_TEST_PR1.md` y luego proceder con la integración y planificación de PR2.
 
+### 2026-06-25T16:20:00-03:00 · @codex · PR2-E2 · DONE
+- **Qué hice:** Desglosé PR2-E2 en subtareas `PR2-E2-S0` a `PR2-E2-S9` dentro de `TASKS.md`, cubriendo foundation SQLite greenfield, adapters por agregado, mappers y facade final. Cada fila declara archivos principales, dependencias y criterio de aceptación.
+- **Por qué:** Preparar PR2 sin tocar `storage/` ni iniciar implementación mientras PR1 termina/cierra. El desglose permite repartir el trabajo por archivo entre agentes cuando PR2 quede habilitada.
+- **Archivos:** migration/TASKS.md
+- **Commit:** a309531
+- **Tests:** Verde con venv real: `/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/betbot/bin/python -m unittest discover -t . -s tests` → 600 tests OK. `./run_tests.sh -t .` falla por interfaz del script (`unrecognized arguments: -t`) y `./run_tests.sh` cae a Python 3.14 del sistema sin dependencias (`telegram`, `httpx`, `playwright`, `dotenv`); no es una falla del cambio.
+- **Notas/Bloqueos:** No se tocó `storage/`, código productivo ni PR1-T4/T5/T6. Las subtareas quedan en `TODO` y no deben implementarse hasta PR1 `DONE` + mergeada y rama PR2 abierta.
+- **Siguiente sugerido:** Cerrar smoke de PR1 según `migration/SMOKE_TEST_PR1.md`; luego abrir PR2 y ejecutar PR2-E1 antes de tomar `PR2-E2-S0`.
+
+
+### 2026-06-25T16:20:00-03:00 · @claude · SMOKE-PR1-AUTO · DONE
+- **Qué hice:** Corrí la parte automatizable del smoke test de PR1 (sin Telegram): (1) parse/import OK de main.py/cli.py/tracking_repository.py; (2) `cli.py prune --days 14` end-to-end OK (corre prune+vacuum, imprime tabla, sin crash); (3) suite completa con venv real → **600 tests OK en 26s**; (4) sin procesos chromium huérfanos.
+- **Por qué:** Validar PR1 de verdad antes de mergear/deployar, hasta donde se puede sin token de Telegram.
+- **Archivos:** (ninguno de código) — solo ejecución; backup temporal de DB creado y borrado.
+- **Commit:** N/A
+- **Tests:** 600 OK (venv real).
+- **Notas/Bloqueos:** La DB de ESTE worktree es de test (~303 KB, casi vacía) → el prune borró 0 filas y no cambió tamaño; el achique grande (16 MB→~5 MB) aplica a la DB de prod/main. Falta la parte MANUAL del smoke (bootear el bot + comandos en chat de test + verificar que /ping responde durante un ciclo de tracking) — requiere token, la corre el usuario.
+- **Siguiente sugerido:** Smoke manual (boot) por el usuario → si OK, mergear PR1 + deploy a VPS + correr `cli.py prune` una vez en prod para reclamar los ~10 MB. Luego arrancar PR2 (F1→F2→F3) según PR2_PLAN.md.
+
+### 2026-06-25T16:35:00-03:00 · @claude · COORD-FLAG · BLOCKED
+- **Qué hice:** Flag de coordinación: @codex marcó PR2-E2 como IN_PROGRESS, pero (1) PR1 todavía NO está mergeada (la regla en TASKS dice no empezar PR2 hasta mergear), y (2) PR2-E2 en TASKS dice "partir tracking_repository.py", que CONTRADICE la decisión registrada de NO partir mecánicamente sino reescribir los adapters de cero contra el esquema limpio (ver migration/PR2_PLAN.md ⚠️ y entrada PR2-PLAN del 14:30).
+- **Por qué:** Evitar trabajo tirado. Si @codex parte el repo legacy con el esquema viejo (active_events), eso se descarta cuando se haga el esquema greenfield.
+- **Recomendación:** @codex → leer migration/PR2_PLAN.md + PORTS_SPEC.md antes de codear. Esperar a que PR1 mergee. Luego arrancar por F1 (esqueleto) → F2 (ports) → F3 (schema limpio), NO por el split mecánico.
+- **Archivos:** migration/LOG.md
+- **Commit:** N/A
+- **Tests:** N/A
+- **Notas/Bloqueos:** Decisión del usuario pendiente: confirmar enfoque "rewrite fresh vs split mecánico" y si se mergea PR1 antes de arrancar PR2.
+- **Siguiente sugerido:** Mergear PR1 (tras smoke manual) ANTES de cualquier trabajo de PR2.
