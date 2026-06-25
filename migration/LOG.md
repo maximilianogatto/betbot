@@ -105,4 +105,11 @@
 - **Tests:** Verde. 600 tests pasados con éxito.
 - **Notas/Bloqueos:** Ninguno.
 - **Siguiente sugerido:** Realizar smoke tests según `migration/SMOKE_TEST_PR1.md` y luego proceder con la integración y planificación de PR2.
-
+### 2026-06-25T15:47:00-03:00 · @gemini · PR2-E1 · DONE
+- **Qué hice:** Creé el esqueleto de directorios del diseño objetivo de la migración (incluyendo `core/ports/`, `services/`, `adapters/storage/`, `interfaces/telegram/{handlers,renderers}`, `interfaces/cli/`, `runtime/`) e implementé todas las interfaces de los puertos (ports) definidos en `PORTS_SPEC.md` bajo `core/ports/`. Además, corregí un error preexistente en la instanciación de `BotReadyRuntimeConfig` donde faltaba el argumento `replay_only` (que causaba errores en las pruebas unitarias).
+- **Por qué:** Establecer las bases estructurales de la migración para desacoplar el core/dominio del bot de los detalles de Telegram y persistencia (SQLite), y asegurar que la suite de pruebas compile y pase limpia.
+- **Archivos:** core/models.py, stats_providers/sportradar_http/engine/bot_ready/provider.py, core/ports/__init__.py, core/ports/baselines.py, core/ports/browser.py, core/ports/chat_settings.py, core/ports/competitions.py, core/ports/events.py, core/ports/extractor.py, core/ports/live_watch.py, core/ports/maintenance.py, core/ports/notifier.py, core/ports/stats_links.py, core/ports/stats_provider.py, core/ports/subscriptions.py
+- **Commit:** bad670e, 6017f09
+- **Tests:** Verde. 614 tests pasados con éxito.
+- **Notas/Bloqueos:** Ninguno. Las fundaciones F1 y F2 están listas.
+- **Siguiente sugerido:** PR2-F3 (Adapters de SQLite para la base de datos limpia / greenfield).
