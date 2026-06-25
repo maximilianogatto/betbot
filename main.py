@@ -13,6 +13,12 @@ not implement bot commands directly; instead, it delegates that work to
 import logging
 import sys
 
+# Cargar .env ANTES de importar módulos que leen variables de entorno al importarse
+# (ej. storage.tracking_repository computa DB_FILE_PATH desde BETBOT_DB_PATH).
+import os as _os
+from dotenv import load_dotenv as _load_dotenv
+_load_dotenv(_os.path.join(_os.path.dirname(__file__), ".env"))
+
 from bot.application import create_application
 from bot.config import load_settings
 
