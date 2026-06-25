@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from datetime import datetime, timezone
 import time
 from typing import Any
 
@@ -185,6 +186,12 @@ async def _orchestrated_db_pruning(application: Application) -> None:
         days_threshold=14
     )
     logger.info("Database pruning finished: %s", stats)
+
+    # Run VACUUM only on Sundays
+    if datetime.now(timezone.utc).weekday() == 6:
+        logger.info("It's Sunday. Running database VACUUM...")
+        vacuum_success = await asyncio.to_thread(tracking_repository.run_db_vacuum)
+        logger.info("Database VACUUM finished: success=%s", vacuum_success)
 
 
 async def _orchestrated_stats_session_refresh(application: Application) -> None:

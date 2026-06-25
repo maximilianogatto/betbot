@@ -3803,7 +3803,7 @@ class SqliteTrackingRepository:
             _sanitize_tracking_state(connection)
 
     def prune_old_data(self, days_threshold: int = 14) -> dict[str, int]:
-        """Prune inactive events, old sent alerts, expired cache, and execute VACUUM.
+        """Prune inactive events, old sent alerts, expired cache.
 
         Returns a dictionary with the counts of deleted rows per table.
         """
@@ -3841,18 +3841,23 @@ class SqliteTrackingRepository:
             )
             stats["expired_live_watches_pruned"] = cursor.rowcount
 
-        # Run VACUUM outside the transaction block
+        return stats
+
+    def run_db_vacuum(self) -> bool:
+        """Execute SQLite VACUUM to reclaim unused disk space.
+
+        Returns True if successful, False otherwise.
+        """
         try:
             conn = sqlite3.connect(DB_FILE_PATH, timeout=30)
             conn.isolation_level = None  # autocommit mode
             conn.execute("VACUUM")
             conn.close()
-            stats["vacuum_executed"] = 1
+            logger.info("Database VACUUM executed successfully.")
+            return True
         except Exception as e:
             logger.exception("Failed to execute VACUUM: %s", e)
-            stats["vacuum_executed"] = 0
-
-        return stats
+            return False
 
 def _process_dirty_chats(connection: sqlite3.Connection) -> None:
     """Compile subscriptions bitmap for dirty chats in Python (Option B)."""

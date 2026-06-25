@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from datetime import datetime, timezone
 
 from telegram.ext import Application
 
@@ -641,6 +642,12 @@ async def _db_pruning_loop(
                 days_threshold=days_threshold
             )
             logger.info("Database pruning finished: %s", stats)
+
+            # Run VACUUM only on Sundays
+            if datetime.now(timezone.utc).weekday() == 6:
+                logger.info("It's Sunday. Running database VACUUM...")
+                vacuum_success = await asyncio.to_thread(tracking_repository.run_db_vacuum)
+                logger.info("Database VACUUM finished: success=%s", vacuum_success)
         except asyncio.CancelledError:
             raise
         except Exception:

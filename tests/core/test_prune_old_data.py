@@ -112,7 +112,7 @@ class PruneOldDataTests(unittest.TestCase):
         # Verify pruned stats returned
         self.assertEqual(stats["active_events_pruned"], 1)
         self.assertEqual(stats["expired_cache_pruned"], 1)
-        self.assertEqual(stats["vacuum_executed"], 1)
+        self.assertNotIn("vacuum_executed", stats)
 
         # Verify active_events
         with tracking_repository_module._connect() as con:
@@ -139,6 +139,31 @@ class PruneOldDataTests(unittest.TestCase):
             cache = {r["cache_key"] for r in con.execute("SELECT cache_key FROM stats_payload_cache")}
             self.assertNotIn("expired_key", cache)
             self.assertIn("valid_key", cache)
+
+    def test_run_db_vacuum_shrinks_file(self) -> None:
+        import os
+
+        # Connect and create a dummy table to fill with large data
+        with tracking_repository_module._connect() as con:
+            con.execute("CREATE TABLE dummy_vacuum (val TEXT)")
+            # Insert 1000 rows of large text
+            large_text = "a" * 1024
+            con.executemany("INSERT INTO dummy_vacuum (val) VALUES (?)", [(large_text,)] * 1000)
+
+        # Get size before vacuum
+        size_before_delete = os.path.getsize(tracking_repository_module.DB_FILE_PATH)
+
+        # Drop the table so space is marked as free/deleted inside SQLite
+        with tracking_repository_module._connect() as con:
+            con.execute("DROP TABLE dummy_vacuum")
+
+        # Run VACUUM
+        success = self.repo.run_db_vacuum()
+        self.assertTrue(success)
+
+        # File size should now be physically smaller
+        size_after_vacuum = os.path.getsize(tracking_repository_module.DB_FILE_PATH)
+        self.assertLess(size_after_vacuum, size_before_delete)
 
 
 if __name__ == "__main__":
