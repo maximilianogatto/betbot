@@ -31,7 +31,7 @@
 | ID | Tarea (alto nivel) | Estado |
 | :--- | :--- | :--- |
 | PR2-E1 | Crear esqueleto de carpetas objetivo + `core/ports/` (interfaces). | TODO |
-| PR2-E2 | Partir `storage/tracking_repository.py` (6063 líneas) en `adapters/storage/*` por agregado. | TODO |
+| PR2-E2 | Partir `storage/tracking_repository.py` (6063 líneas) en `adapters/storage/*` por agregado. | IN_PROGRESS @codex (2026-06-25) |
 | PR2-E3 | Extraer renderers (`bot/alerts.py` + `build_*_message`/`render_*`) a `interfaces/telegram/renderers/`. Servicios devuelven DTOs. | TODO |
 | PR2-E4 | Mover servicios de `monitors/` a `services/` y adelgazarlos (sin telegram, sin SQL inline). | TODO |
 | PR2-E5 | Handlers finos en `interfaces/telegram/handlers/` (mismos comandos). | TODO |
