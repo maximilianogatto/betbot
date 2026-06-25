@@ -143,3 +143,30 @@
 - **Tests:** Sin cambios de código desde el test verde ya registrado para PR2-E2: venv real → 600 tests OK.
 - **Notas/Bloqueos:** PR2 sigue bloqueada para implementación hasta que PR1 esté mergeada. La decisión rewrite greenfield queda respetada en las subtareas.
 - **Siguiente sugerido:** Smoke manual de PR1 y merge; luego PR2-E1 → ports/schema → `PR2-E2-S0`.
+
+### 2026-06-25T17:10:00-03:00 · @claude · DB-PATH-ENV · DONE
+- **Qué hice:** Hice configurable la ruta de la DB por env var `BETBOT_DB_PATH` (a pedido del usuario, para smoke tests sin tocar la DB real). Cambios: (1) `storage/tracking_repository.py` → `DB_FILE_PATH` lee `BETBOT_DB_PATH` (absoluta o relativa al root) con fallback al default + `import os`. (2) `main.py` y `cli.py` → cargan `.env` ANTES de importar el repositorio (si no, el módulo computaba `DB_FILE_PATH` antes de `load_dotenv` y la var no tomaba efecto). (3) `.env` → agregada `BETBOT_DB_PATH=data/tracking.smoke.sqlite3`.
+- **Por qué:** Permitir bootear el bot/CLI contra una copia descartable (`tracking.smoke.sqlite3`) sin riesgo para la DB real.
+- **Archivos:** storage/tracking_repository.py, main.py, cli.py, .env (local, gitignored)
+- **Commit:** pendiente (los 3 .py son mejora limpia y commiteable; el .env queda local)
+- **Tests:** Verde — suite completa OK; `cli.py stats` reporta la DB smoke; `import main` resuelve a smoke.
+- **Notas/Bloqueos:** Para volver a la DB real: comentar/quitar la línea `BETBOT_DB_PATH` del `.env`. `data/tracking.smoke.sqlite3` es hoy una copia de ~303 KB (casi vacía).
+- **Siguiente sugerido:** smoke manual de PR1 (boot) usando la DB smoke; luego merge.
+
+### 2026-06-25T17:45:00-03:00 · @claude · ENV-PY313 · DONE
+- **Qué hice:** El `./run.sh` crasheaba en `run_polling` por incompatibilidad Python 3.14 + python-telegram-bot 21.11.1 (PTB 21 llama `asyncio.get_event_loop()`, que 3.14 ya no auto-crea → RuntimeError). El venv local del worktree (`betbot/`) estaba en 3.14. Lo reconstruí en **Python 3.13.12** (bootstrap desde el venv 3.13 de la rama main) y reinstalé requirements. Verificado: `get_event_loop()` OK, `import main` carga y usa la DB smoke. Backup 3.14 borrado.
+- **Por qué:** PTB 21.x soporta hasta Python 3.13, no 3.14. El bot YA arrancaba y cableaba bien (PR1 OK); el crash era solo de entorno.
+- **Archivos:** betbot/ (venv local, gitignored) — sin cambios de código. run.sh sin tocar (ya anda con el venv 3.13).
+- **Commit:** N/A (venv, no versionado)
+- **Tests:** imports OK; venv 3.13.12 con PTB 21.11.1, playwright 1.60, curl_cffi 0.15.0.
+- **Notas/Bloqueos:** ⚠️ RIESGO DE DEPLOY: fijar Python ≤3.13 en la VPS hasta que PTB soporte 3.14. El venv 3.14 fue un accidente local (homebrew default).
+- **Siguiente sugerido:** `./run.sh` ahora arranca el bot (3.13 + DB smoke). Único pendiente: conflicto de token si el .env tiene el de prod.
+
+### 2026-06-25T18:05:00-03:00 · @claude · SMOKE-PR1-BOOT · DONE
+- **Qué hice:** Smoke manual de PR1 con el usuario: `./run.sh` (venv 3.13) bootea, entra en polling, el scheduler corre (prune/tracking OK sobre DB smoke) y **responde a /list_tracks** (Telegram conectado, sin conflicto de token). Aparecieron 2 errores: (a) betsson `ImportError: h2 not installed` (http2=True) → faltaba `h2` en el venv reconstruido; (b) sportradar headless bootstrap falla (pre-existente, Statshub bloquea headless local).
+- **Por qué/Fix:** `requirements.txt` NO incluía `h2`/`httpx[http2]` aunque `extractors/betsson_http` usa `http2=True`. Gap pre-existente que el rebuild limpio del venv expuso. Instalé `h2` (4.3.0) y agregué `h2>=4.1,<5.0` a requirements.txt → afecta también a la VPS (instalación limpia habría fallado en betsson).
+- **Archivos:** requirements.txt (+h2), betbot/ (venv, gitignored)
+- **Commit:** requirements.txt pendiente (fix real, commiteable)
+- **Tests:** boot + polling OK; `/list_tracks` respondido; httpx http2 construye OK.
+- **Notas/Bloqueos:** sportradar headless es esperado en local — opcional silenciar con `SPORTRADAR_REPLAY_ONLY=true` en .env (deshabilita el refresh de sesión; token por /sportradar_token). No bloquea PR1.
+- **Siguiente sugerido:** re-correr ./run.sh (ya sin error de betsson). PR1 validado end-to-end → listo para merge. Commitear el fix de requirements.txt (h2).
