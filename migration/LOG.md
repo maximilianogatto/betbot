@@ -78,3 +78,12 @@
 - **Tests:** Verde. 598 tests pasaron con éxito.
 - **Notas/Bloqueos:** Ninguno.
 - **Siguiente sugerido:** PR1-T5 (Índices en FKs que disparan CASCADE).
+
+### 2026-06-25T15:42:00-03:00 · @gemini · PR1-T5 · DONE
+- **Qué hice:** Agregué sentencias `CREATE INDEX IF NOT EXISTS` en `_initialize_schema` en `storage/tracking_repository.py` para crear índices explícitos sobre la columna `active_event_id` en las tablas `user_event_baselines`, `small_changes`, `sent_alerts` y `stats_match_links`. Sumé un test de verificación en `tests/core/test_prune_old_data.py`.
+- **Por qué:** Mejorar el rendimiento de las eliminaciones en cascada y prevenir lecturas completas de tablas (full-table scans) cuando se purgan o eliminan eventos activos stale.
+- **Archivos:** storage/tracking_repository.py, tests/core/test_prune_old_data.py
+- **Commit:** 552950d24e103c0dd586d0c50a39184456ae0889
+- **Tests:** Verde. 599 tests pasaron con éxito.
+- **Notas/Bloqueos:** Ninguno.
+- **Siguiente sugerido:** PR1-T6 (Pruning de sent_alerts y small_changes).
