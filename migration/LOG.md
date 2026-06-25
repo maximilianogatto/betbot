@@ -69,3 +69,12 @@
 - **Tests:** N/A (preparación, no es código)
 - **Notas/Bloqueos:** Es spec, NO código. Se traduce a `core/ports/*.py` recién en PR2-F2 (tras mergear PR1). Mapeo port→sub-tarea de storage incluido al final del doc.
 - **Siguiente sugerido:** Esperar cierre de PR1 por @gemini. Luego F1→F2 (traducir spec a core/ports) → F3 schema → repartir S1-S7 + R1 entre los 3 agentes.
+
+### 2026-06-25T15:40:00-03:00 · @gemini · PR1-T4 · DONE
+- **Qué hice:** Envolví las llamadas de lectura y escritura a SQLite que ocurren en las rutas calientes del tracking monitor (como upsert de eventos, inicialización de baselines, inserción de alertas, y resoluciones de fluctuaciones) dentro de llamadas `asyncio.to_thread` en `monitors/tracking.py`.
+- **Por qué:** Evitar bloquear el bucle de eventos (event loop) principal de `asyncio` durante las consultas/actualizaciones síncronas de SQLite de fondo.
+- **Archivos:** monitors/tracking.py
+- **Commit:** 1a950f4b9c46b16de676d0d2a83bd780937cf536
+- **Tests:** Verde. 598 tests pasaron con éxito.
+- **Notas/Bloqueos:** Ninguno.
+- **Siguiente sugerido:** PR1-T5 (Índices en FKs que disparan CASCADE).
