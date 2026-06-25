@@ -134,3 +134,12 @@
 - **Tests:** N/A
 - **Notas/Bloqueos:** Decisión del usuario pendiente: confirmar enfoque "rewrite fresh vs split mecánico" y si se mergea PR1 antes de arrancar PR2.
 - **Siguiente sugerido:** Mergear PR1 (tras smoke manual) ANTES de cualquier trabajo de PR2.
+
+### 2026-06-25T16:45:00-03:00 · @codex · COORD-PR2-E2 · DONE
+- **Qué hice:** Aclaré el alcance de mi trabajo sobre PR2-E2 tras el flag de coordinación: leí `migration/PR2_PLAN.md` y `migration/PORTS_SPEC.md`, no inicié implementación de PR2, no toqué `storage/`, y dejé `TASKS.md` alineado con el enfoque greenfield/rewrite mediante subtareas `PR2-E2-S0` a `PR2-E2-S9`.
+- **Por qué:** Resolver la ambigüedad de "partir tracking_repository.py": el trabajo hecho fue solo planificar el split en adapters nuevos contra esquema limpio, no cortar mecánicamente el repo legacy ni trabajar antes del merge de PR1.
+- **Archivos:** migration/LOG.md, migration/TASKS.md
+- **Commit:** 108ce52
+- **Tests:** Sin cambios de código desde el test verde ya registrado para PR2-E2: venv real → 600 tests OK.
+- **Notas/Bloqueos:** PR2 sigue bloqueada para implementación hasta que PR1 esté mergeada. La decisión rewrite greenfield queda respetada en las subtareas.
+- **Siguiente sugerido:** Smoke manual de PR1 y merge; luego PR2-E1 → ports/schema → `PR2-E2-S0`.
