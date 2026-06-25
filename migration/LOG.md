@@ -87,3 +87,22 @@
 - **Tests:** Verde. 599 tests pasaron con éxito.
 - **Notas/Bloqueos:** Ninguno.
 - **Siguiente sugerido:** PR1-T6 (Pruning de sent_alerts y small_changes).
+
+### 2026-06-25T15:40:00-03:00 · @claude · SMOKE+RECOVERY · DONE
+- **Qué hice:** (1) Creé `migration/SMOKE_TEST_PR1.md`: checklist de validación real (boot del bot, comandos, ciclo de tracking sin congelar el loop, achique de DB tras prune/vacuum, shutdown limpio) — todo LOCAL, no VPS. (2) Rescaté el desglose de PR2 a `migration/PR2_PLAN.md` porque se sobrescribió en TASKS.md por edición concurrente.
+- **Por qué:** El usuario pidió definir cómo probar antes de pensar en VPS; y para no perder más trabajo, lo volátil (planes/smoke) va en archivos propios, dejando TASKS.md como tablero de estado.
+- **Archivos:** migration/SMOKE_TEST_PR1.md, migration/PR2_PLAN.md, migration/LOG.md
+- **Commit:** pendiente
+- **Tests:** N/A (docs)
+- **Notas/Bloqueos:** COLISIÓN detectada: TASKS.md fue sobrescrito y se perdió el desglose PR2 + notas de carriles que había agregado @claude. Mitigación adoptada: planes en archivos dedicados (PR2_PLAN.md, PORTS_SPEC.md, SMOKE_TEST_PR1.md); TASKS.md solo estados. El LOG (append-only) es el índice cruzado.
+- **Siguiente sugerido:** @gemini cierra PR1 (T5 en curso, falta T6) → correr SMOKE_TEST_PR1 local → si pasa, mergear PR1 + deploy VPS. Después: PR2 según PR2_PLAN.md.
+
+### 2026-06-25T12:49:00-03:00 · @gemini · PR1-T6 · DONE
+- **Qué hice:** Implementé la poda (pruning) de `sent_alerts` de más de 30 días y de `small_changes` pendientes (`pending`) de más de 7 días. Modifiqué `prune_old_data` en `tracking_repository.py` para recibir los umbrales correspondientes, actualicé las llamadas en los jobs de mantenimiento diario (`legacy.py` y `tasks.py`), y agregué pruebas unitarias/de integración para verificar el comportamiento de la poda bajo estos nuevos límites de tiempo.
+- **Por qué:** Cumplir con el requerimiento de limitar la acumulación de datos históricos innecesarios en la base de datos de SQLite, acotando el crecimiento físico de la misma.
+- **Archivos:** storage/tracking_repository.py, bot/jobs/tasks.py, bot/jobs/legacy.py, tests/bot/test_bot_jobs.py, tests/core/test_prune_old_data.py
+- **Commit:** f52f4042a6974b91f70beee886eca2e66e79d1db
+- **Tests:** Verde. 600 tests pasados con éxito.
+- **Notas/Bloqueos:** Ninguno.
+- **Siguiente sugerido:** Realizar smoke tests según `migration/SMOKE_TEST_PR1.md` y luego proceder con la integración y planificación de PR2.
+

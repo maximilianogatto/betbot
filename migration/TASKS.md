@@ -19,7 +19,7 @@
 | PR1-T3 | Reinicio graceful de Chromium por RAM. | `bot/jobs/*` (resource monitor), `core/browser_handler.py`, `bot/config.py` | Cuando la RAM de Chromium supera el umbral, se llama `request_restart()` (espera `active_pages==0`, no kill). `ENABLE_MONITORING=true` por defecto. | — | DONE |
 | PR1-T4 | Envolver lecturas/escrituras SQLite pesadas en `asyncio.to_thread`. | `storage/tracking_repository.py` (llamadas en `monitors/tracking.py`, `change_detection.py`) | Las rutas calientes (upsert de eventos, baselines, blobs) no bloquean el event loop. Tests verdes. | — | DONE |
 | PR1-T5 | Índices en FKs que disparan CASCADE. | `storage/tracking_repository.py` (`_initialize_schema`) | `CREATE INDEX` en `user_event_baselines(active_event_id)`, `small_changes(active_event_id)`, `sent_alerts(active_event_id)`, `stats_match_links(active_event_id)`. | — | DONE |
-| PR1-T6 | Prune de `sent_alerts` (>30 días) y `small_changes` no confirmados (>7 días). | `storage/tracking_repository.py`, job mantenimiento | Job diario borra registros viejos. Test. | PR1-T1 | IN_PROGRESS @gemini (2026-06-25) |
+| PR1-T6 | Prune de `sent_alerts` (>30 días) y `small_changes` no confirmados (>7 días). | `storage/tracking_repository.py`, job mantenimiento | Job diario borra registros viejos. Test. | PR1-T1 | DONE |
 
 **Cierre PR1:** suite completa verde (`./run_tests.sh -t .`) + medición de tamaño DB antes/después documentada en `LOG.md`.
 
