@@ -18,11 +18,13 @@ Output contract:
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
+from urllib.parse import parse_qs, urlparse
 
 from stats_providers.sportradar_http.engine.endpoints.discovery import get_config_tree_mini
 from stats_providers.sportradar_http.engine.endpoints.live import (
@@ -53,8 +55,11 @@ from stats_providers.sportradar_http.engine.run_match_pipeline import (
 )
 from stats_providers.sportradar_http.engine.runtime import BootstrapMode, BootstrapSessionManager
 from stats_providers.sportradar_http.engine.session_manager import (
+    SportradarSessionState,
     load_session_state,
+    parse_signed_t,
     save_session_state,
+    signed_token_from_parsed,
 )
 from stats_providers.sportradar_http.engine.tournament_navigation import (
     build_tournament_navigation_snapshot,
@@ -92,11 +97,6 @@ class BotReadyRuntimeConfig:
     # successful headed run warms the shared profile so later headless refreshes
     # reuse its Akamai cookies and stay invisible.
     background_bootstrap_mode: BootstrapMode = "headless"
-    # Replay-only: never launch a browser. Use the cached/uploaded session state
-    # as-is; if it's missing or expired, raise instead of opening Chrome. For
-    # hosts where Playwright is unusable (Akamai blocks headless, tiny VM): the
-    # token is minted elsewhere and fed in (e.g. via /sportradar_token).
-    replay_only: bool = False
     timeout_seconds: float = 25.0
     retries: int = 1
     lastx: int = 8
@@ -136,6 +136,15 @@ class BotReadyTournamentRequest:
     depth: int = 0
 
 
+def _is_replay_only() -> bool:
+    """Return True when SPORTRADAR_REPLAY_ONLY is set in the environment.
+
+    In replay-only mode the provider never opens a browser; it relies
+    exclusively on a pre-imported token (via /sportradar_token in Telegram).
+    """
+    return os.getenv("SPORTRADAR_REPLAY_ONLY", "false").strip().lower() in {"true", "1", "yes"}
+
+
 class SportradarBotReadyProvider:
     """Research-only adapter shaped like a future BetBot provider.
 
@@ -146,6 +155,7 @@ class SportradarBotReadyProvider:
 
     def __init__(self, config: BotReadyRuntimeConfig | None = None) -> None:
         self.config = config or BotReadyRuntimeConfig()
+        self.replay_only = _is_replay_only()
         # A stable Chromium profile lets a successful bootstrap (even a one-time
         # headed one) leave Akamai clearance cookies behind, so later headless
         # refreshes reuse them instead of arriving cold and getting a 403.
@@ -279,12 +289,12 @@ class SportradarBotReadyProvider:
         Returns True when a bootstrap (browser) refresh was performed. Designed to
         run from a background job, keeping the token-minting browser launch off the
         user-facing `/stats` path.
+
+        In replay-only mode this is a no-op: the token is managed externally.
         """
 
-        if self.config.replay_only:
-            # Never mint here; the token is supplied externally.
+        if self.replay_only:
             return False
-
         state = None
         if self.config.session_state_path.exists():
             state = load_session_state(self.config.session_state_path)
@@ -305,18 +315,20 @@ class SportradarBotReadyProvider:
         if self.config.session_state_path.exists():
             state = load_session_state(self.config.session_state_path)
         if state is None or state.signed_token is None or state.signed_token.is_expired():
-            if self.config.replay_only:
+            if self.replay_only:
                 raise RuntimeError(
-                    "Token de Sportradar ausente o vencido. Generá uno nuevo en tu PC "
-                    "y subilo con /sportradar_token (esta instancia no abre navegador)."
+                    "🔑 Token de Sportradar ausente o vencido.\n"
+                    "Modo replay-only: el bot no abre Chrome.\n"
+                    "Renová el token con /sportradar_token <token>."
                 )
             state = self.session_manager.refresh_session()
             save_session_state(state, self.config.session_state_path)
         return SportradarHTTPClient(
             session_state=state,
-            session_manager=self.session_manager,
-            # In replay-only mode a mid-flight 403 must NOT trigger a browser refresh.
-            auto_refresh=not self.config.replay_only,
+            # In replay-only mode, never auto-refresh (which would open Chrome on a
+            # mid-request 403). Let it fail fast so the user can re-import the token.
+            session_manager=None if self.replay_only else self.session_manager,
+            auto_refresh=not self.replay_only,
             retries=self.config.retries,
             timeout_seconds=self.config.timeout_seconds,
         )
@@ -324,6 +336,109 @@ class SportradarBotReadyProvider:
     def _persist_state(self, client: SportradarHTTPClient) -> None:
         if client.state is not None:
             save_session_state(client.state, self.config.session_state_path)
+
+    # -- Token management (used by /sportradar_token handler) ------------------
+
+    def import_token_string(self, raw_token: str) -> dict[str, Any]:
+        """Import a raw Sportradar token string and persist it as session state.
+
+        The token is the ``T`` query parameter value (e.g.
+        ``acl=/*~exp=1750000000~hmac=abc123``). This builds a minimal
+        ``SportradarSessionState`` suitable for HTTP replay.
+
+        Returns a status dict with ``ok``, ``expires_at_utc``, and
+        ``seconds_left``.
+        """
+
+        parsed = parse_signed_t(_extract_raw_token(raw_token))
+        if parsed is None or not parsed.get("raw") or parsed.get("exp") is None:
+            return {"ok": False, "error": "No se pudo parsear el token. Debe contener acl=, exp= y hmac=."}
+        signed = signed_token_from_parsed(parsed)
+        if signed.is_expired():
+            return {"ok": False, "error": "El token ya está vencido."}
+        from stats_providers.sportradar_http.engine.session_manager import (
+            DEFAULT_ORIGIN,
+            DEFAULT_REFERER,
+            build_replay_headers,
+            utc_now_iso,
+        )
+        state = SportradarSessionState(
+            generated_at=utc_now_iso(),
+            headed=False,
+            headless=False,
+            bootstrap_urls=[],
+            origin=DEFAULT_ORIGIN,
+            referer=DEFAULT_REFERER,
+            replay_headers=build_replay_headers(),
+            cookies={},
+            signed_token=signed,
+            sample_signed_url=None,
+        )
+        save_session_state(state, self.config.session_state_path)
+        return {
+            "ok": True,
+            "expires_at_utc": signed.expires_at_utc,
+            "seconds_left": signed.seconds_until_expiration(),
+        }
+
+    def import_session_json(self, json_text: str) -> dict[str, Any]:
+        """Import a full session state JSON (from the session_manager CLI)."""
+
+        import json
+        try:
+            payload = json.loads(json_text)
+        except json.JSONDecodeError as exc:
+            return {"ok": False, "error": f"JSON inválido: {exc}"}
+        state = SportradarSessionState.from_json_dict(payload)
+        if not state.is_usable():
+            return {"ok": False, "error": "El session state no es usable (token vencido o bloqueado)."}
+        save_session_state(state, self.config.session_state_path)
+        return {
+            "ok": True,
+            "expires_at_utc": state.token_expiration(),
+            "seconds_left": (
+                state.signed_token.seconds_until_expiration()
+                if state.signed_token else None
+            ),
+        }
+
+    def get_token_status(self) -> dict[str, Any]:
+        """Return the current token status for display in Telegram."""
+
+        if not self.config.session_state_path.exists():
+            return {"has_token": False, "usable": False}
+        try:
+            state = load_session_state(self.config.session_state_path)
+        except Exception:
+            return {"has_token": False, "usable": False}
+        token = state.signed_token
+        if token is None:
+            return {"has_token": False, "usable": False}
+        seconds_left = token.seconds_until_expiration()
+        return {
+            "has_token": True,
+            "usable": state.is_usable(),
+            "expired": token.is_expired(),
+            "expires_at_utc": token.expires_at_utc,
+            "seconds_left": seconds_left,
+            "hours_left": round(seconds_left / 3600, 1) if seconds_left is not None else None,
+            "replay_only": self.replay_only,
+        }
+
+
+def _extract_raw_token(value: str) -> str:
+    """Return a Sportradar ``T`` token from raw text, ``T=...``, or a URL."""
+
+    raw = str(value or "").strip()
+    if not raw:
+        return ""
+    parsed_url = urlparse(raw)
+    query_values = parse_qs(parsed_url.query).get("T")
+    if query_values:
+        return query_values[0].strip()
+    if raw.startswith("T="):
+        return raw[2:].strip()
+    return raw
 
 
 def build_live_state_document(

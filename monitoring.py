@@ -250,3 +250,51 @@ def _is_chromium_process_name(process_name: str) -> bool:
     """Return whether a process name looks like Chromium/Chrome."""
 
     return any(token in process_name for token in CHROMIUM_NAME_TOKENS)
+
+
+def kill_chromium_child_processes() -> int:
+    """Terminate all Chromium processes that are descendants of the current process.
+
+    Returns the number of terminated processes.
+    """
+    psutil_module = _get_psutil()
+    if psutil_module is None:
+        return 0
+
+    killed_count = 0
+    try:
+        process = _get_current_process(psutil_module)
+        child_processes = process.children(recursive=True)
+        for child in child_processes:
+            try:
+                child_name = str(child.name() or "").lower()
+                if _is_chromium_process_name(child_name):
+                    logger.info("Terminating Chromium child process: pid=%s name=%s", child.pid, child.name())
+                    child.terminate()
+                    killed_count += 1
+            except (
+                psutil_module.NoSuchProcess,
+                psutil_module.AccessDenied,
+                psutil_module.ZombieProcess,
+            ):
+                continue
+
+        # Give them a moment to terminate, then SIGKILL if still alive
+        if killed_count > 0:
+            gone, alive = psutil_module.wait_procs(child_processes, timeout=3)
+            for child in alive:
+                try:
+                    child_name = str(child.name() or "").lower()
+                    if _is_chromium_process_name(child_name):
+                        logger.warning("Force killing Chromium child process: pid=%s name=%s", child.pid, child.name())
+                        child.kill()
+                except (
+                    psutil_module.NoSuchProcess,
+                    psutil_module.AccessDenied,
+                    psutil_module.ZombieProcess,
+                ):
+                    continue
+    except Exception as error:
+        logger.exception("Error cleaning up Chromium child processes: %s", error)
+
+    return killed_count

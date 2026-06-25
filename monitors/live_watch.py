@@ -24,6 +24,7 @@ from core.extractor_base import Extractor
 from core.models import LiveEventSnapshot
 from core.timezones import default_timezone, resolve_chat_timezone
 from core.registry import ExtractorRegistry, extractor_registry as global_extractor_registry
+from core.league_naming import team_name_similarity, normalize_team_name
 from storage.tracking_repository import (
     LiveWatchEntry,
     LiveWatchSettings,
@@ -42,48 +43,7 @@ COMBINED_FLOOR = 0.70
 _MATCH_OVER_GRACE = timedelta(hours=2)
 
 
-_TEAM_TRANSLATION_MAP = {
-    "femenino": "women",
-    "femenil": "women",
-    "mujeres": "women",
-    "fem": "women",
-    "reserva": "reserves",
-    "reservas": "reserves",
-    "sub": "u",
-    "youth": "youth",
-    "juvenil": "youth",
-}
 
-
-def _normalize(value: str) -> str:
-    raw = unicodedata.normalize("NFKD", str(value or "").lower())
-    raw = "".join(ch for ch in raw if not unicodedata.combining(ch))
-    raw = re.sub(r"\bsub[- ]?(\d+)\b", r"u\1", raw)
-    tokens = raw.split()
-    translated = [_TEAM_TRANSLATION_MAP.get(t, t) for t in tokens]
-    raw = " ".join(translated)
-    return re.sub(r"[^a-z0-9]+", " ", raw).strip()
-
-
-# Generic tokens that should not, on their own, make two team names match.
-_STOPWORDS = {
-    "fc", "afc", "sc", "cf", "ca", "ac", "if", "sk", "club", "de", "the",
-    "women", "w", "u20", "u23", "u19", "u17", "reserves", "reserva", "reservas",
-    "femenino", "femenil", "sub", "fem", "youth", "u21", "u18", "u16", "u15"
-}
-
-
-def _name_similarity(left: str, right: str) -> float:
-    left_norm, right_norm = _normalize(left), _normalize(right)
-    if not left_norm or not right_norm:
-        return 0.0
-    ratio = SequenceMatcher(a=left_norm, b=right_norm).ratio()
-    lt = set(left_norm.split()) - _STOPWORDS
-    rt = set(right_norm.split()) - _STOPWORDS
-    if lt and rt:
-        overlap = len(lt & rt) / min(len(lt), len(rt))
-        return max(ratio, overlap)
-    return ratio
 
 
 def _parse_iso_datetime(dt_str: str | None) -> datetime | None:
@@ -173,8 +133,8 @@ def match_score(entry: Any, event: Any) -> float:
         return 0.0
 
     # 3. Team name similarity checks
-    home = _name_similarity(entry_home, event_home_str)
-    away = _name_similarity(entry_away, event_away_str)
+    home = team_name_similarity(entry_home, event_home_str)
+    away = team_name_similarity(entry_away, event_away_str)
     if home < SIDE_FLOOR or away < SIDE_FLOOR:
         return 0.0
     return (home + away) / 2.0
@@ -249,8 +209,8 @@ class LiveWatchService:
             # 2. Skip duplicates
             is_dup = False
             for entry in existing_watches:
-                sim_home = _name_similarity(home, entry.home)
-                sim_away = _name_similarity(away, entry.away)
+                sim_home = team_name_similarity(home, entry.home)
+                sim_away = team_name_similarity(away, entry.away)
                 if sim_home >= 0.85 and sim_away >= 0.85:
                     is_dup = True
                     break
@@ -354,14 +314,13 @@ class LiveWatchService:
                     logger.warning("%s extractor returned no events platform=%s", label, extractor.name)
                     return []
                 return list(raw_events)
-            except Exception as err:
-                # External feeds flap (a book blocks the datacenter IP -> 403/503,
-                # times out, etc.). Those are expected and best-effort, so log a
-                # concise one-liner instead of a full traceback every cycle.
+            except Exception as error:
                 import httpx
-
-                if isinstance(err, (httpx.HTTPError, ConnectionError, TimeoutError, OSError)):
-                    logger.warning("%s fetch failed platform=%s: %s", label, extractor.name, err)
+                if isinstance(error, httpx.HTTPStatusError) and error.response.status_code in (403, 503):
+                    logger.warning(
+                        "%s fetch failed with HTTP %d (WAF/Cloud IP Block) platform=%s. Running from a cloud provider (GCP/AWS) often causes this. Consider using a proxy.",
+                        label, error.response.status_code, extractor.name
+                    )
                 else:
                     logger.exception("%s fetch failed platform=%s", label, extractor.name)
                 return []
@@ -896,12 +855,12 @@ def _format_handicap_from_markets(markets: dict[str, Any], *, home: str, away: s
 
     home_sel = None
     away_sel = None
-    home_norm = _normalize(home)
-    away_norm = _normalize(away)
+    home_norm = normalize_team_name(home)
+    away_norm = normalize_team_name(away)
     for sel in selections:
         if not isinstance(sel, dict):
             continue
-        sel_name = _normalize(sel.get("selection"))
+        sel_name = normalize_team_name(sel.get("selection"))
         if sel_name == home_norm:
             home_sel = sel
         elif sel_name == away_norm:

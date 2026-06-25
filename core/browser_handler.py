@@ -43,6 +43,7 @@ class BrowserHandler:
         self._active_page_count = 0
         self._active_page_count_lock = asyncio.Lock()
         self._restart_requested = False
+        self._restart_requested_reason: str | None = None
         self._last_release_monotonic: float | None = None
 
     async def start(self) -> None:
@@ -105,6 +106,7 @@ class BrowserHandler:
         """Mark the persistent browser for restart before the next safe capture."""
 
         self._restart_requested = True
+        self._restart_requested_reason = reason
         logger.info(
             "Persistent browser restart requested: browser=%s reason=%s",
             self.settings.browser_name,
@@ -230,6 +232,7 @@ class BrowserHandler:
                 )
                 await self.stop()
                 self._restart_requested = False
+                self._restart_requested_reason = None
 
             await self.start()
 
@@ -238,6 +241,8 @@ class BrowserHandler:
             return None
 
         if self._restart_requested and self._active_page_count == 0:
+            if self._restart_requested_reason:
+                return f"restart_requested:{self._restart_requested_reason}"
             return "restart_requested"
 
         idle_ttl_seconds = self.settings.idle_ttl_seconds

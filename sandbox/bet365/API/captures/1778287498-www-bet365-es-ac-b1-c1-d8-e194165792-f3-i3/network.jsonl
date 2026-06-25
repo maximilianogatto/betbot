@@ -1,2 +1,0 @@
-{"id": "request-failed-00001", "type": "request_failed", "timestamp": 1778287505.009669, "url": "https://ogads-pa.clients6.google.com/$rpc/google.internal.onegoogle.asyncdata.v1.AsyncDataService/GetAsyncData", "method": "POST", "resource_type": "xhr", "failure": "net::ERR_NAME_NOT_RESOLVED"}
-{"id": "request-failed-00002", "type": "request_failed", "timestamp": 1778287505.1524742, "url": "https://www.bet365.es/", "method": "GET", "resource_type": "document", "failure": "net::ERR_ABORTED"}

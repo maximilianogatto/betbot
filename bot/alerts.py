@@ -354,9 +354,9 @@ def _physical_match_similarity(event_a: ActiveEventRecord, event_b: ActiveEventR
         if diff_hours > 3.0:
             return 0.0
 
-    from monitors.live_watch import _name_similarity
-    home_sim = _name_similarity(event_a.home, event_b.home)
-    away_sim = _name_similarity(event_a.away, event_b.away)
+    from core.league_naming import team_name_similarity
+    home_sim = team_name_similarity(event_a.home, event_b.home)
+    away_sim = team_name_similarity(event_a.away, event_b.away)
     
     if home_sim >= 0.70 and away_sim >= 0.70:
         avg_score = (home_sim + away_sim) / 2.0
@@ -469,6 +469,35 @@ def build_event_url_message(match: ActiveEventRecord, url: str) -> str:
         f"⚽ <b>{escape(match.home)} vs {escape(match.away)}</b>\n\n"
         f"🔗 {escape(url)}"
     )
+
+
+def build_grouped_event_url_message(matches: Sequence[ActiveEventRecord]) -> str:
+    """Build a Telegram message exposing one direct event URL per bookmaker.
+
+    `matches` is the cross-book group for a single physical match (as produced by
+    `group_events_by_physical_match`). Each record carries its own `event_url` and
+    `platform`, so we list one entry per house.
+    """
+
+    if not matches:
+        return ""
+
+    from storage.tracking_repository import tracking_repository
+
+    representative = matches[0]
+    lines = [f"⚽ <b>{escape(representative.home)} vs {escape(representative.away)}</b>"]
+
+    for match in matches:
+        tracked = tracking_repository.get_tracked_competition(match.tracked_competition_id)
+        plat_disp = escape(tracked.platform_display_name) if tracked else escape(match.platform.capitalize())
+        lines.append("")
+        lines.append(f"🏦 <b>{plat_disp}</b>")
+        if match.event_url:
+            lines.append(f"🔗 {escape(match.event_url)}")
+        else:
+            lines.append("⚠️ Sin link directo disponible.")
+
+    return "\n".join(lines)
 
 
 def build_event_stats_message(match: ActiveEventRecord, stats_url: str) -> str:

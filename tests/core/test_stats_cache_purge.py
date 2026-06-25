@@ -35,6 +35,22 @@ class StatsCachePurgeTests(unittest.TestCase):
         self.assertIsNotNone(self.repo.get_cached_stats_payload("fresh"))
         self.assertIsNone(self.repo.get_cached_stats_payload("stale"))
 
+    def test_set_cached_stats_payload_enforces_fifo_row_limit(self) -> None:
+        for index in range(tracking_repository_module.STATS_PAYLOAD_CACHE_MAX_ROWS + 5):
+            self.repo.set_cached_stats_payload(f"key_{index:03d}", {"v": index}, ttl_seconds=3600)
+
+        with tracking_repository_module._connect() as connection:
+            rows = connection.execute(
+                "SELECT cache_key FROM stats_payload_cache ORDER BY fetched_at ASC, cache_key ASC"
+            ).fetchall()
+
+        keys = [str(row["cache_key"]) for row in rows]
+        self.assertEqual(len(keys), tracking_repository_module.STATS_PAYLOAD_CACHE_MAX_ROWS)
+        self.assertEqual(keys[0], "key_005")
+        self.assertNotIn("key_000", keys)
+        self.assertNotIn("key_004", keys)
+        self.assertIn("key_204", keys)
+
 
 if __name__ == "__main__":
     unittest.main()

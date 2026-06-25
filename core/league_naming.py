@@ -202,3 +202,118 @@ def extract_league_traits(name: str | None) -> dict[str, str | None]:
         "gender": gender,
         "age_group": age.upper() if age else None,
     }
+
+
+from difflib import SequenceMatcher
+
+_LEAGUE_SIMILARITY_TRANSLATION_MAP: dict[str, str] = {
+    "alemania": "germany",
+    "espana": "spain",
+    "inglaterra": "england",
+    "italia": "italy",
+    "francia": "france",
+    "occidental": "western",
+    "oriental": "eastern",
+    "sur": "south",
+    "norte": "north",
+    "central": "central",
+    "copa": "cup",
+    "liga": "league",
+    "campeonato": "championship",
+    "division": "division",
+    "primera": "premier",
+    "segunda": "second",
+    "tercera": "third",
+    "sub": "u",
+    "juvenil": "youth",
+    "reserva": "reserves",
+    "reservas": "reserves",
+    "femenino": "women",
+    "femenil": "women",
+    "mujeres": "women",
+    "fem": "women",
+    "nueva": "new",
+    "gales": "wales",
+    "australia": "australia",
+}
+
+_LEAGUE_SIMILARITY_STOPWORDS: set[str] = {"de", "la", "el", "del", "y", "a", "of", "and", "the", "in", "for", "fc", "club"}
+
+
+def league_name_similarity(left: str, right: str) -> float:
+    """Loose similarity between two league names, ignoring case, prepositions, and translating Spanish terms to English."""
+    if not left or not right:
+        return 0.0
+
+    def norm(value: str) -> str:
+        # Strip accents
+        folded = "".join(c for c in unicodedata.normalize('NFD', value) if unicodedata.category(c) != 'Mn')
+        folded = folded.lower()
+        # Normalize sub-XX or u-XX to uXX
+        folded = re.sub(r"\b(sub|u)-?(\d+)\b", r"u\2", folded)
+        cleaned = re.sub(r"[^a-z0-9]+", " ", folded).strip()
+        cleaned = _apply_country_aliases(cleaned)
+        tokens = cleaned.split()
+        translated = [
+            _LEAGUE_SIMILARITY_TRANSLATION_MAP.get(t, t)
+            for t in tokens
+            if t not in _LEAGUE_SIMILARITY_STOPWORDS
+        ]
+        return " ".join(translated)
+
+    left_norm = norm(left)
+    right_norm = norm(right)
+    ratio = SequenceMatcher(a=left_norm, b=right_norm).ratio()
+    left_tokens = set(left_norm.split())
+    right_tokens = set(right_norm.split())
+    if not left_tokens or not right_tokens:
+        return ratio
+    overlap = len(left_tokens & right_tokens) / min(len(left_tokens), len(right_tokens))
+    return max(ratio, overlap)
+
+
+_TEAM_TRANSLATION_MAP = {
+    "femenino": "women",
+    "femenil": "women",
+    "mujeres": "women",
+    "fem": "women",
+    "reserva": "reserves",
+    "reservas": "reserves",
+    "sub": "u",
+    "youth": "youth",
+    "juvenil": "youth",
+}
+
+_TEAM_STOPWORDS = {
+    "fc", "afc", "sc", "cf", "ca", "ac", "if", "sk", "club", "de", "the",
+    "women", "w", "u20", "u23", "u19", "u17", "reserves", "reserva", "reservas",
+    "femenino", "femenil", "sub", "fem", "youth", "u21", "u18", "u16", "u15"
+}
+
+
+def normalize_team_name(value: str) -> str:
+    """Normalize a team name to a canonical, space-separated format."""
+    raw = unicodedata.normalize("NFKD", str(value or "").lower())
+    raw = "".join(ch for ch in raw if not unicodedata.combining(ch))
+    raw = re.sub(r"\bsub[- ]?(\d+)\b", r"u\1", raw)
+    tokens = raw.split()
+    translated = [_TEAM_TRANSLATION_MAP.get(t, t) for t in tokens]
+    raw = " ".join(translated)
+    return re.sub(r"[^a-z0-9]+", " ", raw).strip()
+
+
+def team_name_similarity(left: str, right: str) -> float:
+    """Fuzzy similarity between two team names, handling common synonyms and stopwords."""
+    if not left or not right:
+        return 0.0
+
+    left_norm, right_norm = normalize_team_name(left), normalize_team_name(right)
+    if not left_norm or not right_norm:
+        return 0.0
+    ratio = SequenceMatcher(a=left_norm, b=right_norm).ratio()
+    lt = set(left_norm.split()) - _TEAM_STOPWORDS
+    rt = set(right_norm.split()) - _TEAM_STOPWORDS
+    if lt and rt:
+        overlap = len(lt & rt) / min(len(lt), len(rt))
+        return max(ratio, overlap)
+    return ratio

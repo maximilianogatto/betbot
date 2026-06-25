@@ -48,6 +48,7 @@ DATA_DIR = PROJECT_ROOT / "data"
 DB_FILE_PATH = DATA_DIR / "tracking.sqlite3"
 DEFAULT_CHANGE_THRESHOLD_PERCENT = 20.0
 DEFAULT_NOTIFY_ODDS_CHANGES = True
+STATS_PAYLOAD_CACHE_MAX_ROWS = 200
 
 
 @dataclass(frozen=True)
@@ -74,6 +75,9 @@ class LiveWatchEntry:
     countdown_fired_at: str | None = None
     chat_local_id: int | None = None
     live_state_json: str | None = None
+    status_flags: int = 1
+    fired_odds_mask: int = 0
+    fired_stats_mask: int = 0
 
     @property
     def fired_platforms_list(self) -> list[str]:
@@ -1517,6 +1521,12 @@ class SqliteTrackingRepository:
             confirmed_at = now_iso if normalized_status == "confirmed" else None
             dismissed_at = now_iso if normalized_status == "ignored" else None
 
+            status_flags = 16
+            if normalized_status == "confirmed":
+                status_flags = 32
+            elif normalized_status == "ignored":
+                status_flags = 64
+
             connection.execute(
                 """
                 INSERT INTO small_changes (
@@ -1531,12 +1541,13 @@ class SqliteTrackingRepository:
                     max_change_percent,
                     payload_json,
                     status,
+                    status_flags,
                     created_at,
                     updated_at,
                     confirmed_at,
                     dismissed_at
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(chat_id, active_event_id) DO UPDATE SET
                     previous_odds_home = excluded.previous_odds_home,
                     previous_odds_draw = excluded.previous_odds_draw,
@@ -1547,6 +1558,7 @@ class SqliteTrackingRepository:
                     max_change_percent = excluded.max_change_percent,
                     payload_json = excluded.payload_json,
                     status = excluded.status,
+                    status_flags = excluded.status_flags,
                     updated_at = excluded.updated_at,
                     confirmed_at = excluded.confirmed_at,
                     dismissed_at = excluded.dismissed_at
@@ -1563,6 +1575,7 @@ class SqliteTrackingRepository:
                     float(max_percent_change),
                     payload_json,
                     normalized_status,
+                    status_flags,
                     now_iso,
                     now_iso,
                     confirmed_at,
@@ -1604,6 +1617,7 @@ class SqliteTrackingRepository:
                     sc.max_change_percent,
                     sc.payload_json,
                     sc.status,
+                    sc.status_flags,
                     sc.created_at,
                     sc.updated_at,
                     sc.confirmed_at,
@@ -1615,7 +1629,7 @@ class SqliteTrackingRepository:
                     ON cs.tracked_competition_id = ae.tracked_competition_id
                    AND cs.telegram_chat_id = sc.chat_id
                 WHERE sc.chat_id = ?
-                  AND sc.status = 'pending'
+                  AND sc.status_flags = 16
                   AND cs.enabled = 1
                   AND tc.enabled = 1
                   AND ae.is_active = 1
@@ -1687,6 +1701,7 @@ class SqliteTrackingRepository:
                 UPDATE small_changes
                 SET
                     status = 'confirmed',
+                    status_flags = 32,
                     confirmed_at = ?,
                     dismissed_at = NULL,
                     updated_at = ?
@@ -1743,12 +1758,13 @@ class SqliteTrackingRepository:
                 UPDATE small_changes
                 SET
                     status = 'confirmed',
+                    status_flags = 32,
                     confirmed_at = ?,
                     dismissed_at = NULL,
                     updated_at = ?
                 WHERE chat_id = ?
                   AND active_event_id = ?
-                  AND status = 'pending'
+                  AND status_flags = 16
                 """,
                 (now_iso, now_iso, chat_id, int(event_row["id"])),
             )
@@ -2782,6 +2798,7 @@ class SqliteTrackingRepository:
                 """,
                 (cache_key, _json_dumps(payload), fetched.isoformat(), expires.isoformat()),
             )
+            _enforce_stats_payload_cache_limit(connection)
 
     def purge_expired_stats_payloads(self) -> int:
         """Delete cached stats payloads past their TTL. Returns rows removed.
@@ -2823,8 +2840,8 @@ class SqliteTrackingRepository:
             cursor = connection.execute(
                 """
                 INSERT INTO live_watch_entries
-                    (chat_id, chat_local_id, home, away, league_hint, note, status, created_at, kickoff_at)
-                VALUES (?, ?, ?, ?, ?, ?, 'watching', ?, ?)
+                    (chat_id, chat_local_id, home, away, league_hint, note, status, created_at, kickoff_at, status_flags)
+                VALUES (?, ?, ?, ?, ?, ?, 'watching', ?, ?, 1)
                 """,
                 (
                     chat_id,
@@ -2903,9 +2920,13 @@ class SqliteTrackingRepository:
 
         with _connect() as connection:
             row = connection.execute(
-                "SELECT fired_platforms FROM live_watch_entries WHERE id = ?", (watch_id,)
+                "SELECT fired_platforms, fired_odds_mask FROM live_watch_entries WHERE id = ?", (watch_id,)
             ).fetchone()
-            current = row[0] if row else None
+            current = row["fired_platforms"] if row else None
+            current_mask = row["fired_odds_mask"] if row and row["fired_odds_mask"] is not None else 0
+
+            flag = _platform_to_odds_flag(platform)
+            new_mask = current_mask | flag
 
             if current:
                 platforms_list = [p.strip() for p in current.split(",") if p.strip()]
@@ -2918,11 +2939,11 @@ class SqliteTrackingRepository:
             connection.execute(
                 """
                 UPDATE live_watch_entries
-                SET fired_platforms = ?, matched_platform = ?, matched_event_id = ?,
+                SET fired_platforms = ?, fired_odds_mask = ?, matched_platform = ?, matched_event_id = ?,
                     matched_minute = ?, fired_at = ?
                 WHERE id = ?
                 """,
-                (new_val, platform, event_id, minute, _utc_now_iso(), watch_id),
+                (new_val, new_mask, platform, event_id, minute, _utc_now_iso(), watch_id),
             )
 
     def mark_live_watch_prematch_seen(self, watch_id: int, *, platform: str, event_id: str) -> None:
@@ -2949,9 +2970,13 @@ class SqliteTrackingRepository:
 
         with _connect() as connection:
             row = connection.execute(
-                "SELECT prematch_fired_platforms FROM live_watch_entries WHERE id = ?", (watch_id,)
+                "SELECT prematch_fired_platforms, fired_odds_mask FROM live_watch_entries WHERE id = ?", (watch_id,)
             ).fetchone()
-            current = row[0] if row else None
+            current = row["prematch_fired_platforms"] if row else None
+            current_mask = row["fired_odds_mask"] if row and row["fired_odds_mask"] is not None else 0
+
+            flag = _platform_to_odds_flag(platform)
+            new_mask = current_mask | flag
 
             if current:
                 platforms_list = [p.strip() for p in current.split(",") if p.strip()]
@@ -2964,13 +2989,13 @@ class SqliteTrackingRepository:
             connection.execute(
                 """
                 UPDATE live_watch_entries
-                SET prematch_fired_platforms = ?,
+                SET prematch_fired_platforms = ?, fired_odds_mask = ?,
                     prematch_seen_at = ?,
                     prematch_platform = ?,
                     matched_event_id = COALESCE(matched_event_id, ?)
                 WHERE id = ?
                 """,
-                (new_val, _utc_now_iso(), platform, event_id, watch_id),
+                (new_val, new_mask, _utc_now_iso(), platform, event_id, watch_id),
             )
 
     def mark_live_watch_countdown_fired(self, watch_id: int) -> None:
@@ -3182,7 +3207,7 @@ class SqliteTrackingRepository:
         ``[{id, name, public_id, score}]`` sorted by descending score.
         """
 
-        from core.league_naming import extract_league_traits, normalize_league_name
+        from core.league_naming import extract_league_traits, normalize_league_name, league_name_similarity
 
         name_clean = name.strip()
         target_norm = normalize_league_name(name_clean)
@@ -3205,7 +3230,7 @@ class SqliteTrackingRepository:
                 continue
             if normalize_league_name(r["name"]) == target_norm:
                 continue  # identical canonical -> would have auto-merged already
-            score = _league_name_similarity(name_clean, r["name"])
+            score = league_name_similarity(name_clean, r["name"])
             if score >= min_score:
                 suggestions.append(
                     {"id": r["id"], "name": r["name"], "public_id": r["public_id"], "score": score}
@@ -3779,6 +3804,129 @@ class SqliteTrackingRepository:
         with _connect() as connection:
             _sanitize_tracking_state(connection)
 
+    def prune_old_data(
+        self,
+        days_threshold: int = 14,
+        sent_alerts_days: int = 30,
+        small_changes_days: int = 7,
+    ) -> dict[str, int]:
+        """Prune inactive events, old sent alerts, expired cache, and pending small changes.
+
+        Returns a dictionary with the counts of deleted rows per table.
+        """
+        now = datetime.now(timezone.utc)
+        cutoff_iso = (now - timedelta(days=days_threshold)).isoformat()
+        sent_alerts_cutoff_iso = (now - timedelta(days=sent_alerts_days)).isoformat()
+        small_changes_cutoff_iso = (now - timedelta(days=small_changes_days)).isoformat()
+        now_iso = now.isoformat()
+
+        stats = {}
+        with _connect() as conn:
+            # 1. Delete inactive active_events older than threshold.
+            cursor = conn.execute(
+                "DELETE FROM active_events WHERE is_active = 0 AND last_seen_at < ?",
+                (cutoff_iso,),
+            )
+            stats["active_events_pruned"] = cursor.rowcount
+
+            # 2. Delete sent_alerts older than threshold.
+            cursor = conn.execute(
+                "DELETE FROM sent_alerts WHERE sent_at < ?",
+                (sent_alerts_cutoff_iso,),
+            )
+            stats["sent_alerts_pruned"] = cursor.rowcount
+
+            # 3. Delete expired stats payload caches.
+            cursor = conn.execute(
+                "DELETE FROM stats_payload_cache WHERE expires_at < ?",
+                (now_iso,),
+            )
+            stats["expired_cache_pruned"] = cursor.rowcount
+
+            # 4. Clean up expired live watches.
+            cursor = conn.execute(
+                "DELETE FROM live_watch_entries WHERE created_at < ?",
+                (cutoff_iso,),
+            )
+            stats["expired_live_watches_pruned"] = cursor.rowcount
+
+            # 5. Delete pending small changes older than threshold.
+            cursor = conn.execute(
+                "DELETE FROM small_changes WHERE status = 'pending' AND created_at < ?",
+                (small_changes_cutoff_iso,),
+            )
+            stats["small_changes_pruned"] = cursor.rowcount
+
+        return stats
+
+    def run_db_vacuum(self) -> bool:
+        """Execute SQLite VACUUM to reclaim unused disk space.
+
+        Returns True if successful, False otherwise.
+        """
+        try:
+            conn = sqlite3.connect(DB_FILE_PATH, timeout=30)
+            conn.isolation_level = None  # autocommit mode
+            conn.execute("VACUUM")
+            conn.close()
+            logger.info("Database VACUUM executed successfully.")
+            return True
+        except Exception as e:
+            logger.exception("Failed to execute VACUUM: %s", e)
+            return False
+
+def _process_dirty_chats(connection: sqlite3.Connection) -> None:
+    """Compile subscriptions bitmap for dirty chats in Python (Option B)."""
+    try:
+        dirty_rows = connection.execute("SELECT chat_id FROM dirty_chats").fetchall()
+    except sqlite3.OperationalError:
+        return
+    if not dirty_rows:
+        return
+
+    from core.flags import ids_to_hex
+    now_iso = _utc_now_iso()
+    
+    for row in dirty_rows:
+        chat_id = int(row["chat_id"])
+        
+        # Compile odds subscriptions
+        odds_rows = connection.execute(
+            """
+            SELECT tc.unified_competition_id 
+            FROM competition_subscriptions cs
+            INNER JOIN tracked_competitions tc ON tc.id = cs.tracked_competition_id
+            WHERE cs.telegram_chat_id = ? AND cs.enabled = 1 AND tc.unified_competition_id IS NOT NULL
+            """,
+            (chat_id,)
+        ).fetchall()
+        odds_ids = sorted(list({int(r[0]) for r in odds_rows}))
+        odds_hex = ids_to_hex(odds_ids)
+
+        # Compile stats subscriptions
+        stats_rows = connection.execute(
+            """
+            SELECT sll.unified_competition_id
+            FROM stats_league_subscriptions sls
+            INNER JOIN stats_league_links sll 
+                ON sll.stats_provider = sls.stats_provider AND sll.stats_league_id = sls.stats_league_id
+            WHERE sls.telegram_chat_id = ? AND sls.enabled = 1 AND sll.unified_competition_id IS NOT NULL
+            """,
+            (chat_id,)
+        ).fetchall()
+        stats_ids = sorted(list({int(r[0]) for r in stats_rows}))
+        stats_hex = ids_to_hex(stats_ids)
+
+        connection.execute(
+            """
+            INSERT OR REPLACE INTO chat_subscriptions_bitmap (chat_id, tracked_odds_leagues_hex, tracked_stats_leagues_hex, updated_at)
+            VALUES (?, ?, ?, ?)
+            """,
+            (chat_id, odds_hex, stats_hex, now_iso)
+        )
+        
+    connection.execute("DELETE FROM dirty_chats")
+
 @contextmanager
 def _connect():
     """Open a repository connection and always close it after use."""
@@ -3795,17 +3943,48 @@ def _connect():
         connection.execute("PRAGMA journal_mode = WAL")
         connection.execute("PRAGMA synchronous = NORMAL")
         connection.execute("PRAGMA busy_timeout = 5000")
+        
         # _initialize_schema is an idempotent self-heal (creates missing tables
         # and runs legacy-data migrations); it must run on each connect so a DB
         # that drifts into a legacy state gets repaired.
         _initialize_schema(connection)
         yield connection
+        _process_dirty_chats(connection)
         connection.commit()
     except Exception:
         connection.rollback()
         raise
     finally:
         connection.close()
+
+
+def _enforce_stats_payload_cache_limit(connection: sqlite3.Connection) -> int:
+    """Keep only the newest stats payload cache rows.
+
+    The cache already has TTL pruning, but long TTLs across many providers can
+    still grow the table. This FIFO cap removes oldest fetched rows first.
+    Returns the number of rows deleted.
+    """
+
+    row = connection.execute("SELECT COUNT(*) AS total FROM stats_payload_cache").fetchone()
+    total = int(row["total"] if row is not None else 0)
+    overflow = max(0, total - STATS_PAYLOAD_CACHE_MAX_ROWS)
+    if overflow <= 0:
+        return 0
+    cursor = connection.execute(
+        """
+        DELETE FROM stats_payload_cache
+        WHERE cache_key IN (
+            SELECT cache_key
+            FROM stats_payload_cache
+            ORDER BY fetched_at ASC, cache_key ASC
+            LIMIT ?
+        )
+        """,
+        (overflow,),
+    )
+    return cursor.rowcount
+
 
 # Inizializate database schema
 def _initialize_schema(connection: sqlite3.Connection) -> None:
@@ -4041,6 +4220,18 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
             timezone TEXT,
             updated_at TEXT NOT NULL
         );
+
+        CREATE INDEX IF NOT EXISTS idx_user_event_baselines_active_event
+        ON user_event_baselines(active_event_id);
+
+        CREATE INDEX IF NOT EXISTS idx_small_changes_active_event
+        ON small_changes(active_event_id);
+
+        CREATE INDEX IF NOT EXISTS idx_sent_alerts_active_event
+        ON sent_alerts(active_event_id);
+
+        CREATE INDEX IF NOT EXISTS idx_stats_match_links_active_event
+        ON stats_match_links(active_event_id);
         """
     )
 
@@ -4312,6 +4503,574 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
         WHERE unified_competition_id IS NOT NULL
         """
     )
+
+    # --- NUCELAR MIGRATION BITS & HEXADECIMAL OPTIMIZATIONS ---
+    # 1. Ensure binary flags and array JSON columns exist on unified_competitions
+    _ensure_column(connection, "unified_competitions", "odds_providers_mask", "INTEGER NOT NULL DEFAULT 0")
+    _ensure_column(connection, "unified_competitions", "stats_providers_mask", "INTEGER NOT NULL DEFAULT 0")
+    _ensure_column(connection, "unified_competitions", "odds_external_ids", "TEXT")
+    _ensure_column(connection, "unified_competitions", "odds_source_urls", "TEXT")
+    _ensure_column(connection, "unified_competitions", "stats_external_ids", "TEXT")
+
+    # 2. Create the unified chat_subscriptions table
+    connection.execute(
+        """
+        CREATE TABLE IF NOT EXISTS chat_subscriptions (
+            chat_id INTEGER NOT NULL,
+            target_type TEXT NOT NULL,
+            target_id INTEGER NOT NULL,
+            settings_mask INTEGER NOT NULL DEFAULT 7,
+            change_threshold_percent REAL NOT NULL DEFAULT 20.0,
+            enabled INTEGER NOT NULL DEFAULT 1,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            PRIMARY KEY (chat_id, target_type, target_id)
+        );
+        """
+    )
+    connection.execute(
+        """
+        CREATE INDEX IF NOT EXISTS idx_chat_subscriptions_target
+        ON chat_subscriptions(target_type, target_id);
+        """
+    )
+
+    # 3. Create the unified events table (static metadata)
+    connection.execute(
+        """
+        CREATE TABLE IF NOT EXISTS events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            unified_competition_id INTEGER NOT NULL,
+            home TEXT NOT NULL,
+            away TEXT NOT NULL,
+            scheduled_at TEXT,
+            event_urls TEXT,
+            status_flags INTEGER NOT NULL DEFAULT 1,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY(unified_competition_id) REFERENCES unified_competitions(id) ON DELETE CASCADE
+        );
+        """
+    )
+    connection.execute(
+        """
+        CREATE INDEX IF NOT EXISTS idx_events_unified_competition
+        ON events(unified_competition_id, status_flags, scheduled_at);
+        """
+    )
+
+    # 4. Create the event_odds_snapshots table (odds time series)
+    connection.execute(
+        """
+        CREATE TABLE IF NOT EXISTS event_odds_snapshots (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            event_id INTEGER NOT NULL,
+            platform TEXT NOT NULL,
+            odds_home REAL,
+            odds_draw REAL,
+            odds_away REAL,
+            odds_btts_yes REAL,
+            odds_btts_no REAL,
+            markets_mask INTEGER NOT NULL DEFAULT 0,
+            markets_json TEXT,
+            extracted_at TEXT NOT NULL,
+            FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE
+        );
+        """
+    )
+    connection.execute(
+        """
+        CREATE INDEX IF NOT EXISTS idx_event_odds_snapshots_event
+        ON event_odds_snapshots(event_id, platform, extracted_at DESC);
+        """
+    )
+
+    # 5. Create event_payloads_debug table
+    connection.execute(
+        """
+        CREATE TABLE IF NOT EXISTS event_payloads_debug (
+            event_id INTEGER NOT NULL,
+            platform TEXT NOT NULL,
+            compressed_raw_payload BLOB,
+            saved_at TEXT NOT NULL,
+            PRIMARY KEY(event_id, platform),
+            FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE
+        );
+        """
+    )
+
+    # 6. Ensure live_watch_entries status_flags and bitmask columns exist
+    _ensure_column(connection, "live_watch_entries", "status_flags", "INTEGER NOT NULL DEFAULT 1")
+    _ensure_column(connection, "live_watch_entries", "fired_odds_mask", "INTEGER NOT NULL DEFAULT 0")
+    _ensure_column(connection, "live_watch_entries", "fired_stats_mask", "INTEGER NOT NULL DEFAULT 0")
+
+    # 7. BACKFILL MIGRATIONS
+    from core.flags import (
+        OddsProviderFlags,
+        StatsProviderFlags,
+        SubscriptionFlags,
+        LiveWatchStatusFlags,
+        MatchStatusFlags,
+        MarketFlags
+    )
+
+    ODDS_PROVIDERS_ORDER = [
+        '1xbet_http', 'betovo_http', 'solcasino_http', 'bet365', 'mrpunter_http',
+        'mystake_http', 'betsson_http', 'betwarrior_http', 'bz_http'
+    ]
+
+    STATS_PROVIDERS_ORDER = [
+        'sportradar_statshub', 'sofascore_http', 'flashscore_http', 'footystats_http',
+        'svenskfotboll_http', 'palloliitto', 'norway_nff_http', 'romania_frf_http',
+        'slovakia_sportnet_http', 'algeria_lnff_http'
+    ]
+
+    # A. Backfill unified_competitions odds providers bitmask & arrays
+    tc_rows = connection.execute(
+        "SELECT platform, competition_external_id, source_url, unified_competition_id FROM tracked_competitions"
+    ).fetchall()
+    for row in tc_rows:
+        uc_id = row["unified_competition_id"]
+        if uc_id is None:
+            continue
+        platform = row["platform"]
+        ext_id = row["competition_external_id"]
+        source_url = row["source_url"]
+
+        uc_row = connection.execute(
+            "SELECT odds_providers_mask, odds_external_ids, odds_source_urls FROM unified_competitions WHERE id = ?",
+            (uc_id,)
+        ).fetchone()
+
+        if uc_row:
+            mask = uc_row["odds_providers_mask"] or 0
+            try:
+                ext_ids = json.loads(uc_row["odds_external_ids"]) if uc_row["odds_external_ids"] else [None] * len(ODDS_PROVIDERS_ORDER)
+            except Exception:
+                ext_ids = [None] * len(ODDS_PROVIDERS_ORDER)
+            try:
+                urls = json.loads(uc_row["odds_source_urls"]) if uc_row["odds_source_urls"] else [None] * len(ODDS_PROVIDERS_ORDER)
+            except Exception:
+                urls = [None] * len(ODDS_PROVIDERS_ORDER)
+
+            if platform in ODDS_PROVIDERS_ORDER:
+                idx = ODDS_PROVIDERS_ORDER.index(platform)
+                mask |= (1 << idx)
+                ext_ids[idx] = ext_id
+                urls[idx] = source_url
+
+                connection.execute(
+                    """
+                    UPDATE unified_competitions
+                    SET odds_providers_mask = ?, odds_external_ids = ?, odds_source_urls = ?
+                    WHERE id = ?
+                    """,
+                    (mask, json.dumps(ext_ids), json.dumps(urls), uc_id)
+                )
+
+    # B. Backfill unified_competitions stats providers bitmask & arrays
+    sll_rows = connection.execute(
+        "SELECT stats_provider, stats_league_id, unified_competition_id FROM stats_league_links"
+    ).fetchall()
+    for row in sll_rows:
+        uc_id = row["unified_competition_id"]
+        if uc_id is None:
+            continue
+        provider = row["stats_provider"]
+        league_id = row["stats_league_id"]
+
+        uc_row = connection.execute(
+            "SELECT stats_providers_mask, stats_external_ids FROM unified_competitions WHERE id = ?",
+            (uc_id,)
+        ).fetchone()
+
+        if uc_row:
+            mask = uc_row["stats_providers_mask"] or 0
+            try:
+                ext_ids = json.loads(uc_row["stats_external_ids"]) if uc_row["stats_external_ids"] else [None] * len(STATS_PROVIDERS_ORDER)
+            except Exception:
+                ext_ids = [None] * len(STATS_PROVIDERS_ORDER)
+
+            if provider in STATS_PROVIDERS_ORDER:
+                idx = STATS_PROVIDERS_ORDER.index(provider)
+                mask |= (1 << idx)
+                ext_ids[idx] = league_id
+
+                connection.execute(
+                    """
+                    UPDATE unified_competitions
+                    SET stats_providers_mask = ?, stats_external_ids = ?
+                    WHERE id = ?
+                    """,
+                    (mask, json.dumps(ext_ids), uc_id)
+                )
+
+    # C. Backfill chat_subscriptions
+    # Odds target
+    sub_odds_rows = connection.execute(
+        """
+        SELECT cs.telegram_chat_id, cs.notify_new_events, cs.notify_odds_changes, cs.change_threshold_percent, cs.enabled, tc.unified_competition_id
+        FROM competition_subscriptions cs
+        JOIN tracked_competitions tc ON tc.id = cs.tracked_competition_id
+        """
+    ).fetchall()
+    for row in sub_odds_rows:
+        chat_id = row["telegram_chat_id"]
+        uc_id = row["unified_competition_id"]
+        if uc_id is None:
+            continue
+
+        mask = SubscriptionFlags.NONE
+        if row["notify_odds_changes"]:
+            mask |= SubscriptionFlags.NOTIFY_ODDS_CHANGES
+        if row["notify_new_events"]:
+            mask |= SubscriptionFlags.NOTIFY_NEW_EVENTS
+        mask |= SubscriptionFlags.ALERT_GOALS | SubscriptionFlags.ALERT_RED_CARDS
+
+        connection.execute(
+            """
+            INSERT OR IGNORE INTO chat_subscriptions (
+                chat_id, target_type, target_id, settings_mask, change_threshold_percent, enabled, created_at, updated_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+            """,
+            (chat_id, 'odds', uc_id, int(mask), row["change_threshold_percent"], row["enabled"])
+        )
+
+    # Stats target
+    sub_stats_rows = connection.execute(
+        "SELECT telegram_chat_id, stats_provider, stats_league_id, enabled FROM stats_league_subscriptions"
+    ).fetchall()
+    for row in sub_stats_rows:
+        chat_id = row["telegram_chat_id"]
+        provider = row["stats_provider"]
+        league_id = row["stats_league_id"]
+
+        uc_row = connection.execute(
+            "SELECT unified_competition_id FROM stats_league_links WHERE stats_provider = ? AND stats_league_id = ?",
+            (provider, league_id)
+        ).fetchone()
+        if uc_row and uc_row["unified_competition_id"]:
+            uc_id = uc_row["unified_competition_id"]
+            mask = SubscriptionFlags.NOTIFY_LINEUPS
+            connection.execute(
+                """
+                INSERT OR IGNORE INTO chat_subscriptions (
+                    chat_id, target_type, target_id, settings_mask, change_threshold_percent, enabled, created_at, updated_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+                """,
+                (chat_id, 'stats', uc_id, int(mask), 20.0, row["enabled"])
+            )
+
+    # D. Backfill events and event_odds_snapshots
+    active_evt_rows = connection.execute(
+        """
+        SELECT ae.id, ae.home, ae.away, ae.scheduled_at, ae.event_url, ae.odds_home, ae.odds_draw, ae.odds_away, ae.is_active, ae.reminder_sent_at, ae.reminder_enabled, tc.unified_competition_id, ae.platform
+        FROM active_events ae
+        JOIN tracked_competitions tc ON tc.id = ae.tracked_competition_id
+        """
+    ).fetchall()
+    for row in active_evt_rows:
+        ae_id = row["id"]
+        uc_id = row["unified_competition_id"]
+        if uc_id is None:
+            continue
+
+        evt_row = connection.execute("SELECT id FROM events WHERE id = ?", (ae_id,)).fetchone()
+        if not evt_row:
+            event_urls = {row["platform"]: row["event_url"]}
+            status_flags = MatchStatusFlags.PREMATCH_INACTIVE
+            if row["is_active"]:
+                status_flags |= MatchStatusFlags.PREMATCH_ACTIVE
+            if row["reminder_sent_at"]:
+                status_flags |= MatchStatusFlags.REMINDER_SENT
+
+            connection.execute(
+                """
+                INSERT OR IGNORE INTO events (
+                    id, unified_competition_id, home, away, scheduled_at, event_urls, status_flags, created_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
+                """,
+                (ae_id, uc_id, row["home"], row["away"], row["scheduled_at"], json.dumps(event_urls), int(status_flags))
+            )
+
+            markets_mask = MarketFlags.MARKET_1X2 if (row["odds_home"] is not None) else MarketFlags.NONE
+            connection.execute(
+                """
+                INSERT OR IGNORE INTO event_odds_snapshots (
+                    event_id, platform, odds_home, odds_draw, odds_away, odds_btts_yes, odds_btts_no, markets_mask, extracted_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+                """,
+                (ae_id, row["platform"], row["odds_home"], row["odds_draw"], row["odds_away"], None, None, int(markets_mask))
+            )
+
+    # E. Backfill live_watch_entries status_flags
+    lw_rows = connection.execute(
+        "SELECT id, status, fired_platforms FROM live_watch_entries WHERE status_flags = 1 AND (status != 'watching' OR fired_platforms IS NOT NULL)"
+    ).fetchall()
+    for row in lw_rows:
+        lw_id = row["id"]
+        status = row["status"]
+        fired_platforms = row["fired_platforms"]
+
+        status_flags = LiveWatchStatusFlags.WATCHING
+        if status == "fired":
+            status_flags = LiveWatchStatusFlags.FIRED
+
+        fired_mask = OddsProviderFlags.NONE
+        if fired_platforms:
+            for p in fired_platforms.split(","):
+                p_clean = p.strip().lower()
+                for member in OddsProviderFlags:
+                    if member.name.lower() == p_clean or member.name.lower() + "_http" == p_clean:
+                        fired_mask |= member
+
+        connection.execute(
+            """
+            UPDATE live_watch_entries
+            SET status_flags = ?, fired_odds_mask = ?
+            WHERE id = ?
+            """,
+            (int(status_flags), int(fired_mask), lw_id)
+        )
+
+    # F. Create Triggers to automatically synchronize legacy tables to new binary schema tables
+    connection.executescript(
+        """
+        CREATE TRIGGER IF NOT EXISTS t_active_events_insert AFTER INSERT ON active_events
+        BEGIN
+            INSERT OR REPLACE INTO events (id, unified_competition_id, home, away, scheduled_at, event_urls, status_flags, created_at)
+            VALUES (
+                NEW.id,
+                COALESCE(
+                    (SELECT unified_competition_id FROM tracked_competitions WHERE id = NEW.tracked_competition_id),
+                    (SELECT id FROM unified_competitions WHERE name = NEW.competition_external_id LIMIT 1),
+                    1
+                ),
+                NEW.home,
+                NEW.away,
+                NEW.scheduled_at,
+                json_object(NEW.platform, NEW.event_url),
+                (CASE WHEN NEW.is_active THEN 1 ELSE 0 END) | (CASE WHEN NEW.reminder_sent_at IS NOT NULL THEN 16 ELSE 0 END),
+                NEW.created_at
+            );
+
+            INSERT OR REPLACE INTO event_odds_snapshots (event_id, platform, odds_home, odds_draw, odds_away, markets_mask, markets_json, extracted_at)
+            VALUES (
+                NEW.id,
+                NEW.platform,
+                NEW.odds_home,
+                NEW.odds_draw,
+                NEW.odds_away,
+                (CASE WHEN NEW.odds_home IS NOT NULL THEN 1 ELSE 0 END),
+                NEW.markets_json,
+                NEW.updated_at
+            );
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS t_active_events_update AFTER UPDATE ON active_events
+        BEGIN
+            UPDATE events SET
+                home = NEW.home,
+                away = NEW.away,
+                scheduled_at = NEW.scheduled_at,
+                event_urls = json_set(COALESCE(event_urls, '{}'), '$.' || NEW.platform, NEW.event_url),
+                status_flags = (CASE WHEN NEW.is_active THEN 1 ELSE 0 END) | (CASE WHEN NEW.reminder_sent_at IS NOT NULL THEN 16 ELSE 0 END)
+            WHERE id = NEW.id;
+
+            INSERT OR REPLACE INTO event_odds_snapshots (event_id, platform, odds_home, odds_draw, odds_away, markets_mask, markets_json, extracted_at)
+            VALUES (
+                NEW.id,
+                NEW.platform,
+                NEW.odds_home,
+                NEW.odds_draw,
+                NEW.odds_away,
+                (CASE WHEN NEW.odds_home IS NOT NULL THEN 1 ELSE 0 END) | (CASE WHEN NEW.markets_json IS NOT NULL THEN 2 ELSE 0 END),
+                NEW.markets_json,
+                NEW.updated_at
+            );
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS t_active_events_delete AFTER DELETE ON active_events
+        BEGIN
+            DELETE FROM events WHERE id = OLD.id;
+            DELETE FROM event_odds_snapshots WHERE event_id = OLD.id;
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS t_competition_subscriptions_insert AFTER INSERT ON competition_subscriptions
+        BEGIN
+            INSERT OR REPLACE INTO chat_subscriptions (chat_id, target_type, target_id, settings_mask, change_threshold_percent, enabled, created_at, updated_at)
+            VALUES (
+                NEW.telegram_chat_id,
+                'odds',
+                COALESCE((SELECT unified_competition_id FROM tracked_competitions WHERE id = NEW.tracked_competition_id), 1),
+                (CASE WHEN NEW.notify_odds_changes THEN 1 ELSE 0 END) | (CASE WHEN NEW.notify_new_events THEN 2 ELSE 0 END) | 4 | 8,
+                NEW.change_threshold_percent,
+                NEW.enabled,
+                NEW.created_at,
+                NEW.updated_at
+            );
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS t_competition_subscriptions_update AFTER UPDATE ON competition_subscriptions
+        BEGIN
+            UPDATE chat_subscriptions SET
+                settings_mask = (CASE WHEN NEW.notify_odds_changes THEN 1 ELSE 0 END) | (CASE WHEN NEW.notify_new_events THEN 2 ELSE 0 END) | 4 | 8,
+                change_threshold_percent = NEW.change_threshold_percent,
+                enabled = NEW.enabled,
+                updated_at = NEW.updated_at
+            WHERE chat_id = NEW.telegram_chat_id
+              AND target_type = 'odds'
+              AND target_id = COALESCE((SELECT unified_competition_id FROM tracked_competitions WHERE id = NEW.tracked_competition_id), 1);
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS t_competition_subscriptions_delete AFTER DELETE ON competition_subscriptions
+        BEGIN
+            DELETE FROM chat_subscriptions
+            WHERE chat_id = OLD.telegram_chat_id
+              AND target_type = 'odds'
+              AND target_id = COALESCE((SELECT unified_competition_id FROM tracked_competitions WHERE id = OLD.tracked_competition_id), 1);
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS t_stats_league_subscriptions_insert AFTER INSERT ON stats_league_subscriptions
+        BEGIN
+            INSERT OR REPLACE INTO chat_subscriptions (chat_id, target_type, target_id, settings_mask, change_threshold_percent, enabled, created_at, updated_at)
+            VALUES (
+                NEW.telegram_chat_id,
+                'stats',
+                COALESCE(
+                    (SELECT unified_competition_id FROM stats_league_links WHERE stats_provider = NEW.stats_provider AND stats_league_id = NEW.stats_league_id LIMIT 1),
+                    1
+                ),
+                64,
+                20.0,
+                NEW.enabled,
+                NEW.created_at,
+                NEW.updated_at
+            );
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS t_stats_league_subscriptions_update AFTER UPDATE ON stats_league_subscriptions
+        BEGIN
+            UPDATE chat_subscriptions SET
+                enabled = NEW.enabled,
+                updated_at = NEW.updated_at
+            WHERE chat_id = NEW.telegram_chat_id
+              AND target_type = 'stats'
+              AND target_id = COALESCE(
+                  (SELECT unified_competition_id FROM stats_league_links WHERE stats_provider = NEW.stats_provider AND stats_league_id = NEW.stats_league_id LIMIT 1),
+                  1
+              );
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS t_stats_league_subscriptions_delete AFTER DELETE ON stats_league_subscriptions
+        BEGIN
+            DELETE FROM chat_subscriptions
+            WHERE chat_id = OLD.telegram_chat_id
+              AND target_type = 'stats'
+              AND target_id = COALESCE(
+                  (SELECT unified_competition_id FROM stats_league_links WHERE stats_provider = OLD.stats_provider AND stats_league_id = OLD.stats_league_id LIMIT 1),
+                  1
+              );
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS t_live_watch_entries_insert AFTER INSERT ON live_watch_entries
+        BEGIN
+            UPDATE live_watch_entries SET
+                status_flags = (CASE WHEN NEW.status = 'fired' THEN 2 WHEN NEW.status = 'cancelled' THEN 4 ELSE 1 END),
+                fired_odds_mask = COALESCE(fired_odds_mask, 0)
+            WHERE id = NEW.id;
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS t_live_watch_entries_update AFTER UPDATE OF status, fired_platforms ON live_watch_entries
+        BEGIN
+            UPDATE live_watch_entries SET
+                status_flags = (CASE WHEN NEW.status = 'fired' THEN 2 WHEN NEW.status = 'cancelled' THEN 4 ELSE 1 END)
+            WHERE id = NEW.id;
+        END;
+        """
+    )
+
+    # G. Subscriptions Hexadecimal Bitmap Schema & Triggers
+    connection.execute(
+        """
+        CREATE TABLE IF NOT EXISTS chat_subscriptions_bitmap (
+            chat_id INTEGER PRIMARY KEY,
+            tracked_odds_leagues_hex TEXT,
+            tracked_stats_leagues_hex TEXT,
+            updated_at TEXT NOT NULL
+        );
+        """
+    )
+
+    connection.execute(
+        """
+        CREATE TABLE IF NOT EXISTS dirty_chats (
+            chat_id INTEGER PRIMARY KEY
+        );
+        """
+    )
+
+    connection.executescript(
+        """
+        CREATE TRIGGER IF NOT EXISTS t_dirty_chats_insert_odds AFTER INSERT ON competition_subscriptions
+        BEGIN
+            INSERT OR IGNORE INTO dirty_chats (chat_id) VALUES (NEW.telegram_chat_id);
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS t_dirty_chats_update_odds AFTER UPDATE ON competition_subscriptions
+        BEGIN
+            INSERT OR IGNORE INTO dirty_chats (chat_id) VALUES (NEW.telegram_chat_id);
+            INSERT OR IGNORE INTO dirty_chats (chat_id) VALUES (OLD.telegram_chat_id);
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS t_dirty_chats_delete_odds AFTER DELETE ON competition_subscriptions
+        BEGIN
+            INSERT OR IGNORE INTO dirty_chats (chat_id) VALUES (OLD.telegram_chat_id);
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS t_dirty_chats_insert_stats AFTER INSERT ON stats_league_subscriptions
+        BEGIN
+            INSERT OR IGNORE INTO dirty_chats (chat_id) VALUES (NEW.telegram_chat_id);
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS t_dirty_chats_update_stats AFTER UPDATE ON stats_league_subscriptions
+        BEGIN
+            INSERT OR IGNORE INTO dirty_chats (chat_id) VALUES (NEW.telegram_chat_id);
+            INSERT OR IGNORE INTO dirty_chats (chat_id) VALUES (OLD.telegram_chat_id);
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS t_dirty_chats_delete_stats AFTER DELETE ON stats_league_subscriptions
+        BEGIN
+            INSERT OR IGNORE INTO dirty_chats (chat_id) VALUES (OLD.telegram_chat_id);
+        END;
+        """
+    )
+
+    # H. Ensure status_flags and backfill for small_changes
+    _ensure_column(connection, "small_changes", "status_flags", "INTEGER NOT NULL DEFAULT 16")
+    connection.execute(
+        """
+        UPDATE small_changes
+        SET status_flags = CASE WHEN status = 'confirmed' THEN 32 WHEN status = 'dismissed' THEN 64 ELSE 16 END
+        WHERE status_flags = 16 AND status != 'pending'
+        """
+    )
+
+    # I. Backfill dirty chats for existing databases
+    connection.execute(
+        """
+        INSERT OR IGNORE INTO dirty_chats (chat_id)
+        SELECT DISTINCT telegram_chat_id FROM (
+            SELECT telegram_chat_id FROM competition_subscriptions
+            UNION
+            SELECT telegram_chat_id FROM stats_league_subscriptions
+        ) WHERE telegram_chat_id NOT IN (SELECT chat_id FROM chat_subscriptions_bitmap)
+        """
+    )
+
 
 
 
@@ -4762,6 +5521,7 @@ def _fetch_small_change_row_by_id(
             sc.max_change_percent,
             sc.payload_json,
             sc.status,
+            sc.status_flags,
             sc.created_at,
             sc.updated_at,
             sc.confirmed_at,
@@ -4804,6 +5564,7 @@ def _fetch_small_change_row_by_identity(
             sc.max_change_percent,
             sc.payload_json,
             sc.status,
+            sc.status_flags,
             sc.created_at,
             sc.updated_at,
             sc.confirmed_at,
@@ -5045,6 +5806,36 @@ def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _platform_to_odds_flag(platform: str) -> int:
+    from core.flags import OddsProviderFlags
+    p_clean = platform.strip().lower()
+    p_name = p_clean.replace('_http', '').upper()
+    if p_name == '1XBET':
+        p_name = 'XBET'
+    try:
+        return int(getattr(OddsProviderFlags, p_name))
+    except AttributeError:
+        return 0
+
+
+def _provider_to_stats_flag(provider: str) -> int:
+    from core.flags import StatsProviderFlags
+    p_clean = provider.strip().lower()
+    p_name = p_clean.replace('_http', '').replace('_statshub', '').replace('_nff', '').replace('_frf', '').replace('_sportnet', '').replace('_lnff', '').upper()
+    if p_name == 'NORWAY_NFF':
+        p_name = 'NORWAY'
+    elif p_name == 'ROMANIA_FRF':
+        p_name = 'ROMANIA'
+    elif p_name == 'SLOVAKIA_SPORTNET':
+        p_name = 'SLOVAKIA'
+    elif p_name == 'ALGERIA_LNFF':
+        p_name = 'ALGERIA'
+    try:
+        return int(getattr(StatsProviderFlags, p_name))
+    except AttributeError:
+        return 0
+
+
 def _row_to_live_watch(row: sqlite3.Row) -> LiveWatchEntry:
     return LiveWatchEntry(
         id=int(row["id"]),
@@ -5067,72 +5858,13 @@ def _row_to_live_watch(row: sqlite3.Row) -> LiveWatchEntry:
         countdown_fired_at=row["countdown_fired_at"] if "countdown_fired_at" in row.keys() else None,
         chat_local_id=row["chat_local_id"] if "chat_local_id" in row.keys() else None,
         live_state_json=row["live_state_json"] if "live_state_json" in row.keys() else None,
+        status_flags=int(row["status_flags"]) if "status_flags" in row.keys() and row["status_flags"] is not None else 1,
+        fired_odds_mask=int(row["fired_odds_mask"]) if "fired_odds_mask" in row.keys() and row["fired_odds_mask"] is not None else 0,
+        fired_stats_mask=int(row["fired_stats_mask"]) if "fired_stats_mask" in row.keys() and row["fired_stats_mask"] is not None else 0,
     )
 
 
-def _league_name_similarity(left: str, right: str) -> float:
-    """Loose similarity between two league names, ignoring case, prepositions, and translating Spanish terms to English."""
-    import re
-    import unicodedata
-    from difflib import SequenceMatcher
 
-    translation_map = {
-        "alemania": "germany",
-        "espana": "spain",
-        "inglaterra": "england",
-        "italia": "italy",
-        "francia": "france",
-        "occidental": "western",
-        "oriental": "eastern",
-        "sur": "south",
-        "norte": "north",
-        "central": "central",
-        "copa": "cup",
-        "liga": "league",
-        "campeonato": "championship",
-        "division": "division",
-        "primera": "premier",
-        "segunda": "second",
-        "tercera": "third",
-        "sub": "u",
-        "juvenil": "youth",
-        "reserva": "reserves",
-        "reservas": "reserves",
-        "femenino": "women",
-        "femenil": "women",
-        "mujeres": "women",
-        "fem": "women",
-        "nueva": "new",
-        "gales": "wales",
-        "australia": "australia",
-    }
-
-    stop_words = {"de", "la", "el", "del", "y", "a", "of", "and", "the", "in", "for", "fc", "club"}
-
-    def norm(value: str) -> str:
-        # Strip accents
-        folded = "".join(c for c in unicodedata.normalize('NFD', value) if unicodedata.category(c) != 'Mn')
-        folded = folded.lower()
-        # Normalize sub-XX or u-XX to uXX
-        folded = re.sub(r"\b(sub|u)-?(\d+)\b", r"u\2", folded)
-        cleaned = re.sub(r"[^a-z0-9]+", " ", folded).strip()
-        tokens = cleaned.split()
-        translated = [
-            translation_map.get(t, t)
-            for t in tokens
-            if t not in stop_words
-        ]
-        return " ".join(translated)
-
-    left_norm = norm(left)
-    right_norm = norm(right)
-    ratio = SequenceMatcher(a=left_norm, b=right_norm).ratio()
-    left_tokens = set(left_norm.split())
-    right_tokens = set(right_norm.split())
-    if not left_tokens or not right_tokens:
-        return ratio
-    overlap = len(left_tokens & right_tokens) / min(len(left_tokens), len(right_tokens))
-    return max(ratio, overlap)
 
 
 def _remove_chat_subscription(

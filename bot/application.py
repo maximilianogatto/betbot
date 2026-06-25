@@ -2,26 +2,16 @@
 
 from __future__ import annotations
 
+import os
+
 from telegram.ext import Application, ApplicationBuilder
 
 from bot.config import Settings
 from bot.error_handler import handle_error
 from bot.handlers import register_handlers
 from bot.jobs import (
-    start_live_watch_monitor,
-    start_peak_digest,
-    start_sheet_import_monitor,
-    start_stats_prefetch,
-    start_stats_session_refresh,
-    start_tracking_monitor,
-    start_resource_monitor,
-    stop_live_watch_monitor,
-    stop_peak_digest,
-    stop_sheet_import_monitor,
-    stop_stats_prefetch,
-    stop_stats_session_refresh,
-    stop_tracking_monitor,
-    stop_resource_monitor,
+    start_orchestrated_scheduler,
+    stop_orchestrated_scheduler,
 )
 from core.registry import extractor_registry
 from core.stats_provider_base import stats_provider_registry
@@ -71,63 +61,12 @@ def create_application(settings: Settings) -> Application:
     async def post_init(application: Application) -> None:
         """Start background monitoring after the bot runtime is ready."""
 
-        await start_tracking_monitor(
-            application,
-            interval_seconds=settings.tracking_refresh_interval_seconds,
-        )
-        await start_resource_monitor(
-            application,
-            enabled=settings.enable_monitoring,
-            interval_seconds=settings.monitor_interval_seconds,
-            log_to_file=settings.monitor_log_to_file,
-            chromium_ram_alert_mb=settings.monitor_chromium_ram_alert_mb,
-        )
-        # Mint/refresh the Sportradar token at startup and well before expiry so
-        # the token-bootstrap browser never opens during a user-facing /stats.
-        await start_stats_session_refresh(
-            application,
-            enabled=settings.stats_session_refresh_enabled,
-            interval_seconds=1800,
-            min_ttl_seconds=5400.0,
-        )
-        # Daily prefetch: warm every stats-linked league (overview + reports of its
-        # tracked matches) into the cache so /stats never hits the provider on demand.
-        await start_stats_prefetch(
-            application,
-            enabled=settings.stats_prefetch_enabled,
-            interval_seconds=settings.stats_prefetch_interval_seconds,
-            ttl_seconds=settings.stats_prefetch_ttl_seconds,
-        )
-        # Poll live feeds and alert when a watched fixture goes in-play.
-        await start_live_watch_monitor(
-            application,
-            enabled=settings.live_watch_enabled,
-            interval_seconds=settings.live_watch_interval_seconds,
-        )
-        # Auto-import the shared Google Sheet into the configured chat on change.
-        await start_sheet_import_monitor(
-            application,
-            chat_id=settings.live_watch_sheet_chat_id,
-            url=settings.live_watch_sheet_url,
-            interval_seconds=settings.live_watch_sheet_interval_seconds,
-        )
-        # Daily morning push of the special-league peak digest to subscribers.
-        await start_peak_digest(
-            application,
-            enabled=settings.peak_digest_enabled,
-            hour_arg=settings.peak_digest_hour_arg,
-        )
+        await start_orchestrated_scheduler(application, settings)
 
     async def post_shutdown(application: Application) -> None:
         """Stop background monitoring when the bot shuts down."""
 
-        await stop_peak_digest(application)
-        await stop_sheet_import_monitor(application)
-        await stop_live_watch_monitor(application)
-        await stop_stats_prefetch(application)
-        await stop_stats_session_refresh(application)
-        await stop_resource_monitor(application)
-        await stop_tracking_monitor(application)
+        await stop_orchestrated_scheduler(application)
         for extractor in reversed(registered_extractors):
             await extractor.stop()
 

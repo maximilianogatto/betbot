@@ -459,7 +459,7 @@ class TrackingService:
         """Process a bulk track list of leagues, searching and tracking matches across all platforms."""
         import re
         import html
-        from monitors.stats import _league_name_similarity
+        from core.league_naming import league_name_similarity as _league_name_similarity
 
         # 1. Parse the text block
         lines = leagues_text.strip().split("\n")
@@ -954,10 +954,13 @@ class TrackingService:
             logger.exception("League-merge learning failed.")
             return
         for merge in merges:
-            chats: set[int] = set()
-            for comp in self.repository.list_tracked_competitions_for_unified(merge["into_id"]):
-                for sub in self.repository.get_subscriptions_for_competition(comp.id, only_enabled=True):
-                    chats.add(sub.telegram_chat_id)
+            def _get_chats_to_notify(into_id):
+                chats: set[int] = set()
+                for comp in self.repository.list_tracked_competitions_for_unified(into_id):
+                    for sub in self.repository.get_subscriptions_for_competition(comp.id, only_enabled=True):
+                        chats.add(sub.telegram_chat_id)
+                return chats
+            chats = await asyncio.to_thread(_get_chats_to_notify, merge["into_id"])
             text = (
                 f"🧠 Aprendí: «{merge['from_name']}» es la misma liga que «{merge['into_name']}» "
                 f"({merge['matches']} partidos coincidentes en otra plataforma) — las unifiqué.\n"
@@ -972,16 +975,15 @@ class TrackingService:
     async def refresh_chat_tracks(self, chat_id: int) -> RefreshSummary:
         """Refresh the unique leagues currently subscribed by one chat."""
 
-        tracked_leagues = self.list_confirmed_tracks(chat_id)
+        tracked_leagues = await asyncio.to_thread(self.list_confirmed_tracks, chat_id)
         tracked_league_ids = [item.tracked_league.id for item in tracked_leagues]
         return await self._refresh_leagues(tracked_league_ids)
 
     async def refresh_all_active_leagues(self) -> RefreshSummary:
         """Refresh all globally active tracked competitions once (full sweep)."""
 
-        tracked_league_ids = [
-            competition.id for competition in self.repository.list_globally_active_competitions()
-        ]
+        competitions = await asyncio.to_thread(self.repository.list_globally_active_competitions)
+        tracked_league_ids = [competition.id for competition in competitions]
         return await self._refresh_leagues(tracked_league_ids)
 
     async def refresh_due_leagues(self) -> RefreshSummary:
@@ -992,12 +994,12 @@ class TrackingService:
         losing reactivity near events. Manual refresh paths still do a full sweep.
         """
 
-        competitions = self.repository.list_globally_active_competitions()
+        competitions = await asyncio.to_thread(self.repository.list_globally_active_competitions)
         if not competitions:
             return await self._refresh_leagues([])
 
         now = datetime.now(timezone.utc)
-        kickoffs = self.repository.get_earliest_kickoffs([c.id for c in competitions])
+        kickoffs = await asyncio.to_thread(self.repository.get_earliest_kickoffs, [c.id for c in competitions])
         due_ids = [
             c.id
             for c in competitions
@@ -1015,7 +1017,7 @@ class TrackingService:
         """Refresh active event state for one globally tracked competition."""
 
         async with self._refresh_lock:
-            tracked_league = self.repository.get_tracked_competition(tracked_league_id)
+            tracked_league = await asyncio.to_thread(self.repository.get_tracked_competition, tracked_league_id)
 
             if tracked_league is None:
                 raise ValueError(f"No tracked competition found with id={tracked_league_id}.")
@@ -1023,14 +1025,16 @@ class TrackingService:
             try:
                 extraction = await self._extract_league(tracked_league.url)
             except CompetitionUnavailableError:
-                self.repository.record_unavailable_refresh(
+                await asyncio.to_thread(
+                    self.repository.record_unavailable_refresh,
                     tracked_league.id,
                     reason=UNAVAILABLE_COMPETITION_MESSAGE,
                 )
                 raise
 
             if extraction.is_empty:
-                self.repository.record_unavailable_refresh(
+                await asyncio.to_thread(
+                    self.repository.record_unavailable_refresh,
                     tracked_league.id,
                     reason=UNAVAILABLE_COMPETITION_MESSAGE,
                 )
@@ -1041,7 +1045,7 @@ class TrackingService:
                     reason_code="competition_unavailable",
                 )
 
-            return self._apply_extraction_to_tracked_league(tracked_league_id, extraction)
+            return await asyncio.to_thread(self._apply_extraction_to_tracked_league, tracked_league_id, extraction)
 
     async def monitor_once(self, bot: Bot) -> RefreshSummary:
         """Run one global monitoring cycle and dispatch notifications."""
@@ -1096,7 +1100,8 @@ class TrackingService:
     async def notify_for_refresh_result(self, bot: Bot, result: CompetitionRefreshResult) -> None:
         """Send notifications for one refreshed league to all matching chats."""
 
-        subscriptions = self.repository.get_subscriptions_for_competition(
+        subscriptions = await asyncio.to_thread(
+            self.repository.get_subscriptions_for_competition,
             result.tracked_league.id,
             only_enabled=True,
         )
@@ -1107,23 +1112,26 @@ class TrackingService:
         for subscription in subscriptions:
             # Render every message for this subscriber in their display timezone.
             set_display_timezone(resolve_chat_timezone(subscription.telegram_chat_id))
-            self.repository.initialize_event_baselines(
+            await asyncio.to_thread(
+                self.repository.initialize_event_baselines,
                 subscription.telegram_chat_id,
                 result.tracked_league.id,
                 result.active_matches,
             )
 
             if subscription.notify_new_matches:
-                unsent_new_matches = [
-                    match
-                    for match in result.new_matches
-                    if not self.repository.has_sent_alert(
-                        subscription.telegram_chat_id,
-                        result.tracked_league.id,
-                        match.fixture_id,
-                        "new_event",
-                    )
-                ]
+                def _filter_unsent():
+                    return [
+                        match
+                        for match in result.new_matches
+                        if not self.repository.has_sent_alert(
+                            subscription.telegram_chat_id,
+                            result.tracked_league.id,
+                            match.fixture_id,
+                            "new_event",
+                        )
+                    ]
+                unsent_new_matches = await asyncio.to_thread(_filter_unsent)
 
                 if unsent_new_matches:
                     if len(unsent_new_matches) == 1:
@@ -1147,7 +1155,8 @@ class TrackingService:
                             parse_mode=ParseMode.HTML,
                         )
 
-                    self.repository.mark_sent_alerts(
+                    await asyncio.to_thread(
+                        self.repository.mark_sent_alerts,
                         subscription.telegram_chat_id,
                         result.tracked_league.id,
                         [match.fixture_id for match in unsent_new_matches],
@@ -1157,7 +1166,8 @@ class TrackingService:
             pending_odds_alerts: list[SubscriptionOddsAlert] = []
 
             for change in result.odds_changes:
-                alert = evaluate_subscription_odds_change(
+                alert = await asyncio.to_thread(
+                    evaluate_subscription_odds_change,
                     self.repository,
                     subscription,
                     result.tracked_league,
@@ -1193,29 +1203,31 @@ class TrackingService:
                         parse_mode=ParseMode.HTML,
                     )
 
-                for alert in pending_odds_alerts:
-                    self.repository.upsert_event_baseline(
-                        subscription.telegram_chat_id,
-                        result.tracked_league.id,
-                        alert.match.fixture_id,
-                        baseline_home=alert.match.odds_home,
-                        baseline_draw=alert.match.odds_draw,
-                        baseline_away=alert.match.odds_away,
-                        baseline_markets_json=(
-                            alert.match.markets_json
-                            if alert.confirmed_baseline_markets_payload is None
-                            else json.dumps(
-                                alert.confirmed_baseline_markets_payload,
-                                ensure_ascii=False,
-                                sort_keys=True,
-                            )
-                        ),
-                    )
-                    self.repository.resolve_small_change_with_current_baseline(
-                        subscription.telegram_chat_id,
-                        result.tracked_league.id,
-                        alert.match.fixture_id,
-                    )
+                def _save_alerts():
+                    for alert in pending_odds_alerts:
+                        self.repository.upsert_event_baseline(
+                            subscription.telegram_chat_id,
+                            result.tracked_league.id,
+                            alert.match.fixture_id,
+                            baseline_home=alert.match.odds_home,
+                            baseline_draw=alert.match.odds_draw,
+                            baseline_away=alert.match.odds_away,
+                            baseline_markets_json=(
+                                alert.match.markets_json
+                                if alert.confirmed_baseline_markets_payload is None
+                                else json.dumps(
+                                    alert.confirmed_baseline_markets_payload,
+                                    ensure_ascii=False,
+                                    sort_keys=True,
+                                )
+                            ),
+                        )
+                        self.repository.resolve_small_change_with_current_baseline(
+                            subscription.telegram_chat_id,
+                            result.tracked_league.id,
+                            alert.match.fixture_id,
+                        )
+                await asyncio.to_thread(_save_alerts)
 
             for match in result.reminder_matches:
                 await self._send_split_message(
@@ -1229,7 +1241,8 @@ class TrackingService:
         set_display_timezone(None)
 
         if result.reminder_matches:
-            self.repository.mark_events_alerted(
+            await asyncio.to_thread(
+                self.repository.mark_events_alerted,
                 result.tracked_league.id,
                 [match.fixture_id for match in result.reminder_matches],
             )
@@ -1244,14 +1257,17 @@ class TrackingService:
     ) -> None:
         """Send a warning for a competition that keeps failing to refresh."""
 
-        if not force_notify and not self.repository.should_send_unavailable_refresh_warning(
+        should_send = await asyncio.to_thread(
+            self.repository.should_send_unavailable_refresh_warning,
             unavailable.tracked_league.id,
             minimum_failures=UNAVAILABLE_WARNING_FAILURE_THRESHOLD,
             cooldown_seconds=UNAVAILABLE_WARNING_COOLDOWN_SECONDS,
-        ):
+        )
+        if not force_notify and not should_send:
             return
 
-        subscriptions = self.repository.get_subscriptions_for_competition(
+        subscriptions = await asyncio.to_thread(
+            self.repository.get_subscriptions_for_competition,
             unavailable.tracked_league.id,
             only_enabled=True,
         )
@@ -1282,7 +1298,7 @@ class TrackingService:
             sent_any_warning = True
 
         if sent_any_warning and not force_notify:
-            self.repository.mark_unavailable_refresh_warning_sent(unavailable.tracked_league.id)
+            await asyncio.to_thread(self.repository.mark_unavailable_refresh_warning_sent, unavailable.tracked_league.id)
 
     def get_matches_for_track(
         self,
@@ -1610,12 +1626,14 @@ class TrackingService:
         degraded_leagues: list[str] = []
         unavailable_competitions: list[UnavailableCompetitionRefresh] = []
 
-        tracked_leagues = [
-            tracked_league
-            for tracked_league_id in unique_ids
-            for tracked_league in [self.repository.get_tracked_competition(tracked_league_id)]
-            if tracked_league is not None
-        ]
+        def _get_tracked_leagues():
+            return [
+                tracked_league
+                for tracked_league_id in unique_ids
+                for tracked_league in [self.repository.get_tracked_competition(tracked_league_id)]
+                if tracked_league is not None
+            ]
+        tracked_leagues = await asyncio.to_thread(_get_tracked_leagues)
 
         async with self._refresh_lock:
             for batch in _batched(tracked_leagues, self.max_parallel_refreshes):
@@ -1627,7 +1645,8 @@ class TrackingService:
                 for tracked_league, extraction_or_error in zip(batch, extracted_batch, strict=True):
                     if isinstance(extraction_or_error, CompetitionUnavailableError):
                         failed_leagues.append(tracked_league.league_name)
-                        unavailable_tracked_league = self.repository.record_unavailable_refresh(
+                        unavailable_tracked_league = await asyncio.to_thread(
+                            self.repository.record_unavailable_refresh,
                             tracked_league.id,
                             reason=str(extraction_or_error),
                         )
@@ -1648,20 +1667,30 @@ class TrackingService:
 
                     if isinstance(extraction_or_error, Exception):
                         failed_leagues.append(tracked_league.league_name)
-                        logger.error(
-                            "Failed to refresh tracked competition id=%s, continuing with remaining competitions.",
-                            tracked_league.id,
-                            exc_info=(
-                                type(extraction_or_error),
-                                extraction_or_error,
-                                extraction_or_error.__traceback__,
-                            ),
-                        )
+                        import httpx
+                        if isinstance(extraction_or_error, httpx.HTTPStatusError) and extraction_or_error.response.status_code in (403, 503):
+                            logger.warning(
+                                "Failed to refresh tracked competition id=%s due to HTTP %d (WAF/Cloud IP Block) platform=%s. Running from a cloud provider (GCP/AWS) often causes this.",
+                                tracked_league.id,
+                                extraction_or_error.response.status_code,
+                                tracked_league.platform,
+                            )
+                        else:
+                            logger.error(
+                                "Failed to refresh tracked competition id=%s, continuing with remaining competitions.",
+                                tracked_league.id,
+                                exc_info=(
+                                    type(extraction_or_error),
+                                    extraction_or_error,
+                                    extraction_or_error.__traceback__,
+                                ),
+                            )
                         continue
 
                     if extraction_or_error.is_empty:
                         failed_leagues.append(tracked_league.league_name)
-                        unavailable_tracked_league = self.repository.record_unavailable_refresh(
+                        unavailable_tracked_league = await asyncio.to_thread(
+                            self.repository.record_unavailable_refresh,
                             tracked_league.id,
                             reason=UNAVAILABLE_COMPETITION_MESSAGE,
                         )
@@ -1681,7 +1710,8 @@ class TrackingService:
                         continue
 
                     try:
-                        result = self._apply_extraction_to_tracked_league(
+                        result = await asyncio.to_thread(
+                            self._apply_extraction_to_tracked_league,
                             tracked_league.id,
                             extraction_or_error,
                         )

@@ -700,6 +700,12 @@ async def run_cli_async(args: argparse.Namespace) -> int:
             f"{mode}: usable={state.is_usable()} token_expiration={state.token_expiration()} "
             f"fetch_count={state.fetch_count} blocked={state.blocked_count}"
         )
+    # Print the raw token for copy-paste into Telegram (/sportradar_token <token>).
+    usable_state = next((s for s in states if s.is_usable() and s.signed_token), None)
+    if usable_state and usable_state.signed_token:
+        print(f"\n--- TOKEN (copiá esta línea para /sportradar_token) ---")
+        print(usable_state.signed_token.raw)
+        print(f"--- expira: {usable_state.token_expiration()} ---")
     print(f"Wrote {args.out_dir / 'session_bootstrap_report.md'}")
     return 0
 

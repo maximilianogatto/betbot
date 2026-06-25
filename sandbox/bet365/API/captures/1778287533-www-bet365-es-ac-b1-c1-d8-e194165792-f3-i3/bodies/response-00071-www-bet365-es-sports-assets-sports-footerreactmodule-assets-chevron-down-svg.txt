@@ -1,1 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="8" height="5" viewBox="0 0 12 7"><path class="fm-SVGComponent_Chevron" fill="#b5b5b5" fill-rule="evenodd" d="M12 .784L11.243 0 6 5.431.757 0 0 .784l5.243 5.432L6 7l.757-.784z"/></svg>

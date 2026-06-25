@@ -11,11 +11,11 @@ from unittest.mock import AsyncMock
 from core.models import LiveEventSnapshot
 from monitors.live_watch import (
     LiveWatchService,
-    _name_similarity,
     match_score,
     parse_fixture_line,
     render_live_hit,
 )
+from core.league_naming import team_name_similarity
 from storage.tracking_repository import SqliteTrackingRepository
 
 tracking_repository_module = importlib.import_module("storage.tracking_repository")
@@ -50,14 +50,14 @@ class LiveWatchUnitTests(unittest.TestCase):
 
     def test_name_similarity(self) -> None:
         # High similarity for exact names (case-insensitive, normalized)
-        self.assertGreaterEqual(_name_similarity("Murdoch FC", "murdoch"), 0.8)
-        self.assertGreaterEqual(_name_similarity("Sevilla", "Sevilla FC"), 0.8)
+        self.assertGreaterEqual(team_name_similarity("Murdoch FC", "murdoch"), 0.8)
+        self.assertGreaterEqual(team_name_similarity("Sevilla", "Sevilla FC"), 0.8)
 
         # stopwords removal
-        self.assertGreaterEqual(_name_similarity("Poli Iasi AC", "Poli Iasi"), 0.9)
+        self.assertGreaterEqual(team_name_similarity("Poli Iasi AC", "Poli Iasi"), 0.9)
 
         # Low similarity
-        self.assertLess(_name_similarity("Murdoch", "East Perth"), 0.4)
+        self.assertLess(team_name_similarity("Murdoch", "East Perth"), 0.4)
 
     def test_match_score(self) -> None:
         # Create a watch entry
@@ -904,13 +904,13 @@ class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):
 
     def test_spanish_name_similarity_normalization(self) -> None:
         # Femenino normalization
-        self.assertGreaterEqual(_name_similarity("AC Connecticut Femenino", "AC Connecticut Women"), 0.8)
-        self.assertGreaterEqual(_name_similarity("Vermont (Femenil)", "Vermont FC"), 0.8)
+        self.assertGreaterEqual(team_name_similarity("AC Connecticut Femenino", "AC Connecticut Women"), 0.8)
+        self.assertGreaterEqual(team_name_similarity("Vermont (Femenil)", "Vermont FC"), 0.8)
         # Sub-20 normalization
-        self.assertGreaterEqual(_name_similarity("Texoma Sub 20", "Texoma U20"), 0.8)
-        self.assertGreaterEqual(_name_similarity("Banyule sub-23", "Banyule U23"), 0.8)
+        self.assertGreaterEqual(team_name_similarity("Texoma Sub 20", "Texoma U20"), 0.8)
+        self.assertGreaterEqual(team_name_similarity("Banyule sub-23", "Banyule U23"), 0.8)
         # Reserva normalization
-        self.assertGreaterEqual(_name_similarity("Belconnen United Reserva", "Belconnen United Reserves"), 0.8)
+        self.assertGreaterEqual(team_name_similarity("Belconnen United Reserva", "Belconnen United Reserves"), 0.8)
 
     async def test_per_casino_prematch_alerting(self) -> None:
         service = LiveWatchService(repository=self.repository)

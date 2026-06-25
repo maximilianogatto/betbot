@@ -167,6 +167,16 @@ def row_to_event_baseline(row: sqlite3.Row) -> "EventBaseline":
 def row_to_small_change_record(row: sqlite3.Row) -> "SmallChangeRecord":
     from storage.tracking_repository import SmallChangeRecord
 
+    status_str = "pending"
+    if "status_flags" in row.keys():
+        flags_val = row["status_flags"]
+        if flags_val == 32:
+            status_str = "confirmed"
+        elif flags_val == 64:
+            status_str = "ignored"
+    else:
+        status_str = str(row["status"])
+
     return SmallChangeRecord(
         id=int(row["id"]),
         telegram_chat_id=int(row["chat_id"]),
@@ -187,7 +197,7 @@ def row_to_small_change_record(row: sqlite3.Row) -> "SmallChangeRecord":
         current_away=row_optional_float(row, "current_odds_away"),
         max_percent_change=float(row["max_change_percent"]),
         payload_json=row_optional_text(row, "payload_json"),
-        status=str(row["status"]),
+        status=status_str,
         created_at=str(row["created_at"]),
         updated_at=str(row["updated_at"]),
         confirmed_at=row_optional_text(row, "confirmed_at"),
