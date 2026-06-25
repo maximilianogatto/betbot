@@ -97,6 +97,7 @@ class BotReadyRuntimeConfig:
     # successful headed run warms the shared profile so later headless refreshes
     # reuse its Akamai cookies and stay invisible.
     background_bootstrap_mode: BootstrapMode = "headless"
+    replay_only: bool = False
     timeout_seconds: float = 25.0
     retries: int = 1
     lastx: int = 8
@@ -155,7 +156,7 @@ class SportradarBotReadyProvider:
 
     def __init__(self, config: BotReadyRuntimeConfig | None = None) -> None:
         self.config = config or BotReadyRuntimeConfig()
-        self.replay_only = _is_replay_only()
+        self.replay_only = self.config.replay_only or _is_replay_only()
         # A stable Chromium profile lets a successful bootstrap (even a one-time
         # headed one) leave Akamai clearance cookies behind, so later headless
         # refreshes reuse them instead of arriving cold and getting a 403.
