@@ -31,12 +31,29 @@
 | ID | Tarea (alto nivel) | Estado |
 | :--- | :--- | :--- |
 | PR2-E1 | Crear esqueleto de carpetas objetivo + `core/ports/` (interfaces). | TODO |
-| PR2-E2 | Partir `storage/tracking_repository.py` (6063 líneas) en `adapters/storage/*` por agregado. | IN_PROGRESS @codex (2026-06-25) |
+| PR2-E2 | Desglosar la partición de `storage/tracking_repository.py` (6063 líneas) en subtareas `adapters/storage/*` por agregado. | IN_PROGRESS @codex (2026-06-25) |
 | PR2-E3 | Extraer renderers (`bot/alerts.py` + `build_*_message`/`render_*`) a `interfaces/telegram/renderers/`. Servicios devuelven DTOs. | TODO |
 | PR2-E4 | Mover servicios de `monitors/` a `services/` y adelgazarlos (sin telegram, sin SQL inline). | TODO |
 | PR2-E5 | Handlers finos en `interfaces/telegram/handlers/` (mismos comandos). | TODO |
 | PR2-E6 | `runtime/scheduler.py` neutro (asyncio) que dispara métodos de services; borrar `bot/jobs/legacy.py` y scheduler propio. | TODO |
 | PR2-E7 | Borrar archivos muertos (`core/flags.py`, etc. — ver §4.4 del reporte). | TODO |
+
+### PR2-E2 — Subtareas propuestas para `adapters/storage/*`
+
+> Estas filas preparan PR2; no se implementan hasta que PR1 esté `DONE`, mergeada y la rama de PR2 esté abierta. Cada subtarea debe tocar solo los archivos declarados. El objetivo es escribir adapters contra el esquema greenfield definido en el reporte, no partir mecánicamente el repositorio legacy para conservar deuda.
+
+| ID | Tarea | Archivos principales | Criterio de aceptación | Deps | Estado |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| PR2-E2-S0 | Crear foundation SQLite greenfield para storage. | `adapters/storage/connection.py`, `adapters/storage/schema.py`, `tests/adapters/storage/test_schema.py` | Una DB vacía inicializa el esquema current-state limpio (`events`, `competitions`, `chat_subscriptions`, `baselines`, `small_changes`, `stats_links`, `live_watch`, `chat_settings`); incluye busy timeout/row factory/transacciones; no importa `storage/tracking_repository.py`; tests de creación e índices verdes. | PR1 mergeada, PR2-E1 | TODO |
+| PR2-E2-S1 | Implementar adapter de competencias/tracking/unified/discovery. | `adapters/storage/competitions.py`, `tests/adapters/storage/test_competitions_repository.py` | Implementa el port de competencias definido en `PORTS_SPEC.md`: pending track, tracked competitions, unavailable refresh, unified competitions y discovery; CRUD idempotente; retorna DTOs/modelos de dominio, no filas SQLite crudas. | PR2-E2-S0, ports PR2-F2 | TODO |
+| PR2-E2-S2 | Implementar adapter de eventos y odds current-state. | `adapters/storage/events.py`, `tests/adapters/storage/test_events_repository.py` | Upsert/listado/remoción de eventos activos funciona sobre tabla `events`; conserva solo estado actual y odds normalizadas; `remove_missing_events`/`remove_past_events` cubiertos por tests; no persiste payloads gigantes salvo flag debug futuro. | PR2-E2-S0, ports PR2-F2 | TODO |
+| PR2-E2-S3 | Implementar adapter de suscripciones y settings de chat. | `adapters/storage/subscriptions.py`, `tests/adapters/storage/test_subscriptions_repository.py` | Cubre suscripciones chat↔liga, toggles de odds/reminders, stats-only, peak digest y `chat_settings`; operaciones por `chat_id` son idempotentes; tests cubren enabled/disabled y remoción. | PR2-E2-S0, ports PR2-F2 | TODO |
+| PR2-E2-S4 | Implementar adapter de baselines, cambios menores y dedupe de alertas. | `adapters/storage/baselines.py`, `tests/adapters/storage/test_baselines_repository.py` | Baselines por chat/evento, `small_changes` pendientes/confirmados y `sent_alerts` dedupe funcionan sin depender de tablas legacy; tests cubren confirmación individual/todas y dedupe de alertas. | PR2-E2-S0, ports PR2-F2 | TODO |
+| PR2-E2-S5 | Implementar adapter de links de estadísticas. | `adapters/storage/stats_links.py`, `tests/adapters/storage/test_stats_links_repository.py` | Liga odds↔stats y match odds↔stats se pueden listar/upsert/consultar por provider; constraints evitan duplicados; tests cubren relink y lookup por evento. | PR2-E2-S0, ports PR2-F2 | TODO |
+| PR2-E2-S6 | Implementar adapter de live watch. | `adapters/storage/live_watch.py`, `tests/adapters/storage/test_live_watch_repository.py` | Cubre altas, listados, remoción, settings, expiración y marcas de fired/countdown/prematch; tests validan estados activos/expirados y actualización de plataforma. | PR2-E2-S0, ports PR2-F2 | TODO |
+| PR2-E2-S7 | Implementar adapter de cache y mantenimiento. | `adapters/storage/maintenance.py`, `tests/adapters/storage/test_maintenance_repository.py` | Porta TTL/cap FIFO 200 de `stats_payload_cache`, prune de `sent_alerts`/`small_changes` y `VACUUM`; tests verifican conteos borrados, cap de cache y que vacuum es invocable. | PR2-E2-S0, ports PR2-F2 | TODO |
+| PR2-E2-S8 | Crear mappers SQLite↔DTO compartidos. | `adapters/storage/mappers.py`, `tests/adapters/storage/test_storage_mappers.py` | Los adapters reutilizan conversiones comunes para odds, eventos, competencias, subscriptions y stats links; tests cubren `None`, fechas ISO y floats; no filtra objetos SQLite fuera de adapters. | PR2-E2-S1, PR2-E2-S2, PR2-E2-S3 | TODO |
+| PR2-E2-S9 | Crear facade de storage y cortar imports legacy. | `adapters/storage/__init__.py`, composition root actual, tests de integración storage | Facade compone S1-S7 e implementa los ports necesarios; imports de runtime/services apuntan al facade nuevo; suite verde con DB greenfield; `storage/tracking_repository.py` queda sin uso y solo se borra cuando los tests confirmen paridad mínima. | PR2-E2-S1, PR2-E2-S2, PR2-E2-S3, PR2-E2-S4, PR2-E2-S5, PR2-E2-S6, PR2-E2-S7, PR2-E2-S8 | TODO |
 
 ---
 
