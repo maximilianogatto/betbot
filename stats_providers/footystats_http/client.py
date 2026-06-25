@@ -29,6 +29,11 @@ class FootyStatsHTTPSettings:
     retries: int = 2
     retry_delay_seconds: float = 0.5
     min_request_interval_seconds: float = 0.2
+    # Public HTML pages now sit behind a Cloudflare Managed Challenge, so they
+    # are fetched through a headed browser instead of plain httpx. The compact
+    # AJAX feeds (live scores) and the licensed API stay on httpx.
+    browser_fetch_html: bool = True
+    browser_fetch_timeout_seconds: float = 90.0
 
 
 class FootyStatsHTTPClient:
@@ -59,16 +64,42 @@ class FootyStatsHTTPClient:
         self._request_lock = threading.Lock()
         self._last_request_started_at: float | None = None
         self.request_count = 0
+        # An injected transport means a test/offline stub; never spin up a real
+        # browser in that case. Otherwise the headed-browser fallback is created
+        # lazily on the first public-HTML fetch.
+        self._browser_fetch_enabled = self.settings.browser_fetch_html and transport is None
+        self._browser = None
+        self._browser_lock = threading.Lock()
 
     def close(self) -> None:
-        """Close pooled HTTP connections."""
+        """Close pooled HTTP connections and the headed browser, if any."""
 
         self._client.close()
+        browser = self._browser
+        if browser is not None:
+            browser.close()
+            self._browser = None
 
     def get_public_html(self, path_or_url: str) -> str:
-        """GET one public HTML page with intentionally minimal headers."""
+        """GET one public HTML page, clearing Cloudflare via a headed browser."""
 
-        return self._request_text(urljoin(self.settings.public_base_url, path_or_url))
+        url = urljoin(self.settings.public_base_url, path_or_url)
+        if self._browser_fetch_enabled:
+            return self._browser_fetcher().fetch_html(
+                url, timeout=self.settings.browser_fetch_timeout_seconds
+            )
+        return self._request_text(url)
+
+    def _browser_fetcher(self):
+        if self._browser is None:
+            with self._browser_lock:
+                if self._browser is None:
+                    from stats_providers.footystats_http.cloudflare_browser import (
+                        CloudflareBrowserFetcher,
+                    )
+
+                    self._browser = CloudflareBrowserFetcher()
+        return self._browser
 
     def get_live_scores(self) -> list[dict[str, Any]]:
         """Return the compact undocumented live-score list when available."""
