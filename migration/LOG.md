@@ -113,3 +113,12 @@
 - **Tests:** Verde. 614 tests pasados con éxito.
 - **Notas/Bloqueos:** Ninguno. Las fundaciones F1 y F2 están listas.
 - **Siguiente sugerido:** PR2-F3 (Adapters de SQLite para la base de datos limpia / greenfield).
+
+### 2026-06-25T17:00:00-03:00 · @codex · PR2-E2 · BLOCKED
+- **Qué hice:** Detuve mi claim de PR2-E2 en `TASKS.md` y lo marqué `BLOCKED`. Agregué nota de coordinación explícita: no partir mecánicamente `tracking_repository.py`; seguir `PR2_PLAN.md` y `PORTS_SPEC.md`, arrancando por F1 → F2 → F3 y luego adapters greenfield nuevos.
+- **Por qué:** El usuario indicó pausar PR2-E2 y evitar iniciar PR2 antes de la condición de merge/orden definida. Esto evita trabajo tirado y colisiones con otros agentes.
+- **Archivos:** migration/TASKS.md, migration/LOG.md
+- **Commit:** pendiente
+- **Tests:** N/A (solo coordinación/docs; no se tocó código).
+- **Notas/Bloqueos:** No se implementó nada, no se tocó `storage/`, no se tomó ninguna subtarea de adapters. Cuando corresponda continuar, reclamar la subtarea concreta en `TASKS.md`.
+- **Siguiente sugerido:** Esperar confirmación de PR1 mergeada y continuar por la próxima subtarea habilitada según `migration/PR2_PLAN.md`.

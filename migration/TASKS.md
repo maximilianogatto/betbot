@@ -31,7 +31,7 @@
 | ID | Tarea (alto nivel) | Estado |
 | :--- | :--- | :--- |
 | PR2-E1 | Crear esqueleto de carpetas objetivo + `core/ports/` (interfaces). | DONE |
-| PR2-E2 | Partir `storage/tracking_repository.py` (6063 líneas) en `adapters/storage/*` por agregado. | IN_PROGRESS @codex (2026-06-25) |
+| PR2-E2 | Partir `storage/tracking_repository.py` (6063 líneas) en `adapters/storage/*` por agregado. | BLOCKED |
 | PR2-E3 | Extraer renderers (`bot/alerts.py` + `build_*_message`/`render_*`) a `interfaces/telegram/renderers/`. Servicios devuelven DTOs. | TODO |
 | PR2-E4 | Mover servicios de `monitors/` a `services/` y adelgazarlos (sin telegram, sin SQL inline). | TODO |
 | PR2-E5 | Handlers finos en `interfaces/telegram/handlers/` (mismos comandos). | TODO |
@@ -54,5 +54,6 @@
 
 ## Notas de coordinación
 - No empezar PR2 hasta que PR1 esté `DONE` y mergeada.
+- PR2-E2 no se implementa como split mecánico del repositorio legacy. Cuando PR2 esté habilitada, seguir `migration/PR2_PLAN.md` y `migration/PORTS_SPEC.md`: F1 (esqueleto) → F2 (ports) → F3 (schema greenfield) → adapters nuevos contra el esquema limpio.
 - Si una tarea queda `BLOCKED`, dejar el motivo en `LOG.md` y, si se puede, tomar otra tarea independiente del mismo PR.
 - **Colisión de archivos en PR1:** las tareas PR1-T1, T2, T4, T5, T6 tocan todas `storage/tracking_repository.py`. **Solo un agente a la vez** debe estar `IN_PROGRESS` sobre ese archivo. El otro agente puede tomar en paralelo **PR1-T3** (toca `browser_handler.py` / `config.py` / jobs, archivos distintos). El resto se hace en serie.
