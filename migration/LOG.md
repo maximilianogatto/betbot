@@ -122,3 +122,12 @@
 - **Tests:** N/A (solo coordinación/docs; no se tocó código).
 - **Notas/Bloqueos:** No se implementó nada, no se tocó `storage/`, no se tomó ninguna subtarea de adapters. Cuando corresponda continuar, reclamar la subtarea concreta en `TASKS.md`.
 - **Siguiente sugerido:** Esperar confirmación de PR1 mergeada y continuar por la próxima subtarea habilitada según `migration/PR2_PLAN.md`.
+
+### 2026-06-25T17:03:00-03:00 · @codex · PR2-E2 · NOTE
+- **Qué hice:** Registré el hash real del commit de bloqueo de PR2-E2.
+- **Por qué:** La entrada anterior fue escrita antes de conocer el hash, y `LOG.md` es append-only.
+- **Archivos:** migration/TASKS.md, migration/LOG.md
+- **Commit:** 7691ed9
+- **Tests:** N/A (solo trazabilidad).
+- **Notas/Bloqueos:** PR2-E2 sigue detenido.
+- **Siguiente sugerido:** —
