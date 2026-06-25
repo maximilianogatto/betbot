@@ -186,7 +186,9 @@ async def _orchestrated_db_pruning(application: Application) -> None:
     logger.info("Starting database pruning cycle...")
     stats = await asyncio.to_thread(
         tracking_repository.prune_old_data,
-        days_threshold=14
+        days_threshold=14,
+        sent_alerts_days=30,
+        small_changes_days=7
     )
     logger.info("Database pruning finished: %s", stats)
 

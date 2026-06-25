@@ -3804,13 +3804,20 @@ class SqliteTrackingRepository:
         with _connect() as connection:
             _sanitize_tracking_state(connection)
 
-    def prune_old_data(self, days_threshold: int = 14) -> dict[str, int]:
-        """Prune inactive events, old sent alerts, expired cache.
+    def prune_old_data(
+        self,
+        days_threshold: int = 14,
+        sent_alerts_days: int = 30,
+        small_changes_days: int = 7,
+    ) -> dict[str, int]:
+        """Prune inactive events, old sent alerts, expired cache, and pending small changes.
 
         Returns a dictionary with the counts of deleted rows per table.
         """
         now = datetime.now(timezone.utc)
         cutoff_iso = (now - timedelta(days=days_threshold)).isoformat()
+        sent_alerts_cutoff_iso = (now - timedelta(days=sent_alerts_days)).isoformat()
+        small_changes_cutoff_iso = (now - timedelta(days=small_changes_days)).isoformat()
         now_iso = now.isoformat()
 
         stats = {}
@@ -3825,7 +3832,7 @@ class SqliteTrackingRepository:
             # 2. Delete sent_alerts older than threshold.
             cursor = conn.execute(
                 "DELETE FROM sent_alerts WHERE sent_at < ?",
-                (cutoff_iso,),
+                (sent_alerts_cutoff_iso,),
             )
             stats["sent_alerts_pruned"] = cursor.rowcount
 
@@ -3842,6 +3849,13 @@ class SqliteTrackingRepository:
                 (cutoff_iso,),
             )
             stats["expired_live_watches_pruned"] = cursor.rowcount
+
+            # 5. Delete pending small changes older than threshold.
+            cursor = conn.execute(
+                "DELETE FROM small_changes WHERE status = 'pending' AND created_at < ?",
+                (small_changes_cutoff_iso,),
+            )
+            stats["small_changes_pruned"] = cursor.rowcount
 
         return stats
 

@@ -644,7 +644,9 @@ async def _db_pruning_loop(
             logger.info("Starting periodic database pruning cycle...")
             stats = await asyncio.to_thread(
                 tracking_repository.prune_old_data,
-                days_threshold=days_threshold
+                days_threshold=days_threshold,
+                sent_alerts_days=30,
+                small_changes_days=7
             )
             logger.info("Database pruning finished: %s", stats)
 

@@ -79,7 +79,7 @@ class DbPruningJobTests(unittest.IsolatedAsyncioTestCase):
         from bot.jobs.tasks import _orchestrated_db_pruning
         await _orchestrated_db_pruning(None)
 
-        mock_repo.prune_old_data.assert_called_once_with(days_threshold=14)
+        mock_repo.prune_old_data.assert_called_once_with(days_threshold=14, sent_alerts_days=30, small_changes_days=7)
         mock_repo.run_db_vacuum.assert_called_once()
 
     @patch("storage.tracking_repository.tracking_repository")
@@ -95,7 +95,7 @@ class DbPruningJobTests(unittest.IsolatedAsyncioTestCase):
         from bot.jobs.tasks import _orchestrated_db_pruning
         await _orchestrated_db_pruning(None)
 
-        mock_repo.prune_old_data.assert_called_once_with(days_threshold=14)
+        mock_repo.prune_old_data.assert_called_once_with(days_threshold=14, sent_alerts_days=30, small_changes_days=7)
         mock_repo.run_db_vacuum.assert_not_called()
 
     @patch("storage.tracking_repository.tracking_repository")
@@ -114,7 +114,7 @@ class DbPruningJobTests(unittest.IsolatedAsyncioTestCase):
             with self.assertRaises(asyncio.CancelledError):
                 await _db_pruning_loop(None, interval_seconds=10, days_threshold=14)
 
-        mock_repo.prune_old_data.assert_called_once_with(days_threshold=14)
+        mock_repo.prune_old_data.assert_called_once_with(days_threshold=14, sent_alerts_days=30, small_changes_days=7)
         mock_repo.run_db_vacuum.assert_called_once()
 
     @patch("storage.tracking_repository.tracking_repository")
@@ -133,7 +133,7 @@ class DbPruningJobTests(unittest.IsolatedAsyncioTestCase):
             with self.assertRaises(asyncio.CancelledError):
                 await _db_pruning_loop(None, interval_seconds=10, days_threshold=14)
 
-        mock_repo.prune_old_data.assert_called_once_with(days_threshold=14)
+        mock_repo.prune_old_data.assert_called_once_with(days_threshold=14, sent_alerts_days=30, small_changes_days=7)
         mock_repo.run_db_vacuum.assert_not_called()
 
 

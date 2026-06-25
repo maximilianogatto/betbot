@@ -176,6 +176,86 @@ class PruneOldDataTests(unittest.TestCase):
         self.assertIn("idx_sent_alerts_active_event", index_names)
         self.assertIn("idx_stats_match_links_active_event", index_names)
 
+    def test_prune_sent_alerts_and_small_changes_thresholds(self) -> None:
+        comp_id = self._add_comp("platform", "comp_ext", "Competition")
+        now = datetime.now(timezone.utc)
+
+        # Active events to prevent cascading deletes
+        event_active1 = self._add_event(comp_id, "event_active1", 1, now)
+        event_active2 = self._add_event(comp_id, "event_active2", 1, now)
+        event_active3 = self._add_event(comp_id, "event_active3", 1, now)
+
+        # 1. Sent alert older than 30 days -> should be pruned
+        old_sent_time = now - timedelta(days=35)
+        # 2. Sent alert fresher than 30 days -> should NOT be pruned
+        fresh_sent_time = now - timedelta(days=15)
+
+        # 3. Small change unconfirmed and older than 7 days -> should be pruned
+        old_change_time = now - timedelta(days=9)
+        # 4. Small change unconfirmed and fresher than 7 days -> should NOT be pruned
+        fresh_change_time = now - timedelta(days=3)
+        # 5. Small change confirmed (status != 'pending') and older than 7 days -> should NOT be pruned
+        old_confirmed_change_time = now - timedelta(days=9)
+
+        with tracking_repository_module._connect() as con:
+            # Insert sent alerts
+            con.execute(
+                "INSERT INTO sent_alerts (chat_id, active_event_id, alert_type, sent_at) VALUES (?, ?, ?, ?)",
+                (999, event_active1, "odds_change_old", old_sent_time.isoformat())
+            )
+            con.execute(
+                "INSERT INTO sent_alerts (chat_id, active_event_id, alert_type, sent_at) VALUES (?, ?, ?, ?)",
+                (999, event_active1, "odds_change_fresh", fresh_sent_time.isoformat())
+            )
+
+            # Insert small changes
+            con.execute(
+                """
+                INSERT INTO small_changes (chat_id, active_event_id, max_change_percent, status, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (999, event_active1, 5.0, "pending", old_change_time.isoformat(), old_change_time.isoformat())
+            )
+            con.execute(
+                """
+                INSERT INTO small_changes (chat_id, active_event_id, max_change_percent, status, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (999, event_active2, 5.0, "pending", fresh_change_time.isoformat(), fresh_change_time.isoformat())
+            )
+            con.execute(
+                """
+                INSERT INTO small_changes (chat_id, active_event_id, max_change_percent, status, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (999, event_active3, 5.0, "confirmed", old_confirmed_change_time.isoformat(), old_confirmed_change_time.isoformat())
+            )
+
+        # Run pruning
+        stats = self.repo.prune_old_data(days_threshold=14, sent_alerts_days=30, small_changes_days=7)
+
+        # Verify stats output
+        self.assertEqual(stats["sent_alerts_pruned"], 1)
+        self.assertEqual(stats["small_changes_pruned"], 1)
+
+        # Verify DB content
+        with tracking_repository_module._connect() as con:
+            alerts = {r["alert_type"] for r in con.execute("SELECT alert_type FROM sent_alerts")}
+            self.assertNotIn("odds_change_old", alerts)
+            self.assertIn("odds_change_fresh", alerts)
+
+            changes = con.execute("SELECT active_event_id, status, created_at FROM small_changes").fetchall()
+            self.assertEqual(len(changes), 2)
+
+            pending_changes = [c for c in changes if c["status"] == "pending"]
+            self.assertEqual(len(pending_changes), 1)
+            self.assertEqual(pending_changes[0]["active_event_id"], event_active2)
+            self.assertEqual(pending_changes[0]["created_at"], fresh_change_time.isoformat())
+
+            confirmed_changes = [c for c in changes if c["status"] == "confirmed"]
+            self.assertEqual(len(confirmed_changes), 1)
+            self.assertEqual(confirmed_changes[0]["active_event_id"], event_active3)
+
 
 if __name__ == "__main__":
     unittest.main()
