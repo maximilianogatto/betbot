@@ -170,3 +170,13 @@
 - **Tests:** boot + polling OK; `/list_tracks` respondido; httpx http2 construye OK.
 - **Notas/Bloqueos:** sportradar headless es esperado en local — opcional silenciar con `SPORTRADAR_REPLAY_ONLY=true` en .env (deshabilita el refresh de sesión; token por /sportradar_token). No bloquea PR1.
 - **Siguiente sugerido:** re-correr ./run.sh (ya sin error de betsson). PR1 validado end-to-end → listo para merge. Commitear el fix de requirements.txt (h2).
+
+### 2026-06-25T18:40:00-03:00 · @claude · CLEANUP+MERGE · DONE
+- **Qué hice:** Ordené todo el git. (1) `main`: commiteé el trabajo pendiente de footystats + sportradar + reporte (9732ceb), ignorando wal/shm transitorios → main limpio. (2) `mig/pr1`: commiteé mis fixes (c6a9ba6: h2 + BETBOT_DB_PATH) y los docs de coordinación/planes (d39d11a). (3) Cherry-pick de los fixes a `main` (0fc3ff1) → h2 y BETBOT_DB_PATH ahora en main. (4) Actualicé PROTOCOL.md con disciplina de ramas + protocolo de MERGE con acuerdo entre agentes (MERGE-PROPOSAL/ACK/DONE).
+- **Por qué:** Pedido del usuario: dejar todo prolijo, llevar el fix de h2 (crítico para instalación limpia/VPS) a main, y que los agentes tengan reglas claras de commit/merge.
+- **Estado de PR1:** confirmado YA mergeado a main (HEAD = d8d0b12 "Merge branch 'mig/pr1'", commits T1-T6 son ancestros). No había merge pendiente.
+- **Archivos:** main: requirements.txt, storage/tracking_repository.py, main.py, cli.py (+ footystats del usuario). mig/pr1: ídem + migration/*.md, reportes.
+- **Commit:** main 9732ceb, 0fc3ff1 · mig/pr1 c6a9ba6, d39d11a
+- **Tests:** fixes ya validados (suite verde + smoke). Cherry-pick aplicó sin conflicto.
+- **Notas/Bloqueos:** ⚠️ `bot/handlers/` quedó UNTRACKED en el worktree de migración (parece WIP de PR2). NO lo commiteé para no pisar a los agentes — que lo resuelva quien esté en esa tarea. ⚠️ Ramas enredadas: mig/pr1 tiene commits de PR2-E2/TASKS encima (histórico desprolijo, no urgente). Nada se pusheó.
+- **Siguiente sugerido:** Los agentes siguen PR2 sobre `mig/pr2` (no sobre mig/pr1). Antes de mergear PR2: seguir el protocolo de merge nuevo (consenso).
