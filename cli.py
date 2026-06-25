@@ -130,8 +130,13 @@ def cmd_list_events(args, repo: SqliteTrackingRepository) -> None:
 
 def cmd_prune(args, repo: SqliteTrackingRepository) -> None:
     """Manually run database pruning."""
-    print(f"Ejecutando purga manual de base de datos con umbral de {args.days} días...")
-    stats = repo.prune_old_data(days_threshold=args.days)
+    print(f"Ejecutando purga manual de base de datos con umbral de {args.days} días, "
+          f"sent_alerts de {args.sent_alerts_days} días y small_changes de {args.small_changes_days} días...")
+    stats = repo.prune_old_data(
+        days_threshold=args.days,
+        sent_alerts_days=args.sent_alerts_days,
+        small_changes_days=args.small_changes_days
+    )
     print("Purga completada con éxito.")
     rows = [[k, v] for k, v in stats.items()]
     print_table(["Métrica de Limpieza", "Registros Eliminados"], rows)
@@ -153,6 +158,8 @@ def main() -> None:
     # prune command
     prune_parser = subparsers.add_parser("prune", help="Purga registros antiguos/expirados de la base de datos.")
     prune_parser.add_argument("--days", type=int, default=14, help="Días mínimos de antigüedad para purgar (default: 14).")
+    prune_parser.add_argument("--sent-alerts-days", type=int, default=30, help="Días mínimos de antigüedad para purgar alertas enviadas (default: 30).")
+    prune_parser.add_argument("--small-changes-days", type=int, default=7, help="Días mínimos de antigüedad para purgar cambios menores pendientes (default: 7).")
     
     args = parser.parse_args()
     
