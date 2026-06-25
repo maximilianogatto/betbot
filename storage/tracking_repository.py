@@ -22,6 +22,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 import json
 import logging
+import os
 from pathlib import Path
 import sqlite3
 from typing import Any
@@ -45,7 +46,15 @@ logger = logging.getLogger(__name__)
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
-DB_FILE_PATH = DATA_DIR / "tracking.sqlite3"
+# Ruta de la DB configurable por entorno (BETBOT_DB_PATH). Útil para smoke tests
+# sin tocar la DB real: ej. BETBOT_DB_PATH=data/tracking.smoke.sqlite3
+# Acepta ruta absoluta o relativa al root del proyecto. Sin la var, usa el default.
+_db_path_env = os.environ.get("BETBOT_DB_PATH", "").strip()
+if _db_path_env:
+    _db_path = Path(_db_path_env)
+    DB_FILE_PATH = _db_path if _db_path.is_absolute() else (PROJECT_ROOT / _db_path)
+else:
+    DB_FILE_PATH = DATA_DIR / "tracking.sqlite3"
 DEFAULT_CHANGE_THRESHOLD_PERCENT = 20.0
 DEFAULT_NOTIFY_ODDS_CHANGES = True
 STATS_PAYLOAD_CACHE_MAX_ROWS = 200
