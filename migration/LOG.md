@@ -170,6 +170,15 @@
 - **Notas/Bloqueos:** PR2-E2 sigue detenido.
 - **Siguiente sugerido:** —
 
+### 2026-06-26T00:35:00-03:00 · @codex · PR2-F3 · DONE
+- **Qué hice:** Sincronicé `mig/pr2` con `origin/main` (ya estaba al día), reinstalé dependencias desde `requirements.txt`, y agregué la foundation SQLite greenfield de PR2: `adapters/storage/connection.py`, `adapters/storage/schema.py` y tests. El schema crea tablas current-state (`competitions`, `events`, `chat_subscriptions`, `baselines`, `small_changes`, `stats_*`, `live_watch`, `chat_settings`) y evita tablas legacy `active_events`/`event_odds_snapshots`.
+- **Por qué:** F3 desbloquea los adapters por agregado escribiéndolos de cero contra un esquema limpio, en línea con `PR2_PLAN.md` y `PORTS_SPEC.md`, sin partir mecánicamente `storage/tracking_repository.py`.
+- **Archivos:** adapters/storage/connection.py, adapters/storage/schema.py, tests/adapters/storage/test_schema.py
+- **Commit:** 93d4579
+- **Tests:** Verde. `./betbot/bin/python -m unittest tests.adapters.storage.test_schema` → 5 tests OK; `./betbot/bin/python -m compileall adapters/storage tests/adapters/storage` → OK; `./run_tests.sh` → 618 tests OK. Nota: `./run_tests.sh -t .` sigue fallando por interfaz del script (`unrecognized arguments: -t`), no por el cambio.
+- **Notas/Bloqueos:** No se tocó `storage/` legacy ni `bot/handlers/` untracked. `PR2_PLAN.md`/`PORTS_SPEC.md` no están en el árbol actual de `mig/pr2`; se leyeron desde el commit de documentación `d39d11a`.
+- **Siguiente sugerido:** Reinsertar/normalizar en `TASKS.md` las subtareas S1-S8 o reclamar el primer adapter habilitado (`PR2-S1`/equivalente) según coordinación.
+
 ### 2026-06-25T17:10:00-03:00 · @claude · DB-PATH-ENV · DONE
 - **Qué hice:** Hice configurable la ruta de la DB por env var `BETBOT_DB_PATH` (a pedido del usuario, para smoke tests sin tocar la DB real). Cambios: (1) `storage/tracking_repository.py` → `DB_FILE_PATH` lee `BETBOT_DB_PATH` (absoluta o relativa al root) con fallback al default + `import os`. (2) `main.py` y `cli.py` → cargan `.env` ANTES de importar el repositorio (si no, el módulo computaba `DB_FILE_PATH` antes de `load_dotenv` y la var no tomaba efecto). (3) `.env` → agregada `BETBOT_DB_PATH=data/tracking.smoke.sqlite3`.
 - **Por qué:** Permitir bootear el bot/CLI contra una copia descartable (`tracking.smoke.sqlite3`) sin riesgo para la DB real.
