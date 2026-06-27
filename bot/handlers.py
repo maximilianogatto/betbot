@@ -1712,6 +1712,22 @@ def _explore_menu_text(overview: dict) -> str:
     )
 
 
+_EXPLORE_MENU_LABELS = [
+    "📊 Tabla de posiciones",
+    "🗓️ Próximos partidos",
+    "👟 Goleadores",
+    "⚽ Buscar un equipo",
+    "🔗 Link al proveedor",
+    "📋 Elegir partido y reporte",
+]
+
+
+def _explore_menu_keyboard():
+    """Inline keyboard for the /explore_stats menu (index ``i`` = option ``i+1``)."""
+
+    return _build_choice_keyboard(_EXPLORE_MENU_LABELS, "exp_menu")
+
+
 async def explore_stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Start `/explore_stats`: navigate stats of a stats-linked tracked league."""
 
@@ -1736,12 +1752,9 @@ async def explore_stats_command(update: Update, context: ContextTypes.DEFAULT_TY
         return ConversationHandler.END
 
     context.user_data[EXPLORE_TRACKS_CONTEXT_KEY] = linked
-    lines = ["¿Qué liga querés explorar?"]
-    for index, league in enumerate(linked, start=1):
-        lines.append(f"{index} - {league.label}")
     await update.message.reply_text(
-        "\n".join(lines),
-        reply_markup=_build_numeric_keyboard(len(linked), "Elegí la liga"),
+        "¿Qué liga querés explorar?",
+        reply_markup=_build_choice_keyboard([lg.label for lg in linked], "exp_league"),
     )
     return EXPLORE_SELECT_LEAGUE
 
@@ -1749,32 +1762,33 @@ async def explore_stats_command(update: Update, context: ContextTypes.DEFAULT_TY
 async def explore_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Load the selected league's cached overview and show the navigation menu."""
 
-    if update.message is None:
+    target = _selection_target(update)
+    if target is None:
         return ConversationHandler.END
 
     linked = context.user_data.get(EXPLORE_TRACKS_CONTEXT_KEY)
     if not isinstance(linked, list) or not linked:
-        await update.message.reply_text(
+        await target.reply_text(
             "No encontré la selección de ligas. Probá de nuevo con /explore_stats.",
             reply_markup=ReplyKeyboardRemove(),
         )
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    selected_index = _parse_selection_number(update.message.text, len(linked))
+    selected_index = await _selected_index(update, prefix="exp_league", count=len(linked))
     if selected_index is None:
-        await update.message.reply_text(
-            "Elegí un número válido de liga.",
-            reply_markup=_build_numeric_keyboard(len(linked), "Elegí la liga"),
+        await target.reply_text(
+            "Elegí una liga de la lista.",
+            reply_markup=_build_choice_keyboard([lg.label for lg in linked], "exp_league"),
         )
         return EXPLORE_SELECT_LEAGUE
 
     league = linked[selected_index]
     if not isinstance(league, ExplorableStatsLeague):
-        await update.message.reply_text("La liga seleccionada no es válida.")
+        await target.reply_text("La liga seleccionada no es válida.")
         return ConversationHandler.END
     stats_service = get_stats_service(context)
-    await update.message.reply_text("Cargando datos de la liga...", reply_markup=ReplyKeyboardRemove())
+    await target.reply_text("Cargando datos de la liga...", reply_markup=ReplyKeyboardRemove())
     try:
         overview = await stats_service.get_league_overview(
             provider_key=league.provider_key,
@@ -1784,7 +1798,7 @@ async def explore_select_league(update: Update, context: ContextTypes.DEFAULT_TY
         logger.exception("Explore stats overview failed league=%s", league.league_id)
         overview = None
     if not overview:
-        await update.message.reply_text(
+        await target.reply_text(
             "No pude cargar los datos de esa liga ahora. Probá más tarde.",
             reply_markup=ReplyKeyboardRemove(),
         )
@@ -1793,9 +1807,9 @@ async def explore_select_league(update: Update, context: ContextTypes.DEFAULT_TY
 
     context.user_data[EXPLORE_OVERVIEW_CONTEXT_KEY] = overview
     context.user_data[EXPLORE_SELECTED_LEAGUE_CONTEXT_KEY] = league
-    await update.message.reply_text(
+    await target.reply_text(
         _explore_menu_text(overview),
-        reply_markup=_build_numeric_keyboard(6, "Elegí una opción"),
+        reply_markup=_explore_menu_keyboard(),
     )
     return EXPLORE_MENU
 
@@ -1803,29 +1817,30 @@ async def explore_select_league(update: Update, context: ContextTypes.DEFAULT_TY
 async def explore_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Render the chosen view and keep the explorer menu open."""
 
-    if update.message is None:
+    target = _selection_target(update)
+    if target is None:
         return ConversationHandler.END
 
     overview = context.user_data.get(EXPLORE_OVERVIEW_CONTEXT_KEY)
     if not isinstance(overview, dict):
-        await update.message.reply_text(
+        await target.reply_text(
             "Se perdió el contexto. Probá de nuevo con /explore_stats.",
             reply_markup=ReplyKeyboardRemove(),
         )
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    choice = _parse_selection_number(update.message.text, 6)
+    choice = await _selected_index(update, prefix="exp_menu", count=6)
     if choice is None:
-        await update.message.reply_text(
+        await target.reply_text(
             _explore_menu_text(overview),
-            reply_markup=_build_numeric_keyboard(6, "Elegí una opción"),
+            reply_markup=_explore_menu_keyboard(),
         )
         return EXPLORE_MENU
 
     option = choice + 1
     if option == 4:
-        await update.message.reply_text(
+        await target.reply_text(
             "Escribí el nombre del equipo a buscar:",
             reply_markup=ReplyKeyboardRemove(),
         )
@@ -1834,7 +1849,7 @@ async def explore_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     if option == 6:
         league = context.user_data.get(EXPLORE_SELECTED_LEAGUE_CONTEXT_KEY)
         if not isinstance(league, ExplorableStatsLeague):
-            await update.message.reply_text("Se perdió la liga seleccionada. Probá de nuevo con /explore_stats.")
+            await target.reply_text("Se perdió la liga seleccionada. Probá de nuevo con /explore_stats.")
             return ConversationHandler.END
         try:
             fixtures = await get_stats_service(context).list_fixtures(
@@ -1846,13 +1861,15 @@ async def explore_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
             logger.exception("Explore fixture list failed provider=%s league=%s", league.provider_key, league.league_id)
             fixtures = []
         if not fixtures:
-            await update.message.reply_text("No hay partidos disponibles para generar reporte.")
+            await target.reply_text("No hay partidos disponibles para generar reporte.")
             return EXPLORE_MENU
         context.user_data[EXPLORE_FIXTURES_CONTEXT_KEY] = fixtures
         await _reply_text_chunks(
-            update.message,
+            target,
             _build_provider_fixture_selection_message(fixtures),
-            reply_markup=_build_numeric_keyboard(len(fixtures), "Elegí el partido"),
+            reply_markup=_build_choice_keyboard(
+                [f"{fx.home} vs {fx.away}" for fx in fixtures], "exp_fix"
+            ),
         )
         return EXPLORE_SELECT_FIXTURE
 
@@ -1865,10 +1882,10 @@ async def explore_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     else:
         message = f"🔗 {overview.get('source_url') or 'Sin link disponible.'}"
 
-    await _reply_text_chunks(update.message, message)
-    await update.message.reply_text(
+    await _reply_text_chunks(target, message)
+    await target.reply_text(
         _explore_menu_text(overview),
-        reply_markup=_build_numeric_keyboard(6, "Elegí una opción"),
+        reply_markup=_explore_menu_keyboard(),
     )
     return EXPLORE_MENU
 
@@ -1891,7 +1908,7 @@ async def explore_team_input(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await _reply_text_chunks(update.message, render_team_row(overview, update.message.text or ""))
     await update.message.reply_text(
         _explore_menu_text(overview),
-        reply_markup=_build_numeric_keyboard(6, "Elegí una opción"),
+        reply_markup=_explore_menu_keyboard(),
     )
     return EXPLORE_MENU
 
@@ -1899,33 +1916,36 @@ async def explore_team_input(update: Update, context: ContextTypes.DEFAULT_TYPE)
 async def explore_select_fixture(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Generate a provider-native match report from `/explore_stats`."""
 
-    if update.message is None:
+    target = _selection_target(update)
+    if target is None:
         return ConversationHandler.END
     fixtures = context.user_data.get(EXPLORE_FIXTURES_CONTEXT_KEY)
     league = context.user_data.get(EXPLORE_SELECTED_LEAGUE_CONTEXT_KEY)
     if not isinstance(fixtures, list) or not fixtures or not isinstance(league, ExplorableStatsLeague):
-        await update.message.reply_text("Se perdió la selección. Probá de nuevo con /explore_stats.")
+        await target.reply_text("Se perdió la selección. Probá de nuevo con /explore_stats.")
         return ConversationHandler.END
-    selected_index = _parse_selection_number(update.message.text, len(fixtures))
+    selected_index = await _selected_index(update, prefix="exp_fix", count=len(fixtures))
     if selected_index is None:
-        await update.message.reply_text(
-            "Elegí un número válido de partido.",
-            reply_markup=_build_numeric_keyboard(len(fixtures), "Elegí el partido"),
+        await target.reply_text(
+            "Elegí un partido de la lista.",
+            reply_markup=_build_choice_keyboard(
+                [f"{fx.home} vs {fx.away}" for fx in fixtures], "exp_fix"
+            ),
         )
         return EXPLORE_SELECT_FIXTURE
     fixture = fixtures[selected_index]
-    await update.message.reply_text("Generando reporte de stats...", reply_markup=ReplyKeyboardRemove())
+    await target.reply_text("Generando reporte de stats...", reply_markup=ReplyKeyboardRemove())
     result = await get_stats_service(context).build_direct_match_report(
         provider_key=league.provider_key,
         stats_match_id=fixture.match_id,
     )
-    await _reply_text_chunks(update.message, result.message)
+    await _reply_text_chunks(target, result.message)
     overview = context.user_data.get(EXPLORE_OVERVIEW_CONTEXT_KEY)
     if not isinstance(overview, dict):
         return ConversationHandler.END
-    await update.message.reply_text(
+    await target.reply_text(
         _explore_menu_text(overview),
-        reply_markup=_build_numeric_keyboard(6, "Elegí una opción"),
+        reply_markup=_explore_menu_keyboard(),
     )
     return EXPLORE_MENU
 
@@ -4058,16 +4078,19 @@ def register_handlers(application: Application) -> None:
         entry_points=[CommandHandler("explore_stats", explore_stats_command)],
         states={
             EXPLORE_SELECT_LEAGUE: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, explore_select_league)
+                CallbackQueryHandler(explore_select_league, pattern="^exp_league:"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, explore_select_league),
             ],
             EXPLORE_MENU: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, explore_menu)
+                CallbackQueryHandler(explore_menu, pattern="^exp_menu:"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, explore_menu),
             ],
             EXPLORE_TEAM_INPUT: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, explore_team_input)
             ],
             EXPLORE_SELECT_FIXTURE: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, explore_select_fixture)
+                CallbackQueryHandler(explore_select_fixture, pattern="^exp_fix:"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, explore_select_fixture),
             ],
         },
         fallbacks=[CommandHandler("cancel", cancel_command)],
