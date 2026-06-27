@@ -3,7 +3,7 @@
 > Fuente de verdad del "qué sigue". Editá el **estado/owner** de la tarea en la que trabajás (ver `PROTOCOL.md`).
 > Diseño de referencia: `REPORTE_ARQUITECTURA_BetBot.md`.
 
-**PR activa:** PR1 · **Rama activa:** `mig/pr1` · **Última actualización:** 2026-06-25 · por @claude
+**PR activa:** PR2 · **Rama activa:** `mig/pr2` · **Última actualización:** 2026-06-26 · por @codex
 
 **Leyenda de estado:** `TODO` · `IN_PROGRESS @agente (fecha)` · `BLOCKED` · `DONE` · `FAILED`
 
@@ -31,6 +31,7 @@
 | ID | Tarea (alto nivel) | Estado |
 | :--- | :--- | :--- |
 | PR2-E1 | Crear esqueleto de carpetas objetivo + `core/ports/` (interfaces). | DONE |
+| PR2-F3 | Crear `adapters/storage/connection.py` + `schema.py` con esquema SQLite greenfield limpio. | IN_PROGRESS @codex (2026-06-26) |
 | PR2-E2 | Partir `storage/tracking_repository.py` (6063 líneas) en `adapters/storage/*` por agregado. | BLOCKED |
 | PR2-E3 | Extraer renderers (`bot/alerts.py` + `build_*_message`/`render_*`) a `interfaces/telegram/renderers/`. Servicios devuelven DTOs. | TODO |
 | PR2-E4 | Mover servicios de `monitors/` a `services/` y adelgazarlos (sin telegram, sin SQL inline). | TODO |
