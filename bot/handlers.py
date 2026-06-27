@@ -12,7 +12,6 @@ from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     Message,
-    ReplyKeyboardMarkup,
     ReplyKeyboardRemove,
     Update,
 )
@@ -3460,7 +3459,7 @@ async def matches_select_match(update: Update, context: ContextTypes.DEFAULT_TYP
         return ConversationHandler.END
 
     full_odds = context.user_data.get("matches_full_odds", False)
-    if update.callback_query is not None:
+    if getattr(update, "callback_query", None) is not None:
         selected_index = await _selected_index(
             update, prefix="mx_match", count=len(active_matches) + 1
         )
@@ -4352,21 +4351,6 @@ def _build_stats_match_selection_message(
     return "\n".join(lines)
 
 
-def _build_numeric_keyboard(
-    count: int,
-    placeholder: str | None = None,
-) -> ReplyKeyboardMarkup:
-    """Build a one-column numeric keyboard for Telegram selections."""
-
-    keyboard = [[str(index)] for index in range(1, count + 1)]
-    return ReplyKeyboardMarkup(
-        keyboard,
-        one_time_keyboard=True,
-        resize_keyboard=True,
-        input_field_placeholder=placeholder,
-    )
-
-
 def _parse_selection_number(text: str | None, upper_bound: int) -> int | None:
     """Parse a one-based numeric selection from Telegram text."""
 
@@ -4403,8 +4387,9 @@ def _build_choice_keyboard(labels, prefix: str):
 def _selection_target(update: Update) -> Message | None:
     """Return the message to reply to, whether from an inline button or text."""
 
-    if update.callback_query is not None:
-        return update.callback_query.message
+    query = getattr(update, "callback_query", None)
+    if query is not None:
+        return query.message
     return update.message
 
 
@@ -4427,7 +4412,7 @@ async def _selected_index(update: Update, *, prefix: str, count: int) -> int | N
     chosen so the caller can re-prompt.
     """
 
-    query = update.callback_query
+    query = getattr(update, "callback_query", None)
     if query is not None:
         await query.answer()
         data = query.data or ""
