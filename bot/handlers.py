@@ -3335,16 +3335,13 @@ async def matches_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
                 await update.message.reply_text(
                     _build_grouped_match_selection_message(selected_league["name"], grouped_matches),
-                    reply_markup=_build_numeric_keyboard(
-                        len(grouped_matches) + 1,
-                        "Elegí el número del partido",
-                    ),
+                    reply_markup=_match_choice_keyboard(grouped_matches),
                 )
                 return SELECT_MATCH_FOR_MATCHES
 
     await update.message.reply_text(
         _build_unified_league_selection_message("Qué liga quiere ver?", unified_leagues),
-        reply_markup=_build_numeric_keyboard(len(unified_leagues), "Elegí el número de la liga"),
+        reply_markup=_build_choice_keyboard([lg["name"] for lg in unified_leagues], "mx_league"),
     )
     return SELECT_LEAGUE_FOR_MATCHES
 
@@ -3352,24 +3349,25 @@ async def matches_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 async def matches_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle the league number selected during the `/matches` flow."""
 
-    if update.message is None or update.effective_chat is None:
+    target = _selection_target(update)
+    if target is None or update.effective_chat is None:
         return ConversationHandler.END
 
     unified_leagues = context.user_data.get(MATCHES_TRACKS_CONTEXT_KEY)
     if not isinstance(unified_leagues, list) or not unified_leagues:
-        await update.message.reply_text(
+        await target.reply_text(
             "No encontré la selección de ligas. Probá de nuevo con /matches.",
             reply_markup=ReplyKeyboardRemove(),
         )
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    selected_index = _parse_selection_number(update.message.text, len(unified_leagues))
+    selected_index = await _selected_index(update, prefix="mx_league", count=len(unified_leagues))
 
     if selected_index is None:
-        await update.message.reply_text(
-            "Elegí un número válido de la lista.",
-            reply_markup=_build_numeric_keyboard(len(unified_leagues)),
+        await target.reply_text(
+            "Elegí una liga de la lista.",
+            reply_markup=_build_choice_keyboard([lg["name"] for lg in unified_leagues], "mx_league"),
         )
         return SELECT_LEAGUE_FOR_MATCHES
 
@@ -3395,7 +3393,7 @@ async def matches_select_league(update: Update, context: ContextTypes.DEFAULT_TY
         )
 
     if not active_events:
-        await update.message.reply_text(
+        await target.reply_text(
             "No encontré partidos activos o futuros para esa liga.",
             reply_markup=ReplyKeyboardRemove(),
         )
@@ -3407,12 +3405,9 @@ async def matches_select_league(update: Update, context: ContextTypes.DEFAULT_TY
     context.user_data[MATCHES_ACTIVE_CONTEXT_KEY] = grouped_matches
     context.user_data[MATCHES_SELECTED_TRACK_CONTEXT_KEY] = selected_league
 
-    await update.message.reply_text(
+    await target.reply_text(
         _build_grouped_match_selection_message(selected_league["name"], grouped_matches),
-        reply_markup=_build_numeric_keyboard(
-            len(grouped_matches) + 1,
-            "Elegí el número del partido",
-        ),
+        reply_markup=_match_choice_keyboard(grouped_matches),
     )
 
     return SELECT_MATCH_FOR_MATCHES
@@ -3421,14 +3416,15 @@ async def matches_select_league(update: Update, context: ContextTypes.DEFAULT_TY
 async def matches_select_match(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle the match number selected during the `/matches` flow."""
 
-    if update.message is None:
+    target = _selection_target(update)
+    if target is None:
         return ConversationHandler.END
 
     active_matches = context.user_data.get(MATCHES_ACTIVE_CONTEXT_KEY)
     tracked_league = context.user_data.get(MATCHES_SELECTED_TRACK_CONTEXT_KEY)
 
     if not isinstance(active_matches, list) or not active_matches:
-        await update.message.reply_text(
+        await target.reply_text(
             "No encontré la selección de partidos. Probá de nuevo con /matches.",
             reply_markup=ReplyKeyboardRemove(),
         )
@@ -3436,27 +3432,32 @@ async def matches_select_match(update: Update, context: ContextTypes.DEFAULT_TYP
         return ConversationHandler.END
 
     if not isinstance(tracked_league, dict) or "id" not in tracked_league:
-        await update.message.reply_text(
+        await target.reply_text(
             "No encontré la liga seleccionada. Probá de nuevo con /matches.",
             reply_markup=ReplyKeyboardRemove(),
         )
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    input_text = str(update.message.text).strip()
     full_odds = context.user_data.get("matches_full_odds", False)
-    for flag in ("-full_odds", "--full_odds", "-full", "-f"):
-        if flag in input_text.lower():
-            full_odds = True
-            input_text = input_text.lower().replace(flag, "").strip()
-            break
-
-    selected_index = _parse_selection_number(input_text, len(active_matches) + 1)
+    if update.callback_query is not None:
+        selected_index = await _selected_index(
+            update, prefix="mx_match", count=len(active_matches) + 1
+        )
+    else:
+        # Text fallback still honours an inline `-full_odds` flag.
+        input_text = str(update.message.text).strip()
+        for flag in ("-full_odds", "--full_odds", "-full", "-f"):
+            if flag in input_text.lower():
+                full_odds = True
+                input_text = input_text.lower().replace(flag, "").strip()
+                break
+        selected_index = _parse_selection_number(input_text, len(active_matches) + 1)
 
     if selected_index is None:
-        await update.message.reply_text(
-            "Elegí un número válido de la lista.",
-            reply_markup=_build_numeric_keyboard(len(active_matches) + 1),
+        await target.reply_text(
+            "Elegí un partido de la lista.",
+            reply_markup=_match_choice_keyboard(active_matches),
         )
         return SELECT_MATCH_FOR_MATCHES
 
@@ -3469,7 +3470,7 @@ async def matches_select_match(update: Update, context: ContextTypes.DEFAULT_TYP
                 parts.append(card)
         all_msg = "\n\n━━━━━━━━━━━━━━━━━━━━\n\n".join(parts)
         await _reply_text_chunks(
-            update.message,
+            target,
             all_msg,
             reply_markup=ReplyKeyboardRemove(),
             parse_mode=ParseMode.HTML,
@@ -3478,7 +3479,7 @@ async def matches_select_match(update: Update, context: ContextTypes.DEFAULT_TYP
         selected_match_group = active_matches[selected_index - 1]
         from bot.alerts import build_comparison_match_card_message
         await _reply_text_chunks(
-            update.message,
+            target,
             build_comparison_match_card_message(selected_match_group, full_odds=full_odds),
             reply_markup=ReplyKeyboardRemove(),
             parse_mode=ParseMode.HTML,
@@ -4004,10 +4005,12 @@ def register_handlers(application: Application) -> None:
         entry_points=[CommandHandler("matches", matches_command)],
         states={
             SELECT_LEAGUE_FOR_MATCHES: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, matches_select_league)
+                CallbackQueryHandler(matches_select_league, pattern="^mx_league:"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, matches_select_league),
             ],
             SELECT_MATCH_FOR_MATCHES: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, matches_select_match)
+                CallbackQueryHandler(matches_select_match, pattern="^mx_match:"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, matches_select_match),
             ],
         },
         fallbacks=[CommandHandler("cancel", cancel_command)],
@@ -4362,6 +4365,17 @@ def _selection_target(update: Update) -> Message | None:
     if update.callback_query is not None:
         return update.callback_query.message
     return update.message
+
+
+def _match_choice_keyboard(grouped_matches):
+    """Inline keyboard for /matches: a 'Ver todos' button + one per match.
+
+    Index 0 is "Ver todos"; index ``i`` (>=1) is ``grouped_matches[i-1]`` — the
+    same mapping the legacy numeric keyboard used (number 1 = all).
+    """
+
+    labels = ["📋 Ver todos"] + [f"{g[0].home} vs {g[0].away}" for g in grouped_matches]
+    return _build_choice_keyboard(labels, "mx_match")
 
 
 async def _selected_index(update: Update, *, prefix: str, count: int) -> int | None:
