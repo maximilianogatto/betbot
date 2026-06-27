@@ -8,7 +8,14 @@ import logging
 import re
 import unicodedata
 
-from telegram import Message, ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
+from telegram import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+    ReplyKeyboardMarkup,
+    ReplyKeyboardRemove,
+    Update,
+)
 from telegram.constants import ParseMode
 from telegram.ext import (
     Application,
@@ -2246,7 +2253,7 @@ async def track_stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     context.user_data[TRACK_STATS_PROVIDERS_CONTEXT_KEY] = providers
     await update.message.reply_text(
         _build_stats_provider_selection_message(providers),
-        reply_markup=_build_numeric_keyboard(len(providers), "Elegí provider de stats"),
+        reply_markup=_build_choice_keyboard([p.display_name for p in providers], "ts_provider"),
     )
     return SELECT_PROVIDER_FOR_TRACK_STATS
 
@@ -2254,25 +2261,26 @@ async def track_stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE
 async def track_stats_select_provider(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Select the provider used by `/track_stats`."""
 
-    if update.message is None:
+    target = _selection_target(update)
+    if target is None:
         return ConversationHandler.END
     providers = context.user_data.get(TRACK_STATS_PROVIDERS_CONTEXT_KEY)
     if not isinstance(providers, list) or not providers:
-        await update.message.reply_text("No encontré la selección de providers. Probá de nuevo con /track_stats.")
+        await target.reply_text("No encontré la selección de providers. Probá de nuevo con /track_stats.")
         return ConversationHandler.END
-    selected_index = _parse_selection_number(update.message.text, len(providers))
+    selected_index = await _selected_index(update, prefix="ts_provider", count=len(providers))
     if selected_index is None:
-        await update.message.reply_text(
-            "Elegí un número válido de provider.",
-            reply_markup=_build_numeric_keyboard(len(providers), "Elegí provider"),
+        await target.reply_text(
+            "Elegí un provider de la lista.",
+            reply_markup=_build_choice_keyboard([p.display_name for p in providers], "ts_provider"),
         )
         return SELECT_PROVIDER_FOR_TRACK_STATS
     selected_provider = providers[selected_index]
     if not isinstance(selected_provider, StatsProviderDescriptor):
-        await update.message.reply_text("El provider seleccionado no es válido.")
+        await target.reply_text("El provider seleccionado no es válido.")
         return ConversationHandler.END
     context.user_data[TRACK_STATS_SELECTED_PROVIDER_CONTEXT_KEY] = selected_provider
-    await update.message.reply_text(
+    await target.reply_text(
         _build_stats_provider_input_message(selected_provider),
         reply_markup=ReplyKeyboardRemove(),
     )
@@ -2344,10 +2352,11 @@ async def track_stats_enter_country(update: Update, context: ContextTypes.DEFAUL
         )
         return ENTER_COUNTRY_FOR_TRACK_STATS
     context.user_data[TRACK_STATS_OPTIONS_CONTEXT_KEY] = options
+    shown = options[:25]
     await _reply_text_chunks(
         update.message,
         _build_stats_league_selection_message(options, prompt="Elegí la liga de stats a seguir:", limit=25),
-        reply_markup=_build_numeric_keyboard(min(len(options), 25), "Elegí la liga stats"),
+        reply_markup=_build_choice_keyboard([opt.league_name for opt in shown], "ts_league"),
     )
     return SELECT_LEAGUE_FOR_TRACK_STATS
 
@@ -2355,28 +2364,30 @@ async def track_stats_enter_country(update: Update, context: ContextTypes.DEFAUL
 async def track_stats_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Persist one standalone provider-native stats league."""
 
-    if update.message is None or update.effective_chat is None:
+    target = _selection_target(update)
+    if target is None or update.effective_chat is None:
         return ConversationHandler.END
     options = context.user_data.get(TRACK_STATS_OPTIONS_CONTEXT_KEY)
     if not isinstance(options, list) or not options:
-        await update.message.reply_text("No encontré la selección de ligas stats. Probá de nuevo con /track_stats.")
+        await target.reply_text("No encontré la selección de ligas stats. Probá de nuevo con /track_stats.")
         return ConversationHandler.END
-    selected_index = _parse_selection_number(update.message.text, len(options))
+    shown = options[:25]
+    selected_index = await _selected_index(update, prefix="ts_league", count=len(shown))
     if selected_index is None:
-        await update.message.reply_text(
-            "Elegí un número válido de liga stats.",
-            reply_markup=_build_numeric_keyboard(len(options), "Elegí la liga stats"),
+        await target.reply_text(
+            "Elegí una liga de la lista.",
+            reply_markup=_build_choice_keyboard([opt.league_name for opt in shown], "ts_league"),
         )
         return SELECT_LEAGUE_FOR_TRACK_STATS
     selected_option = options[selected_index]
     if not isinstance(selected_option, StatsLeagueOption):
-        await update.message.reply_text("La liga stats seleccionada no es válida.")
+        await target.reply_text("La liga stats seleccionada no es válida.")
         return ConversationHandler.END
     result = get_stats_service(context).track_stats_league(
         chat_id=update.effective_chat.id,
         option=selected_option,
     )
-    await _reply_text_chunks(update.message, result.message, reply_markup=ReplyKeyboardRemove())
+    await _reply_text_chunks(target, result.message, reply_markup=ReplyKeyboardRemove())
     _clear_all_selection_context(context)
     return ConversationHandler.END
 
@@ -3963,13 +3974,15 @@ def register_handlers(application: Application) -> None:
         entry_points=[CommandHandler("track_stats", track_stats_command)],
         states={
             SELECT_PROVIDER_FOR_TRACK_STATS: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, track_stats_select_provider)
+                CallbackQueryHandler(track_stats_select_provider, pattern="^ts_provider:"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, track_stats_select_provider),
             ],
             ENTER_COUNTRY_FOR_TRACK_STATS: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, track_stats_enter_country)
             ],
             SELECT_LEAGUE_FOR_TRACK_STATS: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, track_stats_select_league)
+                CallbackQueryHandler(track_stats_select_league, pattern="^ts_league:"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, track_stats_select_league),
             ],
         },
         fallbacks=[CommandHandler("cancel", cancel_command)],
@@ -4315,6 +4328,51 @@ def _parse_selection_number(text: str | None, upper_bound: int) -> int | None:
         return None
 
     return index
+
+
+def _build_choice_keyboard(labels, prefix: str):
+    """Build a one-column inline keyboard; each button carries ``f'{prefix}:{index}'``.
+
+    Replaces the legacy numeric ReplyKeyboard for in-conversation selections so
+    the user taps a labelled button instead of typing a number.
+    """
+
+    keyboard = [
+        [InlineKeyboardButton(str(label), callback_data=f"{prefix}:{index}")]
+        for index, label in enumerate(labels)
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
+
+def _selection_target(update: Update) -> Message | None:
+    """Return the message to reply to, whether from an inline button or text."""
+
+    if update.callback_query is not None:
+        return update.callback_query.message
+    return update.message
+
+
+async def _selected_index(update: Update, *, prefix: str, count: int) -> int | None:
+    """Resolve a 0-based selection from an inline button or a typed number.
+
+    Inline buttons (``f'{prefix}:{index}'``) are the primary path; a typed
+    number is still accepted as a fallback. Returns None when nothing valid was
+    chosen so the caller can re-prompt.
+    """
+
+    query = update.callback_query
+    if query is not None:
+        await query.answer()
+        data = query.data or ""
+        if not data.startswith(f"{prefix}:"):
+            return None
+        try:
+            index = int(data.split(":", 1)[1])
+        except ValueError:
+            return None
+        return index if 0 <= index < count else None
+    text = update.message.text if update.message else None
+    return _parse_selection_number(text, count)
 
 
 def _clear_all_selection_context(context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -5307,7 +5365,6 @@ async def peak_off_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
 # ===================== Generic Stats & Peaks Consolidation =====================
 from datetime import date
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 _PEAK_SCORES_CACHE = {}  # date_str -> list[SpecialMatchScore]
 
