@@ -57,8 +57,9 @@ def register_default_stats_providers(
     # Flashscore (HTTP-only via static x-fsign; broadest league coverage).
     if os.getenv("FLASHSCORE_ENABLED", "true").strip().lower() not in {"false", "0", "no"}:
         target.register(FlashscoreHttpStatsProvider(payload_cache=cache))
-    # FootyStats public fallback uses plain HTTP. A licensed key can be added
-    # later without changing the provider contract.
+    # FootyStats public HTML now sits behind a Cloudflare Managed Challenge, so
+    # the client clears it with a headed browser (see cloudflare_browser.py);
+    # live scores and the licensed key path stay on plain HTTP.
     if os.getenv("FOOTYSTATS_ENABLED", "true").strip().lower() not in {"false", "0", "no"}:
         from stats_providers.footystats_http.client import FootyStatsHTTPClient
 

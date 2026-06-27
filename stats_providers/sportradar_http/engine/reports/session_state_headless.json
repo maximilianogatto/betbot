@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-26T04:50:46.450658+00:00",
+  "generated_at": "2026-06-19T05:00:44.940119+00:00",
   "headed": false,
   "headless": true,
   "bootstrap_urls": [
@@ -10,6 +10,7 @@
   "referer": "https://statshub.sportradar.com/",
   "replay_headers": {
     "accept": "application/json,text/plain,*/*",
+    "accept-language": "en-US",
     "origin": "https://statshub.sportradar.com",
     "referer": "https://statshub.sportradar.com/",
     "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"

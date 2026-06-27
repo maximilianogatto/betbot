@@ -163,6 +163,19 @@ class FootyStatsProductionProviderTests(unittest.TestCase):
         self.assertEqual(fixtures[0].home, "Valentine")
         self.assertEqual(fixtures[0].away, "Edgeworth Eagles")
 
+    def test_describe_league_accepts_url_and_locale_prefix(self) -> None:
+        canonical = "australia/northern-nsw-npl"
+        for reference in (
+            canonical,
+            f"https://footystats.org/{canonical}",
+            f"es/{canonical}",
+            f"https://footystats.org/es/{canonical}",
+        ):
+            option = asyncio.run(self.provider.describe_league(reference))
+            self.assertIsNotNone(option, reference)
+            self.assertEqual(option.league_id, canonical, reference)
+            self.assertEqual(option.league_name, "Northern NSW NPL", reference)
+
     def test_resolves_fixture_and_builds_direct_live_report(self) -> None:
         link = asyncio.run(
             self.provider.resolve_match(

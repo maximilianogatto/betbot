@@ -125,19 +125,25 @@ class FootyStatsHttpStatsProvider(StatsProvider):
         return options
 
     async def describe_league(self, league_id: str) -> StatsLeagueOption | None:
-        """Resolve one public `country/league` path into a discovery option."""
+        """Resolve one public `country/league` reference into a discovery option.
 
-        normalized = league_id.strip("/")
+        Accepts a bare ``country/league`` id, a full footystats URL, or a
+        localized path such as ``es/usa/wpsl`` (the site prefixes pasted links
+        with a 2-letter locale segment). All collapse to the canonical key.
+        """
+
+        candidates = _league_reference_candidates(league_id)
         for item in await self._catalog():
-            if item.get("league_id") != normalized:
+            item_id = str(item.get("league_id") or "")
+            if item_id not in candidates:
                 continue
             return StatsLeagueOption(
                 provider=self.name,
                 provider_display_name=self.display_name,
                 country_name=str(item.get("country_slug") or "").replace("-", " ").title(),
-                league_id=normalized,
-                league_name=str(item.get("league_name") or normalized),
-                source_url=self.build_league_url(normalized),
+                league_id=item_id,
+                league_name=str(item.get("league_name") or item_id),
+                source_url=self.build_league_url(item_id),
                 raw_payload=item,
             )
         return None
@@ -370,6 +376,28 @@ def _overview_fixture(item: dict[str, Any]) -> dict[str, Any]:
         "time": {"iso_utc": item.get("start_time_utc"), "date": start[:10], "time": start[11:16]},
         "status": item.get("status"),
     }
+
+
+def _league_reference_candidates(value: str) -> set[str]:
+    """Return canonical `country/league` keys a reference may resolve to.
+
+    FootyStats league paths are always exactly ``country/league``; pasted links
+    arrive as full URLs and may carry a leading 2-letter locale segment (e.g.
+    ``/es/usa/wpsl``). Collapsing to the last two path segments yields the
+    canonical id while the raw stripped value is kept as a defensive fallback.
+    """
+
+    raw = (value or "").strip()
+    path = urlparse(raw).path if "://" in raw else raw
+    segments = [segment for segment in path.strip("/").split("/") if segment]
+    candidates: set[str] = set()
+    if raw:
+        candidates.add(raw.strip("/"))
+    if len(segments) >= 2:
+        candidates.add("/".join(segments[-2:]))
+    elif segments:
+        candidates.add(segments[-1])
+    return candidates
 
 
 def _public_match_id_from_url(value: str | None) -> str | None:

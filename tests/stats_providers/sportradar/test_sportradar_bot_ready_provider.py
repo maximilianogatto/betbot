@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 import tempfile
 from types import SimpleNamespace
@@ -14,6 +15,7 @@ from stats_providers.sportradar_http.engine.bot_ready.provider import (
     SportradarBotReadyProvider,
     build_live_state_document,
 )
+from stats_providers.sportradar_http.engine.session_manager import load_session_state
 
 
 class SportradarSessionPreRefreshTests(unittest.TestCase):
@@ -62,6 +64,57 @@ class SportradarSessionPreRefreshTests(unittest.TestCase):
 
 
 class SportradarBotReadyProviderTests(unittest.TestCase):
+    def test_import_token_string_persists_minimal_replay_state(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            state_path = Path(tmp) / "state.json"
+            provider = SportradarBotReadyProvider(
+                BotReadyRuntimeConfig(
+                    session_state_path=state_path,
+                    bootstrap_profile_dir=Path(tmp) / "profile",
+                )
+            )
+            token = _future_token()
+
+            result = provider.import_token_string(token)
+
+            self.assertTrue(result["ok"])
+            state = load_session_state(state_path)
+            self.assertTrue(state.is_usable())
+            self.assertEqual(state.signed_token.raw, token)
+            self.assertEqual(state.replay_headers["origin"], "https://statshub.sportradar.com")
+
+    def test_import_token_string_accepts_full_signed_url(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            state_path = Path(tmp) / "state.json"
+            provider = SportradarBotReadyProvider(
+                BotReadyRuntimeConfig(
+                    session_state_path=state_path,
+                    bootstrap_profile_dir=Path(tmp) / "profile",
+                )
+            )
+            token = _future_token()
+            url = f"https://widgets.sir.sportradar.com/bet365/es/gismo/config_tree_mini/67/0/1?T={token}"
+
+            result = provider.import_token_string(url)
+
+            self.assertTrue(result["ok"])
+            state = load_session_state(state_path)
+            self.assertEqual(state.signed_token.raw, token)
+
+    def test_import_token_string_rejects_expired_token(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            provider = SportradarBotReadyProvider(
+                BotReadyRuntimeConfig(
+                    session_state_path=Path(tmp) / "state.json",
+                    bootstrap_profile_dir=Path(tmp) / "profile",
+                )
+            )
+
+            result = provider.import_token_string(_expired_token())
+
+            self.assertFalse(result["ok"])
+            self.assertIn("vencido", result["error"])
+
     def test_build_live_state_document_is_compact_and_serializable(self) -> None:
         payloads = {
             "match_info": {
@@ -243,6 +296,16 @@ def _fixtures_fixture() -> dict:
         ],
         "queryUrl": "/bet365/en/Etc:UTC/gismo/stats_season_fixtures2/138964",
     }
+
+
+def _future_token() -> str:
+    exp = int((datetime.now(UTC) + timedelta(hours=12)).timestamp())
+    return f"acl=/*~exp={exp}~hmac=test"
+
+
+def _expired_token() -> str:
+    exp = int((datetime.now(UTC) - timedelta(hours=1)).timestamp())
+    return f"acl=/*~exp={exp}~hmac=test"
 
 
 if __name__ == "__main__":

@@ -17,6 +17,9 @@ salida.json
 # Sportradar headless bootstrap profile (Akamai cookies cache)
 stats_providers/sportradar_http/engine/reports/chrome_profile/
 
+# FootyStats Cloudflare-clearance headed-browser profile (cf_clearance cache)
+stats_providers/footystats_http/.chrome_profile/
+
 # Mystake research network dumps (bulky, regenerate via capture_traffic.py)
 sandbox/mystake/research/captures/
 
@@ -72,3 +75,7 @@ sandbox/sportradar_stats/sandbox/
 sandbox/sportradar_stats/discovery/
 sandbox/solca/
 sandbox/solcasino_research/
+
+# SQLite transitorios (WAL/SHM)
+data/*.sqlite3-wal
+data/*.sqlite3-shm
