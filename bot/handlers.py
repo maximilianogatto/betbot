@@ -3510,7 +3510,9 @@ async def untrack_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     context.user_data[UNTRACK_TRACKS_CONTEXT_KEY] = tracked_leagues
     await update.message.reply_text(
         _build_track_selection_message("Qué liga querés dejar de trackear?", tracked_leagues),
-        reply_markup=_build_numeric_keyboard(len(tracked_leagues), "Elegí el número de la liga"),
+        reply_markup=_build_choice_keyboard(
+            [t.tracked_league.competition_name for t in tracked_leagues], "un_league"
+        ),
     )
     return SELECT_LEAGUE_FOR_UNTRACK
 
@@ -3518,24 +3520,27 @@ async def untrack_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 async def untrack_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle the league selection during `/untrack`."""
 
-    if update.message is None or update.effective_chat is None:
+    target = _selection_target(update)
+    if target is None or update.effective_chat is None:
         return ConversationHandler.END
 
     tracked_leagues = context.user_data.get(UNTRACK_TRACKS_CONTEXT_KEY)
     if not isinstance(tracked_leagues, list) or not tracked_leagues:
-        await update.message.reply_text(
+        await target.reply_text(
             "No encontré la selección de ligas. Probá de nuevo con /untrack.",
             reply_markup=ReplyKeyboardRemove(),
         )
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    selected_index = _parse_selection_number(update.message.text, len(tracked_leagues))
+    selected_index = await _selected_index(update, prefix="un_league", count=len(tracked_leagues))
 
     if selected_index is None:
-        await update.message.reply_text(
-            "Elegí un número válido de la lista.",
-            reply_markup=_build_numeric_keyboard(len(tracked_leagues)),
+        await target.reply_text(
+            "Elegí una liga de la lista.",
+            reply_markup=_build_choice_keyboard(
+                [t.tracked_league.competition_name for t in tracked_leagues], "un_league"
+            ),
         )
         return SELECT_LEAGUE_FOR_UNTRACK
 
@@ -3546,7 +3551,7 @@ async def untrack_select_league(update: Update, context: ContextTypes.DEFAULT_TY
         selected_track.tracked_league.id,
     )
 
-    await update.message.reply_text(
+    await target.reply_text(
         result.message,
         reply_markup=ReplyKeyboardRemove(),
     )
@@ -3569,26 +3574,29 @@ async def odds_off_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 async def odds_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle the league selection during `/odds_on` or `/odds_off`."""
 
-    if update.message is None or update.effective_chat is None:
+    target = _selection_target(update)
+    if target is None or update.effective_chat is None:
         return ConversationHandler.END
 
     tracked_leagues = context.user_data.get(ODDS_TRACKS_CONTEXT_KEY)
     enabled = context.user_data.get(ODDS_ENABLED_CONTEXT_KEY)
 
     if not isinstance(tracked_leagues, list) or not tracked_leagues or not isinstance(enabled, bool):
-        await update.message.reply_text(
+        await target.reply_text(
             "No encontré la selección de ligas. Probá de nuevo con /odds_on o /odds_off.",
             reply_markup=ReplyKeyboardRemove(),
         )
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    selected_index = _parse_selection_number(update.message.text, len(tracked_leagues))
+    selected_index = await _selected_index(update, prefix="odds_league", count=len(tracked_leagues))
 
     if selected_index is None:
-        await update.message.reply_text(
-            "Elegí un número válido de la lista.",
-            reply_markup=_build_numeric_keyboard(len(tracked_leagues)),
+        await target.reply_text(
+            "Elegí una liga de la lista.",
+            reply_markup=_build_choice_keyboard(
+                [t.tracked_league.competition_name for t in tracked_leagues], "odds_league"
+            ),
         )
         return SELECT_LEAGUE_FOR_ODDS
 
@@ -3600,7 +3608,7 @@ async def odds_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE)
         enabled=enabled,
     )
 
-    await update.message.reply_text(
+    await target.reply_text(
         result.message,
         reply_markup=ReplyKeyboardRemove(),
     )
@@ -3658,7 +3666,9 @@ async def set_change_percent_command(update: Update, context: ContextTypes.DEFAU
             f"Qué liga querés configurar con umbral {percent:.1f}%?",
             tracked_leagues,
         ),
-        reply_markup=_build_numeric_keyboard(len(tracked_leagues), "Elegí el número de la liga"),
+        reply_markup=_build_choice_keyboard(
+            [t.tracked_league.competition_name for t in tracked_leagues], "chg_league"
+        ),
     )
     return SELECT_LEAGUE_FOR_CHANGE_PERCENT
 
@@ -3669,26 +3679,29 @@ async def set_change_percent_select_league(
 ) -> int:
     """Handle the league selection during `/set_change_percent`."""
 
-    if update.message is None or update.effective_chat is None:
+    target = _selection_target(update)
+    if target is None or update.effective_chat is None:
         return ConversationHandler.END
 
     tracked_leagues = context.user_data.get(CHANGE_PERCENT_TRACKS_CONTEXT_KEY)
     percent = context.user_data.get(CHANGE_PERCENT_VALUE_CONTEXT_KEY)
 
     if not isinstance(tracked_leagues, list) or not tracked_leagues or not isinstance(percent, float):
-        await update.message.reply_text(
+        await target.reply_text(
             "No encontré la selección de ligas. Probá de nuevo con /set_change_percent.",
             reply_markup=ReplyKeyboardRemove(),
         )
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    selected_index = _parse_selection_number(update.message.text, len(tracked_leagues))
+    selected_index = await _selected_index(update, prefix="chg_league", count=len(tracked_leagues))
 
     if selected_index is None:
-        await update.message.reply_text(
-            "Elegí un número válido de la lista.",
-            reply_markup=_build_numeric_keyboard(len(tracked_leagues)),
+        await target.reply_text(
+            "Elegí una liga de la lista.",
+            reply_markup=_build_choice_keyboard(
+                [t.tracked_league.competition_name for t in tracked_leagues], "chg_league"
+            ),
         )
         return SELECT_LEAGUE_FOR_CHANGE_PERCENT
 
@@ -3700,7 +3713,7 @@ async def set_change_percent_select_league(
         percent,
     )
 
-    await update.message.reply_text(
+    await target.reply_text(
         result.message,
         reply_markup=ReplyKeyboardRemove(),
     )
@@ -4067,7 +4080,8 @@ def register_handlers(application: Application) -> None:
         entry_points=[CommandHandler("untrack", untrack_command)],
         states={
             SELECT_LEAGUE_FOR_UNTRACK: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, untrack_select_league)
+                CallbackQueryHandler(untrack_select_league, pattern="^un_league:"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, untrack_select_league),
             ],
         },
         fallbacks=[CommandHandler("cancel", cancel_command)],
@@ -4083,7 +4097,8 @@ def register_handlers(application: Application) -> None:
         ],
         states={
             SELECT_LEAGUE_FOR_ODDS: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, odds_select_league)
+                CallbackQueryHandler(odds_select_league, pattern="^odds_league:"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, odds_select_league),
             ],
         },
         fallbacks=[CommandHandler("cancel", cancel_command)],
@@ -4096,7 +4111,8 @@ def register_handlers(application: Application) -> None:
         entry_points=[CommandHandler("set_change_percent", set_change_percent_command)],
         states={
             SELECT_LEAGUE_FOR_CHANGE_PERCENT: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, set_change_percent_select_league)
+                CallbackQueryHandler(set_change_percent_select_league, pattern="^chg_league:"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, set_change_percent_select_league),
             ],
         },
         fallbacks=[CommandHandler("cancel", cancel_command)],
@@ -4141,7 +4157,9 @@ async def _start_odds_toggle(
     )
     await update.message.reply_text(
         _build_track_selection_message(prompt, tracked_leagues),
-        reply_markup=_build_numeric_keyboard(len(tracked_leagues), "Elegí el número de la liga"),
+        reply_markup=_build_choice_keyboard(
+            [t.tracked_league.competition_name for t in tracked_leagues], "odds_league"
+        ),
     )
     return SELECT_LEAGUE_FOR_ODDS
 
