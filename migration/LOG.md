@@ -215,4 +215,13 @@
 - **Tests:** fixes ya validados (suite verde + smoke). Cherry-pick aplicó sin conflicto.
 - **Notas/Bloqueos:** ⚠️ `bot/handlers/` quedó UNTRACKED en el worktree de migración (parece WIP de PR2). NO lo commiteé para no pisar a los agentes — que lo resuelva quien esté en esa tarea. ⚠️ Ramas enredadas: mig/pr1 tiene commits de PR2-E2/TASKS encima (histórico desprolijo, no urgente). Nada se pusheó.
 - **Siguiente sugerido:** Los agentes siguen PR2 sobre `mig/pr2` (no sobre mig/pr1). Antes de mergear PR2: seguir el protocolo de merge nuevo (consenso).
->>>>>>> origin/mig/pr1
+
+### 2026-06-27T01:03:00-03:00 · @gemini · PR2-E2-S0 · DONE
+- **Qué hice:** Diseñé e implementé la persistencia greenfield. Escribí `adapters/storage/connection.py` con `open_connection`, `resolve_database_path` y `transaction`, y `adapters/storage/schema.py` con el esquema limpio simplificado (current-state) que contiene las 17 tablas necesarias.
+- **Por qué:** F3 y S0 establecen las fundaciones de la persistencia desacoplada y limpia, permitiendo escribir los adapters de cero contra un esquema actual-state y descartar snapshots históricos.
+- **Archivos:** adapters/storage/connection.py, adapters/storage/schema.py
+- **Commit:** 0ae57e3
+- **Tests:** Verde. 618 tests pasados con éxito (incluidos los de `tests/adapters/storage/test_schema.py` que comprueban idempotencia y eliminaciones en cascada).
+- **Notas/Bloqueos:** Ninguno. Las fundaciones están listas y en verde.
+- **Siguiente sugerido:** S1 (Competitions adapter).
+
