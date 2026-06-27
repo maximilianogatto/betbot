@@ -31,7 +31,7 @@
 | ID | Tarea (alto nivel) | Estado |
 | :--- | :--- | :--- |
 | PR2-E1 | Crear esqueleto de carpetas objetivo + `core/ports/` (interfaces). | DONE |
-| PR2-F3 | Crear `adapters/storage/connection.py` + `schema.py` con esquema SQLite greenfield limpio. | IN_PROGRESS @codex (2026-06-26) |
+| PR2-F3 | Crear `adapters/storage/connection.py` + `schema.py` con esquema SQLite greenfield limpio. | IN_PROGRESS @gemini (2026-06-27) |
 | PR2-E2 | Partir `storage/tracking_repository.py` (6063 líneas) en `adapters/storage/*` por agregado. | BLOCKED |
 | PR2-E3 | Extraer renderers (`bot/alerts.py` + `build_*_message`/`render_*`) a `interfaces/telegram/renderers/`. Servicios devuelven DTOs. | TODO |
 | PR2-E4 | Mover servicios de `monitors/` a `services/` y adelgazarlos (sin telegram, sin SQL inline). | TODO |
@@ -45,7 +45,7 @@
 
 | ID | Tarea | Archivos principales | Criterio de aceptación | Deps | Estado |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| PR2-E2-S0 | Crear foundation SQLite greenfield para storage. | `adapters/storage/connection.py`, `adapters/storage/schema.py`, `tests/adapters/storage/test_schema.py` | Una DB vacía inicializa el esquema current-state limpio (`events`, `competitions`, `chat_subscriptions`, `baselines`, `small_changes`, `stats_links`, `live_watch`, `chat_settings`); incluye busy timeout/row factory/transacciones; no importa `storage/tracking_repository.py`; tests de creación e índices verdes. | PR1 mergeada, PR2-E1 | TODO |
+| PR2-E2-S0 | Crear foundation SQLite greenfield para storage. | `adapters/storage/connection.py`, `adapters/storage/schema.py`, `tests/adapters/storage/test_schema.py` | Una DB vacía inicializa el esquema current-state limpio (`events`, `competitions`, `chat_subscriptions`, `baselines`, `small_changes`, `stats_links`, `live_watch`, `chat_settings`); incluye busy timeout/row factory/transacciones; no importa `storage/tracking_repository.py`; tests de creación e índices verdes. | PR1 mergeada, PR2-E1 | IN_PROGRESS @gemini (2026-06-27) |
 | PR2-E2-S1 | Implementar adapter de competencias/tracking/unified/discovery. | `adapters/storage/competitions.py`, `tests/adapters/storage/test_competitions_repository.py` | Implementa el port de competencias definido en `PORTS_SPEC.md`: pending track, tracked competitions, unavailable refresh, unified competitions y discovery; CRUD idempotente; retorna DTOs/modelos de dominio, no filas SQLite crudas. | PR2-E2-S0, ports PR2-F2 | TODO |
 | PR2-E2-S2 | Implementar adapter de eventos y odds current-state. | `adapters/storage/events.py`, `tests/adapters/storage/test_events_repository.py` | Upsert/listado/remoción de eventos activos funciona sobre tabla `events`; conserva solo estado actual y odds normalizadas; `remove_missing_events`/`remove_past_events` cubiertos por tests; no persiste payloads gigantes salvo flag debug futuro. | PR2-E2-S0, ports PR2-F2 | TODO |
 | PR2-E2-S3 | Implementar adapter de suscripciones y settings de chat. | `adapters/storage/subscriptions.py`, `tests/adapters/storage/test_subscriptions_repository.py` | Cubre suscripciones chat↔liga, toggles de odds/reminders, stats-only, peak digest y `chat_settings`; operaciones por `chat_id` son idempotentes; tests cubren enabled/disabled y remoción. | PR2-E2-S0, ports PR2-F2 | TODO |
