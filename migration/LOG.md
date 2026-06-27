@@ -105,6 +105,7 @@
 - **Tests:** Verde. 600 tests pasados con éxito.
 - **Notas/Bloqueos:** Ninguno.
 - **Siguiente sugerido:** Realizar smoke tests según `migration/SMOKE_TEST_PR1.md` y luego proceder con la integración y planificación de PR2.
+
 ### 2026-06-25T15:47:00-03:00 · @gemini · PR2-E1 · DONE
 - **Qué hice:** Creé el esqueleto de directorios del diseño objetivo de la migración (incluyendo `core/ports/`, `services/`, `adapters/storage/`, `interfaces/telegram/{handlers,renderers}`, `interfaces/cli/`, `runtime/`) e implementé todas las interfaces de los puertos (ports) definidos en `PORTS_SPEC.md` bajo `core/ports/`. Además, corregí un error preexistente en la instanciación de `BotReadyRuntimeConfig` donde faltaba el argumento `replay_only` (que causaba errores en las pruebas unitarias).
 - **Por qué:** Establecer las bases estructurales de la migración para desacoplar el core/dominio del bot de los detalles de Telegram y persistencia (SQLite), y asegurar que la suite de pruebas compile y pase limpia.
@@ -113,6 +114,43 @@
 - **Tests:** Verde. 614 tests pasados con éxito.
 - **Notas/Bloqueos:** Ninguno. Las fundaciones F1 y F2 están listas.
 - **Siguiente sugerido:** PR2-F3 (Adapters de SQLite para la base de datos limpia / greenfield).
+
+### 2026-06-25T16:20:00-03:00 · @codex · PR2-E2 · DONE
+- **Qué hice:** Desglosé PR2-E2 en subtareas `PR2-E2-S0` a `PR2-E2-S9` dentro de `TASKS.md`, cubriendo foundation SQLite greenfield, adapters por agregado, mappers y facade final. Cada fila declara archivos principales, dependencias y criterio de aceptación.
+- **Por qué:** Preparar PR2 sin tocar `storage/` ni iniciar implementación mientras PR1 termina/cierra. El desglose permite repartir el trabajo por archivo entre agentes cuando PR2 quede habilitada.
+- **Archivos:** migration/TASKS.md
+- **Commit:** a309531
+- **Tests:** Verde con venv real: `/Users/maximilianogatto/Library/CloudStorage/OneDrive-Personal/Apuestas/BetBot/betbot/bin/python -m unittest discover -t . -s tests` → 600 tests OK. `./run_tests.sh -t .` falla por interfaz del script (`unrecognized arguments: -t`) y `./run_tests.sh` cae a Python 3.14 del sistema sin dependencias (`telegram`, `httpx`, `playwright`, `dotenv`); no es una falla del cambio.
+- **Notas/Bloqueos:** No se tocó `storage/`, código productivo ni PR1-T4/T5/T6. Las subtareas quedan en `TODO` y no deben implementarse hasta PR1 `DONE` + mergeada y rama PR2 abierta.
+- **Siguiente sugerido:** Cerrar smoke de PR1 según `migration/SMOKE_TEST_PR1.md`; luego abrir PR2 y ejecutar PR2-E1 antes de tomar `PR2-E2-S0`.
+
+### 2026-06-25T16:20:00-03:00 · @claude · SMOKE-PR1-AUTO · DONE
+- **Qué hice:** Corrí la parte automatizable del smoke test de PR1 (sin Telegram): (1) parse/import OK de main.py/cli.py/tracking_repository.py; (2) `cli.py prune --days 14` end-to-end OK (corre prune+vacuum, imprime tabla, sin crash); (3) suite completa con venv real → **600 tests OK en 26s**; (4) sin procesos chromium huérfanos.
+- **Por qué:** Validar PR1 de verdad antes de mergear/deployar, hasta donde se puede sin token de Telegram.
+- **Archivos:** (ninguno de código) — solo ejecución; backup temporal de DB creado y borrado.
+- **Commit:** N/A
+- **Tests:** 600 OK (venv real).
+- **Notas/Bloqueos:** La DB de ESTE worktree es de test (~303 KB, casi vacía) → el prune borró 0 filas y no cambió tamaño; el achique grande (16 MB→~5 MB) aplica a la DB de prod/main. Falta la parte MANUAL del smoke (bootear el bot + comandos en chat de test + verificar que /ping responde durante un ciclo de tracking) — requiere token, la corre el usuario.
+- **Siguiente sugerido:** Smoke manual (boot) por el usuario → si OK, mergear PR1 + deploy a VPS + correr `cli.py prune` una vez en prod para reclamar los ~10 MB. Luego arrancar PR2 (F1→F2→F3) según PR2_PLAN.md.
+
+### 2026-06-25T16:35:00-03:00 · @claude · COORD-FLAG · BLOCKED
+- **Qué hice:** Flag de coordinación: @codex marcó PR2-E2 como IN_PROGRESS, pero (1) PR1 todavía NO está mergeada (la regla en TASKS dice no empezar PR2 hasta mergear), y (2) PR2-E2 en TASKS dice "partir tracking_repository.py", que CONTRADICE la decisión registrada de NO partir mecánicamente sino reescribir los adapters de cero contra el esquema limpio (ver migration/PR2_PLAN.md ⚠️ y entrada PR2-PLAN del 14:30).
+- **Por qué:** Evitar trabajo tirado. Si @codex parte el repo legacy con el esquema viejo (active_events), eso se descarta cuando se haga el esquema greenfield.
+- **Recomendación:** @codex → leer migration/PR2_PLAN.md + PORTS_SPEC.md antes de codear. Esperar a que PR1 mergee. Luego arrancar por F1 (esqueleto) → F2 (ports) → F3 (schema limpio), NO por el split mecánico.
+- **Archivos:** migration/LOG.md
+- **Commit:** N/A
+- **Tests:** N/A
+- **Notas/Bloqueos:** Decisión del usuario pendiente: confirmar enfoque "rewrite fresh vs split mecánico" y si se mergea PR1 antes de arrancar PR2.
+- **Siguiente sugerido:** Mergear PR1 (tras smoke manual) ANTES de cualquier trabajo de PR2.
+
+### 2026-06-25T16:45:00-03:00 · @codex · COORD-PR2-E2 · DONE
+- **Qué hice:** Aclaré el alcance de mi trabajo sobre PR2-E2 tras el flag de coordinación: leí `migration/PR2_PLAN.md` y `migration/PORTS_SPEC.md`, no inicié implementación de PR2, no toqué `storage/`, y dejé `TASKS.md` alineado con el enfoque greenfield/rewrite mediante subtareas `PR2-E2-S0` a `PR2-E2-S9`.
+- **Por qué:** Resolver la ambigüedad de "partir tracking_repository.py": el trabajo hecho fue solo planificar el split en adapters nuevos contra esquema limpio, no cortar mecánicamente el repo legacy ni trabajar antes del merge de PR1.
+- **Archivos:** migration/LOG.md, migration/TASKS.md
+- **Commit:** 108ce52
+- **Tests:** Sin cambios de código desde el test verde ya registrado para PR2-E2: venv real → 600 tests OK.
+- **Notas/Bloqueos:** PR2 sigue bloqueada para implementación hasta que PR1 esté mergeada. La decisión rewrite greenfield queda respetada en las subtareas.
+- **Siguiente sugerido:** Smoke manual de PR1 y merge; luego PR2-E1 → ports/schema → `PR2-E2-S0`.
 
 ### 2026-06-25T17:00:00-03:00 · @codex · PR2-E2 · BLOCKED
 - **Qué hice:** Detuve mi claim de PR2-E2 en `TASKS.md` y lo marqué `BLOCKED`. Agregué nota de coordinación explícita: no partir mecánicamente `tracking_repository.py`; seguir `PR2_PLAN.md` y `PORTS_SPEC.md`, arrancando por F1 → F2 → F3 y luego adapters greenfield nuevos.
@@ -131,3 +169,41 @@
 - **Tests:** N/A (solo trazabilidad).
 - **Notas/Bloqueos:** PR2-E2 sigue detenido.
 - **Siguiente sugerido:** —
+
+### 2026-06-25T17:10:00-03:00 · @claude · DB-PATH-ENV · DONE
+- **Qué hice:** Hice configurable la ruta de la DB por env var `BETBOT_DB_PATH` (a pedido del usuario, para smoke tests sin tocar la DB real). Cambios: (1) `storage/tracking_repository.py` → `DB_FILE_PATH` lee `BETBOT_DB_PATH` (absoluta o relativa al root) con fallback al default + `import os`. (2) `main.py` y `cli.py` → cargan `.env` ANTES de importar el repositorio (si no, el módulo computaba `DB_FILE_PATH` antes de `load_dotenv` y la var no tomaba efecto). (3) `.env` → agregada `BETBOT_DB_PATH=data/tracking.smoke.sqlite3`.
+- **Por qué:** Permitir bootear el bot/CLI contra una copia descartable (`tracking.smoke.sqlite3`) sin riesgo para la DB real.
+- **Archivos:** storage/tracking_repository.py, main.py, cli.py, .env (local, gitignored)
+- **Commit:** pendiente (los 3 .py son mejora limpia y commiteable; el .env queda local)
+- **Tests:** Verde — suite completa OK; `cli.py stats` reporta la DB smoke; `import main` resuelve a smoke.
+- **Notas/Bloqueos:** Para volver a la DB real: comentar/quitar la línea `BETBOT_DB_PATH` del `.env`. `data/tracking.smoke.sqlite3` es hoy una copia de ~303 KB (casi vacía).
+- **Siguiente sugerido:** smoke manual de PR1 (boot) usando la DB smoke; luego merge.
+
+### 2026-06-25T17:45:00-03:00 · @claude · ENV-PY313 · DONE
+- **Qué hice:** El `./run.sh` crasheaba en `run_polling` por incompatibilidad Python 3.14 + python-telegram-bot 21.11.1 (PTB 21 llama `asyncio.get_event_loop()`, que 3.14 ya no auto-crea → RuntimeError). El venv local del worktree (`betbot/`) estaba en 3.14. Lo reconstruí en **Python 3.13.12** (bootstrap desde el venv 3.13 de la rama main) y reinstalé requirements. Verificado: `get_event_loop()` OK, `import main` carga y usa la DB smoke. Backup 3.14 borrado.
+- **Por qué:** PTB 21.x soporta hasta Python 3.13, no 3.14. El bot YA arrancaba y cableaba bien (PR1 OK); el crash era solo de entorno.
+- **Archivos:** betbot/ (venv local, gitignored) — sin cambios de código. run.sh sin tocar (ya anda con el venv 3.13).
+- **Commit:** N/A (venv, no versionado)
+- **Tests:** imports OK; venv 3.13.12 con PTB 21.11.1, playwright 1.60, curl_cffi 0.15.0.
+- **Notas/Bloqueos:** ⚠️ RIESGO DE DEPLOY: fijar Python ≤3.13 en la VPS hasta que PTB soporte 3.14. El venv 3.14 fue un accidente local (homebrew default).
+- **Siguiente sugerido:** `./run.sh` ahora arranca el bot (3.13 + DB smoke). Único pendiente: conflicto de token si el .env tiene el de prod.
+
+### 2026-06-25T18:05:00-03:00 · @claude · SMOKE-PR1-BOOT · DONE
+- **Qué hice:** Smoke manual de PR1 con el usuario: `./run.sh` (venv 3.13) bootea, entra en polling, el scheduler corre (prune/tracking OK sobre DB smoke) y **responde a /list_tracks** (Telegram conectado, sin conflicto de token). Aparecieron 2 errores: (a) betsson `ImportError: h2 not installed` (http2=True) → faltaba `h2` en el venv reconstruido; (b) sportradar headless bootstrap falla (pre-existente, Statshub bloquea headless local).
+- **Por qué/Fix:** `requirements.txt` NO incluía `h2`/`httpx[http2]` aunque `extractors/betsson_http` usa `http2=True`. Gap pre-existente que el rebuild limpio del venv expuso. Instalé `h2` (4.3.0) y agregué `h2>=4.1,<5.0` a requirements.txt → afecta también a la VPS (instalación limpia habría fallado en betsson).
+- **Archivos:** requirements.txt (+h2), betbot/ (venv, gitignored)
+- **Commit:** requirements.txt pendiente (fix real, commiteable)
+- **Tests:** boot + polling OK; `/list_tracks` respondido; httpx http2 construye OK.
+- **Notas/Bloqueos:** sportradar headless es esperado en local — opcional silenciar con `SPORTRADAR_REPLAY_ONLY=true` en .env (deshabilita el refresh de sesión; token por /sportradar_token). No bloquea PR1.
+- **Siguiente sugerido:** re-correr ./run.sh (ya sin error de betsson). PR1 validado end-to-end → listo para merge. Commitear el fix de requirements.txt (h2).
+
+### 2026-06-25T18:40:00-03:00 · @claude · CLEANUP+MERGE · DONE
+- **Qué hice:** Ordené todo el git. (1) `main`: commiteé el trabajo pendiente de footystats + sportradar + reporte (9732ceb), ignorando wal/shm transitorios → main limpio. (2) `mig/pr1`: commiteé mis fixes (c6a9ba6: h2 + BETBOT_DB_PATH) y los docs de coordinación/planes (d39d11a). (3) Cherry-pick de los fixes a `main` (0fc3ff1) → h2 y BETBOT_DB_PATH ahora en main. (4) Actualicé PROTOCOL.md con disciplina de ramas + protocolo de MERGE con acuerdo entre agentes (MERGE-PROPOSAL/ACK/DONE).
+- **Por qué:** Pedido del usuario: dejar todo prolijo, llevar el fix de h2 (crítico para instalación limpia/VPS) a main, y que los agentes tengan reglas claras de commit/merge.
+- **Estado de PR1:** confirmado YA mergeado a main (HEAD = d8d0b12 "Merge branch 'mig/pr1'", commits T1-T6 son ancestros). No había merge pendiente.
+- **Archivos:** main: requirements.txt, storage/tracking_repository.py, main.py, cli.py (+ footystats del usuario). mig/pr1: ídem + migration/*.md, reportes.
+- **Commit:** main 9732ceb, 0fc3ff1 · mig/pr1 c6a9ba6, d39d11a
+- **Tests:** fixes ya validados (suite verde + smoke). Cherry-pick aplicó sin conflicto.
+- **Notas/Bloqueos:** ⚠️ `bot/handlers/` quedó UNTRACKED en el worktree de migración (parece WIP de PR2). NO lo commiteé para no pisar a los agentes — que lo resuelva quien esté en esa tarea. ⚠️ Ramas enredadas: mig/pr1 tiene commits de PR2-E2/TASKS encima (histórico desprolijo, no urgente). Nada se pusheó.
+- **Siguiente sugerido:** Los agentes siguen PR2 sobre `mig/pr2` (no sobre mig/pr1). Antes de mergear PR2: seguir el protocolo de merge nuevo (consenso).
+>>>>>>> origin/mig/pr1
