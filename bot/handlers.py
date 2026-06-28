@@ -1625,16 +1625,8 @@ async def stats_select_match(update: Update, context: ContextTypes.DEFAULT_TYPE)
         context.user_data[STATS_CANDIDATES_CONTEXT_KEY] = list(resolution.candidates)
         context.user_data[STATS_CANDIDATE_MATCH_CONTEXT_KEY] = representative
         context.user_data[STATS_CANDIDATE_PROVIDER_CONTEXT_KEY] = resolution.provider_key
-        lines = [
-            "No estoy seguro de cuál es el partido de stats. Elegí el correcto:",
-            "",
-        ]
-        for index, candidate in enumerate(resolution.candidates, start=1):
-            lines.append(f"{index} - {candidate.label}")
-        lines.append("")
-        lines.append("Si ninguno corresponde, usá /cancel.")
         await target.reply_text(
-            "\n".join(lines),
+            "No estoy seguro de cuál es el partido de stats. Elegí el correcto:",
             reply_markup=_build_choice_keyboard(
                 [c.label for c in resolution.candidates], "stx_cand"
             ),
@@ -3250,10 +3242,8 @@ async def event_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
 
 def _build_unified_league_selection_message(prompt: str, leagues: list[dict[str, Any]]) -> str:
-    lines = [prompt]
-    for index, league in enumerate(leagues, start=1):
-        lines.append(f"{index} - {league['name']}")
-    return "\n".join(lines)
+    # Options are shown as inline buttons; the message is just the prompt.
+    return prompt
 
 
 def _build_grouped_match_selection_message(
@@ -3262,14 +3252,7 @@ def _build_grouped_match_selection_message(
 ) -> str:
     """Build the second prompt used by `/matches` for unified leagues."""
 
-    lines = [f"Qué partido quiere ver de {unified_league_name}?"]
-    lines.append("1 - Ver todos")
-
-    for index, group in enumerate(grouped_matches, start=2):
-        rep = group[0]
-        lines.append(f"{index} - {rep.home} vs {rep.away}")
-
-    return "\n".join(lines)
+    return f"¿Qué partido querés ver de {unified_league_name}?"
 
 
 def _book_label(platform: str) -> str:
@@ -3284,12 +3267,7 @@ def _build_unified_stats_match_selection_message(
 ) -> str:
     """Stats match picker: union of matches across books, with the books per row."""
 
-    lines = [f"De qué partido de {unified_league_name} querés ver stats?"]
-    for index, group in enumerate(grouped_matches, start=1):
-        rep = group[0]
-        books = ", ".join(sorted({_book_label(e.platform) for e in group}))
-        lines.append(f"{index} - {rep.home} vs {rep.away}  🏦 {books}")
-    return "\n".join(lines)
+    return f"¿De qué partido de {unified_league_name} querés ver stats?"
 
 
 async def matches_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -3517,21 +3495,21 @@ async def untrack_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     logger.info("Comando /untrack recibido.")
 
     tracking_service = get_tracking_service(context)
-    tracked_leagues = tracking_service.list_confirmed_tracks(update.effective_chat.id)
+    unified_leagues = tracking_service.repository.list_subscribed_unified_competitions(
+        update.effective_chat.id
+    )
 
-    if not tracked_leagues:
+    if not unified_leagues:
         await update.message.reply_text(
             "No tenés ligas trackeadas para eliminar.",
             reply_markup=ReplyKeyboardRemove(),
         )
         return ConversationHandler.END
 
-    context.user_data[UNTRACK_TRACKS_CONTEXT_KEY] = tracked_leagues
+    context.user_data[UNTRACK_TRACKS_CONTEXT_KEY] = unified_leagues
     await update.message.reply_text(
-        _build_track_selection_message("Qué liga querés dejar de trackear?", tracked_leagues),
-        reply_markup=_build_choice_keyboard(
-            [t.tracked_league.competition_name for t in tracked_leagues], "un_league"
-        ),
+        "¿Qué liga querés dejar de trackear? (se quita de todas sus plataformas)",
+        reply_markup=_build_choice_keyboard([lg["name"] for lg in unified_leagues], "un_league"),
     )
     return SELECT_LEAGUE_FOR_UNTRACK
 
@@ -3543,8 +3521,8 @@ async def untrack_select_league(update: Update, context: ContextTypes.DEFAULT_TY
     if target is None or update.effective_chat is None:
         return ConversationHandler.END
 
-    tracked_leagues = context.user_data.get(UNTRACK_TRACKS_CONTEXT_KEY)
-    if not isinstance(tracked_leagues, list) or not tracked_leagues:
+    unified_leagues = context.user_data.get(UNTRACK_TRACKS_CONTEXT_KEY)
+    if not isinstance(unified_leagues, list) or not unified_leagues:
         await target.reply_text(
             "No encontré la selección de ligas. Probá de nuevo con /untrack.",
             reply_markup=ReplyKeyboardRemove(),
@@ -3552,22 +3530,20 @@ async def untrack_select_league(update: Update, context: ContextTypes.DEFAULT_TY
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    selected_index = await _selected_index(update, prefix="un_league", count=len(tracked_leagues))
+    selected_index = await _selected_index(update, prefix="un_league", count=len(unified_leagues))
 
     if selected_index is None:
         await target.reply_text(
             "Elegí una liga de la lista.",
-            reply_markup=_build_choice_keyboard(
-                [t.tracked_league.competition_name for t in tracked_leagues], "un_league"
-            ),
+            reply_markup=_build_choice_keyboard([lg["name"] for lg in unified_leagues], "un_league"),
         )
         return SELECT_LEAGUE_FOR_UNTRACK
 
-    selected_track = tracked_leagues[selected_index]
+    selected_league = unified_leagues[selected_index]
     tracking_service = get_tracking_service(context)
-    result = tracking_service.untrack_chat(
+    result = tracking_service.untrack_unified(
         update.effective_chat.id,
-        selected_track.tracked_league.id,
+        selected_league["id"],
     )
 
     await target.reply_text(
@@ -3597,10 +3573,10 @@ async def odds_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE)
     if target is None or update.effective_chat is None:
         return ConversationHandler.END
 
-    tracked_leagues = context.user_data.get(ODDS_TRACKS_CONTEXT_KEY)
+    unified_leagues = context.user_data.get(ODDS_TRACKS_CONTEXT_KEY)
     enabled = context.user_data.get(ODDS_ENABLED_CONTEXT_KEY)
 
-    if not isinstance(tracked_leagues, list) or not tracked_leagues or not isinstance(enabled, bool):
+    if not isinstance(unified_leagues, list) or not unified_leagues or not isinstance(enabled, bool):
         await target.reply_text(
             "No encontré la selección de ligas. Probá de nuevo con /odds_on o /odds_off.",
             reply_markup=ReplyKeyboardRemove(),
@@ -3608,22 +3584,20 @@ async def odds_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE)
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    selected_index = await _selected_index(update, prefix="odds_league", count=len(tracked_leagues))
+    selected_index = await _selected_index(update, prefix="odds_league", count=len(unified_leagues))
 
     if selected_index is None:
         await target.reply_text(
             "Elegí una liga de la lista.",
-            reply_markup=_build_choice_keyboard(
-                [t.tracked_league.competition_name for t in tracked_leagues], "odds_league"
-            ),
+            reply_markup=_build_choice_keyboard([lg["name"] for lg in unified_leagues], "odds_league"),
         )
         return SELECT_LEAGUE_FOR_ODDS
 
-    selected_track = tracked_leagues[selected_index]
+    selected_league = unified_leagues[selected_index]
     tracking_service = get_tracking_service(context)
-    result = tracking_service.set_odds_change_notifications(
+    result = tracking_service.set_odds_change_notifications_unified(
         update.effective_chat.id,
-        selected_track.tracked_league.id,
+        selected_league["id"],
         enabled=enabled,
     )
 
@@ -3668,26 +3642,23 @@ async def set_change_percent_command(update: Update, context: ContextTypes.DEFAU
         return ConversationHandler.END
 
     tracking_service = get_tracking_service(context)
-    tracked_leagues = tracking_service.list_confirmed_tracks(update.effective_chat.id)
+    unified_leagues = tracking_service.repository.list_subscribed_unified_competitions(
+        update.effective_chat.id
+    )
 
-    if not tracked_leagues:
+    if not unified_leagues:
         await update.message.reply_text(
             "No tenés ligas trackeadas para configurar.",
             reply_markup=ReplyKeyboardRemove(),
         )
         return ConversationHandler.END
 
-    context.user_data[CHANGE_PERCENT_TRACKS_CONTEXT_KEY] = tracked_leagues
+    context.user_data[CHANGE_PERCENT_TRACKS_CONTEXT_KEY] = unified_leagues
     context.user_data[CHANGE_PERCENT_VALUE_CONTEXT_KEY] = percent
 
     await update.message.reply_text(
-        _build_track_selection_message(
-            f"Qué liga querés configurar con umbral {percent:.1f}%?",
-            tracked_leagues,
-        ),
-        reply_markup=_build_choice_keyboard(
-            [t.tracked_league.competition_name for t in tracked_leagues], "chg_league"
-        ),
+        f"¿Qué liga querés configurar con umbral {percent:.1f}%?",
+        reply_markup=_build_choice_keyboard([lg["name"] for lg in unified_leagues], "chg_league"),
     )
     return SELECT_LEAGUE_FOR_CHANGE_PERCENT
 
@@ -3702,10 +3673,10 @@ async def set_change_percent_select_league(
     if target is None or update.effective_chat is None:
         return ConversationHandler.END
 
-    tracked_leagues = context.user_data.get(CHANGE_PERCENT_TRACKS_CONTEXT_KEY)
+    unified_leagues = context.user_data.get(CHANGE_PERCENT_TRACKS_CONTEXT_KEY)
     percent = context.user_data.get(CHANGE_PERCENT_VALUE_CONTEXT_KEY)
 
-    if not isinstance(tracked_leagues, list) or not tracked_leagues or not isinstance(percent, float):
+    if not isinstance(unified_leagues, list) or not unified_leagues or not isinstance(percent, float):
         await target.reply_text(
             "No encontré la selección de ligas. Probá de nuevo con /set_change_percent.",
             reply_markup=ReplyKeyboardRemove(),
@@ -3713,22 +3684,20 @@ async def set_change_percent_select_league(
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    selected_index = await _selected_index(update, prefix="chg_league", count=len(tracked_leagues))
+    selected_index = await _selected_index(update, prefix="chg_league", count=len(unified_leagues))
 
     if selected_index is None:
         await target.reply_text(
             "Elegí una liga de la lista.",
-            reply_markup=_build_choice_keyboard(
-                [t.tracked_league.competition_name for t in tracked_leagues], "chg_league"
-            ),
+            reply_markup=_build_choice_keyboard([lg["name"] for lg in unified_leagues], "chg_league"),
         )
         return SELECT_LEAGUE_FOR_CHANGE_PERCENT
 
-    selected_track = tracked_leagues[selected_index]
+    selected_league = unified_leagues[selected_index]
     tracking_service = get_tracking_service(context)
-    result = tracking_service.set_change_percent(
+    result = tracking_service.set_change_percent_unified(
         update.effective_chat.id,
-        selected_track.tracked_league.id,
+        selected_league["id"],
         percent,
     )
 
@@ -3981,7 +3950,10 @@ def register_handlers(application: Application) -> None:
                 MessageHandler(filters.TEXT & ~filters.COMMAND, track_league_select_league)
             ],
         },
-        fallbacks=[CommandHandler("cancel", cancel_command)],
+        fallbacks=[
+            CommandHandler("cancel", cancel_command),
+            CallbackQueryHandler(cancel_callback, pattern="^cxl$"),
+        ],
         name="track_league_conversation",
         persistent=False,
     )
@@ -4006,7 +3978,10 @@ def register_handlers(application: Application) -> None:
                 MessageHandler(filters.TEXT & ~filters.COMMAND, link_stats_select_league)
             ],
         },
-        fallbacks=[CommandHandler("cancel", cancel_command)],
+        fallbacks=[
+            CommandHandler("cancel", cancel_command),
+            CallbackQueryHandler(cancel_callback, pattern="^cxl$"),
+        ],
         name="link_stats_conversation",
         persistent=False,
     )
@@ -4027,7 +4002,10 @@ def register_handlers(application: Application) -> None:
                 MessageHandler(filters.TEXT & ~filters.COMMAND, track_stats_select_league),
             ],
         },
-        fallbacks=[CommandHandler("cancel", cancel_command)],
+        fallbacks=[
+            CommandHandler("cancel", cancel_command),
+            CallbackQueryHandler(cancel_callback, pattern="^cxl$"),
+        ],
         name="track_stats_conversation",
         persistent=False,
     )
@@ -4045,7 +4023,10 @@ def register_handlers(application: Application) -> None:
                 MessageHandler(filters.TEXT & ~filters.COMMAND, matches_select_match),
             ],
         },
-        fallbacks=[CommandHandler("cancel", cancel_command)],
+        fallbacks=[
+            CommandHandler("cancel", cancel_command),
+            CallbackQueryHandler(cancel_callback, pattern="^cxl$"),
+        ],
         name="matches_conversation",
         persistent=False,
     )
@@ -4067,7 +4048,10 @@ def register_handlers(application: Application) -> None:
                 MessageHandler(filters.TEXT & ~filters.COMMAND, stats_select_candidate),
             ],
         },
-        fallbacks=[CommandHandler("cancel", cancel_command)],
+        fallbacks=[
+            CommandHandler("cancel", cancel_command),
+            CallbackQueryHandler(cancel_callback, pattern="^cxl$"),
+        ],
         name="stats_conversation",
         persistent=False,
     )
@@ -4092,7 +4076,10 @@ def register_handlers(application: Application) -> None:
                 MessageHandler(filters.TEXT & ~filters.COMMAND, explore_select_fixture),
             ],
         },
-        fallbacks=[CommandHandler("cancel", cancel_command)],
+        fallbacks=[
+            CommandHandler("cancel", cancel_command),
+            CallbackQueryHandler(cancel_callback, pattern="^cxl$"),
+        ],
         name="explore_stats_conversation",
         persistent=False,
     )
@@ -4106,7 +4093,10 @@ def register_handlers(application: Application) -> None:
                 MessageHandler(filters.TEXT & ~filters.COMMAND, untrack_select_league),
             ],
         },
-        fallbacks=[CommandHandler("cancel", cancel_command)],
+        fallbacks=[
+            CommandHandler("cancel", cancel_command),
+            CallbackQueryHandler(cancel_callback, pattern="^cxl$"),
+        ],
         name="untrack_conversation",
         persistent=False,
     )
@@ -4123,7 +4113,10 @@ def register_handlers(application: Application) -> None:
                 MessageHandler(filters.TEXT & ~filters.COMMAND, odds_select_league),
             ],
         },
-        fallbacks=[CommandHandler("cancel", cancel_command)],
+        fallbacks=[
+            CommandHandler("cancel", cancel_command),
+            CallbackQueryHandler(cancel_callback, pattern="^cxl$"),
+        ],
         name="odds_conversation",
         persistent=False,
     )
@@ -4137,7 +4130,10 @@ def register_handlers(application: Application) -> None:
                 MessageHandler(filters.TEXT & ~filters.COMMAND, set_change_percent_select_league),
             ],
         },
-        fallbacks=[CommandHandler("cancel", cancel_command)],
+        fallbacks=[
+            CommandHandler("cancel", cancel_command),
+            CallbackQueryHandler(cancel_callback, pattern="^cxl$"),
+        ],
         name="change_percent_conversation",
         persistent=False,
     )
@@ -4160,66 +4156,48 @@ async def _start_odds_toggle(
         return ConversationHandler.END
 
     tracking_service = get_tracking_service(context)
-    tracked_leagues = tracking_service.list_confirmed_tracks(update.effective_chat.id)
+    unified_leagues = tracking_service.repository.list_subscribed_unified_competitions(
+        update.effective_chat.id
+    )
 
-    if not tracked_leagues:
+    if not unified_leagues:
         await update.message.reply_text(
             "No tenés ligas trackeadas para configurar.",
             reply_markup=ReplyKeyboardRemove(),
         )
         return ConversationHandler.END
 
-    context.user_data[ODDS_TRACKS_CONTEXT_KEY] = tracked_leagues
+    context.user_data[ODDS_TRACKS_CONTEXT_KEY] = unified_leagues
     context.user_data[ODDS_ENABLED_CONTEXT_KEY] = enabled
 
     prompt = (
-        "Qué liga querés activar para cambios de odds?"
+        "¿Qué liga querés activar para cambios de odds?"
         if enabled
-        else "Qué liga querés desactivar para cambios de odds?"
+        else "¿Qué liga querés desactivar para cambios de odds?"
     )
     await update.message.reply_text(
-        _build_track_selection_message(prompt, tracked_leagues),
-        reply_markup=_build_choice_keyboard(
-            [t.tracked_league.competition_name for t in tracked_leagues], "odds_league"
-        ),
+        prompt,
+        reply_markup=_build_choice_keyboard([lg["name"] for lg in unified_leagues], "odds_league"),
     )
     return SELECT_LEAGUE_FOR_ODDS
 
 
 def _build_track_selection_message(prompt: str, tracks: list[TrackedCompetitionSubscription]) -> str:
-    """Build a league-selection prompt using numbered tracked leagues."""
+    """Build a league-selection prompt (options rendered as inline buttons)."""
 
-    lines = [prompt]
-
-    for index, item in enumerate(tracks, start=1):
-        lines.append(
-            f"{index} - [{item.tracked_league.platform_display_name}] {item.tracked_league.league_name}"
-        )
-
-    return "\n".join(lines)
+    return prompt
 
 
 def _build_discovery_platform_selection_message(platforms: list[PlatformDescriptor]) -> str:
     """Build the platform prompt for `/track_league`."""
 
-    lines = ["Qué plataforma querés usar para buscar ligas?"]
-
-    for index, platform in enumerate(platforms, start=1):
-        lines.append(f"{index} - {platform.display_name} ({platform.key})")
-
-    return "\n".join(lines)
+    return "¿Qué plataforma querés usar para buscar ligas?"
 
 
 def _build_stats_provider_selection_message(providers: list[StatsProviderDescriptor]) -> str:
     """Build the stats provider prompt for `/link_stats`."""
 
-    lines = ["Qué provider de stats querés usar?"]
-
-    for index, provider in enumerate(providers, start=1):
-        live = "live" if provider.capabilities.supports_live else "prematch"
-        lines.append(f"{index} - {provider.display_name} ({provider.key}) | {live}")
-
-    return "\n".join(lines)
+    return "¿Qué provider de stats querés usar?"
 
 
 def _build_stats_provider_input_message(provider: StatsProviderDescriptor) -> str:
@@ -4270,13 +4248,7 @@ def _build_stats_provider_input_message(provider: StatsProviderDescriptor) -> st
 def _build_discovered_league_selection_message(options: list[LeagueDiscoveryOption]) -> str:
     """Build the league prompt for `/track_league`."""
 
-    lines = ["Elegí la liga a trackear:"]
-
-    for index, option in enumerate(options, start=1):
-        games = f" | partidos={option.games_count}" if option.games_count is not None else ""
-        lines.append(f"{index} - {option.league_name} | id={option.league_id}{games}")
-
-    return "\n".join(lines)
+    return "Elegí la liga a trackear:"
 
 
 def _build_stats_league_selection_message(
@@ -4288,32 +4260,18 @@ def _build_stats_league_selection_message(
     """Build a stats-league prompt for linking or standalone tracking."""
 
     lines = [prompt]
-
-    displayed = options[:limit]
-    for index, option in enumerate(displayed, start=1):
-        season = f" | season={option.season_id}" if option.season_id else ""
-        country = f" | {option.country_name}" if option.country_name else ""
-        lines.append(f"{index} - {option.league_name}{country} | id={option.league_id}{season}")
-
     if len(options) > limit:
         lines.append(
             f"\n_(Mostrando {limit} de {len(options)} ligas encontradas. "
             "Si no ves tu liga, escribí una búsqueda más específica o pegá la URL directa.)_"
         )
-
     return "\n".join(lines)
 
 
 def _build_provider_fixture_selection_message(fixtures: list) -> str:
     """Build the provider-native fixture prompt used by `/explore_stats`."""
 
-    lines = ["Elegí el partido para generar reporte:"]
-    for index, fixture in enumerate(fixtures, start=1):
-        when = ""
-        if isinstance(fixture.scheduled_at, str) and len(fixture.scheduled_at) >= 16:
-            when = f" | {fixture.scheduled_at[8:10]}/{fixture.scheduled_at[5:7]} {fixture.scheduled_at[11:16]}"
-        lines.append(f"{index} - {fixture.home} vs {fixture.away}{when}")
-    return "\n".join(lines)
+    return "Elegí el partido para generar reporte:"
 
 
 def _build_match_selection_message(
@@ -4370,18 +4328,37 @@ def _parse_selection_number(text: str | None, upper_bound: int) -> int | None:
     return index
 
 
-def _build_choice_keyboard(labels, prefix: str):
+_CANCEL_CALLBACK_DATA = "cxl"
+
+
+def _build_choice_keyboard(labels, prefix: str, *, cancel: bool = True):
     """Build a one-column inline keyboard; each button carries ``f'{prefix}:{index}'``.
 
     Replaces the legacy numeric ReplyKeyboard for in-conversation selections so
-    the user taps a labelled button instead of typing a number.
+    the user taps a labelled button instead of typing a number. A ``❌ Cancelar``
+    button is appended so the flow can be aborted without typing ``/cancel``.
     """
 
     keyboard = [
         [InlineKeyboardButton(str(label), callback_data=f"{prefix}:{index}")]
         for index, label in enumerate(labels)
     ]
+    if cancel:
+        keyboard.append([InlineKeyboardButton("❌ Cancelar", callback_data=_CANCEL_CALLBACK_DATA)])
     return InlineKeyboardMarkup(keyboard)
+
+
+async def cancel_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """End any active selection flow from the inline ``❌ Cancelar`` button."""
+
+    query = getattr(update, "callback_query", None)
+    if query is not None:
+        await query.answer()
+    _clear_all_selection_context(context)
+    target = _selection_target(update)
+    if target is not None:
+        await target.reply_text("Operación cancelada.", reply_markup=ReplyKeyboardRemove())
+    return ConversationHandler.END
 
 
 def _selection_target(update: Update) -> Message | None:

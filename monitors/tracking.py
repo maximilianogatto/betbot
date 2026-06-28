@@ -855,6 +855,87 @@ class TrackingService:
 
         return CommandResult(ok=True, message="\n".join(lines))
 
+    def untrack_unified(self, chat_id: int, unified_competition_id: int) -> CommandResult:
+        """Untrack a whole unified league (every platform) for one chat."""
+
+        try:
+            results = self.repository.remove_unified_subscription(chat_id, unified_competition_id)
+        except ValueError as error:
+            return CommandResult(ok=False, message=str(error))
+
+        platforms = sorted({r.tracked_league.platform for r in results})
+        league_name = results[0].tracked_league.league_name
+        if len(platforms) > 1:
+            lines = [
+                f"Dejaste de trackear {league_name} en {len(platforms)} plataformas: {', '.join(platforms)}."
+            ]
+        else:
+            lines = [f"Dejaste de trackear {league_name}."]
+        if all(r.league_disabled for r in results):
+            lines.append(
+                "Como no quedaron más chats suscriptos, la liga se desactivó y se limpió su estado scrapeado."
+            )
+        else:
+            remaining = max(r.remaining_enabled_subscriptions for r in results)
+            lines.append(f"Suscripciones activas restantes para esa liga: {remaining}")
+        return CommandResult(ok=True, message="\n".join(lines))
+
+    def _tracks_for_unified(self, chat_id: int, unified_competition_id: int):
+        """Return the chat's confirmed per-platform tracks under one unified league."""
+
+        return [
+            track
+            for track in self.list_confirmed_tracks(chat_id)
+            if track.tracked_league.unified_competition_id == unified_competition_id
+        ]
+
+    def set_odds_change_notifications_unified(
+        self,
+        chat_id: int,
+        unified_competition_id: int,
+        enabled: bool,
+    ) -> CommandResult:
+        """Toggle odds-change notifications across every platform of a unified league."""
+
+        tracks = self._tracks_for_unified(chat_id, unified_competition_id)
+        if not tracks:
+            return CommandResult(ok=False, message="No encontré esa liga unificada.")
+        for track in tracks:
+            try:
+                self.repository.set_odds_notifications(chat_id, track.tracked_league.id, enabled)
+            except ValueError as error:
+                return CommandResult(ok=False, message=str(error))
+        league_name = tracks[0].tracked_league.league_name
+        return CommandResult(
+            ok=True,
+            message=(
+                f"Notificaciones de cambio de odds para {league_name}: "
+                f"{'on' if enabled else 'off'} ({len(tracks)} plataforma(s))."
+            ),
+        )
+
+    def set_change_percent_unified(
+        self,
+        chat_id: int,
+        unified_competition_id: int,
+        percent: float,
+    ) -> CommandResult:
+        """Set the odds-change threshold across every platform of a unified league."""
+
+        tracks = self._tracks_for_unified(chat_id, unified_competition_id)
+        if not tracks:
+            return CommandResult(ok=False, message="No encontré esa liga unificada.")
+        for track in tracks:
+            try:
+                self.repository.set_change_percent_threshold(chat_id, track.tracked_league.id, percent)
+            except ValueError as error:
+                return CommandResult(ok=False, message=str(error))
+        league_name = tracks[0].tracked_league.league_name
+        return CommandResult(
+            ok=True,
+            message=f"Umbral de cambio para {league_name}: {percent:.1f}% ({len(tracks)} plataforma(s)).",
+        )
+
     def learn_unified_merges(self) -> list[dict]:
         """Fusiona ligas unificadas que comparten partidos físicos en otra plataforma.
 
