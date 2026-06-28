@@ -2034,15 +2034,10 @@ async def track_league_command(update: Update, context: ContextTypes.DEFAULT_TYP
         return ConversationHandler.END
 
     context.user_data[TRACK_LEAGUE_PLATFORMS_CONTEXT_KEY] = platforms
-    
-    keyboard = []
-    for i, p in enumerate(platforms):
-        keyboard.append([InlineKeyboardButton(p.display_name, callback_data=f"tl_platform:{i}")])
-    reply_markup = InlineKeyboardMarkup(keyboard)
 
     await update.message.reply_text(
         _build_discovery_platform_selection_message(platforms),
-        reply_markup=reply_markup,
+        reply_markup=_build_choice_keyboard([p.display_name for p in platforms], "tl_platform"),
     )
     return SELECT_PLATFORM_FOR_TRACK_LEAGUE
 
@@ -2077,12 +2072,9 @@ async def track_league_select_platform(
         selected_index = _parse_selection_number(update.message.text, len(platforms))
 
     if selected_index is None:
-        keyboard = []
-        for i, p in enumerate(platforms):
-            keyboard.append([InlineKeyboardButton(p.display_name, callback_data=f"tl_platform:{i}")])
         await msg_obj.reply_text(
-            "Elegí un número o botón válido de plataforma.",
-            reply_markup=InlineKeyboardMarkup(keyboard),
+            "Elegí una plataforma de la lista.",
+            reply_markup=_build_choice_keyboard([p.display_name for p in platforms], "tl_platform"),
         )
         return SELECT_PLATFORM_FOR_TRACK_LEAGUE
 
@@ -2160,15 +2152,12 @@ async def track_league_enter_country(
         return ENTER_COUNTRY_FOR_TRACK_LEAGUE
 
     context.user_data[TRACK_LEAGUE_OPTIONS_CONTEXT_KEY] = league_options
-    
-    keyboard = []
-    for i, option in enumerate(league_options[:20]):
-        keyboard.append([InlineKeyboardButton(option.league_name, callback_data=f"tl_league:{i}")])
-    reply_markup = InlineKeyboardMarkup(keyboard)
 
     await update.message.reply_text(
         _build_discovered_league_selection_message(league_options),
-        reply_markup=reply_markup,
+        reply_markup=_build_choice_keyboard(
+            [option.league_name for option in league_options[:20]], "tl_league"
+        ),
     )
     return SELECT_LEAGUE_FOR_TRACK_LEAGUE
 
@@ -2203,12 +2192,11 @@ async def track_league_select_league(
         selected_index = _parse_selection_number(update.message.text, len(league_options))
 
     if selected_index is None:
-        keyboard = []
-        for i, option in enumerate(league_options[:20]):
-            keyboard.append([InlineKeyboardButton(option.league_name, callback_data=f"tl_league:{i}")])
         await msg_obj.reply_text(
-            "Elegí un número o botón válido de liga.",
-            reply_markup=InlineKeyboardMarkup(keyboard),
+            "Elegí una liga de la lista.",
+            reply_markup=_build_choice_keyboard(
+                [option.league_name for option in league_options[:20]], "tl_league"
+            ),
         )
         return SELECT_LEAGUE_FOR_TRACK_LEAGUE
 
@@ -2430,15 +2418,12 @@ async def link_stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
         return ConversationHandler.END
 
     context.user_data[LINK_STATS_TRACKS_CONTEXT_KEY] = tracked_leagues
-    
-    keyboard = []
-    for i, track in enumerate(tracked_leagues):
-        keyboard.append([InlineKeyboardButton(track.tracked_league.competition_name, callback_data=f"ls_track:{i}")])
-    reply_markup = InlineKeyboardMarkup(keyboard)
 
     await update.message.reply_text(
-        _build_track_selection_message("Qué liga de odds querés vincular con stats?", tracked_leagues),
-        reply_markup=reply_markup,
+        _build_track_selection_message("¿Qué liga de odds querés vincular con stats?", tracked_leagues),
+        reply_markup=_build_choice_keyboard(
+            [t.tracked_league.competition_name for t in tracked_leagues], "ls_track"
+        ),
     )
     return SELECT_TRACK_FOR_LINK_STATS
 
@@ -2470,12 +2455,11 @@ async def link_stats_select_track(update: Update, context: ContextTypes.DEFAULT_
         selected_index = _parse_selection_number(update.message.text, len(tracked_leagues))
 
     if selected_index is None:
-        keyboard = []
-        for i, track in enumerate(tracked_leagues):
-            keyboard.append([InlineKeyboardButton(track.tracked_league.competition_name, callback_data=f"ls_track:{i}")])
         await msg_obj.reply_text(
-            "Elegí un número o botón válido de liga.",
-            reply_markup=InlineKeyboardMarkup(keyboard),
+            "Elegí una liga de la lista.",
+            reply_markup=_build_choice_keyboard(
+                [t.tracked_league.competition_name for t in tracked_leagues], "ls_track"
+            ),
         )
         return SELECT_TRACK_FOR_LINK_STATS
 
@@ -2500,15 +2484,10 @@ async def link_stats_select_track(update: Update, context: ContextTypes.DEFAULT_
 
     context.user_data[LINK_STATS_SELECTED_TRACK_CONTEXT_KEY] = selected_track
     context.user_data[LINK_STATS_PROVIDERS_CONTEXT_KEY] = providers
-    
-    keyboard = []
-    for i, prov in enumerate(providers):
-        keyboard.append([InlineKeyboardButton(prov.display_name, callback_data=f"ls_provider:{i}")])
-    reply_markup = InlineKeyboardMarkup(keyboard)
 
     await msg_obj.reply_text(
         _build_stats_provider_selection_message(providers),
-        reply_markup=reply_markup,
+        reply_markup=_build_choice_keyboard([prov.display_name for prov in providers], "ls_provider"),
     )
     return SELECT_PROVIDER_FOR_LINK_STATS
 
@@ -2540,12 +2519,9 @@ async def link_stats_select_provider(update: Update, context: ContextTypes.DEFAU
         selected_index = _parse_selection_number(update.message.text, len(providers))
 
     if selected_index is None:
-        keyboard = []
-        for i, prov in enumerate(providers):
-            keyboard.append([InlineKeyboardButton(prov.display_name, callback_data=f"ls_provider:{i}")])
         await msg_obj.reply_text(
-            "Elegí un número o botón válido de provider.",
-            reply_markup=InlineKeyboardMarkup(keyboard),
+            "Elegí un provider de la lista.",
+            reply_markup=_build_choice_keyboard([prov.display_name for prov in providers], "ls_provider"),
         )
         return SELECT_PROVIDER_FOR_LINK_STATS
 
@@ -2699,17 +2675,12 @@ async def link_stats_enter_country(update: Update, context: ContextTypes.DEFAULT
     context.user_data[LINK_STATS_OPTIONS_CONTEXT_KEY] = options
     intro = ""
     if sample_events:
-        intro = "🔢 Ordenadas por relevancia: la #1 es la que más coincide con tus partidos.\n\n"
-        
-    keyboard = []
-    for i, opt in enumerate(options[:20]):
-        keyboard.append([InlineKeyboardButton(opt.league_name, callback_data=f"ls_league:{i}")])
-    reply_markup = InlineKeyboardMarkup(keyboard)
+        intro = "🔢 Ordenadas por relevancia: la primera es la que más coincide con tus partidos.\n\n"
 
     await _reply_text_chunks(
         update.message,
         intro + _build_stats_league_selection_message(options, limit=25),
-        reply_markup=reply_markup,
+        reply_markup=_build_choice_keyboard([opt.league_name for opt in options[:20]], "ls_league"),
     )
     return SELECT_LEAGUE_FOR_LINK_STATS
 
@@ -2751,12 +2722,9 @@ async def link_stats_select_league(update: Update, context: ContextTypes.DEFAULT
         selected_index = _parse_selection_number(update.message.text, len(options))
 
     if selected_index is None:
-        keyboard = []
-        for i, opt in enumerate(options[:20]):
-            keyboard.append([InlineKeyboardButton(opt.league_name, callback_data=f"ls_league:{i}")])
         await msg_obj.reply_text(
-            "Elegí un número o botón válido de liga stats.",
-            reply_markup=InlineKeyboardMarkup(keyboard),
+            "Elegí una liga de stats de la lista.",
+            reply_markup=_build_choice_keyboard([opt.league_name for opt in options[:20]], "ls_league"),
         )
         return SELECT_LEAGUE_FOR_LINK_STATS
 
@@ -3253,12 +3221,6 @@ def _build_grouped_match_selection_message(
     """Build the second prompt used by `/matches` for unified leagues."""
 
     return f"¿Qué partido querés ver de {unified_league_name}?"
-
-
-def _book_label(platform: str) -> str:
-    """Short bookmaker label from a platform key (e.g. ``betovo_http`` -> ``betovo``)."""
-
-    return (platform or "").replace("_http", "").replace("_", " ").strip() or platform
 
 
 def _build_unified_stats_match_selection_message(
