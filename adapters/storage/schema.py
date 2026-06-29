@@ -67,6 +67,7 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
             metadata_json TEXT,
             unified_competition_id INTEGER REFERENCES unified_competitions(id) ON DELETE SET NULL,
             enabled INTEGER NOT NULL DEFAULT 1,
+            reminders_enabled INTEGER NOT NULL DEFAULT 0,
             last_refreshed_at TEXT,
             consecutive_unavailable_refreshes INTEGER NOT NULL DEFAULT 0,
             last_unavailable_at TEXT, last_unavailable_reason TEXT, last_unavailable_notified_at TEXT,
@@ -104,12 +105,22 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
             status TEXT NOT NULL DEFAULT 'PREMATCH',   -- PREMATCH | LIVE | FINISHED
             is_active INTEGER NOT NULL DEFAULT 1,
             missing_seen_count INTEGER NOT NULL DEFAULT 0,
+            reminder_enabled INTEGER NOT NULL DEFAULT 0,
             reminder_sent_at TEXT,
             first_seen_at TEXT NOT NULL, last_seen_at TEXT NOT NULL,
             created_at TEXT NOT NULL, updated_at TEXT NOT NULL,
             UNIQUE(platform, external_event_id)
         );
         CREATE INDEX IF NOT EXISTS idx_events_competition ON events(competition_id, is_active, scheduled_at);
+
+        -- Recordatorios de partidos específicos por chat
+        CREATE TABLE IF NOT EXISTS chat_event_reminders (
+            chat_id INTEGER NOT NULL,
+            event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+            enabled INTEGER NOT NULL DEFAULT 1,
+            PRIMARY KEY (chat_id, event_id)
+        );
+        CREATE INDEX IF NOT EXISTS idx_chat_event_reminders_event ON chat_event_reminders(event_id);
 
         -- Baselines por chat (índice en el FK desde el día 1)
         CREATE TABLE IF NOT EXISTS baselines (
@@ -234,5 +245,5 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
         );
         """
     )
-    # Set the user version to 2
-    connection.execute("PRAGMA user_version = 2")
+    # Set the user version to 4
+    connection.execute("PRAGMA user_version = 4")

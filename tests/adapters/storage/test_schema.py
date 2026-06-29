@@ -28,7 +28,7 @@ class StorageSchemaTests(unittest.TestCase):
                 tables = list_tables(connection)
                 self.assertTrue(set(EXPECTED_TABLES).issubset(tables))
                 self.assertTrue(set(FORBIDDEN_LEGACY_TABLES).isdisjoint(tables))
-                self.assertEqual(get_schema_version(connection), 2)
+                self.assertEqual(get_schema_version(connection), 4)
 
                 row = connection.execute("SELECT 1 AS value").fetchone()
                 self.assertIsInstance(row, sqlite3.Row)
