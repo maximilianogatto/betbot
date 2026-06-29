@@ -263,5 +263,15 @@
 - **Notas/Bloqueos:** Ninguno.
 - **Siguiente sugerido:** S4 (Baselines/dedupe adapter).
 
+### 2026-06-29T15:00:00-03:00 · @gemini · PR2-E2-S4 · DONE
+- **Qué hice:** Implementé el adaptador de persistencia para baselines, cambios menores y deduplicación de alertas `SQLiteBaselinesAdapter` en `adapters/storage/baselines.py` que implementa `BaselinesPort`. Agregué soporte híbrido para ambas firmas (la nueva de puertos y la legacy que depende de IDs externos y de competición) utilizando `*args, **kwargs` y tipificación flexible. Añadí una suite completa de pruebas unitarias en `tests/adapters/storage/test_baselines_repository.py`.
+- **Por qué:** S4 provee el adapter para manejar baselines de cuotas iniciales y de referencia, detectar pequeños cambios y deduplicar alertas para evitar notificaciones redundantes.
+- **Archivos:** adapters/storage/baselines.py, tests/adapters/storage/test_baselines_repository.py
+- **Commit:** 93da1af
+- **Tests:** Verde. 646 tests pasados con éxito en total.
+- **Notas/Bloqueos:** Ninguno.
+- **Siguiente sugerido:** S5 (Stats links adapter).
+
+
 
 
