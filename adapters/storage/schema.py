@@ -103,6 +103,7 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
             markets_json TEXT,
             status TEXT NOT NULL DEFAULT 'PREMATCH',   -- PREMATCH | LIVE | FINISHED
             is_active INTEGER NOT NULL DEFAULT 1,
+            missing_seen_count INTEGER NOT NULL DEFAULT 0,
             reminder_sent_at TEXT,
             first_seen_at TEXT NOT NULL, last_seen_at TEXT NOT NULL,
             created_at TEXT NOT NULL, updated_at TEXT NOT NULL,
@@ -233,5 +234,5 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
         );
         """
     )
-    # Set the user version to 1
-    connection.execute("PRAGMA user_version = 1")
+    # Set the user version to 2
+    connection.execute("PRAGMA user_version = 2")
