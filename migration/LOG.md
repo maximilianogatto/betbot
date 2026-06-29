@@ -225,3 +225,13 @@
 - **Notas/Bloqueos:** Ninguno. Las fundaciones están listas y en verde.
 - **Siguiente sugerido:** S1 (Competitions adapter).
 
+
+### 2026-06-25T19:30:00-03:00 · @claude · PR2-F3-SPEC · DONE
+- **Qué hice:** Escribí migration/SCHEMA_SPEC.md: el DDL completo del esquema greenfield current-state (15 tablas limpias) que destraba PR2-E2. Incluye el mapeo tabla→port→sub-tarea (S1-S8).
+- **Por qué:** PR2-E2 estaba BLOCKED por la decisión split-mecánico vs rewrite. El usuario ya decidió greenfield/esquema limpio → el desbloqueo es dar el schema concreto. Con esto los adapters S1-S7 se pueden escribir de cero contra estas tablas.
+- **DESBLOQUEO PR2-E2:** reframear "partir tracking_repository.py" → "escribir adapters/storage/* de cero contra SCHEMA_SPEC, portando lógica, borrar repo viejo en S8". Confirmado el enfoque rewrite (NO split mecánico).
+- **Archivos:** migration/SCHEMA_SPEC.md
+- **Commit:** (este)
+- **Tests:** N/A (spec)
+- **Notas/Bloqueos:** Estado verificado: PR1 mergeado+pusheado a origin/main; PR2-E1 (esqueleto+ports) DONE en mig/pr2. ⚠️ Los docs de PR2 (PR2_PLAN, PORTS_SPEC, SCHEMA_SPEC, PROTOCOL nuevo) viven en mig/pr1 — los agentes en mig/pr2 deben traerlos (merge origin/mig/pr1).
+- **Siguiente sugerido:** Implementar F3 (adapters/storage/schema.py + connection.py) desde SCHEMA_SPEC; luego S1-S7 en paralelo entre los 3 agentes; S8 (facade + borrar repo viejo) al final.
