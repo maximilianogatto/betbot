@@ -560,12 +560,6 @@ def _extract_match_id(url: str | None) -> str | None:
     return match.group(1) if match else None
 
 
-def _replay_only_from_env() -> bool:
-    return (os.getenv("SPORTRADAR_REPLAY_ONLY") or "").strip().lower() in {
-        "1", "true", "yes", "on", "si", "sí",
-    }
-
-
 def _default_runtime_config() -> BotReadyRuntimeConfig:
     """Build runtime config honoring `SPORTRADAR_BOOTSTRAP_MODE` from `.env`.
 
@@ -580,10 +574,12 @@ def _default_runtime_config() -> BotReadyRuntimeConfig:
     mode = normalize_bootstrap_mode(None)
     background_raw = os.getenv("SPORTRADAR_BACKGROUND_BOOTSTRAP_MODE")
     background = normalize_bootstrap_mode(background_raw) if background_raw else mode
+    # `replay_only` is intentionally NOT set here: it is read from the
+    # environment (`SPORTRADAR_REPLAY_ONLY`) inside SportradarBotReadyProvider,
+    # and BotReadyRuntimeConfig does not expose it as a field.
     return BotReadyRuntimeConfig(
         bootstrap_mode=mode,
         background_bootstrap_mode=background,
-        replay_only=_replay_only_from_env(),
     )
 
 

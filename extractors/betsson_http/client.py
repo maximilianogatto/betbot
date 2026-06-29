@@ -17,6 +17,7 @@ from typing import Any
 
 import httpx
 
+from core.net import proxy_for_platform
 from extractors.betsson_http.settings import BetssonHttpSettings
 
 logger = logging.getLogger(__name__)
@@ -108,6 +109,10 @@ class BetssonHttpClient:
             timeout=self.settings.timeout_seconds,
             headers=self.settings.headers,
             http2=_HTTP2_AVAILABLE,
+            # Betsson geo-locks to Argentina; on a foreign VPS it 302-redirects to
+            # country-blocked. Route through an AR proxy when whitelisted via
+            # BOT_PROXY_PLATFORMS (None = direct, unchanged for local/AR hosts).
+            proxy=proxy_for_platform("betsson_http"),
         )
 
     async def _get(self, client: httpx.AsyncClient, path: str, params: dict[str, str] | None) -> Any:
