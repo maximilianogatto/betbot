@@ -281,6 +281,16 @@
 - **Notas/Bloqueos:** Ninguno.
 - **Siguiente sugerido:** S6 (Live watch adapter).
 
+### 2026-06-29T15:30:00-03:00 · @gemini · PR2-E2-S6 · DONE
+- **Qué hice:** Modifiqué el esquema de base de datos en `adapters/storage/schema.py` para incluir todos los campos requeridos para live watch in-play en `live_watch_entries` (incluyendo `chat_local_id`, countdowns, prematch states y live state json) y actualicé `tests/adapters/storage/test_schema.py` con `PRAGMA user_version = 5`. Implementé el adaptador de persistencia para live watch `SQLiteLiveWatchAdapter` en `adapters/storage/live_watch.py` con soporte híbrido para las firmas port/legacy usando `*args, **kwargs`. Añadí unit tests en `tests/adapters/storage/test_live_watch_repository.py`.
+- **Por qué:** S6 permite registrar, consultar, disparar y actualizar estados in-play/prematch/countdown de partidos que los usuarios marcan para vigilancia en vivo.
+- **Archivos:** adapters/storage/schema.py, adapters/storage/live_watch.py, tests/adapters/storage/test_schema.py, tests/adapters/storage/test_live_watch_repository.py
+- **Commit:** ea5e89e
+- **Tests:** Verde. 652 tests pasados con éxito en total.
+- **Notas/Bloqueos:** Ninguno.
+- **Siguiente sugerido:** S7 (Cache/maintenance adapter).
+
+
 
 
 
