@@ -235,3 +235,13 @@
 - **Tests:** N/A (spec)
 - **Notas/Bloqueos:** Estado verificado: PR1 mergeado+pusheado a origin/main; PR2-E1 (esqueleto+ports) DONE en mig/pr2. ⚠️ Los docs de PR2 (PR2_PLAN, PORTS_SPEC, SCHEMA_SPEC, PROTOCOL nuevo) viven en mig/pr1 — los agentes en mig/pr2 deben traerlos (merge origin/mig/pr1).
 - **Siguiente sugerido:** Implementar F3 (adapters/storage/schema.py + connection.py) desde SCHEMA_SPEC; luego S1-S7 en paralelo entre los 3 agentes; S8 (facade + borrar repo viejo) al final.
+
+### 2026-06-29T11:10:00-03:00 · @gemini · PR2-E2-S1 · DONE
+- **Qué hice:** Implementé el adaptador de persistencia para competencias y tracking `SQLiteCompetitionsAdapter` en `adapters/storage/competitions.py` que implementa `CompetitionsPort`. Porté toda la lógica del repositorio viejo adaptándola al esquema limpio (ej. `needs_name_resolution` derivado, tablas `competitions` y `subscriptions`). Añadí un suite completo de pruebas unitarias en `tests/adapters/storage/test_competitions_repository.py`.
+- **Por qué:** S1 provee el adapter de competencias necesario para desacoplar el agregado de tracking del repositorio legacy gigante.
+- **Archivos:** adapters/storage/competitions.py, tests/adapters/storage/test_competitions_repository.py, tests/adapters/__init__.py, tests/adapters/storage/__init__.py
+- **Commit:** 56b1bb9
+- **Tests:** Verde. 630 tests pasados con éxito en total (la suite completa incluye ahora test_schema y test_competitions_repository integrados mediante __init__.py).
+- **Notas/Bloqueos:** Ninguno.
+- **Siguiente sugerido:** S2 (Events adapter) o S3 (Subscriptions adapter).
+
