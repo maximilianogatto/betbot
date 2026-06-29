@@ -245,3 +245,13 @@
 - **Notas/Bloqueos:** Ninguno.
 - **Siguiente sugerido:** S2 (Events adapter) o S3 (Subscriptions adapter).
 
+### 2026-06-29T14:30:00-03:00 · @gemini · PR2-E2-S2 · DONE
+- **Qué hice:** Implementé el adaptador de persistencia para eventos y cuotas `SQLiteEventsAdapter` en `adapters/storage/events.py` que implementa `EventsPort`. Modifiqué la tabla `events` en `adapters/storage/schema.py` para incluir la columna `missing_seen_count` y subí la versión a `PRAGMA user_version = 2` para soportar la expiración/remoción de eventos ausentes. Añadí un suite completo de pruebas unitarias en `tests/adapters/storage/test_events_repository.py`.
+- **Por qué:** S2 provee el adapter de eventos de partidos necesario para persistir y recuperar el estado actual de las cuotas sin guardar snapshots históricos, permitiendo remover eventos que desaparecen de la poller.
+- **Archivos:** adapters/storage/schema.py, adapters/storage/events.py, tests/adapters/storage/test_schema.py, tests/adapters/storage/test_events_repository.py
+- **Commit:** c43615a
+- **Tests:** Verde. 636 tests pasados con éxito en total.
+- **Notas/Bloqueos:** Ninguno.
+- **Siguiente sugerido:** S3 (Subscriptions adapter).
+
+
