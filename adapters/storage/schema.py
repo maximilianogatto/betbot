@@ -206,13 +206,25 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
         CREATE TABLE IF NOT EXISTS live_watch_entries (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             chat_id INTEGER NOT NULL,
+            chat_local_id INTEGER,
             home TEXT NOT NULL, away TEXT NOT NULL,
             league_hint TEXT, note TEXT,
             status TEXT NOT NULL DEFAULT 'watching',   -- watching | fired | cancelled
             matched_platform TEXT, matched_event_id TEXT, matched_minute TEXT,
-            created_at TEXT NOT NULL, fired_at TEXT, fired_platforms TEXT
+            kickoff_at TEXT,
+            prematch_seen_at TEXT, prematch_platform TEXT,
+            fired_platforms TEXT,                       -- comma-separated
+            prematch_fired_platforms TEXT,              -- comma-separated
+            countdown_fired_at TEXT,
+            live_state_json TEXT,                       -- JSON dictionary by platform
+            status_flags INTEGER NOT NULL DEFAULT 1,
+            fired_odds_mask INTEGER NOT NULL DEFAULT 0,
+            fired_stats_mask INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL, fired_at TEXT,
+            UNIQUE(chat_id, chat_local_id)
         );
         CREATE INDEX IF NOT EXISTS idx_live_watch_chat_status ON live_watch_entries(chat_id, status);
+
 
         CREATE TABLE IF NOT EXISTS live_watch_settings (
             chat_id INTEGER PRIMARY KEY,
@@ -245,5 +257,5 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
         );
         """
     )
-    # Set the user version to 4
-    connection.execute("PRAGMA user_version = 4")
+    # Set the user version to 5
+    connection.execute("PRAGMA user_version = 5")
