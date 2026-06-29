@@ -254,4 +254,14 @@
 - **Notas/Bloqueos:** Ninguno.
 - **Siguiente sugerido:** S3 (Subscriptions adapter).
 
+### 2026-06-29T14:40:00-03:00 · @gemini · PR2-E2-S3 · DONE
+- **Qué hice:** Implementé el adaptador de persistencia para suscripciones y settings de chat `SQLiteSubscriptionsAdapter` en `adapters/storage/subscriptions.py` que implementa `SubscriptionsPort`. Modifiqué la tabla `competitions` para incluir la columna `reminders_enabled` y creé la tabla `chat_event_reminders` para soportar tanto notificaciones/reminders globales como per-chat. Subí la versión a `PRAGMA user_version = 4` y añadí una suite completa de pruebas unitarias en `tests/adapters/storage/test_subscriptions_repository.py`.
+- **Por qué:** S3 provee el adapter para manejar todas las preferencias de notificaciones, suscripciones de chats a competencias y proveedores de estadísticas y peak digests diarios.
+- **Archivos:** adapters/storage/schema.py, adapters/storage/subscriptions.py, tests/adapters/storage/test_schema.py, tests/adapters/storage/test_subscriptions_repository.py
+- **Commit:** 5ebe816
+- **Tests:** Verde. 642 tests pasados con éxito en total.
+- **Notas/Bloqueos:** Ninguno.
+- **Siguiente sugerido:** S4 (Baselines/dedupe adapter).
+
+
 
