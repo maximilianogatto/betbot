@@ -272,6 +272,16 @@
 - **Notas/Bloqueos:** Ninguno.
 - **Siguiente sugerido:** S5 (Stats links adapter).
 
+### 2026-06-29T15:15:00-03:00 · @gemini · PR2-E2-S5 · DONE
+- **Qué hice:** Implementé el adaptador de persistencia para links de estadísticas `SQLiteStatsLinksAdapter` en `adapters/storage/stats_links.py` que implementa `StatsLinksPort`. Agregué soporte híbrido para ambas firmas (la nueva de puertos y la legacy que depende de diccionarios de payload y parámetros keyword-only) utilizando `*args, **kwargs`. Añadí métodos extra de compatibilidad legacy (`get_stats_league_link`, `delete_stats_league_link`, y `list_stats_match_links`). Diseñé y ejecuté pruebas unitarias completas en `tests/adapters/storage/test_stats_links_repository.py`.
+- **Por qué:** S5 conecta las entidades de cuotas con las entidades de estadísticas, permitiendo consultas e inserciones mapeadas por provider.
+- **Archivos:** adapters/storage/stats_links.py, tests/adapters/storage/test_stats_links_repository.py
+- **Commit:** dee550b
+- **Tests:** Verde. 648 tests pasados con éxito en total.
+- **Notas/Bloqueos:** Ninguno.
+- **Siguiente sugerido:** S6 (Live watch adapter).
+
+
 
 
 
