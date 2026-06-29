@@ -290,6 +290,16 @@
 - **Notas/Bloqueos:** Ninguno.
 - **Siguiente sugerido:** S7 (Cache/maintenance adapter).
 
+### 2026-06-29T15:45:00-03:00 · @gemini · PR2-E2-S7 · DONE
+- **Qué hice:** Implementé el adaptador de mantenimiento y cache `SQLiteMaintenanceAdapter` en `adapters/storage/maintenance.py` que implementa `MaintenancePort`. Programé la limpieza de datos antiguos (`prune_old_data`), el comando autocommit `VACUUM` (`run_db_vacuum`) y la purga de payloads de estadísticas expirados (`purge_expired_stats_payloads`) que también impone el límite FIFO estricto de 200 filas de cache. Añadí unit tests exhaustivos en `tests/adapters/storage/test_maintenance_repository.py`.
+- **Por qué:** S7 provee higiene, pruning de series temporales descartadas y compresión de archivos sqlite para mantener la base de datos pequeña y eficiente.
+- **Archivos:** adapters/storage/maintenance.py, tests/adapters/storage/test_maintenance_repository.py
+- **Commit:** fb222c4
+- **Tests:** Verde. 655 tests pasados con éxito en total.
+- **Notas/Bloqueos:** Ninguno.
+- **Siguiente sugerido:** S8 (Shared mappers).
+
+
 
 
 
