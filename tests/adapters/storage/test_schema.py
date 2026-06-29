@@ -19,7 +19,6 @@ from adapters.storage.schema import (
     list_tables,
 )
 
-
 class StorageSchemaTests(unittest.TestCase):
     def test_open_connection_initializes_greenfield_schema(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
@@ -49,8 +48,8 @@ class StorageSchemaTests(unittest.TestCase):
         with open_connection(":memory:") as connection:
             competition_id = connection.execute(
                 """
-                INSERT INTO competitions(platform, external_id, name, normalized_name)
-                VALUES ('test', 'league-1', 'Test League', 'test league')
+                INSERT INTO competitions(platform, external_id, name, source_url, created_at, updated_at)
+                VALUES ('test', 'league-1', 'Test League', 'http://url', '2026-06-29', '2026-06-29')
                 """
             ).lastrowid
             connection.commit()
@@ -67,45 +66,45 @@ class StorageSchemaTests(unittest.TestCase):
         with open_connection(":memory:") as connection:
             competition_id = connection.execute(
                 """
-                INSERT INTO competitions(platform, external_id, name, normalized_name)
-                VALUES ('test', 'league-1', 'Test League', 'test league')
+                INSERT INTO competitions(platform, external_id, name, source_url, created_at, updated_at)
+                VALUES ('test', 'league-1', 'Test League', 'http://url', '2026-06-29', '2026-06-29')
                 """
             ).lastrowid
             event_id = connection.execute(
                 """
                 INSERT INTO events(
-                    competition_id, platform, competition_external_id,
-                    external_event_id, home, away
+                    competition_id, platform, external_event_id, home, away,
+                    first_seen_at, last_seen_at, created_at, updated_at
                 )
-                VALUES (?, 'test', 'league-1', 'event-1', 'Home', 'Away')
+                VALUES (?, 'test', 'event-1', 'Home', 'Away', '2026', '2026', '2026', '2026')
                 """,
                 (competition_id,),
             ).lastrowid
             connection.execute(
                 """
-                INSERT INTO chat_subscriptions(chat_id, competition_id)
-                VALUES (123, ?)
+                INSERT INTO subscriptions(chat_id, competition_id, created_at, updated_at)
+                VALUES (123, ?, '2026', '2026')
                 """,
                 (competition_id,),
             )
             connection.execute(
                 """
-                INSERT INTO baselines(chat_id, event_id, competition_id)
-                VALUES (123, ?, ?)
-                """,
-                (event_id, competition_id),
-            )
-            connection.execute(
-                """
-                INSERT INTO sent_alerts(chat_id, event_id, alert_type)
-                VALUES (123, ?, 'new_match')
+                INSERT INTO baselines(chat_id, event_id, set_at, updated_at)
+                VALUES (123, ?, '2026', '2026')
                 """,
                 (event_id,),
             )
             connection.execute(
                 """
-                INSERT INTO stats_match_links(event_id, provider, stats_match_id)
-                VALUES (?, 'stats', 'match-1')
+                INSERT INTO sent_alerts(chat_id, event_id, alert_type, sent_at)
+                VALUES (123, ?, 'new_match', '2026')
+                """,
+                (event_id,),
+            )
+            connection.execute(
+                """
+                INSERT INTO stats_match_links(event_id, provider, match_id, method, created_at, updated_at)
+                VALUES (?, 'stats', 'match-1', 'manual', '2026', '2026')
                 """,
                 (event_id,),
             )
@@ -116,7 +115,7 @@ class StorageSchemaTests(unittest.TestCase):
 
             for table in (
                 "events",
-                "chat_subscriptions",
+                "subscriptions",
                 "baselines",
                 "sent_alerts",
                 "stats_match_links",
@@ -133,8 +132,8 @@ class StorageSchemaTests(unittest.TestCase):
                 with transaction(connection) as tx:
                     tx.execute(
                         """
-                        INSERT INTO competitions(platform, external_id, name, normalized_name)
-                        VALUES ('test', 'league-1', 'Test League', 'test league')
+                        INSERT INTO competitions(platform, external_id, name, source_url, created_at, updated_at)
+                        VALUES ('test', 'league-1', 'Test League', 'http://url', '2026-06-29', '2026-06-29')
                         """
                     )
                     raise RuntimeError("boom")
