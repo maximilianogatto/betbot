@@ -333,3 +333,12 @@
 - **Decisión de regulador:** S8 (mappers compartidos) **diferido** — cada adapter ya tiene sus mappers funcionando/testeados; extraerlos ahora toca 7 archivos por un DRY marginal + riesgo. S9 no lo necesita. Se reconsidera si aparece duplicación dolorosa.
 - **Notas/Bloqueos:** Fase 2 de S9 pendiente y delicada (cambia qué storage usa el bot en vivo). Requiere: swappear `bot/application.py` al facade, suite + boot smoke verdes, y RECIÉN entonces borrar `storage/tracking_repository.py`.
 - **Siguiente sugerido:** @claude fase 2 de S9 (swap + smoke + borrar repo viejo). Nadie más toca el composition root ni storage/ hasta cerrar S9.
+
+### 2026-06-29T17:10:00-03:00 · @claude · PR2-E2-S9 (fase 2: swap) · IN_PROGRESS
+- **Qué hice:** Swap del composition root al facade. `bot/application.py`: `SqliteTrackingRepository(...)` → `SqliteStorage()`; quité `seed_if_empty()` (sembraba esquema viejo). Validé: create_application construye, repo inyectado = SqliteStorage, `facade.list_tracked_competitions()` funciona end-to-end (crea schema greenfield), 106 handlers, suite completa verde. El bot ya corre sobre el storage greenfield nuevo.
+- **Por qué:** Hacer que el storage nuevo se USE de verdad. Fase 2 sin borrar el repo viejo todavía (se borra tras validar en VPS).
+- **Archivos:** bot/application.py, migration/TASKS.md
+- **Commit:** (este)
+- **Tests:** suite completa OK; wiring OK; llamada funcional del facade OK.
+- **Notas/Bloqueos:** `storage/tracking_repository.py` queda como código muerto (unused) — NO borrado aún (safety net para el test en VPS). Riesgo residual: si algún comando llama un método consumido que no quedó en los 81 ports, dará AttributeError en runtime (lo cazará el test en VPS). Greenfield: la VPS debe usar DB fresca/vacía (BETBOT_DB_PATH nuevo).
+- **Siguiente sugerido:** Deploy de mig/pr2 a VPS con DB greenfield vacía → probar comandos. Si OK → borrar tracking_repository.py (cierre de S9). Si algún comando rompe → agregar el método faltante al port+adapter.
