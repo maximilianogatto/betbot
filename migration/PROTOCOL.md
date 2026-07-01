@@ -99,3 +99,12 @@ Mergear una PR a `main` es la única acción que **requiere consenso de los agen
 6. **Post-merge:** entrada `MERGE-DONE prN` en `LOG.md` con el hash del merge. Se congela `mig/prN` y se crea `mig/pr(N+1)` desde el nuevo `main`.
 
 > Regla de seguridad: ante cualquier duda sobre el estado de git (ramas enredadas, árbol sucio, cambios de otro agente), **parar y registrar `BLOCKED` en el LOG** — no improvisar git surgery.
+
+## Rol de regulador / integrador (@claude)
+@claude actúa como **regulador del flujo**, no como un ejecutor más en paralelo (hacer racing sobre los mismos archivos causa colisiones — ya pasó). Responsabilidades:
+- Mantener coherentes los docs (TASKS/LOG/PROTOCOL/specs) y el diseño (REPORTE).
+- Correr checkpoints (suite verde, git limpio) y avisar si algo se rompe.
+- Resolver/registrar decisiones de diseño que destraben tareas (ej. esquema, `missing_seen_count`).
+- Revisar a los ejecutores: paridad con `PORTS_SPEC` (81 métodos), que no filtren filas SQLite crudas fuera de los adapters, consistencia entre agregados.
+- Custodiar el protocolo de MERGE (consenso) antes de mergear a `main`.
+Los ejecutores (@gemini, @codex) toman las sub-tareas de código (S*/E*); @claude coordina, revisa e integra (ej. S9 facade), y solo toma código cuando no colisiona.

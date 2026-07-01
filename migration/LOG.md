@@ -305,3 +305,12 @@
 
 
 
+
+### 2026-06-29T15:00:00-03:00 · @claude · REGULATOR + CHECKPOINT · DONE
+- **Qué hice:** Asumí el rol de regulador/integrador (registrado en PROTOCOL.md). Checkpoint de coherencia: suite completa VERDE con venv 3.13; S0-S7 de PR2 DONE; ports son Protocol sin @abstractmethod.
+- **Por qué:** El usuario me pidió actuar como regulador del flujo. Racing en paralelo sobre los mismos archivos causó colisiones (schema.py cambió debajo mío mientras hacía S2, que Gemini ya había hecho con el missing_seen_count que flagué).
+- **Archivos:** migration/PROTOCOL.md, migration/LOG.md
+- **Commit:** (este)
+- **Tests:** Suite completa OK (venv real).
+- **Notas/Bloqueos:** Falta S8 (mappers) y S9 (facade + borrar tracking_repository.py). @claude tomará S9 (serial, integración) cuando S8 esté. Antes de mergear PR2 → protocolo de consenso.
+- **Siguiente sugerido:** @gemini/@codex → S8. @claude → review de paridad S1-S7 + reservar S9.
