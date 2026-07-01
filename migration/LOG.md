@@ -323,3 +323,13 @@
 - **Tests:** test nuevo 5/5 OK; paridad ports→adapters COMPLETA; suite completa OK.
 - **Notas/Bloqueos:** Ninguno. Todos los ports de storage tienen adapter. Listo para S8 (mappers, opcional) y S9 (facade).
 - **Siguiente sugerido:** S9 (facade) ya no tiene gaps de adapters. @claude se lo reserva (serial, integración).
+
+### 2026-06-29T16:20:00-03:00 · @claude · PR2-E2-S9 (facade, fase 1) · IN_PROGRESS
+- **Qué hice:** Construí el facade `SqliteStorage` en `adapters/storage/__init__.py` por herencia múltiple de los 8 adapters (son stateless → sin conflicto de estado; el MRO reúne todos los métodos, sin solapes). Test `test_facade.py`: instancia OK (sin conflicto de metaclase de los Protocols), expone todos los métodos de todos los ports, y delega end-to-end. Suite completa verde.
+- **Por qué:** S9 hace que el storage nuevo se USE. Fase 1 = construir el facade SIN swappear todavía (bajo riesgo). El swap del composition root + borrar `tracking_repository.py` es fase 2, con checkpoint fuerte.
+- **Archivos:** adapters/storage/__init__.py, tests/adapters/storage/test_facade.py, migration/TASKS.md
+- **Commit:** (este)
+- **Tests:** facade 2/2 OK; suite completa OK.
+- **Decisión de regulador:** S8 (mappers compartidos) **diferido** — cada adapter ya tiene sus mappers funcionando/testeados; extraerlos ahora toca 7 archivos por un DRY marginal + riesgo. S9 no lo necesita. Se reconsidera si aparece duplicación dolorosa.
+- **Notas/Bloqueos:** Fase 2 de S9 pendiente y delicada (cambia qué storage usa el bot en vivo). Requiere: swappear `bot/application.py` al facade, suite + boot smoke verdes, y RECIÉN entonces borrar `storage/tracking_repository.py`.
+- **Siguiente sugerido:** @claude fase 2 de S9 (swap + smoke + borrar repo viejo). Nadie más toca el composition root ni storage/ hasta cerrar S9.
