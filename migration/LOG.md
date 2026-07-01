@@ -314,3 +314,12 @@
 - **Tests:** Suite completa OK (venv real).
 - **Notas/Bloqueos:** Falta S8 (mappers) y S9 (facade + borrar tracking_repository.py). @claude tomará S9 (serial, integración) cuando S8 esté. Antes de mergear PR2 → protocolo de consenso.
 - **Siguiente sugerido:** @gemini/@codex → S8. @claude → review de paridad S1-S7 + reservar S9.
+
+### 2026-06-29T15:40:00-03:00 · @claude · PR2-E2-S3B (paridad gap) · DONE
+- **Qué hice:** Review de paridad ports→adapters (introspección) detectó que **ChatSettingsPort no estaba implementado en ningún adapter** (get/set/clear_chat_timezone). Lo implementé: `adapters/storage/chat_settings.py` (SQLiteChatSettingsAdapter sobre tabla chat_settings) + test. Re-corrí paridad → COMPLETA. Suite entera verde.
+- **Por qué:** Gap real: S1-S7 cubrieron 7 agregados pero ChatSettings (mi PORTS_SPEC lo dejó ambiguo "S2/S3") quedó sin dueño. El Protocol sin @abstractmethod no lo cazaba en runtime; el review de regulador sí. Sin esto, el facade (S9) no podría implementar todos los ports y el timezone del bot rompería.
+- **Archivos:** adapters/storage/chat_settings.py, tests/adapters/storage/test_chat_settings_repository.py, migration/TASKS.md
+- **Commit:** (este)
+- **Tests:** test nuevo 5/5 OK; paridad ports→adapters COMPLETA; suite completa OK.
+- **Notas/Bloqueos:** Ninguno. Todos los ports de storage tienen adapter. Listo para S8 (mappers, opcional) y S9 (facade).
+- **Siguiente sugerido:** S9 (facade) ya no tiene gaps de adapters. @claude se lo reserva (serial, integración).
