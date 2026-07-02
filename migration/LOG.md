@@ -362,3 +362,16 @@
 - **Tests:** en mig/pr2 tras sync: core 174 OK, bot 135 OK, adapters 44 OK. Imports OK.
 - **Notas/Bloqueos:** El blocklist quedó en el legacy (handlers lo usan por el global); el learner (service/facade) tiene `get_merge_exceptions` guardado con try/except → devuelve vacío hasta re-portarlo al greenfield en S9b.
 - **Siguiente sugerido:** PR2-E2-S9a — sacar el global legacy de `bot/alerts.py` y relocalizar los tipos de dominio compartidos.
+
+### 2026-07-02 · @claude · S9a + S9b + S9c-1 (migración por capas) · DONE
+- **Qué hice:** Migré por capas los consumidores del storage legacy al facade greenfield. Resultado: el RUNTIME de prod ya NO corre con dos esquemas.
+  - **S9a-1:** unifiqué las 15 dataclasses de dominio (estaban duplicadas idénticas legacy⟷core.models) → el legacy re-exporta de `core.models` (−447 líneas). Ahora legacy y greenfield devuelven el MISMO tipo.
+  - **S9a-2:** accessor `get_storage()` (singleton del facade) en `adapters/storage/__init__.py`; `bot/alerts.py` al facade + tipos de core.models.
+  - **S9b-1:** `bot/jobs/{tasks,legacy}.py` + `core/timezones.py` a `get_storage()`.
+  - **S9b-2:** re-porté el blocklist (`unified_merge_exceptions`) al schema greenfield + 3 métodos en el competitions adapter (get/block/clear) + tests.
+  - **S9c-1:** `bot/handlers.py` (14 métodos del global → `get_storage()`, tipos → core.models, 0 refs a storage.tracking_repository); `monitors/models.py` tipos; fallback `default_tracking_repository` → `get_storage()` en tracking/stats/live_watch.
+- **Por qué:** cerrar la incoherencia de dos esquemas (services greenfield, handlers legacy) sin big-bang.
+- **Tests:** suite completa 673 OK en cada paso.
+- **Commits:** 64cc7cc, f4caf60, 97613c0, e205a57, 2388712 (pusheados a origin/mig/pr2).
+- **Notas/Bloqueos:** Falta SOLO S9c-2 (borrar el archivo legacy). Bloqueado por: 4 type-hints `SqliteTrackingRepository` en `monitors/*` + **22 archivos de test** que construyen `SqliteTrackingRepository`. Es un pase propio (parte = borrar tests legacy redundantes ya cubiertos por `tests/adapters/storage/*`, parte = migrar al facade). El blocklist en runtime: handlers escriben al greenfield (get_storage) y el learner (facade) lee del greenfield → coherente en prod.
+- **Siguiente sugerido:** S9c-2 (migrar/limpiar los 22 tests + type-hints + borrar legacy) o arrancar E3 (renderers) sobre un runtime ya coherente.
