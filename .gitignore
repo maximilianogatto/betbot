@@ -13,6 +13,7 @@ sandbox/.env
 sandbox/vendor/*
 !sandbox/vendor/.gitkeep
 salida.json
+:memory:
 
 # Sportradar headless bootstrap profile (Akamai cookies cache)
 stats_providers/sportradar_http/engine/reports/chrome_profile/

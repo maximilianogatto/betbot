@@ -351,3 +351,14 @@
 - **Tests:** suite local OK (fixture presente → corre). En VPS: los 3 se saltearán → verde.
 - **Notas/Bloqueos:** Confirma que la migración de storage NO rompió nada en la VPS. Falta: boot del bot en VPS (DB greenfield) + probar comandos (ahí se caza cualquier método de facade faltante).
 - **Siguiente sugerido:** Re-pull en VPS, re-correr suite (verde), luego ./run.sh con DB greenfield y probar comandos.
+
+### 2026-07-02 · @claude · SYNC main→mig/pr2 + REABRIR S9 · DONE (sync) / BLOCKED (S9)
+- **Qué hice:** (1) Mergeé `origin/main` en `mig/pr2` para absorber 2 hotfixes de prod que faltaban (blocklist de auto-merge `unified_merge_exceptions` + polling in-play 20s/fast-path de alertas). Merge limpio (ort), `application.py` auto-resuelto bien (facade + params nuevos, sin `seed_if_empty`). (2) Audité el estado real de S9 y lo REABRÍ: el swap NO estaba "casi listo".
+- **Por qué:** main sigue recibiendo hotfixes → la rama larga divergía. Al sincronizar, encontré que S9 es solo parcial.
+- **Hallazgo (importante):** El facade greenfield SOLO está inyectado en los **services** (composition root). ~40 sitios siguen usando el **global legacy** `tracking_repository` (`bot/alerts.py`, `bot/handlers.py` ×11, `bot/jobs/*`, `monitors/change_detection.py`, `core/timezones.py`, + tipos compartidos importados del módulo legacy). El global legacy (`storage/tracking_repository.py:6108`) crea el esquema viejo (`active_events`/`tracked_competitions`). Runtime corre con DOS esquemas a la vez → services usan `events`/`competitions`, handlers `active_events`/`tracked_competitions`. Incoherente. Borrar el legacy rompe ~40 imports.
+- **Decisión (con el usuario):** Plan B — migración por capas. Sync primero (hecho), después mover consumidores al facade capa por capa: S9a alerts+tipos → S9b jobs+timezones (re-portar blocklist al greenfield) → S9c handlers+change_detection → recién ahí borrar el legacy.
+- **Archivos:** merge de main (`bot/*`, `monitors/*`, `tests/*`, `.env.example`); `migration/TASKS.md` (S9 → BLOCKED + subtareas S9a/b/c); limpié cruft `:memory:` (sqlite accidental) + `.gitignore`.
+- **Commit:** merge (ort) + (este de docs).
+- **Tests:** en mig/pr2 tras sync: core 174 OK, bot 135 OK, adapters 44 OK. Imports OK.
+- **Notas/Bloqueos:** El blocklist quedó en el legacy (handlers lo usan por el global); el learner (service/facade) tiene `get_merge_exceptions` guardado con try/except → devuelve vacío hasta re-portarlo al greenfield en S9b.
+- **Siguiente sugerido:** PR2-E2-S9a — sacar el global legacy de `bot/alerts.py` y relocalizar los tipos de dominio compartidos.
