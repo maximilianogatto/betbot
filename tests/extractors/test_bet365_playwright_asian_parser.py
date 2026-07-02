@@ -18,6 +18,13 @@ ASIAN_FIXTURE = (
 )
 
 
+_FIXTURES_AVAILABLE = LEAGUE_FIXTURE.exists() and ASIAN_FIXTURE.exists()
+
+
+@unittest.skipUnless(
+    _FIXTURES_AVAILABLE,
+    "Fixtures de captura Bet365 no disponibles (sandbox/ no viaja al clonar; solo local).",
+)
 class Bet365PlaywrightAsianParserTests(unittest.TestCase):
     def test_parse_league_payload_extracts_matches_and_1x2(self) -> None:
         parsed = parse_league_payload(

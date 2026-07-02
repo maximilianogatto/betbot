@@ -342,3 +342,12 @@
 - **Tests:** suite completa OK; wiring OK; llamada funcional del facade OK.
 - **Notas/Bloqueos:** `storage/tracking_repository.py` queda como código muerto (unused) — NO borrado aún (safety net para el test en VPS). Riesgo residual: si algún comando llama un método consumido que no quedó en los 81 ports, dará AttributeError en runtime (lo cazará el test en VPS). Greenfield: la VPS debe usar DB fresca/vacía (BETBOT_DB_PATH nuevo).
 - **Siguiente sugerido:** Deploy de mig/pr2 a VPS con DB greenfield vacía → probar comandos. Si OK → borrar tracking_repository.py (cierre de S9). Si algún comando rompe → agregar el método faltante al port+adapter.
+
+### 2026-06-29T18:00:00-03:00 · @claude · FIX test portability (VPS) · DONE
+- **Qué hice:** El test suite en la VPS dio 3 ERRORES (FileNotFoundError) en test_bet365_playwright_asian_parser.py: lee fixtures de captura bajo `sandbox/bet365/...` que NO están en git (sandbox gitignoreado, no viaja al clonar). NO relacionado con el storage swap. Agregué `@unittest.skipUnless(fixtures_exist, ...)` a la clase → se saltea limpio donde no está la captura (VPS) y corre donde sí (local).
+- **Por qué:** Test dependiente de datos locales de captura. En la VPS (clon limpio) faltan → deben saltearse, no fallar. Los otros 659 tests (incluido todo storage/services) pasaron en la VPS → el swap greenfield está validado en el entorno VPS.
+- **Archivos:** tests/extractors/test_bet365_playwright_asian_parser.py
+- **Commit:** (este)
+- **Tests:** suite local OK (fixture presente → corre). En VPS: los 3 se saltearán → verde.
+- **Notas/Bloqueos:** Confirma que la migración de storage NO rompió nada en la VPS. Falta: boot del bot en VPS (DB greenfield) + probar comandos (ahí se caza cualquier método de facade faltante).
+- **Siguiente sugerido:** Re-pull en VPS, re-correr suite (verde), luego ./run.sh con DB greenfield y probar comandos.
