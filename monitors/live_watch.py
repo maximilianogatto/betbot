@@ -25,11 +25,11 @@ from core.models import LiveEventSnapshot
 from core.timezones import default_timezone, resolve_chat_timezone
 from core.registry import ExtractorRegistry, extractor_registry as global_extractor_registry
 from core.league_naming import team_name_similarity, normalize_team_name
+from adapters.storage import get_storage
 from storage.tracking_repository import (
     LiveWatchEntry,
     LiveWatchSettings,
     SqliteTrackingRepository,
-    tracking_repository as default_tracking_repository,
 )
 
 logger = logging.getLogger(__name__)
@@ -161,7 +161,7 @@ class LiveWatchService:
         repository: SqliteTrackingRepository | None = None,
     ) -> None:
         self.extractor_registry = extractor_registry or global_extractor_registry
-        self.repository = repository or default_tracking_repository
+        self.repository = repository or get_storage()
         # Prematch changes slowly; cache it so the (fast) live poll doesn't re-pull
         # the whole-day lists every cycle (lighter for a VPS).
         self._prematch_cache: list[LiveEventSnapshot] | None = None

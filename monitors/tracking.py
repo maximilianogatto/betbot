@@ -50,6 +50,7 @@ from monitors.models import (
 )
 from core.models import CompetitionExtraction, EventSnapshot, PlatformDescriptor
 from core.registry import ExtractorRegistry, extractor_registry as global_extractor_registry
+from adapters.storage import get_storage
 from storage.tracking_repository import (
     ActiveEventRecord,
     ActiveEventUpsert,
@@ -59,7 +60,6 @@ from storage.tracking_repository import (
     SqliteTrackingRepository,
     TrackedCompetition,
     TrackedCompetitionSubscription,
-    tracking_repository as default_tracking_repository,
 )
 
 logger = logging.getLogger(__name__)
@@ -165,7 +165,7 @@ class TrackingService:
             float(odds_fast_path_percent) if odds_fast_path_percent else None
         )
         self.extractor_registry = extractor_registry or global_extractor_registry
-        self.repository = repository or default_tracking_repository
+        self.repository = repository or get_storage()
         self.max_parallel_refreshes = max(1, max_parallel_refreshes)
         self.remove_missing_after_cycles = max(1, remove_missing_after_cycles)
         self.odds_change_confirmation_refreshes = max(1, odds_change_confirmation_refreshes)
