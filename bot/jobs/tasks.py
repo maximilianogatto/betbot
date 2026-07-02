@@ -182,7 +182,8 @@ async def _orchestrated_tracking_monitor(application: Application) -> None:
 
 
 async def _orchestrated_db_pruning(application: Application) -> None:
-    from storage.tracking_repository import tracking_repository
+    from adapters.storage import get_storage
+    tracking_repository = get_storage()
     logger.info("Starting database pruning cycle...")
     stats = await asyncio.to_thread(
         tracking_repository.prune_old_data,
@@ -212,7 +213,8 @@ async def _orchestrated_stats_prefetch(application: Application) -> None:
     if not isinstance(stats_service, StatsService) or not settings:
         return
     summary = await stats_service.warm_tracked_leagues(ttl_seconds=settings.stats_prefetch_ttl_seconds)
-    from storage.tracking_repository import tracking_repository
+    from adapters.storage import get_storage
+    tracking_repository = get_storage()
     purged = await asyncio.to_thread(tracking_repository.purge_expired_stats_payloads)
     logger.info(
         "Stats prefetch cycle finished leagues=%s reports=%s skipped=%s errors=%s purged_cache=%s",
@@ -296,7 +298,8 @@ async def _orchestrated_sheet_import(application: Application) -> None:
 
 async def _orchestrated_peak_digest(application: Application) -> None:
     from monitors.special_peak import build_peak_scores, render_peak_digest
-    from storage.tracking_repository import tracking_repository
+    from adapters.storage import get_storage
+    tracking_repository = get_storage()
     
     try:
         chat_ids = tracking_repository.list_peak_digest_chats()

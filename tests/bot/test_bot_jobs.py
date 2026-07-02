@@ -66,13 +66,14 @@ class TrackingMonitorLoopTests(unittest.IsolatedAsyncioTestCase):
 
 
 class DbPruningJobTests(unittest.IsolatedAsyncioTestCase):
-    @patch("storage.tracking_repository.tracking_repository")
+    @patch("adapters.storage.get_storage")
     @patch("bot.jobs.tasks.datetime")
-    async def test_orchestrated_pruning_runs_vacuum_on_sunday(self, mock_datetime, mock_repo) -> None:
+    async def test_orchestrated_pruning_runs_vacuum_on_sunday(self, mock_datetime, mock_get_storage) -> None:
         # Mock weekday() == 6 (Sunday)
         mock_now = mock_datetime.now.return_value
         mock_now.weekday.return_value = 6
         
+        mock_repo = mock_get_storage.return_value
         mock_repo.prune_old_data = unittest.mock.Mock(return_value={"pruned": 5})
         mock_repo.run_db_vacuum = unittest.mock.Mock(return_value=True)
 
@@ -82,13 +83,14 @@ class DbPruningJobTests(unittest.IsolatedAsyncioTestCase):
         mock_repo.prune_old_data.assert_called_once_with(days_threshold=14, sent_alerts_days=30, small_changes_days=7)
         mock_repo.run_db_vacuum.assert_called_once()
 
-    @patch("storage.tracking_repository.tracking_repository")
+    @patch("adapters.storage.get_storage")
     @patch("bot.jobs.tasks.datetime")
-    async def test_orchestrated_pruning_does_not_run_vacuum_on_monday(self, mock_datetime, mock_repo) -> None:
+    async def test_orchestrated_pruning_does_not_run_vacuum_on_monday(self, mock_datetime, mock_get_storage) -> None:
         # Mock weekday() == 0 (Monday)
         mock_now = mock_datetime.now.return_value
         mock_now.weekday.return_value = 0
         
+        mock_repo = mock_get_storage.return_value
         mock_repo.prune_old_data = unittest.mock.Mock(return_value={"pruned": 5})
         mock_repo.run_db_vacuum = unittest.mock.Mock()
 
@@ -98,13 +100,14 @@ class DbPruningJobTests(unittest.IsolatedAsyncioTestCase):
         mock_repo.prune_old_data.assert_called_once_with(days_threshold=14, sent_alerts_days=30, small_changes_days=7)
         mock_repo.run_db_vacuum.assert_not_called()
 
-    @patch("storage.tracking_repository.tracking_repository")
+    @patch("adapters.storage.get_storage")
     @patch("bot.jobs.legacy.datetime")
-    async def test_legacy_pruning_runs_vacuum_on_sunday(self, mock_datetime, mock_repo) -> None:
+    async def test_legacy_pruning_runs_vacuum_on_sunday(self, mock_datetime, mock_get_storage) -> None:
         # Mock weekday() == 6 (Sunday)
         mock_now = mock_datetime.now.return_value
         mock_now.weekday.return_value = 6
         
+        mock_repo = mock_get_storage.return_value
         mock_repo.prune_old_data = unittest.mock.Mock(return_value={"pruned": 5})
         mock_repo.run_db_vacuum = unittest.mock.Mock(return_value=True)
 
@@ -117,13 +120,14 @@ class DbPruningJobTests(unittest.IsolatedAsyncioTestCase):
         mock_repo.prune_old_data.assert_called_once_with(days_threshold=14, sent_alerts_days=30, small_changes_days=7)
         mock_repo.run_db_vacuum.assert_called_once()
 
-    @patch("storage.tracking_repository.tracking_repository")
+    @patch("adapters.storage.get_storage")
     @patch("bot.jobs.legacy.datetime")
-    async def test_legacy_pruning_does_not_run_vacuum_on_monday(self, mock_datetime, mock_repo) -> None:
+    async def test_legacy_pruning_does_not_run_vacuum_on_monday(self, mock_datetime, mock_get_storage) -> None:
         # Mock weekday() == 0 (Monday)
         mock_now = mock_datetime.now.return_value
         mock_now.weekday.return_value = 0
         
+        mock_repo = mock_get_storage.return_value
         mock_repo.prune_old_data = unittest.mock.Mock(return_value={"pruned": 5})
         mock_repo.run_db_vacuum = unittest.mock.Mock()
 

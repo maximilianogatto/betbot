@@ -377,7 +377,8 @@ async def _stats_prefetch_loop(
     while True:
         try:
             summary = await stats_service.warm_tracked_leagues(ttl_seconds=ttl_seconds)
-            from storage.tracking_repository import tracking_repository
+            from adapters.storage import get_storage
+            tracking_repository = get_storage()
 
             purged = await asyncio.to_thread(tracking_repository.purge_expired_stats_payloads)
             logger.info(
@@ -447,7 +448,8 @@ def _seconds_until_arg_hour(hour_arg: int) -> float:
 async def _peak_digest_loop(application: Application, *, hour_arg: int) -> None:
     """Push the special-league peak digest to subscribed chats once per day."""
     from monitors.special_peak import build_peak_scores, render_peak_digest
-    from storage.tracking_repository import tracking_repository
+    from adapters.storage import get_storage
+    tracking_repository = get_storage()
 
     while True:
         try:
@@ -637,7 +639,8 @@ async def _db_pruning_loop(
     days_threshold: int,
 ) -> None:
     """Prune database old records periodically."""
-    from storage.tracking_repository import tracking_repository
+    from adapters.storage import get_storage
+    tracking_repository = get_storage()
 
     while True:
         try:

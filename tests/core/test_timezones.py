@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -53,13 +54,24 @@ class TimezoneHelpersTests(unittest.TestCase):
 
 class ChatTimezonePersistenceTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.old_db_path = tracking_repository_module.DB_FILE_PATH
+        # resolve_chat_timezone() lee vía el facade greenfield (get_storage()), así
+        # que el test escribe/lee por el MISMO facade sobre una DB greenfield temporal.
+        from adapters.storage import SqliteStorage
+        from adapters.storage.connection import open_connection
+        from adapters.storage.schema import initialize_schema
+
         self.tmp = tempfile.TemporaryDirectory()
-        tracking_repository_module.DB_FILE_PATH = Path(self.tmp.name) / "tracking.sqlite3"
-        self.repo = tracking_repository_module.SqliteTrackingRepository()
+        self._prev_db = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp.name) / "tz.sqlite3")
+        with open_connection() as conn:
+            initialize_schema(conn)
+        self.repo = SqliteStorage()
 
     def tearDown(self) -> None:
-        tracking_repository_module.DB_FILE_PATH = self.old_db_path
+        if self._prev_db is None:
+            os.environ.pop("BETBOT_DB_PATH", None)
+        else:
+            os.environ["BETBOT_DB_PATH"] = self._prev_db
         self.tmp.cleanup()
 
     def test_set_get_clear_roundtrip(self) -> None:
