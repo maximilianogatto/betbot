@@ -9,7 +9,7 @@ import json
 from typing import TYPE_CHECKING
 
 from core.timezones import current_display_timezone
-from storage.tracking_repository import (
+from core.models import (
     ActiveEventRecord,
     SmallChangeRecord,
     TrackedCompetition,
@@ -47,7 +47,8 @@ def build_new_event_alert_message(
     lines.extend(_build_match_block_lines(match))
 
     # Cross-platform odds comparison if available
-    from storage.tracking_repository import tracking_repository
+    from adapters.storage import get_storage
+    tracking_repository = get_storage()
     other_matches = []
     if tracked_league.unified_competition_id is not None:
         all_active = tracking_repository.get_active_events_for_unified_competition(
@@ -91,7 +92,8 @@ def build_grouped_new_event_alert_message(
         f"📋 <b>Nuevos partidos:</b> {total_matches}",
     ]
 
-    from storage.tracking_repository import tracking_repository
+    from adapters.storage import get_storage
+    tracking_repository = get_storage()
 
     visible_matches = matches if max_items is None else matches[:max_items]
     for match in visible_matches:
@@ -233,7 +235,8 @@ def build_match_reminder_alert_message(
     match: ActiveEventRecord,
 ) -> str:
     """Build an HTML-formatted Telegram reminder sent 5 minutes before kickoff, comparing other bookmakers."""
-    from storage.tracking_repository import tracking_repository
+    from adapters.storage import get_storage
+    tracking_repository = get_storage()
     other_matches = []
     if tracked_league.unified_competition_id is not None:
         all_active = tracking_repository.get_active_events_for_unified_competition(
@@ -391,7 +394,8 @@ def build_comparison_match_card_message(
     if not matches:
         return ""
         
-    from storage.tracking_repository import tracking_repository
+    from adapters.storage import get_storage
+    tracking_repository = get_storage()
 
     representative = matches[0]
     lines = [
@@ -482,7 +486,8 @@ def build_grouped_event_url_message(matches: Sequence[ActiveEventRecord]) -> str
     if not matches:
         return ""
 
-    from storage.tracking_repository import tracking_repository
+    from adapters.storage import get_storage
+    tracking_repository = get_storage()
 
     representative = matches[0]
     lines = [f"⚽ <b>{escape(representative.home)} vs {escape(representative.away)}</b>"]

@@ -35,8 +35,27 @@ class SqliteStorage(
     pass
 
 
+_storage: SqliteStorage | None = None
+
+
+def get_storage() -> SqliteStorage:
+    """Devuelve el facade de storage del proceso (singleton lazy).
+
+    Bridge para migrar los consumidores legacy (que usaban el global
+    `storage.tracking_repository.tracking_repository`) al storage greenfield sin
+    cambiar firmas función por función. El facade es stateless (abre conexión por
+    método), así que un singleton por proceso alcanza.
+    """
+
+    global _storage
+    if _storage is None:
+        _storage = SqliteStorage()
+    return _storage
+
+
 __all__ = [
     "SqliteStorage",
+    "get_storage",
     "SQLiteCompetitionsAdapter",
     "SQLiteEventsAdapter",
     "SQLiteSubscriptionsAdapter",
