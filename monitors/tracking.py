@@ -91,14 +91,25 @@ def _parse_iso_utc(raw: str | None) -> datetime | None:
     return parsed.astimezone(timezone.utc)
 
 
-def _refresh_interval_seconds(now: datetime, earliest_kickoff: datetime | None) -> float:
-    """Minimum seconds between refreshes given the league's next kickoff."""
+_DEFAULT_IN_PLAY_REFRESH_SECONDS = 20.0
+
+
+def _refresh_interval_seconds(
+    now: datetime,
+    earliest_kickoff: datetime | None,
+    in_play_seconds: float = _DEFAULT_IN_PLAY_REFRESH_SECONDS,
+) -> float:
+    """Minimum seconds between refreshes given the league's next kickoff.
+
+    ``in_play_seconds`` gobierna el tier caliente (partido en vivo o a <=15 min del
+    kickoff): es donde queremos máxima reactividad para detectar goles rápido.
+    """
 
     if earliest_kickoff is None:
         return 3600.0  # no upcoming match: check hourly
     delta = (earliest_kickoff - now).total_seconds()
     if delta <= 900:           # in-play or within 15 min of kickoff
-        return 60.0
+        return in_play_seconds
     if delta <= 3 * 3600:      # within 3 h
         return 120.0
     if delta <= 24 * 3600:     # within a day
@@ -107,13 +118,16 @@ def _refresh_interval_seconds(now: datetime, earliest_kickoff: datetime | None) 
 
 
 def _is_refresh_due(
-    now: datetime, last_synced: datetime | None, earliest_kickoff: datetime | None
+    now: datetime,
+    last_synced: datetime | None,
+    earliest_kickoff: datetime | None,
+    in_play_seconds: float = _DEFAULT_IN_PLAY_REFRESH_SECONDS,
 ) -> bool:
     """True when a league should be refreshed this cycle (tier-based)."""
 
     if last_synced is None:
         return True
-    interval = _refresh_interval_seconds(now, earliest_kickoff)
+    interval = _refresh_interval_seconds(now, earliest_kickoff, in_play_seconds)
     return (now - last_synced).total_seconds() >= interval - _REFRESH_DUE_GRACE_SECONDS
 
 
@@ -143,7 +157,13 @@ class TrackingService:
         odds_change_confirmation_refreshes: int = 2,
         odds_flap_window_minutes: int = 10,
         odds_flap_epsilon: float = 0.01,
+        live_refresh_seconds: float = _DEFAULT_IN_PLAY_REFRESH_SECONDS,
+        odds_fast_path_percent: float | None = None,
     ) -> None:
+        self.live_refresh_seconds = float(live_refresh_seconds)
+        self.odds_fast_path_percent = (
+            float(odds_fast_path_percent) if odds_fast_path_percent else None
+        )
         self.extractor_registry = extractor_registry or global_extractor_registry
         self.repository = repository or default_tracking_repository
         self.max_parallel_refreshes = max(1, max_parallel_refreshes)
@@ -1156,7 +1176,10 @@ class TrackingService:
             c.id
             for c in competitions
             if _is_refresh_due(
-                now, _parse_iso_utc(c.last_synced_at), _parse_iso_utc(kickoffs.get(c.id))
+                now,
+                _parse_iso_utc(c.last_synced_at),
+                _parse_iso_utc(kickoffs.get(c.id)),
+                self.live_refresh_seconds,
             )
         ]
         if len(due_ids) != len(competitions):
@@ -1327,6 +1350,7 @@ class TrackingService:
                     confirmation_refreshes=self.odds_change_confirmation_refreshes,
                     flap_window_minutes=self.odds_flap_window_minutes,
                     flap_epsilon=self.odds_flap_epsilon,
+                    fast_path_percent=self.odds_fast_path_percent,
                 )
 
                 if alert is not None and subscription.notify_odds_changes:

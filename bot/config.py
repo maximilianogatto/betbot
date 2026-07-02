@@ -17,6 +17,7 @@ class Settings:
     telegram_bot_token: str
     log_level: str = "INFO"
     tracking_refresh_interval_seconds: int = 120
+    tracking_live_refresh_seconds: int = 20
     tracking_max_parallel_refreshes: int = 3
     extractor_browser_enabled: bool = True
     extractor_max_parallel_competitions: int = 1
@@ -44,6 +45,7 @@ class Settings:
     odds_change_confirmation_refreshes: int = 2
     odds_flap_window_minutes: int = 10
     odds_flap_epsilon: float = 0.01
+    odds_fast_path_percent: float = 40.0
     enable_monitoring: bool = True
     monitor_interval_seconds: int = 60
     monitor_log_to_file: bool = False
@@ -98,6 +100,10 @@ def load_settings() -> Settings:
             default="120",
         ),
         variable_name="TRACKING_REFRESH_INTERVAL_SECONDS",
+    )
+    tracking_live_refresh_seconds = _parse_positive_int(
+        os.getenv("TRACKING_LIVE_REFRESH_SECONDS", "20"),
+        variable_name="TRACKING_LIVE_REFRESH_SECONDS",
     )
     tracking_max_parallel_refreshes = _parse_positive_int(
         _first_env_value(
@@ -216,6 +222,10 @@ def load_settings() -> Settings:
         os.getenv("ODDS_FLAP_EPSILON", "0.01"),
         variable_name="ODDS_FLAP_EPSILON",
     )
+    odds_fast_path_percent = _parse_positive_float(
+        os.getenv("ODDS_FAST_PATH_PERCENT", "40.0"),
+        variable_name="ODDS_FAST_PATH_PERCENT",
+    )
     enable_monitoring = _parse_bool(os.getenv("ENABLE_MONITORING", "true"))
     monitor_interval_seconds = _parse_positive_int(
         os.getenv("MONITOR_INTERVAL_SECONDS", "60"),
@@ -295,9 +305,11 @@ def load_settings() -> Settings:
         tracking_default_change_threshold_percent=tracking_default_change_threshold_percent,
         tracking_default_notify_odds_changes=tracking_default_notify_odds_changes,
         tracking_remove_missing_after_cycles=tracking_remove_missing_after_cycles,
+        tracking_live_refresh_seconds=tracking_live_refresh_seconds,
         odds_change_confirmation_refreshes=odds_change_confirmation_refreshes,
         odds_flap_window_minutes=odds_flap_window_minutes,
         odds_flap_epsilon=odds_flap_epsilon,
+        odds_fast_path_percent=odds_fast_path_percent,
         enable_monitoring=enable_monitoring,
         monitor_interval_seconds=monitor_interval_seconds,
         monitor_log_to_file=monitor_log_to_file,

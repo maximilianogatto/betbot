@@ -36,8 +36,16 @@ def evaluate_subscription_odds_change(
     confirmation_refreshes: int = 2,
     flap_window_minutes: int = 10,
     flap_epsilon: float = 0.01,
+    fast_path_percent: float | None = None,
 ) -> SubscriptionOddsAlert | None:
-    """Evaluate one global odds change against a specific chat baseline."""
+    """Evaluate one global odds change against a specific chat baseline.
+
+    ``fast_path_percent``: si un cambio supera este % (en puntos porcentuales) y no
+    está flapeando, se confirma en el PRIMER sighting en vez de esperar
+    ``confirmation_refreshes`` ciclos. Pensado para saltos grandes tipo gol, donde
+    el movimiento es real y permanente y no queremos perder un ciclo confirmándolo.
+    ``None`` desactiva el fast-path (comportamiento clásico).
+    """
 
     baseline = repository.get_event_baseline(
         subscription.telegram_chat_id,
@@ -118,7 +126,14 @@ def evaluate_subscription_odds_change(
         },
     }
 
-    if pending_seen_count < max(1, confirmation_refreshes):
+    is_big_move = (
+        fast_path_percent is not None
+        and max_percent_change is not None
+        and max_percent_change >= fast_path_percent
+    )
+    fast_path = is_big_move and not is_flapping
+
+    if pending_seen_count < max(1, confirmation_refreshes) and not fast_path:
         repository.upsert_event_baseline(
             subscription.telegram_chat_id,
             tracked_league.id,

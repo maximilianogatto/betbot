@@ -48,6 +48,8 @@ def create_application(settings: Settings) -> Application:
         odds_change_confirmation_refreshes=settings.odds_change_confirmation_refreshes,
         odds_flap_window_minutes=settings.odds_flap_window_minutes,
         odds_flap_epsilon=settings.odds_flap_epsilon,
+        live_refresh_seconds=settings.tracking_live_refresh_seconds,
+        odds_fast_path_percent=settings.odds_fast_path_percent,
     )
     stats_service = StatsService(
         provider_registry=stats_provider_registry,
