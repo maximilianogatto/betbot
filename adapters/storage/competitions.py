@@ -646,6 +646,85 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
             _propagate_unified_subscriptions(conn, target_unified_id)
             conn.execute("DELETE FROM unified_competitions WHERE id = ?", (source_unified_id,))
 
+    # --- Blocklist de auto-merge (unified_merge_exceptions) ---
+    @staticmethod
+    def _canonical_merge_pair(
+        platform_a: str, external_id_a: str, platform_b: str, external_id_b: str
+    ) -> tuple[str, str, str, str]:
+        """Par en orden canónico (a<=b), independiente del orden de los argumentos."""
+        a = (str(platform_a), str(external_id_a))
+        b = (str(platform_b), str(external_id_b))
+        return (*a, *b) if a <= b else (*b, *a)
+
+    def get_merge_exceptions(self) -> set[tuple[str, str, str, str]]:
+        """Pares (plataforma, external_id) bloqueados, como 4-tuplas canónicas."""
+        with open_connection() as conn:
+            rows = conn.execute(
+                "SELECT platform_a, external_id_a, platform_b, external_id_b "
+                "FROM unified_merge_exceptions"
+            ).fetchall()
+        return {
+            (r["platform_a"], r["external_id_a"], r["platform_b"], r["external_id_b"])
+            for r in rows
+        }
+
+    def block_unlinked_competition(self, tracked_id: int, unified_id: int) -> int:
+        """Al separar una competencia de una liga, bloquea su re-merge contra CADA
+        miembro que quedaba (un par por miembro). Devuelve cuántos pares insertó."""
+        with open_connection() as conn:
+            target = conn.execute(
+                "SELECT platform, external_id FROM competitions WHERE id = ?", (tracked_id,)
+            ).fetchone()
+            if target is None:
+                return 0
+            members = conn.execute(
+                "SELECT platform, external_id FROM competitions "
+                "WHERE unified_competition_id = ? AND id != ?",
+                (unified_id, tracked_id),
+            ).fetchall()
+            now_iso = datetime.now(timezone.utc).isoformat()
+            inserted = 0
+            for m in members:
+                pa, xa, pb, xb = self._canonical_merge_pair(
+                    target["platform"], target["external_id"], m["platform"], m["external_id"]
+                )
+                if (pa, xa) == (pb, xb):
+                    continue
+                cur = conn.execute(
+                    "INSERT OR IGNORE INTO unified_merge_exceptions "
+                    "(platform_a, external_id_a, platform_b, external_id_b, created_at) "
+                    "VALUES (?, ?, ?, ?, ?)",
+                    (pa, xa, pb, xb, now_iso),
+                )
+                inserted += cur.rowcount
+        return inserted
+
+    def clear_merge_exceptions_between(self, unified_a_id: int, unified_b_id: int) -> int:
+        """Borra los bloqueos entre miembros de dos ligas (override manual /link_league).
+        Devuelve cuántas filas borró (para avisar al usuario)."""
+        with open_connection() as conn:
+            comps_a = conn.execute(
+                "SELECT platform, external_id FROM competitions WHERE unified_competition_id = ?",
+                (unified_a_id,),
+            ).fetchall()
+            comps_b = conn.execute(
+                "SELECT platform, external_id FROM competitions WHERE unified_competition_id = ?",
+                (unified_b_id,),
+            ).fetchall()
+            deleted = 0
+            for ca in comps_a:
+                for cb in comps_b:
+                    pa, xa, pb, xb = self._canonical_merge_pair(
+                        ca["platform"], ca["external_id"], cb["platform"], cb["external_id"]
+                    )
+                    cur = conn.execute(
+                        "DELETE FROM unified_merge_exceptions "
+                        "WHERE platform_a=? AND external_id_a=? AND platform_b=? AND external_id_b=?",
+                        (pa, xa, pb, xb),
+                    )
+                    deleted += cur.rowcount
+        return deleted
+
     def relink_unified_by_normalized_name(self) -> int:
         from core.league_naming import normalize_league_name
         moved = 0

@@ -232,3 +232,69 @@ class CompetitionsRepositoryTests(unittest.TestCase):
         tracked_for_unified = self.adapter.list_tracked_competitions_for_unified(comp.unified_competition_id)
         self.assertEqual(len(tracked_for_unified), 1)
         self.assertEqual(tracked_for_unified[0].id, comp.id)
+
+
+class MergeExceptionsTests(unittest.TestCase):
+    """Blocklist de auto-merge re-portado al greenfield (S9b)."""
+
+    def setUp(self) -> None:
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        self._prev_db_path = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp_dir.name) / "test_db.sqlite3")
+        self.adapter = SQLiteCompetitionsAdapter()
+        with open_connection() as conn:
+            initialize_schema(conn)
+
+    def tearDown(self) -> None:
+        self.tmp_dir.cleanup()
+        if self._prev_db_path is None:
+            os.environ.pop("BETBOT_DB_PATH", None)
+        else:
+            os.environ["BETBOT_DB_PATH"] = self._prev_db_path
+
+    def _mk_unified(self, conn, name: str) -> int:
+        now = datetime.now(timezone.utc).isoformat()
+        cur = conn.execute(
+            "INSERT INTO unified_competitions (public_id, name, created_at, updated_at) "
+            "VALUES (?, ?, ?, ?)",
+            (name.lower().replace(" ", "-"), name, now, now),
+        )
+        return int(cur.lastrowid)
+
+    def _mk_comp(self, conn, platform: str, ext: str, unified_id: int) -> int:
+        now = datetime.now(timezone.utc).isoformat()
+        cur = conn.execute(
+            "INSERT INTO competitions (platform, external_id, name, source_url, "
+            "unified_competition_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (platform, ext, "L", "http://x", unified_id, now, now),
+        )
+        return int(cur.lastrowid)
+
+    def test_block_against_all_members_and_get(self) -> None:
+        with open_connection() as conn:
+            uid = self._mk_unified(conn, "Liga U")
+            a = self._mk_comp(conn, "1xbet_http", "100", uid)
+            self._mk_comp(conn, "betovo_http", "200", uid)
+            self._mk_comp(conn, "betsson_http", "300", uid)
+        # Separar la de 1xbet → bloquea 2 pares (contra betovo y betsson).
+        blocked = self.adapter.block_unlinked_competition(a, uid)
+        self.assertEqual(blocked, 2)
+        exc = self.adapter.get_merge_exceptions()
+        self.assertEqual(len(exc), 2)
+        # Orden canónico (a<=b) e independiente del orden de inserción.
+        self.assertIn(("1xbet_http", "100", "betovo_http", "200"), exc)
+        self.assertIn(("1xbet_http", "100", "betsson_http", "300"), exc)
+
+    def test_clear_between_removes_block(self) -> None:
+        with open_connection() as conn:
+            u1 = self._mk_unified(conn, "Liga 1")
+            a = self._mk_comp(conn, "1xbet_http", "100", u1)
+            self._mk_comp(conn, "betovo_http", "200", u1)
+        self.adapter.block_unlinked_competition(a, u1)
+        # Simular que 1xbet quedó en otra unified y se hace /link_league manual.
+        with open_connection() as conn:
+            u2 = self._mk_unified(conn, "Liga 2")
+            conn.execute("UPDATE competitions SET unified_competition_id = ? WHERE id = ?", (u2, a))
+        deleted = self.adapter.clear_merge_exceptions_between(u1, u2)
+        self.assertEqual(deleted, 1)
+        self.assertEqual(self.adapter.get_merge_exceptions(), set())

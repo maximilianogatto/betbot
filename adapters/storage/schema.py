@@ -3,6 +3,7 @@ import sqlite3
 EXPECTED_TABLES = [
     "unified_competitions",
     "competitions",
+    "unified_merge_exceptions",
     "subscriptions",
     "events",
     "baselines",
@@ -75,6 +76,16 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
             UNIQUE(platform, external_id)
         );
         CREATE INDEX IF NOT EXISTS idx_competitions_unified ON competitions(unified_competition_id);
+
+        -- Excepciones de auto-merge (blocklist por par plataforma+external_id, orden
+        -- canónico a<=b). La escribe /unlink_league (un par por miembro que quedaba);
+        -- el learner la lee para no re-fusionar ligas separadas a mano.
+        CREATE TABLE IF NOT EXISTS unified_merge_exceptions (
+            platform_a TEXT NOT NULL, external_id_a TEXT NOT NULL,
+            platform_b TEXT NOT NULL, external_id_b TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            PRIMARY KEY (platform_a, external_id_a, platform_b, external_id_b)
+        );
 
         -- Suscripción chat ↔ liga (booleanos en columnas, no bitmask)
         CREATE TABLE IF NOT EXISTS subscriptions (
