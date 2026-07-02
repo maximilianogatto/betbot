@@ -936,17 +936,24 @@ class TrackingService:
             message=f"Umbral de cambio para {league_name}: {percent:.1f}% ({len(tracks)} plataforma(s)).",
         )
 
+    #: Coincidencias físicas mínimas para auto-fusionar dos ligas.
+    MIN_MERGE_COINCIDENCES = 3
+
     def learn_unified_merges(self) -> list[dict]:
         """Fusiona ligas unificadas que comparten partidos físicos en otra plataforma.
 
         Aprendizaje automático del registro (decisión: ejecutar; /unlink_league
         repara). Umbral deliberadamente alto para evitar falsos positivos:
-        equipos >=0.85 de similitud, kickoffs a <=30 min (o >=0.92 sin horario),
-        plataformas distintas y >=2 partidos coincidentes entre ambas ligas.
+        - traits compatibles (mismo género M/F, misma categoría de edad y país que
+          no se contradiga) — ver `_leagues_can_merge`;
+        - pares NO bloqueados por un /unlink_league manual previo (blocklist);
+        - equipos >=0.90 de similitud con horario confiable a <=30 min;
+        - plataformas distintas y >=3 partidos coincidentes entre ambas ligas.
         """
 
         repository = self.repository
         events_by_unified: dict[int, list] = {}
+        comps_by_unified: dict[int, list] = {}
         league_names: dict[int, str] = {}
         for comp in repository.list_globally_active_competitions():
             unified_id = comp.unified_competition_id
@@ -957,7 +964,13 @@ class TrackingService:
             except Exception:
                 continue
             events_by_unified.setdefault(unified_id, []).extend(events)
+            comps_by_unified.setdefault(unified_id, []).append(comp)
             league_names.setdefault(unified_id, comp.league_name)
+
+        try:
+            blocked = repository.get_merge_exceptions()
+        except Exception:
+            blocked = set()
 
         merges: list[dict] = []
         unified_ids = sorted(events_by_unified)
@@ -968,10 +981,20 @@ class TrackingService:
             for source_id in unified_ids[i + 1:]:
                 if source_id in merged_away:
                     continue
+                if not self._leagues_can_merge(
+                    league_names.get(target_id, ""), league_names.get(source_id, "")
+                ):
+                    continue
+                if self._has_blocked_pair(
+                    comps_by_unified.get(target_id, ()),
+                    comps_by_unified.get(source_id, ()),
+                    blocked,
+                ):
+                    continue
                 coincidences = self._coinciding_matches(
                     events_by_unified[target_id], events_by_unified[source_id]
                 )
-                if coincidences < 2:
+                if coincidences < self.MIN_MERGE_COINCIDENCES:
                     continue
                 try:
                     repository.merge_unified_competitions(source_id, target_id)
@@ -979,6 +1002,9 @@ class TrackingService:
                     continue
                 merged_away.add(source_id)
                 events_by_unified[target_id].extend(events_by_unified[source_id])
+                comps_by_unified.setdefault(target_id, []).extend(
+                    comps_by_unified.get(source_id, ())
+                )
                 merges.append({
                     "into_id": target_id,
                     "into_name": league_names.get(target_id, str(target_id)),
@@ -992,8 +1018,55 @@ class TrackingService:
         return merges
 
     @staticmethod
+    def _leagues_can_merge(name_a: str, name_b: str) -> bool:
+        """Trait gate: two leagues can only be the same if gender/age/country agree.
+
+        Mismos discriminadores que usa `suggest_similar_unified`: nunca fusiona
+        femenino con masculino, categorías de edad distintas (U20 vs adulto) ni
+        países explícitos que se contradigan. No exige igualdad de nombre porque
+        cada casa nombra distinto la misma liga (p.ej. «La Liga» vs «Primera
+        División»); los partidos físicos son la verdad de fondo.
+        """
+
+        try:
+            from core.league_naming import extract_league_traits
+        except Exception:
+            return True
+        ta, tb = extract_league_traits(name_a or ""), extract_league_traits(name_b or "")
+        if ta.get("gender") != tb.get("gender"):
+            return False
+        if ta.get("age_group") != tb.get("age_group"):
+            return False
+        country_a, country_b = ta.get("country"), tb.get("country")
+        if country_a and country_b and country_a != country_b:
+            return False
+        return True
+
+    @staticmethod
+    def _has_blocked_pair(comps_a, comps_b, blocked: set) -> bool:
+        """True if any competition pair across the two leagues is on the blocklist."""
+
+        if not blocked:
+            return False
+        for ca in comps_a:
+            key_a = (str(ca.platform), str(ca.competition_external_id))
+            for cb in comps_b:
+                key_b = (str(cb.platform), str(cb.competition_external_id))
+                pair = (
+                    (*key_a, *key_b) if key_a <= key_b else (*key_b, *key_a)
+                )
+                if pair in blocked:
+                    return True
+        return False
+
+    @staticmethod
     def _coinciding_matches(events_a: list, events_b: list) -> int:
-        """Count physical matches shared by two leagues across DIFFERENT platforms."""
+        """Count physical matches shared by two leagues across DIFFERENT platforms.
+
+        Estricto a propósito: exige similitud de equipos >=0.90 y horario confiable
+        en ambos lados a <=30 min. Sin horario no cuenta (evita falsos positivos
+        entre ligas distintas que casualmente comparten nombres de equipos).
+        """
 
         from bot.alerts import _physical_match_similarity
 
@@ -1012,15 +1085,13 @@ class TrackingService:
             for j, event_b in enumerate(events_b):
                 if j in used_b or event_a.platform == event_b.platform:
                     continue
-                similarity = _physical_match_similarity(event_a, event_b)
-                if similarity < 0.85:
+                if _physical_match_similarity(event_a, event_b) < 0.90:
                     continue
                 dt_a, dt_b = _parse(event_a.scheduled_at), _parse(event_b.scheduled_at)
-                if dt_a is not None and dt_b is not None:
-                    if abs((dt_a - dt_b).total_seconds()) > 1800:
-                        continue
-                elif similarity < 0.92:
-                    continue  # sin horario confiable, exigir similitud más alta
+                if dt_a is None or dt_b is None:
+                    continue  # sin horario confiable en ambos lados: no cuenta
+                if abs((dt_a - dt_b).total_seconds()) > 1800:
+                    continue
                 used_b.add(j)
                 count += 1
                 break
