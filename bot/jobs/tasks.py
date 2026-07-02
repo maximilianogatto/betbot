@@ -356,10 +356,16 @@ async def start_orchestrated_scheduler(application: Application, settings: Any) 
     
     scheduler = OrchestratedScheduler(application)
     
-    # 1. Register Tracking Monitor
-    scheduler.register_job(
-        TrackingMonitorJob(settings.tracking_refresh_interval_seconds)
+    # 1. Register Tracking Monitor.
+    # El tick externo debe ser tan rápido como el tier más caliente (in-play),
+    # si no, el gating por tiers nunca puede refrescar en vivo antes del tick.
+    # Los partidos prematch siguen throttleados por sus tiers, así que la carga
+    # extra queda acotada a los partidos en vivo.
+    tracking_tick_seconds = min(
+        settings.tracking_refresh_interval_seconds,
+        settings.tracking_live_refresh_seconds,
     )
+    scheduler.register_job(TrackingMonitorJob(tracking_tick_seconds))
     
     # 2. Register Resource Monitor
     if settings.enable_monitoring:

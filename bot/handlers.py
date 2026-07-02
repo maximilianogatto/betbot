@@ -2852,9 +2852,19 @@ async def link_league_command(update: Update, context: ContextTypes.DEFAULT_TYPE
         await update.message.reply_text("Números inválidos. Mirá <code>/leagues</code>.", parse_mode=ParseMode.HTML)
         return
     into_id, from_id = unified[n - 1]["id"], unified[m - 1]["id"]
+    # Override manual: si estas ligas estaban bloqueadas por un /unlink_league previo,
+    # el usuario afirma que SÍ son la misma — quitamos el bloqueo y avisamos.
+    overridden = tracking_repository.clear_merge_exceptions_between(into_id, from_id)
     tracking_repository.merge_unified_competitions(from_id, into_id)
     card = build_league_card(tracking_repository, into_id)
-    msg = "✅ Ligas fusionadas.\n\n" + (render_league_card(card) if card else "")
+    aviso = (
+        "⚠️ <b>Ojo:</b> estas ligas las habías separado a mano con "
+        "<code>/unlink_league</code>. Las fusioné igual porque me lo pediste y quité "
+        "ese bloqueo.\n\n"
+        if overridden
+        else ""
+    )
+    msg = aviso + "✅ Ligas fusionadas.\n\n" + (render_league_card(card) if card else "")
     await _reply_text_chunks(update.message, msg, parse_mode=ParseMode.HTML)
 
 
@@ -2900,11 +2910,22 @@ async def unlink_league_command(update: Update, context: ContextTypes.DEFAULT_TY
         await update.message.reply_text("\n".join(lines), parse_mode=ParseMode.HTML)
         return
     target = matches[0]
+    old_uid = unified[n - 1]["id"]
+    # Grabar el bloqueo ANTES de reasignar: un par por cada plataforma que quedaba
+    # en la liga, para que el learner no la vuelva a fusionar con ninguna de ellas.
+    blocked_pairs = tracking_repository.block_unlinked_competition(target.id, old_uid)
     new_uid = tracking_repository.create_unified_competition(target.competition_name)
     tracking_repository.link_tracked_competition_to_unified(target.id, new_uid)
+    nota = (
+        f"\n🔒 No la volveré a unificar automáticamente con esa liga "
+        f"({blocked_pairs} plataforma/s). Si te equivocaste, usá <code>/link_league</code>."
+        if blocked_pairs
+        else ""
+    )
     await update.message.reply_text(
         f"✅ Saqué <b>{escape_html(target.platform.replace('_http', ''))}</b> "
-        f"({escape_html(target.competition_name)}) de la liga; quedó como liga propia.",
+        f"({escape_html(target.competition_name)}) de la liga; quedó como liga propia."
+        + nota,
         parse_mode=ParseMode.HTML,
     )
 

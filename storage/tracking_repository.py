@@ -3310,6 +3310,119 @@ class SqliteTrackingRepository:
             "new_subscriptions": new_subscriptions,
         }
 
+    # ------------------------------------------------------------------
+    # Do-not-auto-merge exceptions (keyed by platform + external_id pairs)
+    # ------------------------------------------------------------------
+    @staticmethod
+    def _canonical_merge_pair(
+        platform_a: str,
+        external_id_a: str,
+        platform_b: str,
+        external_id_b: str,
+    ) -> tuple[str, str, str, str]:
+        """Return the pair in canonical (a <= b) order so it is order-independent."""
+
+        a = (str(platform_a), str(external_id_a))
+        b = (str(platform_b), str(external_id_b))
+        if a <= b:
+            return (a[0], a[1], b[0], b[1])
+        return (b[0], b[1], a[0], a[1])
+
+    def get_merge_exceptions(self) -> set[tuple[str, str, str, str]]:
+        """Return all blocked competition pairs as canonical 4-tuples (fast in-memory check)."""
+
+        with _connect() as connection:
+            rows = connection.execute(
+                "SELECT platform_a, external_id_a, platform_b, external_id_b "
+                "FROM unified_merge_exceptions"
+            ).fetchall()
+        return {
+            (r["platform_a"], r["external_id_a"], r["platform_b"], r["external_id_b"])
+            for r in rows
+        }
+
+    def block_unlinked_competition(
+        self, tracked_competition_id: int, unified_competition_id: int
+    ) -> int:
+        """Record do-not-auto-merge exceptions when a competition is split off a league.
+
+        Stores ONE row per *other* member competition still in the unified league,
+        so the learner can never re-merge the separated competition with ANY of the
+        platforms it was just detached from (while it stays free to merge with
+        unrelated leagues). Returns how many exception rows were inserted.
+        """
+
+        with _connect() as connection:
+            target = connection.execute(
+                "SELECT platform, competition_external_id FROM tracked_competitions WHERE id = ?",
+                (tracked_competition_id,),
+            ).fetchone()
+            if target is None:
+                return 0
+            members = connection.execute(
+                "SELECT platform, competition_external_id FROM tracked_competitions "
+                "WHERE unified_competition_id = ? AND id != ?",
+                (unified_competition_id, tracked_competition_id),
+            ).fetchall()
+            now_iso = _utc_now_iso()
+            inserted = 0
+            for member in members:
+                pa, xa, pb, xb = self._canonical_merge_pair(
+                    target["platform"],
+                    target["competition_external_id"],
+                    member["platform"],
+                    member["competition_external_id"],
+                )
+                if (pa, xa) == (pb, xb):
+                    continue
+                cursor = connection.execute(
+                    "INSERT OR IGNORE INTO unified_merge_exceptions "
+                    "(platform_a, external_id_a, platform_b, external_id_b, created_at) "
+                    "VALUES (?, ?, ?, ?, ?)",
+                    (pa, xa, pb, xb, now_iso),
+                )
+                inserted += cursor.rowcount
+        return inserted
+
+    def clear_merge_exceptions_between(
+        self, unified_a_id: int, unified_b_id: int
+    ) -> int:
+        """Delete any do-not-merge exceptions between two unified leagues' members.
+
+        Used by a manual /link_league override: the user asserts the leagues ARE the
+        same, so the blocklist that would forbid the merge is removed. Returns how
+        many exception rows were deleted (to warn the user an override happened).
+        """
+
+        with _connect() as connection:
+            comps_a = connection.execute(
+                "SELECT platform, competition_external_id FROM tracked_competitions "
+                "WHERE unified_competition_id = ?",
+                (unified_a_id,),
+            ).fetchall()
+            comps_b = connection.execute(
+                "SELECT platform, competition_external_id FROM tracked_competitions "
+                "WHERE unified_competition_id = ?",
+                (unified_b_id,),
+            ).fetchall()
+            deleted = 0
+            for ca in comps_a:
+                for cb in comps_b:
+                    pa, xa, pb, xb = self._canonical_merge_pair(
+                        ca["platform"],
+                        ca["competition_external_id"],
+                        cb["platform"],
+                        cb["competition_external_id"],
+                    )
+                    cursor = connection.execute(
+                        "DELETE FROM unified_merge_exceptions "
+                        "WHERE platform_a = ? AND external_id_a = ? "
+                        "AND platform_b = ? AND external_id_b = ?",
+                        (pa, xa, pb, xb),
+                    )
+                    deleted += cursor.rowcount
+        return deleted
+
     def relink_unified_by_normalized_name(self) -> dict:
         """Re-unify tracked competitions whose names share the same canonical form.
 
@@ -4399,6 +4512,25 @@ def _initialize_schema(connection: sqlite3.Connection) -> None:
         """
         CREATE UNIQUE INDEX IF NOT EXISTS idx_unified_competitions_public_id
         ON unified_competitions(public_id) WHERE public_id IS NOT NULL
+        """
+    )
+
+    # 1c. Do-not-auto-merge exceptions between two physical competitions.
+    #     Keyed by the STABLE natural identity (platform + external_id), NOT by
+    #     unified ids (those get reassigned on every merge). Order is canonical
+    #     (a <= b) so a pair is stored once regardless of argument order. Written
+    #     by /unlink_league (one row per remaining league member) and cleared by a
+    #     manual /link_league override.
+    connection.executescript(
+        """
+        CREATE TABLE IF NOT EXISTS unified_merge_exceptions (
+            platform_a TEXT NOT NULL,
+            external_id_a TEXT NOT NULL,
+            platform_b TEXT NOT NULL,
+            external_id_b TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            PRIMARY KEY (platform_a, external_id_a, platform_b, external_id_b)
+        );
         """
     )
 
