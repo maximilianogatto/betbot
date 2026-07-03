@@ -241,3 +241,27 @@ class EventsRepositoryTests(unittest.TestCase):
         with open_connection() as conn:
             reminder_sent = conn.execute("SELECT reminder_sent_at FROM events WHERE id = ?", (event_id,)).fetchone()[0]
             self.assertIsNotNone(reminder_sent)
+
+    def test_get_active_events_only_future(self) -> None:
+        # Paridad con el legacy: only_future devuelve futuros + sin horario y
+        # descarta pasados. Lo usa el learner de unificación de ligas en prod.
+        now = datetime.now(timezone.utc)
+
+        def _ev(eid, when):
+            return ActiveEventUpsert(
+                external_event_id=eid, home="H", away="A",
+                scheduled_label_date=None, scheduled_label_time=None,
+                scheduled_at=when, odds_home=1.5, odds_draw=3.0, odds_away=5.0,
+            )
+
+        self.adapter.upsert_active_events(1, [
+            _ev("past", (now - timedelta(days=1)).isoformat()),
+            _ev("future", (now + timedelta(days=1)).isoformat()),
+            _ev("unscheduled", None),
+        ])
+
+        # Sin only_future: los 3.
+        self.assertEqual(len(self.adapter.get_active_events(1)), 3)
+        # Con only_future: futuro + sin horario, el pasado se filtra.
+        future_ids = {e.external_event_id for e in self.adapter.get_active_events(1, only_future=True)}
+        self.assertEqual(future_ids, {"future", "unscheduled"})

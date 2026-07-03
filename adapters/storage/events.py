@@ -9,6 +9,20 @@ from core.models import ActiveEventRecord, ActiveEventUpsert
 from core.ports.events import EventsPort
 from adapters.storage.connection import open_connection
 
+
+def _is_future_or_unscheduled(raw_value: str | None, reference: datetime) -> bool:
+    """True si el evento es futuro o no tiene horario confiable (paridad legacy)."""
+    if raw_value is None:
+        return True
+    try:
+        parsed = datetime.fromisoformat(str(raw_value).strip())
+    except (TypeError, ValueError):
+        return True
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc) > reference
+
+
 def _row_to_active_event_record(row: sqlite3.Row) -> ActiveEventRecord:
     return ActiveEventRecord(
         id=int(row["id"]),
@@ -154,6 +168,7 @@ class SQLiteEventsAdapter(EventsPort):
         tracked_competition_id: int,
         exclude_alerted: bool = False,
         limit: int | None = None,
+        only_future: bool = False,
     ) -> list[ActiveEventRecord]:
         query = """
             SELECT e.*, c.external_id AS competition_external_id
@@ -162,19 +177,28 @@ class SQLiteEventsAdapter(EventsPort):
             WHERE e.competition_id = ? AND e.is_active = 1
         """
         params: list[Any] = [tracked_competition_id]
-        
+
         if exclude_alerted:
             query += " AND e.reminder_sent_at IS NULL"
-            
+
         query += " ORDER BY e.scheduled_at IS NULL, e.scheduled_at, e.home, e.away, e.id"
-        
+
         if limit is not None:
             query += " LIMIT ?"
             params.append(limit)
-            
+
         with open_connection() as conn:
             rows = conn.execute(query, params).fetchall()
-            return [_row_to_active_event_record(row) for row in rows]
+            records = [_row_to_active_event_record(row) for row in rows]
+        if not only_future:
+            return records
+        # only_future: futuros o sin horario, excluyendo eventos "missing".
+        # (Paridad con el legacy; lo usa el learner de unificación de ligas.)
+        now_utc = datetime.now(timezone.utc)
+        return [
+            r for r in records
+            if _is_future_or_unscheduled(r.scheduled_at, now_utc) and not r.is_missing
+        ]
 
     def get_all_active_events_with_league(
         self,
