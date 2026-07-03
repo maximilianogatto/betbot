@@ -596,6 +596,7 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
                     (platform, external_id, name, source_url, uc_id, now_iso, now_iso)
                 )
                 comp_id = int(cursor.lastrowid)
+                _propagate_unified_subscriptions(conn, uc_id)
             else:
                 existing = _row_to_tracked_competition(row)
                 comp_id = existing.id
@@ -613,6 +614,7 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
                     """,
                     (uc_id, now_iso, comp_id)
                 )
+                _propagate_unified_subscriptions(conn, uc_id)
                 
             if chat_id is not None:
                 conn.execute(
@@ -628,6 +630,8 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
                     """,
                     (chat_id, comp_id, now_iso, now_iso)
                 )
+            
+            _propagate_unified_subscriptions(conn, uc_id)
                 
             if is_legacy:
                 return comp_id

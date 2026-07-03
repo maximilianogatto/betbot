@@ -1,11 +1,13 @@
 from __future__ import annotations
 
-import importlib
+import os
 import tempfile
 import unittest
 from pathlib import Path
 
-tracking_repository_module = importlib.import_module("storage.tracking_repository")
+from adapters.storage import SqliteStorage
+from adapters.storage.connection import open_connection
+from adapters.storage.schema import initialize_schema
 
 
 class UnifiedSubscriptionTests(unittest.TestCase):
@@ -15,14 +17,19 @@ class UnifiedSubscriptionTests(unittest.TestCase):
     CHAT_B = 222
 
     def setUp(self) -> None:
-        self.old_db_path = tracking_repository_module.DB_FILE_PATH
         self.tmp = tempfile.TemporaryDirectory()
-        tracking_repository_module.DB_FILE_PATH = Path(self.tmp.name) / "tracking.sqlite3"
-        self.repo = tracking_repository_module.SqliteTrackingRepository()
+        self.old_db_path = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp.name) / "tracking.sqlite3")
+        with open_connection() as conn:
+            initialize_schema(conn)
+        self.repo = SqliteStorage()
 
     def tearDown(self) -> None:
-        tracking_repository_module.DB_FILE_PATH = self.old_db_path
         self.tmp.cleanup()
+        if self.old_db_path is None:
+            os.environ.pop("BETBOT_DB_PATH", None)
+        else:
+            os.environ["BETBOT_DB_PATH"] = self.old_db_path
 
     def _confirm_track(self, chat_id: int, platform: str, ext_id: str, name: str):
         """Run the real track flow: pending request -> confirm."""
@@ -32,21 +39,23 @@ class UnifiedSubscriptionTests(unittest.TestCase):
             source_url=f"https://{platform}.example/{ext_id}",
             competition_external_id=ext_id,
             competition_name=name,
+            requires_empty_confirmation=False,
+            needs_name_resolution=False,
         )
         return self.repo.confirm_pending_competition_request(chat_id)
 
     def _subs(self, chat_id: int) -> set[tuple[str, str]]:
-        with tracking_repository_module._connect() as c:
+        with open_connection() as c:
             rows = c.execute(
                 """
-                SELECT tc.platform, tc.competition_external_id
-                FROM competition_subscriptions cs
-                JOIN tracked_competitions tc ON tc.id = cs.tracked_competition_id
-                WHERE cs.telegram_chat_id = ? AND cs.enabled = 1
+                SELECT tc.platform, tc.external_id
+                FROM subscriptions cs
+                JOIN competitions tc ON tc.id = cs.competition_id
+                WHERE cs.chat_id = ? AND cs.enabled = 1
                 """,
                 (chat_id,),
             ).fetchall()
-        return {(r["platform"], r["competition_external_id"]) for r in rows}
+        return {(r["platform"], r["external_id"]) for r in rows}
 
     def test_tracking_second_platform_inherits_both_ways(self) -> None:
         # Chat A tracks the league on 1xbet.
