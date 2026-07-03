@@ -391,3 +391,12 @@
 - **Tests:** suite completa 674 OK, SIN skips.
 - **Commit:** 51525a5 (pusheado).
 - **Estado S9c-2:** faltan ~12 tests de servicio/legacy por migrar antes de poder borrar `storage/tracking_repository.py` (cada uno puede destapar más gaps, como pasó con estos 3). Etapa pausada acá por decisión del usuario.
+
+### 2026-07-02T22:43:11-03:00 · @codex · PR2-E2-S9c-2 · DONE
+- **Qué hice:** Continué el takeover desde el WIP de @gemini y cerré el borrado del repositorio legacy: migré los últimos imports/type-hints trackeados a `core.models` + `adapters.storage.SqliteStorage/get_storage`, pasé CLI/monitoring/providers/xbet live al facade greenfield, borré `storage/tracking_repository.py` y `storage/mappers.py`, y ajusté tests residuales al facade.
+- **Por qué:** S9c-2 requería que ningún módulo ni test dependiera del repositorio SQLite monolítico para poder eliminarlo sin mantener dos esquemas ni un safety net obsoleto.
+- **Archivos:** adapters/storage/__init__.py, adapters/storage/subscriptions.py, adapters/storage/live_watch.py, cli.py, extractors/xbet_http/extractor.py, main.py, monitoring.py, monitors/change_detection.py, monitors/live_watch.py, monitors/stats.py, monitors/tracking.py, stats_providers/__init__.py, storage/__init__.py, storage/mappers.py, storage/tracking_repository.py, tests/adapters/storage/test_competitions_repository.py, tests/adapters/storage/test_live_watch_repository.py, tests/core/test_live_watch.py, tests/extractors/test_xbet_http_extractor.py
+- **Commit:** 2ab62f5
+- **Tests:** verde; `./betbot/bin/python -m unittest discover -s tests -t .` → 667 OK. También validé el mismo comando ocultando temporalmente el directorio untracked `bot/handlers/` para simular checkout limpio → 667 OK.
+- **Notas/Bloqueos:** El worktree local conserva `bot/handlers/` como WIP untracked ajeno a este commit; no se incluyó en S9c-2. Para que no shadowee localmente al módulo trackeado, le apliqué un ajuste mínimo no commiteado de imports a facade. No hay referencias trackeadas a `storage.tracking_repository` fuera de documentación histórica/migración.
+- **Siguiente sugerido:** PR2-E3 (extraer renderers a `interfaces/telegram/renderers/`) o resolver explícitamente qué hacer con el WIP untracked `bot/handlers/` antes de arrancar E5.
