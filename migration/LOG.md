@@ -385,3 +385,9 @@
 - **Commits:** 1678371 (Cat A), dbc117a (#1), e98258e (#2), aa3fd04 (league_learning). Pusheados.
 - **Notas/Bloqueos:** Faltan ~12 tests de servicio/legacy por migrar (test_stats_service, test_unified_competitions, test_live_watch, test_tracking_stats_links, test_xbet_http_extractor + los "via importlib": test_canonical_repo, test_league_registry, test_league_seed, test_peak_subscriptions, test_prune_old_data, test_reminders, test_stats_cache_purge, test_unified_subscriptions). Cada uno puede destapar más gaps. El legacy sigue en uso por esos → NO borrable aún. Los tipos ya están unificados (S9a-1), así que Category-A-style (solo tipos) es trivial; los de servicio son los que validan paridad.
 - **Siguiente sugerido:** Decidir gap #3 (diseño stats-links). Luego seguir migrando los tests de servicio uno a uno (cazando gaps), después los "via importlib" (varios quizás redundantes con tests/adapters/storage/* → borrar), 4 type-hints, y recién ahí borrar el legacy.
+
+### 2026-07-02 · @claude · gap #3 RESUELTO (cierre de etapa)
+- **Qué:** Implementé la opción elegida (list a nivel unified con dedupe por provider) en `list_stats_league_links`. Herencia de stats entre plataformas restaurada; `test_merge_preserves_stats_links` des-skipeado y verde. Los 3 gaps de paridad quedaron FIXED.
+- **Tests:** suite completa 674 OK, SIN skips.
+- **Commit:** 51525a5 (pusheado).
+- **Estado S9c-2:** faltan ~12 tests de servicio/legacy por migrar antes de poder borrar `storage/tracking_repository.py` (cada uno puede destapar más gaps, como pasó con estos 3). Etapa pausada acá por decisión del usuario.
