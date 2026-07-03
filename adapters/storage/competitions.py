@@ -719,6 +719,34 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
         with open_connection() as conn:
             return _insert_unified_competition(conn, name_clean)
 
+    def get_unified_competition(
+        self,
+        unified_id: int,
+    ) -> dict[str, Any] | None:
+        with open_connection() as conn:
+            row = conn.execute("SELECT * FROM unified_competitions WHERE id = ?", (unified_id,)).fetchone()
+            if not row:
+                return None
+            return {
+                "id": int(row["id"]),
+                "name": str(row["name"]),
+                "public_id": str(row["public_id"]),
+            }
+
+    def delete_unified_competition(
+        self,
+        unified_id: int,
+    ) -> None:
+        with open_connection() as conn:
+            conn.execute("DELETE FROM unified_competitions WHERE id = ?", (unified_id,))
+
+    def get_or_create_unified_competition(
+        self,
+        name: str,
+    ) -> int:
+        with open_connection() as conn:
+            return _find_or_create_unified_competition_id(conn, name)
+
     def link_tracked_competition_to_unified(
         self,
         tracked_id: int,
@@ -838,9 +866,10 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
                     deleted += cur.rowcount
         return deleted
 
-    def relink_unified_by_normalized_name(self) -> int:
+    def relink_unified_by_normalized_name(self) -> dict[str, int]:
         from core.league_naming import normalize_league_name
         moved = 0
+        groups_merged = 0
         now_iso = datetime.now(timezone.utc).isoformat()
         with open_connection() as conn:
             rows = conn.execute(
@@ -876,6 +905,7 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
                         changed = True
                 if changed:
                     _propagate_unified_subscriptions(conn, target)
+                    groups_merged += 1
                     
                 for uid in unified_ids:
                     if uid == target:
@@ -886,7 +916,10 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
                     ).fetchone()
                     if remaining is None:
                         conn.execute("DELETE FROM unified_competitions WHERE id = ?", (uid,))
-        return moved
+        return {
+            "groups_merged": groups_merged,
+            "competitions_moved": moved,
+        }
 
     def suggest_similar_unified(
         self,
