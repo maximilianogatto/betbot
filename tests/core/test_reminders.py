@@ -1,44 +1,48 @@
 from __future__ import annotations
 
-import importlib
+import os
 import tempfile
 import unittest
 from pathlib import Path
 
-trm = importlib.import_module("storage.tracking_repository")
+from adapters.storage import SqliteStorage
+from adapters.storage.connection import open_connection
+from adapters.storage.schema import initialize_schema
 
 
 class ReminderFlagsTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.old_db = trm.DB_FILE_PATH
-        self.old_dir = trm.DATA_DIR
         self.tmp = tempfile.TemporaryDirectory()
-        trm.DATA_DIR = Path(self.tmp.name)
-        trm.DB_FILE_PATH = Path(self.tmp.name) / "t.sqlite3"
-        self.repo = trm.SqliteTrackingRepository()
+        self.old_db = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp.name) / "t.sqlite3")
+        with open_connection() as conn:
+            initialize_schema(conn)
+        self.repo = SqliteStorage()
         self.now = "2026-01-01T00:00:00+00:00"
 
     def tearDown(self) -> None:
         self.tmp.cleanup()
-        trm.DB_FILE_PATH = self.old_db
-        trm.DATA_DIR = self.old_dir
+        if self.old_db is None:
+            os.environ.pop("BETBOT_DB_PATH", None)
+        else:
+            os.environ["BETBOT_DB_PATH"] = self.old_db
 
     def _comp(self) -> int:
-        with trm._connect() as con:
+        with open_connection() as con:
             cur = con.execute(
-                "INSERT INTO tracked_competitions (platform, competition_external_id, competition_name, source_url, created_at, updated_at) "
-                "VALUES (?, ?, ?, ?, ?, ?)",
+                "INSERT INTO competitions (platform, external_id, name, source_url, enabled, consecutive_unavailable_refreshes, created_at, updated_at) "
+                "VALUES (?, ?, ?, ?, 1, 0, ?, ?)",
                 ("1xbet_http", "L1", "Liga", "http://x", self.now, self.now),
             )
             return int(cur.lastrowid)
 
     def _event(self, comp_id: int, ext_id: str) -> None:
-        with trm._connect() as con:
+        with open_connection() as con:
             con.execute(
-                "INSERT INTO active_events (tracked_competition_id, platform, competition_external_id, external_event_id, "
-                "home, away, first_seen_at, last_seen_at, created_at, updated_at) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (comp_id, "1xbet_http", "L1", ext_id, "A", "B", self.now, self.now, self.now, self.now),
+                "INSERT INTO events (competition_id, platform, external_event_id, "
+                "home, away, is_active, first_seen_at, last_seen_at, created_at, updated_at) "
+                "VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?, ?)",
+                (comp_id, "1xbet_http", ext_id, "A", "B", self.now, self.now, self.now, self.now),
             )
 
     def test_league_flag_default_off_and_toggle(self) -> None:
