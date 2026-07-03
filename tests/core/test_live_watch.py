@@ -8,6 +8,7 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
+import os
 from core.models import LiveEventSnapshot
 from monitors.live_watch import (
     LiveWatchService,
@@ -16,9 +17,9 @@ from monitors.live_watch import (
     render_live_hit,
 )
 from core.league_naming import team_name_similarity
-from storage.tracking_repository import SqliteTrackingRepository
-
-tracking_repository_module = importlib.import_module("storage.tracking_repository")
+from adapters.storage import SqliteStorage
+from adapters.storage.connection import open_connection
+from adapters.storage.schema import initialize_schema
 
 
 class LiveWatchUnitTests(unittest.TestCase):
@@ -209,17 +210,19 @@ class LiveWatchUnitTests(unittest.TestCase):
 
 class LiveWatchRepositoryTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.old_db_path = tracking_repository_module.DB_FILE_PATH
-        self.old_data_dir = tracking_repository_module.DATA_DIR
         self.tmp_dir = tempfile.TemporaryDirectory()
-        tracking_repository_module.DATA_DIR = Path(self.tmp_dir.name)
-        tracking_repository_module.DB_FILE_PATH = Path(self.tmp_dir.name) / "tracking.sqlite3"
-        self.repository = SqliteTrackingRepository()
+        self._prev_db = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp_dir.name) / "live_watch.sqlite3")
+        with open_connection() as conn:
+            initialize_schema(conn)
+        self.repository = SqliteStorage()
 
     def tearDown(self) -> None:
+        if self._prev_db is None:
+            os.environ.pop("BETBOT_DB_PATH", None)
+        else:
+            os.environ["BETBOT_DB_PATH"] = self._prev_db
         self.tmp_dir.cleanup()
-        tracking_repository_module.DB_FILE_PATH = self.old_db_path
-        tracking_repository_module.DATA_DIR = self.old_data_dir
 
     def test_live_watch_crud(self) -> None:
         chat_id = 999
@@ -289,17 +292,19 @@ class LiveWatchRepositoryTests(unittest.TestCase):
 
 class LiveWatchServiceTests(unittest.IsolatedAsyncioTestCase):
     def setUp(self) -> None:
-        self.old_db_path = tracking_repository_module.DB_FILE_PATH
-        self.old_data_dir = tracking_repository_module.DATA_DIR
         self.tmp_dir = tempfile.TemporaryDirectory()
-        tracking_repository_module.DATA_DIR = Path(self.tmp_dir.name)
-        tracking_repository_module.DB_FILE_PATH = Path(self.tmp_dir.name) / "tracking.sqlite3"
-        self.repository = SqliteTrackingRepository()
+        self._prev_db = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp_dir.name) / "live_watch.sqlite3")
+        with open_connection() as conn:
+            initialize_schema(conn)
+        self.repository = SqliteStorage()
 
     def tearDown(self) -> None:
+        if self._prev_db is None:
+            os.environ.pop("BETBOT_DB_PATH", None)
+        else:
+            os.environ["BETBOT_DB_PATH"] = self._prev_db
         self.tmp_dir.cleanup()
-        tracking_repository_module.DB_FILE_PATH = self.old_db_path
-        tracking_repository_module.DATA_DIR = self.old_data_dir
 
     def test_recently_started_match_is_kept(self) -> None:
         # A match that kicked off ~30 min ago is in play and must still be added
@@ -663,17 +668,19 @@ class LiveWatchServiceTests(unittest.IsolatedAsyncioTestCase):
 
 class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):
     def setUp(self) -> None:
-        self.old_db_path = tracking_repository_module.DB_FILE_PATH
-        self.old_data_dir = tracking_repository_module.DATA_DIR
         self.tmp_dir = tempfile.TemporaryDirectory()
-        tracking_repository_module.DATA_DIR = Path(self.tmp_dir.name)
-        tracking_repository_module.DB_FILE_PATH = Path(self.tmp_dir.name) / "tracking.sqlite3"
-        self.repository = SqliteTrackingRepository()
+        self._prev_db = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp_dir.name) / "live_watch.sqlite3")
+        with open_connection() as conn:
+            initialize_schema(conn)
+        self.repository = SqliteStorage()
 
     def tearDown(self) -> None:
+        if self._prev_db is None:
+            os.environ.pop("BETBOT_DB_PATH", None)
+        else:
+            os.environ["BETBOT_DB_PATH"] = self._prev_db
         self.tmp_dir.cleanup()
-        tracking_repository_module.DB_FILE_PATH = self.old_db_path
-        tracking_repository_module.DATA_DIR = self.old_data_dir
 
     async def test_live_watch_auto_track_league(self) -> None:
         from unittest.mock import MagicMock

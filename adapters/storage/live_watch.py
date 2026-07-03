@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Any
 
 from core.models import LiveWatchEntry, LiveWatchSettings
@@ -241,14 +241,29 @@ class SQLiteLiveWatchAdapter(LiveWatchPort):
                 )
             return cursor.rowcount
 
-    def purge_expired_live_watches(self) -> int:
+    def purge_expired_live_watches(
+        self,
+        *args: Any,
+        **kwargs: Any,
+    ) -> int:
+        kickoff_grace = kwargs.get("kickoff_grace_hours", 2.0)
+        stale = kwargs.get("stale_hours", 16.0)
+        fired_retain = kwargs.get("fired_retain_hours", 3.0)
+        
+        now = datetime.now(timezone.utc)
+        kickoff_cutoff = (now - timedelta(hours=kickoff_grace)).isoformat()
+        stale_cutoff = (now - timedelta(hours=stale)).isoformat()
+        fired_cutoff = (now - timedelta(hours=fired_retain)).isoformat()
+        
         with open_connection() as conn:
             cursor = conn.execute(
                 """
                 DELETE FROM live_watch_entries
-                WHERE status = 'fired'
-                   OR (kickoff_at IS NOT NULL AND datetime(kickoff_at) < datetime('now', '-1 day'))
-                """
+                WHERE (status = 'watching' AND kickoff_at IS NOT NULL AND kickoff_at < ?)
+                   OR (status = 'watching' AND kickoff_at IS NULL AND created_at < ?)
+                   OR (status = 'fired' AND fired_at IS NOT NULL AND fired_at < ?)
+                """,
+                (kickoff_cutoff, stale_cutoff, fired_cutoff)
             )
             return cursor.rowcount
 
@@ -357,7 +372,7 @@ class SQLiteLiveWatchAdapter(LiveWatchPort):
                     """
                     UPDATE live_watch_entries
                     SET fired_platforms = ?, fired_odds_mask = ?, matched_platform = ?, matched_event_id = ?,
-                        matched_minute = ?, fired_at = ?, status = 'fired'
+                        matched_minute = ?, fired_at = ?
                     WHERE id = ?
                     """,
                     (new_val, new_mask, platform, event_id, minute, now_iso, entry_id)
@@ -380,7 +395,7 @@ class SQLiteLiveWatchAdapter(LiveWatchPort):
                 conn.execute(
                     """
                     UPDATE live_watch_entries
-                    SET fired_platforms = ?, fired_odds_mask = ?, live_state_json = ?, fired_at = ?, status = 'fired'
+                    SET fired_platforms = ?, fired_odds_mask = ?, live_state_json = ?, fired_at = ?
                     WHERE id = ?
                     """,
                     (new_val, new_mask, json.dumps(current_state), now_iso, entry_id)

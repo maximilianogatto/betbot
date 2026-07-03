@@ -5,7 +5,7 @@ import sqlite3
 from datetime import datetime, timezone, timedelta
 from typing import Any
 
-from core.models import TrackedCompetition, PendingCompetitionTrackRequest
+from core.models import TrackedCompetition, PendingCompetitionTrackRequest, TrackedCompetitionSubscription, CompetitionSubscription
 from core.ports.competitions import CompetitionsPort
 from adapters.storage.connection import open_connection
 
@@ -396,11 +396,63 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
                 return None
             return _row_to_tracked_competition(row)
 
-    def list_tracked_competitions(self) -> list[TrackedCompetition]:
+    def list_tracked_competitions(
+        self,
+        chat_id: int | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> list[Any]:
+        cid = chat_id or kwargs.get("chat_id")
         with open_connection() as conn:
             _sanitize_tracking_state(conn)
-            rows = conn.execute("SELECT * FROM competitions").fetchall()
-            return [_row_to_tracked_competition(row) for row in rows]
+            if cid is not None:
+                rows = conn.execute(
+                    """
+                    SELECT s.*, c.platform, c.external_id, c.name, c.source_url, c.metadata_json, c.unified_competition_id, 
+                           c.id AS comp_db_id, c.enabled AS comp_enabled, c.last_refreshed_at, c.consecutive_unavailable_refreshes, 
+                           c.last_unavailable_at, c.last_unavailable_reason, c.last_unavailable_notified_at, 
+                           c.created_at AS comp_created_at, c.updated_at AS comp_updated_at
+                    FROM subscriptions s
+                    INNER JOIN competitions c ON s.competition_id = c.id
+                    WHERE s.chat_id = ? AND s.enabled = 1 AND c.enabled = 1
+                    """,
+                    (cid,)
+                ).fetchall()
+                out = []
+                for row in rows:
+                    comp = TrackedCompetition(
+                        id=int(row["comp_db_id"]),
+                        platform=str(row["platform"]),
+                        source_url=str(row["source_url"]),
+                        competition_external_id=str(row["external_id"]),
+                        competition_name=str(row["name"]),
+                        metadata_json=row["metadata_json"],
+                        needs_name_resolution=bool(json.loads(row["metadata_json"] or "{}").get("needs_name_resolution", False)),
+                        enabled=bool(row["comp_enabled"]),
+                        last_synced_at=row["last_refreshed_at"],
+                        consecutive_unavailable_refreshes=int(row["consecutive_unavailable_refreshes"]),
+                        last_unavailable_refresh_at=row["last_unavailable_at"],
+                        last_unavailable_reason=row["last_unavailable_reason"],
+                        last_unavailable_notification_at=row["last_unavailable_notified_at"],
+                        created_at=str(row["comp_created_at"]),
+                        updated_at=str(row["comp_updated_at"]),
+                        unified_competition_id=int(row["unified_competition_id"]) if row["unified_competition_id"] is not None else None,
+                    )
+                    sub = CompetitionSubscription(
+                        telegram_chat_id=int(row["chat_id"]),
+                        tracked_competition_id=int(row["competition_id"]),
+                        notify_new_events=bool(row["notify_new_events"]),
+                        notify_odds_changes=bool(row["notify_odds_changes"]),
+                        change_percent_threshold=float(row["change_threshold_percent"]),
+                        enabled=bool(row["enabled"]),
+                        created_at=str(row["created_at"]),
+                        updated_at=str(row["updated_at"]),
+                    )
+                    out.append(TrackedCompetitionSubscription(tracked_competition=comp, subscription=sub))
+                return out
+            else:
+                rows = conn.execute("SELECT * FROM competitions").fetchall()
+                return [_row_to_tracked_competition(row) for row in rows]
 
     def list_globally_active_competitions(self) -> list[TrackedCompetition]:
         with open_connection() as conn:
@@ -493,11 +545,30 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
 
     def auto_track_live_detected_league(
         self,
-        platform: str,
-        external_id: str,
-        name: str,
-        source_url: str | None = None,
-    ) -> TrackedCompetition | None:
+        *args: Any,
+        **kwargs: Any,
+    ) -> Any:
+        def get_arg(pos_idx: int, kw_name: str, default: Any = None) -> Any:
+            if len(args) > pos_idx:
+                return args[pos_idx]
+            return kwargs.get(kw_name, default)
+
+        first_val = get_arg(0, "chat_id")
+        is_legacy = isinstance(first_val, int)
+
+        if is_legacy:
+            chat_id = first_val
+            platform = get_arg(1, "platform")
+            external_id = get_arg(2, "competition_external_id")
+            name = get_arg(3, "competition_name")
+            source_url = get_arg(4, "source_url")
+        else:
+            chat_id = None
+            platform = get_arg(0, "platform")
+            external_id = get_arg(1, "external_id")
+            name = get_arg(2, "name")
+            source_url = get_arg(3, "source_url")
+
         platform = platform.strip().lower()
         external_id = external_id.strip()
         name = name.strip()
@@ -542,6 +613,24 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
                     """,
                     (uc_id, now_iso, comp_id)
                 )
+                
+            if chat_id is not None:
+                conn.execute(
+                    """
+                    INSERT INTO subscriptions (
+                        chat_id, competition_id, notify_new_events, notify_odds_changes,
+                        change_threshold_percent, reminders_enabled, enabled, created_at, updated_at
+                    )
+                    VALUES (?, ?, 1, 1, 20.0, 0, 1, ?, ?)
+                    ON CONFLICT(chat_id, competition_id) DO UPDATE SET
+                        enabled = 1,
+                        updated_at = excluded.updated_at
+                    """,
+                    (chat_id, comp_id, now_iso, now_iso)
+                )
+                
+            if is_legacy:
+                return comp_id
                 
             updated_row = conn.execute("SELECT * FROM competitions WHERE id = ?", (comp_id,)).fetchone()
             return _row_to_tracked_competition(updated_row)
