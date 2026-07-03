@@ -29,7 +29,7 @@ class StatsLinksPort(Protocol):
     def get_stats_match_link(
         self,
         active_event_id: int,
-        stats_provider: str,
+        stats_provider: str | None = None,
     ) -> StatsMatchLinkRecord | None:
         """Retrieve a cached stats provider match mapping link for an event."""
         ...

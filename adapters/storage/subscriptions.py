@@ -385,13 +385,17 @@ class SQLiteSubscriptionsAdapter(SubscriptionsPort):
     def upsert_stats_league_subscription(
         self,
         chat_id: int,
-        provider: str,
-        stats_league_id: str,
-        stats_league_name: str,
+        provider: str | None = None,
+        stats_league_id: str | None = None,
+        stats_league_name: str | None = None,
         stats_country_name: str | None = None,
         source_url: str | None = None,
         enabled: bool = True,
+        **kwargs: Any,
     ) -> None:
+        provider = provider or kwargs.get("stats_provider")
+        if not provider:
+            raise TypeError("Missing required argument: 'provider' or 'stats_provider'")
         now_iso = datetime.now(timezone.utc).isoformat()
         with open_connection() as conn:
             existing = conn.execute(

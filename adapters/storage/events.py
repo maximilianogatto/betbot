@@ -40,7 +40,7 @@ def _row_to_active_event_record(row: sqlite3.Row) -> ActiveEventRecord:
         odds_draw=row["odds_draw"] if row["odds_draw"] is not None else None,
         odds_away=row["odds_away"] if row["odds_away"] is not None else None,
         markets_json=row["markets_json"],
-        raw_payload_json=None,
+        raw_payload_json=json.dumps({"stats_url": row["stats_url"]}) if ("stats_url" in row.keys() and row["stats_url"]) else None,
         alerted=row["reminder_sent_at"] is not None,
         is_active=bool(row["is_active"]),
         first_seen_at=str(row["first_seen_at"]),
@@ -99,6 +99,10 @@ class SQLiteEventsAdapter(EventsPort):
                     }
                 markets_json = json.dumps(markets_payload) if markets_payload else None
                 
+                stats_url = None
+                if event.raw_payload and isinstance(event.raw_payload, dict):
+                    stats_url = event.raw_payload.get("stats_url")
+                
                 if existing:
                     # Update
                     conn.execute(
@@ -111,6 +115,7 @@ class SQLiteEventsAdapter(EventsPort):
                             scheduled_label_date = ?,
                             scheduled_label_time = ?,
                             event_url = ?,
+                            stats_url = ?,
                             odds_home = ?,
                             odds_draw = ?,
                             odds_away = ?,
@@ -124,7 +129,7 @@ class SQLiteEventsAdapter(EventsPort):
                         (
                             tracked_competition_id, home, away,
                             event.scheduled_at, event.scheduled_label_date, event.scheduled_label_time,
-                            event.event_url, event.odds_home, event.odds_draw, event.odds_away,
+                            event.event_url, stats_url, event.odds_home, event.odds_draw, event.odds_away,
                             markets_json, now_iso, now_iso, existing["id"]
                         )
                     )
@@ -134,16 +139,16 @@ class SQLiteEventsAdapter(EventsPort):
                         """
                         INSERT INTO events (
                             competition_id, platform, external_event_id, home, away,
-                            scheduled_at, scheduled_label_date, scheduled_label_time, event_url,
+                            scheduled_at, scheduled_label_date, scheduled_label_time, event_url, stats_url,
                             odds_home, odds_draw, odds_away, markets_json,
                             is_active, missing_seen_count, first_seen_at, last_seen_at, created_at, updated_at
                         )
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 0, ?, ?, ?, ?)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 0, ?, ?, ?, ?)
                         """,
                         (
                             tracked_competition_id, platform, ext_id, home, away,
                             event.scheduled_at, event.scheduled_label_date, event.scheduled_label_time,
-                            event.event_url, event.odds_home, event.odds_draw, event.odds_away,
+                            event.event_url, stats_url, event.odds_home, event.odds_draw, event.odds_away,
                             markets_json, now_iso, now_iso, now_iso, now_iso
                         )
                     )

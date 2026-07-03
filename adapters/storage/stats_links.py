@@ -189,13 +189,19 @@ class SQLiteStatsLinksAdapter(StatsLinksPort):
     def get_stats_match_link(
         self,
         active_event_id: int,
-        stats_provider: str,
+        stats_provider: str | None = None,
     ) -> StatsMatchLinkRecord | None:
         with open_connection() as conn:
-            row = conn.execute(
-                "SELECT * FROM stats_match_links WHERE event_id = ? AND provider = ?",
-                (active_event_id, stats_provider.strip().lower())
-            ).fetchone()
+            if stats_provider:
+                row = conn.execute(
+                    "SELECT * FROM stats_match_links WHERE event_id = ? AND provider = ?",
+                    (active_event_id, stats_provider.strip().lower())
+                ).fetchone()
+            else:
+                row = conn.execute(
+                    "SELECT * FROM stats_match_links WHERE event_id = ?",
+                    (active_event_id,)
+                ).fetchone()
             return _row_to_stats_match_link(row) if row else None
 
     def list_stats_match_links(

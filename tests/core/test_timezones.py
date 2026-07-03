@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import importlib
 import os
 import tempfile
 import unittest
@@ -17,7 +16,6 @@ from core.timezones import (
     use_timezone,
 )
 
-tracking_repository_module = importlib.import_module("storage.tracking_repository")
 
 
 class TimezoneHelpersTests(unittest.TestCase):
