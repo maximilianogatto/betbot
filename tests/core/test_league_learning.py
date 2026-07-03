@@ -144,14 +144,6 @@ class LeagueLearningTests(unittest.TestCase):
         ])
         self.assertEqual(self.service.learn_unified_merges(), [])
 
-    @unittest.skip(
-        "GAP #3 greenfield: stats_league_links es per-competition (columna competition_id), "
-        "no per-unified. Se perdió la herencia de stats entre plataformas de una liga "
-        "(feature del registro canónico). El merge no consolida los links y "
-        "list_stats_league_links(id) solo devuelve los de esa competencia. Requiere "
-        "decisión de diseño (list a nivel unified vs propagar en merge/upsert). NO borrar "
-        "el legacy hasta resolverlo."
-    )
     def test_merge_preserves_stats_links(self) -> None:
         a = self._track("1xbet_http", "100", "Inglaterra. Liga Premier")
         b = self._track("betovo_http", "200", "English Top Flight Special")

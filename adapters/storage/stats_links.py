@@ -45,12 +45,42 @@ class SQLiteStatsLinksAdapter(StatsLinksPort):
         self,
         tracked_competition_id: int,
     ) -> list[StatsLeagueLink]:
+        """Links de stats de la liga, con HERENCIA entre plataformas.
+
+        Si la competencia pertenece a una liga unificada, devuelve los links de
+        TODAS sus plataformas (uno por provider: se prefiere el link propio de la
+        competencia consultada y, si no, el de mayor confianza). Así linkear stats
+        en una plataforma se hereda al resto de la liga (feature del registro
+        canónico). Sin unified, cae a los links propios de la competencia.
+        """
         with open_connection() as conn:
-            rows = conn.execute(
-                "SELECT * FROM stats_league_links WHERE competition_id = ?",
-                (tracked_competition_id,)
-            ).fetchall()
-            return [_row_to_stats_league_link(row) for row in rows]
+            row = conn.execute(
+                "SELECT unified_competition_id FROM competitions WHERE id = ?",
+                (tracked_competition_id,),
+            ).fetchone()
+            unified_id = row["unified_competition_id"] if row else None
+            if unified_id is not None:
+                rows = conn.execute(
+                    "SELECT s.* FROM stats_league_links s "
+                    "JOIN competitions c ON c.id = s.competition_id "
+                    "WHERE c.unified_competition_id = ? "
+                    "ORDER BY (s.competition_id = ?) DESC, s.confidence DESC, s.id",
+                    (unified_id, tracked_competition_id),
+                ).fetchall()
+            else:
+                rows = conn.execute(
+                    "SELECT * FROM stats_league_links WHERE competition_id = ? "
+                    "ORDER BY confidence DESC, id",
+                    (tracked_competition_id,),
+                ).fetchall()
+        seen: set[str] = set()
+        out: list[StatsLeagueLink] = []
+        for row in rows:
+            if row["provider"] in seen:
+                continue
+            seen.add(row["provider"])
+            out.append(_row_to_stats_league_link(row))
+        return out
 
     def get_stats_league_link(
         self,
