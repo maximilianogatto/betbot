@@ -507,3 +507,11 @@ class SQLiteSubscriptionsAdapter(SubscriptionsPort):
                 (chat_id, provider, stats_league_id)
             )
             return cursor.rowcount > 0
+
+    def is_peak_digest_enabled(self, chat_id: int) -> bool:
+        with open_connection() as conn:
+            row = conn.execute(
+                "SELECT enabled FROM peak_digest_subscriptions WHERE chat_id = ?",
+                (chat_id,)
+            ).fetchone()
+            return bool(row["enabled"]) if row else False

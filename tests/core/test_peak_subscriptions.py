@@ -1,27 +1,30 @@
 from __future__ import annotations
 
-import importlib
+import os
 import tempfile
 import unittest
 from pathlib import Path
 
-tracking_repository_module = importlib.import_module("storage.tracking_repository")
-SqliteTrackingRepository = tracking_repository_module.SqliteTrackingRepository
+from adapters.storage import SqliteStorage
+from adapters.storage.connection import open_connection
+from adapters.storage.schema import initialize_schema
 
 
 class PeakDigestSubscriptionTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.old_db_path = tracking_repository_module.DB_FILE_PATH
-        self.old_data_dir = tracking_repository_module.DATA_DIR
         self.tmp_dir = tempfile.TemporaryDirectory()
-        tracking_repository_module.DATA_DIR = Path(self.tmp_dir.name)
-        tracking_repository_module.DB_FILE_PATH = Path(self.tmp_dir.name) / "tracking.sqlite3"
-        self.repository = SqliteTrackingRepository()
+        self.old_db_path = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp_dir.name) / "tracking.sqlite3")
+        with open_connection() as conn:
+            initialize_schema(conn)
+        self.repository = SqliteStorage()
 
     def tearDown(self) -> None:
         self.tmp_dir.cleanup()
-        tracking_repository_module.DB_FILE_PATH = self.old_db_path
-        tracking_repository_module.DATA_DIR = self.old_data_dir
+        if self.old_db_path is None:
+            os.environ.pop("BETBOT_DB_PATH", None)
+        else:
+            os.environ["BETBOT_DB_PATH"] = self.old_db_path
 
     def test_subscribe_and_list(self) -> None:
         self.assertEqual(self.repository.list_peak_digest_chats(), [])
