@@ -602,9 +602,16 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
         name: str,
         country_name: str | None = None,
     ) -> int:
+        """Crea SIEMPRE una unified NUEVA (paridad legacy: sin fuzzy find).
+
+        El find-or-create durante el tracking vive en `auto_track_live_detected_league`
+        / `confirm_pending_competition_request`. Este método explícito debe crear una
+        liga nueva: p.ej. `/unlink_league` lo usa para separar una plataforma en su
+        propia liga, y si hiciera find-or-create la re-pegaría a la misma unified.
+        """
         name_clean = name.strip()
         with open_connection() as conn:
-            return _find_or_create_unified_competition_id(conn, name_clean)
+            return _insert_unified_competition(conn, name_clean)
 
     def link_tracked_competition_to_unified(
         self,
