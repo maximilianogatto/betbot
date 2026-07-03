@@ -1,8 +1,8 @@
 """Storage adapters package + `SqliteStorage` facade.
 
 `SqliteStorage` compone los adapters SQLite por agregado en un único objeto que
-implementa TODOS los ports de storage. Es el reemplazo drop-in del legacy
-`SqliteTrackingRepository` en el composition root (PR2-E2-S9).
+implementa TODOS los ports de storage. Es el reemplazo drop-in del repositorio
+SQLite monolítico legacy en el composition root (PR2-E2-S9).
 
 Los adapters son *stateless* (sin `__init__`, abren la conexión por método), así
 que la composición por herencia múltiple no tiene conflicto de estado: el MRO
@@ -42,7 +42,7 @@ def get_storage() -> SqliteStorage:
     """Devuelve el facade de storage del proceso (singleton lazy).
 
     Bridge para migrar los consumidores legacy (que usaban el global
-    `storage.tracking_repository.tracking_repository`) al storage greenfield sin
+    singleton de storage legacy) al storage greenfield sin
     cambiar firmas función por función. El facade es stateless (abre conexión por
     método), así que un singleton por proceso alcanza.
     """

@@ -1104,7 +1104,7 @@ class SheetParseTests(unittest.TestCase):
 
 class RenderLiveHitMarketsTests(unittest.TestCase):
     def _entry(self, home: str, away: str):
-        from storage.tracking_repository import LiveWatchEntry
+        from core.models import LiveWatchEntry
 
         return LiveWatchEntry(
             id=1, chat_id=10, home=home, away=away, league_hint=None, note=None,

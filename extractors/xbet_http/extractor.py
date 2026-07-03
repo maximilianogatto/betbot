@@ -11,6 +11,7 @@ from urllib.parse import parse_qs, urlparse
 from core.extractor_base import Extractor
 from core.extractor_base import LeagueDiscoveryOption
 from core.models import CompetitionExtraction, EventSnapshot, LiveEventSnapshot, ProviderCapabilities
+from adapters.storage import get_storage
 from extractors.xbet_http.client import (
     XBetHttpClient,
     base_url_from_linefeed_url,
@@ -145,8 +146,7 @@ class XBetHttpExtractor(Extractor):
             events = []
 
         try:
-            from storage.tracking_repository import tracking_repository
-            tracked = tracking_repository.list_globally_active_competitions()
+            tracked = get_storage().list_globally_active_competitions()
             xbet_leagues = [c for c in tracked if c.platform == self.name and c.enabled]
             if xbet_leagues:
                 tasks = []

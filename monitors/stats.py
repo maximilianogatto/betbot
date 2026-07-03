@@ -26,10 +26,9 @@ from core.stats_models import (
 from core.stats_provider_base import StatsProviderRegistry, stats_provider_registry
 from core.league_naming import league_name_similarity
 from monitors.models import CommandResult
-from adapters.storage import get_storage
-from storage.tracking_repository import (
+from adapters.storage import SqliteStorage, get_storage
+from core.models import (
     ActiveEventRecord,
-    SqliteTrackingRepository,
     StatsLeagueSubscription,
     TrackedCompetitionSubscription,
 )
@@ -82,7 +81,7 @@ class StatsService:
         self,
         *,
         provider_registry: StatsProviderRegistry | None = None,
-        repository: SqliteTrackingRepository | None = None,
+        repository: SqliteStorage | None = None,
     ) -> None:
         self.provider_registry = provider_registry or stats_provider_registry
         self.repository = repository or get_storage()

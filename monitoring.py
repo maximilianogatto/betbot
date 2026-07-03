@@ -18,7 +18,7 @@ import logging
 import os
 from pathlib import Path
 
-from storage.tracking_repository import DB_FILE_PATH
+from adapters.storage.connection import resolve_database_path
 
 logger = logging.getLogger(__name__)
 
@@ -232,8 +232,9 @@ def _get_db_size_mb() -> float:
     """Return the SQLite file size in MB."""
 
     try:
-        if DB_FILE_PATH.exists():
-            return _bytes_to_mb(DB_FILE_PATH.stat().st_size)
+        db_file_path = resolve_database_path()
+        if db_file_path.exists():
+            return _bytes_to_mb(db_file_path.stat().st_size)
     except OSError:
         logger.exception("No pude leer el tamaño de la base SQLite.")
 

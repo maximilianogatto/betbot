@@ -48,19 +48,20 @@ from monitors.models import (
     SubscriptionOddsAlert,
     UnavailableCompetitionRefresh,
 )
-from core.models import CompetitionExtraction, EventSnapshot, PlatformDescriptor
-from core.registry import ExtractorRegistry, extractor_registry as global_extractor_registry
-from adapters.storage import get_storage
-from storage.tracking_repository import (
+from core.models import (
     ActiveEventRecord,
     ActiveEventUpsert,
     ConfirmedCompetitionTrackRequest,
+    CompetitionExtraction,
+    EventSnapshot,
     PendingCompetitionTrackRequest,
+    PlatformDescriptor,
     SmallChangeRecord,
-    SqliteTrackingRepository,
     TrackedCompetition,
     TrackedCompetitionSubscription,
 )
+from core.registry import ExtractorRegistry, extractor_registry as global_extractor_registry
+from adapters.storage import SqliteStorage, get_storage
 
 logger = logging.getLogger(__name__)
 
@@ -151,7 +152,7 @@ class TrackingService:
     def __init__(
         self,
         extractor_registry: ExtractorRegistry | None = None,
-        repository: SqliteTrackingRepository | None = None,
+        repository: SqliteStorage | None = None,
         max_parallel_refreshes: int = 3,
         remove_missing_after_cycles: int = 3,
         odds_change_confirmation_refreshes: int = 2,

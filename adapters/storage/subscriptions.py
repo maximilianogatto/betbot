@@ -202,69 +202,6 @@ class SQLiteSubscriptionsAdapter(SubscriptionsPort):
                 for row in rows
             ]
 
-def _remove_chat_subscription(
-    conn: sqlite3.Connection,
-    chat_id: int,
-    competition_id: int,
-) -> UntrackCompetitionResult:
-    now_iso = datetime.now(timezone.utc).isoformat()
-    
-    row_comp = conn.execute("SELECT * FROM competitions WHERE id = ?", (competition_id,)).fetchone()
-    if not row_comp:
-        raise ValueError(f"No tracked competition found with id={competition_id}.")
-    
-    cursor = conn.execute(
-        "DELETE FROM subscriptions WHERE chat_id = ? AND competition_id = ?",
-        (chat_id, competition_id)
-    )
-    if cursor.rowcount == 0:
-        raise ValueError(f"No subscription found for chat_id={chat_id} and competition_id={competition_id}.")
-        
-    for table in ("baselines", "small_changes", "sent_alerts"):
-        conn.execute(
-            f"""
-            DELETE FROM {table}
-            WHERE chat_id = ?
-              AND event_id IN (
-                  SELECT id FROM events WHERE competition_id = ?
-              )
-            """,
-            (chat_id, competition_id)
-        )
-        
-    row_sub = conn.execute(
-        "SELECT COUNT(*) FROM subscriptions WHERE competition_id = ? AND enabled = 1",
-        (competition_id,)
-    ).fetchone()
-    remaining = row_sub[0] if row_sub else 0
-    
-    competition_disabled = False
-    removed_active_events = 0
-    
-    if remaining == 0:
-        competition_disabled = True
-        conn.execute(
-            "UPDATE competitions SET enabled = 0, updated_at = ? WHERE id = ?",
-            (now_iso, competition_id)
-        )
-        cursor_events = conn.execute(
-            "DELETE FROM events WHERE competition_id = ?",
-            (competition_id,)
-        )
-        removed_active_events = cursor_events.rowcount
-        
-    row_comp = conn.execute("SELECT * FROM competitions WHERE id = ?", (competition_id,)).fetchone()
-    from adapters.storage.competitions import _row_to_tracked_competition
-    tc = _row_to_tracked_competition(row_comp)
-    
-    return UntrackCompetitionResult(
-        tracked_competition=tc,
-        removed_subscription=True,
-        competition_disabled=competition_disabled,
-        removed_active_events=removed_active_events,
-        remaining_enabled_subscriptions=remaining
-    )
-
     def set_change_percent_threshold(
         self,
         chat_id: int,
@@ -584,3 +521,67 @@ def _remove_chat_subscription(
                 (chat_id,)
             ).fetchone()
             return bool(row["enabled"]) if row else False
+
+
+def _remove_chat_subscription(
+    conn: sqlite3.Connection,
+    chat_id: int,
+    competition_id: int,
+) -> UntrackCompetitionResult:
+    now_iso = datetime.now(timezone.utc).isoformat()
+    
+    row_comp = conn.execute("SELECT * FROM competitions WHERE id = ?", (competition_id,)).fetchone()
+    if not row_comp:
+        raise ValueError(f"No tracked competition found with id={competition_id}.")
+    
+    cursor = conn.execute(
+        "DELETE FROM subscriptions WHERE chat_id = ? AND competition_id = ?",
+        (chat_id, competition_id)
+    )
+    if cursor.rowcount == 0:
+        raise ValueError(f"No subscription found for chat_id={chat_id} and competition_id={competition_id}.")
+        
+    for table in ("baselines", "small_changes", "sent_alerts"):
+        conn.execute(
+            f"""
+            DELETE FROM {table}
+            WHERE chat_id = ?
+              AND event_id IN (
+                  SELECT id FROM events WHERE competition_id = ?
+              )
+            """,
+            (chat_id, competition_id)
+        )
+        
+    row_sub = conn.execute(
+        "SELECT COUNT(*) FROM subscriptions WHERE competition_id = ? AND enabled = 1",
+        (competition_id,)
+    ).fetchone()
+    remaining = row_sub[0] if row_sub else 0
+    
+    competition_disabled = False
+    removed_active_events = 0
+    
+    if remaining == 0:
+        competition_disabled = True
+        conn.execute(
+            "UPDATE competitions SET enabled = 0, updated_at = ? WHERE id = ?",
+            (now_iso, competition_id)
+        )
+        cursor_events = conn.execute(
+            "DELETE FROM events WHERE competition_id = ?",
+            (competition_id,)
+        )
+        removed_active_events = cursor_events.rowcount
+        
+    row_comp = conn.execute("SELECT * FROM competitions WHERE id = ?", (competition_id,)).fetchone()
+    from adapters.storage.competitions import _row_to_tracked_competition
+    tc = _row_to_tracked_competition(row_comp)
+    
+    return UntrackCompetitionResult(
+        tracked_competition=tc,
+        removed_subscription=True,
+        competition_disabled=competition_disabled,
+        removed_active_events=removed_active_events,
+        remaining_enabled_subscriptions=remaining
+    )

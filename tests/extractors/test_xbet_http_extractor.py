@@ -358,10 +358,8 @@ class XBetHttpExtractionTests(unittest.IsolatedAsyncioTestCase):
 
         client = FakeXBetHttpClient(EMPTY_CHAMP_PAYLOAD)
         extractor = XBetHttpExtractor(client=client)
-        with patch(
-            "storage.tracking_repository.tracking_repository.list_globally_active_competitions",
-            return_value=[],
-        ):
+        storage = SimpleNamespace(list_globally_active_competitions=lambda: [])
+        with patch("extractors.xbet_http.extractor.get_storage", return_value=storage):
             result = await extractor.list_live_events()
         self.assertIsInstance(result, list)
 

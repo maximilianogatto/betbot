@@ -3,6 +3,7 @@ import os
 import tempfile
 import json
 from pathlib import Path
+from datetime import datetime, timedelta, timezone
 
 from adapters.storage.connection import open_connection
 from adapters.storage.schema import initialize_schema
@@ -103,7 +104,7 @@ class LiveWatchRepositoryTests(unittest.TestCase):
         # 3. Port signature: mark_live_watch_fired
         self.adapter.mark_live_watch_fired(entry.id, ["codere"], {"codere": {"goals": 1}})
         entry_f = self.adapter.get_live_watch(entry.id)
-        self.assertEqual(entry_f.status, "fired")
+        self.assertEqual(entry_f.status, "watching")
         self.assertEqual(entry_f.fired_platforms, "codere")
         self.assertEqual(entry_f.fired_odds_mask, 101) # accumulated mask
         self.assertEqual(entry_f.live_state, {"codere": {"goals": 1}})
@@ -115,7 +116,7 @@ class LiveWatchRepositoryTests(unittest.TestCase):
             
         self.adapter.mark_live_watch_fired(entry.id, platform="bet365", event_id="b365-1", minute="45")
         entry_f_leg = self.adapter.get_live_watch(entry.id)
-        self.assertEqual(entry_f_leg.status, "fired")
+        self.assertEqual(entry_f_leg.status, "watching")
         self.assertEqual(entry_f_leg.fired_platforms, "bet365")
         self.assertEqual(entry_f_leg.fired_odds_mask, 1)
         self.assertEqual(entry_f_leg.matched_minute, "45")
@@ -174,6 +175,12 @@ class LiveWatchRepositoryTests(unittest.TestCase):
         # purge_expired_live_watches
         e4 = self.adapter.add_live_watch(chat_id, "G", "H", chat_local_id=4)
         self.adapter.mark_live_watch_fired(e4.id, ["bet365"])
+        old_created_at = (datetime.now(timezone.utc) - timedelta(hours=17)).isoformat()
+        with open_connection() as conn:
+            conn.execute(
+                "UPDATE live_watch_entries SET created_at = ? WHERE id = ?",
+                (old_created_at, e4.id),
+            )
         purged = self.adapter.purge_expired_live_watches()
         self.assertEqual(purged, 1)
         self.assertIsNone(self.adapter.get_live_watch(e4.id))

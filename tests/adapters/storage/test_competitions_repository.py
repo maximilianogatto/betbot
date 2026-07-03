@@ -203,7 +203,10 @@ class CompetitionsRepositoryTests(unittest.TestCase):
         
         # relink
         moved = self.adapter.relink_unified_by_normalized_name()
-        self.assertGreaterEqual(moved, 0)
+        if isinstance(moved, dict):
+            self.assertGreaterEqual(moved.get("competitions_moved", 0) + moved.get("groups_merged", 0), 0)
+        else:
+            self.assertGreaterEqual(moved, 0)
 
     def test_suggestions_and_subscribed_unified(self) -> None:
         uc_id = self.adapter.create_unified_competition("Copa Libertadores")

@@ -9,13 +9,13 @@ import json
 from typing import Any
 
 from monitors.models import MarketChangeDetail, SubscriptionOddsAlert
-from storage.tracking_repository import (
+from core.models import (
     ActiveEventRecord,
     CompetitionSubscription,
     EventBaseline,
-    SqliteTrackingRepository,
     TrackedCompetition,
 )
+from adapters.storage import SqliteStorage
 
 MARKET_TYPE_LABELS = {
     "1x2": "1X2",
@@ -28,7 +28,7 @@ RECENT_SNAPSHOT_HISTORY_SIZE = 4
 
 
 def evaluate_subscription_odds_change(
-    repository: SqliteTrackingRepository,
+    repository: SqliteStorage,
     subscription: CompetitionSubscription,
     tracked_league: TrackedCompetition,
     match: ActiveEventRecord,
