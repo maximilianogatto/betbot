@@ -432,6 +432,31 @@ class TrackedCompetition:
     def platform_display_name(self) -> str:
         return platform_display_name(self.platform)
 
+    @property
+    def tracked_competition(self) -> TrackedCompetition:
+        return self
+
+    @property
+    def tracked_league(self) -> TrackedCompetition:
+        return self
+
+    @property
+    def subscription(self) -> CompetitionSubscription:
+        return CompetitionSubscription(
+            telegram_chat_id=0,
+            tracked_competition_id=self.id,
+            notify_new_events=True,
+            notify_odds_changes=True,
+            change_percent_threshold=20.0,
+            enabled=True,
+            created_at=self.created_at,
+            updated_at=self.updated_at,
+        )
+
+    @property
+    def subscription_created(self) -> bool:
+        return True
+
 
 @dataclass(frozen=True)
 class CompetitionSubscription:

@@ -8,16 +8,13 @@ from pathlib import Path
 
 from bot.alerts import group_events_by_physical_match, build_comparison_match_card_message
 from core.extractor_base import Extractor, LeagueDiscoveryOption
-from core.models import PlatformDescriptor, ProviderCapabilities, CompetitionExtraction, EventSnapshot, CompetitionKey
+import os
+from core.models import PlatformDescriptor, ProviderCapabilities, CompetitionExtraction, EventSnapshot, CompetitionKey, ActiveEventUpsert, ActiveEventRecord
 from core.registry import ExtractorRegistry
 from monitors.tracking import TrackingService
-from storage.tracking_repository import (
-    ActiveEventUpsert,
-    SqliteTrackingRepository,
-    ActiveEventRecord,
-)
-
-tracking_repository_module = importlib.import_module("storage.tracking_repository")
+from adapters.storage import SqliteStorage
+from adapters.storage.connection import open_connection
+from adapters.storage.schema import initialize_schema
 
 
 class FakeExtractor(Extractor):
@@ -125,12 +122,12 @@ def make_active_event_record(**kwargs) -> ActiveEventRecord:
 
 class UnifiedCompetitionsTests(unittest.IsolatedAsyncioTestCase):
     def setUp(self) -> None:
-        self.old_db_path = tracking_repository_module.DB_FILE_PATH
-        self.old_data_dir = tracking_repository_module.DATA_DIR
         self.tmp = tempfile.TemporaryDirectory()
-        tracking_repository_module.DATA_DIR = Path(self.tmp.name)
-        tracking_repository_module.DB_FILE_PATH = Path(self.tmp.name) / "tracking.sqlite3"
-        self.repository = SqliteTrackingRepository()
+        self._prev_db = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp.name) / "unified_competitions.sqlite3")
+        with open_connection() as conn:
+            initialize_schema(conn)
+        self.repository = SqliteStorage()
 
         self.registry = ExtractorRegistry()
         self.fake_extractor = FakeExtractor()
@@ -141,8 +138,10 @@ class UnifiedCompetitionsTests(unittest.IsolatedAsyncioTestCase):
         )
 
     def tearDown(self) -> None:
-        tracking_repository_module.DB_FILE_PATH = self.old_db_path
-        tracking_repository_module.DATA_DIR = self.old_data_dir
+        if self._prev_db is None:
+            os.environ.pop("BETBOT_DB_PATH", None)
+        else:
+            os.environ["BETBOT_DB_PATH"] = self._prev_db
         self.tmp.cleanup()
 
     def test_automatic_mapping_upon_confirm_pending_competition_request(self) -> None:
@@ -155,10 +154,11 @@ class UnifiedCompetitionsTests(unittest.IsolatedAsyncioTestCase):
             source_url="https://platform_a.test/npl-vic",
             competition_external_id="l1",
             competition_name="Australia. NPL Victoria",
+            requires_empty_confirmation=False,
+            needs_name_resolution=False,
         )
-        confirmed_1 = self.repository.confirm_pending_competition_request(chat_id)
-        self.assertIsNotNone(confirmed_1)
-        tracked_1 = confirmed_1.tracked_competition
+        tracked_1 = self.repository.confirm_pending_competition_request(chat_id)
+        self.assertIsNotNone(tracked_1)
 
         # Verify unified competition is created
         self.assertIsNotNone(tracked_1.unified_competition_id)
@@ -170,10 +170,11 @@ class UnifiedCompetitionsTests(unittest.IsolatedAsyncioTestCase):
             source_url="https://platform_b.test/npl-vic-b",
             competition_external_id="l2",
             competition_name="NPL Victoria, Australia",  # word shuffle -> same league
+            requires_empty_confirmation=False,
+            needs_name_resolution=False,
         )
-        confirmed_2 = self.repository.confirm_pending_competition_request(chat_id)
-        self.assertIsNotNone(confirmed_2)
-        tracked_2 = confirmed_2.tracked_competition
+        tracked_2 = self.repository.confirm_pending_competition_request(chat_id)
+        self.assertIsNotNone(tracked_2)
 
         # Canonical-equal names share the same unified competition.
         self.assertEqual(tracked_1.unified_competition_id, tracked_2.unified_competition_id)
@@ -186,9 +187,10 @@ class UnifiedCompetitionsTests(unittest.IsolatedAsyncioTestCase):
             source_url="https://platform_b.test/npl-vic-femenil",
             competition_external_id="l2f",
             competition_name="Australia. NPL Victoria (F)",
+            requires_empty_confirmation=False,
+            needs_name_resolution=False,
         )
-        confirmed_2f = self.repository.confirm_pending_competition_request(chat_id)
-        tracked_2f = confirmed_2f.tracked_competition
+        tracked_2f = self.repository.confirm_pending_competition_request(chat_id)
         self.assertNotEqual(tracked_1.unified_competition_id, tracked_2f.unified_competition_id)
 
         # Verify that a completely different league gets a different unified_competition_id
@@ -198,10 +200,11 @@ class UnifiedCompetitionsTests(unittest.IsolatedAsyncioTestCase):
             source_url="https://platform_a.test/premier-league",
             competition_external_id="l3",
             competition_name="England. Premier League",
+            requires_empty_confirmation=False,
+            needs_name_resolution=False,
         )
-        confirmed_3 = self.repository.confirm_pending_competition_request(chat_id)
-        self.assertIsNotNone(confirmed_3)
-        tracked_3 = confirmed_3.tracked_competition
+        tracked_3 = self.repository.confirm_pending_competition_request(chat_id)
+        self.assertIsNotNone(tracked_3)
         self.assertNotEqual(tracked_1.unified_competition_id, tracked_3.unified_competition_id)
 
     def test_sharing_stats_links_dynamically(self) -> None:
@@ -212,8 +215,10 @@ class UnifiedCompetitionsTests(unittest.IsolatedAsyncioTestCase):
             source_url="https://platform_a.test/npl-vic",
             competition_external_id="l1",
             competition_name="Australia. NPL Victoria",
+            requires_empty_confirmation=False,
+            needs_name_resolution=False,
         )
-        t1 = self.repository.confirm_pending_competition_request(chat_id).tracked_competition
+        t1 = self.repository.confirm_pending_competition_request(chat_id)
 
         self.repository.create_pending_competition_request(
             chat_id,
@@ -221,8 +226,10 @@ class UnifiedCompetitionsTests(unittest.IsolatedAsyncioTestCase):
             source_url="https://platform_b.test/npl-vic",
             competition_external_id="l2",
             competition_name="Australia. NPL Victoria",
+            requires_empty_confirmation=False,
+            needs_name_resolution=False,
         )
-        t2 = self.repository.confirm_pending_competition_request(chat_id).tracked_competition
+        t2 = self.repository.confirm_pending_competition_request(chat_id)
 
         # Add stats link to t1
         self.repository.upsert_stats_league_link(
@@ -323,7 +330,7 @@ class UnifiedCompetitionsTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("Australia. NPL Victoria (F)", res.message)
         self.assertIn("Australia. NPL Victoria", res.message)
 
-        tracked = self.repository.list_tracked_competitions(chat_id)
+        tracked = self.repository.list_tracked_competitions()
         self.assertEqual(len(tracked), 2)
 
 

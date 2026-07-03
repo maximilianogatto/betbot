@@ -514,8 +514,9 @@ class SQLiteBaselinesAdapter(BaselinesPort):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        # Port signature: mark_sent_alerts(self, chat_id, active_event_id, alert_type)
+        # Port signature: mark_sent_alerts(self, chat_id, active_event_ids: list[int], alert_type)
         # Legacy signature: mark_sent_alert(self, chat_id, tracked_competition_id, external_event_id, alert_type)
+        # Legacy signature: mark_sent_alerts(self, chat_id, tracked_competition_id, external_event_ids, alert_type)
         now_iso = datetime.now(timezone.utc).isoformat()
         
         def get_arg(pos_idx, kw_name, default=None):
@@ -523,28 +524,52 @@ class SQLiteBaselinesAdapter(BaselinesPort):
                 return args[pos_idx]
             return kwargs.get(kw_name, default)
 
+        first_arg = get_arg(0, "tracked_competition_id") or get_arg(0, "active_event_ids")
+        is_legacy = isinstance(first_arg, int) and (len(args) >= 3 or "external_event_id" in kwargs or "external_event_ids" in kwargs)
+
         with open_connection() as conn:
-            is_legacy = len(args) >= 3 and isinstance(args[1], str)
-            
             if is_legacy:
-                tracked_competition_id = get_arg(0, "tracked_competition_id")
-                external_event_id = get_arg(1, "external_event_id")
+                tracked_competition_id = first_arg
+                ext_events = get_arg(1, "external_event_ids") or get_arg(1, "external_event_id")
                 alert_type = get_arg(2, "alert_type")
-                event_row = conn.execute(
-                    "SELECT id FROM events WHERE competition_id = ? AND external_event_id = ?",
-                    (tracked_competition_id, external_event_id)
-                ).fetchone()
-                if not event_row:
+                
+                if isinstance(ext_events, str):
+                    event_ids = [ext_events]
+                else:
+                    event_ids = list(ext_events)
+
+                if not event_ids or not alert_type:
                     return
-                active_event_id = event_row["id"]
+
+                placeholders = ",".join("?" for _ in event_ids)
+                rows = conn.execute(
+                    f"SELECT id FROM events WHERE competition_id = ? AND external_event_id IN ({placeholders})",
+                    [tracked_competition_id] + event_ids
+                ).fetchall()
+                for row in rows:
+                    conn.execute(
+                        "INSERT OR IGNORE INTO sent_alerts (chat_id, event_id, alert_type, sent_at) VALUES (?, ?, ?, ?)",
+                        (chat_id, row["id"], alert_type.strip().lower(), now_iso)
+                    )
             else:
-                active_event_id = get_arg(0, "active_event_id")
+                active_events = first_arg
                 alert_type = get_arg(1, "alert_type")
                 
-            conn.execute(
-                "INSERT OR IGNORE INTO sent_alerts (chat_id, event_id, alert_type, sent_at) VALUES (?, ?, ?, ?)",
-                (chat_id, active_event_id, alert_type.strip().lower(), now_iso)
-            )
+                if active_events is None:
+                    return
+                
+                if isinstance(active_events, int):
+                    event_ids = [active_events]
+                elif isinstance(active_events, list):
+                    event_ids = [getattr(e, "id", e) for e in active_events]
+                else:
+                    event_ids = [getattr(e, "id", e) for e in list(active_events)]
+                
+                for ev_id in event_ids:
+                    conn.execute(
+                        "INSERT OR IGNORE INTO sent_alerts (chat_id, event_id, alert_type, sent_at) VALUES (?, ?, ?, ?)",
+                        (chat_id, int(ev_id), alert_type.strip().lower(), now_iso)
+                    )
 
     # Alias for legacy singular name
     mark_sent_alert = mark_sent_alerts

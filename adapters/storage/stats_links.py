@@ -87,18 +87,14 @@ class SQLiteStatsLinksAdapter(StatsLinksPort):
         tracked_competition_id: int,
         stats_provider: str | None = None,
     ) -> StatsLeagueLink | None:
-        with open_connection() as conn:
-            if stats_provider:
-                row = conn.execute(
-                    "SELECT * FROM stats_league_links WHERE competition_id = ? AND provider = ?",
-                    (tracked_competition_id, stats_provider.strip().lower())
-                ).fetchone()
-            else:
-                row = conn.execute(
-                    "SELECT * FROM stats_league_links WHERE competition_id = ? LIMIT 1",
-                    (tracked_competition_id,)
-                ).fetchone()
-            return _row_to_stats_league_link(row) if row else None
+        links = self.list_stats_league_links(tracked_competition_id)
+        if stats_provider:
+            prov = stats_provider.strip().lower()
+            for link in links:
+                if link.stats_provider.lower() == prov:
+                    return link
+            return None
+        return links[0] if links else None
 
     def upsert_stats_league_link(
         self,

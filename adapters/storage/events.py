@@ -300,7 +300,10 @@ class SQLiteEventsAdapter(EventsPort):
         tracked_competition_id: int,
         active_external_ids: list[str],
         max_missing_cycles: int = 3,
+        *args: Any,
+        **kwargs: Any,
     ) -> int:
+        max_cycles = kwargs.get("remove_after_cycles", max_missing_cycles)
         normalized_ids = [eid.strip() for eid in active_external_ids if eid and eid.strip()]
         
         with open_connection() as conn:
@@ -317,7 +320,7 @@ class SQLiteEventsAdapter(EventsPort):
                 
                 # Increment missing count
                 next_count = row["missing_seen_count"] + 1
-                if next_count >= max(1, max_missing_cycles):
+                if next_count >= max(1, max_cycles):
                     # Mark inactive
                     conn.execute(
                         "UPDATE events SET is_active = 0, missing_seen_count = ?, updated_at = ? WHERE id = ?",

@@ -193,14 +193,22 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
     def create_pending_competition_request(
         self,
         chat_id: int,
-        platform: str,
-        source_url: str,
-        competition_external_id: str,
-        competition_name: str,
-        requires_empty_confirmation: bool,
-        needs_name_resolution: bool,
-        payload_json: str | None = None,
+        *args: Any,
+        **kwargs: Any,
     ) -> PendingCompetitionTrackRequest:
+        def get_arg(pos_idx: int, kw_name: str, default: Any = None) -> Any:
+            if len(args) > pos_idx:
+                return args[pos_idx]
+            return kwargs.get(kw_name, default)
+
+        platform = get_arg(0, "platform")
+        source_url = get_arg(1, "source_url")
+        competition_external_id = get_arg(2, "competition_external_id")
+        competition_name = get_arg(3, "competition_name")
+        requires_empty_confirmation = get_arg(4, "requires_empty_confirmation", False)
+        needs_name_resolution = get_arg(5, "needs_name_resolution", False)
+        payload = get_arg(6, "payload_json") or kwargs.get("payload")
+
         platform = platform.strip().lower()
         source_url = source_url.strip()
         comp_ext_id = competition_external_id.strip()
@@ -208,11 +216,14 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
         now_iso = datetime.now(timezone.utc).isoformat()
         
         meta = {}
-        if payload_json:
-            try:
-                meta = json.loads(payload_json)
-            except Exception:
-                pass
+        if payload:
+            if isinstance(payload, dict):
+                meta = dict(payload)
+            elif isinstance(payload, str):
+                try:
+                    meta = json.loads(payload)
+                except Exception:
+                    pass
         meta["needs_name_resolution"] = needs_name_resolution
         merged_payload_json = json.dumps(meta)
         
@@ -415,8 +426,11 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
         last_synced_at: str | None = None,
         metadata_json: str | None = None,
         needs_name_resolution: bool | None = None,
+        *args: Any,
+        **kwargs: Any,
     ) -> TrackedCompetition:
         now_iso = datetime.now(timezone.utc).isoformat()
+        source_url = kwargs.get("source_url")
         with open_connection() as conn:
             row = conn.execute("SELECT metadata_json, unified_competition_id FROM competitions WHERE id = ?", (competition_id,)).fetchone()
             if not row:
@@ -447,6 +461,9 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
             if new_metadata_json is not None or needs_name_resolution is not None:
                 updates.append("metadata_json = ?")
                 params.append(new_metadata_json)
+            if source_url is not None:
+                updates.append("source_url = ?")
+                params.append(source_url)
                 
             params.append(competition_id)
             conn.execute(

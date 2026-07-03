@@ -92,8 +92,12 @@ class SQLiteSubscriptionsAdapter(SubscriptionsPort):
         self,
         chat_id: int,
         platform: str,
-        external_id: str,
+        external_id: str | None = None,
+        **kwargs: Any,
     ) -> TrackedCompetitionSubscription | None:
+        ext_id = external_id or kwargs.get("competition_external_id")
+        if not ext_id:
+            raise TypeError("Missing required argument: 'external_id' or 'competition_external_id'")
         query = """
             SELECT s.*, c.id AS comp_db_id, c.name, c.source_url, c.metadata_json, c.unified_competition_id, 
                    c.enabled AS comp_enabled, c.last_refreshed_at, c.consecutive_unavailable_refreshes, 
@@ -104,7 +108,7 @@ class SQLiteSubscriptionsAdapter(SubscriptionsPort):
             WHERE s.chat_id = ? AND c.platform = ? AND c.external_id = ?
         """
         with open_connection() as conn:
-            row = conn.execute(query, (chat_id, platform, external_id)).fetchone()
+            row = conn.execute(query, (chat_id, platform, ext_id)).fetchone()
             if not row:
                 return None
                 
