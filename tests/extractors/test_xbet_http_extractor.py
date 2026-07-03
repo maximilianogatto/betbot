@@ -7,6 +7,7 @@ import tempfile
 from types import SimpleNamespace
 from urllib.parse import parse_qs, urlparse
 
+import os
 from core.models import CompetitionExtraction
 from core.models import ProviderCapabilities
 from core.registry import ExtractorRegistry
@@ -14,9 +15,9 @@ from extractors import register_default_extractors
 from extractors.xbet_http.client import build_champ_url, build_game_url
 from extractors.xbet_http import XBetHttpExtractor, XBetHttpSettings
 from monitors.tracking import TrackingService
-from storage.tracking_repository import SqliteTrackingRepository
-
-tracking_repository_module = importlib.import_module("storage.tracking_repository")
+from adapters.storage import SqliteStorage
+from adapters.storage.connection import open_connection
+from adapters.storage.schema import initialize_schema
 
 
 CHAMP_PAYLOAD = {
@@ -382,14 +383,13 @@ class XBetHttpExtractionTests(unittest.IsolatedAsyncioTestCase):
         )
 
     async def test_tracking_service_persists_1xbet_events_in_existing_schema(self) -> None:
-        old_db_path = tracking_repository_module.DB_FILE_PATH
-        old_data_dir = tracking_repository_module.DATA_DIR
-
         with tempfile.TemporaryDirectory() as tmp_dir:
-            tracking_repository_module.DATA_DIR = Path(tmp_dir)
-            tracking_repository_module.DB_FILE_PATH = Path(tmp_dir) / "tracking.sqlite3"
+            old_db = os.environ.get("BETBOT_DB_PATH")
+            os.environ["BETBOT_DB_PATH"] = str(Path(tmp_dir) / "tracking.sqlite3")
+            with open_connection() as conn:
+                initialize_schema(conn)
             try:
-                repository = SqliteTrackingRepository()
+                repository = SqliteStorage()
                 registry = ExtractorRegistry()
                 registry.register(
                     XBetHttpExtractor(
@@ -436,8 +436,10 @@ class XBetHttpExtractionTests(unittest.IsolatedAsyncioTestCase):
                 self.assertIn("asian_handicap", event.markets_json or "")
                 self.assertIn("goal_line", event.markets_json or "")
             finally:
-                tracking_repository_module.DB_FILE_PATH = old_db_path
-                tracking_repository_module.DATA_DIR = old_data_dir
+                if old_db is None:
+                    os.environ.pop("BETBOT_DB_PATH", None)
+                else:
+                    os.environ["BETBOT_DB_PATH"] = old_db
 
 
 if __name__ == "__main__":

@@ -86,17 +86,15 @@ class SQLiteEventsAdapter(EventsPort):
                 ).fetchone()
                 
                 # Default markets format
-                markets_payload = None
-                if event.event_url: # Use event_url to match legacy default markets
-                    pass
+                markets_payload = {}
                 if event.odds_home is not None or event.odds_draw is not None or event.odds_away is not None:
-                    markets_payload = {
-                        "1x2": {
-                            "home": event.odds_home,
-                            "draw": event.odds_draw,
-                            "away": event.odds_away
-                        }
+                    markets_payload["1x2"] = {
+                        "home": event.odds_home,
+                        "draw": event.odds_draw,
+                        "away": event.odds_away
                     }
+                if event.markets_payload:
+                    markets_payload.update(event.markets_payload)
                 markets_json = json.dumps(markets_payload) if markets_payload else None
                 
                 stats_url = None
