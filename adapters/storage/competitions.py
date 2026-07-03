@@ -729,8 +729,14 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
                 return None
             return {
                 "id": int(row["id"]),
-                "name": str(row["name"]),
                 "public_id": str(row["public_id"]),
+                "name": str(row["name"]),
+                "display_name": row["display_name"],
+                "country": row["country"],
+                "gender": row["gender"],
+                "age_group": row["age_group"],
+                "created_at": str(row["created_at"]),
+                "updated_at": str(row["updated_at"]),
             }
 
     def delete_unified_competition(
@@ -925,9 +931,12 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
         self,
         name: str,
         limit: int = 5,
+        *args: Any,
+        **kwargs: Any,
     ) -> list[dict[str, Any]]:
         from core.league_naming import extract_league_traits, normalize_league_name, league_name_similarity
         
+        exclude_id = kwargs.get("exclude_unified_id")
         name_clean = name.strip()
         target_norm = normalize_league_name(name_clean)
         if len(target_norm.split()) < 2:
@@ -939,6 +948,8 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
             rows = conn.execute("SELECT id, name, public_id FROM unified_competitions").fetchall()
             
         for r in rows:
+            if exclude_id is not None and r["id"] == exclude_id:
+                continue
             cand = extract_league_traits(r["name"])
             if target["gender"] != cand["gender"] or target["age_group"] != cand["age_group"]:
                 continue

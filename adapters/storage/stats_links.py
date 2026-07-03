@@ -130,32 +130,68 @@ class SQLiteStatsLinksAdapter(StatsLinksPort):
             payload_json = get_arg(5, "payload_json")
 
         with open_connection() as conn:
-            conn.execute(
-                """
-                INSERT INTO stats_league_links (
-                    competition_id, provider, league_id, league_name, country_name, confidence, payload_json, created_at, updated_at
+            row = conn.execute("SELECT unified_competition_id FROM competitions WHERE id = ?", (tracked_competition_id,)).fetchone()
+            unified_id = row["unified_competition_id"] if row else None
+            
+            existing_id = None
+            if unified_id is not None:
+                row_link = conn.execute(
+                    """
+                    SELECT s.id FROM stats_league_links s
+                    JOIN competitions c ON c.id = s.competition_id
+                    WHERE c.unified_competition_id = ? AND s.provider = ?
+                    """,
+                    (unified_id, stats_provider.strip().lower())
+                ).fetchone()
+                if row_link:
+                    existing_id = row_link["id"]
+                    
+            if existing_id is not None:
+                conn.execute(
+                    """
+                    UPDATE stats_league_links
+                    SET competition_id = ?, league_id = ?, league_name = ?, country_name = ?,
+                        confidence = ?, payload_json = ?, updated_at = ?
+                    WHERE id = ?
+                    """,
+                    (
+                        tracked_competition_id,
+                        stats_league_id.strip(),
+                        stats_league_name.strip(),
+                        stats_country_name.strip() if stats_country_name else None,
+                        confidence,
+                        payload_json,
+                        now_iso,
+                        existing_id
+                    )
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(competition_id, provider) DO UPDATE SET
-                    league_id = excluded.league_id,
-                    league_name = excluded.league_name,
-                    country_name = excluded.country_name,
-                    confidence = excluded.confidence,
-                    payload_json = excluded.payload_json,
-                    updated_at = excluded.updated_at
-                """,
-                (
-                    tracked_competition_id,
-                    stats_provider.strip().lower(),
-                    stats_league_id.strip(),
-                    stats_league_name.strip(),
-                    stats_country_name,
-                    confidence,
-                    payload_json,
-                    now_iso,
-                    now_iso
+            else:
+                conn.execute(
+                    """
+                    INSERT INTO stats_league_links (
+                        competition_id, provider, league_id, league_name, country_name, confidence, payload_json, created_at, updated_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(competition_id, provider) DO UPDATE SET
+                        league_id = excluded.league_id,
+                        league_name = excluded.league_name,
+                        country_name = excluded.country_name,
+                        confidence = excluded.confidence,
+                        payload_json = excluded.payload_json,
+                        updated_at = excluded.updated_at
+                    """,
+                    (
+                        tracked_competition_id,
+                        stats_provider.strip().lower(),
+                        stats_league_id.strip(),
+                        stats_league_name.strip(),
+                        stats_country_name.strip() if stats_country_name else None,
+                        confidence,
+                        payload_json,
+                        now_iso,
+                        now_iso
+                    )
                 )
-            )
             
             # Reload for legacy return
             row = conn.execute(
