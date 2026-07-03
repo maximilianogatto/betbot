@@ -386,6 +386,17 @@ class SQLiteSubscriptionsAdapter(SubscriptionsPort):
             ).fetchall()
             return [_row_to_stats_league_sub(row) for row in rows]
 
+    def list_globally_active_stats_leagues(self) -> list[StatsLeagueSubscription]:
+        with open_connection() as conn:
+            rows = conn.execute(
+                """
+                SELECT * FROM stats_league_subscriptions
+                WHERE enabled = 1
+                ORDER BY provider, league_id, chat_id
+                """
+            ).fetchall()
+            return [_row_to_stats_league_sub(row) for row in rows]
+
     def upsert_stats_league_subscription(
         self,
         chat_id: int,
@@ -396,10 +407,19 @@ class SQLiteSubscriptionsAdapter(SubscriptionsPort):
         source_url: str | None = None,
         enabled: bool = True,
         **kwargs: Any,
-    ) -> None:
+    ) -> StatsLeagueSubscription | None:
         provider = provider or kwargs.get("stats_provider")
         if not provider:
             raise TypeError("Missing required argument: 'provider' or 'stats_provider'")
+            
+        payload = kwargs.get("payload") or kwargs.get("payload_json")
+        payload_json = None
+        if payload:
+            if isinstance(payload, dict):
+                payload_json = json.dumps(payload)
+            elif isinstance(payload, str):
+                payload_json = payload
+
         now_iso = datetime.now(timezone.utc).isoformat()
         with open_connection() as conn:
             existing = conn.execute(
@@ -411,21 +431,27 @@ class SQLiteSubscriptionsAdapter(SubscriptionsPort):
                 conn.execute(
                     """
                     UPDATE stats_league_subscriptions
-                    SET league_name = ?, country_name = ?, source_url = ?, enabled = ?, updated_at = ?
+                    SET league_name = ?, country_name = ?, source_url = ?, payload_json = ?, enabled = ?, updated_at = ?
                     WHERE chat_id = ? AND provider = ? AND league_id = ?
                     """,
-                    (stats_league_name, stats_country_name, source_url, 1 if enabled else 0, now_iso, chat_id, provider, stats_league_id)
+                    (stats_league_name, stats_country_name, source_url, payload_json, 1 if enabled else 0, now_iso, chat_id, provider, stats_league_id)
                 )
             else:
                 conn.execute(
                     """
                     INSERT INTO stats_league_subscriptions (
-                        chat_id, provider, league_id, league_name, country_name, source_url, enabled, created_at, updated_at
+                        chat_id, provider, league_id, league_name, country_name, source_url, payload_json, enabled, created_at, updated_at
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
-                    (chat_id, provider, stats_league_id, stats_league_name, stats_country_name, source_url, 1 if enabled else 0, now_iso, now_iso)
+                    (chat_id, provider, stats_league_id, stats_league_name, stats_country_name, source_url, payload_json, 1 if enabled else 0, now_iso, now_iso)
                 )
+                
+            updated = conn.execute(
+                "SELECT * FROM stats_league_subscriptions WHERE chat_id = ? AND provider = ? AND league_id = ?",
+                (chat_id, provider, stats_league_id)
+            ).fetchone()
+            return _row_to_stats_league_sub(updated) if updated else None
 
     def list_peak_digest_chats(self) -> list[int]:
         with open_connection() as conn:
@@ -454,3 +480,30 @@ class SQLiteSubscriptionsAdapter(SubscriptionsPort):
                     "INSERT INTO peak_digest_subscriptions (chat_id, enabled, updated_at) VALUES (?, ?, ?)",
                     (chat_id, 1 if enabled else 0, now_iso)
                 )
+
+    def delete_stats_league_subscription(
+        self,
+        chat_id: int,
+        *args: Any,
+        **kwargs: Any,
+    ) -> bool:
+        def get_arg(pos_idx, kw_name, default=None):
+            if len(args) > pos_idx:
+                return args[pos_idx]
+            return kwargs.get(kw_name, default)
+            
+        provider = get_arg(0, "stats_provider") or kwargs.get("provider")
+        stats_league_id = get_arg(1, "stats_league_id")
+        
+        if not provider or not stats_league_id:
+            raise TypeError("Missing provider or stats_league_id")
+            
+        with open_connection() as conn:
+            cursor = conn.execute(
+                """
+                DELETE FROM stats_league_subscriptions
+                WHERE chat_id = ? AND provider = ? AND league_id = ?
+                """,
+                (chat_id, provider, stats_league_id)
+            )
+            return cursor.rowcount > 0
