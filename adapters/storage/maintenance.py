@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import json
 import sqlite3
 import logging
 from datetime import datetime, timedelta, timezone
+from typing import Any
 
 from core.ports.maintenance import MaintenancePort
 from adapters.storage.connection import open_connection, resolve_database_path
@@ -106,5 +108,59 @@ class SQLiteMaintenanceAdapter(MaintenancePort):
                     (overflow,)
                 )
                 deleted_expired += cursor_limit.rowcount
-                
+
             return deleted_expired
+
+    def get_cached_stats_payload(self, cache_key: str) -> dict[str, Any] | None:
+        """Payload de stats cacheado si existe y no venció, si no None.
+
+        Respalda el cache anti-ban/latencia: los payloads caros de los providers
+        se guardan para no volver a pegarle a Sportradar en cada lectura.
+        """
+        now_iso = datetime.now(timezone.utc).isoformat()
+        with open_connection() as conn:
+            row = conn.execute(
+                "SELECT payload_json, expires_at FROM stats_payload_cache WHERE cache_key = ?",
+                (cache_key,),
+            ).fetchone()
+        if row is None or str(row["expires_at"]) <= now_iso:
+            return None
+        try:
+            payload = json.loads(row["payload_json"])
+        except (TypeError, ValueError):
+            return None
+        return payload if isinstance(payload, dict) else None
+
+    def set_cached_stats_payload(
+        self, cache_key: str, payload: dict[str, Any], *, ttl_seconds: float
+    ) -> None:
+        """Persiste un payload de stats bajo cache_key con TTL (segundos) + cap FIFO 200."""
+        fetched = datetime.now(timezone.utc)
+        expires = fetched + timedelta(seconds=max(1.0, float(ttl_seconds)))
+        with open_connection() as conn:
+            conn.execute(
+                """
+                INSERT INTO stats_payload_cache (cache_key, payload_json, fetched_at, expires_at)
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT(cache_key) DO UPDATE SET
+                    payload_json = excluded.payload_json,
+                    fetched_at = excluded.fetched_at,
+                    expires_at = excluded.expires_at
+                """,
+                (cache_key, json.dumps(payload), fetched.isoformat(), expires.isoformat()),
+            )
+            # Cap FIFO 200: borra los más viejos si se pasa.
+            total = int(conn.execute(
+                "SELECT COUNT(*) AS n FROM stats_payload_cache"
+            ).fetchone()["n"])
+            overflow = max(0, total - STATS_PAYLOAD_CACHE_MAX_ROWS)
+            if overflow > 0:
+                conn.execute(
+                    """
+                    DELETE FROM stats_payload_cache WHERE cache_key IN (
+                        SELECT cache_key FROM stats_payload_cache
+                        ORDER BY fetched_at ASC, cache_key ASC LIMIT ?
+                    )
+                    """,
+                    (overflow,),
+                )

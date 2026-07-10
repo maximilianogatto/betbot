@@ -126,4 +126,19 @@ class MaintenanceRepositoryTests(unittest.TestCase):
         with open_connection() as conn:
             count = conn.execute("SELECT COUNT(*) FROM stats_payload_cache").fetchone()[0]
             self.assertEqual(count, 200)
-stream = None
+
+    def test_stats_payload_cache_get_set_roundtrip(self) -> None:
+        # Gap greenfield: los stats providers usan get/set_cached_stats_payload en
+        # runtime (anti-ban/latencia). Faltaban en el facade → AttributeError.
+        self.assertIsNone(self.adapter.get_cached_stats_payload("k1"))
+        self.adapter.set_cached_stats_payload("k1", {"foo": "bar", "n": 3}, ttl_seconds=60)
+        self.assertEqual(self.adapter.get_cached_stats_payload("k1"), {"foo": "bar", "n": 3})
+        # Vencido → None.
+        with open_connection() as conn:
+            past = (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat()
+            conn.execute(
+                "INSERT INTO stats_payload_cache (cache_key, payload_json, fetched_at, expires_at) "
+                "VALUES ('old', '{\"a\": 1}', ?, ?)",
+                (past, past),
+            )
+        self.assertIsNone(self.adapter.get_cached_stats_payload("old"))
