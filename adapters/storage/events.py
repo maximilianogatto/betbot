@@ -229,6 +229,7 @@ class SQLiteEventsAdapter(EventsPort):
     def get_active_events_for_unified_competition(
         self,
         unified_id: int,
+        only_future: bool = False,
     ) -> list[ActiveEventRecord]:
         query = """
             SELECT e.*, c.external_id AS competition_external_id
@@ -239,7 +240,15 @@ class SQLiteEventsAdapter(EventsPort):
         """
         with open_connection() as conn:
             rows = conn.execute(query, (unified_id,)).fetchall()
-            return [_row_to_active_event_record(row) for row in rows]
+            records = [_row_to_active_event_record(row) for row in rows]
+        if not only_future:
+            return records
+        # Paridad legacy: futuros o sin horario, excluyendo eventos "missing".
+        now_utc = datetime.now(timezone.utc)
+        return [
+            r for r in records
+            if _is_future_or_unscheduled(r.scheduled_at, now_utc) and not r.is_missing
+        ]
 
     def get_earliest_kickoffs(
         self,
