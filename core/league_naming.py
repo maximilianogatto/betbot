@@ -49,7 +49,29 @@ _COUNTRY_ALIASES: dict[str, str] = {
     "eslovaquia": "slovakia",
     "slovakia": "slovakia",
     "argelia": "algeria",
-    "algeria": "algeria"
+    "algeria": "algeria",
+    "islandia": "iceland",
+    "iceland": "iceland",
+    "dinamarca": "denmark",
+    "denmark": "denmark",
+    "polonia": "poland",
+    "poland": "poland",
+    "grecia": "greece",
+    "greece": "greece",
+    "turquia": "turkey",
+    "turquía": "turkey",
+    "turkey": "turkey",
+    "japon": "japan",
+    "japón": "japan",
+    "japan": "japan",
+    "lituania": "lithuania",
+    "lithuania": "lithuania",
+    "croacia": "croatia",
+    "croatia": "croatia",
+    "serbia": "serbia",
+    "bosnia": "bosnia",
+    "bosnia-herzegovina": "bosnia",
+    "bosnia and herzegovina": "bosnia",
 }
 
 # Number words (en + es) and roman numerals → digit string.
@@ -75,7 +97,8 @@ _TOKEN_ALIASES: dict[str, str] = {
     "división": "div",
     "femenino": "women", "femenina": "women", "women": "women", "woman": "women",
     "damas": "women", "dam": "women", "mujeres": "women", "féminas": "women", "feminas": "women",
-    "f": "women", "w": "women", 'femenil': "women",
+    "f": "women", "w": "women", 'femenil': "women", "fem": "women",
+    "sub": "u", "u": "u", "juvenil": "youth", "youth": "youth", "reserva": "reserves", "reserves": "reserves", "res": "reserves"
 }
 
 # Tokens dropped as noise (incl. men markers → treat unmarked as men).
