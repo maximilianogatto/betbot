@@ -2795,7 +2795,20 @@ async def list_tracks_command(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 
 def _subscribed_unified(chat_id: int) -> list[dict]:
-    return get_storage().list_subscribed_unified_competitions(chat_id)
+    # Orden: agrupado por país (bandera alineada) y luego alfabético por nombre.
+    # Las sin país detectado van al final. Este orden es la fuente única del índice
+    # N que usan /league, /link_league, /unlink_league, etc. → display y selección
+    # quedan consistentes.
+    from core.league_naming import extract_league_traits
+
+    unified = get_storage().list_subscribed_unified_competitions(chat_id)
+    return sorted(
+        unified,
+        key=lambda u: (
+            extract_league_traits(u.get("name")).get("country") or "zzzz",
+            (u.get("name") or "").lower(),
+        ),
+    )
 
 
 async def leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
