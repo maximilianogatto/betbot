@@ -4,7 +4,12 @@ from pathlib import Path
 from contextlib import contextmanager
 from .schema import initialize_schema
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+# connection.py vive en adapters/storage/ → el root del proyecto son 3 niveles
+# arriba (storage → adapters → root). OJO: tenía un .parent de más y resolvía al
+# directorio PADRE del proyecto, mandando el default y las rutas BETBOT_DB_PATH
+# relativas un nivel arriba (DB vacía silenciosa). Los tests no lo cazaban porque
+# usan rutas absolutas.
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 
 def resolve_database_path() -> Path:

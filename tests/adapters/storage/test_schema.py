@@ -44,6 +44,29 @@ class StorageSchemaTests(unittest.TestCase):
 
             self.assertTrue(db_path.exists())
 
+    def test_relative_db_path_resolves_under_project_root(self) -> None:
+        # Regresión: un BETBOT_DB_PATH relativo debe caer bajo el ROOT del proyecto,
+        # no bajo su directorio padre. (Bug: PROJECT_ROOT tenía un `.parent` de más
+        # → el bot arrancaba con una DB vacía en el dir de arriba. Los tests no lo
+        # cazaban porque usan rutas absolutas.)
+        from adapters.storage.connection import PROJECT_ROOT
+
+        # El root es el repo: contiene adapters/storage/connection.py.
+        self.assertTrue((PROJECT_ROOT / "adapters" / "storage" / "connection.py").exists())
+
+        previous = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = "data/greenfield_test.sqlite3"
+        try:
+            self.assertEqual(
+                resolve_database_path(),
+                PROJECT_ROOT / "data" / "greenfield_test.sqlite3",
+            )
+        finally:
+            if previous is None:
+                os.environ.pop("BETBOT_DB_PATH", None)
+            else:
+                os.environ["BETBOT_DB_PATH"] = previous
+
     def test_schema_is_idempotent_and_preserves_data(self) -> None:
         with open_connection(":memory:") as connection:
             competition_id = connection.execute(
