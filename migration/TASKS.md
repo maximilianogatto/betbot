@@ -3,7 +3,9 @@
 > Fuente de verdad del "qué sigue". Editá el **estado/owner** de la tarea en la que trabajás (ver `PROTOCOL.md`).
 > Diseño de referencia: `REPORTE_ARQUITECTURA_BetBot.md`.
 
-**PR activa:** PR1 · **Rama activa:** `mig/pr1` · **Última actualización:** 2026-06-25 · por @claude
+**PR activa:** PR2 · **Rama activa:** `mig/pr2` · **Última actualización:** 2026-07-02 · por @claude
+
+> **Hito 2026-07-02:** PR2-E2 (migración de storage a greenfield) **COMPLETA** — legacy borrado, runtime+tests migrados, suite 667 OK + boot funcional verde. Próximo: PR2-E3 (renderers) / E4 (services) / E5 (handlers finos, ya hay WIP en `bot/handlers/`) / E6 (scheduler) / E7 (borrar muertos).
 
 **Leyenda de estado:** `TODO` · `IN_PROGRESS @agente (fecha)` · `BLOCKED` · `DONE` · `FAILED`
 
@@ -30,13 +32,37 @@
 
 | ID | Tarea (alto nivel) | Estado |
 | :--- | :--- | :--- |
-| PR2-E1 | Crear esqueleto de carpetas objetivo + `core/ports/` (interfaces). | TODO |
-| PR2-E2 | Partir `storage/tracking_repository.py` (6063 líneas) en `adapters/storage/*` por agregado. | IN_PROGRESS @codex (2026-06-25) |
+| PR2-E1 | Crear esqueleto de carpetas objetivo + `core/ports/` (interfaces). | DONE |
+| PR2-F3 | Crear `adapters/storage/connection.py` + `schema.py` con esquema SQLite greenfield limpio. | DONE |
+| PR2-E2 | Partir `storage/tracking_repository.py` (6063 líneas) en `adapters/storage/*` por agregado. | DONE (2026-07-02) — adapters greenfield + facade `SqliteStorage`; runtime y tests migrados; legacy `storage/tracking_repository.py` BORRADO (−5835). Suite 667 OK + boot funcional greenfield verde. |
 | PR2-E3 | Extraer renderers (`bot/alerts.py` + `build_*_message`/`render_*`) a `interfaces/telegram/renderers/`. Servicios devuelven DTOs. | TODO |
 | PR2-E4 | Mover servicios de `monitors/` a `services/` y adelgazarlos (sin telegram, sin SQL inline). | TODO |
 | PR2-E5 | Handlers finos en `interfaces/telegram/handlers/` (mismos comandos). | TODO |
 | PR2-E6 | `runtime/scheduler.py` neutro (asyncio) que dispara métodos de services; borrar `bot/jobs/legacy.py` y scheduler propio. | TODO |
 | PR2-E7 | Borrar archivos muertos (`core/flags.py`, etc. — ver §4.4 del reporte). | TODO |
+
+### PR2-E2 — Subtareas propuestas para `adapters/storage/*`
+
+> Estas filas preparan PR2; no se implementan hasta que PR1 esté `DONE`, mergeada y la rama de PR2 esté abierta. Cada subtarea debe tocar solo los archivos declarados. El objetivo es escribir adapters contra el esquema greenfield definido en el reporte, no partir mecánicamente el repositorio legacy para conservar deuda.
+
+| ID | Tarea | Archivos principales | Criterio de aceptación | Deps | Estado |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| PR2-E2-S0 | Crear foundation SQLite greenfield para storage. | `adapters/storage/connection.py`, `adapters/storage/schema.py`, `tests/adapters/storage/test_schema.py` | Una DB vacía inicializa el esquema current-state limpio (`events`, `competitions`, `chat_subscriptions`, `baselines`, `small_changes`, `stats_links`, `live_watch`, `chat_settings`); incluye busy timeout/row factory/transacciones; no importa `storage/tracking_repository.py`; tests de creación e índices verdes. | PR1 mergeada, PR2-E1 | DONE |
+| PR2-E2-S1 | Implementar adapter de competencias/tracking/unified/discovery. | `adapters/storage/competitions.py`, `tests/adapters/storage/test_competitions_repository.py` | Implementa el port de competencias definido en `PORTS_SPEC.md`: pending track, tracked competitions, unavailable refresh, unified competitions y discovery; CRUD idempotente; retorna DTOs/modelos de dominio, no filas SQLite crudas. | PR2-E2-S0, ports PR2-F2 | DONE |
+| PR2-E2-S2 | Implementar adapter de eventos y odds current-state. | `adapters/storage/events.py`, `tests/adapters/storage/test_events_repository.py` | Upsert/listado/remoción de eventos activos funciona sobre tabla `events`; conserva solo estado actual y odds normalizadas; `remove_missing_events`/`remove_past_events` cubiertos por tests; no persiste payloads gigantes salvo flag debug futuro. | PR2-E2-S0, ports PR2-F2 | DONE |
+| PR2-E2-S3 | Implementar adapter de suscripciones y settings de chat. | `adapters/storage/subscriptions.py`, `tests/adapters/storage/test_subscriptions_repository.py` | Cubre suscripciones chat↔liga, toggles de odds/reminders, stats-only, peak digest y `chat_settings`; operaciones por `chat_id` son idempotentes; tests cubren enabled/disabled y remoción. | PR2-E2-S0, ports PR2-F2 | DONE |
+| PR2-E2-S4 | Implementar adapter de baselines, cambios menores y dedupe de alertas. | `adapters/storage/baselines.py`, `tests/adapters/storage/test_baselines_repository.py` | Baselines por chat/evento, `small_changes` pendientes/confirmados y `sent_alerts` dedupe funcionan sin depender de tablas legacy; tests cubren confirmación individual/todas y dedupe de alertas. | PR2-E2-S0, ports PR2-F2 | DONE |
+| PR2-E2-S5 | Implementar adapter de links de estadísticas. | `adapters/storage/stats_links.py`, `tests/adapters/storage/test_stats_links_repository.py` | Liga odds↔stats y match odds↔stats se pueden listar/upsert/consultar por provider; constraints evitan duplicados; tests cubren relink and lookup por evento. | PR2-E2-S0, ports PR2-F2 | DONE |
+| PR2-E2-S6 | Implementar adapter de live watch. | `adapters/storage/live_watch.py`, `tests/adapters/storage/test_live_watch_repository.py` | Cubre altas, listados, remoción, settings, expiración y marcas de fired/countdown/prematch; tests validan estados activos/expirados y actualización de plataforma. | PR2-E2-S0, ports PR2-F2 | DONE |
+| PR2-E2-S7 | Implementar adapter de cache y mantenimiento. | `adapters/storage/maintenance.py`, `tests/adapters/storage/test_maintenance_repository.py` | Porta TTL/cap FIFO 200 de `stats_payload_cache`, prune de `sent_alerts`/`small_changes` y `VACUUM`; tests verifican conteos borrados, cap de cache y que vacuum es invocable. | PR2-E2-S0, ports PR2-F2 | DONE |
+| PR2-E2-S3B | Adapter de settings de chat (timezone) — gap detectado en review de paridad @claude. | `adapters/storage/chat_settings.py`, `tests/adapters/storage/test_chat_settings_repository.py` | Implementa `ChatSettingsPort` (get/set/clear timezone) sobre `chat_settings`; tests verdes; paridad ports→adapters completa. | PR2-E2-S0, ports PR2-F2 | DONE |
+| PR2-E2-S8 | Crear mappers SQLite↔DTO compartidos. | `adapters/storage/mappers.py`, `tests/adapters/storage/test_storage_mappers.py` | Los adapters reutilizan conversiones comunes para odds, eventos, competencias, subscriptions y stats links; tests cubren `None`, fechas ISO y floats; no filtra objetos SQLite fuera de adapters. | PR2-E2-S1, PR2-E2-S2, PR2-E2-S3 | N/A — no se hizo módulo compartido: cada adapter tiene su `_row_to_*` local (`adapters/storage/mappers.py` no existe). La migración cerró verde sin él; refactor opcional a futuro si hay duplicación real. |
+| PR2-E2-S9 | Crear facade de storage y cortar imports legacy. | `adapters/storage/__init__.py`, composition root actual, tests de integración storage | Facade compone S1-S7 e implementa los ports necesarios; imports de runtime/services apuntan al facade nuevo; suite verde con DB greenfield; `storage/tracking_repository.py` queda sin uso y solo se borra cuando los tests confirmen paridad mínima. | PR2-E2-S1, PR2-E2-S2, PR2-E2-S3, PR2-E2-S4, PR2-E2-S5, PR2-E2-S6, PR2-E2-S7 | DONE (2026-07-02) — facade + swap del composition root + migración por capas S9a/b/c (alerts, jobs/timezones, handlers/services) al facade. Legacy borrado en S9c-2. Todos los consumidores usan `get_storage()`/facade inyectado. Suite verde. |
+| PR2-E2-S9a | Migrar `bot/alerts.py` + tipos compartidos al facade (sacar el global legacy de alerts). | `bot/alerts.py`, `core/models.py`, `adapters/storage/__init__.py` | alerts no importa `tracking_repository` global; usa `get_storage()`; tests verdes. | PR2-E2-S9 | DONE @claude (2026-07-02) — tipos unificados en core.models (legacy re-exporta, −447 líneas); accessor `get_storage()`; alerts al facade. 673 OK. |
+| PR2-E2-S9b | Migrar `bot/jobs/*` + `core/timezones.py` al facade + re-portar blocklist al greenfield. | `bot/jobs/tasks.py`, `bot/jobs/legacy.py`, `core/timezones.py`, `adapters/storage/schema.py`, `adapters/storage/competitions.py` | Jobs y timezones dejan de usar el global legacy; `unified_merge_exceptions` en el schema greenfield + métodos en el competitions adapter. | PR2-E2-S9a | DONE @claude (2026-07-02) — jobs+timezones a `get_storage()`; blocklist re-portado (tabla+3 métodos+tests). 673 OK. |
+| PR2-E2-S9c-1 | Migrar `bot/handlers.py` (14 métodos) + `monitors/*` (fallback + tipos) al facade. | `bot/handlers.py`, `monitors/models.py`, `monitors/{tracking,stats,live_watch}.py` | handlers usa `get_storage()`; services usan el facade inyectado (fallback `get_storage()`); RUNTIME de prod ya no corre con dos esquemas. | PR2-E2-S9b | DONE @claude (2026-07-02) — 0 usos del global legacy en runtime de prod. 673 OK. |
+| PR2-E2-S9c-2 | Borrar el archivo legacy `storage/tracking_repository.py`. | 4 type-hints en `monitors/*` (`SqliteTrackingRepository`→facade/Protocol) + **22 archivos de test** que construyen `SqliteTrackingRepository` (migrar al facade greenfield o borrar los redundantes con `tests/adapters/storage/*`) + borrar el archivo. | Ningún módulo NI test importa `storage.tracking_repository`; el archivo se borra; suite verde. | PR2-E2-S9c-1 | DONE @codex (2026-07-02) |
+
 
 ---
 
@@ -54,5 +80,6 @@
 
 ## Notas de coordinación
 - No empezar PR2 hasta que PR1 esté `DONE` y mergeada.
+- PR2-E2 no se implementa como split mecánico del repositorio legacy. Cuando PR2 esté habilitada, seguir `migration/PR2_PLAN.md` y `migration/PORTS_SPEC.md`: F1 (esqueleto) → F2 (ports) → F3 (schema greenfield) → adapters nuevos contra el esquema limpio.
 - Si una tarea queda `BLOCKED`, dejar el motivo en `LOG.md` y, si se puede, tomar otra tarea independiente del mismo PR.
 - **Colisión de archivos en PR1:** las tareas PR1-T1, T2, T4, T5, T6 tocan todas `storage/tracking_repository.py`. **Solo un agente a la vez** debe estar `IN_PROGRESS` sobre ese archivo. El otro agente puede tomar en paralelo **PR1-T3** (toca `browser_handler.py` / `config.py` / jobs, archivos distintos). El resto se hace en serie.

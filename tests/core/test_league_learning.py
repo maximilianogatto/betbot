@@ -1,15 +1,16 @@
 from __future__ import annotations
 
-import importlib
+import os
 import tempfile
 import unittest
 from pathlib import Path
 
 from core.registry import ExtractorRegistry
 from monitors.tracking import TrackingService
-from storage.tracking_repository import ActiveEventUpsert, SqliteTrackingRepository
-
-tracking_repository_module = importlib.import_module("storage.tracking_repository")
+from core.models import ActiveEventUpsert
+from adapters.storage import SqliteStorage
+from adapters.storage.connection import open_connection
+from adapters.storage.schema import initialize_schema
 
 
 def _event(eid: str, home: str, away: str, when: str) -> ActiveEventUpsert:
@@ -32,17 +33,22 @@ class LeagueLearningTests(unittest.TestCase):
     CHAT = 42
 
     def setUp(self) -> None:
-        self.old_db_path = tracking_repository_module.DB_FILE_PATH
         self.tmp = tempfile.TemporaryDirectory()
-        tracking_repository_module.DB_FILE_PATH = Path(self.tmp.name) / "tracking.sqlite3"
-        self.repo = SqliteTrackingRepository()
+        self._prev_db = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp.name) / "tracking.sqlite3")
+        with open_connection() as conn:
+            initialize_schema(conn)
+        self.repo = SqliteStorage()
         self.service = TrackingService(
             extractor_registry=ExtractorRegistry(),
             repository=self.repo,
         )
 
     def tearDown(self) -> None:
-        tracking_repository_module.DB_FILE_PATH = self.old_db_path
+        if self._prev_db is None:
+            os.environ.pop("BETBOT_DB_PATH", None)
+        else:
+            os.environ["BETBOT_DB_PATH"] = self._prev_db
         self.tmp.cleanup()
 
     def _track(self, platform: str, ext_id: str, name: str):
@@ -52,8 +58,10 @@ class LeagueLearningTests(unittest.TestCase):
             source_url=f"https://{platform}.example/{ext_id}",
             competition_external_id=ext_id,
             competition_name=name,
+            requires_empty_confirmation=False,
+            needs_name_resolution=False,
         )
-        return self.repo.confirm_pending_competition_request(self.CHAT).tracked_competition
+        return self.repo.confirm_pending_competition_request(self.CHAT)
 
     def _seed_shared_fixtures(self, a_id: int, b_id: int) -> None:
         """Three coinciding matches across platforms (>= MIN_MERGE_COINCIDENCES)."""

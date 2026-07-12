@@ -21,16 +21,11 @@ from typing import Iterable, Any
 from zoneinfo import ZoneInfo
 
 from core.extractor_base import Extractor
-from core.models import LiveEventSnapshot
+from core.models import LiveEventSnapshot, LiveWatchEntry, LiveWatchSettings
 from core.timezones import default_timezone, resolve_chat_timezone
 from core.registry import ExtractorRegistry, extractor_registry as global_extractor_registry
 from core.league_naming import team_name_similarity, normalize_team_name
-from storage.tracking_repository import (
-    LiveWatchEntry,
-    LiveWatchSettings,
-    SqliteTrackingRepository,
-    tracking_repository as default_tracking_repository,
-)
+from adapters.storage import SqliteStorage, get_storage
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +34,7 @@ SIDE_FLOOR = 0.62
 COMBINED_FLOOR = 0.70
 # A match is considered finished (and not worth adding/keeping) this long after
 # kickoff: 90' + halftime + stoppage. Kept in sync with the 2h purge grace in
-# SqliteTrackingRepository.purge_expired_live_watches.
+# SQLiteLiveWatchAdapter.purge_expired_live_watches.
 _MATCH_OVER_GRACE = timedelta(hours=2)
 
 
@@ -158,10 +153,10 @@ class LiveWatchService:
         self,
         *,
         extractor_registry: ExtractorRegistry | None = None,
-        repository: SqliteTrackingRepository | None = None,
+        repository: SqliteStorage | None = None,
     ) -> None:
         self.extractor_registry = extractor_registry or global_extractor_registry
-        self.repository = repository or default_tracking_repository
+        self.repository = repository or get_storage()
         # Prematch changes slowly; cache it so the (fast) live poll doesn't re-pull
         # the whole-day lists every cycle (lighter for a VPS).
         self._prematch_cache: list[LiveEventSnapshot] | None = None

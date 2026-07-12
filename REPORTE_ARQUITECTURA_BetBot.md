@@ -1,932 +1,1032 @@
-# Reporte Técnico de Arquitectura y Auditoría — BetBot
+# Reporte de Arquitectura y Plan de Migración: BetBot
 
-> Auditoría realizada como arquitecto de software senior sobre el código fuente real del repositorio (rama `main`).
-> Todas las afirmaciones de este documento fueron verificadas contra el código, no contra documentación previa.
-> Donde el reporte anterior (`architecture_audit_report.md`) contenía imprecisiones, se corrige explícitamente en la sección [§12](#12-correcciones-al-reporte-previo).
+Este reporte presenta la especificación técnica definitiva para la migración incremental de BetBot hacia una **Arquitectura Hexagonal (Puertos y Adaptadores)** con inyección de dependencias (DI) y notificaciones reactivas basadas en un `EventBus` en memoria.
 
 ---
 
-## Índice
+## 1. Resumen Ejecutivo
 
-1. [Resumen ejecutivo](#1-resumen-ejecutivo)
-2. [Mapa general del sistema](#2-mapa-general-del-sistema)
-3. [Diagramas de arquitectura](#3-diagramas-de-arquitectura)
-4. [Servicios y conexiones](#4-servicios-y-conexiones)
-5. [Base de datos y persistencia](#5-base-de-datos-y-persistencia)
-6. [Tipos de datos y modelos](#6-tipos-de-datos-y-modelos)
-7. [Flujo de trabajo completo](#7-flujo-de-trabajo-completo)
-8. [Diagramas de secuencia](#8-diagramas-de-secuencia)
-9. [Evaluación técnica](#9-evaluación-técnica)
-10. [Recomendaciones priorizadas (P0/P1/P2)](#10-recomendaciones-priorizadas)
-11. [Conclusiones y roadmap](#11-conclusiones-y-roadmap)
-12. [Correcciones al reporte previo](#12-correcciones-al-reporte-previo)
-13. [Arquitectura actual en detalle (tipos, flujo de datos, wrappers)](#13-arquitectura-actual-en-detalle)
-14. [Arquitectura propuesta y veredicto](#14-arquitectura-propuesta-y-veredicto)
+BetBot es un bot de Telegram monolítico modular diseñado para el monitoreo de cuotas de apuestas, alertas en vivo de partidos (*live-watch*), integración con proveedores de estadísticas federativas y predicciones de rotaciones (*peaks*). 
+
+La arquitectura actual presenta un acoplamiento estrecho entre la interfaz de usuario (Telegram Handlers) y la lógica de negocio (consultas directas a base de datos, scraping y formateo de mensajes HTML redundantes). Esta migración tiene como objetivo:
+*   **Desacoplar el Core:** Separar la lógica de negocio pura de las APIs de Telegram y la consola CLI.
+*   **EventBus One-Way:** Utilizar el bus de eventos en memoria únicamente para alertas asíncronas de salida (desacoplando notificaciones de Telegram y logs).
+*   **Request-Reply Directo:** Comunicar comandos interactivos mediante llamadas asíncronas directas (`await`) entre referencias inyectadas, preservando la pila de llamadas (*stack traces*) y evitando el overhead de colas internas.
+*   **Simplificación y Robustez:** Reducir y consolidar los 95 comandos reales en buckets funcionales e integrar los jobs de fondo de manera segura contra bloqueos concurrentes de SQLite y Chromium.
 
 ---
 
-## 1. Resumen ejecutivo
-
-**BetBot** es un bot de Telegram en Python que monitorea cuotas y estadísticas de fútbol en tiempo real, con foco en ligas menores y de federaciones nacionales (Finlandia, Suecia, Noruega, Rumanía, Eslovaquia, Argelia) donde las casas de apuestas fijan mal las líneas. Combina tres capacidades:
-
-- **Tracking de cuotas prematch** sobre múltiples casas de apuestas (1 con navegador headless, el resto vía HTTP) con detección de variaciones por encima de un umbral y alertas a chats suscritos.
-- **Live-watch in-play**: emparejamiento difuso de partidos de una watchlist contra feeds en vivo de las casas, para avisar el momento exacto del kickoff y eventos (goles/tarjetas).
-- **Peak digest / scoring**: análisis diario 1–10 de partidos de Finlandia/Suecia que detecta valor por rotación de alineaciones (B-Team).
-
-Arquitectura **monolítica modular en proceso único** (`python main.py`), `asyncio` + `python-telegram-bot` en *long polling*, persistencia en **SQLite local** (modo WAL), y registries de plug-ins para extractores y proveedores de estadísticas. Toda la salida de red puede enrutarse por un proxy SOCKS5 (`BOT_PROXY_URL`).
-
-**Estado general:** diseño desacoplado y maduro en `core/` (registries + interfaces) que facilita agregar fuentes sin tocar la capa de Telegram. Los riesgos reales no están en la arquitectura de dominio sino en: (a) acceso **síncrono** a SQLite dentro del event loop, (b) **ausencia de `VACUUM`** y de poda de tablas append-only (`sent_alerts`), (c) reinicio de Chromium por RAM **no cableado por defecto**, y (d) `bot/handlers.py` monolítico (~5.000 líneas).
-
----
-
-## 2. Mapa general del sistema
-
-### 2.1. Estructura de directorios y responsabilidades
-
-| Carpeta / archivo | Responsabilidad | Líneas (aprox.) |
-| :--- | :--- | ---: |
-| `main.py` | Punto de entrada. Carga settings, configura logging, crea la `Application` y arranca `run_polling()`. | 108 |
-| `monitoring.py` | Métricas de sistema (CPU/RAM, procesos Chromium, tamaño DB) y umbrales de warning. | 252 |
-| `bot/application.py` | **Factory**: registra extractores/proveedores, abre repo, hace seed, instancia los 3 servicios, cablea `post_init`/`post_shutdown`. | 150 |
-| `bot/config.py` | `Settings` (dataclass) ← `.env`. Define todos los defaults y mapea `BOT_PROXY_URL`→`ALL_PROXY`. | 364 |
-| `bot/handlers.py` | Todos los comandos y conversaciones de Telegram. **Monolito** (mezcla transporte + negocio + SQL ad-hoc). | 5.064 |
-| `bot/jobs.py` | Definición y arranque/parada de los **7 loops de background**. | 621 |
-| `bot/alerts.py` | Formateo de mensajes/plantillas Markdown y `split_telegram_message`. | 1.105 |
-| `bot/special_leagues.py` | Compilación de reportes analíticos de Suecia/Finlandia. | 3.144 |
-| `bot/canonical_leagues.py` | Diccionarios de ligas preconfiguradas. | — |
-| `bot/error_handler.py` | `handle_error` global registrado en la Application. | — |
-| `core/models.py` | Modelos de dominio de cuotas/eventos (`Odds1X2`, `EventSnapshot`, `CompetitionExtraction`, `LiveEventSnapshot`…). | 196 |
-| `core/stats_models.py` | Modelos del dominio de estadísticas. | — |
-| `core/extractor_base.py` | Interfaz `Extractor` + excepciones (`CompetitionUnavailableError`). | — |
-| `core/stats_provider_base.py` | Interfaz `StatsProvider` + `stats_provider_registry`. | — |
-| `core/registry.py` | `extractor_registry` (singleton). | — |
-| `core/browser_handler.py` | Pool/ciclo de vida de Chromium (Playwright), `request_restart`. | 271 |
-| `core/league_naming.py` / `core/timezones.py` | Normalización canónica de ligas; TZ por chat (ContextVar). | — |
-| `extractors/*` | 9 extractores de casas: `bet365` (Playwright), `bz_http`, `betovo_http`, `betsson_http`, `betwarrior_http`, `mrpunter_http`, `mystake_http`, `solcasino_http`, `xbet_http`. | — |
-| `stats_providers/*` | `sportradar_http`, `sofascore_http`, `flashscore_http`, `footystats_http`, `svenskfotboll_http`, `palloliitto`, `special_federation` (norway/algeria/slovakia/romania). | — |
-| `monitors/tracking.py` | `TrackingService`: orquesta el ciclo de scrape→persistencia→alertas. | 2.244 |
-| `monitors/live_watch.py` | `LiveWatchService`: poll in-play + fuzzy match + import de planilla. | 1.185 |
-| `monitors/stats.py` | `StatsService`: resolución/linkeo de stats, prefetch/warming, cache. | 1.083 |
-| `monitors/change_detection.py` | Cálculo de variación vs baseline, **confirmación** y **anti-flapping**. | 736 |
-| `monitors/models.py` | DTOs de servicio (`SubscriptionOddsAlert`, `RefreshSummary`, …). | ~80 |
-| `monitors/special_peak.py` / `peak_model.py` / `peak_backtest.py` | Digest diario, scoring 1–10 y backtest. | 1.119 / 394 / 342 |
-| `storage/tracking_repository.py` | **Repositorio SQLite** + esquema + migraciones + todos los dataclasses de persistencia. | 5.389 |
-| `storage/mappers.py` | Mapeo fila SQL ↔ dataclass. | 283 |
-| `storage/league_seed.py` | `seed_if_empty()` para bootstrap de DB nueva (cloud). | 476 |
-
-### 2.2. Puntos de entrada
-
-1. **`python main.py`** (vía `run.sh` / `deploy/`): único proceso de larga duración.
-2. **`bot/application.create_application(settings)`**: ensambla todo y devuelve la `Application`.
-3. **`post_init`** (en `application.py`): arranca los 7 loops asíncronos cuando el runtime está listo.
-4. **`post_shutdown`**: cancela los loops en orden inverso y llama `extractor.stop()` (cierra Chromium).
-
-### 2.3. Cómo se conectan los módulos
-
-```
-main.py ─► bot.application.create_application
-              ├─ registra extractores  (core.registry.extractor_registry)
-              ├─ registra stats providers (stats_provider_registry)
-              ├─ abre SqliteTrackingRepository  + seed_if_empty()
-              ├─ instancia TrackingService / StatsService / LiveWatchService
-              └─ post_init ► jobs.start_* (7 loops)
-
-handlers.py  ──usa──► servicios (bot_data) ──usan──► registries ──► extractores/proveedores
-                                            └──────► SqliteTrackingRepository ► tracking.sqlite3
-jobs.py      ──dispara──► servicios ──formatean con──► alerts.py ──► application.bot.send_message
-```
-
-Los 3 servicios son **singletons** guardados en `application.bot_data` y compartidos entre handlers (on-demand) y jobs (background).
-
----
-
-## 3. Diagramas de arquitectura
-
-### 3.1. Arquitectura general
+## 2. Diagrama de Arquitectura Actual (Monolito Acoplado)
 
 ```mermaid
 graph TD
-    User["Usuario / Chat Telegram"]
-
-    subgraph Bot["Capa Bot (bot/)"]
-        H["handlers.py"]
-        J["jobs.py (7 loops)"]
-        A["alerts.py"]
-        C["config.py / Settings"]
+    subgraph Telegram_Bot [Módulo del Bot de Telegram]
+        Handlers[Fat Handlers: system.py, stats.py, tracking.py, live_watch.py]
+        LegacyJobs[Legacy Jobs Loops: legacy.py con asyncio.sleep]
+        Alerts[Formatting: bot.alerts]
     end
 
-    subgraph Svc["Servicios (monitors/)"]
-        TS["TrackingService"]
-        LWS["LiveWatchService"]
-        SS["StatsService"]
-        CD["change_detection"]
-        PK["peak_model / special_peak"]
+    subgraph Core_Data [Persistencia y Datos]
+        Repository[SqliteTrackingRepository]
+        SQLite[(sqlite3 DB File)]
     end
 
-    subgraph Core["Núcleo (core/)"]
-        REG["extractor_registry / stats_provider_registry"]
-        BH["browser_handler (Playwright pool)"]
-        NAM["league_naming / timezones"]
+    subgraph Ext_Adapters [Scrapers e Integraciones]
+        Extractors[Extractores: Bet365, etc.]
+        StatsAPI[Stats Providers: Sportradar, FOGIS, Palloliitto]
     end
 
-    subgraph Sources["Fuentes (extractors/ + stats_providers/)"]
-        B365["Bet365 (Playwright)"]
-        HTTP["8 books HTTP"]
-        FED["Sportradar / SofaScore / Flashscore / Federaciones"]
-    end
-
-    DB[("tracking.sqlite3 (WAL)")]
-    REPO["SqliteTrackingRepository"]
-
-    User <==>|long polling| H
-    C --> H & J
-    J --> TS & LWS & SS & PK
-    H --> TS & LWS & SS
-    TS --> CD
-    TS & LWS & SS --> REPO --> DB
-    SS & TS & LWS --> REG --> B365 & HTTP & FED
-    B365 --> BH
-    B365 & HTTP & FED -.->|normalizan| NAM
-    TS & LWS & PK --> A --> User
-```
-
-### 3.2. Arranque
-
-```mermaid
-flowchart TD
-    S["python main.py"] --> L["load_settings(): lee .env"]
-    L --> P["BOT_PROXY_URL → ALL_PROXY/all_proxy"]
-    P --> LG["configure_logging(): silencia httpx/telegram/asyncio"]
-    LG --> CA["create_application(settings)"]
-    CA --> R["register_default_extractors + stats_providers"]
-    R --> DBI["SqliteTrackingRepository() + seed_if_empty()"]
-    DBI --> SV["instancia Tracking/Stats/LiveWatch services → bot_data"]
-    SV --> RH["register_handlers + add_error_handler"]
-    RH --> RP["run_polling()"]
-    RP --> PI["post_init: arranca 7 loops"]
-
-    subgraph PI7["post_init"]
-        T1["tracking_monitor (120s)"]
-        T2["resource_monitor (60s, off por defecto)"]
-        T3["stats_session_refresh (1800s)"]
-        T4["stats_prefetch (86400s)"]
-        T5["live_watch (15s→10s)"]
-        T6["sheet_import (900s, opt-in)"]
-        T7["peak_digest (diario 08:00 ARG)"]
-    end
-    PI --> PI7
-```
-
-### 3.3. Extracción de datos
-
-```mermaid
-flowchart TD
-    T["monitor_once() / refresh manual"] --> DUE["get_due_competitions() (intervalo dinámico)"]
-    DUE --> LOCK["async with _refresh_lock"]
-    LOCK --> BATCH["_batched(leagues, max_parallel_refreshes=3)"]
-    BATCH --> GAT["asyncio.gather(_extract_league, return_exceptions=True)"]
-    GAT --> BR{"¿Bet365?"}
-    BR -- Sí --> PG["browser_handler: adquiere página, navega, intercepta JSON, libera"]
-    BR -- No --> HX["httpx / curl_cffi GET/POST"]
-    PG --> PRS["parser → CompetitionExtraction"]
-    HX --> PRS
-    PRS --> UP["upsert_competition_snapshot()"]
-    GAT -. CompetitionUnavailableError .-> UNAV["record_unavailable_refresh (+1 fallo)"]
-```
-
-### 3.4. Persistencia
-
-```mermaid
-flowchart TD
-    CE["CompetitionExtraction"] --> UC["upsert tracked_competitions (last_refreshed_at)"]
-    UC --> EV["por cada EventSnapshot"]
-    EV --> AE["upsert active_events (odds + markets_json + raw_payload_json)"]
-    AE --> BL["evaluate_subscription_odds_change vs user_event_baselines"]
-    BL --> TH{"% cambio ≥ umbral del chat?"}
-    TH -- Sí, confirmado --> AL["SubscriptionOddsAlert → Telegram + update baseline"]
-    TH -- Sí, sin confirmar --> PEND["sube baseline parcial; espera confirmation_refreshes"]
-    TH -- No --> SC["small_changes (status='pending')"]
-    EV --> OBS["DELETE active_events con scheduled_at pasado (poda)"]
-    EV --> INACT["marca is_active=0 tras N=3 ciclos ausente"]
-```
-
-### 3.5. Live-watch
-
-```mermaid
-flowchart TD
-    LP["loop 15s (→10s si kickoff próximo)"] --> WL["get watchlist 'watching'"]
-    WL --> LE["list_live_events() de books live-capable"]
-    LE --> NM["normaliza home/away (league_naming)"]
-    NM --> SIM["SequenceMatcher por lado + combinada"]
-    SIM --> TH{"sim_lado>umbral y combinada>umbral?"}
-    TH -- Sí --> FIRE["send_message kickoff/score → status='fired' + fired_platforms"]
-    TH -- No --> KEEP["sigue 'watching'"]
-```
-
-### 3.6. Errores / reintentos / fallbacks
-
-```mermaid
-flowchart TD
-    RQ["intento de scrape de liga"] --> OK{"200 + parseable?"}
-    OK -- Sí --> RST["consecutive_unavailable_refreshes = 0"]
-    OK -- No (403/timeout) --> INC["record_unavailable_refresh (+1); liga aislada, sigue el resto"]
-    INC --> THR{"fallos ≥ 3?"}
-    THR -- No --> NEXT["espera próximo ciclo"]
-    THR -- Sí --> CD{"última notificación > 12h?"}
-    CD -- Sí --> AL["alerta 'liga no disponible' a suscriptores"]
-    CD -- No --> SL["log silencioso"]
-
-    subgraph BR["browser_handler"]
-        X["crash/leak Chromium"] --> RR["request_restart() (flag)"]
-        RR --> IDLE["espera active_pages == 0"]
-        IDLE --> RE["reinicia Chromium en próximo ciclo"]
-    end
+    %% Acoplamientos Fat Handlers
+    Handlers -->|Direct SQL Queries / Direct Write| Repository
+    Handlers -->|Invocación directa de scrapers| Extractors
+    Handlers -->|Invocación directa de APIs| StatsAPI
+    Handlers -->|Formateo y Envío directo de Red| Alerts
+    
+    LegacyJobs -->|Monitoreo y Envío de Telegram directo| Handlers
+    Repository -->|Blocking I/O| SQLite
 ```
 
 ---
 
-## 4. Servicios y conexiones
+## 3. Diagrama de Arquitectura Propuesta (Hexagonal / Ports & Adapters)
 
-### 4.1. Telegram
-
-- **`python-telegram-bot`** en **long polling** (`run_polling()`) — no requiere webhook ni IP pública.
-- Middleware en grupo `-1`: `apply_chat_timezone_context` inyecta la TZ del chat (ContextVar) para renderizar horas locales.
-- Salida proactiva con `application.bot.send_message`; mensajes >4096 chars se parten con `split_telegram_message` (`alerts.py`).
-- `add_error_handler(handle_error)` captura excepciones no manejadas de los handlers.
-
-### 4.2. Casas de apuestas y fuentes externas
-
-- **Bet365** — único que usa **Playwright/Chromium**: carga la SPA e intercepta respuestas de red (`Page.on("response")`) para capturar los payloads.
-- **8 books HTTP-only** — `httpx` (async) o **`curl_cffi`** (TLS fingerprint) para evadir protección anti-bot. Cada uno tiene su `parser.py`.
-- **Estadísticas** — Sportradar (token dinámico minteado vía JS/headless), SofaScore/Flashscore (firma estática), federaciones (FOGIS/Svenskfotboll, Palloliitto, Noruega/Argelia/Eslovaquia/Rumanía).
-- **Proxy de egress** — `BOT_PROXY_URL` (ej. `socks5://127.0.0.1:25344`) se exporta a `ALL_PROXY`/`all_proxy` **antes** de crear cualquier cliente, así httpx, curl_cffi y Playwright lo heredan.
-
-### 4.3. Procesos en background (7 loops — definidos en `bot/jobs.py`)
-
-| Loop | Función arranque | Intervalo (default) | On/Off |
-| :--- | :--- | :--- | :--- |
-| Tracking de cuotas | `start_tracking_monitor` | 120 s (`TRACKING_REFRESH_INTERVAL_SECONDS`) | siempre |
-| Live-watch in-play | `start_live_watch_monitor` | 15 s → 10 s si hay kickoff próximo | `LIVE_WATCH_ENABLED` |
-| Refresh sesión stats | `start_stats_session_refresh` | **1800 s (hardcoded en `application.py`)** | siempre |
-| Prefetch stats diario | `start_stats_prefetch` | 86400 s (+ purga de cache vencida) | `STATS_PREFETCH_ENABLED` |
-| Import de planilla | `start_sheet_import_monitor` | 900 s | sólo si `LIVE_WATCH_SHEET_CHAT_ID` |
-| Peak digest | `start_peak_digest` | diario 08:00 ARG (`PEAK_DIGEST_HOUR_ARG`) | `PEAK_DIGEST_ENABLED` |
-| Resource monitor | `start_resource_monitor` | 60 s | **`ENABLE_MONITORING` (off por defecto)** |
-
-> El `min_ttl_seconds=5400` y el intervalo `1800` del refresh de sesión están **hardcodeados** en `post_init`, no en `Settings`.
-
-### 4.4. On-demand vs intervalos
-
-- **On-demand** (handlers): `/track_url`, `/confirm_track`, `/refresh_tracks`, `/stats`, `/league`, `/watch_live`, `/peak_today`, comandos de federación (`/swe_*`, `/fin_*`, …), `/status`, `/resources`, etc.
-- **Por intervalo**: los 7 loops de §4.3.
-
-### 4.5. Resiliencia ante fallos
-
-- Cada liga se extrae con `return_exceptions=True`: un fallo **aísla** esa liga (`failed_leagues`) y no aborta el ciclo.
-- `CompetitionUnavailableError` → `record_unavailable_refresh` (+1). A las **3 fallas** consecutivas se notifica al usuario, con **cooldown de 12 h** anti-spam.
-- Chromium: `browser_handler.request_restart()` marca un flag y reinicia cuando `active_pages == 0` (no interrumpe capturas en curso).
-- Todos los loops envuelven el cuerpo en `try/except Exception: logger.exception(...)` y re-lanzan sólo `CancelledError` → un fallo de ciclo nunca mata el loop.
-
----
-
-## 5. Base de datos y persistencia
-
-**Motor:** SQLite (`data/tracking.sqlite3`), abierto con `PRAGMA foreign_keys=ON`, `journal_mode=WAL`, `synchronous=NORMAL`, `busy_timeout=5000`. Esquema creado/migrado idempotentemente en `_initialize_schema` (incluye migraciones de constraints `UNIQUE` viejos y `_ensure_column`).
-
-### 5.1. Tablas (15)
-
-| Tabla | PK | Rol | Notas |
-| :--- | :--- | :--- | :--- |
-| `pending_track_requests` | `id` (UNIQUE por chat) | track temporal a confirmar | expira (`expires_at`) |
-| `tracked_competitions` | `id` (UNIQUE `platform,external_id`) | liga monitoreada global | contadores de indisponibilidad |
-| `competition_subscriptions` | `(chat_id, tracked_competition_id)` | suscripción chat↔liga | FK CASCADE; `change_threshold_percent` |
-| `active_events` | `id` (UNIQUE `platform,external_event_id`) | partido + odds + JSON | FK CASCADE; índice `(tracked,is_active,scheduled_at)` |
-| `stats_league_links` | `id` (UNIQUE `tracked,provider`) | liga↔liga de stats | FK CASCADE |
-| `stats_league_subscriptions` | `(chat,provider,league)` | chat↔liga de stats directa | sin FK |
-| `stats_match_links` | `id` (UNIQUE `active_event,provider`) | partido↔partido de stats | FK CASCADE |
-| `stats_payload_cache` | `cache_key` | cache HTTP de stats | `expires_at` + **purga diaria** |
-| `user_event_baselines` | `(chat_id, active_event_id)` | baseline de odds por chat | FK CASCADE; **sin índice propio en FK** |
-| `small_changes` | `id` (UNIQUE `chat,active_event`) | cambios menores pendientes | FK CASCADE |
-| `sent_alerts` | `id` (UNIQUE `chat,event,type`) | dedupe de alertas | FK CASCADE; **append-only, sin poda** |
-| `live_watch_entries` | `id` | watchlist in-play | `status`, `fired_platforms` |
-| `live_watch_settings` | `chat_id` | toggles goles/rojas/amarillas | — |
-| `peak_digest_subscriptions` | `chat_id` | suscriptores del digest | — |
-| `chat_settings` | `chat_id` | TZ del chat | — |
-| `unified_competitions` | `id` (UNIQUE `public_id`) | liga canónica cross-plataforma | `idx_stats_league_links_unified_provider` |
-
-### 5.2. Diagrama entidad-relación
-
-```mermaid
-erDiagram
-    unified_competitions ||--o{ tracked_competitions : agrupa
-    tracked_competitions ||--o{ competition_subscriptions : suscribe
-    tracked_competitions ||--o{ active_events : contiene
-    tracked_competitions ||--o{ stats_league_links : linkea
-    active_events ||--o{ stats_match_links : linkea
-    active_events ||--o{ user_event_baselines : baseline
-    active_events ||--o{ small_changes : cambios
-    active_events ||--o{ sent_alerts : alertas
-
-    tracked_competitions {
-        integer id PK
-        text platform
-        text competition_external_id
-        text source_url
-        integer enabled
-        integer consecutive_unavailable_refreshes
-        integer unified_competition_id FK
-    }
-    active_events {
-        integer id PK
-        integer tracked_competition_id FK
-        text external_event_id
-        text home
-        text away
-        text scheduled_at
-        real odds_home
-        real odds_draw
-        real odds_away
-        text markets_json
-        text raw_payload_json
-        integer is_active
-    }
-    user_event_baselines {
-        integer chat_id PK
-        integer active_event_id PK_FK
-        real baseline_odds_home
-        real baseline_odds_draw
-        real baseline_odds_away
-        text baseline_markets_json
-    }
-    small_changes {
-        integer id PK
-        integer chat_id
-        integer active_event_id FK
-        real max_change_percent
-        text status
-    }
-```
-
-### 5.3. Clasificación de datos
-
-| Tipo | Columnas/tablas | ¿Reconstruible? | Recomendación |
-| :--- | :--- | :--- | :--- |
-| **Raw** | `raw_payload_json` (active_events), `payload_json` (cache/links) | Sí, re-scraping | comprimir o no guardar si `EXTRACTOR_SAVE_DEBUG_PAYLOADS=false` |
-| **Derivado** | `odds_*`, `unified_competitions`/traits, `small_changes` | Sí | mantener |
-| **Cache** | `stats_payload_cache` | Sí (TTL) | **ya se purga** a diario |
-| **Estado de usuario (no reconstruible)** | subscriptions, `chat_settings`, `user_event_baselines`, `live_watch_entries`, `peak_digest_subscriptions` | **No** | backup prioritario |
-
-### 5.4. Poda y crecimiento (verificado)
-
-- `active_events` **sí se poda**: durante el refresh se hace `DELETE` de eventos con `scheduled_at` pasado (`_is_past_scheduled_at`), y cascada FK limpia baselines/small_changes/sent_alerts/stats_match_links.
-- `stats_payload_cache` **sí se purga** diariamente (`purge_expired_stats_payloads` en el loop de prefetch).
-- `live_watch_entries` tiene `purge_expired_live_watches`.
-- **Gaps reales de crecimiento:** (1) **no hay `VACUUM`** → tras los DELETE, el archivo/WAL no se reduce; (2) `sent_alerts` es **append-only sin poda**; (3) eventos de ligas que dejan de refrescarse (deshabilitadas pero no removidas) no se podan; (4) varias FK que disparan CASCADE **no tienen índice propio** (`user_event_baselines.active_event_id`, `small_changes.active_event_id`, `sent_alerts.active_event_id`, `stats_match_links.active_event_id`) → el borrado hace full-scan.
-
----
-
-## 6. Tipos de datos y modelos
-
-Todos son `@dataclass(frozen=True)`. Resumen por capa (nombre · ubicación · rol · creador → consumidor):
-
-### `core/models.py` (dominio cuotas)
-- `ProviderCapabilities` — flags http/live/deep/browserless. Extractor → registry/handlers.
-- `PlatformDescriptor` — identidad de un book (key, domains, supports). Extractor → `/platforms`, resolución de URL.
-- `Odds1X2` — `home/draw/away: float|None`. Parsers → repo/change_detection.
-- `CompetitionKey` / `EventKey` — identidad inmutable (platform[, comp][, event]).
-- `EventSnapshot` — evento prematch + `odds_1x2` + `markets_payload` + `raw_payload`. Extractor → TrackingService/repo.
-- `CompetitionExtraction` — resultado completo de scrapear una liga (`events`, `is_empty`, `is_provisional_name`). Extractor → TrackingService.
-- `LiveEventSnapshot` — estado in-play (minuto, score, tarjetas, `is_soccer`). Parsers live → LiveWatchService.
-
-### `core/stats_models.py` (dominio stats)
-- `StatsProviderCapabilities`, `StatsProviderDescriptor`, `StatsLeagueOption`, `StatsFixture`, `MatchIdentityCandidate` (matching fonético), `StatsMatchLink`, `MatchStatsReport` (Markdown listo para Telegram).
-
-### `monitors/models.py` (DTOs de servicio)
-- `CommandResult`, `OddsChange`, `MarketChangeDetail`, `SubscriptionOddsAlert`, `CompetitionRefreshResult`, `UnavailableCompetitionRefresh`, `RefreshSummary`.
-
-### `storage/tracking_repository.py` (persistencia)
-- `LiveWatchEntry`, `LiveWatchSettings`, `PendingCompetitionTrackRequest`, `TrackedCompetition`, `CompetitionSubscription`, `TrackedCompetitionSubscription`, `ConfirmedCompetitionTrackRequest`, `UntrackCompetitionResult`, `ActiveEventUpsert`, `ActiveEventRecord`, `StatsLeagueLink`, `StatsLeagueSubscription`, `StatsMatchLinkRecord`, `EventBaseline`, `SmallChangeRecord`.
-
-**Observación de diseño:** hay ~5 representaciones de "partido" (`EventSnapshot`, `LiveEventSnapshot`, `ActiveEventRecord`, `StatsFixture`, `MatchIdentityCandidate`) y ~3 de "suscripción". Es deuda de modelado real, pero cada una cumple un rol distinto (contrato de extractor vs fila SQL vs DTO de matching); una unificación a un `MatchSnapshot` único es deseable a largo plazo pero **no urgente** y conlleva riesgo alto de regresión.
-
----
-
-## 7. Flujo de trabajo completo
-
-```
-[Arranque]
-  main.main() → load_settings() → proxy → configure_logging → create_application → run_polling
-  create_application: registries → repo + seed_if_empty → 3 servicios → handlers → post_init(7 loops)
-
-[Tracking cada 120s]  jobs._tracking_monitor_loop → TrackingService.monitor_once(bot)
-  async with _refresh_lock:
-    get_due_competitions → _batched(3) → gather(_extract_league, return_exceptions)
-    por liga OK: upsert tracked + active_events
-                 por chat suscrito: change_detection.evaluate_subscription_odds_change
-                   baseline ausente → initialize; cambio≥umbral & confirmado → alerta + update baseline
-                   cambio chico → small_changes('pending'); flapping → se descarta
-    poda eventos pasados; marca is_active=0 tras 3 ciclos ausente
-    por liga error: record_unavailable_refresh; a las 3 + cooldown 12h → alerta
-
-[Live-watch 15s→10s]  poll_once → watchlist + list_live_events → fuzzy match → 'fired' + alerta
-
-[Stats]  session_refresh (1800s) mantiene token; prefetch (24h) calienta cache + purga vencidos
-[Sheet import 900s]  GET CSV → sha256 → si cambió: parse + add_fixture_lines + notifica
-[Peak digest]  diario 08:00 ARG → build_peak_scores → render por TZ de cada chat
-
-[Apagado]  SIGINT/SIGTERM → post_shutdown: stop_* (orden inverso) + extractor.stop() (cierra Chromium)
-```
-
----
-
-## 8. Diagramas de secuencia
-
-### 8.1. `/track_url` → `/confirm_track`
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor U as Chat
-    participant H as handlers.py
-    participant TS as TrackingService
-    participant E as Extractor
-    participant R as Repository
-    U->>H: /track_url [URL]
-    H->>TS: preparar pending track (resuelve plataforma + scrape inicial)
-    TS->>E: extract_league(URL)
-    E-->>TS: CompetitionExtraction
-    TS->>R: save pending_track_requests
-    H-->>U: tarjeta con datos + pedir /confirm_track
-    U->>H: /confirm_track
-    H->>R: confirm → tracked_competitions + competition_subscriptions
-    H-->>U: "Monitoreo iniciado"
-```
-
-### 8.2. `/stats`
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor U as Chat
-    participant H as handlers.py
-    participant SS as StatsService
-    participant C as stats_payload_cache
-    participant P as Stats Provider
-    U->>H: /stats [match]
-    H->>SS: resolver/render reporte
-    SS->>C: get_cached_payload
-    alt cache válido
-        C-->>SS: JSON
-    else vencido/ausente
-        SS->>P: fetch
-        P-->>SS: JSON
-        SS->>C: save (TTL)
-    end
-    SS-->>H: MatchStatsReport (Markdown)
-    H-->>U: mensaje formateado
-```
-
-### 8.3. Detección de cambio de cuota
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant J as jobs
-    participant TS as TrackingService
-    participant E as Extractor
-    participant R as Repository
-    participant CD as change_detection
-    participant B as Telegram
-    J->>TS: monitor_once()
-    Note over TS: async with _refresh_lock (serializa con refresh manual)
-    TS->>R: get_due_competitions
-    loop liga vencida
-        TS->>E: extract_league
-        E-->>TS: CompetitionExtraction
-        TS->>R: upsert active_events
-        loop chat suscrito
-            TS->>CD: evaluate_subscription_odds_change
-            CD->>R: get_event_baseline
-            alt ≥ umbral y confirmado (2 refreshes, no flap)
-                CD-->>TS: SubscriptionOddsAlert
-                TS->>B: send_message
-                TS->>R: upsert_event_baseline (nuevo)
-            else chico
-                CD->>R: insert small_changes
-            end
-        end
-    end
-```
-
-### 8.4. Live-watch
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant J as jobs
-    participant LWS as LiveWatchService
-    participant E as Extractor live
-    participant R as Repository
-    participant B as Telegram
-    J->>LWS: poll_once()
-    LWS->>R: get watchlist 'watching'
-    LWS->>E: list_live_events()
-    E-->>LWS: [LiveEventSnapshot]
-    loop por live event
-        LWS->>LWS: fuzzy_match(home/away)
-        alt match
-            LWS->>B: "EN VIVO: score, minuto"
-            LWS->>R: status='fired' + fired_platforms
-        end
-    end
-```
-
-### 8.5. Reintentos / indisponibilidad
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant TS as TrackingService
-    participant E as Extractor
-    participant R as Repository
-    participant B as Telegram
-    TS->>E: extract_league
-    E-->>TS: CompetitionUnavailableError
-    TS->>R: record_unavailable_refresh (+1)
-    alt fallos >= 3 y última notif > 12h
-        TS->>R: get subscribers
-        TS->>B: "Liga no disponible / posible cambio de URL"
-        TS->>R: update last_unavailable_notification_at
-    else
-        Note over TS: log silencioso, sigue con el resto de ligas
-    end
-```
-
----
-
-## 9. Evaluación técnica
-
-### 9.1. Fortalezas
-- Desacople real por **registries** + interfaces (`Extractor`/`StatsProvider`): agregar un book/proveedor es escribir el adaptador y registrarlo.
-- **Anti-ruido sofisticado** en alertas: confirmación por N refreshes (`odds_change_confirmation_refreshes=2`) + ventana anti-flapping (`odds_flap_window_minutes`, `odds_flap_epsilon`) + dedupe en `sent_alerts`. (El reporte previo no lo mencionó.)
-- WAL + `busy_timeout` + FK CASCADE + índices en los FKs más calientes.
-- Loops robustos: cada uno tolera excepciones sin morir; `post_shutdown` cierra Chromium ordenadamente.
-- Aislamiento de fallos por liga + cooldown de notificación.
-
-### 9.2. Cuellos de botella y riesgos de recursos
-| # | Hallazgo | Impacto | Severidad |
-| :-- | :--- | :--- | :--- |
-| 1 | SQLite **síncrono dentro del event loop** (sólo 2–3 llamadas usan `asyncio.to_thread`) | Una escritura pesada (blobs JSON) congela polling + retrasa el timer de live-watch (15 s) | Alta |
-| 2 | **Sin `VACUUM`** + `sent_alerts` append-only | El archivo/WAL crece y no se recupera; disco del VPS | Alta |
-| 3 | Reinicio de Chromium por RAM **no cableado**: `resource_monitor` sólo loguea warning; `EXTRACTOR_BROWSER_RESTART_AFTER_N_REFRESHES=None` | OOM-kill en VPS chico | Alta |
-| 4 | Re-serialización de `raw_payload_json`/`markets_json` cada 120 s | CPU/IO por ciclo | Media |
-| 5 | FK sin índice en `active_event_id` (baselines/small_changes/sent_alerts/match_links) | CASCADE DELETE hace full-scan al podar | Media |
-| 6 | `resource_monitor` **off por defecto** (`ENABLE_MONITORING=false`) | Sin visibilidad de RAM/CPU en prod | Media |
-
-### 9.3. Race conditions y errores silenciosos
-- **Baseline read-modify-write**: el reporte previo lo marcó como race entre refresh manual y loop. **Está mitigado**: todos los caminos de refresh toman `self._refresh_lock` (5 usos en `tracking.py`), serializándose. El riesgo residual es sólo si en el futuro se escribiera el baseline fuera del lock.
-- **Import de planilla silencioso**: `_sheet_import_loop` captura todo y loguea; si la Sheet cambia de formato o falla la red, deja de importar **sin avisar** al chat (válido).
-- **Errores de scraping genéricos**: se registra `CompetitionUnavailableError` sin volcar el HTML/JSON que falló → depurar selectores rotos es difícil (válido, salvo si `EXTRACTOR_SAVE_DEBUG_PAYLOADS=true`).
-- `1800/5400` del refresh de sesión hardcodeados en `application.py` (no en `Settings`) → divergencia silenciosa de configuración.
-
-### 9.4. Código duplicado / mantenibilidad
-- **`bot/handlers.py` ~5.064 líneas**: mezcla transporte Telegram + negocio + SQL ad-hoc. Difícil de testear y navegar.
-- Normalización de texto duplicada: `core/league_naming.py` vs `_normalize` en `monitors/live_watch.py` (mismas reglas, código separado → riesgo de divergencia en matching).
-- ~37 comandos por federación (`/swe_*`, `/fin_*`, `/ro_*`, `/sk_*`, `/al_*`, `/no_*`) repetidos.
-
-### 9.5. Dónde agregar logs
-- Volcar payload (o hash + primeras N KB) al fallar el parseo de un book.
-- Métricas por ciclo: tiempo por liga, % de ligas degradadas, tamaño DB, RAM de Chromium → a un chat admin.
-- Confirmar/registrar cuándo el anti-flapping descarta un cambio (hoy es casi invisible).
-
----
-
-## 10. Recomendaciones priorizadas
-
-### P0 — Críticas
-
-**P0.1 · `VACUUM` periódico + poda de `sent_alerts`**
-- Archivos: `storage/tracking_repository.py` (nuevo `purge_old_sent_alerts` + `vacuum`), `bot/jobs.py` (engancharlo al loop de prefetch diario ya existente).
-- Cambio: borrar `sent_alerts`/eventos de ligas inactivas con `last_seen_at` > 14 d y correr `VACUUM` (o `wal_checkpoint(TRUNCATE)`) tras la purga diaria.
-- Por qué: hoy el espacio liberado por los DELETE no se recupera y `sent_alerts` crece sin techo.
-- Riesgo: bajo (no toca estado de usuario activo). `VACUUM` bloquea la DB unos instantes → correrlo en horario muerto, en `to_thread`.
-- Beneficio: tamaño de DB acotado de forma indefinida.
-
-**P0.2 · Reinicio automático de Chromium por RAM**
-- Archivos: `bot/jobs.py` (`_resource_monitor_loop`), `bot/config.py` (default), `core/browser_handler.py`.
-- Cambio: cuando la RAM de Chromium supere `monitor_chromium_ram_alert_mb` (800) llamar `browser_handler.request_restart(...)`; setear `EXTRACTOR_BROWSER_RESTART_AFTER_N_REFRESHES` por defecto (ej. 50). Además **activar `ENABLE_MONITORING=true`** en prod.
-- Por qué: hoy sólo se loguea un warning; en VPS chico termina en OOM-kill.
-- Riesgo: medio — el restart ya espera `active_pages==0`, así que no corta capturas.
-- Beneficio: elimina caídas por memoria.
-
-**P0.3 · Sacar SQLite del event loop en los caminos calientes**
-- Archivos: `storage/tracking_repository.py`, llamadores en `monitors/tracking.py` y `change_detection.py`.
-- Cambio: envolver lecturas/escrituras pesadas (upsert de eventos, baselines, blobs) en `asyncio.to_thread` (ya hay precedente: `purge_expired_stats_payloads`, `learn_unified_merges`).
-- Por qué: una escritura grande congela polling y descompasa el live-watch de 15 s.
-- Riesgo: medio — revisar reentrancia/transacciones (WAL + `busy_timeout` ya ayudan).
-- Beneficio: fluidez del bot y precisión temporal del live-watch.
-
-### P1 — Importantes
-
-**P1.1 · Índices en FK que disparan CASCADE**
-- Archivo: `storage/tracking_repository.py` (`_initialize_schema`).
-- Cambio: `CREATE INDEX` sobre `user_event_baselines(active_event_id)`, `small_changes(active_event_id)`, `sent_alerts(active_event_id)`, `stats_match_links(active_event_id)`.
-- Por qué: SQLite no indexa FKs automáticamente; el borrado en cascada al podar hace full-scan.
-- Riesgo: bajo. Beneficio: purgas rápidas sin bloquear.
-
-**P1.2 · Canal de alertas de sistema a chat admin**
-- Archivos: `bot/error_handler.py`, `monitoring.py`, `bot/config.py` (`SYSTEM_ADMIN_CHAT_ID`).
-- Cambio: enviar al admin las fallas persistentes de scrapers, caída de proxy, warnings de RAM/disco y los fallos del import de planilla (hoy silenciosos).
-- Riesgo: bajo. Beneficio: detección proactiva sin SSH.
-
-**P1.3 · Unificar la normalización de nombres**
-- Archivos: `core/league_naming.py`, `monitors/live_watch.py`.
-- Cambio: mover `_normalize` de live_watch a `league_naming` como normalizador reutilizable de equipos.
-- Riesgo: bajo (requiere regresión de matching). Beneficio: menos falsos negativos in-play.
-
-**P1.4 · Mover `1800/5400` del refresh de sesión a `Settings`**
-- Archivos: `bot/config.py`, `bot/application.py`.
-- Riesgo: muy bajo. Beneficio: config consistente.
-
-### P2 — Mejoras futuras
-
-- **P2.1 · Modularizar `bot/handlers.py`** en `tracking_/stats_/live_/system_handlers.py`. Riesgo bajo, gran ganancia de mantenibilidad.
-- **P2.2 · Parametrizar comandos de federación**: 37 comandos → 6 genéricos (`/standings [país]`, etc.) con botones inline. Riesgo medio (UX/regresión).
-- **P2.3 · Volcado de debug al fallar parseo** (gateado por flag) para depurar selectores rotos.
-- **P2.4 · (Largo plazo) consolidar modelos de "partido"** a un `MatchSnapshot` único. Alto riesgo de regresión; sólo con suite verde y por fases.
-
-> Las propuestas de rediseño profundo del esquema (serie temporal de odds, `competition_provider_mappings`, EventBus, scheduler único) del reporte previo son válidas como visión, pero son **reescrituras grandes**: trátarlas como épicas P2/P3 detrás de los P0/P1, no como trabajo inmediato.
-
----
-
-## 11. Conclusiones y roadmap
-
-BetBot es un monolito modular **bien estructurado en el dominio** y con mecanismos de calidad que el reporte previo había subestimado (lock de refresh, confirmación + anti-flapping, poda de eventos y de cache, FK CASCADE, WAL). Los riesgos genuinos son **operativos de VPS**, no de diseño: bloqueo del event loop por SQLite síncrono, falta de `VACUUM`/poda de `sent_alerts`, y reinicio de Chromium no cableado.
-
-**Roadmap sugerido (orden de ejecución):**
-
-```mermaid
-flowchart LR
-    A["P0.1 VACUUM + poda sent_alerts"] --> B["P0.2 restart Chromium por RAM + ENABLE_MONITORING"]
-    B --> C["P0.3 SQLite a to_thread en caminos calientes"]
-    C --> D["P1.1 índices FK"]
-    D --> E["P1.2 alertas admin"]
-    E --> F["P1.3 normalización unificada + P1.4 settings"]
-    F --> G["P2 modularizar handlers / comandos genéricos / debug dumps"]
-    G --> H["P3 (visión) MatchSnapshot + esquema serie-temporal + EventBus"]
-```
-
-Con los P0/P1 resueltos, el bot queda estable en un VPS de bajos recursos sin tocar la lógica de negocio. El rediseño profundo (P3) sólo conviene si el catálogo de plataformas/usuarios crece a un punto donde el monolito actual deje de escalar.
-
----
-
-## 12. Correcciones al reporte previo
-
-El documento `architecture_audit_report.md` es sólido en estructura, pero contenía estas imprecisiones (corregidas arriba):
-
-| Afirmación previa | Realidad verificada |
-| :--- | :--- |
-| "No hay limpieza de DB → crece sin fin (P0)" | `active_events` pasados **se borran** en cada refresh; `stats_payload_cache` **se purga** a diario; `live_watch_entries` tiene purga. El gap real es **`VACUUM`** y **`sent_alerts`** (append-only), no la ausencia total de poda. |
-| "El caché de stats no se limpia" | Se purga en el loop de prefetch (`purge_expired_stats_payloads`). |
-| "Race condition de baselines entre refresh manual y loop genera alertas duplicadas" | Mitigado: todos los refresh toman `self._refresh_lock`. Además hay confirmación + anti-flapping que el reporte no mencionó. |
-| "6 loops de background" | Son **7** (faltaba `peak_digest`). |
-| "FK sin índice bloquean cascada" (genérico) | Cierto sólo para las FK a `active_event_id` sin índice; las FK calientes (`tracked_competition_id`) **sí** tienen índice, y `foreign_keys=ON`. |
-| Intervalo de refresh de sesión "30 min" como config | Está **hardcodeado** (`1800`/`5400`) en `application.py`, no en `Settings`. |
-| `EventSnapshot` "tiene `odds_1x2` y `raw_payload`" (campos parciales) | También expone `markets_payload`, `scheduled_label_*`, `metadata`, properties de identidad. |
-
----
-
----
-
-## 13. Arquitectura actual en detalle
-
-Esta sección documenta el estado **actual** (no propuesto): cómo se organizan los tipos de datos, qué viaja entre módulos y funciones, y qué wrappers existen.
-
-### 13.1. Catálogo de tipos de datos y contención
-
-Todos los modelos son `@dataclass(frozen=True)`. El diagrama muestra qué tipo **contiene/usa** a cuál (las flechas son relación de composición, no de herencia).
-
-```mermaid
-classDiagram
-    direction LR
-
-    class Odds1X2 {
-      home: float|None
-      draw: float|None
-      away: float|None
-    }
-    class EventSnapshot {
-      key: EventKey
-      home / away: str
-      scheduled_at: str|None
-      odds_1x2: Odds1X2
-      markets_payload: dict
-      raw_payload: dict
-    }
-    class CompetitionExtraction {
-      competition: CompetitionKey
-      events: list~EventSnapshot~
-      is_empty / is_provisional_name
-    }
-    class LiveEventSnapshot {
-      platform / home / away
-      minute / home_score / away_score
-      *_red_cards / *_yellow_cards
-      odds_1x2: Odds1X2|None
-    }
-    CompetitionExtraction *-- EventSnapshot
-    EventSnapshot *-- Odds1X2
-    LiveEventSnapshot *-- Odds1X2
-
-    class ActiveEventUpsert {
-      external_event_id / home / away
-      odds_home/draw/away
-      markets_payload / raw_payload
-    }
-    class ActiveEventRecord {
-      id / tracked_competition_id
-      odds_* / markets_json / raw_payload_json
-      is_active / alerted
-    }
-    class EventBaseline {
-      chat_id / active_event_id
-      baseline_home/draw/away
-      baseline_markets_json
-    }
-    EventSnapshot --> ActiveEventUpsert : TrackingService convierte
-    ActiveEventUpsert --> ActiveEventRecord : Repository persiste
-
-    class MarketChangeDetail {
-      market_type / selection / line
-      before / after / percent_change
-    }
-    class SubscriptionOddsAlert {
-      match: ActiveEventRecord
-      baseline: EventBaseline
-      max_percent_change: float
-      change_details: tuple~MarketChangeDetail~
-    }
-    SubscriptionOddsAlert *-- ActiveEventRecord
-    SubscriptionOddsAlert *-- EventBaseline
-    SubscriptionOddsAlert *-- MarketChangeDetail
-
-    class CompetitionRefreshResult {
-      tracked_league: TrackedCompetition
-      active/new/reminder_matches
-      odds_changes: list~OddsChange~
-    }
-    class RefreshSummary {
-      tracks_requested / refreshed
-      league_results: list~CompetitionRefreshResult~
-      unavailable_competitions
-    }
-    RefreshSummary *-- CompetitionRefreshResult
-    CompetitionRefreshResult *-- ActiveEventRecord
-
-    class StatsMatchLink {
-      provider / stats_match_id
-      stats_url / confidence / method
-    }
-    class MatchStatsReport {
-      markdown (listo para Telegram)
-    }
-```
-
-**Inventario por ubicación** (creador → consumidor):
-
-| Tipo | Archivo | Creado por | Consumido por |
-| :--- | :--- | :--- | :--- |
-| `Odds1X2`, `EventKey`, `CompetitionKey` | `core/models.py` | parsers de extractores | TrackingService, repo |
-| `EventSnapshot`, `CompetitionExtraction` | `core/models.py` | `Extractor.extract_league/match` | TrackingService |
-| `LiveEventSnapshot` | `core/models.py` | parsers live | LiveWatchService |
-| `PlatformDescriptor`, `ProviderCapabilities` | `core/models.py` | `describe_platform()` | handlers (`/platforms`), registry |
-| `LeagueDiscoveryOption` | `core/extractor_base.py` | `Extractor.search_leagues` | handlers (track sin URL) |
-| `StatsLeagueOption`, `StatsFixture`, `StatsMatchLink`, `MatchStatsReport`, `MatchIdentityCandidate`, `StatsProviderDescriptor` | `core/stats_models.py` | `StatsProvider.*` | StatsService, handlers |
-| `ActiveEventUpsert` | `storage/…` | TrackingService (desde `EventSnapshot`) | `Repository.upsert_active_events` |
-| `ActiveEventRecord`, `EventBaseline`, `SmallChangeRecord`, `TrackedCompetition`, `CompetitionSubscription`, `LiveWatchEntry`, … | `storage/…` | Repository (desde filas SQL via `mappers.py`) | servicios, change_detection, handlers |
-| `OddsChange`, `MarketChangeDetail`, `SubscriptionOddsAlert`, `CompetitionRefreshResult`, `UnavailableCompetitionRefresh`, `RefreshSummary`, `CommandResult` | `monitors/models.py` | change_detection, TrackingService | TrackingService, alerts, jobs |
-
-### 13.2. Flujo de datos entre módulos (qué tipo viaja)
-
-```mermaid
-flowchart TD
-    subgraph Cuotas
-        E1["Extractor.extract_league(url)"] -->|CompetitionExtraction| TS["TrackingService.monitor_once"]
-        TS -->|ActiveEventUpsert| R1["Repository.upsert_active_events"]
-        R1 -->|ActiveEventRecord| CD["change_detection.evaluate_subscription_odds_change"]
-        CD -->|SubscriptionOddsAlert| AL["alerts → bot.send_message"]
-        AL -->|texto Markdown| TG1["Chat Telegram"]
-    end
-    subgraph Live
-        E2["Extractor.list_live_events()"] -->|"list[LiveEventSnapshot]"| LWS["LiveWatchService.poll_once"]
-        LWS -->|LiveHit (fuzzy vs LiveWatchEntry)| RH["render_live_hit"]
-        RH -->|texto| TG2["Chat Telegram"]
-    end
-    subgraph Stats
-        E3["StatsProvider.resolve_match()"] -->|StatsMatchLink| SS["StatsService"]
-        SS -->|StatsMatchLinkRecord| R2["Repository (persist)"]
-        SS -->|MatchStatsReport| TG3["Chat Telegram"]
-    end
-```
-
-**Contratos clave función ↔ tipo:**
-
-| Función / método | Recibe | Devuelve |
-| :--- | :--- | :--- |
-| `Extractor.extract_league(url)` | `str` | `CompetitionExtraction` |
-| `Extractor.extract_match(url)` | `str` | `EventSnapshot` |
-| `Extractor.list_live_events()` | — | `list[LiveEventSnapshot]` |
-| `Repository.upsert_active_events(...)` | `ActiveEventUpsert` (+ ids) | `list[ActiveEventRecord]` |
-| `change_detection.evaluate_subscription_odds_change(...)` | `ActiveEventRecord`, `EventBaseline`, subscription | `SubscriptionOddsAlert | None` |
-| `TrackingService.monitor_once(bot)` | `telegram.Bot` | `RefreshSummary` |
-| `StatsProvider.resolve_match(...)` | criterios de partido | `StatsMatchLink | None` |
-| `StatsProvider.build_match_report(id)` | `str` | `MatchStatsReport` |
-
-### 13.3. Wrappers y capas de abstracción
-
-```mermaid
-flowchart TD
-    SVC["Servicios: Tracking / LiveWatch / Stats"]
-    SVC -->|usa| ER["ExtractorRegistry"]
-    SVC -->|usa| SR["StatsProviderRegistry"]
-    ER -->|get_for_url| EB["Extractor (ABC)"]
-    SR -->|get| SB["StatsProvider (ABC)"]
-    EXC["9 extractores concretos<br/>bet365 + 8 HTTP"] -.implementan.-> EB
-    PROV["7 proveedores de stats<br/>sportradar, sofascore, …"] -.implementan.-> SB
-    EXC -->|usa| BH["BrowserHandler → Chromium"]
-    EXC -->|usa| HC["HTTP client → httpx / curl_cffi"]
-    PROV -->|usa| HC
-    SVC -->|persiste| REPO["SqliteTrackingRepository → sqlite3 (WAL)"]
-    SVC -->|notifica| ALW["alerts → telegram.Bot"]
-```
-
-| Wrapper | Envuelve | Usado por | Notas |
-| :--- | :--- | :--- | :--- |
-| `ExtractorRegistry` / `StatsProviderRegistry` | dict de instancias | servicios, handlers | descubrimiento plug-and-play (`get_for_url`, `get`, `list_registered`) |
-| `Extractor` (ABC) | contrato de scraping | registry | `extract_league/match`, `list_live_events`, `describe_platform` |
-| `StatsProvider` (ABC) | contrato de stats | registry | `search_leagues`, `resolve_match`, `build_match_report` |
-| `BrowserHandler` | Playwright/Chromium | sólo Bet365 | pool de páginas, `request_restart`, espera `active_pages==0` |
-| HTTP clients (por extractor) | `httpx` / `curl_cffi` | 8 books HTTP + stats | curl_cffi para TLS fingerprint anti-bot; heredan `ALL_PROXY` |
-| `SqliteTrackingRepository` | `sqlite3` | los 3 servicios + handlers | WAL, FK ON, `busy_timeout`; ~mayoría síncrono (ver §9.2) |
-| `alerts` + `mappers` | `telegram.Bot` / filas SQL | TrackingService/LiveWatch / repo | formateo Markdown + `split_telegram_message`; mapeo fila↔dataclass |
-
-> El mapa visual del esquema de DB está en el diagrama de chat correspondiente; su versión exhaustiva en tablas está en [§5](#5-base-de-datos-y-persistencia).
-
----
-
-## 14. Arquitectura propuesta y veredicto
-
-### 14.1. Arquitectura objetivo propuesta (del reporte previo)
+El siguiente diagrama muestra el flujo de control y las capas desacopladas. Las interfaces de usuario (Telegram y CLI) llaman directamente a los servicios del Core mediante referencias inyectadas (DI), el runtime autónomo disparado por `runtime/scheduler.py` ejecuta las tareas periódicas de forma neutral, y los eventos asíncronos unidireccionales (alertas) se notifican mediante el `EventBus` hacia los Sinks escuchadores. Esto incluye tanto notificaciones a Telegram a través del `TelegramEventListener` como la opción de mostrar dichos mensajes en la consola en tiempo real a través del `CliEventListener` si el bot se ejecuta desde la consola de comandos.
 
 ```mermaid
 graph TD
-    subgraph UI["Interfaces desacopladas"]
-        TGI["Telegram handler"]
-        CLI["CLI (futuro)"]
-        WEB["Web dashboard (futuro)"]
+    %% Entrada (Transportes / Interfaces)
+    subgraph Interfaces [interfaces/ (Transportes)]
+        TelegramUI[Telegram Handlers]
+        ConsoleCLI[Console CLI Tool]
     end
-    subgraph CORE["Núcleo de orquestación (nuevo)"]
-        DISP["Dispatcher"]
-        BUS["EventBus"]
-        SCH["Scheduler único"]
-        STC["StateCache"]
+
+    %% Desencadenador Autónomo
+    subgraph Runtime [runtime/ (Autónomo)]
+        Scheduler[runtime/scheduler.py (asyncio loop)]
     end
-    subgraph BIZ["Negocio"]
-        SCO["ScrapeCoordinator"]
-        REG["Platform registry"]
-        DAL["Async DAL"]
+
+    %% Capa de Casos de Uso (Servicios)
+    subgraph Services [services/ (Casos de Uso)]
+        TrackingService[TrackingService]
+        LiveWatchService[LiveWatchService]
+        StatsService[StatsService]
+        PeakService[PeakService]
+        SystemWatchService[SystemWatchService]
+        MaintenanceService[MaintenanceService]
     end
-    SRC["Sportsbooks / Federaciones"]
-    subgraph DB["Almacenamiento (serie temporal)"]
-        MAP["competition_provider_mappings"]
-        EVT["events"]
-        SNAP["odds_snapshots"]
+
+    %% Capa de Dominio / Interfaces Abstractas
+    subgraph Core [core/ (Dominio Puro)]
+        Models[core/models/ (DTOs)]
+        Ports[core/ports/ (Interfaces/ABC)]
+        EventBus[core/event_bus.py]
     end
-    TGI & CLI & WEB <--> DISP
-    DISP --> SCH & BUS
-    SCH --> SCO --> REG --> SRC
-    SCO --> STC --> BUS
-    SCO --> DAL --> MAP & EVT & SNAP
-    BUS --> TGI & CLI & WEB
+
+    %% Capa de Adaptadores (Implementación I/O)
+    subgraph Adapters [adapters/ (Implementaciones)]
+        Storage[adapters/storage/* (SQLite)]
+        Extractors[adapters/extractors/* (Scrapers)]
+        StatsProviders[adapters/stats_providers/* (APIs)]
+        Browser[adapters/browser/* (Playwright)]
+    end
+
+    %% Capa de Salida (Sinks)
+    subgraph TelegramSink [interfaces/telegram/sink.py]
+        TGEventListener[TelegramEventListener]
+    end
+    subgraph ConsoleSink [interfaces/cli/sink.py]
+        CliEventListener[CliEventListener]
+    end
+
+    %% Flujos de dependencias
+    TelegramUI -->|Llama| Services
+    ConsoleCLI -->|Llama| Services
+    Scheduler -->|Dispara métodos| Services
+    
+    Services -->|Orquesta usando| Ports
+    Services -->|Publica alertas| EventBus
+    
+    Storage -.->|Implementa| Ports
+    Extractors -.->|Implementa| Ports
+    StatsProviders -.->|Implementa| Ports
+    Browser -.->|Implementa| Ports
+
+    EventBus -->|Notifica| TGEventListener
+    EventBus -->|Notifica| CliEventListener
+    TGEventListener -->|Envía mensajes| TelegramUI
+    CliEventListener -->|Imprime mensajes| ConsoleCLI
 ```
-
-### 14.2. Veredicto por componente
-
-| Propuesta | Veredicto | Por qué |
-| :--- | :--- | :--- |
-| Índices en FKs + `VACUUM` / purga de `sent_alerts` | **Adoptar ya** | barato, alto impacto operativo (= P0.1/P1.1) |
-| Consolidar comandos de federación (37→6) + UX inline | **Adoptar ya** | gran win de mantenibilidad y UX |
-| No persistir `raw_payload_json` por defecto | **Adoptar ya** | ese es el ahorro de disco real (no el BLOB comprimido) |
-| SQLite async (`asyncio.to_thread`) | **Adoptar ya** | saca el bloqueo del event loop (= P0.3) |
-| Tabla `competition_provider_mappings` | **Diferir (P2/P3)** | migración grande, valor medio; ya existe `unified_competitions` |
-| `MatchSnapshot` unificando 5 modelos | **Diferir (P2/P3)** | riesgo de *god object*; los 5 tipos viven en capas distintas |
-| State Store compartido tracking/live | **Diferir** | solapamiento de scraping chico hoy |
-| Tabla `odds_snapshots` (serie temporal) | **Descartar / replantear** | **haría crecer** la DB, no achicarla; sólo si se quiere historial |
-| EventBus + interfaces CLI/Web | **Descartar** | YAGNI: no hay segunda interfaz; el acoplamiento se resuelve con un `Notifier` inyectable |
-| Scheduler maestro único | **Descartar** | cero ganancia (`asyncio.sleep` no consume ocioso) y menos robusto que 7 loops aislados |
-
-**Síntesis:** buena visión de largo plazo, mala lista de tareas inmediatas. Los ítems "adoptar" coinciden con los P0/P1 de [§10](#10-recomendaciones-priorizadas) y dan ~90% del beneficio con ~10% del riesgo de la migración de 4 fases.
 
 ---
 
-*Reporte generado a partir de inspección directa del código (entry points, `bot/`, `core/`, `monitors/`, `storage/`). No se modificó código fuente.*
+## 4. Estructura Objetivo y Modularización del Código
+
+Esta sección detalla la estructura física del proyecto refactorizado, las responsabilidades de cada directorio, la división de archivos complejos y el listado de archivos obsoletos a eliminar para limpiar el repositorio.
+
+### 4.1. Árbol de Carpetas Objetivo
+
+```
+betbot/
+├── main.py                      # Composition Root: inicializa y ensambla el grafo de dependencias
+├── config.py                    # Configuración global y parseo de variables de entorno (.env)
+│
+├── core/                        # DOMINIO PURO (Sin dependencias de Telegram, SQL o HTTPX)
+│   ├── models/                  # Dataclasses sencillas, una por concepto de negocio
+│   │   ├── odds.py, event.py, fixture.py, peak.py, league.py
+│   ├── events.py                # Definición de eventos del bus (OddsChangedEvent, MatchLiveEvent...)
+│   ├── event_bus.py             # EventBus en memoria para notificaciones unidireccionales
+│   ├── league_naming.py         # Lógica pura de normalización de nombres de ligas
+│   └── ports/                   # INTERFACES (Contratos abstractos de entrada/salida)
+│       ├── repository.py        # RepositoryPort (contratos de persistencia)
+│       ├── extractor.py         # ExtractorPort (contratos de scrapers)
+│       ├── stats_provider.py    # StatsProviderPort (contratos de APIs de estadísticas)
+│       ├── browser.py           # BrowserPort (contratos de control del navegador)
+│       └── notifier.py          # EventListener (contratos para sinks/escuchadores)
+│
+├── services/                    # CASOS DE USO (Orquestadores de la lógica de negocio; sin Telegram)
+│   ├── tracking.py              # Gestión y barrido periódico de cuotas
+│   ├── live_watch.py            # Monitoreo y fuzzy matching de partidos en-play
+│   ├── stats.py                 # Standings, fixtures, caching y prefetch de federaciones
+│   ├── peak/                    # Lógica de predicción (model.py, scoring.py, digest.py)
+│   ├── system_watch.py          # Monitoreo de memoria, CPU y Chromium graceful restart
+│   ├── maintenance.py           # Pruning y VACUUM de SQLite
+│   └── change_detection.py      # Algoritmos puros de análisis de fluctuaciones
+│
+├── adapters/                    # IMPLEMENTACIONES DE INFRAESTRUCTURA (Conexiones I/O reales)
+│   ├── storage/                 # Persistencia SQLite (segmentada en archivos pequeños por agregado)
+│   │   ├── connection.py        # Inicialización de la conexión
+│   │   ├── schema.py            # Definición del esquema limpio de base de datos
+│   │   ├── competitions.py      # Repositorio de ligas/competencias seguidas
+│   │   ├── events.py            # Repositorio de eventos y cuotas
+│   │   ├── subscriptions.py     # Repositorio de ajustes y suscripciones de chats
+│   │   ├── baselines.py         # Repositorio de cuotas baseline históricas
+│   │   ├── small_changes.py     # Repositorio de alertas/cambios menores en espera
+│   │   ├── stats_links.py       # Repositorio de vinculación de ligas cuotas-stats
+│   │   ├── live_watch.py        # Repositorio de vigilancia en vivo
+│   │   └── mappers.py           # Mapeadores entre tuplas de SQLite y DTOs del Core
+│   ├── extractors/              # Scrapers reales (Bet365, Betovo, etc.)
+│   ├── stats_providers/         # Clientes HTTP de APIs de federaciones (Sportradar, Palloliitto, etc.)
+│   └── browser/                 # Implementación de Playwright (BrowserHandler)
+│
+├── interfaces/                  # CAPA DE TRANSPORTE (Entradas/Salidas al usuario externo)
+│   ├── telegram/                # Aislamiento de toda la interacción con Telegram
+│   │   ├── handlers/            # Handlers finos (tracking.py, stats.py, live.py, system.py)
+│   │   ├── renderers/           # Formateadores DTO -> HTML/Markdown (alerts.py, message_builders.py)
+│   │   ├── sink.py              # TelegramEventListener (suscrito al bus de eventos)
+│   │   └── app.py               # Configuración e inicio de la Application de PTB
+│   └── cli/                     # CLI de administración por consola y sink de consola
+│       ├── commands.py          # Definición de comandos CLI
+│       └── sink.py              # CliEventListener
+│
+├── runtime/                     # PLANIFICADORES Y RUNTIMES
+│   └── scheduler.py             # ~40 líneas de asyncio loop neutro (no acoplado a Telegram)
+│
+└── tests/                       # Suite de pruebas unitarias e integración
+```
+
+### 4.2. Roles y Reglas de Dependencias
+
+| Directorio | Rol en la Arquitectura | Regla de Oro de Dependencias |
+| :--- | :--- | :--- |
+| `core/` | Modelos de dominio y contratos abstractos (puertos). | **Prohibido** importar de `adapters/`, `interfaces/` o librerías de infraestructura (`telegram`, `sqlite3`, `httpx`). |
+| `services/` | Lógica de casos de uso (orquesta puertos y retorna DTOs). | Solo depende de `core/` y sus puertos abstractos. Retorna DTOs puros, nunca HTML preformateado. |
+| `adapters/` | Implementación de bajo nivel de los puertos del dominio. | El único lugar del código donde se permite código SQL, Scraping (Playwright) o clientes HTTP externos. |
+| `interfaces/` | Canales de comunicación con el exterior (Telegram, CLI). | Traduce inputs del usuario, llama a los servicios, renderiza DTOs con sus renderers y devuelve mensajes de red. |
+| `runtime/` | Temporizadores de background independientes. | Ejecuta un loop asíncrono puro de python llamando a los servicios del Core. Totalmente desacoplado de Telegram. |
+| `main.py` | Composición y ensamblado. | El único archivo que conoce a todos los módulos para instanciar e inyectar las dependencias en el arranque. |
+
+### 4.3. Fragmentación de Archivos "Monstruo" (Split de Archivos Grandes)
+
+Para garantizar un código limpio, legible y con responsabilidades acotadas, realizaremos la siguiente segmentación:
+
+| Archivo Original | Líneas Actuales | Destino Hexagonal | Método de División |
+| :--- | :--- | :--- | :--- |
+| **`storage/tracking_repository.py`** | ~6063 | `adapters/storage/*.py` | Se divide por agregado en archivos dedicados: `competitions.py`, `events.py`, `subscriptions.py`, `baselines.py`, `stats_links.py`, `live_watch.py` y `maintenance.py`. Se unifica la lógica en `connection.py`. |
+| **`monitors/tracking.py`** | ~2244 | `services/tracking.py` | Se extrae la persistencia a los puertos de base de datos, el renderizado de texto a `interfaces/telegram/renderers/` y la publicación de alertas al `EventBus`. El servicio se reduce a ~300 líneas de orquestación pura. |
+| **`bot/special_leagues.py`** | ~3144 | `services/peak/*` y `interfaces/telegram/renderers/` | Se extrae la lógica matemática de scoring y procesamiento de picos al Core (`services/peak/`), y el formateo HTML de reportes a renderers de Telegram. |
+| **`bot/alerts.py`** y `build_*` | ~1105 | `interfaces/telegram/renderers/` | Funciones puras que reciben DTOs del Core y los transforman a HTML o Markdown para su envío a Telegram. |
+| **`bot/handlers/*.py`** | Varios | `interfaces/telegram/handlers/*.py` | Manejadores del bot finos y de baja complejidad que solo parsean inputs, invocan al servicio del Core, pasan el resultado al renderer y envían. |
+
+### 4.4. Catálogo de Archivos a Eliminar (Borrado Seguro)
+
+Para limpiar el worktree de archivos obsoletos y redundancias en esta reescritura, se procederá al borrado físico de los siguientes archivos:
+*   `core/flags.py` (Mapeo de bitmask descartado).
+*   `bot/jobs/legacy.py` (Lógica vieja de loops repetidos).
+*   `bot/jobs/base.py` y `bot/jobs/tasks.py` (Reemplazados por el scheduler asíncrono neutro).
+*   `monitoring.py` (Migrado a `services/system_watch.py`).
+*   Directorio `sandbox/` y `temp/` (Limpieza de archivos temporales de investigación).
+*   Esquema y queries redundantes de la tabla `active_events` (Se unifica todo en la tabla limpia `events` en el nuevo esquema).
+
+---
+
+## 5. Tabla de Servicios Finales del Core
+
+| Servicio | Responsabilidad Primaria | Dependencias Inyectadas | Métodos Principales |
+| :--- | :--- | :--- | :--- |
+| **`TrackingService`** | Ciclo de actualización de cuotas, baselines y detección de fluctuaciones significativas. | `Repository`, `Searcher`, `EventBus` | `request_track()`, `confirm_pending_track()`, `toggle_odds_alerts()`, `refresh_due_leagues()` |
+| **`LiveWatchService`** | Monitoreo en vivo de partidos vigilados (apuestas o directo de estadísticas) y alertas de kickoff. | `Repository`, `Searcher`, `EventBus` | `subscribe_live()`, `unsubscribe_live()`, `poll_once()`, `import_google_sheet()` |
+| **`StatsService`** | Integración con Sportradar/FOGIS/Palloliitto, standings, fixtures, vinculación de ligas y precalentamiento de caché/sesiones. | `Repository`, `StatsProviders` | `get_match_stats_report()`, `search_leagues()`, `link_leagues()`, `list_linked_leagues()`, `ensure_provider_sessions_fresh()`, `warm_tracked_leagues_cache()` |
+| **`PeakService`** | Scoring 1-10 de rotaciones diarias y compilación del digest matutino de picos. | `Repository`, `StatsProviders`, `EventBus` | `list_active_peaks()`, `compile_and_send_digest()`, `trigger_digest_generation_now()` |
+| **`SystemWatchService`**| Monitoreo de hardware (RAM, CPU, Chromium child processes) usando `psutil` y query de DB. | `Repository` | `get_system_status()`, `get_resource_metrics()`, `log_and_check_limits()` |
+| **`MaintenanceService`**| Pruning de SQLite y compactación del tamaño físico del archivo de base de datos. | `Repository` | `run_db_pruning()`, `run_db_vacuum()` |
+
+> [!NOTE]
+> **Integración entre LiveWatch, Tracking y Aprendizaje de Ligas:**
+> *   **Monitoreo en Vivo sin dependencias de Prematch/Cuotas:** El sistema sabe si un partido debe alertarse en vivo mediante la lista de vigilancia (*LiveWatch subscriptions*) activa para el chat, la cual no requiere que el partido haya estado en prematch ni que posea cuotas registradas. `LiveWatchService` monitorea esta lista y realiza una búsqueda de similitud de nombres (*fuzzy matching*) sobre los feeds en vivo expuestos por los extractores.
+> *   **Servicio de Aprendizaje y Vinculación Automática:** Si la liga del partido en vivo o importada no es conocida aún por el bot, entra en juego el servicio de aprendizaje (`learn_and_notify_league_merges` en `TrackingService`). Este servicio vincula dinámicamente tanto las ligas como sus respectivos extractores entre sí, registrándola como una liga conocida del bot. Una vez registrada, esta liga se lista en el baseline del chat del usuario que realizó la carga.
+> *   **Persistencia Compartida:** Ambos servicios se integran a nivel de base de datos compartida en SQLite, evitando acoplamientos rígidos en tiempo de ejecución.
+
+
+---
+
+## 6. Tabla de Comandos Actuales por Bucket
+
+Mapeo de los 95 comandos reales agrupados por funcionalidad:
+
+### Bucket 1: General / Otros
+*   `/start` ➔ Inicializa ajustes del chat. (UI-only)
+*   `/help` / `/guide` ➔ Muestra la guía rápida de uso. (UI-only)
+*   `/cancel` ➔ Cancela una conversación interactiva en curso. (UI-only)
+*   `/ping` ➔ `system_watch_service.get_system_status()` (Retorna latencia/ping)
+*   `/status` ➔ `system_watch_service.get_system_status()` (Uptime, DB rows, ping)
+*   `/resources` ➔ `system_watch_service.get_resource_metrics()` (RAM/CPU/Chromium)
+*   `/echo <text>` ➔ Devuelve el texto ingresado. (UI-only para diagnóstico)
+
+### Bucket 2: Ligas de Apuestas & URLs (Tracking)
+*   `/track_url <url>` ➔ `tracking_service.request_track(url, chat_id)` (Retorna: `PendingTrackRequest`)
+*   `/track_league` ➔ `tracking_service.discover_leagues(...)` (Inicia búsqueda interactiva por país)
+*   `/confirm_track` ➔ `tracking_service.confirm_pending_track(chat_id)`
+*   `/confirm_empty_track` ➔ `tracking_service.confirm_empty_pending_track(chat_id)`
+*   `/untrack` ➔ `tracking_service.remove_subscription(chat_id, idx)`
+*   `/list_tracks` / `/leagues` / `/league` ➔ `tracking_service.list_subscriptions(chat_id)`
+*   `/refresh_tracks` ➔ `tracking_service.refresh_for_chat(chat_id)` (Monitoreo manual forzado)
+*   `/update_track_url <id> <url>` ➔ `tracking_service.update_subscription_url(id, url)`
+*   `/platforms` ➔ `extractor_registry.list_platforms()`
+*   `/competition_url <id>` ➔ `tracking_service.get_competition_url(id)`
+*   `/help_matches` / `/help_leagues` ➔ Guía de comandos de seguimiento. (UI-only)
+
+### Bucket 3: Ligas Unificadas (Mapeos)
+*   `/link_league <odds_id> <stats_id>` ➔ `stats_service.link_leagues(odds_id, stats_id)`
+*   `/unlink_league <odds_id>` ➔ `stats_service.unlink_leagues(odds_id)`
+*   `/relink_leagues` ➔ `stats_service.auto_relink_all_leagues()`
+
+### Bucket 4: Notificaciones & Fluctuaciones (Reminders & Odds Changes)
+*   `/odds_on` / `/odds_off` ➔ `tracking_service.toggle_odds_alerts(chat_id, idx, enabled)`
+*   `/set_change_percent <n>` ➔ `tracking_service.update_change_threshold(chat_id, percent)`
+*   `/check_little_changes` ➔ `tracking_service.list_pending_small_changes(chat_id)`
+*   `/confirm_change <id>` ➔ `tracking_service.confirm_small_change(chat_id, id)`
+*   `/confirm_all_little_changes` ➔ `tracking_service.confirm_all_small_changes(chat_id)`
+*   `/reminders_league` ➔ `tracking_service.toggle_league_reminders(chat_id, idx)`
+*   `/reminders_match` ➔ `tracking_service.toggle_match_reminder(chat_id, match_id)`
+
+### Bucket 5: Live Watch (Monitoreo en Vivo)
+*   `/watch_live` ➔ `live_watch_service.subscribe_live(match_id, chat_id)`
+*   `/unwatch` ➔ `live_watch_service.unsubscribe_live(match_id, chat_id)`
+*   `/watching` ➔ `live_watch_service.list_watched_matches(chat_id)`
+*   `/live_status` ➔ `live_watch_service.get_poller_status()`
+*   `/live_match <id>` / `/view_live_match` ➔ `live_watch_service.get_live_details(id)` (Muestra detalles del partido en vivo en-play)
+*   `/matches` ➔ `tracking_service.list_stored_active_matches(chat_id)` (Partidos del día seguidos, prematch/live)
+*   `/event_url <id>` ➔ `live_watch_service.get_event_url(id)`
+*   `/live_settings` ➔ `live_watch_service.update_settings(chat_id, similarity, interval)`
+*   `/help_live` ➔ Guía de monitoreo en vivo. (UI-only)
+*   `/import_sheet` ➔ `live_watch_service.trigger_sheet_import(chat_id)`
+
+### Bucket 6: Estadísticas Genéricas & Federaciones
+*   `/standings [pais/id]` ➔ `stats_service.get_standings(query)`
+*   `/fixtures [pais/id]` ➔ `stats_service.get_fixtures(query)`
+*   `/results [pais/id]` ➔ `stats_service.get_recent_results(query)`
+*   `/today [pais]` ➔ `stats_service.get_today_matches(query)`
+*   `/match [pais] <match_id>` ➔ `stats_service.get_provider_match_details(pais, match_id)` (Detalles del partido del stats provider)
+*   `/stats <match_id>` ➔ `stats_service.get_match_stats_report(match_id)`
+*   `/explore_stats` ➔ `stats_service.explore_league_stats(query)`
+*   `/stats_links` ➔ `stats_service.list_linked_leagues(chat_id)`
+*   `/track_stats` ➔ `stats_service.subscribe_stats_league(chat_id, league_id)`
+*   `/stats_tracks` / `/stats_leagues` ➔ `stats_service.list_stats_subscriptions(chat_id)`
+*   `{fin,swe,no,ro,sk,al}_help` ➔ Mensajes de ayuda por federación. (UI-only)
+*   `{fin,swe,no,ro,sk,al}_leagues` ➔ `stats_service.get_special_leagues(country)`
+*   `{fin,swe,no,ro,sk,al}_standings <lc>` ➔ `stats_service.get_special_standings(country, lc)`
+*   `{fin,swe,no,ro,sk,al}_fixtures` ➔ `stats_service.get_special_fixtures(country)`
+*   `{fin,swe,no,ro,sk,al}_today` ➔ `stats_service.get_special_today(country)`
+*   `{fin,swe,no,ro,sk,al}_match <id>` ➔ `stats_service.get_special_match(country, id)`
+*   `/swe_results` ➔ `stats_service.get_special_results("sweden")`
+
+### Bucket 7: Peak (Rotaciones)
+*   `/peaks` ➔ `peak_service.list_active_peaks()`
+*   `/peak_today` ➔ `peak_service.trigger_digest_generation_now(chat_id)`
+*   `/peak_on` / `/peak_off` ➔ `peak_service.toggle_digest_subscription(chat_id, enabled)`
+
+### Bucket 8: Sportradar
+*   `/sportradar_token` ➔ `stats_service.update_sportradar_token(token)`
+
+---
+
+### 6.1. Propuesta de Comandos Simplificados (UX Futura)
+
+Para reducir la complejidad cognitiva del usuario, se propone consolidar los 95 comandos en **10 comandos interactivos** utilizando botones inline (*Callback Queries*) para las confirmaciones de flujos de conversación:
+
+1.  **`/track [url/pais]`**: Maneja tanto URLs directas como búsquedas interactivas por país para suscribirse a ligas.
+2.  **`/untrack`**: Muestra la lista de suscripciones con un botón inline `[❌ Eliminar]` al lado de cada una.
+3.  **`/list`**: Muestra una lista unificada de todas las ligas seguidas (cuotas y estadísticas standalone).
+4.  **`/matches`**: Lista partidos activos del día, ofreciendo botones inline `[📊 Ver Stats]` y `[🔗 Ver Apuesta]`.
+5.  **`/stats <match_id>`**: Genera estadísticas consolidadas en vivo (funciona para ligas de apuestas y directas).
+6.  **`/changes`**: Muestra fluctuaciones menores con botones inline: `[Confirmar]` y `[Confirmar Todos]`.
+7.  **`/settings`**: Panel central interactivo para activar/desactivar alertas y ajustar la sensibilidad (%) con sliders inline.
+8.  **`/links`**: Muestra y gestiona los vínculos cuotas-estadísticas con botón `[Vincular Nueva]` y `[❌ Desvincular]`.
+9.  **`/status`**: Diagnóstico unificado del bot (uptime, tamaño de DB, ping y consumo de RAM/CPU de Chromium).
+10. **`/help`**: Guía rápida de uso y comandos simplificados.
+
+---
+
+## 7. Diseños y Contratos de Datos (Data Classes)
+
+Esquemas de datos reales definidos en `core/models.py`:
+
+```python
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from typing import Any, Optional, Sequence
+
+@dataclass(frozen=True)
+class Odds1X2:
+    home: Optional[float]
+    draw: Optional[float]
+    away: Optional[float]
+
+@dataclass(frozen=True)
+class EventKey:
+    platform: str
+    competition_external_id: str
+    external_event_id: str
+
+@dataclass(frozen=True)
+class EventSnapshot:
+    key: EventKey
+    competition_name: str
+    home: str
+    away: str
+    scheduled_label_date: Optional[str]
+    scheduled_label_time: Optional[str]
+    scheduled_at: Optional[str]
+    source_url: Optional[str]
+    odds_1x2: Odds1X2
+    extracted_at: str
+    stats_url: Optional[str] = None
+    markets_payload: Optional[dict[str, Any]] = None
+    metadata: dict[str, Any] = field(default_factory=dict)
+    raw_payload: dict[str, Any] = field(default_factory=dict)
+```
+
+---
+
+## 8. Tabla de Eventos del EventBus (One-Way)
+
+| Evento | Publicado Por | Suscrito Por (Sink) | Propósito / Acción del Receptor |
+| :--- | :--- | :--- | :--- |
+| **`OddsChangedEvent`** | `TrackingService` | `TelegramEventListener`<br>`CliEventListener` | Genera y envía mensaje HTML a chats (o imprime en consola stdout). |
+| **`MatchLiveEvent`** | `LiveWatchService` | `TelegramEventListener`<br>`CliEventListener` | Alerta del inicio del partido en vivo o eventos clave (goles, tarjetas). |
+| **`RotationAlertEvent`**| `PeakService` | `TelegramEventListener`<br>`CliEventListener` | Envía digest consolidado matutino de picos de rotación. |
+| **`SystemWarningEvent`**| `SystemWatchService`| `TelegramEventListener` (Admin)<br>`CliEventListener`| Alerta del sistema si Chromium satura RAM. |
+
+> [!NOTE]
+> **Consola CLI como canal de salida alternativo:**
+> Si el sistema o el bot se ejecuta desde la terminal o consola CLI de administración, el `CliEventListener` se suscribe a los eventos del `EventBus` y muestra los mensajes y alertas directamente en la salida estándar (stdout) en tiempo real, permitiendo la monitorización sin necesidad de depender de los chats de Telegram.
+
+---
+
+## 9. Persistencia SQLite Delgada y Mantenimiento
+
+Para evitar el crecimiento indefinido de la base de datos y eliminar riesgos de migración innecesarios, se redefine la persistencia bajo un enfoque de **Esquema de Estado Actual Limpio (Greenfield DB)**:
+
+### A. Estructura y Limpieza de Payloads (Esquema Current-State Limpio)
+*   **Inicialización Limpia:** Se elimina la base de datos legacy acoplada y se escribe un generador de esquema limpio en `adapters/storage/schema.py`. El bot inicia con una base de datos vacía y nueva, descartando scripts de migración complejos.
+*   **Definición de Tablas del Esquema Limpio (Current-State):**
+    *   `events`: Almacena el estado actual y cuotas de partidos seguidos (prematch o en vivo). Columnas: `platform`, `competition_id`, `external_event_id`, `home`, `away`, `scheduled_at`, `status` (texto: PREMATCH, LIVE, FINISHED), `home_odds`, `draw_odds`, `away_odds`, `extracted_at`, `stats_url`. Se descartan los historiales en `event_odds_snapshots`.
+    *   `competitions`: Ligas seguidas por el bot. Columnas: `id`, `platform`, `name`, `url`, `country`, `active`.
+    *   `chat_subscriptions`: Asociación de chats con ligas y banderas booleanas de notificación independientes (`notify_new_matches` e `notify_odds_changes` como columnas de enteros indexables), evitando payloads JSON acoplados.
+    *   `baselines`: Cuotas de referencia guardadas para calcular fluctuaciones. Columnas: `platform`, `external_event_id`, `home_odds`, `draw_odds`, `away_odds`, `recorded_at`.
+    *   `small_changes`: Cambios menores de cuota pendientes de confirmación. Columnas: `id`, `chat_id`, `external_event_id`, `old_odds`, `new_odds`, `detected_at`.
+    *   `stats_links`: Mapeo entre identificadores de ligas de apuestas y APIs federativas. Columnas: `odds_competition_id`, `provider`, `stats_competition_id`.
+    *   `live_watch`: Suscripciones activas para el monitoreo en vivo. Columnas: `external_event_id`, `chat_id`, `status`, `last_alert_at`.
+    *   `chat_settings`: Ajustes generales del chat (por ejemplo, el porcentaje de fluctuación mínimo configurable). Columnas: `chat_id`, `change_threshold_percent`, `language`.
+*   **Eliminación de Payloads JSON:** El campo `raw_payload` no se guarda en base de datos de manera física (salvo si se define `DEBUG_PAYLOADS=1`), reduciendo el tamaño promedio de fila a menos de 1 KB.
+
+### B. Pruning y Mantenimiento (VACUUM & Cache Cap)
+*   **VACUUM Semanal:** El archivo real de la base de datos se reconstruirá físicamente los domingos corriendo `VACUUM;` desde `MaintenanceService` para recuperar el almacenamiento real liberado al sistema operativo del VPS.
+*   **Tope en stats_payload_cache:** Se impone un tope máximo en cola FIFO de 200 filas para prevenir su crecimiento desmedido.
+*   **Pruning de sent_alerts y small_changes:** Se purgan automáticamente registros viejos de alertas enviadas (antigüedad > 30 días) y cambios menores no confirmados (antigüedad > 7 días). Al no existir la tabla `event_odds_snapshots`, se elimina por completo la necesidad de purgar snapshots de cuotas.
+
+---
+
+## 10. Mapeo de Background Jobs (Los 8 Loops de Fondo)
+
+| Loop Job | Intervalo | Servicio Responsable | Lock Involucrado | Evento Lanzado |
+| :--- | :--- | :--- | :--- | :--- |
+| **Tracking Monitor** | Cada 120s | `TrackingService` | `_refresh_lock` (serializa sweeps) | `OddsChangedEvent` |
+| **Live Watch** | Dinámico (10s-60s) | `LiveWatchService` | Ninguno | `MatchLiveEvent` |
+| **Resource Monitor** | Cada 60s | `SystemWatchService` | Ninguno (reinicia graceful Chromium) | `SystemWarningEvent` |
+| **DB Pruning & VACUUM**| Cada 24h (domingo VACUUM) | `MaintenanceService` | DB Write Lock (implícito SQLite) | Ninguno |
+| **Stats Session Refresh**| Cada 30m | `StatsService` | Token Lock | Ninguno |
+| **Stats Cache Prefetch**| Cada 24h (diario) | `StatsService` | Cache Lock | Ninguno |
+| **Sheet Import** | Cada 15m | `LiveWatchService` | File Read Lock | `MatchLiveEvent` |
+| **Peak Digest** | Diario (08:00 ARG)| `PeakService` | None | `RotationAlertEvent` |
+
+*   **Nota de Bloqueos:** El lock de hardware `BrowserPool` vive en `core/browser_handler.py` limitando los extractores mediante `asyncio.Semaphore(3)`.
+*   **Llamadas a Servicios desde Jobs:** Sí, todos los background jobs utilizan e invocan directamente a los servicios del Core correspondientes (inyectados). Los jobs actúan meramente como disparadores (*triggers*) de tiempo del planificador neutro (`runtime/scheduler.py` en asyncio, descartando depender de la JobQueue de Telegram para la lógica de fondo) y no contienen lógica de negocio.
+
+---
+
+## 11. Plan de Migración Incremental por Fases
+
+### Fase 0: Snapshot, Cobertura de Tests y Preparación
+*   **Objetivo:** Asegurar la red de seguridad.
+*   **Acciones:** Ejecutar la suite de pruebas completa en `tests/`. Crear snapshots de los retornos JSON de los extractores.
+*   **Riesgo:** Nulo.
+*   **Rollback:** No aplica.
+
+### Fase 1: Creación de DTOs e Interfaces de Puertos
+*   **Objetivo:** Declarar las dataclasses y los tipos de eventos sin cambiar código funcional.
+*   **Acciones:** Escribir `core/listener.py` con `EventListener`. Normalizar `Odds1X2` y `EventSnapshot` en `core/models.py`.
+*   **Riesgo:** Bajo.
+*   **Validación:** Ejecutar `pytest tests/core/`.
+
+### Fase 2: Extracción de Servicios e Inyección de Dependencias
+*   **Objetivo:** Mover la lógica pesada de `bot/handlers/*.py` y `bot/jobs/tasks.py` hacia los servicios del Core.
+*   **Acciones:** Modularizar `TrackingService` y `StatsService`. Inyectar dependencias mediante el *Composition Root* en `bot/application.py`.
+*   **Riesgo:** Alto (pérdida de variables de estado o inicializaciones).
+*   **Validación:** Probar comandos `/track` y `/stats` en entorno local.
+
+### Fase 2.5: Desacople y Extracción de Renderers
+*   **Objetivo:** Desacoplar por completo el formateo de salida HTML/Markdown de la lógica interna de los servicios.
+*   **Acciones:** Crear el paquete `bot/renderers/`. Mapear las funciones de renderizado y formateo (`build_*_message()`, `render_*()`) a clases del bot (ej: `TelegramMessageRenderer`). Los servicios del Core retornarán únicamente DTOs limpios y la UI invocará al renderer correspondiente.
+*   **Riesgo:** Bajo-Medio.
+*   **Validación:** Tests unitarios de los renders y verificación en paralelo.
+
+### Fase 3: Integración del EventBus (One-Way)
+*   **Objetivo:** Retirar llamadas directas de envío de Telegram de los servicios del Core.
+*   **Acciones:** Modificar `TrackingService` y `LiveWatchService` para publicar eventos. Implementar `TelegramEventListener` y registrarlo al bus en el arranque de la app.
+*   **Riesgo:** Medio.
+*   **Validación:** Verificar la suite completa `tests/bot/test_tracking_refresh_notifications.py`.
+
+### Fase 4: Reorganización de Background Jobs y Scheduler Neutro
+*   **Objetivo:** Integrar los 8 jobs de fondo en un scheduler neutro asíncrono (`runtime/scheduler.py`), totalmente desacoplado de la API de Telegram.
+*   **Acciones:** Eliminar `bot/jobs/legacy.py` y descartar clases de scheduler personalizadas. Escribir un loop asíncrono simple en `runtime/scheduler.py` que invoque directamente a los servicios core correspondientes.
+*   **Riesgo:** Bajo.
+*   **Validación:** `tests/bot/test_bot_jobs.py`.
+
+### Fase 5: Inicialización de Base de Datos Limpia (DB Greenfield)
+*   **Objetivo:** Crear el nuevo esquema simplificado actual-state de base de datos desde cero, omitiendo históricos redundantes y eliminando por completo riesgos de cutover y backfills relacionales heredados.
+*   **Acciones:** Escribir `adapters/storage/schema.py` para crear el nuevo esquema SQLite de cero. El bot inicia con una base de datos vacía y limpia. Mapear repositorios para interactuar directamente con el nuevo esquema limpio (`events`, `competitions`, etc.).
+*   **Riesgo:** Bajo.
+*   **Validación:** Asegurar la correcta creación de la base de datos al inicio de la aplicación y verificar queries en base de datos vacía.
+
+### Fase 6: Preservación de Comandos y Despliegue
+*   **Objetivo:** Mantener el comportamiento, formato y nombres de los comandos antiguos en su totalidad para descartar regresiones en la interfaz de Telegram.
+*   **Acciones:** Registrar los handlers de Telegram en `interfaces/telegram/handlers/` mapeando los nombres de comandos actuales. Cada handler delega la lógica de negocio al servicio Core, pasa el DTO resultante al renderer y envía el mensaje de respuesta.
+*   **Riesgo:** Bajo.
+*   **Validación:** Verificación manual de los comandos en el bot de Telegram de desarrollo.
+
+---
+
+## 12. Diagramas de Secuencia Críticos (Ejecución de todos los Comandos Simplificados)
+
+### Flujo A: Detección y Confirmación de Cambios Menores (`/changes`)
+Este diagrama ilustra cómo el actualizador periódico detecta fluctuaciones menores y las almacena en SQLite para su posterior confirmación manual interactiva por parte del usuario, actualizando el baseline de cuotas en memoria.
+
+```mermaid
+sequenceDiagram
+    participant Sched as Scheduler (runtime/scheduler.py)
+    participant Track as TrackingService (Core)
+    participant Repo as SqliteRepository
+    actor Usuario
+    participant TG as TelegramHandlers
+    
+    Sched ->> Track: refresh_due_leagues()
+    note over Track: Detecta fluctuación por debajo del umbral de alerta (ej: 1.5% vs 3%)
+    Track ->> Repo: save_small_change(chat_id, match_id, new_odds)
+    
+    note over Usuario: Usuario revisa cambios guardados
+    Usuario ->> TG: /changes
+    TG ->> Track: list_pending_small_changes(chat_id)
+    Track ->> Repo: get_small_changes(chat_id)
+    Repo -->> Track: Sequence[SmallChangeRecord]
+    Track -->> TG: Sequence[SmallChangeRecord]
+    TG ->> Usuario: Muestra lista con botones inline [Confirmar]
+    
+    Usuario ->> TG: Presiona [Confirmar] en cambio #1 (CallbackQuery)
+    TG ->> Track: confirm_small_change(chat_id, change_id)
+    Track ->> Repo: update_event_baseline_odds(match_id, confirmed_odds)
+    Track ->> Repo: delete_small_change(change_id)
+    Track -->> TG: bool (Exito)
+    TG ->> Usuario: Actualiza mensaje: "Baseline de cuota actualizado."
+```
+
+---
+
+### Flujo B: Búsqueda y Registro por País (`/track`)
+
+```mermaid
+sequenceDiagram
+    actor Usuario
+    participant TG as TelegramHandlers
+    participant Track as TrackingService (Core)
+    participant Scrape as Extractor (Scraper)
+    participant Repo as SqliteRepository
+    
+    Usuario ->> TG: /track Suecia
+    TG ->> Track: discover_leagues("Suecia")
+    Track ->> Scrape: discover_available_leagues("Suecia")
+    Scrape -->> Track: List[LeagueDiscoveryOption]
+    Track -->> TG: Sequence[LeagueDiscoveryOption]
+    TG ->> Usuario: Muestra teclado con las ligas de Suecia
+    Usuario ->> TG: Selecciona "Superettan"
+    TG ->> Track: confirm_league_track(Platform, SelectedLeague, chat_id)
+    Track ->> Repo: activate_subscription(chat_id, SelectedLeague)
+    Track -->> TG: TrackedCompetition
+    TG ->> Usuario: Muestra: "Monitoreando Suecia Superettan"
+```
+
+---
+
+### Flujo C: Monitoreo Prematch de Partidos Vigilados
+El actualizador corre periódicamente disparado por el scheduler para verificar ligas que aún no han comenzado y establecer las cuotas baseline iniciales silenciosas.
+
+```mermaid
+sequenceDiagram
+    participant Sched as Scheduler (runtime/scheduler.py)
+    participant Track as TrackingService (Core)
+    participant Scrape as Extractor (Scraper)
+    participant Repo as SqliteRepository
+    
+    Sched ->> Track: refresh_due_leagues()
+    Track ->> Repo: list_globally_active_competitions()
+    Repo -->> Track: List[TrackedCompetition]
+    
+    note over Track: Filtra ligas prematch due basándose en tier de kickoff
+    Track ->> Scrape: extract_league(league_url)
+    Scrape -->> Track: CompetitionExtraction (Partidos futuros y cuotas)
+    
+    Track ->> Repo: save_event_snapshots(CompetitionExtraction)
+    note over Track: Establece baselines de cuotas iniciales silenciosos en DB
+    Track -->> Sched: Ciclo finalizado
+```
+
+---
+
+### Flujo D: Monitoreo en Vivo de Estadísticas (Stats-Only Live Watch)
+El bot monitorea ligas de federaciones registradas en vivo (FOGIS, Palloliitto, etc.) que no requieren cuotas de apuestas, informando al usuario en vivo a través del `EventBus`.
+
+```mermaid
+sequenceDiagram
+    participant Sched as Scheduler (runtime/scheduler.py)
+    participant Live as LiveWatchService (Core)
+    participant Prov as StatsProvider (API)
+    participant Repo as SqliteRepository
+    participant Bus as EventBus
+    participant Listener as TelegramEventListener
+    actor Usuario
+    
+    Sched ->> Live: poll_once()
+    Live ->> Repo: list_active_stats_subscriptions()
+    Repo -->> Live: List[LiveWatchSubscription]
+    
+    Live ->> Prov: get_today_live_matches()
+    Prov -->> Live: List[LiveEventSnapshot]
+    
+    note over Live: Compara fixture de suscripción con partidos en vivo por nombre
+    Live ->> Repo: mark_alert_sent(match_id)
+    Live ->> Bus: publish(MatchLiveEvent)
+    
+    Bus ->> Listener: notify(MatchLiveEvent)
+    Listener ->> Usuario: Envía mensaje HTML: "🟢 [Stats] Match has started!"
+```
+
+---
+
+### Flujo E: Consulta de Estadísticas (`/stats <match_id>`)
+
+```mermaid
+sequenceDiagram
+    actor Usuario
+    participant TG as TelegramHandlers
+    participant Stats as StatsService (Core)
+    participant Repo as SqliteRepository
+    participant Prov as StatsProvider (API)
+    
+    Usuario ->> TG: /stats 123
+    TG ->> Stats: get_match_stats_report(123)
+    Stats ->> Repo: get_match_metadata(123)
+    Repo -->> Stats: Match Record
+    Stats ->> Prov: fetch_live_stats(provider_match_id)
+    Prov -->> Stats: Raw Stats Payload
+    Stats -->> TG: MatchStatsReport
+    TG ->> Usuario: Renderiza y envía reporte en HTML
+```
+
+---
+
+### Flujo F: Listar Suscripciones Activas (`/list`)
+
+```mermaid
+sequenceDiagram
+    actor Usuario
+    participant TG as TelegramHandlers
+    participant Track as TrackingService (Core)
+    participant Repo as SqliteRepository
+    
+    Usuario ->> TG: /list
+    TG ->> Track: list_subscriptions(chat_id)
+    Track ->> Repo: get_subscriptions_for_chat(chat_id)
+    Repo -->> Track: List[Subscription]
+    Track -->> TG: Sequence[Subscription]
+    TG ->> Usuario: Muestra listado consolidado de ligas y estadísticas
+```
+
+---
+
+### Flujo G: Remover Suscripción (`/untrack`)
+
+```mermaid
+sequenceDiagram
+    actor Usuario
+    participant TG as TelegramHandlers
+    participant Track as TrackingService (Core)
+    participant Repo as SqliteRepository
+    
+    Usuario ->> TG: /untrack
+    TG ->> Track: list_subscriptions(chat_id)
+    Track -->> TG: Sequence[Subscription]
+    TG ->> Usuario: Muestra lista con botones inline [❌ Eliminar]
+    
+    Usuario ->> TG: Presiona [❌ Eliminar] en liga #3 (CallbackQuery)
+    TG ->> Track: remove_subscription(chat_id, subscription_id)
+    Track ->> Repo: delete_subscription(subscription_id)
+    Track -->> TG: bool (Exito)
+    TG ->> Usuario: Actualiza mensaje: "Suscripción eliminada con éxito."
+```
+
+---
+
+### Flujo H: Ver Partidos del Día (`/matches`)
+
+```mermaid
+sequenceDiagram
+    actor Usuario
+    participant TG as TelegramHandlers
+    participant Track as TrackingService (Core)
+    participant Repo as SqliteRepository
+    
+    Usuario ->> TG: /matches
+    TG ->> Track: list_stored_active_matches(chat_id)
+    Track ->> Repo: get_active_matches_for_chat(chat_id)
+    Repo -->> Track: List[EventSnapshot]
+    Track -->> TG: Sequence[EventSnapshot]
+    TG ->> Usuario: Muestra partidos del día con botón inline [📊 Ver Stats]
+    
+    Usuario ->> TG: Presiona [📊 Ver Stats] en el partido #1
+    note over TG: Redirige automáticamente al Flujo E (/stats)
+    TG ->> Usuario: Muestra estadísticas en vivo del partido
+```
+
+---
+
+### Flujo I: Configuración Central de Notificaciones (`/settings`)
+
+```mermaid
+sequenceDiagram
+    actor Usuario
+    participant TG as TelegramHandlers
+    participant Track as TrackingService (Core)
+    participant Repo as SqliteRepository
+    
+    Usuario ->> TG: /settings
+    TG ->> Track: get_chat_settings(chat_id)
+    Track ->> Repo: get_settings_for_chat(chat_id)
+    Repo -->> Track: ChatSettings
+    Track -->> TG: ChatSettings
+    TG ->> Usuario: Muestra panel con toggle [Alertas ON/OFF] y cambio de %
+    
+    Usuario ->> TG: Presiona [Desactivar Alertas] (CallbackQuery)
+    TG ->> Track: toggle_odds_alerts(chat_id, idx, False)
+    Track ->> Repo: update_notification_settings(chat_id, False)
+    Track -->> TG: bool
+    TG ->> Usuario: Actualiza panel a estado "Alertas: Desactivadas"
+```
+
+---
+
+### Flujo J: Vincular Ligas de Cuotas con Estadísticas (`/links`)
+
+```mermaid
+sequenceDiagram
+    actor Usuario
+    participant TG as TelegramHandlers
+    participant Stats as StatsService (Core)
+    participant Repo as SqliteRepository
+    
+    Usuario ->> TG: /links
+    TG ->> Stats: list_linked_leagues(chat_id)
+    Stats ->> Repo: get_linked_leagues_for_chat(chat_id)
+    Repo -->> Stats: Sequence[LeagueLinkRecord]
+    Stats -->> TG: Sequence[LeagueLinkRecord]
+    TG ->> Usuario: Muestra vínculos y botón [Vincular Nueva]
+    
+    Usuario ->> TG: Presiona [Vincular Nueva] (CallbackQuery)
+    TG ->> Usuario: Pide elegir liga de cuotas, proveedor y país
+    Usuario ->> TG: Selecciona opciones
+    TG ->> Stats: link_leagues(odds_id, stats_id)
+    Stats ->> Repo: create_link_mapping(odds_id, stats_id)
+    Stats -->> TG: bool
+    TG ->> Usuario: Actualiza mensaje: "Ligas vinculadas correctamente."
+```
+
+---
+
+### Flujo K: Consulta de Diagnóstico del Sistema (`/status`)
+
+```mermaid
+sequenceDiagram
+    actor Usuario
+    participant TG as TelegramHandlers
+    participant Watch as SystemWatchService (Core)
+    participant Repo as SqliteRepository
+    
+    Usuario ->> TG: /status
+    TG ->> Watch: get_system_status()
+    Watch ->> Repo: get_total_tracked_leagues()
+    Repo -->> Watch: count (int)
+    Watch -->> TG: SystemStatusDTO (Uptime, DB rows, CPU/RAM, Ping)
+    TG ->> Usuario: Muestra panel de diagnóstico formateado en HTML
+```
+
+---
+
+### Flujo L: Guía de Ayuda Interactiva (`/help`)
+
+El comando de ayuda no es puramente estático en el handler de la UI; consulta dinámicamente al Core las plataformas activas y países especiales soportados para armar la guía interactiva.
+
+```mermaid
+sequenceDiagram
+    actor Usuario
+    participant TG as TelegramHandlers
+    participant Track as TrackingService (Core)
+    participant Stats as StatsService (Core)
+    
+    Usuario ->> TG: /help
+    TG ->> Track: get_supported_platforms()
+    Track -->> TG: List[Platform]
+    TG ->> Stats: get_special_countries()
+    Stats -->> TG: List[Country]
+    note over TG: UI procesa la guía rápida usando plantillas y datos dinámicos del Core
+    TG ->> Usuario: Envía mensaje HTML interactivo con la guía de uso y botones inline
+```
+
+---
+
+### Flujo M: Consulta de Ligas Especiales / Federaciones (`/standings [pais]`, `/today [pais]`, etc.)
+
+Este flujo muestra cómo las ligas especiales de federaciones se unifican e integran dinámicamente dentro de las consultas del Core, resolviendo su respectivo adapter a través del registro de proveedores.
+
+```mermaid
+sequenceDiagram
+    actor Usuario
+    participant TG as TelegramHandlers
+    participant Stats as StatsService (Core)
+    participant Registry as StatsProviderRegistry (Core)
+    participant Provider as FederationProvider (API)
+    
+    Usuario ->> TG: /standings Finlandia
+    TG ->> Stats: get_standings("Finlandia")
+    Stats ->> Registry: get_provider_for_country("Finlandia")
+    Registry -->> Stats: PalloliittoStatsProvider (Adapter Federativo)
+    Stats ->> Provider: fetch_standings(...)
+    Provider -->> Stats: FederationStandingsDTO
+    Stats -->> TG: FederationStandingsDTO
+    TG ->> Usuario: Renderiza y muestra la tabla de posiciones unificada en HTML
+```
+
+---
+
+## 13. Diagramas de Secuencia de los Background Jobs
+
+A continuación se detallan los diagramas de secuencia para los jobs de fondo que se ejecutan de manera autónoma, mostrando su interacción directa con los servicios del Core a través del planificador neutro.
+
+### Job 1 & 2: Tracking Monitor & Live Watch
+*(Ver Flujo C y Flujo D en la Sección 11).*
+
+### Job 3: Resource Monitor (Métrica de Recursos de Hardware con Reinicio Graceful)
+
+```mermaid
+sequenceDiagram
+    participant Sched as Scheduler (runtime/scheduler.py)
+    participant Watch as SystemWatchService (Core)
+    participant Browser as BrowserHandler (Core)
+    participant Bus as EventBus
+    participant Listener as TelegramEventListener
+    
+    Sched ->> Watch: log_and_check_limits()
+    note over Watch: psutil lee uso de CPU y RAM del bot y de Chromium
+    alt Uso excede límites críticos (ej: RAM > 80% o Chromium colgado)
+        Watch ->> Browser: request_restart()
+        note over Browser: Espera a que active_pages == 0 y reinicia
+        Watch ->> Bus: publish(SystemWarningEvent)
+        Bus ->> Listener: notify(SystemWarningEvent)
+        Listener ->> Admin: Alerta de hardware en Telegram: "⚠️ Reinicio gradual de Chromium por consumo RAM"
+    end
+```
+
+---
+
+### Job 4: DB Pruning & VACUUM (Mantenimiento de Persistencia)
+
+```mermaid
+sequenceDiagram
+    participant Sched as Scheduler (runtime/scheduler.py)
+    participant Maint as MaintenanceService (Core)
+    participant Repo as SqliteRepository
+    
+    Sched ->> Maint: run_db_pruning()
+    Maint ->> Repo: prune_old_alerts(days=30)
+    Repo -->> Maint: count_deleted_alerts
+    alt Es Domingo (Mantenimiento Semanal)
+        Maint ->> Repo: execute_vacuum()
+        note over Repo: Ejecuta: VACUUM; (Reconstruye y libera disco real)
+    end
+```
+
+---
+
+### Job 5: Stats Session Refresh (Renovación de Sesiones API bajo StatsService)
+
+```mermaid
+sequenceDiagram
+    participant Sched as Scheduler (runtime/scheduler.py)
+    participant Stats as StatsService (Core)
+    participant Prov as StatsProviderRegistry (Core)
+    participant SR as SportradarProvider (API)
+    
+    Sched ->> Stats: ensure_provider_sessions_fresh()
+    Stats ->> Prov: get_all_providers()
+    Prov -->> Stats: List[StatsProvider]
+    note over Stats: Verifica expiración de tokens / credenciales
+    Stats ->> SR: refresh_session_token()
+    SR ->> SR: request_fresh_session_token()
+    SR -->> Stats: success
+```
+
+---
+
+### Job 6: Stats Cache Prefetch (Precalentamiento Diario de Caché bajo StatsService)
+
+```mermaid
+sequenceDiagram
+    participant Sched as Scheduler (runtime/scheduler.py)
+    participant Stats as StatsService (Core)
+    participant Repo as SqliteRepository
+    participant Prov as StatsProviderRegistry (Core)
+    
+    Sched ->> Stats: warm_tracked_leagues_cache()
+    Stats ->> Repo: get_active_league_links()
+    Repo -->> Stats: List[LeagueLinkRecord]
+    loop Para cada liga vinculada
+        Stats ->> Prov: prefetch_and_cache_league_metadata(stats_id)
+        Prov -->> Stats: metadata_cached
+    end
+```
+
+---
+
+### Job 7: Sheet Import (Importación de Planilla de Vigilancia en Vivo)
+
+```mermaid
+sequenceDiagram
+    participant Sched as Scheduler (runtime/scheduler.py)
+    participant Live as LiveWatchService (Core)
+    participant Sheet as GoogleSheetsAdapter (API)
+    participant Repo as SqliteRepository
+    
+    Sched ->> Live: trigger_sheet_import()
+    Live ->> Sheet: fetch_live_watch_sheet()
+    Sheet -->> Live: List[SheetRow]
+    loop Para cada fila importada
+        Live ->> Repo: upsert_live_watch_subscription(match_info)
+    end
+    note over Live: Retorna resumen de importación (nuevos partidos vigilados)
+```
+
+---
+
+### Job 8: Peak Digest (Generación y Envío del Reporte Diario de Picos)
+
+```mermaid
+sequenceDiagram
+    participant Sched as Scheduler (runtime/scheduler.py)
+    participant Peak as PeakService (Core)
+    participant Repo as SqliteRepository
+    participant Bus as EventBus
+    participant Listener as TelegramEventListener
+    
+    Sched ->> Peak: compile_and_send_digest()
+    Peak ->> Repo: get_active_peaks_scoring()
+    Repo -->> Peak: List[PeakRecord]
+    note over Peak: Filtra y ordena picos (Scoring >= 7)
+    Peak ->> Bus: publish(RotationAlertEvent)
+    Bus ->> Listener: notify(RotationAlertEvent)
+    Listener ->> Chat: Envía digest consolidado matutino en HTML
+```
+
+---
+
+## 14. Estrategia de Cutover y Migración de Datos (DB Greenfield)
+
+Dado que se ha decidido **prescindir de históricos de cuotas redundantes** y arrancar el bot con una base de datos SQLite limpia desde cero, la estrategia de cutover se simplifica a un **despliegue de limpieza en frío (Greenfield Deployment)** sin riesgos relacionales:
+
+### Paso 1: Ventana de Downtime (5 minutos)
+*   **Acción:** Se detiene el bot de Telegram legacy en el VPS.
+*   **Rollback:** Se resguarda la base de datos antigua completa (`betbot_legacy.db`) como respaldo.
+
+### Paso 2: Creación del Esquema Limpio
+*   **Acción:** Al arrancar el nuevo runtime, el módulo `adapters/storage/schema.py` crea las tablas básicas del nuevo esquema.
+*   **Propósito:** Contar con una base de datos libre de tablas huérfanas, índices redundantes o payloads gigantescos.
+
+### Paso 3: Inicialización en Limpio
+*   **Acción:** Los chats/usuarios vuelven a suscribirse o se realiza una carga rápida inicial de planillas Google Sheets mediante el comando `/import_sheet`.
+
+---
+
+## 15. Tabla de Riesgos y Mitigaciones
+
+| Riesgo Identificado | Impacto | Nivel de Riesgo | Estrategia de Mitigación |
+| :--- | :--- | :--- | :--- |
+| **Crecimiento Exponencial de la DB** | Llenado del disco del VPS por acumulación de datos históricos. | **Bajo** | Se descartan por completo los snapshots históricos y la tabla `event_odds_snapshots`. Se persiste únicamente el estado actual en la tabla `events` sin guardar `raw_payload`. Se limita la caché a un tope de 200 filas y se compacta semanalmente con `VACUUM`. |
+| **Pérdida de Suscripciones en el Arranque** | Los usuarios dejan de recibir alertas temporalmente al arrancar con una base de datos nueva y vacía. | **Bajo-Medio** | Los chats/usuarios vuelven a suscribirse o se realiza una carga rápida inicial de planillas Google Sheets mediante el comando `/import_sheet`. Se mantiene un backup de la DB anterior para consulta manual si es necesario. |
+| **Bloqueos de SQLite por Escrituras Concurrentes** | Caídas del bot debido a accesos simultáneos desde múltiples loops de fondo y handlers de Telegram. | **Alto** | Centralizar operaciones de escritura/lectura en la capa de persistencia usando `asyncio.to_thread` para delegar el bloqueo E/S fuera del event loop. Implementar reintentos nativos ante errores `SQLITE_BUSY`. |
+| **Saturación y Cuelgue de Chromium** | Pérdida de extracciones activas y fugas de memoria RAM en el VPS. | **Medio** | Restricción estricta de concurrencia mediante `BrowserPool` (Semaphore=3). Monitoreo de memoria por `SystemWatchService` con reinicio *graceful* mediante `request_restart()` esperando a que no haya extracciones en curso (active_pages == 0). |
+| **Acoplamiento de handlers por rendering directo** | Pérdida de la capacidad de interactuar mediante otras interfaces (como el CLI). | **Bajo** | Desacoplamiento total en la Fase 2.5: los servicios del Core devuelven DTOs puros y el formateo HTML/Markdown se encapsula en `bot/renderers/`. |
+
+---
+
+## 16. Checklist de Implementación Detallado
+
+- [ ] **Fase 0: Preparación**
+  - [ ] Ejecutar `pytest tests/` y verificar que pase el 100% de la suite de pruebas actual.
+  - [ ] Generar un backup completo del archivo de base de datos de producción (`betbot.db`).
+- [ ] **Fase 1: Puertos y Dataclasses**
+  - [ ] Definir el puerto abstracto `EventListener` en `core/listener.py`.
+  - [ ] Normalizar las dataclasses de cuotas y snapshots (`Odds1X2`, `EventSnapshot`) en `core/models.py`.
+- [ ] **Fase 2: Extracción de Servicios**
+  - [ ] Crear y migrar lógica a `TrackingService`, `LiveWatchService` y `StatsService`.
+  - [ ] Implementar inyección de dependencias en `bot/application.py`.
+- [ ] **Fase 2.5: Extracción de Renderers**
+  - [ ] Mover helpers y builders de mensajes HTML/Markdown a `bot/renderers/`.
+  - [ ] Asegurar que todos los servicios devuelvan únicamente DTOs y no código de Telegram.
+- [ ] **Fase 3: EventBus**
+  - [ ] Acoplar la publicación de eventos (`OddsChangedEvent`, etc.) desde el Core.
+  - [ ] Suscribir `TelegramEventListener` al bus para realizar los envíos reactivos.
+- [ ] **Fase 4: Reorganización de Jobs**
+  - [ ] Eliminar `bot/jobs/legacy.py` y descartar la lógica del scheduler de Telegram.
+  - [ ] Implementar el loop asíncrono neutro en `runtime/scheduler.py` para disparar métodos del Core.
+- [ ] **Fase 5: Inicialización de SQLite Greenfield**
+  - [ ] Escribir esquema simplificado de base de datos actual-state en `adapters/storage/schema.py`.
+  - [ ] Detener el bot de Telegram de producción, renombrar la base de datos vieja para backup e iniciar el bot con base de datos limpia de cero.
+- [ ] **Fase 6: Preservación de Comandos**
+  - [ ] Mapear los mismos comandos de Telegram antiguos en `interfaces/telegram/handlers/`.
+  - [ ] Realizar pruebas funcionales manuales en canal de desarrollo.
+
+---
+
+## 17. Incertidumbres y Decisiones Abiertas
+
+*   **Límite de reintentos en Scraping:** Se mantendrá un límite de 3 reintentos antes de descartar la extracción de una liga para evitar bloquear el pool de Chromium indefinidamente.
+*   **Sensibilidad de alertas por defecto:** El valor por defecto de fluctuación se fija en `3%`, configurable dinámicamente por chat con `/settings`.
+*   **Frecuencia del precalentamiento de cache:** Se fija en 24 horas (ejecutado durante la noche) para evitar solapamiento con los picos de partidos en vivo del fin de semana.
+
+---
+
+## 18. Vía Pragmática y Enfoque de Riesgo Reducido (Triage)
+
+Para evitar el riesgo de una migración sobredimensionada ("Big-Bang") que pueda desestabilizar el bot y requerir un esfuerzo de refactorización desproporcionado, se adopta un enfoque de **triage y desarrollo incremental basado en Pull Requests (PRs) independientes**. Este plan prioriza mitigar los dolores reales del bot con mínimo riesgo operativo.
+
+### A. Decisiones de Alcance (Qué NO hacer de inmediato)
+1.  **Confirmación del Esquema Limpio (Greenfield DB):**
+    *   *Razón:* Implementamos directamente el nuevo esquema simplificado con la tabla `events` (y demás tablas limpias: `competitions`, `baselines`, etc.) en lugar de intentar migrar o conservar la tabla antigua `active_events`. Se elimina por completo la tabla `active_events` al iniciar de cero, y se descarta permanentemente el esquema de series temporales (`events` + `event_odds_snapshots`) y el dual-write. De esta forma, el bot arranca con una base de datos limpia de cero.
+2.  **Desacoplar el Rediseño de Comandos (Dropeo de la Fase 6):**
+    *   *Razón:* Cambiar los 95 comandos reales a 10 con botones inline altera radicalmente la interfaz y comportamiento esperado del bot. Mezclar este rediseño de UX con la migración de plumbing tecnológico duplica la superficie de regresión. Se decide mantener los comandos actuales idénticos durante la migración interna. La consolidación de comandos a botones inline se tratará como un proyecto de UX independiente y posterior.
+
+### B. Dolor Crítico Agregado: Evitar Bloqueos Síncronos en SQLite
+*   *Dolor:* Dado que SQLite opera de forma síncrona, cualquier consulta pesada o escritura masiva de baselines bloqueará el único hilo del event loop asíncrono neutro (`runtime/scheduler.py`), congelando temporalmente el bucle de eventos y afectando la precisión y concurrencia del poller de alertas en vivo de `LiveWatch` y las tareas del sistema.
+*   *Solución:* Se envolverán todas las llamadas de lectura y escritura síncronas de SQLite del repositorio en `asyncio.to_thread` (delegando el bloqueo E/S síncrono al pool de hilos de Python de manera nativa), asegurando que el loop de eventos asíncronos quede libre de latencias y bloqueos.
+
+### C. Hoja de Ruta de Entrega en 3 PRs Progresivos
+
+*   **PR 1: Estabilización Operativa Urgente (Cero cambios de arquitectura, 80% del valor inmediato)**
+    *   Configurar el `VACUUM` semanal en el job de mantenimiento dominical.
+    *   Imponer tope de caché de 200 filas (cola FIFO) en `stats_payload_cache`.
+    *   Implementar reinicio graceful de Chromium (`request_restart()`) en `BrowserHandler`.
+    *   Envolver escrituras SQLite síncronas pesadas del repositorio en `asyncio.to_thread`.
+*   **PR 2: Desacople Estructural (Refactor Tranquilo de Capas)**
+    *   Crear `bot/renderers/` y extraer helpers de formato y renderizado HTML/Markdown (Fase 2.5), logrando que los servicios devuelvan DTOs testeables sin dependencias de Telegram.
+    *   Introducir DI simple de servicios en `bot/application.py`.
+*   **PR 3: Alertas Reactivas e Integración del CLI (EventBus)**
+    *   Implementar el `EventBus` en memoria para el envío de alertas reactivas unidireccionales (sinks desvinculados para Telegram y logs), habilitando el CLI sin dependencias de Telegram.
+
+

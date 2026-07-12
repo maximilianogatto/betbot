@@ -98,7 +98,8 @@ def resolve_chat_timezone(chat_id: int | None) -> ZoneInfo:
     if chat_id is None:
         return default_timezone()
     try:
-        from storage.tracking_repository import tracking_repository
+        from adapters.storage import get_storage
+        tracking_repository = get_storage()
 
         name = tracking_repository.get_chat_timezone(chat_id)
     except Exception:

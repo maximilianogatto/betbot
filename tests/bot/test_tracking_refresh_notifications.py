@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock
 from core.extractor_base import CompetitionUnavailableError
 from monitors.models import RefreshSummary, UnavailableCompetitionRefresh
 from monitors.tracking import TrackingService, format_duration
-from storage.tracking_repository import TrackedCompetition
+from core.models import TrackedCompetition
 
 
 def _tracked_competition() -> TrackedCompetition:

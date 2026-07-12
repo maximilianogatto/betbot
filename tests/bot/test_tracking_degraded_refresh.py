@@ -4,7 +4,7 @@ import unittest
 
 from core.models import CompetitionExtraction, CompetitionKey, EventKey, EventSnapshot, Odds1X2
 from monitors.tracking import _normalize_extracted_match_for_persistence
-from storage.tracking_repository import ActiveEventRecord
+from core.models import ActiveEventRecord
 
 
 class TrackingDegradedRefreshTests(unittest.TestCase):

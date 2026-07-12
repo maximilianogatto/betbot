@@ -39,9 +39,9 @@ def register_default_stats_providers(
     target = registry or stats_provider_registry
     cache = payload_cache
     if cache is None and os.getenv("SPORTRADAR_CACHE_ENABLED", "true").strip().lower() not in {"false", "0", "no"}:
-        from storage.tracking_repository import tracking_repository
+        from adapters.storage import get_storage
 
-        cache = tracking_repository
+        cache = get_storage()
     target.register(SportradarHttpStatsProvider(payload_cache=cache))
     target.register(PalloliittoStatsProvider(payload_cache=cache))
     if os.getenv("SVENSKFOTBOLL_ENABLED", "true").strip().lower() not in {"false", "0", "no"}:

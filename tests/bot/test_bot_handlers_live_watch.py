@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import AsyncMock, Mock, patch
 
 from bot.handlers import watch_live_command, watching_command, unwatch_command, import_sheet_command, view_match_command
-from storage.tracking_repository import LiveWatchEntry
+from core.models import LiveWatchEntry
 
 
 def _live_watch_entry(entry_id: int, home: str, away: str, status: str = "watching", matched_platform: str | None = None, matched_minute: str | None = None, chat_local_id: int | None = None, live_state_json: str | None = None) -> LiveWatchEntry:

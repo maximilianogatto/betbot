@@ -22,9 +22,11 @@ from monitors.stats import (
     render_team_row,
     render_top_scorers,
 )
-from storage.tracking_repository import ActiveEventUpsert, SqliteTrackingRepository
-
-tracking_repository_module = importlib.import_module("storage.tracking_repository")
+import os
+from core.models import ActiveEventUpsert
+from adapters.storage import SqliteStorage
+from adapters.storage.connection import open_connection
+from adapters.storage.schema import initialize_schema
 
 
 class FakeStatsProvider(StatsProvider):
@@ -89,20 +91,22 @@ class FakeStatsProvider(StatsProvider):
 
 class StatsServiceTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.old_db_path = tracking_repository_module.DB_FILE_PATH
-        self.old_data_dir = tracking_repository_module.DATA_DIR
         self.tmp = tempfile.TemporaryDirectory()
-        tracking_repository_module.DATA_DIR = Path(self.tmp.name)
-        tracking_repository_module.DB_FILE_PATH = Path(self.tmp.name) / "tracking.sqlite3"
-        self.repository = SqliteTrackingRepository()
+        self._prev_db = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp.name) / "stats_service.sqlite3")
+        with open_connection() as conn:
+            initialize_schema(conn)
+        self.repository = SqliteStorage()
         registry = StatsProviderRegistry()
         registry.register(FakeStatsProvider())
         self.service = StatsService(provider_registry=registry, repository=self.repository)
         self.subscription = self._create_track()
 
     def tearDown(self) -> None:
-        tracking_repository_module.DB_FILE_PATH = self.old_db_path
-        tracking_repository_module.DATA_DIR = self.old_data_dir
+        if self._prev_db is None:
+            os.environ.pop("BETBOT_DB_PATH", None)
+        else:
+            os.environ["BETBOT_DB_PATH"] = self._prev_db
         self.tmp.cleanup()
 
     def test_warm_tracked_leagues_prefetches_and_links(self) -> None:
@@ -414,10 +418,13 @@ class StatsServiceTests(unittest.TestCase):
             source_url="https://example.test/laliga",
             competition_external_id="laliga",
             competition_name="Spanish Primera",
+            requires_empty_confirmation=False,
+            needs_name_resolution=False,
         )
         confirmed = self.repository.confirm_pending_competition_request(chat_id)
-        self.assertIsNotNone(confirmed)
-        return self.repository.list_tracked_competitions(chat_id)[0]
+        return self.repository.get_tracked_competition_subscription_by_identity(
+            chat_id, "bet365", "laliga"
+        )
 
     def _create_event(self, *, raw_payload: dict):
         self.repository.upsert_active_events(

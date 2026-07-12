@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from storage.tracking_repository import ActiveEventRecord, EventBaseline, TrackedCompetition
+from core.models import ActiveEventRecord, EventBaseline, TrackedCompetition
 
 
 @dataclass(frozen=True)

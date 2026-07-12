@@ -20,8 +20,7 @@ from stats_providers import register_default_stats_providers
 from monitors.live_watch import LiveWatchService
 from monitors.stats import StatsService
 from monitors.tracking import TrackingService
-from storage.tracking_repository import SqliteTrackingRepository
-from storage.league_seed import seed_if_empty
+from adapters.storage import SqliteStorage  # facade greenfield (PR2-E2-S9)
 
 
 def create_application(settings: Settings) -> Application:
@@ -31,14 +30,13 @@ def create_application(settings: Settings) -> Application:
     registered_extractors = register_default_extractors(extractor_registry, settings=settings)
     stats_provider_registry.replace_all([])
     register_default_stats_providers(stats_provider_registry)
-    tracking_repository = SqliteTrackingRepository(
-        default_change_threshold_percent=settings.tracking_default_change_threshold_percent,
-        default_notify_odds_changes=settings.tracking_default_notify_odds_changes,
-    )
-    # Bootstrap a fresh DB (e.g. a new cloud deploy where the gitignored SQLite file
-    # didn't travel) from the committed league seed. No-op if the DB already has
-    # tracked competitions, so an existing install is never altered.
-    seed_if_empty()
+    # PR2-E2-S9: storage greenfield vía facade (compone los adapters por agregado).
+    # Los defaults de threshold/notify ahora viven en el esquema (columnas DEFAULT)
+    # y se pasan explícitos al crear suscripciones, así que el facade no los recibe.
+    tracking_repository = SqliteStorage()
+    # seed_if_empty() se omite en greenfield (sembraba el esquema viejo `active_events`/
+    # `tracked_competitions`). El seed del registro canónico contra el esquema nuevo
+    # queda como follow-up si se decide precargar ligas.
 
     tracking_service = TrackingService(
         extractor_registry=extractor_registry,

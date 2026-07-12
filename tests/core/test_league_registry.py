@@ -1,37 +1,47 @@
 from __future__ import annotations
 
-import importlib
+import os
 import tempfile
 import unittest
 from pathlib import Path
+from datetime import datetime, timezone
 
-tracking_repository_module = importlib.import_module("storage.tracking_repository")
+from adapters.storage import SqliteStorage
+from adapters.storage.connection import open_connection
+from adapters.storage.schema import initialize_schema
 
 
 class LeagueRegistryTests(unittest.TestCase):
     """Fase 1: public_id/traits en unified + stats links a nivel liga unificada."""
 
     def setUp(self) -> None:
-        self.old_db_path = tracking_repository_module.DB_FILE_PATH
         self.tmp = tempfile.TemporaryDirectory()
-        tracking_repository_module.DB_FILE_PATH = Path(self.tmp.name) / "tracking.sqlite3"
-        self.repo = tracking_repository_module.SqliteTrackingRepository()
+        self.old_db_path = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp.name) / "tracking.sqlite3")
+        with open_connection() as conn:
+            initialize_schema(conn)
+        self.repo = SqliteStorage()
 
     def tearDown(self) -> None:
-        tracking_repository_module.DB_FILE_PATH = self.old_db_path
         self.tmp.cleanup()
+        if self.old_db_path is None:
+            os.environ.pop("BETBOT_DB_PATH", None)
+        else:
+            os.environ["BETBOT_DB_PATH"] = self.old_db_path
 
     def _track(self, platform: str, ext_id: str, name: str) -> int:
         """Insert a tracked competition the way production code does (with unified)."""
-        with tracking_repository_module._connect() as c:
-            uc_id = tracking_repository_module._find_or_create_unified_competition_id(c, name)
-            now = tracking_repository_module._utc_now_iso()
+        now = datetime.now(timezone.utc).isoformat()
+        with open_connection() as c:
+            # We can use the helper method _find_or_create_unified_competition_id from the adapter's module,
+            # or just call repo.get_or_create_unified_competition(name)!
+            uc_id = self.repo.get_or_create_unified_competition(name)
             cur = c.execute(
                 """
-                INSERT INTO tracked_competitions (
-                    platform, competition_external_id, competition_name, source_url,
-                    enabled, unified_competition_id, created_at, updated_at
-                ) VALUES (?, ?, ?, ?, 1, ?, ?, ?)
+                INSERT INTO competitions (
+                    platform, external_id, name, source_url,
+                    enabled, unified_competition_id, consecutive_unavailable_refreshes, created_at, updated_at
+                ) VALUES (?, ?, ?, ?, 1, ?, 0, ?, ?)
                 """,
                 (platform, ext_id, name, f"{platform}:{ext_id}", uc_id, now, now),
             )
@@ -70,7 +80,7 @@ class LeagueRegistryTests(unittest.TestCase):
         )
         links_b = self.repo.list_stats_league_links(tc_b)
         self.assertEqual([(l.stats_provider, l.stats_league_id) for l in links_b],
-                         [("sofascore_http", "17")])
+                          [("sofascore_http", "17")])
 
     def test_upsert_from_second_platform_updates_shared_row(self) -> None:
         tc_a = self._track("1xbet_http", "100", "Premier League")
@@ -84,11 +94,11 @@ class LeagueRegistryTests(unittest.TestCase):
             tc_b, stats_provider="sofascore_http", stats_league_id="99",
             stats_league_name="Premier League (fixed)",
         )
-        with tracking_repository_module._connect() as c:
+        with open_connection() as c:
             rows = c.execute(
-                "SELECT stats_league_id FROM stats_league_links WHERE stats_provider='sofascore_http'"
+                "SELECT league_id FROM stats_league_links WHERE provider='sofascore_http'"
             ).fetchall()
-        self.assertEqual([r["stats_league_id"] for r in rows], ["99"])
+        self.assertEqual([r["league_id"] for r in rows], ["99"])
 
     def test_multiple_providers_per_league(self) -> None:
         tc = self._track("1xbet_http", "100", "Premier League")
@@ -99,48 +109,32 @@ class LeagueRegistryTests(unittest.TestCase):
         links = self.repo.list_stats_league_links(tc)
         self.assertEqual({l.stats_provider for l in links}, {"sofascore_http", "flashscore_http"})
 
-    def test_legacy_duplicate_links_deduped_on_migration(self) -> None:
-        tc_a = self._track("1xbet_http", "100", "Premier League")
-        tc_b = self._track("betovo_http", "200", "Premier League")
-        # Simulate legacy per-platform duplicates (pre-registry schema): same
-        # provider linked separately from each platform, NULL unified column.
-        with tracking_repository_module._connect() as c:
-            now = tracking_repository_module._utc_now_iso()
-            for tc_id, league_id, conf in ((tc_a, "17", 0.7), (tc_b, "99", 0.9)):
-                c.execute(
-                    """
-                    INSERT INTO stats_league_links (
-                        tracked_competition_id, stats_provider, stats_league_id,
-                        stats_league_name, confidence, created_at, updated_at
-                    ) VALUES (?, 'sofascore_http', ?, 'PL', ?, ?, ?)
-                    """,
-                    (tc_id, league_id, conf, now, now),
-                )
-        # Next connect runs the migration: backfill unified + dedupe keeps best confidence.
-        links = self.repo.list_stats_league_links(tc_a)
-        self.assertEqual([(l.stats_provider, l.stats_league_id) for l in links],
-                         [("sofascore_http", "99")])
-
 
 class LeagueMatchingTests(unittest.TestCase):
     """Hotfix: auto-merge only on safe signals; fuzzy is a suggestion."""
 
     def setUp(self) -> None:
-        self.old_db_path = tracking_repository_module.DB_FILE_PATH
         self.tmp = tempfile.TemporaryDirectory()
-        tracking_repository_module.DB_FILE_PATH = Path(self.tmp.name) / "tracking.sqlite3"
-        self.repo = tracking_repository_module.SqliteTrackingRepository()
+        self.old_db_path = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp.name) / "tracking.sqlite3")
+        with open_connection() as conn:
+            initialize_schema(conn)
+        self.repo = SqliteStorage()
 
     def tearDown(self) -> None:
-        tracking_repository_module.DB_FILE_PATH = self.old_db_path
         self.tmp.cleanup()
+        if self.old_db_path is None:
+            os.environ.pop("BETBOT_DB_PATH", None)
+        else:
+            os.environ["BETBOT_DB_PATH"] = self.old_db_path
 
     def _track(self, platform: str, ext_id: str, name: str):
         self.repo.create_pending_competition_request(
             1, platform=platform, source_url=f"u/{ext_id}",
             competition_external_id=ext_id, competition_name=name,
+            requires_empty_confirmation=False, needs_name_resolution=False,
         )
-        return self.repo.confirm_pending_competition_request(1).tracked_competition
+        return self.repo.confirm_pending_competition_request(1)
 
     def test_women_and_u20_are_not_merged(self) -> None:
         u20 = self._track("1xbet_http", "1", "Australia. New South Wales Premier League U20")

@@ -10,11 +10,12 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-# Cargar .env antes de importar el repositorio (lee BETBOT_DB_PATH al importarse).
+# Cargar .env antes de resolver BETBOT_DB_PATH.
 from dotenv import load_dotenv
 load_dotenv(PROJECT_ROOT / ".env")
 
-from storage.tracking_repository import SqliteTrackingRepository, _connect
+from adapters.storage import SqliteStorage
+from adapters.storage.connection import open_connection, resolve_database_path
 from bot.config import load_settings
 from typing import Any
 
@@ -45,22 +46,29 @@ def print_table(headers: list[str], rows: list[list[Any]]) -> None:
         print(row_str)
     print(sep)
 
-def cmd_stats(args, repo: SqliteTrackingRepository) -> None:
+def cmd_stats(args, repo: SqliteStorage) -> None:
     """Print overall database size and row counts."""
-    from storage.tracking_repository import DB_FILE_PATH
-    
+
     print("\n=== BETBOT DATABASE STATISTICS ===")
-    with _connect() as con:
-        if os.path.exists(DB_FILE_PATH):
-            size_mb = os.path.getsize(DB_FILE_PATH) / (1024 * 1024)
-            print(f"Ruta DB: {DB_FILE_PATH}")
+    db_file_path = resolve_database_path()
+    with open_connection() as con:
+        if os.path.exists(db_file_path):
+            size_mb = os.path.getsize(db_file_path) / (1024 * 1024)
+            print(f"Ruta DB: {db_file_path}")
             print(f"Tamaño archivo DB: {size_mb:.2f} MB")
         else:
             print("Archivo de base de datos no se pudo inicializar.")
             return
 
-        tables = ["tracked_competitions", "unified_competitions", "chat_subscriptions", 
-                  "events", "event_odds_snapshots", "live_watch_entries", "small_changes"]
+        tables = [
+            "competitions",
+            "unified_competitions",
+            "subscriptions",
+            "events",
+            "baselines",
+            "live_watch_entries",
+            "small_changes",
+        ]
         rows = []
         for table in tables:
             try:
@@ -72,14 +80,14 @@ def cmd_stats(args, repo: SqliteTrackingRepository) -> None:
         print("\nConteos de Filas por Tabla:")
         print_table(["Tabla", "Cantidad de Filas"], rows)
 
-def cmd_list_competitions(args, repo: SqliteTrackingRepository) -> None:
+def cmd_list_competitions(args, repo: SqliteStorage) -> None:
     """List all registered and tracked competitions."""
-    with _connect() as con:
+    with open_connection() as con:
         rows = con.execute(
             """
-            SELECT id, platform, competition_external_id, competition_name, enabled, last_refreshed_at
-            FROM tracked_competitions
-            ORDER BY platform, competition_name
+            SELECT id, platform, external_id, name, enabled, last_refreshed_at
+            FROM competitions
+            ORDER BY platform, name
             """
         ).fetchall()
         
@@ -88,8 +96,8 @@ def cmd_list_competitions(args, repo: SqliteTrackingRepository) -> None:
             table_rows.append([
                 r["id"],
                 r["platform"],
-                r["competition_external_id"],
-                r["competition_name"][:40],
+                r["external_id"],
+                r["name"][:40],
                 "SÍ" if r["enabled"] else "NO",
                 r["last_refreshed_at"] or "Nunca"
             ])
@@ -97,14 +105,15 @@ def cmd_list_competitions(args, repo: SqliteTrackingRepository) -> None:
         print("\nLigas y Competiciones Monitoreadas:")
         print_table(["ID", "Plataforma", "ID Externo", "Nombre Liga", "Activa", "Último Scrape"], table_rows)
 
-def cmd_list_events(args, repo: SqliteTrackingRepository) -> None:
+def cmd_list_events(args, repo: SqliteStorage) -> None:
     """List currently stored events/matches."""
-    with _connect() as con:
+    with open_connection() as con:
         rows = con.execute(
             """
-            SELECT e.id, e.home, e.away, e.scheduled_at, e.status_flags, uc.name as league_name
+            SELECT e.id, e.home, e.away, e.scheduled_at, e.status, COALESCE(uc.name, c.name) as league_name
             FROM events e
-            JOIN unified_competitions uc ON e.unified_competition_id = uc.id
+            JOIN competitions c ON c.id = e.competition_id
+            LEFT JOIN unified_competitions uc ON uc.id = c.unified_competition_id
             ORDER BY e.scheduled_at DESC, e.id DESC
             LIMIT 40
             """
@@ -112,14 +121,7 @@ def cmd_list_events(args, repo: SqliteTrackingRepository) -> None:
         
         table_rows = []
         for r in rows:
-            # Map status flags
-            flags = r["status_flags"]
-            status_desc = "PREMATCH"
-            if flags & 2:
-                status_desc = "LIVE"
-            if flags & 4:
-                status_desc = "FINISHED"
-                
+            status_desc = str(r["status"] or "PREMATCH")
             table_rows.append([
                 r["id"],
                 r["home"][:20],
@@ -132,7 +134,7 @@ def cmd_list_events(args, repo: SqliteTrackingRepository) -> None:
         print("\nÚltimos Partidos Detectados (Límite 40):")
         print_table(["ID", "Local", "Visitante", " Kickoff (UTC)", "Estado", "Liga Unificada"], table_rows)
 
-def cmd_prune(args, repo: SqliteTrackingRepository) -> None:
+def cmd_prune(args, repo: SqliteStorage) -> None:
     """Manually run database pruning."""
     print(f"Ejecutando purga manual de base de datos con umbral de {args.days} días, "
           f"sent_alerts de {args.sent_alerts_days} días y small_changes de {args.small_changes_days} días...")
@@ -172,11 +174,8 @@ def main() -> None:
         sys.exit(0)
         
     try:
-        settings = load_settings()
-        repo = SqliteTrackingRepository(
-            default_change_threshold_percent=settings.tracking_default_change_threshold_percent,
-            default_notify_odds_changes=settings.tracking_default_notify_odds_changes,
-        )
+        load_settings()
+        repo = SqliteStorage()
     except Exception as e:
         print(f"Error al inicializar configuración o repositorio: {e}")
         sys.exit(1)

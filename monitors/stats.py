@@ -26,12 +26,11 @@ from core.stats_models import (
 from core.stats_provider_base import StatsProviderRegistry, stats_provider_registry
 from core.league_naming import league_name_similarity
 from monitors.models import CommandResult
-from storage.tracking_repository import (
+from adapters.storage import SqliteStorage, get_storage
+from core.models import (
     ActiveEventRecord,
-    SqliteTrackingRepository,
     StatsLeagueSubscription,
     TrackedCompetitionSubscription,
-    tracking_repository as default_tracking_repository,
 )
 
 logger = logging.getLogger(__name__)
@@ -82,10 +81,10 @@ class StatsService:
         self,
         *,
         provider_registry: StatsProviderRegistry | None = None,
-        repository: SqliteTrackingRepository | None = None,
+        repository: SqliteStorage | None = None,
     ) -> None:
         self.provider_registry = provider_registry or stats_provider_registry
-        self.repository = repository or default_tracking_repository
+        self.repository = repository or get_storage()
 
     async def ensure_provider_sessions_fresh(self, *, min_ttl_seconds: float = 3600.0) -> None:
         """Proactively refresh provider sessions/tokens nearing expiry.

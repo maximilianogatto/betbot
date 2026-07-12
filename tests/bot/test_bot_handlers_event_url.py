@@ -9,7 +9,7 @@ from bot.handlers import (
     MATCHES_SELECTED_TRACK_CONTEXT_KEY,
     event_url_command,
 )
-from storage.tracking_repository import ActiveEventRecord
+from core.models import ActiveEventRecord
 
 
 def _active_event(
@@ -100,7 +100,7 @@ class EventUrlCommandTests(unittest.IsolatedAsyncioTestCase):
         )
 
         with patch(
-            "storage.tracking_repository.tracking_repository.get_tracked_competition",
+            "adapters.storage.SqliteStorage.get_tracked_competition",
             return_value=None,
         ):
             await event_url_command(update, context)
@@ -123,7 +123,7 @@ class EventUrlCommandTests(unittest.IsolatedAsyncioTestCase):
         )
 
         with patch(
-            "storage.tracking_repository.tracking_repository.get_tracked_competition",
+            "adapters.storage.SqliteStorage.get_tracked_competition",
             return_value=None,
         ):
             await event_url_command(update, context)
@@ -193,7 +193,7 @@ class EventUrlCommandTests(unittest.IsolatedAsyncioTestCase):
         )
 
         with patch(
-            "storage.tracking_repository.tracking_repository.get_tracked_competition",
+            "adapters.storage.SqliteStorage.get_tracked_competition",
             return_value=None,
         ):
             await event_url_command(update, context)

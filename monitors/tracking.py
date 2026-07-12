@@ -48,19 +48,20 @@ from monitors.models import (
     SubscriptionOddsAlert,
     UnavailableCompetitionRefresh,
 )
-from core.models import CompetitionExtraction, EventSnapshot, PlatformDescriptor
-from core.registry import ExtractorRegistry, extractor_registry as global_extractor_registry
-from storage.tracking_repository import (
+from core.models import (
     ActiveEventRecord,
     ActiveEventUpsert,
     ConfirmedCompetitionTrackRequest,
+    CompetitionExtraction,
+    EventSnapshot,
     PendingCompetitionTrackRequest,
+    PlatformDescriptor,
     SmallChangeRecord,
-    SqliteTrackingRepository,
     TrackedCompetition,
     TrackedCompetitionSubscription,
-    tracking_repository as default_tracking_repository,
 )
+from core.registry import ExtractorRegistry, extractor_registry as global_extractor_registry
+from adapters.storage import SqliteStorage, get_storage
 
 logger = logging.getLogger(__name__)
 
@@ -151,7 +152,7 @@ class TrackingService:
     def __init__(
         self,
         extractor_registry: ExtractorRegistry | None = None,
-        repository: SqliteTrackingRepository | None = None,
+        repository: SqliteStorage | None = None,
         max_parallel_refreshes: int = 3,
         remove_missing_after_cycles: int = 3,
         odds_change_confirmation_refreshes: int = 2,
@@ -165,7 +166,7 @@ class TrackingService:
             float(odds_fast_path_percent) if odds_fast_path_percent else None
         )
         self.extractor_registry = extractor_registry or global_extractor_registry
-        self.repository = repository or default_tracking_repository
+        self.repository = repository or get_storage()
         self.max_parallel_refreshes = max(1, max_parallel_refreshes)
         self.remove_missing_after_cycles = max(1, remove_missing_after_cycles)
         self.odds_change_confirmation_refreshes = max(1, odds_change_confirmation_refreshes)

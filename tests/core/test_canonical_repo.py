@@ -1,34 +1,38 @@
 from __future__ import annotations
 
-import importlib
+import os
 import tempfile
 import unittest
 from pathlib import Path
 
-tracking_repository_module = importlib.import_module("storage.tracking_repository")
-SqliteTrackingRepository = tracking_repository_module.SqliteTrackingRepository
+from adapters.storage import SqliteStorage
+from adapters.storage.connection import open_connection
+from adapters.storage.schema import initialize_schema
 
 
 class UnifiedCompetitionRepoTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.old_db = tracking_repository_module.DB_FILE_PATH
-        self.old_dir = tracking_repository_module.DATA_DIR
         self.tmp = tempfile.TemporaryDirectory()
-        tracking_repository_module.DATA_DIR = Path(self.tmp.name)
-        tracking_repository_module.DB_FILE_PATH = Path(self.tmp.name) / "t.sqlite3"
-        self.repo = SqliteTrackingRepository()
+        self.old_db = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp.name) / "t.sqlite3")
+        with open_connection() as conn:
+            initialize_schema(conn)
+        self.repo = SqliteStorage()
 
     def tearDown(self) -> None:
         self.tmp.cleanup()
-        tracking_repository_module.DB_FILE_PATH = self.old_db
-        tracking_repository_module.DATA_DIR = self.old_dir
+        if self.old_db is None:
+            os.environ.pop("BETBOT_DB_PATH", None)
+        else:
+            os.environ["BETBOT_DB_PATH"] = self.old_db
 
     def _add_comp(self, platform, ext_id, name):
-        with tracking_repository_module._connect() as con:
+        now_iso = "2026-01-01T00:00:00+00:00"
+        with open_connection() as con:
             cur = con.execute(
-                "INSERT INTO tracked_competitions (platform, competition_external_id, competition_name, source_url, created_at, updated_at) "
-                "VALUES (?, ?, ?, ?, ?, ?)",
-                (platform, ext_id, name, "http://x", "2026-01-01T00:00:00+00:00", "2026-01-01T00:00:00+00:00"),
+                "INSERT INTO competitions (platform, external_id, name, source_url, enabled, consecutive_unavailable_refreshes, created_at, updated_at) "
+                "VALUES (?, ?, ?, ?, 1, 0, ?, ?)",
+                (platform, ext_id, name, "http://x", now_iso, now_iso),
             )
             return int(cur.lastrowid)
 

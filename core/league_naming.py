@@ -49,7 +49,63 @@ _COUNTRY_ALIASES: dict[str, str] = {
     "eslovaquia": "slovakia",
     "slovakia": "slovakia",
     "argelia": "algeria",
-    "algeria": "algeria"
+    "algeria": "algeria",
+    "islandia": "iceland",
+    "iceland": "iceland",
+    "dinamarca": "denmark",
+    "denmark": "denmark",
+    "polonia": "poland",
+    "poland": "poland",
+    "grecia": "greece",
+    "greece": "greece",
+    "turquia": "turkey",
+    "turquía": "turkey",
+    "turkey": "turkey",
+    "japon": "japan",
+    "japón": "japan",
+    "japan": "japan",
+    "lituania": "lithuania",
+    "lithuania": "lithuania",
+    "croacia": "croatia",
+    "croatia": "croatia",
+    "serbia": "serbia",
+    "bosnia": "bosnia",
+    "bosnia-herzegovina": "bosnia",
+    "bosnia and herzegovina": "bosnia",
+    "australia": "australia",
+    "belarus": "belarus", "bielorrusia": "belarus",
+    "estonia": "estonia",
+    "ecuador": "ecuador",
+    "macau": "macau", "macao": "macau",
+    "mongolia": "mongolia",
+    "morocco": "morocco", "marruecos": "morocco",
+    "new zealand": "newzealand", "nueva zelanda": "newzealand", "nueva zelandia": "newzealand",
+    "northern ireland": "northernireland", "irlanda del norte": "northernireland",
+    "somalia": "somalia",
+    "thailand": "thailand", "tailandia": "thailand",
+    "vietnam": "vietnam",
+    "anguilla": "anguilla",
+    "argentina": "argentina",
+    "chile": "chile",
+    "colombia": "colombia",
+    "peru": "peru", "perú": "peru",
+    "uruguay": "uruguay",
+    "paraguay": "paraguay",
+    "mexico": "mexico", "méxico": "mexico",
+    "portugal": "portugal",
+    "belgium": "belgium", "belgica": "belgium", "bélgica": "belgium",
+    "austria": "austria",
+    "switzerland": "switzerland", "suiza": "switzerland",
+    "scotland": "scotland", "escocia": "scotland",
+    "wales": "wales", "gales": "wales",
+    "ireland": "ireland", "irlanda": "ireland",
+    "russia": "russia", "rusia": "russia",
+    "ukraine": "ukraine", "ucrania": "ukraine",
+    "england": "england", "inglaterra": "england",
+    # Gentilicios / adjetivos comunes en nombres de ligas.
+    "spanish": "spain", "english": "england", "svenska": "sweden", "swedish": "sweden",
+    "brazilian": "brazil", "brasileiro": "brazil", "brasileirao": "brazil",
+    "australian": "australia", "italiana": "italy", "italian": "italy",
 }
 
 # Number words (en + es) and roman numerals → digit string.
@@ -75,7 +131,8 @@ _TOKEN_ALIASES: dict[str, str] = {
     "división": "div",
     "femenino": "women", "femenina": "women", "women": "women", "woman": "women",
     "damas": "women", "dam": "women", "mujeres": "women", "féminas": "women", "feminas": "women",
-    "f": "women", "w": "women", 'femenil': "women",
+    "f": "women", "w": "women", 'femenil': "women", "fem": "women",
+    "sub": "u", "u": "u", "juvenil": "youth", "youth": "youth", "reserva": "reserves", "reserves": "reserves", "res": "reserves"
 }
 
 # Tokens dropped as noise (incl. men markers → treat unmarked as men).
@@ -168,6 +225,47 @@ def same_league_anagram(a: str | None, b: str | None) -> bool:
 
 
 _CANONICAL_COUNTRIES: set[str] = set(_COUNTRY_ALIASES.values())
+
+# País canónico → ISO 3166-1 alpha-2 (para derivar la bandera emoji).
+_COUNTRY_ISO2: dict[str, str] = {
+    "algeria": "dz", "argentina": "ar", "australia": "au", "austria": "at",
+    "belarus": "by", "belgium": "be", "bosnia": "ba", "brazil": "br",
+    "chile": "cl", "colombia": "co", "croatia": "hr", "denmark": "dk",
+    "ecuador": "ec", "estonia": "ee", "finland": "fi", "france": "fr",
+    "germany": "de", "greece": "gr", "iceland": "is", "ireland": "ie",
+    "italy": "it", "japan": "jp", "lithuania": "lt", "macau": "mo",
+    "mexico": "mx", "mongolia": "mn", "morocco": "ma", "netherlands": "nl",
+    "newzealand": "nz", "northernireland": "gb", "norway": "no", "paraguay": "py",
+    "peru": "pe", "poland": "pl", "portugal": "pt", "romania": "ro",
+    "russia": "ru", "serbia": "rs", "slovakia": "sk", "somalia": "so",
+    "spain": "es", "sweden": "se", "switzerland": "ch", "thailand": "th",
+    "turkey": "tr", "ukraine": "ua", "uruguay": "uy", "usa": "us",
+    "vietnam": "vn", "anguilla": "ai",
+}
+# Subdivisiones sin ISO2 propio: bandera por secuencia de tags (Telegram las renderiza).
+_COUNTRY_FLAG_SPECIAL: dict[str, str] = {
+    "england": "🏴\U000e0067\U000e0062\U000e0065\U000e006e\U000e0067\U000e007f",
+    "scotland": "🏴\U000e0067\U000e0062\U000e0073\U000e0063\U000e0074\U000e007f",
+    "wales": "🏴\U000e0067\U000e0062\U000e0077\U000e006c\U000e0073\U000e007f",
+}
+
+
+def country_flag(country: str | None) -> str:
+    """Bandera emoji del país canónico (p.ej. 'brazil' → 🇧🇷). '' si no se conoce."""
+    if not country:
+        return ""
+    if country in _COUNTRY_FLAG_SPECIAL:
+        return _COUNTRY_FLAG_SPECIAL[country]
+    iso2 = _COUNTRY_ISO2.get(country)
+    if not iso2:
+        return ""
+    return "".join(chr(0x1F1E6 + ord(c) - ord("a")) for c in iso2.lower())
+
+
+def name_country_flag(name: str | None) -> tuple[str | None, str]:
+    """Devuelve (país canónico, bandera emoji) detectados en un nombre de liga."""
+    country = extract_league_traits(name).get("country")
+    return country, country_flag(country)
 
 
 def league_slug(name: str | None, max_length: int = 60) -> str:

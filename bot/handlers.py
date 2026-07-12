@@ -56,11 +56,11 @@ from monitors.stats import (
     render_top_scorers,
 )
 from monitors.tracking import CommandResult, TrackingService
-from storage.tracking_repository import (
+from core.models import (
     ActiveEventRecord,
     TrackedCompetitionSubscription,
-    tracking_repository,
 )
+from adapters.storage import get_storage
 
 logger = logging.getLogger(__name__)
 
@@ -1286,7 +1286,7 @@ async def timezone_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     args = context.args or []
 
     if not args:
-        saved = tracking_repository.get_chat_timezone(chat_id)
+        saved = get_storage().get_chat_timezone(chat_id)
         tz = resolve_chat_timezone(chat_id)
         now_local = datetime.now(tz)
         current_name = saved if saved else "por defecto (Argentina)"
@@ -1304,7 +1304,7 @@ async def timezone_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     arg = " ".join(args).strip()
     if arg.lower() in {"reset", "default", "defecto", "arg", "argentina"}:
-        tracking_repository.clear_chat_timezone(chat_id)
+        get_storage().clear_chat_timezone(chat_id)
         set_display_timezone(None)
         tz = resolve_chat_timezone(chat_id)
         await update.message.reply_text(
@@ -1324,7 +1324,7 @@ async def timezone_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         )
         return
 
-    tracking_repository.set_chat_timezone(chat_id, arg)
+    get_storage().set_chat_timezone(chat_id, arg)
     set_display_timezone(tz)
     now_local = datetime.now(tz)
     await update.message.reply_text(
@@ -2803,8 +2803,20 @@ async def list_tracks_command(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 
 def _subscribed_unified(chat_id: int) -> list[dict]:
-    from storage.tracking_repository import tracking_repository
-    return tracking_repository.list_subscribed_unified_competitions(chat_id)
+    # Orden: agrupado por país (bandera alineada) y luego alfabético por nombre.
+    # Las sin país detectado van al final. Este orden es la fuente única del índice
+    # N que usan /league, /link_league, /unlink_league, etc. → display y selección
+    # quedan consistentes.
+    from core.league_naming import extract_league_traits
+
+    unified = get_storage().list_subscribed_unified_competitions(chat_id)
+    return sorted(
+        unified,
+        key=lambda u: (
+            extract_league_traits(u.get("name")).get("country") or "zzzz",
+            (u.get("name") or "").lower(),
+        ),
+    )
 
 
 async def leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -2812,10 +2824,9 @@ async def leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     del context
     if update.message is None or update.effective_chat is None:
         return
-    from storage.tracking_repository import tracking_repository
     from bot.canonical_leagues import build_league_card, render_leagues_list
     unified = _subscribed_unified(update.effective_chat.id)
-    cards = [c for c in (build_league_card(tracking_repository, u["id"]) for u in unified) if c]
+    cards = [c for c in (build_league_card(get_storage(), u["id"]) for u in unified) if c]
     await _reply_text_chunks(update.message, render_leagues_list(cards), parse_mode=ParseMode.HTML)
 
 
@@ -2823,7 +2834,6 @@ async def league_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     """Handle /league <N>: show the cross-platform card of the Nth league (from /leagues)."""
     if update.message is None or update.effective_chat is None:
         return
-    from storage.tracking_repository import tracking_repository
     from bot.canonical_leagues import build_league_card, render_league_card
     unified = _subscribed_unified(update.effective_chat.id)
     if not context.args or not context.args[0].isdigit():
@@ -2833,7 +2843,7 @@ async def league_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     if not (1 <= idx <= len(unified)):
         await update.message.reply_text("Número fuera de rango. Mirá <code>/leagues</code>.", parse_mode=ParseMode.HTML)
         return
-    card = build_league_card(tracking_repository, unified[idx - 1]["id"])
+    card = build_league_card(get_storage(), unified[idx - 1]["id"])
     if not card:
         await update.message.reply_text("No encontré esa liga.")
         return
@@ -2844,7 +2854,6 @@ async def link_league_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     """Handle /link_league <N> <M>: merge league M into N (same physical league)."""
     if update.message is None or update.effective_chat is None:
         return
-    from storage.tracking_repository import tracking_repository
     from bot.canonical_leagues import build_league_card, render_league_card
     unified = _subscribed_unified(update.effective_chat.id)
     args = context.args or []
@@ -2862,9 +2871,9 @@ async def link_league_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     into_id, from_id = unified[n - 1]["id"], unified[m - 1]["id"]
     # Override manual: si estas ligas estaban bloqueadas por un /unlink_league previo,
     # el usuario afirma que SÍ son la misma — quitamos el bloqueo y avisamos.
-    overridden = tracking_repository.clear_merge_exceptions_between(into_id, from_id)
-    tracking_repository.merge_unified_competitions(from_id, into_id)
-    card = build_league_card(tracking_repository, into_id)
+    overridden = get_storage().clear_merge_exceptions_between(into_id, from_id)
+    get_storage().merge_unified_competitions(from_id, into_id)
+    card = build_league_card(get_storage(), into_id)
     aviso = (
         "⚠️ <b>Ojo:</b> estas ligas las habías separado a mano con "
         "<code>/unlink_league</code>. Las fusioné igual porque me lo pediste y quité "
@@ -2880,7 +2889,6 @@ async def unlink_league_command(update: Update, context: ContextTypes.DEFAULT_TY
     """Handle /unlink_league <N> <plataforma>: split a platform off league N into its own."""
     if update.message is None or update.effective_chat is None:
         return
-    from storage.tracking_repository import tracking_repository
     unified = _subscribed_unified(update.effective_chat.id)
     args = context.args or []
     if len(args) < 2 or not args[0].isdigit():
@@ -2895,7 +2903,7 @@ async def unlink_league_command(update: Update, context: ContextTypes.DEFAULT_TY
     if not (1 <= n <= len(unified)):
         await update.message.reply_text("Número fuera de rango. Mirá <code>/leagues</code>.", parse_mode=ParseMode.HTML)
         return
-    comps = tracking_repository.list_tracked_competitions_for_unified(unified[n - 1]["id"])
+    comps = get_storage().list_tracked_competitions_for_unified(unified[n - 1]["id"])
     matches = [c for c in comps if plat_q in c.platform.lower()]
     if extra_q:
         matches = [
@@ -2921,9 +2929,9 @@ async def unlink_league_command(update: Update, context: ContextTypes.DEFAULT_TY
     old_uid = unified[n - 1]["id"]
     # Grabar el bloqueo ANTES de reasignar: un par por cada plataforma que quedaba
     # en la liga, para que el learner no la vuelva a fusionar con ninguna de ellas.
-    blocked_pairs = tracking_repository.block_unlinked_competition(target.id, old_uid)
-    new_uid = tracking_repository.create_unified_competition(target.competition_name)
-    tracking_repository.link_tracked_competition_to_unified(target.id, new_uid)
+    blocked_pairs = get_storage().block_unlinked_competition(target.id, old_uid)
+    new_uid = get_storage().create_unified_competition(target.competition_name)
+    get_storage().link_tracked_competition_to_unified(target.id, new_uid)
     nota = (
         f"\n🔒 No la volveré a unificar automáticamente con esa liga "
         f"({blocked_pairs} plataforma/s). Si te equivocaste, usá <code>/link_league</code>."
@@ -2943,8 +2951,7 @@ async def relink_leagues_command(update: Update, context: ContextTypes.DEFAULT_T
     del context
     if update.message is None:
         return
-    from storage.tracking_repository import tracking_repository
-    summary = tracking_repository.relink_unified_by_normalized_name()
+    summary = get_storage().relink_unified_by_normalized_name()
     await update.message.reply_text(
         "🔗 <b>Re-unificación por nombre normalizado</b>\n"
         f"• Ligas fusionadas: <b>{summary['groups_merged']}</b>\n"
@@ -2967,7 +2974,6 @@ async def reminders_league_command(update: Update, context: ContextTypes.DEFAULT
     """Handle /reminders_league <N> on|off: toggle pre-kickoff reminders for a league."""
     if update.message is None or update.effective_chat is None:
         return
-    from storage.tracking_repository import tracking_repository
     unified = _subscribed_unified(update.effective_chat.id)
     args = context.args or []
     enabled = _parse_on_off(args[1]) if len(args) >= 2 else None
@@ -2982,9 +2988,9 @@ async def reminders_league_command(update: Update, context: ContextTypes.DEFAULT
     if not (1 <= n <= len(unified)):
         await update.message.reply_text("Número fuera de rango. Mirá <code>/leagues</code>.", parse_mode=ParseMode.HTML)
         return
-    comps = tracking_repository.list_tracked_competitions_for_unified(unified[n - 1]["id"])
+    comps = get_storage().list_tracked_competitions_for_unified(unified[n - 1]["id"])
     for comp in comps:
-        tracking_repository.set_competition_reminders(comp.id, enabled)
+        get_storage().set_competition_reminders(comp.id, enabled)
     estado = "ACTIVADOS ✅" if enabled else "desactivados ⚪️"
     await update.message.reply_text(
         f"⏰ Recordatorios {estado} para <b>{escape_html(unified[n - 1]['name'])}</b> ({len(comps)} plataforma/s).",
@@ -2996,7 +3002,6 @@ async def reminders_match_command(update: Update, context: ContextTypes.DEFAULT_
     """Handle /reminders_match <n> on|off: toggle reminder for a match from the last /matches list."""
     if update.message is None:
         return
-    from storage.tracking_repository import tracking_repository
     active_matches = context.user_data.get(MATCHES_ACTIVE_CONTEXT_KEY)
     args = context.args or []
     enabled = _parse_on_off(args[1]) if len(args) >= 2 else None
@@ -3021,7 +3026,7 @@ async def reminders_match_command(update: Update, context: ContextTypes.DEFAULT_
         return
     group = active_matches[selected_index - 1]
     for ev in group:
-        tracking_repository.set_event_reminder(ev.tracked_competition_id, ev.external_event_id, enabled)
+        get_storage().set_event_reminder(ev.tracked_competition_id, ev.external_event_id, enabled)
     estado = "ACTIVADO ✅" if enabled else "desactivado ⚪️"
     rep = group[0]
     await update.message.reply_text(
@@ -5357,9 +5362,8 @@ async def peak_on_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     del context
     if update.message is None or update.effective_chat is None:
         return
-    from storage.tracking_repository import tracking_repository
 
-    tracking_repository.set_peak_digest_subscription(update.effective_chat.id, True)
+    get_storage().set_peak_digest_subscription(update.effective_chat.id, True)
     await update.message.reply_text(
         "✅ Listo. Vas a recibir cada mañana el *Peak del día* de ligas especiales "
         "(Finlandia 🇫🇮 + Suecia 🇸🇪).\n"
@@ -5374,9 +5378,8 @@ async def peak_off_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     del context
     if update.message is None or update.effective_chat is None:
         return
-    from storage.tracking_repository import tracking_repository
 
-    tracking_repository.set_peak_digest_subscription(update.effective_chat.id, False)
+    get_storage().set_peak_digest_subscription(update.effective_chat.id, False)
     await update.message.reply_text(
         "🔕 Desactivé el envío automático del Peak del día. Igual podés consultarlo con `/peak_today`.",
         parse_mode="Markdown",

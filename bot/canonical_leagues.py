@@ -156,10 +156,14 @@ def render_leagues_list(cards: list[LeagueCard]) -> str:
             "📭 Todavía no hay ligas canónicas armadas.\n"
             "Trackeá una liga en varias plataformas y se irán linkeando (o usá /link_league)."
         )
+    from core.league_naming import name_country_flag
+
     lines = ["🏆 <b>Ligas canónicas</b>", "━━━━━━━━━━━━━━━━━━━━"]
     for i, card in enumerate(cards, start=1):
         stat = "📊" if card.has_stats else "  "
-        lines.append(f"{i}. {escape(card.name)} — {card.tracked_count} plat. {stat}")
+        _, flag = name_country_flag(card.name)
+        prefix = f"{flag} " if flag else ""
+        lines.append(f"{i}. {prefix}{escape(card.name)} — {card.tracked_count} plat. {stat}")
     lines.append("")
     lines.append("👉 Ver detalle: <code>/league [N]</code>")
     return "\n".join(lines)

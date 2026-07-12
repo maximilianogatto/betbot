@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-import importlib
+import os
 import json
 import tempfile
 import unittest
 from pathlib import Path
 
-tracking_repository_module = importlib.import_module("storage.tracking_repository")
-from storage import league_seed  # noqa: E402
+from adapters.storage.connection import open_connection, resolve_database_path
+from adapters.storage.schema import initialize_schema
+from storage import league_seed
 
 
 def _sample_seed() -> dict:
@@ -67,25 +68,30 @@ def _sample_seed() -> dict:
 
 class LeagueSeedTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.old_db_path = tracking_repository_module.DB_FILE_PATH
         self.tmp = tempfile.TemporaryDirectory()
-        tracking_repository_module.DB_FILE_PATH = Path(self.tmp.name) / "tracking.sqlite3"
+        self.old_db_path = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp.name) / "tracking.sqlite3")
+        with open_connection() as conn:
+            initialize_schema(conn)
         self.seed_path = Path(self.tmp.name) / "leagues.json"
 
     def tearDown(self) -> None:
-        tracking_repository_module.DB_FILE_PATH = self.old_db_path
         self.tmp.cleanup()
+        if self.old_db_path is None:
+            os.environ.pop("BETBOT_DB_PATH", None)
+        else:
+            os.environ["BETBOT_DB_PATH"] = self.old_db_path
 
     def _counts(self) -> dict[str, int]:
-        with tracking_repository_module._connect() as c:
+        with open_connection() as c:
             return {
                 t: c.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0]
                 for t in (
                     "unified_competitions",
-                    "tracked_competitions",
+                    "competitions",
                     "stats_league_links",
-                    "competition_subscriptions",
-                    "active_events",
+                    "subscriptions",
+                    "events",
                 )
             }
 
@@ -97,11 +103,11 @@ class LeagueSeedTests(unittest.TestCase):
 
         db = self._counts()
         self.assertEqual(db["unified_competitions"], 2)
-        self.assertEqual(db["tracked_competitions"], 3)
+        self.assertEqual(db["competitions"], 3)
         self.assertEqual(db["stats_league_links"], 1)
         # User tables are never populated by a seed import.
-        self.assertEqual(db["competition_subscriptions"], 0)
-        self.assertEqual(db["active_events"], 0)
+        self.assertEqual(db["subscriptions"], 0)
+        self.assertEqual(db["events"], 0)
 
         # Export is registry-centric (v2): one entry per league with its
         # platform links + league-level stats links.
@@ -121,21 +127,23 @@ class LeagueSeedTests(unittest.TestCase):
 
         # And a v2 export imports cleanly into a fresh DB (full roundtrip).
         with tempfile.TemporaryDirectory() as tmp2:
-            tracking_repository_module.DB_FILE_PATH = Path(tmp2) / "fresh.sqlite3"
+            os.environ["BETBOT_DB_PATH"] = str(Path(tmp2) / "fresh.sqlite3")
+            with open_connection() as conn:
+                initialize_schema(conn)
             counts2 = league_seed.import_league_seed(exported, overwrite=False)
             self.assertEqual(counts2["unified_created"], 2)
             self.assertEqual(counts2["tracked_inserted"], 3)
             self.assertEqual(counts2["stats_inserted"], 1)
-            with tracking_repository_module._connect() as c:
+            with open_connection() as c:
                 row = c.execute(
                     "SELECT public_id FROM unified_competitions WHERE name = 'Premier League'"
                 ).fetchone()
                 self.assertEqual(row["public_id"], "premier-league")
                 link = c.execute(
-                    "SELECT unified_competition_id FROM stats_league_links"
+                    "SELECT c.unified_competition_id FROM stats_league_links s JOIN competitions c ON c.id = s.competition_id"
                 ).fetchone()
                 self.assertIsNotNone(link["unified_competition_id"])
-            tracking_repository_module.DB_FILE_PATH = Path(self.tmp.name) / "tracking.sqlite3"
+            os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp.name) / "tracking.sqlite3")
 
     def test_import_is_idempotent(self) -> None:
         league_seed.import_league_seed(_sample_seed(), overwrite=False)
@@ -143,7 +151,7 @@ class LeagueSeedTests(unittest.TestCase):
         self.assertEqual(counts["tracked_inserted"], 0)
         self.assertEqual(counts["tracked_skipped"], 3)
         self.assertEqual(counts["stats_inserted"], 0)
-        self.assertEqual(self._counts()["tracked_competitions"], 3)
+        self.assertEqual(self._counts()["competitions"], 3)
 
     def test_overwrite_updates_existing(self) -> None:
         league_seed.import_league_seed(_sample_seed(), overwrite=False)
@@ -151,12 +159,12 @@ class LeagueSeedTests(unittest.TestCase):
         data["tracked_competitions"][0]["competition_name"] = "NEW NAME"
         counts = league_seed.import_league_seed(data, overwrite=True)
         self.assertEqual(counts["tracked_updated"], 3)
-        with tracking_repository_module._connect() as c:
+        with open_connection() as c:
             row = c.execute(
-                "SELECT competition_name FROM tracked_competitions WHERE platform=? AND competition_external_id=?",
+                "SELECT name FROM competitions WHERE platform=? AND external_id=?",
                 ("1xbet_http", "PL-1X"),
             ).fetchone()
-        self.assertEqual(row["competition_name"], "NEW NAME")
+        self.assertEqual(row["name"], "NEW NAME")
 
     def test_seed_if_empty_bootstraps_then_noop(self) -> None:
         self.seed_path.write_text(json.dumps(_sample_seed()), encoding="utf-8")
@@ -168,7 +176,7 @@ class LeagueSeedTests(unittest.TestCase):
 
     def test_seed_if_empty_without_file_is_noop(self) -> None:
         self.assertIsNone(league_seed.seed_if_empty(self.seed_path))
-        self.assertEqual(self._counts()["tracked_competitions"], 0)
+        self.assertEqual(self._counts()["competitions"], 0)
 
 
 if __name__ == "__main__":

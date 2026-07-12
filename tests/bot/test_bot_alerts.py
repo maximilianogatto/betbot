@@ -12,7 +12,7 @@ from bot.alerts import (
     format_kickoff_text,
     split_telegram_message,
 )
-from storage.tracking_repository import ActiveEventRecord, TrackedCompetition
+from core.models import ActiveEventRecord, TrackedCompetition
 
 
 def _tracked_league() -> TrackedCompetition:
