@@ -135,15 +135,15 @@ async def _sheet_import_loop(
                             else []
                         )
                         if added:
+                            from bot.jobs.tasks import _notify_sheet_import
+
                             msg = [f"📥 *Auto-import de planilla:* +{len(added)} partido(s) en vigilancia."]
                             for entry in added:
                                 hint = f" ({entry.league_hint})" if entry.league_hint else ""
                                 disp_id = entry.chat_local_id if entry.chat_local_id is not None else entry.id
                                 msg.append(f"  *#{disp_id}* · `{entry.home}` vs `{entry.away}`{hint}")
                             try:
-                                await application.bot.send_message(
-                                    chat_id=chat_id, text="\n".join(msg), parse_mode="Markdown"
-                                )
+                                await _notify_sheet_import(application.bot, chat_id, "\n".join(msg))
                             except Exception:
                                 logger.exception("Sheet auto-import: failed to notify chat %s", chat_id)
                         logger.info("Sheet auto-import: change detected, %s new fixture(s).", len(added))

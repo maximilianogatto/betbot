@@ -137,5 +137,39 @@ class DbPruningJobTests(unittest.IsolatedAsyncioTestCase):
         mock_repo.run_db_vacuum.assert_not_called()
 
 
+class NotifySheetImportTests(unittest.IsolatedAsyncioTestCase):
+    async def test_long_message_is_sent_in_chunks(self) -> None:
+        from bot.jobs.tasks import _notify_sheet_import
+
+        bot = SimpleNamespace(send_message=AsyncMock())
+        long_text = "\n".join(f"  *#{i}* · `Home {i}` vs `Away {i}`" for i in range(200))
+        await _notify_sheet_import(bot, 123, long_text)
+
+        self.assertGreater(bot.send_message.await_count, 1)
+        for call in bot.send_message.await_args_list:
+            self.assertLessEqual(len(call.kwargs["text"]), 4096)
+            self.assertEqual(call.kwargs["chat_id"], 123)
+            self.assertEqual(call.kwargs["parse_mode"], "Markdown")
+
+    async def test_markdown_failure_falls_back_to_plain_text(self) -> None:
+        from telegram.error import BadRequest
+
+        from bot.jobs.tasks import _notify_sheet_import
+
+        calls: list[dict] = []
+
+        async def send_message(**kwargs):
+            calls.append(kwargs)
+            if kwargs.get("parse_mode") == "Markdown":
+                raise BadRequest("Can't parse entities")
+
+        bot = SimpleNamespace(send_message=AsyncMock(side_effect=send_message))
+        await _notify_sheet_import(bot, 123, "📥 Auto-import: `Team_A` vs Team_B")
+
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(calls[0]["parse_mode"], "Markdown")
+        self.assertNotIn("parse_mode", calls[1])
+
+
 if __name__ == "__main__":
     unittest.main()

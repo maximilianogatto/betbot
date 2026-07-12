@@ -252,6 +252,27 @@ def _live_watch_interval_resolver(application: Application) -> float:
     return default_normal
 
 
+async def _notify_sheet_import(bot, chat_id: int, text: str) -> None:
+    """Send the auto-import notice, chunked and surviving Markdown-breaking names.
+
+    A single send_message fails silently past Telegram's 4096-char limit (a
+    full-sheet first import easily exceeds it) or when a team name breaks the
+    Markdown parser; either way the user never learns what was added.
+    """
+
+    from bot.alerts import split_telegram_message
+
+    for chunk in split_telegram_message(text):
+        try:
+            await bot.send_message(chat_id=chat_id, text=chunk, parse_mode="Markdown")
+        except Exception:
+            logger.warning(
+                "Sheet auto-import: Markdown send failed chat=%s, retrying as plain text",
+                chat_id,
+            )
+            await bot.send_message(chat_id=chat_id, text=chunk)
+
+
 async def _orchestrated_sheet_import(application: Application) -> None:
     settings = application.bot_data.get("settings")
     if not settings or not settings.live_watch_sheet_chat_id:
@@ -282,6 +303,12 @@ async def _orchestrated_sheet_import(application: Application) -> None:
                     if lines
                     else []
                 )
+                logger.info(
+                    "Sheet auto-import: %d line(s) parsed, %d new watch(es) added chat=%s",
+                    len(lines),
+                    len(added),
+                    chat_id,
+                )
                 if added:
                     msg = [f"📥 *Auto-import de planilla:* +{len(added)} partido(s) en vigilancia."]
                     for entry in added:
@@ -289,9 +316,7 @@ async def _orchestrated_sheet_import(application: Application) -> None:
                         disp_id = entry.chat_local_id if entry.chat_local_id is not None else entry.id
                         msg.append(f"  *#{disp_id}* · `{entry.home}` vs `{entry.away}`{hint}")
                     try:
-                        await application.bot.send_message(
-                            chat_id=chat_id, text="\n".join(msg), parse_mode="Markdown"
-                        )
+                        await _notify_sheet_import(application.bot, chat_id, "\n".join(msg))
                     except Exception:
                         logger.exception("Sheet auto-import: failed to notify chat %s", chat_id)
     except Exception:
@@ -405,6 +430,10 @@ async def start_orchestrated_scheduler(application: Application, settings: Any) 
     if settings.live_watch_sheet_chat_id:
         scheduler.register_job(
             SheetImportJob(settings.live_watch_sheet_interval_seconds)
+        )
+    else:
+        logger.info(
+            "Sheet auto-import disabled: LIVE_WATCH_SHEET_CHAT_ID is not set."
         )
         
     # 8. Register Peak Digest
