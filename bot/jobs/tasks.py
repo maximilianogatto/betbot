@@ -17,7 +17,7 @@ from monitoring import (
     get_metric_warnings,
     get_system_metrics,
 )
-from monitors.live_watch import LiveWatchService, parse_sheet_fixture_lines, render_live_hit
+from monitors.live_watch import LiveWatchService, parse_sheet_fixture_lines, render_live_hit, sheet_timezone
 from monitors.stats import StatsService
 from monitors.tracking import TrackingService, format_duration
 from bot.jobs.resource_monitor import request_chromium_restart
@@ -277,7 +277,11 @@ async def _orchestrated_sheet_import(application: Application) -> None:
                 except ValueError as err:
                     logger.warning("Sheet auto-import: %s", err)
                     lines = []
-                added = service.add_fixture_lines(chat_id, lines) if lines else []
+                added = (
+                    service.add_fixture_lines(chat_id, lines, times_tz=sheet_timezone())
+                    if lines
+                    else []
+                )
                 if added:
                     msg = [f"📥 *Auto-import de planilla:* +{len(added)} partido(s) en vigilancia."]
                     for entry in added:

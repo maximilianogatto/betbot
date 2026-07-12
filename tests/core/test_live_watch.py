@@ -314,6 +314,34 @@ class LiveWatchServiceTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(added), 1)
         self.assertIsNotNone(added[0].kickoff_at)
 
+    def test_sheet_times_parsed_in_sheet_timezone_not_chat_timezone(self) -> None:
+        # Sheet imports pass times_tz=sheet_timezone() (Argentina): the stored
+        # UTC kickoff must reflect the Argentina wall clock even if the chat's
+        # display timezone is elsewhere (e.g. Europe/Madrid).
+        from datetime import datetime, timedelta, timezone
+        from zoneinfo import ZoneInfo
+
+        from monitors.live_watch import sheet_timezone
+
+        tz_arg = sheet_timezone()
+        self.assertEqual(str(tz_arg), "America/Argentina/Buenos_Aires")
+
+        service = LiveWatchService(repository=self.repository)
+        target = datetime.now(tz_arg) + timedelta(hours=3)
+        line = f"{target:%H:%M} Sheet Home - Sheet Away"
+
+        added = service.add_fixture_lines(999, [line], times_tz=tz_arg)
+        self.assertEqual(len(added), 1)
+        ko = datetime.fromisoformat(added[0].kickoff_at)
+        expected = target.replace(second=0, microsecond=0).astimezone(timezone.utc)
+        self.assertLess(abs((ko - expected).total_seconds()), 60)
+
+        # The same line parsed as Madrid wall clock lands on a different instant.
+        parsed_madrid = parse_fixture_line(line, tz=ZoneInfo("Europe/Madrid"))
+        self.assertIsNotNone(parsed_madrid)
+        ko_madrid = datetime.fromisoformat(parsed_madrid[3])
+        self.assertNotEqual(ko, ko_madrid)
+
     async def test_live_watch_poller_matches_and_fires_alerts(self) -> None:
         service = LiveWatchService(repository=self.repository)
 

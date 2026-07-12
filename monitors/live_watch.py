@@ -170,19 +170,29 @@ class LiveWatchService:
 
     # ----- watchlist management (used by the bot commands) -----
 
-    def add_fixture_lines(self, chat_id: int, lines: Iterable[str]) -> list[LiveWatchEntry]:
+    def add_fixture_lines(
+        self,
+        chat_id: int,
+        lines: Iterable[str],
+        *,
+        times_tz: ZoneInfo | None = None,
+    ) -> list[LiveWatchEntry]:
         """Parse pasted fixture lines and add each as a watch entry.
 
         Accepted per line (one match per line):
           - "Home - Away"
           - "Home vs Away" / "Home vs. Away"
           - "League | Home - Away"  (the part before '|' becomes the league hint)
+
+        ``times_tz`` is the wall-clock zone of any leading "HH:MM": pasted lines
+        default to the chat's display timezone, while sheet imports must pass
+        :func:`sheet_timezone` because the shared sheet is written in Argentina
+        time regardless of where each chat lives. Kickoffs are stored in UTC.
         """
 
         added: list[LiveWatchEntry] = []
         existing_watches = self.repository.list_live_watches(chat_id, status="watching")
-        # A leading "HH:MM" in a pasted line is the user's local wall-clock time.
-        chat_tz = resolve_chat_timezone(chat_id)
+        chat_tz = times_tz or resolve_chat_timezone(chat_id)
 
         for raw in lines:
             parsed = parse_fixture_line(raw, tz=chat_tz)
@@ -1103,6 +1113,21 @@ def parse_fixture_line(
 # --------------------------------------------------------------------------- #
 # Google Sheet import (shared by /import_sheet and the auto-import job)
 # --------------------------------------------------------------------------- #
+def sheet_timezone() -> ZoneInfo:
+    """Wall-clock zone of the Horario column in the shared Google Sheet.
+
+    The sheet is always written in Argentina time, no matter which display
+    timezone each chat picked. Overridable via LIVE_WATCH_SHEET_TIMEZONE.
+    """
+
+    import os
+
+    from core.timezones import get_zoneinfo
+
+    name = (os.getenv("LIVE_WATCH_SHEET_TIMEZONE") or "").strip()
+    return get_zoneinfo(name) or _ARG_TZ
+
+
 def parse_sheet_fixture_lines(csv_text: str) -> list[str]:
     """Parse the shared Google Sheet CSV into watch fixture lines.
 
