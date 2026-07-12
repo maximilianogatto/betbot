@@ -332,7 +332,8 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         mock_reply_chunks.assert_awaited_once()
         reply_content = mock_reply_chunks.await_args[0][1]
         self.assertIn("*#5*", reply_content)
-        self.assertIn("`11:00`", reply_content)
+        # Kickoff is not today, so the local time is shown with its date.
+        self.assertIn("`02/06 11:00`", reply_content)
         self.assertIn("`Banyule` vs `Bundoora`", reply_content)
 
 
@@ -463,12 +464,15 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
             await import_sheet_command(update, context)
 
         mock_client.get.assert_called_once()
+        from monitors.live_watch import sheet_timezone
+
         live_watch_service.add_fixture_lines.assert_called_once_with(
             123,
             [
                 "15:00 Australia Victoria NPL 1 | Banyule vs Bundoora (Visitantes +5/6)",
                 "18:00 USA USL League Two | Texoma vs Fort Worth (Locales +4t5)",
-            ]
+            ],
+            times_tz=sheet_timezone(),
         )
         mock_reply_chunks.assert_awaited_once()
         reply_content = mock_reply_chunks.await_args[0][1]

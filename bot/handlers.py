@@ -535,7 +535,7 @@ async def import_sheet_command(update: Update, context: ContextTypes.DEFAULT_TYP
 
     import os
     import httpx
-    from monitors.live_watch import parse_sheet_fixture_lines
+    from monitors.live_watch import parse_sheet_fixture_lines, sheet_timezone
 
     url = os.getenv(
         "LIVE_WATCH_SHEET_URL",
@@ -563,7 +563,10 @@ async def import_sheet_command(update: Update, context: ContextTypes.DEFAULT_TYP
             return
 
         service = get_live_watch_service(context)
-        added = service.add_fixture_lines(update.effective_chat.id, lines_to_add)
+        # Sheet times are Argentina wall-clock, not this chat's display timezone.
+        added = service.add_fixture_lines(
+            update.effective_chat.id, lines_to_add, times_tz=sheet_timezone()
+        )
 
         total_read = len(lines_to_add)
         total_added = len(added)
@@ -610,17 +613,22 @@ async def watching_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         )
         return
     lines: list[str] = []
+    display_tz = current_display_timezone()
     if watching:
-        lines.append("👁️ *En vigilancia:*")
+        lines.append(f"👁️ *En vigilancia:* _(hora {tz_offset_label(display_tz)})_")
         lines.append("━━━━━━━━━━━━━━━━━━━━")
         for e in watching:
             time_lbl = "Pendiente"
             if e.kickoff_at:
                 try:
-                    from datetime import datetime
+                    from datetime import datetime, timezone as _tz
                     dt = datetime.fromisoformat(e.kickoff_at)
-                    dt_local = dt.astimezone(current_display_timezone())
+                    if dt.tzinfo is None:
+                        dt = dt.replace(tzinfo=_tz.utc)
+                    dt_local = dt.astimezone(display_tz)
                     time_lbl = dt_local.strftime('%H:%M')
+                    if dt_local.date() != datetime.now(display_tz).date():
+                        time_lbl = dt_local.strftime('%d/%m %H:%M')
                 except Exception:
                     pass
             disp_id = e.chat_local_id if e.chat_local_id is not None else e.id
