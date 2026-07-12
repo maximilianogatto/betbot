@@ -18,6 +18,9 @@ from adapters.storage.stats_links import SQLiteStatsLinksAdapter
 from adapters.storage.live_watch import SQLiteLiveWatchAdapter
 from adapters.storage.maintenance import SQLiteMaintenanceAdapter
 from adapters.storage.chat_settings import SQLiteChatSettingsAdapter
+# El archivo de cuotas NO integra el facade: es una DB separada (retención
+# infinita, fuera del alcance de prune/VACUUM). Se re-exporta para conveniencia.
+from adapters.storage.odds_archive import SQLiteOddsArchiveAdapter, OddsArchiveSnapshot
 
 
 class SqliteStorage(
@@ -64,4 +67,6 @@ __all__ = [
     "SQLiteLiveWatchAdapter",
     "SQLiteMaintenanceAdapter",
     "SQLiteChatSettingsAdapter",
+    "SQLiteOddsArchiveAdapter",
+    "OddsArchiveSnapshot",
 ]

@@ -302,6 +302,29 @@ class SQLiteEventsAdapter(EventsPort):
                 rows = conn.execute(query, (now_iso, cutoff)).fetchall()
                 return [dict(row) for row in rows]
 
+    def get_events_in_kickoff_window(
+        self,
+        window_start_iso: str,
+        window_end_iso: str,
+    ) -> list[dict[str, Any]]:
+        """Eventos (activos o no) con kickoff dentro de [start, end], con su liga.
+
+        Lo usa el archivo de cuotas para capturar el snapshot de cierre: incluye
+        eventos ya marcados inactivos porque los libros suelen deslistar el
+        prematch justo en el kickoff y esas cuotas son precisamente las de cierre.
+        """
+        query = """
+            SELECT e.*, c.name AS competition_name, c.external_id AS competition_external_id
+            FROM events e
+            INNER JOIN competitions c ON c.id = e.competition_id
+            WHERE e.scheduled_at IS NOT NULL
+              AND e.scheduled_at >= ?
+              AND e.scheduled_at <= ?
+        """
+        with open_connection() as conn:
+            rows = conn.execute(query, (window_start_iso, window_end_iso)).fetchall()
+            return [dict(row) for row in rows]
+
     def remove_missing_events(
         self,
         tracked_competition_id: int,
