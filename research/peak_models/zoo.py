@@ -85,6 +85,82 @@ def point_in_time_ppg(matches: pd.DataFrame) -> pd.DataFrame:
     return feat
 
 
+# ------------------------------- G0b: histograma binneado sobre Δposición
+# Port del LeaguePredictor del director (research.ipynb, worktree peak-research):
+# P(resultado | Δposición normalizada) estimada por bins fijos en [-1, 1] con
+# fallback nearest-bin. Correcciones respecto del original: las probabilidades
+# se renormalizan a suma 1 y hay fallback a tasa base de liga cuando no hay
+# tabla o el bin no tiene muestra.
+
+def point_in_time_standing_diff(matches: pd.DataFrame, *, min_pj: int = 4) -> pd.DataFrame:
+    """-(pos_home - pos_away)/N_teams antes de cada partido (replay cronológico).
+
+    N_teams es el tamaño conocido de la serie (calendario), no un dato futuro.
+    Filas sin tabla suficiente (algún equipo con < min_pj PJ) quedan NaN.
+    """
+
+    df = (matches.dropna(subset=["home_goals", "away_goals"])
+          .sort_values(["date", "match_id"]))
+    n_teams = (matches.groupby(["season", "league_code", "group_id"])
+               .apply(lambda g: len(set(g.home_team_id) | set(g.away_team_id)),
+                      include_groups=False))
+    rows = []
+    for key, g in df.groupby(["season", "league_code", "group_id"], sort=False):
+        stats: dict = {}
+        nt = float(n_teams.loc[key])
+        for r in g.itertuples():
+            h = stats.get(r.home_team_id)
+            a = stats.get(r.away_team_id)
+            diff = np.nan
+            if h and a and min(h[3], a[3]) >= min_pj:
+                table = sorted(stats.values(), key=lambda s: (-s[0], -s[1], -s[2]))
+                pos = {id(s): i + 1 for i, s in enumerate(table)}
+                diff = -(pos[id(h)] - pos[id(a)]) / nt
+            rows.append({"match_id": r.match_id, "standing_diff": diff})
+            for tid, gf, ga in [(r.home_team_id, r.home_goals, r.away_goals),
+                                (r.away_team_id, r.away_goals, r.home_goals)]:
+                s = stats.setdefault(tid, [0, 0, 0, 0])  # pts, dg, gf, pj
+                s[0] += 3 if gf > ga else (1 if gf == ga else 0)
+                s[1] += gf - ga
+                s[2] += gf
+                s[3] += 1
+    return pd.DataFrame(rows)
+
+
+def make_binned_standing(full_df: pd.DataFrame, *, n_bins: int = 9,
+                         min_bin_count: int = 15):
+    feats = point_in_time_standing_diff(full_df).set_index("match_id")
+    edges = np.linspace(-1, 1, n_bins + 1)
+    centers = (edges[:-1] + edges[1:]) / 2
+
+    def model(train: pd.DataFrame, rows: pd.DataFrame) -> pd.DataFrame:
+        rates, glob = league_rates(train)
+        tr = train.join(feats, on="match_id").dropna(subset=["standing_diff"])
+        P_bins = np.full((n_bins, 3), np.nan)
+        if len(tr):
+            b = np.clip(np.digitize(tr["standing_diff"], edges[1:-1]), 0, n_bins - 1)
+            for k in range(n_bins):
+                sel = tr.loc[b == k, "result"]
+                if len(sel) >= min_bin_count:
+                    P_bins[k] = [np.mean(sel == c) for c in ORDER]
+        valid = ~np.isnan(P_bins[:, 0])
+        out = []
+        for r in rows.itertuples():
+            d = feats.at[r.match_id, "standing_diff"] if r.match_id in feats.index else np.nan
+            if pd.isna(d) or not valid.any():
+                out.append(rates.loc[r.league_code].to_numpy()
+                           if r.league_code in rates.index else glob)
+                continue
+            k = int(np.clip(np.digitize(d, edges[1:-1]), 0, n_bins - 1))
+            if not valid[k]:  # nearest bin válido (interp 'nearest' del original)
+                k = int(np.where(valid)[0][np.argmin(np.abs(centers[valid] - centers[k]))])
+            p = P_bins[k]
+            out.append(p / p.sum())
+        return pd.DataFrame(np.array(out), columns=PCOLS)
+
+    return model
+
+
 # ------------------------------------------------- stacking DC + features
 
 STACK_FEATS = ["elo_diff", "mom5_diff", "adj_form5_diff", "sos5_diff",

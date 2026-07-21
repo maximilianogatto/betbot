@@ -148,6 +148,31 @@ de pooling del modelo jerárquico.
   (los perfiles ya están), EXP-003a diagnóstico M1, extender dataset a Islandia
   (sportradar) y sumar targets O/U-BTTS con las matrices de marcadores ya emitidas.
 
+## Adenda: el predictor binneado del director (g0b)
+
+A pedido del director se integró al harness su `LeaguePredictor` (notebook
+`research.ipynb` de la worktree peak-research): P(resultado | Δposición
+normalizada) por histograma en 9 bins fijos con fallback nearest-bin, portado a
+`zoo.make_binned_standing` con dos correcciones (probabilidades renormalizadas a
+suma 1; fallback a tasa base sin tabla). Mismo walk-forward 2026, mismos 1.619
+partidos (`binned_comparison.json`):
+
+| Modelo | RPS | log-loss | ECE(H) | ΔRPS vs g0b (IC 95%) |
+|---|---|---|---|---|
+| stack_cal | 0.2132 | 0.9940 | 0.028 | −0.0102 (−0.0152, −0.0053) |
+| dc_best | 0.2139 | 1.0007 | 0.031 | −0.0095 (−0.0148, −0.0042) |
+| g0_logistic_dppg | 0.2225 | 1.0243 | 0.027 | −0.0009 (−0.0053, +0.0034) |
+| **g0b_binned_standing** | 0.2234 | 1.0259 | 0.042 | — |
+| b0_base_rate | 0.2377 | 1.0633 | 0.048 | +0.0143 |
+
+Lectura: el predictor binneado **empata estadísticamente con la logística G0**
+(Δ −0.0009, IC cruza 0) — son el mismo estimador conceptual (tabla → 1X2), uno
+no paramétrico y otro suave. Ambos pierden contra los modelos de goles con
+p>0.999. Su calibración es peor (ECE 0.042: los bins chicos meten ruido). La
+idea de diseño del original (replay incremental con reversas, multi-liga,
+fixtures) queda señalada como esqueleto para la fase de producción (Fase 6),
+donde lo incremental sí es el requisito.
+
 ## Reproducir
 
 ```bash

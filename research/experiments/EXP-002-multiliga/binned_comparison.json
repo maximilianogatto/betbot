@@ -1,0 +1,101 @@
+[
+  {
+    "model": "stack_cal",
+    "n": 1619,
+    "rps": 0.2131603299,
+    "log_loss": 0.9939540686,
+    "brier": 0.5931792339,
+    "ece_home": 0.0282074607,
+    "accuracy": 0.5311920939,
+    "d_rps_vs_base": -0.010196648,
+    "d_rps_ci": [
+      -0.0152,
+      -0.0053
+    ],
+    "p_better_rps": 1.0,
+    "d_logloss_vs_base": -0.0319235198,
+    "p_better_logloss": 1.0
+  },
+  {
+    "model": "dc_best",
+    "n": 1619,
+    "rps": 0.2138569609,
+    "log_loss": 1.0006753769,
+    "brier": 0.5957771943,
+    "ece_home": 0.0310253773,
+    "accuracy": 0.5324274243,
+    "d_rps_vs_base": -0.009500017,
+    "d_rps_ci": [
+      -0.0148,
+      -0.0042
+    ],
+    "p_better_rps": 0.99975,
+    "d_logloss_vs_base": -0.0252022114,
+    "p_better_logloss": 0.998
+  },
+  {
+    "model": "stack_full",
+    "n": 1619,
+    "rps": 0.2139199046,
+    "log_loss": 0.9967798616,
+    "brier": 0.5952006332,
+    "ece_home": 0.0276155856,
+    "accuracy": 0.5200741198,
+    "d_rps_vs_base": -0.0094370733,
+    "d_rps_ci": [
+      -0.0146,
+      -0.0044
+    ],
+    "p_better_rps": 1.0,
+    "d_logloss_vs_base": -0.0290977267,
+    "p_better_logloss": 0.99975
+  },
+  {
+    "model": "g0_logistic_dppg",
+    "n": 1619,
+    "rps": 0.2224594007,
+    "log_loss": 1.0242931895,
+    "brier": 0.6136405921,
+    "ece_home": 0.0274024544,
+    "accuracy": 0.5089561458,
+    "d_rps_vs_base": -0.0008975772,
+    "d_rps_ci": [
+      -0.0053,
+      0.0034
+    ],
+    "p_better_rps": 0.66875,
+    "d_logloss_vs_base": -0.0015843989,
+    "p_better_logloss": 0.59775
+  },
+  {
+    "model": "g0b_binned_standing",
+    "n": 1619,
+    "rps": 0.2233569779,
+    "log_loss": 1.0258775884,
+    "brier": 0.6150737913,
+    "ece_home": 0.0416562669,
+    "accuracy": 0.4966028413,
+    "d_rps_vs_base": null,
+    "d_rps_ci": null,
+    "p_better_rps": null,
+    "d_logloss_vs_base": null,
+    "p_better_logloss": null
+  },
+  {
+    "model": "b0_base_rate",
+    "n": 1619,
+    "rps": 0.2377003318,
+    "log_loss": 1.0632885771,
+    "brier": 0.6438583507,
+    "ece_home": 0.0477468909,
+    "accuracy": 0.4441012971,
+    "d_rps_vs_base": 0.0143433539,
+    "d_rps_ci": [
+      0.0095,
+      0.0193
+    ],
+    "p_better_rps": 0.0,
+    "d_logloss_vs_base": 0.0374109887,
+    "p_better_logloss": 0.0
+  }
+]
