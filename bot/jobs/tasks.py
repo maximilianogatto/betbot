@@ -262,7 +262,7 @@ async def _notify_sheet_import(bot, chat_id: int, text: str) -> None:
     Markdown parser; either way the user never learns what was added.
     """
 
-    from bot.alerts import split_telegram_message
+    from interfaces.telegram.renderers import split_telegram_message
 
     for chunk in split_telegram_message(text):
         try:

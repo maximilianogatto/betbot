@@ -5,7 +5,7 @@ import unittest
 
 from dataclasses import replace
 
-from bot.alerts import (
+from interfaces.telegram.renderers import (
     build_match_reminder_alert_message,
     format_display_datetime,
     format_kickoff_labels,
@@ -191,7 +191,7 @@ class BotAlertsTests(unittest.TestCase):
         self.assertIn("2026-05-13T22:00:00+00:00", match.scheduled_at)
 
     def test_build_match_card_message_with_full_odds(self) -> None:
-        from bot.alerts import build_match_card_message
+        from interfaces.telegram.renderers import build_match_card_message
         
         match = _match_with_markets(
             {

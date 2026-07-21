@@ -74,7 +74,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         update = SimpleNamespace(message=message)
 
         with patch("bot.handlers.get_stats_service", return_value=stats_service), patch(
-            "bot.alerts.build_comparison_match_card_message", return_value=""
+            "interfaces.telegram.renderers.build_comparison_match_card_message", return_value=""
         ):
             await stats_command(update, context)
 
@@ -110,7 +110,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         update = SimpleNamespace(message=message)
 
         with patch("bot.handlers.get_stats_service", return_value=stats_service), patch(
-            "bot.alerts.build_comparison_match_card_message", return_value=""
+            "interfaces.telegram.renderers.build_comparison_match_card_message", return_value=""
         ):
             state = await stats_select_match(update, context)
 

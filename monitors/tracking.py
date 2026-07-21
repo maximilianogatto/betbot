@@ -22,7 +22,7 @@ import time
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.constants import ParseMode
 
-from bot.alerts import (
+from interfaces.telegram.renderers import (
     build_competition_unavailable_warning_message,
     build_competition_url_message,
     build_event_stats_message,

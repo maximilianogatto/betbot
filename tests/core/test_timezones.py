@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from bot.alerts import format_display_datetime
+from interfaces.telegram.renderers import format_display_datetime
 from core.timezones import (
     current_display_timezone,
     default_timezone,

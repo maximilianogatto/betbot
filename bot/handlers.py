@@ -27,7 +27,7 @@ from telegram.ext import (
     filters,
 )
 
-from bot.alerts import (
+from interfaces.telegram.renderers import (
     build_all_matches_message,
     build_competition_unavailable_warning_message,
     build_little_changes_message,
@@ -1415,7 +1415,7 @@ async def _send_unified_stats_report(
 ) -> None:
     """Send the cross-book card (qué casas lo tienen + odds) and the stats report."""
 
-    from bot.alerts import build_comparison_match_card_message
+    from interfaces.telegram.renderers import build_comparison_match_card_message
 
     stats_service = get_stats_service(context)
     await update.message.reply_text("Generando reporte de stats...", reply_markup=ReplyKeyboardRemove())
@@ -1563,7 +1563,7 @@ async def stats_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    from bot.alerts import group_events_by_physical_match
+    from interfaces.telegram.renderers import group_events_by_physical_match
 
     grouped_matches = group_events_by_physical_match(active_events)
     context.user_data[STATS_ACTIVE_CONTEXT_KEY] = grouped_matches
@@ -1618,7 +1618,7 @@ async def stats_select_match(update: Update, context: ContextTypes.DEFAULT_TYPE)
     stats_service = get_stats_service(context)
     await target.reply_text("Generando reporte de stats...", reply_markup=ReplyKeyboardRemove())
 
-    from bot.alerts import build_comparison_match_card_message
+    from interfaces.telegram.renderers import build_comparison_match_card_message
 
     card = build_comparison_match_card_message(match_group, full_odds=False)
     if card:
@@ -3274,7 +3274,7 @@ async def event_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         return
 
     group = active_matches[selected_index - 1]
-    from bot.alerts import build_grouped_event_url_message
+    from interfaces.telegram.renderers import build_grouped_event_url_message
 
     message = build_grouped_event_url_message(group)
     if not message:
@@ -3362,7 +3362,7 @@ async def matches_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 )
 
             if active_events:
-                from bot.alerts import group_events_by_physical_match
+                from interfaces.telegram.renderers import group_events_by_physical_match
                 grouped_matches = group_events_by_physical_match(active_events)
                 context.user_data[MATCHES_ACTIVE_CONTEXT_KEY] = grouped_matches
                 context.user_data[MATCHES_SELECTED_TRACK_CONTEXT_KEY] = selected_league
@@ -3434,7 +3434,7 @@ async def matches_select_league(update: Update, context: ContextTypes.DEFAULT_TY
         _clear_all_selection_context(context)
         return ConversationHandler.END
 
-    from bot.alerts import group_events_by_physical_match
+    from interfaces.telegram.renderers import group_events_by_physical_match
     grouped_matches = group_events_by_physical_match(active_events)
     context.user_data[MATCHES_ACTIVE_CONTEXT_KEY] = grouped_matches
     context.user_data[MATCHES_SELECTED_TRACK_CONTEXT_KEY] = selected_league
@@ -3496,7 +3496,7 @@ async def matches_select_match(update: Update, context: ContextTypes.DEFAULT_TYP
         return SELECT_MATCH_FOR_MATCHES
 
     if selected_index == 0:
-        from bot.alerts import build_comparison_match_card_message
+        from interfaces.telegram.renderers import build_comparison_match_card_message
         parts = []
         for match_group in active_matches:
             card = build_comparison_match_card_message(match_group, full_odds=full_odds)
@@ -3511,7 +3511,7 @@ async def matches_select_match(update: Update, context: ContextTypes.DEFAULT_TYP
         )
     else:
         selected_match_group = active_matches[selected_index - 1]
-        from bot.alerts import build_comparison_match_card_message
+        from interfaces.telegram.renderers import build_comparison_match_card_message
         await _reply_text_chunks(
             target,
             build_comparison_match_card_message(selected_match_group, full_odds=full_odds),

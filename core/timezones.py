@@ -3,7 +3,7 @@
 The bot shows kickoff times, alerts and live messages in a *display* timezone.
 Historically this was hardcoded to Argentina; now each Telegram chat can pick its
 own zone (default Argentina). To avoid threading a ``tz`` argument through the
-dozen formatting helpers in :mod:`bot.alerts` (and friends), the active display
+dozen formatting helpers in :mod:`interfaces.telegram.renderers` (and friends), the active display
 timezone is kept in a :class:`~contextvars.ContextVar`. Command handlers and the
 broadcast loops set it for the recipient chat right before building a message;
 the formatters read it via :func:`current_display_timezone`.

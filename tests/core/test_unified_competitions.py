@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from bot.alerts import group_events_by_physical_match, build_comparison_match_card_message
+from interfaces.telegram.renderers import group_events_by_physical_match, build_comparison_match_card_message
 from core.extractor_base import Extractor, LeagueDiscoveryOption
 import os
 from core.models import PlatformDescriptor, ProviderCapabilities, CompetitionExtraction, EventSnapshot, CompetitionKey, ActiveEventUpsert, ActiveEventRecord
