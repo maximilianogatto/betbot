@@ -1,0 +1,72 @@
+{
+  "dc_vs_g0_logistic_dppg_en_M1": {
+    "delta_mean": 0.00942746691538758,
+    "ci_lo": -0.011334747525304906,
+    "ci_hi": 0.031120855543863575,
+    "p_better": 0.19975
+  },
+  "dc_vs_stack_cal_en_M1": {
+    "delta_mean": 0.002588084928952734,
+    "ci_lo": -0.0009377535294769984,
+    "ci_hi": 0.006370414457303112,
+    "p_better": 0.0815
+  },
+  "dc_vs_b0_base_rate_en_M1": {
+    "delta_mean": -0.005402041632856426,
+    "ci_lo": -0.03522355644523985,
+    "ci_hi": 0.02476339870378588,
+    "p_better": 0.64125
+  },
+  "contexto_ligas_fin": [
+    {
+      "liga": "VL",
+      "equipos_2026": 12,
+      "nuevos_2026": 2,
+      "pct_nuevos": 0.17,
+      "empates_2025": 0.226,
+      "empates_2026": 0.292,
+      "local_2025": 0.407,
+      "local_2026": 0.479
+    },
+    {
+      "liga": "M1L",
+      "equipos_2026": 10,
+      "nuevos_2026": 3,
+      "pct_nuevos": 0.3,
+      "empates_2025": 0.259,
+      "empates_2026": 0.23,
+      "local_2025": 0.43,
+      "local_2026": 0.432
+    },
+    {
+      "liga": "M1",
+      "equipos_2026": 12,
+      "nuevos_2026": 3,
+      "pct_nuevos": 0.25,
+      "empates_2025": 0.191,
+      "empates_2026": 0.244,
+      "local_2025": 0.519,
+      "local_2026": 0.389
+    },
+    {
+      "liga": "M2",
+      "equipos_2026": 30,
+      "nuevos_2026": 8,
+      "pct_nuevos": 0.27,
+      "empates_2025": 0.119,
+      "empates_2026": 0.2,
+      "local_2025": 0.52,
+      "local_2026": 0.462
+    },
+    {
+      "liga": "NL",
+      "equipos_2026": 8,
+      "nuevos_2026": 2,
+      "pct_nuevos": 0.25,
+      "empates_2025": 0.128,
+      "empates_2026": 0.096,
+      "local_2025": 0.535,
+      "local_2026": 0.442
+    }
+  ]
+}
