@@ -36,7 +36,7 @@
 | PR2-F3 | Crear `adapters/storage/connection.py` + `schema.py` con esquema SQLite greenfield limpio. | DONE |
 | PR2-E2 | Partir `storage/tracking_repository.py` (6063 líneas) en `adapters/storage/*` por agregado. | DONE (2026-07-02) — adapters greenfield + facade `SqliteStorage`; runtime y tests migrados; legacy `storage/tracking_repository.py` BORRADO (−5835). Suite 667 OK + boot funcional greenfield verde. |
 | PR2-E3 | Extraer renderers (`bot/alerts.py` + `build_*_message`/`render_*`) a `interfaces/telegram/renderers/`. Servicios devuelven DTOs. | DONE |
-| PR2-E4 | Mover servicios de `monitors/` a `services/` y adelgazarlos (sin telegram, sin SQL inline). | TODO |
+| PR2-E4 | Mover servicios de `monitors/` a `services/` y adelgazarlos (sin telegram, sin SQL inline). | IN_PROGRESS @gemini (2026-07-22) |
 | PR2-E5 | Handlers finos en `interfaces/telegram/handlers/` (mismos comandos). | TODO |
 | PR2-E6 | `runtime/scheduler.py` neutro (asyncio) que dispara métodos de services; borrar `bot/jobs/legacy.py` y scheduler propio. | TODO |
 | PR2-E7 | Borrar archivos muertos (`core/flags.py`, etc. — ver §4.4 del reporte). | DONE |
