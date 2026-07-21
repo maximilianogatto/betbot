@@ -58,7 +58,7 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         context = SimpleNamespace(application=application, bot=bot, args=[], user_data={})
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
-        with patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service):
+        with patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service):
             await watch_live_command(update, context)
 
         message.reply_text.assert_awaited_once()
@@ -78,7 +78,7 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         context = SimpleNamespace(application=application, bot=bot, args=[], user_data={})
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
-        with patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service):
+        with patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service):
             await watching_command(update, context)
 
         message.reply_text.assert_awaited_once()
@@ -102,7 +102,7 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         context = SimpleNamespace(application=application, bot=bot, args=[], user_data={})
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
-        with patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service):
+        with patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service):
             await watching_command(update, context)
 
         message.reply_text.assert_awaited_once()
@@ -122,7 +122,7 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         context = SimpleNamespace(application=application, bot=bot, args=["all"], user_data={})
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
-        with patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service):
+        with patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service):
             await unwatch_command(update, context)
 
         message.reply_text.assert_awaited_once()
@@ -136,7 +136,7 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         context = SimpleNamespace(application=application, bot=bot, args=["invalid"], user_data={})
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
-        with patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service):
+        with patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service):
             await unwatch_command(update, context)
 
         message.reply_text.assert_awaited_once()
@@ -152,7 +152,7 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         context = SimpleNamespace(application=application, bot=bot, args=["42"], user_data={})
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
-        with patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service):
+        with patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service):
             await unwatch_command(update, context)
 
         message.reply_text.assert_awaited_once_with("🗑️ Borrado.")
@@ -167,7 +167,7 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         context = SimpleNamespace(application=application, bot=bot, args=["42"], user_data={})
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
-        with patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service):
+        with patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service):
             await unwatch_command(update, context)
 
         message.reply_text.assert_awaited_once_with("No encontré ese id en tu vigilancia.")
@@ -218,9 +218,9 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
         with (
-            patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service),
+            patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service),
             patch("httpx.AsyncClient", return_value=mock_client),
-            patch("interfaces.telegram.handlers.commands._reply_text_chunks", new_callable=AsyncMock) as mock_reply_chunks
+            patch("interfaces.telegram.handlers.live_watch._reply_text_chunks", new_callable=AsyncMock) as mock_reply_chunks
         ):
             await watch_live_command(update, context)
 
@@ -288,9 +288,9 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
         with (
-            patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service),
+            patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service),
             patch("httpx.AsyncClient", return_value=mock_client),
-            patch("interfaces.telegram.handlers.commands._reply_text_chunks", new_callable=AsyncMock) as mock_reply_chunks
+            patch("interfaces.telegram.handlers.live_watch._reply_text_chunks", new_callable=AsyncMock) as mock_reply_chunks
         ):
             await watch_live_command(update, context)
 
@@ -324,8 +324,8 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
         with (
-            patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service),
-            patch("interfaces.telegram.handlers.commands._reply_text_chunks", new_callable=AsyncMock) as mock_reply_chunks
+            patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service),
+            patch("interfaces.telegram.handlers.live_watch._reply_text_chunks", new_callable=AsyncMock) as mock_reply_chunks
         ):
             await watching_command(update, context)
 
@@ -348,7 +348,7 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         context = SimpleNamespace(application=application, bot=bot, args=["5"], user_data={})
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
-        with patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service):
+        with patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service):
             await unwatch_command(update, context)
 
         live_watch_service.remove_watch_by_local_id.assert_called_once_with(123, 5)
@@ -363,7 +363,7 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         context_fallback = SimpleNamespace(application=application, bot=bot, args=["999"], user_data={})
         update_fallback = SimpleNamespace(message=message_fallback, effective_chat=SimpleNamespace(id=123))
 
-        with patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service_fallback):
+        with patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service_fallback):
             await unwatch_command(update_fallback, context_fallback)
 
         live_watch_service_fallback.remove_watch_by_local_id.assert_called_once_with(123, 999)
@@ -412,9 +412,9 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
         with (
-            patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service),
+            patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service),
             patch("httpx.AsyncClient", return_value=mock_client),
-            patch("interfaces.telegram.handlers.commands._reply_text_chunks", new_callable=AsyncMock)
+            patch("interfaces.telegram.handlers.live_watch._reply_text_chunks", new_callable=AsyncMock)
         ):
             await watch_live_command(update, context)
 
@@ -457,9 +457,9 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
         with (
-            patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service),
+            patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service),
             patch("httpx.AsyncClient", return_value=mock_client),
-            patch("interfaces.telegram.handlers.commands._reply_text_chunks", new_callable=AsyncMock) as mock_reply_chunks
+            patch("interfaces.telegram.handlers.live_watch._reply_text_chunks", new_callable=AsyncMock) as mock_reply_chunks
         ):
             await import_sheet_command(update, context)
 
@@ -528,7 +528,7 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
         with (
-            patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service),
+            patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service),
             patch("httpx.AsyncClient", return_value=mock_client),
         ):
             await import_sheet_command(update, context)
@@ -584,7 +584,7 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         context = SimpleNamespace(application=application, args=["5"], user_data={})
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
-        with patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service):
+        with patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service):
             await view_match_command(update, context)
 
         message.reply_text.assert_awaited_once()
@@ -635,8 +635,8 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
         with (
-            patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service),
-            patch("interfaces.telegram.handlers.commands._reply_text_chunks", new_callable=AsyncMock) as mock_reply_chunks,
+            patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service),
+            patch("interfaces.telegram.handlers.live_watch._reply_text_chunks", new_callable=AsyncMock) as mock_reply_chunks,
         ):
             await view_match_command(update, context)
 
@@ -696,8 +696,8 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
         with (
-            patch("interfaces.telegram.handlers.commands.get_live_watch_service", return_value=live_watch_service),
-            patch("interfaces.telegram.handlers.commands._reply_text_chunks", new_callable=AsyncMock) as mock_reply_chunks,
+            patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service),
+            patch("interfaces.telegram.handlers.live_watch._reply_text_chunks", new_callable=AsyncMock) as mock_reply_chunks,
         ):
             await view_match_command(update, context)
 
