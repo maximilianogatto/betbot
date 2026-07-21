@@ -1,0 +1,136 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,14,4038044,2026-04-03,19:00:00,50775,Pallokerho-35,60495,Ekenäs Idrottsförening,4,2,2,1,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,15,4038045,2026-04-06,16:00:00,129811,Jippo,60676,Järvenpään Palloseura,0,0,0,0,Played,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,15,4038046,2026-04-06,16:00:00,60692,Helsingin Jalkapalloklubi,60487,Käpylän Pallo,1,2,0,2,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,15,4038047,2026-04-06,16:00:00,168874,SJK Akatemia,60494,Mikkelin Palloilijat,1,0,1,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,15,4038049,2026-04-10,18:30:00,60972,FC KTP Kotka,60494,Mikkelin Palloilijat,1,0,0,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,15,4038048,2026-04-10,18:30:00,60676,Järvenpään Palloseura,60692,Helsingin Jalkapalloklubi,1,0,1,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,15,4038050,2026-04-10,19:00:00,60487,Käpylän Pallo,168874,SJK Akatemia,2,2,2,0,Played,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,15,4038052,2026-04-11,18:00:00,50775,Pallokerho-35,60561,Football Club Haka,0,0,0,0,Played,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,15,4038051,2026-04-11,18:30:00,60495,Ekenäs Idrottsförening,129811,Jippo,1,2,1,0,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,16,4038053,2026-04-18,16:00:00,129811,Jippo,60972,FC KTP Kotka,0,0,0,0,Played,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,16,4038055,2026-04-19,16:00:00,60495,Ekenäs Idrottsförening,60692,Helsingin Jalkapalloklubi,2,1,0,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,16,4038054,2026-04-19,16:00:00,60494,Mikkelin Palloilijat,60487,Käpylän Pallo,0,1,0,1,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,16,4038056,2026-04-19,18:00:00,168874,SJK Akatemia,50775,Pallokerho-35,0,1,0,1,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,17,4038057,2026-04-21,18:30:00,60561,Football Club Haka,60676,Järvenpään Palloseura,5,0,1,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,17,4038059,2026-04-24,19:00:00,60692,Helsingin Jalkapalloklubi,60494,Mikkelin Palloilijat,0,1,0,1,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,17,4038058,2026-04-24,19:00:00,50775,Pallokerho-35,60972,FC KTP Kotka,0,1,0,0,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,17,4038060,2026-04-25,16:00:00,129811,Jippo,168874,SJK Akatemia,1,0,0,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,17,4038061,2026-04-25,16:00:00,60676,Järvenpään Palloseura,60495,Ekenäs Idrottsförening,3,0,2,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,17,4038062,2026-04-25,18:00:00,60561,Football Club Haka,60487,Käpylän Pallo,2,2,0,1,Played,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,18,4038065,2026-05-02,16:00:00,60692,Helsingin Jalkapalloklubi,168874,SJK Akatemia,1,1,0,0,Played,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,18,4038063,2026-05-02,16:00:00,60494,Mikkelin Palloilijat,60561,Football Club Haka,1,0,1,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,18,4038064,2026-05-02,16:00:00,60676,Järvenpään Palloseura,50775,Pallokerho-35,1,0,1,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,18,4038066,2026-05-02,18:00:00,60487,Käpylän Pallo,129811,Jippo,0,2,0,2,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,18,4038067,2026-05-03,16:00:00,60495,Ekenäs Idrottsförening,60972,FC KTP Kotka,5,2,2,1,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,19,4038068,2026-05-07,19:00:00,50775,Pallokerho-35,60494,Mikkelin Palloilijat,3,1,0,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,19,4038069,2026-05-08,18:30:00,60561,Football Club Haka,60495,Ekenäs Idrottsförening,4,3,2,1,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,19,4038072,2026-05-09,15:00:00,129811,Jippo,60692,Helsingin Jalkapalloklubi,1,1,0,0,Played,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,19,4038070,2026-05-09,17:00:00,60972,FC KTP Kotka,60487,Käpylän Pallo,2,1,0,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,19,4038071,2026-05-09,18:00:00,168874,SJK Akatemia,60676,Järvenpään Palloseura,0,2,0,0,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,20,4038076,2026-05-16,16:00:00,60676,Järvenpään Palloseura,60972,FC KTP Kotka,0,1,0,0,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,20,4038073,2026-05-17,16:00:00,60495,Ekenäs Idrottsförening,168874,SJK Akatemia,3,0,2,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,20,4038074,2026-05-17,18:00:00,60487,Käpylän Pallo,50775,Pallokerho-35,0,0,0,0,Played,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,20,4038075,2026-05-17,18:30:00,60494,Mikkelin Palloilijat,129811,Jippo,1,3,1,0,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,21,4038077,2026-05-18,18:30:00,60561,Football Club Haka,60692,Helsingin Jalkapalloklubi,1,1,0,0,Played,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,21,4038078,2026-05-22,18:30:00,60676,Järvenpään Palloseura,60494,Mikkelin Palloilijat,0,2,0,0,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,21,4038079,2026-05-22,18:30:00,168874,SJK Akatemia,60561,Football Club Haka,0,1,0,0,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,21,4038081,2026-05-23,16:00:00,129811,Jippo,50775,Pallokerho-35,0,1,0,1,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,21,4038080,2026-05-23,17:00:00,60495,Ekenäs Idrottsförening,60487,Käpylän Pallo,1,0,0,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,21,4038082,2026-05-23,19:00:00,60692,Helsingin Jalkapalloklubi,60972,FC KTP Kotka,0,1,0,1,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,22,4038088,2026-05-27,19:00:00,60692,Helsingin Jalkapalloklubi,50775,Pallokerho-35,0,1,0,0,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,22,4038084,2026-05-29,18:30:00,60561,Football Club Haka,129811,Jippo,2,1,0,1,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,22,4038083,2026-05-29,18:30:00,60972,FC KTP Kotka,168874,SJK Akatemia,1,0,1,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,22,4038085,2026-05-29,19:00:00,60487,Käpylän Pallo,60676,Järvenpään Palloseura,2,1,1,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,22,4038086,2026-05-31,18:00:00,50775,Pallokerho-35,60692,Helsingin Jalkapalloklubi,1,1,0,0,Played,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,22,4038087,2026-05-31,18:30:00,60494,Mikkelin Palloilijat,60495,Ekenäs Idrottsförening,1,0,1,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,23,4038090,2026-06-05,18:30:00,60561,Football Club Haka,60676,Järvenpään Palloseura,1,2,1,2,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,23,4038089,2026-06-05,19:00:00,60487,Käpylän Pallo,60972,FC KTP Kotka,1,2,1,1,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,23,4038091,2026-06-06,16:00:00,60495,Ekenäs Idrottsförening,60494,Mikkelin Palloilijat,1,0,0,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,24,4038043,2026-06-08,18:30:00,60972,FC KTP Kotka,60561,Football Club Haka,0,2,0,1,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,24,4038092,2026-06-09,19:00:00,168874,SJK Akatemia,129811,Jippo,0,0,0,0,Played,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,24,4038093,2026-06-12,18:30:00,60972,FC KTP Kotka,60495,Ekenäs Idrottsförening,5,1,2,1,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,24,4038094,2026-06-12,18:30:00,60676,Järvenpään Palloseura,50775,Pallokerho-35,0,5,0,1,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,24,4038095,2026-06-13,16:00:00,129811,Jippo,60487,Käpylän Pallo,3,0,2,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,24,4038096,2026-06-14,18:30:00,60494,Mikkelin Palloilijat,60692,Helsingin Jalkapalloklubi,2,2,0,1,Played,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,25,4038097,2026-06-15,18:30:00,168874,SJK Akatemia,60561,Football Club Haka,0,2,0,1,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,26,4038098,2026-06-26,19:00:00,60692,Helsingin Jalkapalloklubi,168874,SJK Akatemia,2,0,1,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,26,4038099,2026-06-26,19:00:00,50775,Pallokerho-35,60494,Mikkelin Palloilijat,2,1,1,1,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,26,4038100,2026-06-27,16:00:00,60561,Football Club Haka,60972,FC KTP Kotka,0,2,0,1,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,26,4038101,2026-06-27,16:00:00,129811,Jippo,60495,Ekenäs Idrottsförening,1,1,1,0,Played,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,26,4038102,2026-06-28,16:00:00,60487,Käpylän Pallo,60676,Järvenpään Palloseura,3,1,1,1,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,27,4038104,2026-07-03,18:30:00,60972,FC KTP Kotka,129811,Jippo,3,3,2,2,Played,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,27,4038103,2026-07-03,18:30:00,60676,Järvenpään Palloseura,168874,SJK Akatemia,1,0,0,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,27,4038105,2026-07-04,16:00:00,60495,Ekenäs Idrottsförening,50775,Pallokerho-35,0,3,0,0,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,27,4038106,2026-07-05,18:30:00,60494,Mikkelin Palloilijat,60561,Football Club Haka,2,1,1,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,28,4038108,2026-07-10,18:30:00,60972,FC KTP Kotka,60676,Järvenpään Palloseura,4,1,0,1,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,28,4038109,2026-07-10,19:00:00,50775,Pallokerho-35,60487,Käpylän Pallo,3,1,2,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,28,4038110,2026-07-11,16:00:00,60561,Football Club Haka,60495,Ekenäs Idrottsförening,3,1,0,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,28,4038111,2026-07-11,16:00:00,168874,SJK Akatemia,60494,Mikkelin Palloilijat,1,1,0,0,Played,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,28,4038112,2026-07-11,19:00:00,60692,Helsingin Jalkapalloklubi,129811,Jippo,0,2,0,2,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,29,4038113,2026-07-15,18:30:00,129811,Jippo,60494,Mikkelin Palloilijat,3,1,0,0,Played,H
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,29,4038115,2026-07-17,19:00:00,60692,Helsingin Jalkapalloklubi,60561,Football Club Haka,2,2,2,1,Played,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,29,4038114,2026-07-17,19:00:00,60487,Käpylän Pallo,168874,SJK Akatemia,2,2,0,0,Played,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,29,4038116,2026-07-18,16:00:00,60495,Ekenäs Idrottsförening,60676,Järvenpään Palloseura,0,1,0,0,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,29,4038117,2026-07-18,17:00:00,60972,FC KTP Kotka,50775,Pallokerho-35,0,1,0,0,Played,A
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,30,4038107,2026-07-21,19:00:00,60487,Käpylän Pallo,60692,Helsingin Jalkapalloklubi,0,0,,,Live,D
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,30,4038118,2026-07-25,15:00:00,60561,Football Club Haka,60487,Käpylän Pallo,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,30,4038120,2026-07-25,16:00:00,60494,Mikkelin Palloilijat,60972,FC KTP Kotka,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,30,4038119,2026-07-25,16:00:00,60676,Järvenpään Palloseura,60692,Helsingin Jalkapalloklubi,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,30,4038121,2026-07-25,16:00:00,168874,SJK Akatemia,60495,Ekenäs Idrottsförening,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,30,4038122,2026-07-25,18:00:00,50775,Pallokerho-35,129811,Jippo,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,31,4038124,2026-07-29,18:30:00,60494,Mikkelin Palloilijat,60487,Käpylän Pallo,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,31,4038123,2026-07-30,18:30:00,129811,Jippo,60676,Järvenpään Palloseura,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,31,4038125,2026-07-31,18:30:00,60972,FC KTP Kotka,168874,SJK Akatemia,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,31,4038127,2026-07-31,18:30:00,60495,Ekenäs Idrottsförening,60692,Helsingin Jalkapalloklubi,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,31,4038126,2026-07-31,19:00:00,50775,Pallokerho-35,60561,Football Club Haka,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,32,4038129,2026-08-07,18:00:00,60561,Football Club Haka,129811,Jippo,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,32,4038128,2026-08-07,18:30:00,60676,Järvenpään Palloseura,60494,Mikkelin Palloilijat,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,32,4038131,2026-08-08,18:00:00,60487,Käpylän Pallo,60495,Ekenäs Idrottsförening,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,32,4038130,2026-08-08,18:00:00,168874,SJK Akatemia,50775,Pallokerho-35,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,32,4038132,2026-08-09,15:00:00,60692,Helsingin Jalkapalloklubi,60972,FC KTP Kotka,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,33,4038133,2026-08-14,18:30:00,60676,Järvenpään Palloseura,60561,Football Club Haka,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,33,4038134,2026-08-15,16:00:00,129811,Jippo,168874,SJK Akatemia,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,33,4038136,2026-08-15,18:00:00,50775,Pallokerho-35,60692,Helsingin Jalkapalloklubi,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,33,4038137,2026-08-15,20:00:00,60972,FC KTP Kotka,60487,Käpylän Pallo,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,33,4038135,2026-08-16,17:00:00,60494,Mikkelin Palloilijat,60495,Ekenäs Idrottsförening,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,34,4038141,2026-08-20,18:00:00,60487,Käpylän Pallo,129811,Jippo,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,34,4038138,2026-08-21,18:30:00,60561,Football Club Haka,168874,SJK Akatemia,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,34,4038139,2026-08-21,19:00:00,50775,Pallokerho-35,60676,Järvenpään Palloseura,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,34,4038140,2026-08-22,15:00:00,60495,Ekenäs Idrottsförening,60972,FC KTP Kotka,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,34,4038142,2026-08-22,19:00:00,60692,Helsingin Jalkapalloklubi,60494,Mikkelin Palloilijat,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,35,4038143,2026-08-28,18:30:00,60972,FC KTP Kotka,60561,Football Club Haka,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,35,4038144,2026-08-28,18:30:00,60676,Järvenpään Palloseura,60487,Käpylän Pallo,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,35,4038146,2026-08-29,16:00:00,60494,Mikkelin Palloilijat,50775,Pallokerho-35,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,35,4038145,2026-08-29,17:00:00,60495,Ekenäs Idrottsförening,129811,Jippo,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,35,4038147,2026-08-30,18:00:00,168874,SJK Akatemia,60692,Helsingin Jalkapalloklubi,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,36,4038149,2026-09-04,18:30:00,129811,Jippo,60972,FC KTP Kotka,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,36,4038148,2026-09-04,19:00:00,50775,Pallokerho-35,60495,Ekenäs Idrottsförening,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,36,4038150,2026-09-06,16:00:00,168874,SJK Akatemia,60676,Järvenpään Palloseura,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,36,4038151,2026-09-06,18:30:00,60561,Football Club Haka,60494,Mikkelin Palloilijat,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,37,4038152,2026-09-07,19:00:00,60692,Helsingin Jalkapalloklubi,60487,Käpylän Pallo,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,37,4038153,2026-09-11,18:30:00,60972,FC KTP Kotka,60676,Järvenpään Palloseura,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,37,4038154,2026-09-11,19:00:00,60487,Käpylän Pallo,50775,Pallokerho-35,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,37,4038155,2026-09-12,15:00:00,60495,Ekenäs Idrottsförening,60561,Football Club Haka,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,37,4038156,2026-09-12,16:00:00,129811,Jippo,60692,Helsingin Jalkapalloklubi,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,37,4038157,2026-09-12,16:00:00,60494,Mikkelin Palloilijat,168874,SJK Akatemia,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,38,4038159,2026-09-18,18:30:00,60561,Football Club Haka,60692,Helsingin Jalkapalloklubi,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,38,4038158,2026-09-18,18:30:00,60676,Järvenpään Palloseura,60495,Ekenäs Idrottsförening,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,38,4038160,2026-09-18,19:00:00,50775,Pallokerho-35,60972,FC KTP Kotka,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,38,4038161,2026-09-19,16:00:00,60494,Mikkelin Palloilijat,129811,Jippo,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,38,4038162,2026-09-19,18:00:00,168874,SJK Akatemia,60487,Käpylän Pallo,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,39,4038163,2026-09-25,18:30:00,60972,FC KTP Kotka,60494,Mikkelin Palloilijat,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,39,4038164,2026-09-25,19:00:00,60487,Käpylän Pallo,60561,Football Club Haka,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,39,4038165,2026-09-26,15:00:00,60495,Ekenäs Idrottsförening,168874,SJK Akatemia,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,39,4038166,2026-09-26,16:00:00,129811,Jippo,50775,Pallokerho-35,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,39,4038167,2026-09-26,19:00:00,60692,Helsingin Jalkapalloklubi,60676,Järvenpään Palloseura,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,41,4038171,2026-10-09,19:00:00,60561,Football Club Haka,50775,Pallokerho-35,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,41,4038170,2026-10-09,19:00:00,60692,Helsingin Jalkapalloklubi,60495,Ekenäs Idrottsförening,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,41,4038168,2026-10-09,19:00:00,60487,Käpylän Pallo,60494,Mikkelin Palloilijat,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,41,4038172,2026-10-09,19:00:00,60676,Järvenpään Palloseura,129811,Jippo,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,41,4038169,2026-10-09,19:00:00,168874,SJK Akatemia,60972,FC KTP Kotka,,,,,Fixture,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,42,4038175,2026-10-17,,129811,Jippo,60561,Football Club Haka,,,,,Planned,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,42,4038176,2026-10-17,,60972,FC KTP Kotka,60692,Helsingin Jalkapalloklubi,,,,,Planned,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,42,4038174,2026-10-17,,60494,Mikkelin Palloilijat,60676,Järvenpään Palloseura,,,,,Planned,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,42,4038177,2026-10-17,,50775,Pallokerho-35,168874,SJK Akatemia,,,,,Planned,
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,42,4038173,2026-10-17,,60495,Ekenäs Idrottsförening,60487,Käpylän Pallo,,,,,Planned,

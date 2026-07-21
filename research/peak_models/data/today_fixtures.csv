@@ -1,0 +1,2 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result
+2026,M1L,Ykkösliiga (M2),spljp26,1,Ykkösliiga,30,4038107,2026-07-21,19:00:00,60487,Käpylän Pallo,60692,Helsingin Jalkapalloklubi,0,0,,,Live,D

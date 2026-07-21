@@ -1,0 +1,136 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,17,3748452,2025-04-21,16:00:00,129811,Jippo,60690,Salon Palloilijat,2,0,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,17,3748451,2025-04-22,18:30:00,168874,SJK Akatemia,60971,TPS Juniorijalkapallo,3,4,2,3,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,17,3748453,2025-04-23,18:30:00,50775,Pallokerho-35,60969,FC Lahti,0,0,0,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,17,3748455,2025-04-23,18:30:00,60692,Helsingin Jalkapalloklubi,60676,Järvenpään Palloseura,4,6,2,1,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,17,3748454,2025-04-23,18:30:00,60495,Ekenäs Idrottsförening,60487,Käpylän Pallo,4,2,1,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,17,3748456,2025-04-26,16:00:00,60971,TPS Juniorijalkapallo,129811,Jippo,2,1,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,17,3748457,2025-04-27,18:30:00,60487,Käpylän Pallo,168874,SJK Akatemia,0,3,0,1,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,17,3748459,2025-04-27,18:30:00,60690,Salon Palloilijat,50775,Pallokerho-35,1,2,0,1,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,17,3748458,2025-04-27,18:30:00,60495,Ekenäs Idrottsförening,60676,Järvenpään Palloseura,4,2,3,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,18,3748460,2025-04-28,18:30:00,60692,Helsingin Jalkapalloklubi,60969,FC Lahti,0,2,0,2,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,18,3748462,2025-05-02,18:30:00,50775,Pallokerho-35,60495,Ekenäs Idrottsförening,1,2,1,2,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,18,3748461,2025-05-02,18:30:00,60676,Järvenpään Palloseura,60971,TPS Juniorijalkapallo,0,6,0,5,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,18,3748463,2025-05-03,16:00:00,168874,SJK Akatemia,60692,Helsingin Jalkapalloklubi,1,2,0,0,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,18,3748464,2025-05-03,16:00:00,60969,FC Lahti,60690,Salon Palloilijat,1,0,0,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,18,3748465,2025-05-04,19:15:00,60487,Käpylän Pallo,129811,Jippo,1,1,1,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,19,3748467,2025-05-10,16:00:00,60690,Salon Palloilijat,60676,Järvenpään Palloseura,1,1,1,1,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,19,3748466,2025-05-10,16:00:00,60495,Ekenäs Idrottsförening,60692,Helsingin Jalkapalloklubi,3,4,1,2,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,20,3748469,2025-05-13,18:30:00,129811,Jippo,60969,FC Lahti,3,1,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,20,3748468,2025-05-13,18:30:00,168874,SJK Akatemia,50775,Pallokerho-35,1,1,0,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,20,3748470,2025-05-14,18:30:00,60971,TPS Juniorijalkapallo,60487,Käpylän Pallo,4,2,2,2,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,20,3748471,2025-05-17,16:00:00,60690,Salon Palloilijat,60495,Ekenäs Idrottsförening,0,1,0,0,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,20,3748472,2025-05-17,16:00:00,60676,Järvenpään Palloseura,129811,Jippo,1,1,0,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,20,3748473,2025-05-17,16:00:00,60969,FC Lahti,168874,SJK Akatemia,1,0,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,20,3748474,2025-05-18,16:00:00,60692,Helsingin Jalkapalloklubi,60971,TPS Juniorijalkapallo,3,1,1,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,20,3748475,2025-05-18,18:30:00,50775,Pallokerho-35,60487,Käpylän Pallo,4,0,2,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,21,3748480,2025-05-21,18:30:00,60487,Käpylän Pallo,60690,Salon Palloilijat,3,1,0,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,21,3748479,2025-05-21,18:30:00,50775,Pallokerho-35,60676,Järvenpään Palloseura,1,0,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,21,3748478,2025-05-21,18:30:00,129811,Jippo,60692,Helsingin Jalkapalloklubi,0,3,0,1,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,21,3748477,2025-05-21,18:30:00,60971,TPS Juniorijalkapallo,60969,FC Lahti,2,2,1,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,21,3748476,2025-05-21,18:30:00,168874,SJK Akatemia,60495,Ekenäs Idrottsförening,0,1,0,0,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,21,3748482,2025-05-25,16:00:00,60692,Helsingin Jalkapalloklubi,50775,Pallokerho-35,1,1,0,1,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,21,3748481,2025-05-25,16:00:00,60969,FC Lahti,60487,Käpylän Pallo,5,3,2,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,21,3748485,2025-05-25,18:30:00,60690,Salon Palloilijat,60971,TPS Juniorijalkapallo,1,2,0,1,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,21,3748483,2025-05-25,18:30:00,60676,Järvenpään Palloseura,168874,SJK Akatemia,2,2,0,1,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,21,3748484,2025-05-25,18:30:00,60495,Ekenäs Idrottsförening,129811,Jippo,1,1,0,1,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,22,3748486,2025-06-01,16:00:00,129811,Jippo,50775,Pallokerho-35,1,1,1,1,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,22,3748488,2025-06-01,18:30:00,60690,Salon Palloilijat,168874,SJK Akatemia,0,0,0,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,22,3748487,2025-06-01,18:30:00,60487,Käpylän Pallo,60692,Helsingin Jalkapalloklubi,0,5,0,2,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,23,3748490,2025-06-02,18:30:00,60971,TPS Juniorijalkapallo,60495,Ekenäs Idrottsförening,2,0,0,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,23,3748489,2025-06-02,18:30:00,60969,FC Lahti,60676,Järvenpään Palloseura,2,0,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,23,3748492,2025-06-06,18:30:00,50775,Pallokerho-35,60971,TPS Juniorijalkapallo,2,3,1,2,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,23,3748491,2025-06-06,18:30:00,60676,Järvenpään Palloseura,60487,Käpylän Pallo,2,2,0,2,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,23,3748494,2025-06-06,18:30:00,168874,SJK Akatemia,129811,Jippo,3,1,1,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,23,3748493,2025-06-06,18:30:00,60495,Ekenäs Idrottsförening,60969,FC Lahti,0,1,0,0,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,24,3748496,2025-06-13,18:30:00,60971,TPS Juniorijalkapallo,168874,SJK Akatemia,3,2,1,2,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,24,3748497,2025-06-13,18:30:00,60676,Järvenpään Palloseura,60692,Helsingin Jalkapalloklubi,2,0,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,24,3748500,2025-06-14,16:00:00,60487,Käpylän Pallo,60495,Ekenäs Idrottsförening,1,3,0,2,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,24,3748499,2025-06-14,17:00:00,60969,FC Lahti,50775,Pallokerho-35,2,1,2,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,24,3748498,2025-06-14,18:00:00,60690,Salon Palloilijat,129811,Jippo,0,0,0,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,25,3748502,2025-06-18,17:00:00,168874,SJK Akatemia,60487,Käpylän Pallo,5,3,2,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,25,3748504,2025-06-18,18:30:00,50775,Pallokerho-35,60690,Salon Palloilijat,3,1,2,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,25,3748501,2025-06-19,18:30:00,129811,Jippo,60971,TPS Juniorijalkapallo,1,2,1,2,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,25,3748503,2025-06-19,18:30:00,60676,Järvenpään Palloseura,60495,Ekenäs Idrottsförening,1,1,0,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,25,3748505,2025-06-19,18:30:00,60969,FC Lahti,60692,Helsingin Jalkapalloklubi,2,1,2,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,26,3748511,2025-06-23,18:30:00,50775,Pallokerho-35,168874,SJK Akatemia,2,1,1,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,26,3748507,2025-06-27,18:30:00,60495,Ekenäs Idrottsförening,50775,Pallokerho-35,2,0,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,26,3748506,2025-06-27,19:00:00,60971,TPS Juniorijalkapallo,60676,Järvenpään Palloseura,4,2,2,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,26,3748508,2025-06-28,14:00:00,60690,Salon Palloilijat,60969,FC Lahti,1,2,1,1,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,26,3748509,2025-06-28,20:00:00,60692,Helsingin Jalkapalloklubi,168874,SJK Akatemia,3,2,2,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,26,3748510,2025-06-29,16:00:00,129811,Jippo,60487,Käpylän Pallo,3,1,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,27,3748514,2025-07-03,18:30:00,60487,Käpylän Pallo,60971,TPS Juniorijalkapallo,4,2,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,27,3748512,2025-07-03,18:30:00,60969,FC Lahti,129811,Jippo,3,2,1,2,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,27,3748513,2025-07-04,18:30:00,60676,Järvenpään Palloseura,60690,Salon Palloilijat,4,3,2,2,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,27,3748515,2025-07-05,19:00:00,60692,Helsingin Jalkapalloklubi,60495,Ekenäs Idrottsförening,2,2,0,1,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,28,3748518,2025-07-08,18:30:00,129811,Jippo,60676,Järvenpään Palloseura,1,1,0,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,28,3748516,2025-07-08,18:30:00,168874,SJK Akatemia,60969,FC Lahti,0,3,0,2,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,28,3748517,2025-07-09,18:30:00,60971,TPS Juniorijalkapallo,60692,Helsingin Jalkapalloklubi,4,1,3,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,28,3748519,2025-07-09,18:30:00,60487,Käpylän Pallo,50775,Pallokerho-35,1,1,1,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,28,3748520,2025-07-09,18:30:00,60495,Ekenäs Idrottsförening,60690,Salon Palloilijat,4,0,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,28,3748521,2025-07-13,16:00:00,60692,Helsingin Jalkapalloklubi,129811,Jippo,1,1,0,1,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,28,3748524,2025-07-13,18:30:00,60690,Salon Palloilijat,60487,Käpylän Pallo,1,0,0,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,28,3748523,2025-07-13,18:30:00,60676,Järvenpään Palloseura,50775,Pallokerho-35,1,4,1,3,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,28,3748522,2025-07-13,18:30:00,60495,Ekenäs Idrottsförening,168874,SJK Akatemia,3,1,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,29,3748525,2025-07-14,18:30:00,60969,FC Lahti,60971,TPS Juniorijalkapallo,2,2,1,1,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,29,3748526,2025-07-16,18:30:00,129811,Jippo,60495,Ekenäs Idrottsförening,3,2,1,2,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,29,3748527,2025-07-18,18:30:00,60971,TPS Juniorijalkapallo,60690,Salon Palloilijat,3,2,2,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,29,3748528,2025-07-19,14:00:00,60487,Käpylän Pallo,60969,FC Lahti,2,2,0,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,29,3748529,2025-07-19,16:00:00,168874,SJK Akatemia,60676,Järvenpään Palloseura,4,1,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,29,3748530,2025-07-19,18:00:00,50775,Pallokerho-35,60692,Helsingin Jalkapalloklubi,1,1,0,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,30,3748495,2025-07-23,18:30:00,60692,Helsingin Jalkapalloklubi,60690,Salon Palloilijat,3,1,2,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,30,3748533,2025-07-25,18:30:00,50775,Pallokerho-35,129811,Jippo,1,1,0,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,30,3748531,2025-07-25,18:30:00,60676,Järvenpään Palloseura,60969,FC Lahti,2,1,1,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,30,3748532,2025-07-25,18:30:00,60495,Ekenäs Idrottsförening,60971,TPS Juniorijalkapallo,0,2,0,2,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,31,3748534,2025-07-28,18:30:00,60692,Helsingin Jalkapalloklubi,60487,Käpylän Pallo,1,1,0,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,31,3748535,2025-07-28,18:30:00,168874,SJK Akatemia,60690,Salon Palloilijat,3,0,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,31,3748537,2025-08-02,16:00:00,60690,Salon Palloilijat,60692,Helsingin Jalkapalloklubi,0,3,0,2,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,31,3748536,2025-08-02,16:00:00,129811,Jippo,168874,SJK Akatemia,3,1,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,31,3748539,2025-08-02,16:00:00,60971,TPS Juniorijalkapallo,50775,Pallokerho-35,1,2,1,0,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,31,3748538,2025-08-02,16:00:00,60487,Käpylän Pallo,60676,Järvenpään Palloseura,0,3,0,1,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,31,3748540,2025-08-02,16:00:00,60969,FC Lahti,60495,Ekenäs Idrottsförening,3,1,1,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,33,3960196,2025-08-15,18:30:00,60971,TPS Juniorijalkapallo,50775,Pallokerho-35,1,3,1,0,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,33,3960197,2025-08-15,18:30:00,60676,Järvenpään Palloseura,60690,Salon Palloilijat,2,0,0,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,33,3960198,2025-08-16,16:00:00,129811,Jippo,60692,Helsingin Jalkapalloklubi,0,1,0,1,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,33,3960199,2025-08-16,17:00:00,60969,FC Lahti,60487,Käpylän Pallo,2,2,2,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,34,3960200,2025-08-18,18:30:00,60495,Ekenäs Idrottsförening,168874,SJK Akatemia,2,3,1,0,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,34,3960201,2025-08-22,18:30:00,50775,Pallokerho-35,60676,Järvenpään Palloseura,0,0,0,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,34,3960203,2025-08-22,18:30:00,60971,TPS Juniorijalkapallo,168874,SJK Akatemia,2,1,2,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,34,3960202,2025-08-22,18:30:00,60495,Ekenäs Idrottsförening,60969,FC Lahti,0,2,0,1,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,34,3960204,2025-08-23,16:00:00,60690,Salon Palloilijat,129811,Jippo,0,1,0,1,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,34,3960205,2025-08-23,18:00:00,60692,Helsingin Jalkapalloklubi,60487,Käpylän Pallo,0,1,0,0,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,35,3960206,2025-08-28,18:30:00,60969,FC Lahti,60692,Helsingin Jalkapalloklubi,2,2,1,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,35,3960208,2025-08-29,18:30:00,50775,Pallokerho-35,129811,Jippo,0,2,0,0,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,35,3960207,2025-08-29,18:30:00,60676,Järvenpään Palloseura,60495,Ekenäs Idrottsförening,0,0,0,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,35,3960209,2025-08-30,16:00:00,60487,Käpylän Pallo,60971,TPS Juniorijalkapallo,3,3,1,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,35,3960210,2025-08-30,17:00:00,168874,SJK Akatemia,60690,Salon Palloilijat,2,1,0,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,36,3960213,2025-09-05,18:30:00,60971,TPS Juniorijalkapallo,60495,Ekenäs Idrottsförening,4,0,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,36,3960211,2025-09-05,18:30:00,60487,Käpylän Pallo,60676,Järvenpään Palloseura,2,3,1,1,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,36,3960212,2025-09-06,15:00:00,60690,Salon Palloilijat,50775,Pallokerho-35,1,2,0,0,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,36,3960214,2025-09-06,16:00:00,129811,Jippo,60969,FC Lahti,1,0,0,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,37,3960216,2025-09-12,18:30:00,50775,Pallokerho-35,60487,Käpylän Pallo,1,1,0,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,37,3960218,2025-09-12,18:30:00,60495,Ekenäs Idrottsförening,60690,Salon Palloilijat,2,3,1,2,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,37,3960219,2025-09-14,17:00:00,168874,SJK Akatemia,129811,Jippo,1,1,0,0,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,37,3960220,2025-09-14,18:30:00,60969,FC Lahti,60676,Järvenpään Palloseura,2,1,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,37,3960217,2025-09-14,19:00:00,60692,Helsingin Jalkapalloklubi,60971,TPS Juniorijalkapallo,2,3,1,0,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,38,3960223,2025-09-19,17:00:00,129811,Jippo,60495,Ekenäs Idrottsförening,2,2,1,2,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,38,3960221,2025-09-19,17:30:00,60690,Salon Palloilijat,60969,FC Lahti,1,4,1,1,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,38,3960224,2025-09-19,18:30:00,60487,Käpylän Pallo,168874,SJK Akatemia,3,1,2,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,38,3960222,2025-09-19,18:30:00,60676,Järvenpään Palloseura,60971,TPS Juniorijalkapallo,1,1,0,1,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,38,3960225,2025-09-20,14:00:00,50775,Pallokerho-35,60692,Helsingin Jalkapalloklubi,2,1,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,39,3960215,2025-09-24,20:00:00,60692,Helsingin Jalkapalloklubi,168874,SJK Akatemia,1,4,1,2,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,39,3960226,2025-09-26,18:30:00,60495,Ekenäs Idrottsförening,60487,Käpylän Pallo,4,1,2,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,39,3960227,2025-09-27,15:00:00,60971,TPS Juniorijalkapallo,129811,Jippo,0,1,0,1,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,39,3960230,2025-09-27,16:00:00,60969,FC Lahti,50775,Pallokerho-35,1,0,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,39,3960229,2025-09-27,19:30:00,60692,Helsingin Jalkapalloklubi,60690,Salon Palloilijat,1,0,0,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,39,3960228,2025-09-28,17:00:00,168874,SJK Akatemia,60676,Järvenpään Palloseura,1,1,0,1,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,40,3960232,2025-10-03,18:30:00,50775,Pallokerho-35,60495,Ekenäs Idrottsförening,1,2,0,0,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,40,3960231,2025-10-03,18:30:00,60969,FC Lahti,168874,SJK Akatemia,3,0,0,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,40,3960233,2025-10-04,15:00:00,60690,Salon Palloilijat,60971,TPS Juniorijalkapallo,1,0,0,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,40,3960234,2025-10-04,16:00:00,129811,Jippo,60487,Käpylän Pallo,2,1,2,1,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,40,3960235,2025-10-04,18:30:00,60692,Helsingin Jalkapalloklubi,60676,Järvenpään Palloseura,2,1,1,0,Played,H
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,42,3960240,2025-10-18,15:00:00,60971,TPS Juniorijalkapallo,60969,FC Lahti,3,3,3,1,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,42,3960239,2025-10-18,15:00:00,60487,Käpylän Pallo,60690,Salon Palloilijat,1,2,1,1,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,42,3960236,2025-10-18,15:00:00,60676,Järvenpään Palloseura,129811,Jippo,1,1,1,1,Played,D
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,42,3960238,2025-10-18,15:00:00,168874,SJK Akatemia,50775,Pallokerho-35,1,2,0,1,Played,A
+2025,M1L,Ykkösliiga (M2),spljp25,1,Ykkösliiga,42,3960237,2025-10-18,15:00:00,60495,Ekenäs Idrottsförening,60692,Helsingin Jalkapalloklubi,2,1,1,0,Played,H

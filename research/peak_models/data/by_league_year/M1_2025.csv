@@ -1,0 +1,163 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,15,3774022,2025-04-11,18:30:00,60860,Football Club International Turku,60494,Mikkelin Palloilijat,4,0,2,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,15,3774026,2025-04-11,19:00:00,106945,Jalkapalloseura Tampere United,60702,Atlantis FC Edustus,0,2,0,1,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,15,3774027,2025-04-11,19:23:00,106331,Kuopion Palloseura,144858,JJK Jyväskylä,2,1,0,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,15,3774025,2025-04-12,16:00:00,60536,KPV Juniorit,106449,Oulun Luistinseura,2,2,1,1,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,15,3774024,2025-04-12,16:00:00,62296,Espoon Palloseuran Jalkapallo,60521,FC Jazz Juniorit,0,1,0,0,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,15,3774023,2025-04-12,17:00:00,60973,Rovaniemen Palloseura,60929,Pallokerho Keski-Uusimaa,0,5,0,3,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,16,3774028,2025-04-19,15:00:00,60494,Mikkelin Palloilijat,60973,Rovaniemen Palloseura,0,1,0,0,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,16,3774029,2025-04-19,16:00:00,60536,KPV Juniorit,60929,Pallokerho Keski-Uusimaa,1,0,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,16,3774032,2025-04-20,14:00:00,60702,Atlantis FC Edustus,62296,Espoon Palloseuran Jalkapallo,0,2,0,0,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,16,3774030,2025-04-20,14:00:00,106449,Oulun Luistinseura,144858,JJK Jyväskylä,2,2,1,1,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,16,3774031,2025-04-20,15:00:00,60860,Football Club International Turku,106945,Jalkapalloseura Tampere United,2,3,1,1,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,16,3774033,2025-04-20,18:00:00,106331,Kuopion Palloseura,60521,FC Jazz Juniorit,2,1,0,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,17,3774034,2025-04-25,19:00:00,106945,Jalkapalloseura Tampere United,60536,KPV Juniorit,2,0,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,17,3774036,2025-04-26,16:00:00,60521,FC Jazz Juniorit,60702,Atlantis FC Edustus,0,3,0,2,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,17,3774035,2025-04-26,16:00:00,62296,Espoon Palloseuran Jalkapallo,60494,Mikkelin Palloilijat,3,1,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,17,3774038,2025-04-26,19:00:00,60973,Rovaniemen Palloseura,106449,Oulun Luistinseura,4,1,2,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,17,3774037,2025-04-27,16:00:00,144858,JJK Jyväskylä,60860,Football Club International Turku,4,1,2,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,18,3774039,2025-04-28,18:30:00,60929,Pallokerho Keski-Uusimaa,106331,Kuopion Palloseura,2,2,0,2,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,18,3774041,2025-05-02,19:00:00,60702,Atlantis FC Edustus,60929,Pallokerho Keski-Uusimaa,2,3,1,1,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,18,3774040,2025-05-02,19:00:00,106945,Jalkapalloseura Tampere United,144858,JJK Jyväskylä,1,0,0,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,18,3774042,2025-05-03,13:00:00,60860,Football Club International Turku,60973,Rovaniemen Palloseura,2,0,0,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,18,3774043,2025-05-03,14:00:00,106449,Oulun Luistinseura,62296,Espoon Palloseuran Jalkapallo,4,0,2,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,18,3774045,2025-05-03,16:00:00,60536,KPV Juniorit,106331,Kuopion Palloseura,1,0,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,18,3774044,2025-05-03,16:00:00,60494,Mikkelin Palloilijat,60521,FC Jazz Juniorit,0,0,0,0,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,19,3774046,2025-05-10,16:00:00,60521,FC Jazz Juniorit,106449,Oulun Luistinseura,2,0,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,19,3774047,2025-05-10,16:00:00,60973,Rovaniemen Palloseura,106945,Jalkapalloseura Tampere United,0,2,0,1,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,19,3774050,2025-05-11,15:00:00,60929,Pallokerho Keski-Uusimaa,60494,Mikkelin Palloilijat,3,2,2,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,19,3774048,2025-05-11,16:00:00,62296,Espoon Palloseuran Jalkapallo,60860,Football Club International Turku,3,5,2,3,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,19,3774049,2025-05-11,17:00:00,144858,JJK Jyväskylä,60536,KPV Juniorit,3,0,,,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,19,3774051,2025-05-11,18:00:00,106331,Kuopion Palloseura,60702,Atlantis FC Edustus,5,2,1,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,20,3774052,2025-05-15,19:00:00,106945,Jalkapalloseura Tampere United,62296,Espoon Palloseuran Jalkapallo,1,0,0,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,20,3774054,2025-05-17,16:00:00,60536,KPV Juniorit,60702,Atlantis FC Edustus,3,0,3,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,20,3774053,2025-05-17,16:00:00,60494,Mikkelin Palloilijat,106331,Kuopion Palloseura,3,0,2,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,20,3774055,2025-05-18,15:00:00,144858,JJK Jyväskylä,60973,Rovaniemen Palloseura,5,0,4,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,20,3774057,2025-05-18,17:00:00,60860,Football Club International Turku,60521,FC Jazz Juniorit,1,2,1,1,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,20,3774056,2025-05-18,19:00:00,106449,Oulun Luistinseura,60929,Pallokerho Keski-Uusimaa,3,1,0,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,21,3774058,2025-05-23,18:30:00,60521,FC Jazz Juniorit,106945,Jalkapalloseura Tampere United,3,2,2,2,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,21,3774059,2025-05-23,19:00:00,60702,Atlantis FC Edustus,60494,Mikkelin Palloilijat,0,2,0,1,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,21,3774060,2025-05-24,14:00:00,106331,Kuopion Palloseura,106449,Oulun Luistinseura,1,3,1,1,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,21,3774061,2025-05-24,16:00:00,60973,Rovaniemen Palloseura,60536,KPV Juniorit,2,2,2,0,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,21,3774062,2025-05-24,16:00:00,62296,Espoon Palloseuran Jalkapallo,144858,JJK Jyväskylä,2,1,1,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,21,3774063,2025-05-24,18:00:00,60929,Pallokerho Keski-Uusimaa,60860,Football Club International Turku,3,5,1,2,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,22,3774064,2025-06-01,15:00:00,60973,Rovaniemen Palloseura,62296,Espoon Palloseuran Jalkapallo,2,0,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,22,3774065,2025-06-01,17:00:00,60536,KPV Juniorit,60494,Mikkelin Palloilijat,1,4,1,1,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,22,3774066,2025-06-01,18:30:00,106449,Oulun Luistinseura,60702,Atlantis FC Edustus,6,1,3,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,22,3774067,2025-06-01,19:00:00,106945,Jalkapalloseura Tampere United,60929,Pallokerho Keski-Uusimaa,2,2,1,1,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,23,3774068,2025-06-02,18:30:00,144858,JJK Jyväskylä,60521,FC Jazz Juniorit,3,1,2,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,23,3774069,2025-06-03,18:30:00,60860,Football Club International Turku,106331,Kuopion Palloseura,6,1,1,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,23,3774071,2025-06-06,19:00:00,60702,Atlantis FC Edustus,60860,Football Club International Turku,1,0,0,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,23,3774070,2025-06-06,19:00:00,60929,Pallokerho Keski-Uusimaa,144858,JJK Jyväskylä,2,0,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,23,3774073,2025-06-08,16:00:00,60521,FC Jazz Juniorit,60973,Rovaniemen Palloseura,3,1,3,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,23,3774072,2025-06-08,16:00:00,62296,Espoon Palloseuran Jalkapallo,60536,KPV Juniorit,1,0,0,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,23,3774075,2025-06-08,18:30:00,60494,Mikkelin Palloilijat,106449,Oulun Luistinseura,0,0,0,0,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,23,3774074,2025-06-08,18:30:00,106331,Kuopion Palloseura,106945,Jalkapalloseura Tampere United,5,0,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,24,3774077,2025-06-14,16:00:00,60536,KPV Juniorit,60521,FC Jazz Juniorit,3,1,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,24,3774076,2025-06-14,16:00:00,60702,Atlantis FC Edustus,144858,JJK Jyväskylä,1,0,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,24,3774078,2025-06-14,18:00:00,60929,Pallokerho Keski-Uusimaa,62296,Espoon Palloseuran Jalkapallo,4,1,2,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,24,3774079,2025-06-15,15:00:00,106331,Kuopion Palloseura,60973,Rovaniemen Palloseura,1,1,0,0,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,24,3774080,2025-06-15,18:30:00,106449,Oulun Luistinseura,60860,Football Club International Turku,2,2,0,1,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,24,3774081,2025-06-15,19:30:00,60494,Mikkelin Palloilijat,106945,Jalkapalloseura Tampere United,2,1,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,25,3774088,2025-06-18,18:30:00,144858,JJK Jyväskylä,106331,Kuopion Palloseura,2,1,0,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,26,3774083,2025-06-25,18:30:00,144858,JJK Jyväskylä,60494,Mikkelin Palloilijat,0,0,0,0,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,26,3774084,2025-06-26,20:00:00,60521,FC Jazz Juniorit,60929,Pallokerho Keski-Uusimaa,4,2,3,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,26,3774085,2025-06-27,18:30:00,62296,Espoon Palloseuran Jalkapallo,106331,Kuopion Palloseura,0,3,0,2,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,26,3774082,2025-06-28,16:00:00,106945,Jalkapalloseura Tampere United,106449,Oulun Luistinseura,2,2,0,1,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,26,3774086,2025-06-28,19:00:00,60860,Football Club International Turku,60536,KPV Juniorit,7,1,5,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,26,3774087,2025-06-28,22:15:00,60973,Rovaniemen Palloseura,60702,Atlantis FC Edustus,1,1,0,0,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,27,3774089,2025-07-01,18:30:00,60521,FC Jazz Juniorit,62296,Espoon Palloseuran Jalkapallo,7,0,2,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,27,3774090,2025-07-02,18:00:00,60929,Pallokerho Keski-Uusimaa,60973,Rovaniemen Palloseura,0,4,0,1,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,27,3774091,2025-07-02,18:30:00,60494,Mikkelin Palloilijat,60860,Football Club International Turku,2,2,0,2,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,27,3774092,2025-07-02,18:30:00,106449,Oulun Luistinseura,60536,KPV Juniorit,1,1,0,1,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,27,3774093,2025-07-02,19:00:00,60702,Atlantis FC Edustus,106945,Jalkapalloseura Tampere United,2,0,0,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,27,3774094,2025-07-05,16:00:00,60536,KPV Juniorit,106945,Jalkapalloseura Tampere United,1,0,0,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,27,3774095,2025-07-06,16:00:00,106331,Kuopion Palloseura,60929,Pallokerho Keski-Uusimaa,0,1,0,0,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,27,3774096,2025-07-06,18:30:00,60494,Mikkelin Palloilijat,62296,Espoon Palloseuran Jalkapallo,1,1,0,1,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,27,3774097,2025-07-06,18:30:00,60702,Atlantis FC Edustus,60521,FC Jazz Juniorit,0,1,0,0,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,28,3774099,2025-07-07,18:30:00,60860,Football Club International Turku,144858,JJK Jyväskylä,0,1,0,0,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,28,3774098,2025-07-07,18:30:00,106449,Oulun Luistinseura,60973,Rovaniemen Palloseura,2,1,2,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,28,3774101,2025-07-11,18:30:00,62296,Espoon Palloseuran Jalkapallo,60702,Atlantis FC Edustus,1,0,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,28,3774100,2025-07-11,19:00:00,106945,Jalkapalloseura Tampere United,60860,Football Club International Turku,1,3,0,1,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,28,3774102,2025-07-12,16:00:00,60973,Rovaniemen Palloseura,60494,Mikkelin Palloilijat,2,1,0,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,28,3774103,2025-07-12,18:00:00,60929,Pallokerho Keski-Uusimaa,60536,KPV Juniorit,3,1,0,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,28,3774104,2025-07-13,17:00:00,144858,JJK Jyväskylä,106449,Oulun Luistinseura,1,1,0,0,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,29,3774105,2025-07-16,19:00:00,60521,FC Jazz Juniorit,106331,Kuopion Palloseura,2,1,1,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,29,3774107,2025-07-19,16:00:00,60973,Rovaniemen Palloseura,60860,Football Club International Turku,3,1,2,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,29,3774106,2025-07-19,16:00:00,62296,Espoon Palloseuran Jalkapallo,106449,Oulun Luistinseura,1,4,1,1,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,29,3774108,2025-07-19,17:00:00,144858,JJK Jyväskylä,106945,Jalkapalloseura Tampere United,1,4,0,3,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,29,3774109,2025-07-19,18:00:00,60929,Pallokerho Keski-Uusimaa,60702,Atlantis FC Edustus,0,0,0,0,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,29,3774110,2025-07-20,17:00:00,106331,Kuopion Palloseura,60536,KPV Juniorit,1,0,0,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,30,3774111,2025-07-25,19:00:00,60521,FC Jazz Juniorit,60494,Mikkelin Palloilijat,1,3,1,2,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,30,3774113,2025-07-25,19:00:00,60702,Atlantis FC Edustus,106331,Kuopion Palloseura,2,4,0,2,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,30,3774112,2025-07-25,19:00:00,106945,Jalkapalloseura Tampere United,60973,Rovaniemen Palloseura,4,0,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,30,3774114,2025-07-26,16:00:00,60536,KPV Juniorit,144858,JJK Jyväskylä,3,0,2,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,30,3774115,2025-07-26,17:00:00,60860,Football Club International Turku,62296,Espoon Palloseuran Jalkapallo,2,1,0,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,31,3774116,2025-07-28,18:30:00,106449,Oulun Luistinseura,60521,FC Jazz Juniorit,2,1,2,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,31,3774117,2025-07-29,18:30:00,60494,Mikkelin Palloilijat,60929,Pallokerho Keski-Uusimaa,3,1,0,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,31,3774118,2025-08-01,18:30:00,60521,FC Jazz Juniorit,60860,Football Club International Turku,2,2,1,1,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,31,3774120,2025-08-01,19:00:00,60702,Atlantis FC Edustus,60536,KPV Juniorit,3,5,1,0,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,31,3774119,2025-08-01,19:00:00,106331,Kuopion Palloseura,60494,Mikkelin Palloilijat,1,6,0,1,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,31,3774122,2025-08-02,16:00:00,60973,Rovaniemen Palloseura,144858,JJK Jyväskylä,1,2,1,1,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,31,3774121,2025-08-02,16:00:00,62296,Espoon Palloseuran Jalkapallo,106945,Jalkapalloseura Tampere United,1,1,1,1,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,31,3774123,2025-08-02,16:00:00,60929,Pallokerho Keski-Uusimaa,106449,Oulun Luistinseura,1,1,0,0,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,32,3774128,2025-08-06,18:30:00,60536,KPV Juniorit,60973,Rovaniemen Palloseura,5,0,3,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,32,3774129,2025-08-06,18:30:00,144858,JJK Jyväskylä,62296,Espoon Palloseuran Jalkapallo,1,0,0,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,32,3774127,2025-08-06,18:30:00,60494,Mikkelin Palloilijat,60702,Atlantis FC Edustus,3,1,0,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,32,3774125,2025-08-06,18:30:00,60860,Football Club International Turku,60929,Pallokerho Keski-Uusimaa,2,2,2,0,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,32,3774126,2025-08-06,18:30:00,106449,Oulun Luistinseura,106331,Kuopion Palloseura,5,0,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,32,3774124,2025-08-06,19:00:00,106945,Jalkapalloseura Tampere United,60521,FC Jazz Juniorit,4,2,2,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,32,3774130,2025-08-10,16:00:00,62296,Espoon Palloseuran Jalkapallo,60973,Rovaniemen Palloseura,2,1,2,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,32,3774131,2025-08-10,16:00:00,60702,Atlantis FC Edustus,106449,Oulun Luistinseura,3,2,1,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,32,3774133,2025-08-10,17:00:00,106331,Kuopion Palloseura,60860,Football Club International Turku,3,1,1,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,32,3774134,2025-08-10,17:00:00,60929,Pallokerho Keski-Uusimaa,106945,Jalkapalloseura Tampere United,0,0,0,0,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,32,3774135,2025-08-10,18:30:00,60494,Mikkelin Palloilijat,60536,KPV Juniorit,2,1,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,33,3774136,2025-08-15,19:00:00,106945,Jalkapalloseura Tampere United,106331,Kuopion Palloseura,1,2,0,2,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,33,3774137,2025-08-16,15:00:00,60973,Rovaniemen Palloseura,60521,FC Jazz Juniorit,3,1,2,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,33,3774138,2025-08-16,16:00:00,60536,KPV Juniorit,62296,Espoon Palloseuran Jalkapallo,2,1,0,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,33,3774139,2025-08-16,18:00:00,144858,JJK Jyväskylä,60929,Pallokerho Keski-Uusimaa,2,3,1,2,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,33,3774140,2025-08-16,19:00:00,106449,Oulun Luistinseura,60494,Mikkelin Palloilijat,2,2,1,2,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,34,3774141,2025-08-18,18:30:00,60860,Football Club International Turku,60702,Atlantis FC Edustus,1,3,0,2,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,34,3774142,2025-08-21,18:30:00,144858,JJK Jyväskylä,60702,Atlantis FC Edustus,1,1,0,1,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,34,3774143,2025-08-22,19:00:00,106945,Jalkapalloseura Tampere United,60494,Mikkelin Palloilijat,0,2,0,0,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,34,3774145,2025-08-23,16:00:00,60521,FC Jazz Juniorit,60536,KPV Juniorit,1,1,0,1,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,34,3774144,2025-08-23,16:00:00,60973,Rovaniemen Palloseura,106331,Kuopion Palloseura,0,3,0,2,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,34,3774146,2025-08-23,16:00:00,62296,Espoon Palloseuran Jalkapallo,60929,Pallokerho Keski-Uusimaa,4,3,2,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,34,3774147,2025-08-24,17:00:00,60860,Football Club International Turku,106449,Oulun Luistinseura,1,1,0,1,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,35,3774132,2025-08-27,18:30:00,60521,FC Jazz Juniorit,144858,JJK Jyväskylä,0,1,0,0,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,35,3774150,2025-08-30,16:00:00,60536,KPV Juniorit,60860,Football Club International Turku,2,1,0,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,35,3774148,2025-08-30,16:00:00,60494,Mikkelin Palloilijat,144858,JJK Jyväskylä,2,0,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,35,3774152,2025-08-30,16:00:00,60702,Atlantis FC Edustus,60973,Rovaniemen Palloseura,3,3,2,2,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,35,3774151,2025-08-30,16:00:00,106449,Oulun Luistinseura,106945,Jalkapalloseura Tampere United,1,3,0,2,Played,A
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,35,3774149,2025-08-30,16:00:00,106331,Kuopion Palloseura,62296,Espoon Palloseuran Jalkapallo,1,1,0,1,Played,D
+2025,M1,Ykkönen (M3),spljp25,1,Runkosarja,35,3774153,2025-08-30,16:00:00,60929,Pallokerho Keski-Uusimaa,60521,FC Jazz Juniorit,0,5,0,2,Played,A
+2025,M1,Ykkönen (M3),spljp25,3,Alempi jatkosarja,37,3974482,2025-09-12,19:00:00,60521,FC Jazz Juniorit,60702,Atlantis FC Edustus,6,4,5,2,Played,H
+2025,M1,Ykkönen (M3),spljp25,2,Ylempi jatkosarja,37,3974467,2025-09-13,16:00:00,60494,Mikkelin Palloilijat,106945,Jalkapalloseura Tampere United,3,0,3,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,2,Ylempi jatkosarja,37,3974469,2025-09-13,16:00:00,106449,Oulun Luistinseura,106331,Kuopion Palloseura,4,2,3,2,Played,H
+2025,M1,Ykkönen (M3),spljp25,3,Alempi jatkosarja,37,3974483,2025-09-13,16:00:00,60929,Pallokerho Keski-Uusimaa,60973,Rovaniemen Palloseura,2,2,0,1,Played,D
+2025,M1,Ykkönen (M3),spljp25,2,Ylempi jatkosarja,37,3974468,2025-09-13,17:00:00,60536,KPV Juniorit,144858,JJK Jyväskylä,4,0,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,3,Alempi jatkosarja,37,3974484,2025-09-14,17:00:00,60860,Football Club International Turku,62296,Espoon Palloseuran Jalkapallo,1,3,1,1,Played,A
+2025,M1,Ykkönen (M3),spljp25,2,Ylempi jatkosarja,38,3974470,2025-09-18,19:00:00,106945,Jalkapalloseura Tampere United,106449,Oulun Luistinseura,0,2,0,1,Played,A
+2025,M1,Ykkönen (M3),spljp25,2,Ylempi jatkosarja,38,3974471,2025-09-19,17:30:00,60536,KPV Juniorit,60494,Mikkelin Palloilijat,1,2,0,2,Played,A
+2025,M1,Ykkönen (M3),spljp25,3,Alempi jatkosarja,38,3974486,2025-09-19,17:30:00,60702,Atlantis FC Edustus,60929,Pallokerho Keski-Uusimaa,3,0,3,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,3,Alempi jatkosarja,38,3974485,2025-09-19,18:30:00,60860,Football Club International Turku,60521,FC Jazz Juniorit,2,1,0,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,2,Ylempi jatkosarja,38,3974472,2025-09-19,19:00:00,144858,JJK Jyväskylä,106331,Kuopion Palloseura,1,2,0,2,Played,A
+2025,M1,Ykkönen (M3),spljp25,3,Alempi jatkosarja,38,3974487,2025-09-21,15:00:00,62296,Espoon Palloseuran Jalkapallo,60973,Rovaniemen Palloseura,0,1,0,1,Played,A
+2025,M1,Ykkönen (M3),spljp25,2,Ylempi jatkosarja,39,3974473,2025-09-26,18:30:00,60494,Mikkelin Palloilijat,144858,JJK Jyväskylä,5,1,2,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,3,Alempi jatkosarja,39,3974488,2025-09-26,19:00:00,60521,FC Jazz Juniorit,62296,Espoon Palloseuran Jalkapallo,0,2,0,2,Played,A
+2025,M1,Ykkönen (M3),spljp25,3,Alempi jatkosarja,39,3974489,2025-09-26,19:00:00,60929,Pallokerho Keski-Uusimaa,60860,Football Club International Turku,2,1,1,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,3,Alempi jatkosarja,39,3974490,2025-09-27,17:00:00,60973,Rovaniemen Palloseura,60702,Atlantis FC Edustus,4,2,1,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,2,Ylempi jatkosarja,39,3974474,2025-09-28,16:00:00,106331,Kuopion Palloseura,106945,Jalkapalloseura Tampere United,2,0,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,2,Ylempi jatkosarja,39,3974475,2025-09-28,17:00:00,106449,Oulun Luistinseura,60536,KPV Juniorit,3,0,2,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,2,Ylempi jatkosarja,40,3974476,2025-10-03,19:00:00,106945,Jalkapalloseura Tampere United,60536,KPV Juniorit,1,2,0,1,Played,A
+2025,M1,Ykkönen (M3),spljp25,3,Alempi jatkosarja,40,3974491,2025-10-03,19:00:00,60929,Pallokerho Keski-Uusimaa,62296,Espoon Palloseuran Jalkapallo,1,0,1,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,2,Ylempi jatkosarja,40,3974477,2025-10-04,16:00:00,106331,Kuopion Palloseura,60494,Mikkelin Palloilijat,2,2,1,1,Played,D
+2025,M1,Ykkönen (M3),spljp25,3,Alempi jatkosarja,40,3974492,2025-10-04,17:00:00,60973,Rovaniemen Palloseura,60521,FC Jazz Juniorit,2,1,0,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,3,Alempi jatkosarja,40,3974493,2025-10-04,19:00:00,60702,Atlantis FC Edustus,60860,Football Club International Turku,1,5,1,3,Played,A
+2025,M1,Ykkönen (M3),spljp25,2,Ylempi jatkosarja,40,3974478,2025-10-05,17:00:00,106449,Oulun Luistinseura,144858,JJK Jyväskylä,3,0,3,0,Played,H
+2025,M1,Ykkönen (M3),spljp25,2,Ylempi jatkosarja,42,3974480,2025-10-19,15:00:00,60536,KPV Juniorit,106331,Kuopion Palloseura,1,3,1,3,Played,A
+2025,M1,Ykkönen (M3),spljp25,3,Alempi jatkosarja,42,3974494,2025-10-19,15:00:00,60521,FC Jazz Juniorit,60929,Pallokerho Keski-Uusimaa,1,2,0,2,Played,A
+2025,M1,Ykkönen (M3),spljp25,3,Alempi jatkosarja,42,3974496,2025-10-19,15:00:00,62296,Espoon Palloseuran Jalkapallo,60702,Atlantis FC Edustus,5,1,1,1,Played,H
+2025,M1,Ykkönen (M3),spljp25,2,Ylempi jatkosarja,42,3974479,2025-10-19,15:00:00,60494,Mikkelin Palloilijat,106449,Oulun Luistinseura,2,2,0,0,Played,D
+2025,M1,Ykkönen (M3),spljp25,3,Alempi jatkosarja,42,3974495,2025-10-19,15:00:00,60860,Football Club International Turku,60973,Rovaniemen Palloseura,1,6,0,4,Played,A
+2025,M1,Ykkönen (M3),spljp25,2,Ylempi jatkosarja,42,3974481,2025-10-19,15:00:00,144858,JJK Jyväskylä,106945,Jalkapalloseura Tampere United,5,0,1,0,Played,H

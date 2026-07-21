@@ -1,0 +1,133 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,14,4036852,2026-04-04,13:00:00,60987,Football Club International Turku,60901,Vaasan Palloseura,0,0,0,0,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,14,4036853,2026-04-04,15:00:00,60731,Helsingin Jalkapalloklubin Liiga-HJK,60970,SEINÄJOEN JALKAPALLOKERHO,3,0,1,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,14,4036854,2026-04-04,17:00:00,60759,IFK Mariehamn Fotboll,60971,TPS Juniorijalkapallo,1,1,1,0,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,14,4036855,2026-04-04,17:00:00,60745,Ilves,60756,Kuopion Palloseura,1,3,0,2,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,14,4036856,2026-04-04,17:00:00,60974,Fotbollsföreningen JARO Jalkapalloseura,60969,FC Lahti,0,1,0,1,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,14,4036857,2026-04-04,19:00:00,60534,IF Gnistan,60493,Oulun edustusjalkapallo AC Oulu,1,5,1,2,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,15,4036858,2026-04-10,18:00:00,60971,TPS Juniorijalkapallo,60969,FC Lahti,2,1,1,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,15,4036859,2026-04-10,19:00:00,60970,SEINÄJOEN JALKAPALLOKERHO,60759,IFK Mariehamn Fotboll,3,0,1,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,15,4036860,2026-04-10,20:00:00,60901,Vaasan Palloseura,60974,Fotbollsföreningen JARO Jalkapalloseura,0,0,0,0,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,15,4036861,2026-04-11,14:00:00,60756,Kuopion Palloseura,60534,IF Gnistan,1,0,0,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,15,4036862,2026-04-11,17:00:00,60731,Helsingin Jalkapalloklubin Liiga-HJK,60493,Oulun edustusjalkapallo AC Oulu,0,1,0,1,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,15,4036863,2026-04-11,19:00:00,60987,Football Club International Turku,60745,Ilves,2,1,0,1,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,16,4036864,2026-04-18,14:00:00,60534,IF Gnistan,60731,Helsingin Jalkapalloklubin Liiga-HJK,0,3,0,1,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,16,4036865,2026-04-18,16:00:00,60974,Fotbollsföreningen JARO Jalkapalloseura,60756,Kuopion Palloseura,1,1,1,0,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,16,4036867,2026-04-18,17:00:00,60971,TPS Juniorijalkapallo,60970,SEINÄJOEN JALKAPALLOKERHO,2,0,1,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,16,4036866,2026-04-18,17:00:00,60969,FC Lahti,60987,Football Club International Turku,0,2,0,0,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,16,4036868,2026-04-18,17:00:00,60493,Oulun edustusjalkapallo AC Oulu,60901,Vaasan Palloseura,1,0,0,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,16,4036869,2026-04-18,19:00:00,60759,IFK Mariehamn Fotboll,60745,Ilves,2,2,1,1,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,17,4036930,2026-04-22,18:00:00,60756,Kuopion Palloseura,60493,Oulun edustusjalkapallo AC Oulu,3,2,1,1,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,17,4036871,2026-04-24,18:00:00,60901,Vaasan Palloseura,60745,Ilves,3,2,3,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,17,4036870,2026-04-24,18:00:00,60971,TPS Juniorijalkapallo,60534,IF Gnistan,1,1,0,0,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,17,4036872,2026-04-24,19:00:00,60970,SEINÄJOEN JALKAPALLOKERHO,60974,Fotbollsföreningen JARO Jalkapalloseura,1,1,0,1,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,17,4036873,2026-04-25,15:00:00,60969,FC Lahti,60493,Oulun edustusjalkapallo AC Oulu,2,1,2,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,17,4036874,2026-04-25,17:00:00,60987,Football Club International Turku,60759,IFK Mariehamn Fotboll,1,0,0,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,17,4036875,2026-04-26,16:00:00,60756,Kuopion Palloseura,60731,Helsingin Jalkapalloklubin Liiga-HJK,1,1,1,0,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,18,4036931,2026-04-29,19:00:00,60987,Football Club International Turku,60731,Helsingin Jalkapalloklubin Liiga-HJK,1,1,1,1,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,18,4036876,2026-05-02,15:00:00,60970,SEINÄJOEN JALKAPALLOKERHO,60745,Ilves,1,1,0,1,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,18,4036878,2026-05-02,17:00:00,60759,IFK Mariehamn Fotboll,60901,Vaasan Palloseura,0,1,0,1,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,18,4036877,2026-05-02,17:00:00,60974,Fotbollsföreningen JARO Jalkapalloseura,60971,TPS Juniorijalkapallo,2,2,1,1,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,18,4036879,2026-05-02,19:00:00,60493,Oulun edustusjalkapallo AC Oulu,60756,Kuopion Palloseura,2,0,1,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,19,4036880,2026-05-04,19:00:00,60731,Helsingin Jalkapalloklubin Liiga-HJK,60969,FC Lahti,1,0,1,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,19,4036881,2026-05-05,19:00:00,60534,IF Gnistan,60987,Football Club International Turku,2,0,1,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,19,4036883,2026-05-08,18:00:00,60971,TPS Juniorijalkapallo,60731,Helsingin Jalkapalloklubin Liiga-HJK,1,0,0,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,19,4036882,2026-05-08,18:00:00,60745,Ilves,60493,Oulun edustusjalkapallo AC Oulu,1,0,1,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,19,4036884,2026-05-08,20:00:00,60756,Kuopion Palloseura,60970,SEINÄJOEN JALKAPALLOKERHO,0,0,0,0,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,19,4036885,2026-05-09,15:00:00,60987,Football Club International Turku,60974,Fotbollsföreningen JARO Jalkapalloseura,2,0,2,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,19,4036886,2026-05-09,17:00:00,60901,Vaasan Palloseura,60534,IF Gnistan,1,1,1,0,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,19,4036887,2026-05-10,15:00:00,60969,FC Lahti,60759,IFK Mariehamn Fotboll,1,1,1,0,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,20,4036888,2026-05-16,14:00:00,60731,Helsingin Jalkapalloklubin Liiga-HJK,60745,Ilves,2,2,1,1,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,20,4036889,2026-05-16,17:00:00,60759,IFK Mariehamn Fotboll,60756,Kuopion Palloseura,1,1,1,1,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,20,4036891,2026-05-16,17:00:00,60970,SEINÄJOEN JALKAPALLOKERHO,60987,Football Club International Turku,1,3,0,2,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,20,4036890,2026-05-16,19:00:00,60534,IF Gnistan,60974,Fotbollsföreningen JARO Jalkapalloseura,5,0,1,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,20,4036892,2026-05-16,19:00:00,60493,Oulun edustusjalkapallo AC Oulu,60971,TPS Juniorijalkapallo,1,0,0,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,21,4036893,2026-05-18,18:00:00,60969,FC Lahti,60901,Vaasan Palloseura,1,1,1,1,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,21,4036936,2026-05-20,18:00:00,60745,Ilves,60987,Football Club International Turku,1,3,1,2,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,21,4036937,2026-05-20,19:00:00,60756,Kuopion Palloseura,60974,Fotbollsföreningen JARO Jalkapalloseura,3,0,1,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,21,4036894,2026-05-22,19:00:00,60901,Vaasan Palloseura,60731,Helsingin Jalkapalloklubin Liiga-HJK,2,1,0,1,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,21,4036895,2026-05-23,14:00:00,60987,Football Club International Turku,60971,TPS Juniorijalkapallo,2,1,2,1,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,21,4036899,2026-05-23,17:00:00,60970,SEINÄJOEN JALKAPALLOKERHO,60493,Oulun edustusjalkapallo AC Oulu,0,1,0,1,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,21,4036897,2026-05-23,17:00:00,60745,Ilves,60534,IF Gnistan,2,0,1,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,21,4036896,2026-05-23,17:00:00,60756,Kuopion Palloseura,60969,FC Lahti,2,1,2,1,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,21,4036898,2026-05-23,17:00:00,60974,Fotbollsföreningen JARO Jalkapalloseura,60759,IFK Mariehamn Fotboll,3,0,2,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,22,4036900,2026-05-30,15:00:00,60731,Helsingin Jalkapalloklubin Liiga-HJK,60759,IFK Mariehamn Fotboll,1,0,0,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,22,4036902,2026-05-30,17:00:00,60971,TPS Juniorijalkapallo,60901,Vaasan Palloseura,1,0,0,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,22,4036903,2026-05-30,17:00:00,60534,IF Gnistan,60970,SEINÄJOEN JALKAPALLOKERHO,3,2,1,1,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,22,4036904,2026-05-30,17:00:00,60969,FC Lahti,60745,Ilves,5,0,3,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,22,4036901,2026-05-30,17:00:00,60756,Kuopion Palloseura,60987,Football Club International Turku,1,1,0,0,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,22,4036905,2026-05-31,16:00:00,60493,Oulun edustusjalkapallo AC Oulu,60974,Fotbollsföreningen JARO Jalkapalloseura,2,1,0,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,24,4036907,2026-06-13,15:00:00,60987,Football Club International Turku,60493,Oulun edustusjalkapallo AC Oulu,0,0,0,0,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,24,4036906,2026-06-13,15:00:00,60745,Ilves,60971,TPS Juniorijalkapallo,1,0,0,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,24,4036909,2026-06-13,17:00:00,60901,Vaasan Palloseura,60756,Kuopion Palloseura,1,1,1,0,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,24,4036908,2026-06-13,17:00:00,60974,Fotbollsföreningen JARO Jalkapalloseura,60731,Helsingin Jalkapalloklubin Liiga-HJK,2,5,2,1,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,24,4036911,2026-06-13,19:00:00,60759,IFK Mariehamn Fotboll,60534,IF Gnistan,0,3,0,2,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,24,4036910,2026-06-13,19:00:00,60969,FC Lahti,60970,SEINÄJOEN JALKAPALLOKERHO,2,3,1,1,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,25,4036912,2026-06-17,18:00:00,60731,Helsingin Jalkapalloklubin Liiga-HJK,60987,Football Club International Turku,3,3,1,2,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,25,4036914,2026-06-17,18:00:00,60971,TPS Juniorijalkapallo,60756,Kuopion Palloseura,1,2,0,1,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,25,4036913,2026-06-17,18:00:00,60745,Ilves,60974,Fotbollsföreningen JARO Jalkapalloseura,5,0,4,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,25,4036917,2026-06-17,21:00:00,60534,IF Gnistan,60969,FC Lahti,1,0,0,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,25,4036916,2026-06-17,21:00:00,60970,SEINÄJOEN JALKAPALLOKERHO,60901,Vaasan Palloseura,1,2,1,0,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,25,4036915,2026-06-18,12:59:00,60493,Oulun edustusjalkapallo AC Oulu,60759,IFK Mariehamn Fotboll,2,1,0,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,26,4036920,2026-06-23,18:00:00,60901,Vaasan Palloseura,60493,Oulun edustusjalkapallo AC Oulu,5,1,3,1,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,26,4036919,2026-06-23,18:00:00,60969,FC Lahti,60971,TPS Juniorijalkapallo,0,0,0,0,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,26,4036918,2026-06-23,18:00:00,60756,Kuopion Palloseura,60745,Ilves,4,3,4,1,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,26,4036922,2026-06-23,19:00:00,60987,Football Club International Turku,60970,SEINÄJOEN JALKAPALLOKERHO,1,1,0,1,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,26,4036921,2026-06-23,19:00:00,60974,Fotbollsföreningen JARO Jalkapalloseura,60534,IF Gnistan,1,1,0,1,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,26,4036923,2026-06-23,20:00:00,60759,IFK Mariehamn Fotboll,60731,Helsingin Jalkapalloklubin Liiga-HJK,0,4,0,1,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,26,4036924,2026-06-27,14:00:00,60745,Ilves,60970,SEINÄJOEN JALKAPALLOKERHO,2,2,0,0,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,26,4036926,2026-06-27,17:00:00,60759,IFK Mariehamn Fotboll,60987,Football Club International Turku,0,2,0,1,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,26,4036925,2026-06-27,17:00:00,60731,Helsingin Jalkapalloklubin Liiga-HJK,60756,Kuopion Palloseura,0,4,0,1,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,26,4036928,2026-06-27,19:00:00,60971,TPS Juniorijalkapallo,60974,Fotbollsföreningen JARO Jalkapalloseura,3,2,1,2,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,26,4036927,2026-06-27,19:00:00,60534,IF Gnistan,60901,Vaasan Palloseura,1,1,1,1,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,26,4036929,2026-06-27,21:00:00,60493,Oulun edustusjalkapallo AC Oulu,60969,FC Lahti,1,1,0,0,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,27,4036932,2026-07-04,15:00:00,60969,FC Lahti,60534,IF Gnistan,1,0,0,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,27,4036934,2026-07-04,17:00:00,60970,SEINÄJOEN JALKAPALLOKERHO,60971,TPS Juniorijalkapallo,3,1,1,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,27,4036933,2026-07-04,17:00:00,60974,Fotbollsföreningen JARO Jalkapalloseura,60745,Ilves,2,1,2,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,27,4036935,2026-07-04,18:00:00,60901,Vaasan Palloseura,60759,IFK Mariehamn Fotboll,4,0,2,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,28,4036938,2026-07-10,19:00:00,60901,Vaasan Palloseura,60970,SEINÄJOEN JALKAPALLOKERHO,1,0,0,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,28,4036939,2026-07-11,15:00:00,60969,FC Lahti,60731,Helsingin Jalkapalloklubin Liiga-HJK,2,0,1,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,28,4036941,2026-07-11,17:00:00,60971,TPS Juniorijalkapallo,60493,Oulun edustusjalkapallo AC Oulu,3,0,3,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,28,4036940,2026-07-11,17:00:00,60534,IF Gnistan,60759,IFK Mariehamn Fotboll,4,2,1,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,29,4036942,2026-07-18,15:00:00,60731,Helsingin Jalkapalloklubin Liiga-HJK,60901,Vaasan Palloseura,2,1,1,0,Played,H
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,29,4036943,2026-07-18,17:00:00,60970,SEINÄJOEN JALKAPALLOKERHO,60756,Kuopion Palloseura,0,2,0,2,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,29,4036944,2026-07-18,17:00:00,60493,Oulun edustusjalkapallo AC Oulu,60534,IF Gnistan,0,2,0,1,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,29,4036945,2026-07-19,18:30:00,60974,Fotbollsföreningen JARO Jalkapalloseura,60987,Football Club International Turku,0,0,0,0,Played,D
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,30,4036946,2026-07-20,18:00:00,60971,TPS Juniorijalkapallo,60745,Ilves,1,3,1,2,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,30,4036947,2026-07-20,19:00:00,60759,IFK Mariehamn Fotboll,60969,FC Lahti,0,2,0,1,Played,A
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,30,4036948,2026-07-24,19:00:00,60974,Fotbollsföreningen JARO Jalkapalloseura,60970,SEINÄJOEN JALKAPALLOKERHO,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,30,4036949,2026-07-25,16:30:00,60759,IFK Mariehamn Fotboll,60493,Oulun edustusjalkapallo AC Oulu,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,30,4036950,2026-07-25,17:00:00,60756,Kuopion Palloseura,60901,Vaasan Palloseura,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,30,4036952,2026-07-26,15:00:00,60987,Football Club International Turku,60534,IF Gnistan,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,30,4036951,2026-07-26,15:00:00,60745,Ilves,60969,FC Lahti,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,30,4036953,2026-07-26,17:00:00,60731,Helsingin Jalkapalloklubin Liiga-HJK,60971,TPS Juniorijalkapallo,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,31,4036954,2026-08-01,15:00:00,60971,TPS Juniorijalkapallo,60759,IFK Mariehamn Fotboll,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,31,4036957,2026-08-01,18:00:00,60969,FC Lahti,60974,Fotbollsföreningen JARO Jalkapalloseura,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,31,4036958,2026-08-01,19:00:00,60534,IF Gnistan,60756,Kuopion Palloseura,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,31,4036956,2026-08-02,15:00:00,60901,Vaasan Palloseura,60987,Football Club International Turku,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,31,4036955,2026-08-02,17:00:00,60493,Oulun edustusjalkapallo AC Oulu,60745,Ilves,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,32,4036959,2026-08-03,19:00:00,60970,SEINÄJOEN JALKAPALLOKERHO,60731,Helsingin Jalkapalloklubin Liiga-HJK,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,32,4036960,2026-08-07,19:00:00,60970,SEINÄJOEN JALKAPALLOKERHO,60534,IF Gnistan,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,32,4036961,2026-08-08,15:00:00,60493,Oulun edustusjalkapallo AC Oulu,60731,Helsingin Jalkapalloklubin Liiga-HJK,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,32,4036964,2026-08-08,17:00:00,60987,Football Club International Turku,60969,FC Lahti,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,32,4036963,2026-08-08,17:00:00,60745,Ilves,60759,IFK Mariehamn Fotboll,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,32,4036962,2026-08-08,17:00:00,60756,Kuopion Palloseura,60971,TPS Juniorijalkapallo,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,32,4036965,2026-08-08,19:00:00,60974,Fotbollsföreningen JARO Jalkapalloseura,60901,Vaasan Palloseura,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,33,4036966,2026-08-14,18:00:00,60901,Vaasan Palloseura,60971,TPS Juniorijalkapallo,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,33,4036967,2026-08-15,15:00:00,60969,FC Lahti,60756,Kuopion Palloseura,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,33,4036968,2026-08-15,17:00:00,60493,Oulun edustusjalkapallo AC Oulu,60987,Football Club International Turku,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,33,4036969,2026-08-15,19:00:00,60759,IFK Mariehamn Fotboll,60970,SEINÄJOEN JALKAPALLOKERHO,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,33,4036970,2026-08-16,16:00:00,60731,Helsingin Jalkapalloklubin Liiga-HJK,60974,Fotbollsföreningen JARO Jalkapalloseura,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,34,4036971,2026-08-17,18:00:00,60534,IF Gnistan,60745,Ilves,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,34,4036972,2026-08-21,19:00:00,60970,SEINÄJOEN JALKAPALLOKERHO,60969,FC Lahti,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,34,4036973,2026-08-22,14:00:00,60971,TPS Juniorijalkapallo,60987,Football Club International Turku,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,34,4036976,2026-08-22,17:00:00,60745,Ilves,60901,Vaasan Palloseura,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,34,4036975,2026-08-22,17:00:00,60756,Kuopion Palloseura,60759,IFK Mariehamn Fotboll,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,34,4036974,2026-08-22,17:00:00,60974,Fotbollsföreningen JARO Jalkapalloseura,60493,Oulun edustusjalkapallo AC Oulu,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,34,4036977,2026-08-23,15:00:00,60731,Helsingin Jalkapalloklubin Liiga-HJK,60534,IF Gnistan,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,36,4036979,2026-08-31,19:00:00,60901,Vaasan Palloseura,60969,FC Lahti,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,36,4036978,2026-08-31,19:00:00,60759,IFK Mariehamn Fotboll,60974,Fotbollsföreningen JARO Jalkapalloseura,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,36,4036980,2026-08-31,19:00:00,60987,Football Club International Turku,60756,Kuopion Palloseura,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,36,4036981,2026-08-31,19:00:00,60534,IF Gnistan,60971,TPS Juniorijalkapallo,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,36,4036983,2026-08-31,19:00:00,60745,Ilves,60731,Helsingin Jalkapalloklubin Liiga-HJK,,,,,Fixture,
+2026,VL,Veikkausliiga (M1),spljp26,1,Runkosarja,36,4036982,2026-08-31,19:00:00,60493,Oulun edustusjalkapallo AC Oulu,60970,SEINÄJOEN JALKAPALLOKERHO,,,,,Fixture,
