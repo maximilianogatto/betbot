@@ -2946,6 +2946,47 @@ async def unlink_league_command(update: Update, context: ContextTypes.DEFAULT_TY
     )
 
 
+async def undo_league_merge_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Botón «Estuvo mal, separalas» del aviso de unificación automática.
+
+    Deshace el merge que acaba de hacer el learner y graba el bloqueo para que no
+    las vuelva a pegar. callback_data: `undomrg:<into_id>:<comp_ids separados por coma>`.
+    """
+    query = update.callback_query
+    if query is None:
+        return
+    await query.answer()
+
+    try:
+        _, into_raw, ids_raw = (query.data or "").split(":", 2)
+        into_id = int(into_raw)
+        moved_ids = [int(x) for x in ids_raw.split(",") if x.strip()]
+    except (ValueError, AttributeError):
+        await query.edit_message_text("No pude interpretar ese botón. Usá /unlink_league.")
+        return
+
+    tracking_service = context.application.bot_data.get(TRACKING_SERVICE_KEY)
+    if not isinstance(tracking_service, TrackingService):
+        return
+
+    result = await asyncio.to_thread(
+        tracking_service.undo_league_merge, moved_ids, into_id, ""
+    )
+    if not result["moved"]:
+        await query.edit_message_text(
+            "⚠️ No encontré esas competencias (quizá ya las separaste). Mirá /leagues."
+        )
+        return
+
+    await query.edit_message_text(
+        "↩️ <b>Deshecho.</b> Separé "
+        f"<b>{result['moved']}</b> plataforma/s en su propia liga.\n"
+        f"🔒 No las voy a volver a unificar automáticamente ({result['blocked']} bloqueo/s).\n\n"
+        "Si en realidad iban juntas, unilas a mano con <code>/link_league</code>.",
+        parse_mode=ParseMode.HTML,
+    )
+
+
 async def relink_leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle /relink_leagues: re-unify split leagues by canonical (normalized) name."""
     del context
@@ -3907,6 +3948,9 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("league", league_command))
     application.add_handler(CommandHandler("link_league", link_league_command))
     application.add_handler(CommandHandler("unlink_league", unlink_league_command))
+    application.add_handler(
+        CallbackQueryHandler(undo_league_merge_callback, pattern="^undomrg:")
+    )
     application.add_handler(CommandHandler("relink_leagues", relink_leagues_command))
     application.add_handler(CommandHandler("reminders_league", reminders_league_command))
     application.add_handler(CommandHandler("reminders_match", reminders_match_command))

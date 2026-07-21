@@ -19,7 +19,7 @@ import json
 import logging
 import time
 
-from telegram import Bot
+from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.constants import ParseMode
 
 from bot.alerts import (
@@ -1022,6 +1022,9 @@ class TrackingService:
                 except ValueError:
                     continue
                 merged_away.add(source_id)
+                # Las competencias que venían de la liga fusionada: se guardan ANTES
+                # de mezclarlas en el target para poder deshacer el merge después.
+                moved_competition_ids = [c.id for c in comps_by_unified.get(source_id, ())]
                 events_by_unified[target_id].extend(events_by_unified[source_id])
                 comps_by_unified.setdefault(target_id, []).extend(
                     comps_by_unified.get(source_id, ())
@@ -1031,6 +1034,7 @@ class TrackingService:
                     "into_name": league_names.get(target_id, str(target_id)),
                     "from_name": league_names.get(source_id, str(source_id)),
                     "matches": coincidences,
+                    "moved_competition_ids": moved_competition_ids,
                 })
                 logger.info(
                     "League learning: merged unified %s («%s») into %s («%s») on %s coinciding matches.",
@@ -1118,6 +1122,41 @@ class TrackingService:
                 break
         return count
 
+    def undo_league_merge(
+        self,
+        moved_competition_ids: list[int],
+        into_id: int,
+        league_name: str,
+    ) -> dict:
+        """Deshace una unificación automática: separa las competencias que venían de
+        la liga fusionada y bloquea que el learner las vuelva a pegar.
+
+        El orden importa: primero se mueven a la liga nueva y RECIÉN AHÍ se graban los
+        bloqueos contra `into_id`. Así quedan bloqueadas contra las que se quedaron,
+        pero NO entre ellas (venían juntas y deben seguir juntas).
+        """
+        repository = self.repository
+        existing = [
+            comp for comp in (repository.get_tracked_competition(cid) for cid in moved_competition_ids)
+            if comp is not None
+        ]
+        if not existing:
+            return {"moved": 0, "blocked": 0, "unified_id": None}
+
+        new_unified_id = repository.create_unified_competition(league_name or existing[0].competition_name)
+        for comp in existing:
+            repository.link_tracked_competition_to_unified(comp.id, new_unified_id)
+
+        blocked = 0
+        for comp in existing:
+            blocked += repository.block_unlinked_competition(comp.id, into_id)
+
+        logger.info(
+            "League learning UNDO: separadas %s competencias de unified %s a %s (%s bloqueos).",
+            len(existing), into_id, new_unified_id, blocked,
+        )
+        return {"moved": len(existing), "blocked": blocked, "unified_id": new_unified_id}
+
     async def learn_and_notify_league_merges(self, bot: Bot) -> None:
         """Run league-merge learning and tell the merged league's subscribers."""
 
@@ -1137,11 +1176,24 @@ class TrackingService:
             text = (
                 f"🧠 Aprendí: «{merge['from_name']}» es la misma liga que «{merge['into_name']}» "
                 f"({merge['matches']} partidos coincidentes en otra plataforma) — las unifiqué.\n"
-                "Heredás sus links de odds y stats. Si está mal, separala con /unlink_league."
+                "Heredás sus links de odds y stats."
             )
+            # Botón para deshacer en el momento (y bloquear el re-merge). El
+            # callback_data de Telegram admite 64 bytes: si no entran todos los ids,
+            # se cae al /unlink_league manual.
+            reply_markup = None
+            moved_ids = merge.get("moved_competition_ids") or []
+            if moved_ids:
+                payload = f"undomrg:{merge['into_id']}:{','.join(str(i) for i in moved_ids)}"
+                if len(payload.encode()) <= 60:
+                    reply_markup = InlineKeyboardMarkup(
+                        [[InlineKeyboardButton("↩️ Estuvo mal, separalas", callback_data=payload)]]
+                    )
+            if reply_markup is None:
+                text += "\nSi está mal, separala con /unlink_league."
             for chat_id in sorted(chats):
                 try:
-                    await bot.send_message(chat_id=chat_id, text=text)
+                    await bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
                 except Exception:
                     logger.warning("Could not notify chat %s about a league merge.", chat_id)
 
