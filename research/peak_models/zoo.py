@@ -11,7 +11,8 @@ import pandas as pd
 
 from research.peak_models import loader
 from research.peak_models.evaluate import ORDER, PCOLS
-from research.peak_models.models import fit_poisson, predict_probs
+from research.peak_models.models import (fit_poisson, fit_poisson_hier,
+                                         predict_probs, predict_probs_hier)
 
 _GLOBAL_FALLBACK = np.array([0.42, 0.26, 0.32])  # sane Finland-ish prior
 
@@ -83,6 +84,30 @@ def point_in_time_ppg(matches: pd.DataFrame) -> pd.DataFrame:
     feat = matches.merge(home, on="match_id").merge(away, on="match_id")
     feat["delta_ppg"] = feat["ppg_home"] - feat["ppg_away"]
     return feat
+
+
+# ------------------------------------------------- jerárquico multi-liga
+
+def make_hier(league_cluster: dict[str, str], **params):
+    """Wrapper del MAP jerárquico (un solo fit conjunto por semana)."""
+
+    def model(train: pd.DataFrame, rows: pd.DataFrame) -> pd.DataFrame:
+        rates, glob = league_rates(train)
+        cutoff = rows["date"].min().normalize()
+        fit = fit_poisson_hier(train, asof=cutoff, league_cluster=league_cluster,
+                               **params)
+        out = []
+        for r in rows.itertuples():
+            if fit is None:
+                out.append(rates.loc[r.league_code].to_numpy()
+                           if r.league_code in rates.index else glob)
+                continue
+            p = predict_probs_hier(fit, f"{r.country}|{r.home_team_id}",
+                                   f"{r.country}|{r.away_team_id}", r.league_code)
+            out.append([p["p_home"], p["p_draw"], p["p_away"]])
+        return pd.DataFrame(np.array(out, dtype=float), columns=PCOLS)
+
+    return model
 
 
 # ------------------------------- G0b: histograma binneado sobre Δposición
