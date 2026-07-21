@@ -14,6 +14,10 @@ from core.models import (
     SmallChangeRecord,
     TrackedCompetition,
 )
+from core.match_identity import (  # dominio: identidad/agrupado de partidos
+    group_events_by_physical_match,
+    physical_match_similarity,
+)
 
 if TYPE_CHECKING:
     from monitors.models import MarketChangeDetail, SubscriptionOddsAlert
@@ -332,57 +336,10 @@ def build_match_card_message(
     return "\n".join(lines)
 
 
-def _physical_match_similarity(event_a: ActiveEventRecord, event_b: ActiveEventRecord) -> float:
-    from datetime import datetime
-
-    def parse_dt(dt_val):
-        if not dt_val:
-            return None
-        if isinstance(dt_val, datetime):
-            parsed = dt_val
-        else:
-            try:
-                parsed = datetime.fromisoformat(dt_val.strip())
-            except ValueError:
-                return None
-
-        if parsed.tzinfo is None:
-            parsed = parsed.replace(tzinfo=timezone.utc)
-        return parsed.astimezone(timezone.utc)
-
-    dt_a = parse_dt(event_a.scheduled_at)
-    dt_b = parse_dt(event_b.scheduled_at)
-    if dt_a and dt_b:
-        diff_hours = abs((dt_a - dt_b).total_seconds()) / 3600.0
-        if diff_hours > 3.0:
-            return 0.0
-
-    from core.league_naming import team_name_similarity
-    home_sim = team_name_similarity(event_a.home, event_b.home)
-    away_sim = team_name_similarity(event_a.away, event_b.away)
-    
-    if home_sim >= 0.70 and away_sim >= 0.70:
-        avg_score = (home_sim + away_sim) / 2.0
-        if avg_score >= 0.80:
-            return avg_score
-            
-    return 0.0
-
-
-def group_events_by_physical_match(events: list[ActiveEventRecord]) -> list[list[ActiveEventRecord]]:
-    """Group events from different platforms representing the same physical match."""
-    groups: list[list[ActiveEventRecord]] = []
-    for event in events:
-        placed = False
-        for group in groups:
-            representative = group[0]
-            if _physical_match_similarity(representative, event) >= 0.80:
-                group.append(event)
-                placed = True
-                break
-        if not placed:
-            groups.append([event])
-    return groups
+# La identidad física de partidos es DOMINIO, no presentación: vive en
+# `core/match_identity.py` (PR2-E3). Se re-exporta acá por compatibilidad con los
+# handlers que ya la importaban desde este módulo.
+_physical_match_similarity = physical_match_similarity
 
 
 def build_comparison_match_card_message(
