@@ -1089,7 +1089,7 @@ class TrackingService:
         entre ligas distintas que casualmente comparten nombres de equipos).
         """
 
-        from bot.alerts import _physical_match_similarity
+        from core.match_identity import physical_match_similarity as _physical_match_similarity
 
         def _parse(raw):
             try:
