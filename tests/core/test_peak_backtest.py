@@ -3,13 +3,13 @@ from __future__ import annotations
 import itertools
 import unittest
 
-from monitors.peak_backtest import (
+from services.peak_backtest import (
     BacktestRow,
     build_model_at,
     run_backtest_on_matches,
     summarize,
 )
-from monitors.peak_model import PastMatch
+from services.peak_model import PastMatch
 
 
 def _gen_season(reps: int = 4) -> list[PastMatch]:

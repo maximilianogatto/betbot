@@ -163,5 +163,5 @@ Próximos (ver `../PROTOCOLO_INVESTIGACION.md`):
    Noruega/Suecia/Islandia.
 3. Métricas económicas (ROI/CLV) cuando la Fase 0 (archivado de cuotas) acumule.
 
-> El backtest del bot (`monitors/peak_backtest.py` en main) ya hace el walk-forward
+> El backtest del bot (`services/peak_backtest.py` en main) ya hace el walk-forward
 > point-in-time del modelo heurístico actual: úsalo como vara de comparación.

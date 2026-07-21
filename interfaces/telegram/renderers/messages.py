@@ -8,7 +8,10 @@ from html import escape
 import json
 from typing import TYPE_CHECKING
 
+from services.models import CommandResult, RefreshSummary
+
 from core.timezones import current_display_timezone
+from core.formatting import format_duration
 from core.models import (
     ActiveEventRecord,
     SmallChangeRecord,
@@ -20,7 +23,7 @@ from core.match_identity import (  # dominio: identidad/agrupado de partidos
 )
 
 if TYPE_CHECKING:
-    from monitors.models import MarketChangeDetail, SubscriptionOddsAlert
+    from services.models import MarketChangeDetail, SubscriptionOddsAlert
 
 MAX_GROUPED_ALERT_ITEMS = 10
 TELEGRAM_SAFE_MESSAGE_LIMIT = 3900
@@ -1065,3 +1068,239 @@ def _format_all_goal_lines(selections: list[dict[str, Any]]) -> list[str]:
             lines_output.append(f"• {', '.join(parts)}")
 
     return lines_output
+
+
+# format_duration vive en core/formatting.py (única implementación).
+
+
+def build_platforms_message(platforms: list[Any]) -> CommandResult:
+    """Build the `/platforms` response from the extractor registry."""
+    if not platforms:
+        return CommandResult(
+            ok=True,
+            message="No hay plataformas registradas en este momento.",
+        )
+
+    lines = ["🌐 Plataformas disponibles"]
+
+    for platform in platforms:
+        lines.append("")
+        prefix = "✅" if platform.implemented else "⚪️"
+        lines.append(f"{prefix} {platform.display_name}")
+        lines.append(f"Key: {platform.key}")
+        if platform.domains:
+            lines.append(f"Dominios: {', '.join(platform.domains)}")
+        if platform.supports:
+            lines.append(f"Soporta: {', '.join(platform.supports)}")
+
+    return CommandResult(ok=True, message="\n".join(lines))
+
+
+def build_tracks_list_message(tracked_leagues: list[Any]) -> CommandResult:
+    """Build the `/list_tracks` response using tracked subscriptions."""
+    if not tracked_leagues:
+        return CommandResult(
+            ok=True,
+            message=(
+                "No tenés ligas trackeadas todavía.\n"
+                "Usá /track_url <url_de_plataforma> y después /confirm_track."
+            ),
+        )
+
+    lines = ["Ligas trackeadas:"]
+    current_platform: str | None = None
+    visible_index = 0
+
+    for item in tracked_leagues:
+        platform_name = item.tracked_league.platform_display_name
+
+        if platform_name != current_platform:
+            if current_platform is not None:
+                lines.append("")
+            lines.append(f"🌐 {platform_name}")
+            current_platform = platform_name
+
+        visible_index += 1
+        lines.append(
+            f"{visible_index}. {item.tracked_league.league_name} | "
+            f"enabled={'on' if item.subscription.enabled else 'off'} | "
+            f"odds={'on' if item.subscription.notify_odds_changes else 'off'} | "
+            f"threshold={item.subscription.change_percent_threshold:.1f}%"
+        )
+
+    return CommandResult(ok=True, message="\n".join(lines))
+
+
+def build_refresh_summary_message(summary: RefreshSummary) -> CommandResult:
+    """Build the user-facing summary for `/refresh_tracks` or monitor logs."""
+    if summary.tracks_requested == 0:
+        return CommandResult(
+            ok=True,
+            message=(
+                "No tenés ligas trackeadas todavía.\n"
+                "Usá /track_url <url_de_plataforma> y después /confirm_track."
+                f"\n\n⏱️ Tiempo total: {format_duration(summary.elapsed_seconds)}"
+            ),
+        )
+
+    lines = [
+        "Refresh completado." if not summary.failed_leagues else "Refresh completado con errores.",
+        f"Ligas intentadas: {summary.tracks_requested}",
+        f"Ligas actualizadas: {summary.tracks_refreshed}",
+        f"Partidos activos guardados: {summary.active_matches}",
+        f"Nuevos eventos detectados: {summary.new_events}",
+        f"Cambios de odds detectados: {summary.odds_changes}",
+    ]
+
+    if summary.failed_leagues:
+        lines.append(
+            f"Ligas con problemas ({len(summary.failed_leagues)}): {', '.join(summary.failed_leagues)}"
+        )
+    if summary.degraded_leagues:
+        lines.append(
+            f"Ligas degradadas ({len(summary.degraded_leagues)}): {', '.join(summary.degraded_leagues)}"
+        )
+    lines.append(f"⏱️ Tiempo total: {format_duration(summary.elapsed_seconds)}")
+
+    return CommandResult(ok=True, message="\n".join(lines))
+
+
+def build_pending_confirmation_message(pending_request: Any) -> str:
+    """Build the Telegram message shown after `/track_url` succeeds."""
+    return (
+        f"Encontré la liga {pending_request.league_name}.\n"
+        f"🌐 Plataforma: {pending_request.platform_display_name}\n"
+        f"🔑 Key: {pending_request.platform}\n"
+        f"🏷️ Competencia: {pending_request.topic}\n"
+        "Respondé /confirm_track para agregarla al tracking."
+    )
+
+
+def build_empty_pending_confirmation_message(pending_request: Any) -> str:
+    """Build the Telegram message shown after detecting a valid empty league."""
+    return (
+        "⚠️ La liga fue detectada, pero actualmente no tiene partidos o cuotas disponibles.\n\n"
+        f"Liga: {pending_request.league_name}\n"
+        f"Plataforma: {pending_request.platform_display_name}\n"
+        f"URL: {pending_request.url}\n\n"
+        "¿Querés almacenarla igual para empezar a trackearla?\n"
+        "Respondé:\n"
+        "- /confirm_empty_track para guardarla igualmente\n"
+        "- /cancel para cancelar"
+    )
+
+
+def build_confirmation_message(
+    confirmed_request: Any,
+    *,
+    bootstrap_count: int | None,
+    bootstrap_error: str | None,
+    repository: Any = None,
+) -> str:
+    """Build the Telegram message shown after `/confirm_track`."""
+    tracked_league = confirmed_request.tracked_league
+    subscription = confirmed_request.subscription
+
+    lines = [
+        "✅ Liga trackeada",
+        f"🌐 Plataforma: {tracked_league.platform_display_name}",
+        f"🏷️ Liga: {tracked_league.league_name}",
+        f"🔑 Competencia: {tracked_league.topic}",
+        "",
+        "📈 Notificaciones de cambios de cuotas: "
+        f"{'activadas' if subscription.notify_odds_changes else 'desactivadas'}",
+        f"🎯 {'Threshold por defecto' if confirmed_request.subscription_created else 'Threshold configurado'}: "
+        f"{subscription.change_percent_threshold:.1f}%",
+    ]
+
+    if bootstrap_count is not None:
+        lines.append(f"Estado inicial guardado: {bootstrap_count} partidos activos.")
+
+    if bootstrap_error is not None:
+        lines.append(
+            "No pude guardar el estado inicial ahora mismo. "
+            "El monitor lo volverá a intentar automáticamente."
+        )
+
+    if repository is not None:
+        lines.extend(build_known_league_lines(tracked_league, repository))
+
+    return "\n".join(lines)
+
+
+def build_known_league_lines(tracked_league: Any, repository: Any) -> list[str]:
+    """Registry card: what the bot already knows about this unified league."""
+    unified_id = getattr(tracked_league, "unified_competition_id", None)
+    if unified_id is None:
+        return []
+    try:
+        siblings = repository.list_tracked_competitions_for_unified(unified_id)
+        stats_links = repository.list_stats_league_links(tracked_league.id)
+    except Exception:
+        return []
+    others = [s for s in siblings if s.id != tracked_league.id]
+    lines: list[str] = []
+    if others or stats_links:
+        lines.append("")
+        lines.append("✨ Liga conocida en el registro — heredás automáticamente:")
+        for sibling in others:
+            lines.append(f"  🏦 {sibling.platform}: {sibling.league_name}")
+        for link in stats_links:
+            lines.append(f"  📊 {link.stats_provider}: {link.stats_league_name}")
+    lines.extend(build_merge_suggestion_lines(tracked_league, unified_id, repository))
+    return lines
+
+
+def build_merge_suggestion_lines(
+    tracked_league: Any,
+    unified_id: int,
+    repository: Any,
+) -> list[str]:
+    """Suggest leagues that look similar, for the user to confirm."""
+    try:
+        suggestions = repository.suggest_similar_unified(
+            tracked_league.league_name, exclude_unified_id=unified_id
+        )
+    except Exception:
+        return []
+    if not suggestions:
+        return []
+    lines = ["", "💡 ¿Es la misma liga que alguna de estas? (NO las uní automáticamente)"]
+    for s in suggestions:
+        lines.append(f"  • {s['name']}")
+    lines.append("Si coincide, fusionalas con /link_league (mirá /leagues para los números).")
+    return lines
+
+
+def build_empty_confirmation_message(
+    confirmed_request: Any,
+    *,
+    repository: Any = None,
+) -> str:
+    """Build the Telegram message shown after confirming an empty league."""
+    tracked_league = confirmed_request.tracked_league
+    subscription = confirmed_request.subscription
+
+    lines = [
+        "✅ Liga trackeada",
+        f"🌐 Plataforma: {tracked_league.platform_display_name}",
+        f"🏷️ Liga: {tracked_league.league_name}",
+        f"🔑 Competencia: {tracked_league.topic}",
+        "",
+        "📈 Notificaciones de cambios de cuotas: "
+        f"{'activadas' if subscription.notify_odds_changes else 'desactivadas'}",
+        f"🎯 {'Threshold por defecto' if confirmed_request.subscription_created else 'Threshold configurado'}: "
+        f"{subscription.change_percent_threshold:.1f}%",
+        "",
+        "La liga quedó guardada aunque todavía no tenga partidos activos.",
+    ]
+
+    if tracked_league.needs_name_resolution:
+        lines.append(
+            "Se usó un nombre provisorio y se reemplazará automáticamente cuando la plataforma muestre eventos reales."
+        )
+
+    if repository is not None:
+        lines.extend(build_known_league_lines(tracked_league, repository))
+
+    return "\n".join(lines)

@@ -14,7 +14,7 @@ from core.registry import ExtractorRegistry
 from extractors import register_default_extractors
 from extractors.xbet_http.client import build_champ_url, build_game_url
 from extractors.xbet_http import XBetHttpExtractor, XBetHttpSettings
-from monitors.tracking import TrackingService
+from services.tracking import TrackingService
 from adapters.storage import SqliteStorage
 from adapters.storage.connection import open_connection
 from adapters.storage.schema import initialize_schema

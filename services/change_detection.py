@@ -8,7 +8,7 @@ import hashlib
 import json
 from typing import Any
 
-from monitors.models import MarketChangeDetail, SubscriptionOddsAlert
+from services.models import MarketChangeDetail, SubscriptionOddsAlert
 from core.models import (
     ActiveEventRecord,
     CompetitionSubscription,

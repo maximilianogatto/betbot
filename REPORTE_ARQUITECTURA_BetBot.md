@@ -202,7 +202,7 @@ Para garantizar un código limpio, legible y con responsabilidades acotadas, rea
 | Archivo Original | Líneas Actuales | Destino Hexagonal | Método de División |
 | :--- | :--- | :--- | :--- |
 | **`storage/tracking_repository.py`** | ~6063 | `adapters/storage/*.py` | Se divide por agregado en archivos dedicados: `competitions.py`, `events.py`, `subscriptions.py`, `baselines.py`, `stats_links.py`, `live_watch.py` y `maintenance.py`. Se unifica la lógica en `connection.py`. |
-| **`monitors/tracking.py`** | ~2244 | `services/tracking.py` | Se extrae la persistencia a los puertos de base de datos, el renderizado de texto a `interfaces/telegram/renderers/` y la publicación de alertas al `EventBus`. El servicio se reduce a ~300 líneas de orquestación pura. |
+| **`services/tracking.py`** | ~2244 | `services/tracking.py` | Se extrae la persistencia a los puertos de base de datos, el renderizado de texto a `interfaces/telegram/renderers/` y la publicación de alertas al `EventBus`. El servicio se reduce a ~300 líneas de orquestación pura. |
 | **`bot/special_leagues.py`** | ~3144 | `services/peak/*` y `interfaces/telegram/renderers/` | Se extrae la lógica matemática de scoring y procesamiento de picos al Core (`services/peak/`), y el formateo HTML de reportes a renderers de Telegram. |
 | **`bot/alerts.py`** y `build_*` | ~1105 | `interfaces/telegram/renderers/` | Funciones puras que reciben DTOs del Core y los transforman a HTML o Markdown para su envío a Telegram. |
 | **`bot/handlers/*.py`** | Varios | `interfaces/telegram/handlers/*.py` | Manejadores del bot finos y de baja complejidad que solo parsean inputs, invocan al servicio del Core, pasan el resultado al renderer y envían. |

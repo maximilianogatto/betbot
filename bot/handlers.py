@@ -47,7 +47,7 @@ from core.timezones import (
 )
 from core.stats_models import MatchIdentityCandidate, StatsLeagueOption, StatsProviderDescriptor
 from monitoring import format_system_metrics_message, get_system_metrics
-from monitors.stats import (
+from services.stats import (
     ExplorableStatsLeague,
     StatsService,
     render_league_fixtures,
@@ -55,7 +55,7 @@ from monitors.stats import (
     render_team_row,
     render_top_scorers,
 )
-from monitors.tracking import CommandResult, TrackingService
+from services.tracking import CommandResult, TrackingService
 from core.models import (
     ActiveEventRecord,
     TrackedCompetitionSubscription,
@@ -303,7 +303,7 @@ def get_stats_service(context: ContextTypes.DEFAULT_TYPE) -> StatsService:
 def get_live_watch_service(context: ContextTypes.DEFAULT_TYPE):
     """Retrieve the shared live-watch service from the application."""
 
-    from monitors.live_watch import LiveWatchService
+    from services.live_watch import LiveWatchService
 
     service = context.application.bot_data.get("live_watch_service")
     if not isinstance(service, LiveWatchService):
@@ -535,7 +535,7 @@ async def import_sheet_command(update: Update, context: ContextTypes.DEFAULT_TYP
 
     import os
     import httpx
-    from monitors.live_watch import parse_sheet_fixture_lines, sheet_timezone
+    from services.live_watch import parse_sheet_fixture_lines, sheet_timezone
 
     url = os.getenv(
         "LIVE_WATCH_SHEET_URL",
@@ -992,7 +992,7 @@ async def view_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
         
         if best_match is not None:
             score, event = best_match
-            from monitors.live_watch import _event_live_state
+            from services.live_watch import _event_live_state
             current_state = _event_live_state(event)
             service.repository.update_live_watch_platform_state(
                 entry.id,
@@ -1996,7 +1996,15 @@ async def track_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         custom_name=custom_name,
     )
 
-    await reply_with_result(update, result)
+    if result.ok and getattr(result, "data", None) is not None:
+        from interfaces.telegram.renderers import build_pending_confirmation_message, build_empty_pending_confirmation_message
+        if result.data.requires_empty_confirmation:
+            msg = build_empty_pending_confirmation_message(result.data)
+        else:
+            msg = build_pending_confirmation_message(result.data)
+        await _reply_text_chunks(update.message, msg)
+    else:
+        await reply_with_result(update, result)
 
 
 async def bulk_track_message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -2767,7 +2775,16 @@ async def confirm_track_command(update: Update, context: ContextTypes.DEFAULT_TY
     tracking_service = get_tracking_service(context)
     result = await tracking_service.confirm_pending_track(update.effective_chat.id)
 
-    await reply_with_result(update, result)
+    if result.ok and getattr(result, "data", None) is not None:
+        from interfaces.telegram.renderers import build_confirmation_message
+        msg = build_confirmation_message(
+            result.data["confirmed_request"],
+            bootstrap_count=result.data["bootstrap_count"],
+            bootstrap_error=result.data["bootstrap_error"],
+        )
+        await _reply_text_chunks(update.message, msg)
+    else:
+        await reply_with_result(update, result)
 
 
 async def confirm_empty_track_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -2781,7 +2798,12 @@ async def confirm_empty_track_command(update: Update, context: ContextTypes.DEFA
     tracking_service = get_tracking_service(context)
     result = await tracking_service.confirm_empty_pending_track(update.effective_chat.id)
 
-    await reply_with_result(update, result)
+    if result.ok and getattr(result, "data", None) is not None:
+        from interfaces.telegram.renderers import build_empty_confirmation_message
+        msg = build_empty_confirmation_message(result.data["confirmed_request"])
+        await _reply_text_chunks(update.message, msg)
+    else:
+        await reply_with_result(update, result)
 
 
 async def list_tracks_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -2793,7 +2815,10 @@ async def list_tracks_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     logger.info("Comando /list_tracks recibido.")
 
     tracking_service = get_tracking_service(context)
-    result = tracking_service.build_tracks_list_message(update.effective_chat.id)
+    tracked_leagues = tracking_service.list_confirmed_tracks(update.effective_chat.id)
+
+    from interfaces.telegram.renderers import build_tracks_list_message
+    result = build_tracks_list_message(tracked_leagues)
 
     await reply_with_result(update, result)
     await update.message.reply_text(
@@ -3121,12 +3146,40 @@ async def competition_url_command(update: Update, context: ContextTypes.DEFAULT_
         return
 
     tracking_service = get_tracking_service(context)
-    result = tracking_service.build_competition_url_message(
-        update.effective_chat.id,
-        track_number,
+    tracked_leagues = tracking_service.list_confirmed_tracks(update.effective_chat.id)
+    if track_number > len(tracked_leagues):
+        await update.message.reply_text("No encontré ese número de liga en /list_tracks.", parse_mode=ParseMode.HTML)
+        return
+
+    tracked_subscription = tracked_leagues[track_number - 1]
+    extractor = tracking_service.extractor_registry.get_for_platform(
+        tracked_subscription.tracked_league.platform
     )
 
-    await _reply_text_chunks(update.message, result.message, parse_mode=ParseMode.HTML)
+    import json
+    def _loads_json(v):
+        try:
+            return json.loads(v) if v else None
+        except Exception:
+            return None
+
+    competition_url = extractor.build_competition_url(
+        competition_external_id=tracked_subscription.tracked_league.competition_external_id,
+        source_url=tracked_subscription.tracked_league.source_url,
+        metadata=_loads_json(tracked_subscription.tracked_league.metadata_json),
+    )
+
+    if not competition_url:
+        await update.message.reply_text("⚠️ Esta plataforma no soporta links directos a competiciones.", parse_mode=ParseMode.HTML)
+        return
+
+    from interfaces.telegram.renderers import build_competition_url_message
+    message = build_competition_url_message(
+        tracked_subscription.tracked_league,
+        competition_url,
+    )
+
+    await _reply_text_chunks(update.message, message, parse_mode=ParseMode.HTML)
 
 
 async def update_track_url_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -3188,14 +3241,21 @@ async def refresh_tracks_command(update: Update, context: ContextTypes.DEFAULT_T
     async def run_manual_refresh() -> None:
         try:
             summary = await tracking_service.refresh_chat_tracks(update.effective_chat.id)
-            await tracking_service.dispatch_notifications(
+
+            from interfaces.telegram.notifications import dispatch_tracking_notifications
+            from adapters.storage import get_storage
+            from interfaces.telegram.renderers import build_refresh_summary_message
+
+            repository = get_storage()
+            await dispatch_tracking_notifications(
                 context.bot,
                 summary,
+                repository,
                 notify_failures=True,
                 force_unavailable_warnings=True,
                 unavailable_warning_chat_id=update.effective_chat.id,
             )
-            summary_result = tracking_service.build_refresh_summary_message(summary)
+            summary_result = build_refresh_summary_message(summary)
             await _send_text_chunks(
                 context.bot,
                 update.effective_chat.id,
@@ -4928,7 +4988,7 @@ def _swe_resolve_comp_for_teams(client, home: str, away: str) -> str | None:
     the known leagues' standings and match by normalised team name.
     """
 
-    from monitors.special_peak import _norm_team
+    from services.special_peak import _norm_team
 
     h, a = _norm_team(home), _norm_team(away)
     if not h or not a:
@@ -5376,7 +5436,7 @@ async def peak_today_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
     import asyncio as _asyncio
 
-    from monitors.special_peak import build_peak_scores, render_peak_digest
+    from services.special_peak import build_peak_scores, render_peak_digest
     from stats_providers.palloliitto.api_client import PalloliittoAPI
     from stats_providers.svenskfotboll_http.client import SvenskfotbollHTTPClient
 
@@ -5456,7 +5516,7 @@ def filter_peaks(scores: list[SpecialMatchScore], market: str) -> list[SpecialMa
     return scores
 
 def render_filtered_peak_digest(scores: list[SpecialMatchScore], market: str) -> str:
-    from monitors.special_peak import current_display_timezone, tz_offset_label
+    from services.special_peak import current_display_timezone, tz_offset_label
     
     tz = current_display_timezone()
     date_label = date.today().strftime("%d/%m/%Y")
@@ -5487,14 +5547,14 @@ def render_filtered_peak_digest(scores: list[SpecialMatchScore], market: str) ->
     
     if peaks:
         lines.append("⭐ *PEAKS (listos para apostar / vigilar):*")
-        from monitors.special_peak import _render_entry
+        from services.special_peak import _render_entry
         for score in peaks:
             lines.extend(_render_entry(score, tz))
         lines.append("")
         
     if rest:
         lines.append("📋 *Resto del radar:*")
-        from monitors.special_peak import _kickoff_label_for_display
+        from services.special_peak import _kickoff_label_for_display
         for score in rest:
             lines.append(
                 f"  {score.badge} *{score.score_int}/10* · `{_kickoff_label_for_display(score, tz)}` "
@@ -5517,7 +5577,7 @@ async def peaks_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
             "🎯 Analizando partidos de ligas especiales del día (Finlandia 🇫🇮 + Suecia 🇸🇪)..."
         )
         import asyncio
-        from monitors.special_peak import build_peak_scores
+        from services.special_peak import build_peak_scores
         from stats_providers.palloliitto.api_client import PalloliittoAPI
         from stats_providers.svenskfotboll_http.client import SvenskfotbollHTTPClient
         
@@ -5536,7 +5596,7 @@ async def peaks_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
             fin_api.close()
             swe_client.close()
             
-    from monitors.special_peak import render_peak_digest
+    from services.special_peak import render_peak_digest
     digest = render_peak_digest(scores)
     
     keyboard = [

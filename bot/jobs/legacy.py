@@ -15,9 +15,10 @@ from monitoring import (
     get_system_metrics,
 )
 from bot.jobs.resource_monitor import request_chromium_restart
-from monitors.live_watch import LiveWatchService, parse_sheet_fixture_lines, render_live_hit, sheet_timezone
-from monitors.stats import StatsService
-from monitors.tracking import TrackingService, format_duration
+from services.live_watch import LiveWatchService, parse_sheet_fixture_lines, render_live_hit, sheet_timezone
+from services.stats import StatsService
+from services.tracking import TrackingService
+from interfaces.telegram.renderers import format_duration
 
 logger = logging.getLogger(__name__)
 
@@ -451,7 +452,7 @@ def _seconds_until_arg_hour(hour_arg: int) -> float:
 
 async def _peak_digest_loop(application: Application, *, hour_arg: int) -> None:
     """Push the special-league peak digest to subscribed chats once per day."""
-    from monitors.special_peak import build_peak_scores, render_peak_digest
+    from services.special_peak import build_peak_scores, render_peak_digest
     from adapters.storage import get_storage
     tracking_repository = get_storage()
 
@@ -538,7 +539,16 @@ async def _tracking_monitor_loop(
 
     while True:
         try:
-            summary = await tracking_service.monitor_once(application.bot)
+            summary, merges = await tracking_service.monitor_once()
+
+            from interfaces.telegram.notifications import dispatch_tracking_notifications, notify_league_merges
+            from adapters.storage import get_storage
+            repository = get_storage()
+
+            await dispatch_tracking_notifications(application.bot, summary, repository)
+            if merges:
+                await notify_league_merges(application.bot, merges, repository)
+
             logger.info(
                 "Tracking monitor cycle finished: requested=%s refreshed=%s active_matches=%s new_events=%s odds_changes=%s failed=%s duration=%s duration_seconds=%.2f",
                 summary.tracks_requested,

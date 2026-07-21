@@ -17,9 +17,10 @@ from monitoring import (
     get_metric_warnings,
     get_system_metrics,
 )
-from monitors.live_watch import LiveWatchService, parse_sheet_fixture_lines, render_live_hit, sheet_timezone
-from monitors.stats import StatsService
-from monitors.tracking import TrackingService, format_duration
+from services.live_watch import LiveWatchService, parse_sheet_fixture_lines, render_live_hit, sheet_timezone
+from services.stats import StatsService
+from services.tracking import TrackingService
+from interfaces.telegram.renderers import format_duration
 from bot.jobs.resource_monitor import request_chromium_restart
 
 logger = logging.getLogger(__name__)
@@ -122,7 +123,7 @@ class StatsPrefetchJob(ScheduledJob):
 
 
 class LiveWatchJob(ScheduledJob):
-    """Job that monitors in-play status of matches with a dynamic interval."""
+    """Job that services in-play status of matches with a dynamic interval."""
 
     def __init__(self, initial_delay: float = 0.0) -> None:
         super().__init__("live_watch", initial_delay)
@@ -167,7 +168,16 @@ async def _orchestrated_tracking_monitor(application: Application) -> None:
     tracking_service = application.bot_data.get(TRACKING_SERVICE_KEY)
     if not isinstance(tracking_service, TrackingService):
         return
-    summary = await tracking_service.monitor_once(application.bot)
+    summary, merges = await tracking_service.monitor_once()
+
+    from interfaces.telegram.notifications import dispatch_tracking_notifications, notify_league_merges
+    from adapters.storage import get_storage
+    repository = get_storage()
+
+    await dispatch_tracking_notifications(application.bot, summary, repository)
+    if merges:
+        await notify_league_merges(application.bot, merges, repository)
+
     logger.info(
         "Tracking monitor cycle finished: requested=%s refreshed=%s active_matches=%s new_events=%s odds_changes=%s failed=%s duration=%s duration_seconds=%.2f",
         summary.tracks_requested,
@@ -326,7 +336,7 @@ async def _orchestrated_sheet_import(application: Application) -> None:
 
 
 async def _orchestrated_peak_digest(application: Application) -> None:
-    from monitors.special_peak import build_peak_scores, render_peak_digest
+    from services.special_peak import build_peak_scores, render_peak_digest
     from adapters.storage import get_storage
     tracking_repository = get_storage()
     

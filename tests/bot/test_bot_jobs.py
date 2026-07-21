@@ -6,8 +6,8 @@ import unittest
 from unittest.mock import AsyncMock, patch
 
 from bot.jobs import _tracking_monitor_loop
-from monitors.models import RefreshSummary
-from monitors.tracking import TrackingService
+from services.models import RefreshSummary
+from services.tracking import TrackingService
 
 
 class TrackingMonitorLoopTests(unittest.IsolatedAsyncioTestCase):
@@ -29,7 +29,7 @@ class TrackingMonitorLoopTests(unittest.IsolatedAsyncioTestCase):
     async def test_tracking_monitor_logs_duration(self) -> None:
         tracking_service = TrackingService()
         tracking_service.monitor_once = AsyncMock(
-            return_value=RefreshSummary(
+            return_value=(RefreshSummary(
                 tracks_requested=3,
                 tracks_refreshed=2,
                 active_matches=10,
@@ -40,7 +40,7 @@ class TrackingMonitorLoopTests(unittest.IsolatedAsyncioTestCase):
                 league_results=[],
                 unavailable_competitions=[],
                 elapsed_seconds=68.0,
-            )
+            ), [])
         )
 
         application = SimpleNamespace(
@@ -51,6 +51,16 @@ class TrackingMonitorLoopTests(unittest.IsolatedAsyncioTestCase):
         with (
             self.assertLogs("bot.jobs", level="INFO") as captured_logs,
             patch("bot.jobs.legacy.asyncio.sleep", new=AsyncMock(side_effect=asyncio.CancelledError)),
+            # El loop ahora dispatchea por interfaces/telegram antes de loguear.
+            patch("adapters.storage.get_storage", return_value=SimpleNamespace()),
+            patch(
+                "interfaces.telegram.notifications.dispatch_tracking_notifications",
+                new=AsyncMock(),
+            ),
+            patch(
+                "interfaces.telegram.notifications.notify_league_merges",
+                new=AsyncMock(),
+            ),
         ):
             with self.assertRaises(asyncio.CancelledError):
                 await _tracking_monitor_loop(

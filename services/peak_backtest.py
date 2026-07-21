@@ -1,7 +1,7 @@
 """Retrospective, point-in-time backtest of the pre-match peak model.
 
 Walks each competition's finished matches chronologically and, for every match,
-rebuilds a :class:`~monitors.peak_model.LeagueModel` using ONLY the matches
+rebuilds a :class:`~services.peak_model.LeagueModel` using ONLY the matches
 played *before* that match's date (no leakage — even the table position is
 recomputed from prior points). It then scores the fixture and compares the
 predicted favourite / mismatch magnitude against what actually happened.
@@ -23,7 +23,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Optional
 
-from monitors.peak_model import (
+from services.peak_model import (
     LeagueModel,
     PastMatch,
     PeakParams,
@@ -257,7 +257,7 @@ def render_report(summary: BacktestSummary, *, title: str = "Backtest del peak d
 # Fetch layer + CLI
 # --------------------------------------------------------------------------- #
 def finland_matches(api, competition_id: str, category_id: str, *, now: datetime, include_previous: bool = True) -> list[PastMatch]:
-    from monitors.special_peak import _fin_matches_to_past, _resolve_fin_previous_competition
+    from services.special_peak import _fin_matches_to_past, _resolve_fin_previous_competition
 
     out = _fin_matches_to_past(api.get_matches_by_league(competition_id, category_id))
     if include_previous:
@@ -271,7 +271,7 @@ def finland_matches(api, competition_id: str, category_id: str, *, now: datetime
 
 
 def sweden_matches(client, competition_id: str) -> list[PastMatch]:
-    from monitors.special_peak import _norm_team, _parse_swe_score
+    from services.special_peak import _norm_team, _parse_swe_score
 
     res = client.get_latest_results(competition_id, limit=300)
     results = res.get("matches") if isinstance(res, dict) else res
@@ -291,7 +291,7 @@ def sweden_matches(client, competition_id: str) -> list[PastMatch]:
 def main() -> None:  # pragma: no cover - thin network driver
     from zoneinfo import ZoneInfo
 
-    from monitors.special_peak import _FIN_LEAGUE_CODES, _SWE_COMP_IDS
+    from services.special_peak import _FIN_LEAGUE_CODES, _SWE_COMP_IDS
     from stats_providers.palloliitto.api_client import PalloliittoAPI
     from stats_providers.svenskfotboll_http.client import SvenskfotbollHTTPClient
 

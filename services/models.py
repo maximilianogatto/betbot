@@ -14,6 +14,7 @@ class CommandResult:
 
     ok: bool
     message: str
+    data: Any = None
 
 
 @dataclass(frozen=True)

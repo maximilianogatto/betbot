@@ -2,7 +2,7 @@
 son el MISMO partido, y agruparlos.
 
 Es lógica de dominio pura (no sabe de Telegram ni de storage). Vivía en
-`bot/alerts.py`, lo que obligaba a los services (`monitors/tracking.py`) a importar
+`bot/alerts.py`, lo que obligaba a los services (`services/tracking.py`) a importar
 de la capa de bot — una inversión de dependencia que PR2-E3 corrige.
 
 La usan: el comparador cross-plataforma, el agrupado de `/matches` y el learner de

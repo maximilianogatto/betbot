@@ -28,7 +28,7 @@ from typing import Any, Callable, Optional
 from zoneinfo import ZoneInfo
 
 from core.timezones import current_display_timezone, tz_offset_label
-from monitors.peak_model import (
+from services.peak_model import (
     LeagueModel,
     PastMatch,
     PeakParams,

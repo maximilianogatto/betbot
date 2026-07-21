@@ -24,7 +24,7 @@ from pathlib import Path
 from adapters.storage import SqliteStorage
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-SCANNED_PACKAGES = ("bot", "monitors", "core")
+SCANNED_PACKAGES = ("bot", "services", "core")
 # Receivers que representan al storage en el código.
 STORAGE_RECEIVERS = {
     "repository", "tracking_repository", "storage", "_repository", "_storage", "_cache",

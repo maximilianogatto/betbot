@@ -25,7 +25,7 @@ from core.stats_models import (
 )
 from core.stats_provider_base import StatsProviderRegistry, stats_provider_registry
 from core.league_naming import league_name_similarity
-from monitors.models import CommandResult
+from services.models import CommandResult
 from adapters.storage import SqliteStorage, get_storage
 from core.models import (
     ActiveEventRecord,
@@ -1017,4 +1017,6 @@ def _provider_display_name(registry: StatsProviderRegistry, provider_key: str) -
         return provider_key
 
 
-__all__ = ["StatsService"]
+stats_service = StatsService()
+
+__all__ = ["StatsService", "stats_service"]

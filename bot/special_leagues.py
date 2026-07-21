@@ -1029,7 +1029,7 @@ class FinlandLeagues(SpecialLeague):
             home_primary = m.get("team_A_primary_category_id") or m.get("category_id")
             away_primary = m.get("team_B_primary_category_id") or m.get("category_id")
             
-            from monitors.special_peak import compute_rotation_ratio
+            from services.special_peak import compute_rotation_ratio
             home_rot = compute_rotation_ratio(
                 self.api, team_id=home_id, primary_category=home_primary,
                 competition_id=comp_id, starters=home_raw_starters, target_match_id=match_id
@@ -1362,7 +1362,7 @@ class SwedenLeagues(SpecialLeague):
 
     def _calculate_sweden_rotation(self, team_name: str, comp_id: str, starters: list[SpecialPlayer], target_match_id: str) -> RotationResult:
         import xml.etree.ElementTree as ET
-        from monitors.special_peak import RotationResult
+        from services.special_peak import RotationResult
         if not starters:
             return RotationResult(None)
         try:

@@ -51,7 +51,7 @@ graph TD
         J["jobs (7-8 loops)"]
         A["alerts.py (render)"]
     end
-    subgraph Services [monitors/]
+    subgraph Services [services/]
         TS["TrackingService<br/>orquesta + render + notify(bot)"]
         LWS["LiveWatchService"]
         SS["StatsService"]
@@ -137,7 +137,7 @@ Diferencias clave: el **render sale de los servicios** (los servicios devuelven 
 
 **UI-only (no tocan el Core):** `/start`, `/guide`, `/help*`, `/cancel`, `/echo`, paginación y teclados inline.
 
-**Lógica que debe salir de los servicios (no solo de handlers):** todos los métodos `build_*_message` y `render_*` que hoy viven en `monitors/tracking.py`, `monitors/stats.py`, `monitors/live_watch.py`. Devuelven texto/`CommandResult`; deben pasar a `bot/renderers/` y los servicios devolver DTOs puros.
+**Lógica que debe salir de los servicios (no solo de handlers):** todos los métodos `build_*_message` y `render_*` que hoy viven en `services/tracking.py`, `services/stats.py`, `services/live_watch.py`. Devuelven texto/`CommandResult`; deben pasar a `bot/renderers/` y los servicios devolver DTOs puros.
 
 **Sin servicios redundantes:** se evaluó un `LeagueRegistryService` (ligas unificadas). ⚠️ DECISIÓN: por ahora vive en `TrackingService` (`learn_unified_merges`, link/unlink). Extraerlo solo si crece; no crearlo preventivamente.
 
@@ -305,16 +305,16 @@ Diferencias clave: el **render sale de los servicios** (los servicios devuelven 
 - **Riesgo:** nulo. **Validación:** suite verde. **Rollback:** trivial.
 
 ### Fase 1 — Interfaces + DTOs (sin cambiar comportamiento)
-- **Archivos:** `core/models.py`, `core/ports.py` (nuevo, opcional), `monitors/models.py`. Arreglar bug `timestamp` en `core/events.py`. Definir DTOs faltantes (`SystemStatus`, `ResourceMetrics`, `PeakScore`).
+- **Archivos:** `core/models.py`, `core/ports.py` (nuevo, opcional), `services/models.py`. Arreglar bug `timestamp` en `core/events.py`. Definir DTOs faltantes (`SystemStatus`, `ResourceMetrics`, `PeakScore`).
 - **Riesgo:** bajo (solo agrega tipos). **Validación/tests:** la suite existente debe pasar sin cambios. **Rollback:** revertir commit.
 - ⚠️ `RepositoryPort` (Protocol): solo si vas a escribir tests unitarios del Core con un `FakeRepository`. Si no, omitir.
 
 ### Fase 2 — Separar handlers por dominio + extraer renderers
-- **Archivos:** `bot/handlers/*` (ya es paquete), nuevo `bot/renderers/{tracking,stats,live,system}.py`. Mover los `build_*_message`/`render_*` desde `monitors/*` a `renderers/*`. Los servicios pasan a devolver DTOs.
+- **Archivos:** `bot/handlers/*` (ya es paquete), nuevo `bot/renderers/{tracking,stats,live,system}.py`. Mover los `build_*_message`/`render_*` desde `services/*` a `renderers/*`. Los servicios pasan a devolver DTOs.
 - **Riesgo:** **medio** (regresión de texto). **Validación/tests:** tests "golden" del texto renderizado (snapshot del output actual antes de mover). **Rollback:** los renderers son funciones puras; revertir es contenido.
 
 ### Fase 3 — EventBus (reemplazar push directo)
-- **Archivos:** `core/event_bus.py` (gather en publish), `bot/telegram_listener.py` (nuevo sink), `monitors/tracking.py` y `live_watch.py` (cambiar `notify_*(bot)` por `publish(Event)`), `bot/application.py` (suscribir sinks).
+- **Archivos:** `core/event_bus.py` (gather en publish), `bot/telegram_listener.py` (nuevo sink), `services/tracking.py` y `live_watch.py` (cambiar `notify_*(bot)` por `publish(Event)`), `bot/application.py` (suscribir sinks).
 - **Riesgo:** **medio** (entrega de alertas). **Validación/tests:** unit test de sinks (evento → mensaje correcto) + integración (publish dispara send). Probar en un chat de prueba antes de prod.
 - **Rollback:** mantener `notify_*` viejo detrás de un flag hasta validar; el bus es aditivo.
 

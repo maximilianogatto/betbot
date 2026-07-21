@@ -3,7 +3,7 @@ import json
 import unittest
 from unittest.mock import MagicMock
 
-from monitors.change_detection import evaluate_subscription_odds_change, find_main_line_selections
+from services.change_detection import evaluate_subscription_odds_change, find_main_line_selections
 from core.models import ActiveEventRecord, CompetitionSubscription, EventBaseline, TrackedCompetition
 
 

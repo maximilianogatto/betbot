@@ -1170,3 +1170,6 @@ def parse_sheet_fixture_lines(csv_text: str) -> list[str]:
             line += f" ({detalle})"
         lines.append(line)
     return lines
+
+
+live_watch_service = LiveWatchService()

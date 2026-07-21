@@ -33,8 +33,17 @@ from interfaces.telegram.renderers.messages import (
     format_display_datetime,
     format_odd_text,
     split_telegram_message,
+    format_duration,
     # Re-export de dominio (definido en core/match_identity.py)
     group_events_by_physical_match,
+    # Nuevos de Tracking/Refreshes
+    build_platforms_message,
+    build_tracks_list_message,
+    build_refresh_summary_message,
+    build_pending_confirmation_message,
+    build_empty_pending_confirmation_message,
+    build_confirmation_message,
+    build_empty_confirmation_message,
 )
 
 __all__ = [
@@ -57,5 +66,13 @@ __all__ = [
     "format_display_datetime",
     "format_odd_text",
     "split_telegram_message",
+    "format_duration",
     "group_events_by_physical_match",
+    "build_platforms_message",
+    "build_tracks_list_message",
+    "build_refresh_summary_message",
+    "build_pending_confirmation_message",
+    "build_empty_pending_confirmation_message",
+    "build_confirmation_message",
+    "build_empty_confirmation_message",
 ]

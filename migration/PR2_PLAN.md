@@ -30,7 +30,7 @@ NO partir mecánicamente el `tracking_repository.py` legacy (6063 líneas) para 
 | ID | Tarea | Archivos | Deps |
 | :--- | :--- | :--- | :--- |
 | PR2-R1 | Renderers: `bot/alerts.py` + `build_*_message`/`render_*` → `interfaces/telegram/renderers/`. Servicios devuelven DTOs. | `interfaces/telegram/renderers/*` | F2 |
-| PR2-V1 | Mover servicios `monitors/` → `services/`, adelgazar (sin telegram, sin SQL inline). | `services/*` | F2 |
+| PR2-V1 | Mover servicios `services/` → `services/`, adelgazar (sin telegram, sin SQL inline). | `services/*` | F2 |
 | PR2-H1 | Handlers finos `interfaces/telegram/handlers/` (mismos comandos). | `interfaces/telegram/handlers/*` | R1, V1 |
 | PR2-SCH | `runtime/scheduler.py` neutro (asyncio); borrar `bot/jobs/legacy.py` + scheduler propio. | `runtime/scheduler.py` | V1 |
 | PR2-DEL | Borrar muertos: `core/flags.py`, `monitoring.py`(→service), residuos `bot/jobs/*`, revisar `sandbox/`/`temp/`. | varios | S8, SCH |

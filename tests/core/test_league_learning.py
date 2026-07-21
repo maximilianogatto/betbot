@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 
 from core.registry import ExtractorRegistry
-from monitors.tracking import TrackingService
+from services.tracking import TrackingService
 from core.models import ActiveEventUpsert
 from adapters.storage import SqliteStorage
 from adapters.storage.connection import open_connection

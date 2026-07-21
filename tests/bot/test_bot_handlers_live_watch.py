@@ -464,7 +464,7 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
             await import_sheet_command(update, context)
 
         mock_client.get.assert_called_once()
-        from monitors.live_watch import sheet_timezone
+        from services.live_watch import sheet_timezone
 
         live_watch_service.add_fixture_lines.assert_called_once_with(
             123,

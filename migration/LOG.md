@@ -71,9 +71,9 @@
 - **Siguiente sugerido:** Esperar cierre de PR1 por @gemini. Luego F1→F2 (traducir spec a core/ports) → F3 schema → repartir S1-S7 + R1 entre los 3 agentes.
 
 ### 2026-06-25T15:40:00-03:00 · @gemini · PR1-T4 · DONE
-- **Qué hice:** Envolví las llamadas de lectura y escritura a SQLite que ocurren en las rutas calientes del tracking monitor (como upsert de eventos, inicialización de baselines, inserción de alertas, y resoluciones de fluctuaciones) dentro de llamadas `asyncio.to_thread` en `monitors/tracking.py`.
+- **Qué hice:** Envolví las llamadas de lectura y escritura a SQLite que ocurren en las rutas calientes del tracking monitor (como upsert de eventos, inicialización de baselines, inserción de alertas, y resoluciones de fluctuaciones) dentro de llamadas `asyncio.to_thread` en `services/tracking.py`.
 - **Por qué:** Evitar bloquear el bucle de eventos (event loop) principal de `asyncio` durante las consultas/actualizaciones síncronas de SQLite de fondo.
-- **Archivos:** monitors/tracking.py
+- **Archivos:** services/tracking.py
 - **Commit:** 1a950f4b9c46b16de676d0d2a83bd780937cf536
 - **Tests:** Verde. 598 tests pasaron con éxito.
 - **Notas/Bloqueos:** Ninguno.
@@ -355,9 +355,9 @@
 ### 2026-07-02 · @claude · SYNC main→mig/pr2 + REABRIR S9 · DONE (sync) / BLOCKED (S9)
 - **Qué hice:** (1) Mergeé `origin/main` en `mig/pr2` para absorber 2 hotfixes de prod que faltaban (blocklist de auto-merge `unified_merge_exceptions` + polling in-play 20s/fast-path de alertas). Merge limpio (ort), `application.py` auto-resuelto bien (facade + params nuevos, sin `seed_if_empty`). (2) Audité el estado real de S9 y lo REABRÍ: el swap NO estaba "casi listo".
 - **Por qué:** main sigue recibiendo hotfixes → la rama larga divergía. Al sincronizar, encontré que S9 es solo parcial.
-- **Hallazgo (importante):** El facade greenfield SOLO está inyectado en los **services** (composition root). ~40 sitios siguen usando el **global legacy** `tracking_repository` (`bot/alerts.py`, `bot/handlers.py` ×11, `bot/jobs/*`, `monitors/change_detection.py`, `core/timezones.py`, + tipos compartidos importados del módulo legacy). El global legacy (`storage/tracking_repository.py:6108`) crea el esquema viejo (`active_events`/`tracked_competitions`). Runtime corre con DOS esquemas a la vez → services usan `events`/`competitions`, handlers `active_events`/`tracked_competitions`. Incoherente. Borrar el legacy rompe ~40 imports.
+- **Hallazgo (importante):** El facade greenfield SOLO está inyectado en los **services** (composition root). ~40 sitios siguen usando el **global legacy** `tracking_repository` (`bot/alerts.py`, `bot/handlers.py` ×11, `bot/jobs/*`, `services/change_detection.py`, `core/timezones.py`, + tipos compartidos importados del módulo legacy). El global legacy (`storage/tracking_repository.py:6108`) crea el esquema viejo (`active_events`/`tracked_competitions`). Runtime corre con DOS esquemas a la vez → services usan `events`/`competitions`, handlers `active_events`/`tracked_competitions`. Incoherente. Borrar el legacy rompe ~40 imports.
 - **Decisión (con el usuario):** Plan B — migración por capas. Sync primero (hecho), después mover consumidores al facade capa por capa: S9a alerts+tipos → S9b jobs+timezones (re-portar blocklist al greenfield) → S9c handlers+change_detection → recién ahí borrar el legacy.
-- **Archivos:** merge de main (`bot/*`, `monitors/*`, `tests/*`, `.env.example`); `migration/TASKS.md` (S9 → BLOCKED + subtareas S9a/b/c); limpié cruft `:memory:` (sqlite accidental) + `.gitignore`.
+- **Archivos:** merge de main (`bot/*`, `services/*`, `tests/*`, `.env.example`); `migration/TASKS.md` (S9 → BLOCKED + subtareas S9a/b/c); limpié cruft `:memory:` (sqlite accidental) + `.gitignore`.
 - **Commit:** merge (ort) + (este de docs).
 - **Tests:** en mig/pr2 tras sync: core 174 OK, bot 135 OK, adapters 44 OK. Imports OK.
 - **Notas/Bloqueos:** El blocklist quedó en el legacy (handlers lo usan por el global); el learner (service/facade) tiene `get_merge_exceptions` guardado con try/except → devuelve vacío hasta re-portarlo al greenfield en S9b.
@@ -369,11 +369,11 @@
   - **S9a-2:** accessor `get_storage()` (singleton del facade) en `adapters/storage/__init__.py`; `bot/alerts.py` al facade + tipos de core.models.
   - **S9b-1:** `bot/jobs/{tasks,legacy}.py` + `core/timezones.py` a `get_storage()`.
   - **S9b-2:** re-porté el blocklist (`unified_merge_exceptions`) al schema greenfield + 3 métodos en el competitions adapter (get/block/clear) + tests.
-  - **S9c-1:** `bot/handlers.py` (14 métodos del global → `get_storage()`, tipos → core.models, 0 refs a storage.tracking_repository); `monitors/models.py` tipos; fallback `default_tracking_repository` → `get_storage()` en tracking/stats/live_watch.
+  - **S9c-1:** `bot/handlers.py` (14 métodos del global → `get_storage()`, tipos → core.models, 0 refs a storage.tracking_repository); `services/models.py` tipos; fallback `default_tracking_repository` → `get_storage()` en tracking/stats/live_watch.
 - **Por qué:** cerrar la incoherencia de dos esquemas (services greenfield, handlers legacy) sin big-bang.
 - **Tests:** suite completa 673 OK en cada paso.
 - **Commits:** 64cc7cc, f4caf60, 97613c0, e205a57, 2388712 (pusheados a origin/mig/pr2).
-- **Notas/Bloqueos:** Falta SOLO S9c-2 (borrar el archivo legacy). Bloqueado por: 4 type-hints `SqliteTrackingRepository` en `monitors/*` + **22 archivos de test** que construyen `SqliteTrackingRepository`. Es un pase propio (parte = borrar tests legacy redundantes ya cubiertos por `tests/adapters/storage/*`, parte = migrar al facade). El blocklist en runtime: handlers escriben al greenfield (get_storage) y el learner (facade) lee del greenfield → coherente en prod.
+- **Notas/Bloqueos:** Falta SOLO S9c-2 (borrar el archivo legacy). Bloqueado por: 4 type-hints `SqliteTrackingRepository` en `services/*` + **22 archivos de test** que construyen `SqliteTrackingRepository`. Es un pase propio (parte = borrar tests legacy redundantes ya cubiertos por `tests/adapters/storage/*`, parte = migrar al facade). El blocklist en runtime: handlers escriben al greenfield (get_storage) y el learner (facade) lee del greenfield → coherente en prod.
 - **Siguiente sugerido:** S9c-2 (migrar/limpiar los 22 tests + type-hints + borrar legacy) o arrancar E3 (renderers) sobre un runtime ya coherente.
 
 ### 2026-07-02 · @claude · S9c-2 pase de PARIDAD greenfield (destapa bugs de prod) · IN_PROGRESS
@@ -395,7 +395,7 @@
 ### 2026-07-02T22:43:11-03:00 · @codex · PR2-E2-S9c-2 · DONE
 - **Qué hice:** Continué el takeover desde el WIP de @gemini y cerré el borrado del repositorio legacy: migré los últimos imports/type-hints trackeados a `core.models` + `adapters.storage.SqliteStorage/get_storage`, pasé CLI/monitoring/providers/xbet live al facade greenfield, borré `storage/tracking_repository.py` y `storage/mappers.py`, y ajusté tests residuales al facade.
 - **Por qué:** S9c-2 requería que ningún módulo ni test dependiera del repositorio SQLite monolítico para poder eliminarlo sin mantener dos esquemas ni un safety net obsoleto.
-- **Archivos:** adapters/storage/__init__.py, adapters/storage/subscriptions.py, adapters/storage/live_watch.py, cli.py, extractors/xbet_http/extractor.py, main.py, monitoring.py, monitors/change_detection.py, monitors/live_watch.py, monitors/stats.py, monitors/tracking.py, stats_providers/__init__.py, storage/__init__.py, storage/mappers.py, storage/tracking_repository.py, tests/adapters/storage/test_competitions_repository.py, tests/adapters/storage/test_live_watch_repository.py, tests/core/test_live_watch.py, tests/extractors/test_xbet_http_extractor.py
+- **Archivos:** adapters/storage/__init__.py, adapters/storage/subscriptions.py, adapters/storage/live_watch.py, cli.py, extractors/xbet_http/extractor.py, main.py, monitoring.py, services/change_detection.py, services/live_watch.py, services/stats.py, services/tracking.py, stats_providers/__init__.py, storage/__init__.py, storage/mappers.py, storage/tracking_repository.py, tests/adapters/storage/test_competitions_repository.py, tests/adapters/storage/test_live_watch_repository.py, tests/core/test_live_watch.py, tests/extractors/test_xbet_http_extractor.py
 - **Commit:** 2ab62f5
 - **Tests:** verde; `./betbot/bin/python -m unittest discover -s tests -t .` → 667 OK. También validé el mismo comando ocultando temporalmente el directorio untracked `bot/handlers/` para simular checkout limpio → 667 OK.
 - **Notas/Bloqueos:** El worktree local conserva `bot/handlers/` como WIP untracked ajeno a este commit; no se incluyó en S9c-2. Para que no shadowee localmente al módulo trackeado, le apliqué un ajuste mínimo no commiteado de imports a facade. No hay referencias trackeadas a `storage.tracking_repository` fuera de documentación histórica/migración.
@@ -415,4 +415,4 @@
 - **Commit:** be5ca76
 - **Tests:** Verde. 674 tests pasados con éxito.
 - **Notas/Bloqueos:** Ninguno.
-- **Siguiente sugerido:** PR2-E4 (Mover servicios de monitors/ a services/ y adelgazarlos).
+- **Siguiente sugerido:** PR2-E4 (Mover servicios de services/ a services/ y adelgazarlos).

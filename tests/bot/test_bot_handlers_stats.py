@@ -26,8 +26,8 @@ from bot.handlers import (
     track_stats_select_league,
 )
 from core.stats_models import StatsFixture, StatsLeagueOption, StatsProviderCapabilities, StatsProviderDescriptor
-from monitors.models import CommandResult
-from monitors.stats import ExplorableStatsLeague, StatsResolution
+from services.models import CommandResult
+from services.stats import ExplorableStatsLeague, StatsResolution
 from core.models import (
     ActiveEventRecord,
     CompetitionSubscription,

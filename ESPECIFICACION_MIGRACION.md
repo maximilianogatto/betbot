@@ -60,10 +60,10 @@ graph TD
 
 | Servicio | Archivo | Responsabilidad |
 | :--- | :--- | :--- |
-| `TrackingService` | `monitors/tracking.py` | Ciclo de cuotas prematch: scrape → upsert → detección vs baseline por chat → `publish(OddsChangedEvent)`. Registro/confirmación de ligas, suscripciones, cambios menores, registro unificado de ligas. |
-| `LiveWatchService` | `monitors/live_watch.py` | Poll in-play + fuzzy match vs watchlist (cuotas y stats-only) → `publish(MatchLiveEvent)`. Import de planilla. Ajustes de alertas live. |
-| `StatsService` | `monitors/stats.py` | Búsqueda/linkeo de ligas de stats, reportes consolidados, comandos de federación, refresh de sesión y prefetch. Import del token Sportradar (replay). |
-| `PeakService` | `monitors/special_peak.py` | Scoring 1-10 de rotación (Fin/Swe), digest diario y suscripciones. **(Faltaba en el spec previo.)** |
+| `TrackingService` | `services/tracking.py` | Ciclo de cuotas prematch: scrape → upsert → detección vs baseline por chat → `publish(OddsChangedEvent)`. Registro/confirmación de ligas, suscripciones, cambios menores, registro unificado de ligas. |
+| `LiveWatchService` | `services/live_watch.py` | Poll in-play + fuzzy match vs watchlist (cuotas y stats-only) → `publish(MatchLiveEvent)`. Import de planilla. Ajustes de alertas live. |
+| `StatsService` | `services/stats.py` | Búsqueda/linkeo de ligas de stats, reportes consolidados, comandos de federación, refresh de sesión y prefetch. Import del token Sportradar (replay). |
+| `PeakService` | `services/special_peak.py` | Scoring 1-10 de rotación (Fin/Swe), digest diario y suscripciones. **(Faltaba en el spec previo.)** |
 | `SystemWatchService` | `monitoring.py` | Métricas de RAM/CPU/Chromium (vía `psutil`/OS), tamaño de DB, warnings al chat admin. |
 
 **Locks (van en la infraestructura/servicio, nunca en un mediador):**

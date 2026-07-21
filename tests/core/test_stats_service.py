@@ -15,7 +15,7 @@ from core.stats_models import (
     StatsProviderCapabilities,
 )
 from core.stats_provider_base import StatsProvider, StatsProviderRegistry
-from monitors.stats import (
+from services.stats import (
     StatsService,
     render_league_fixtures,
     render_league_table,
@@ -523,7 +523,7 @@ class PickRepresentativeEventTests(unittest.TestCase):
     def test_prefers_event_with_stats_url(self) -> None:
         from types import SimpleNamespace
 
-        from monitors.stats import _pick_representative_event
+        from services.stats import _pick_representative_event
 
         no_url = SimpleNamespace(stats_url=None, home="A", away="B")
         with_url = SimpleNamespace(stats_url="https://x/match/1", home="A", away="B")

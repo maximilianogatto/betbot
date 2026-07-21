@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import unittest
 
-from monitors.match_analytics import build_analytics, render_analytics
-from monitors.peak_model import LeagueModel, PastMatch, TeamStats
+from services.match_analytics import build_analytics, render_analytics
+from services.peak_model import LeagueModel, PastMatch, TeamStats
 
 
 def _t(tid, pos, gfh, gah, gfa, gaa, ph=3, pa=2):

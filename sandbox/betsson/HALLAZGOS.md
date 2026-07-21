@@ -82,7 +82,7 @@ Detección live vía events-table `eventPhase=Live` (liviana).
 
 **Integración en el bot:** registrado en `extractors/__init__.py`; agregado a
 `bot/canonical_leagues.py` (`PLATFORM_ORDER` + display "Betsson") y al parseo de
-esquema en `monitors/live_watch.py` (`betsson:competition:` → auto-track). El
+esquema en `services/live_watch.py` (`betsson:competition:` → auto-track). El
 hándicap europeo se renderiza con la maquinaria 📐 existente (verificado vía
 `bot/alerts._format_asian_handicap_line`).
 

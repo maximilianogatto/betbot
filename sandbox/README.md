@@ -46,7 +46,7 @@ When you find a source you trust, the clean migration path is:
 
 ## Example future roadmap
 
-- `monitors/watchlist_builder.py`: creates candidate fixtures from standings
+- `services/watchlist_builder.py`: creates candidate fixtures from standings
 - `storage/watchlist.py`: saves those candidates
 - `services/odds_provider.py`: checks if the fixture exists pre-match
 - `bot/alerts.py`: sends Telegram alerts when odds and rules match

@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 
 from core.models import CompetitionExtraction, CompetitionKey, EventKey, EventSnapshot, Odds1X2
-from monitors.tracking import _normalize_extracted_match_for_persistence
+from services.tracking import _normalize_extracted_match_for_persistence
 from core.models import ActiveEventRecord
 
 

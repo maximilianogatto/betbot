@@ -1,6 +1,6 @@
 """Pre-match mismatch model for special-league peak detection.
 
-Pure, network-free statistics. Adapters in :mod:`monitors.special_peak` build a
+Pure, network-free statistics. Adapters in :mod:`services.special_peak` build a
 :class:`LeagueModel` from the Finland / Sweden feeds and call
 :func:`score_prematch`; everything here is unit-testable with synthetic data.
 

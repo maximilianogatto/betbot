@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 from datetime import datetime, timedelta, timezone
 
-from monitors.tracking import _is_refresh_due, _refresh_interval_seconds
+from services.tracking import _is_refresh_due, _refresh_interval_seconds
 
 NOW = datetime(2026, 6, 14, 12, 0, 0, tzinfo=timezone.utc)
 

@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import unittest
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, patch
 
 from core.extractor_base import CompetitionUnavailableError
-from monitors.models import RefreshSummary, UnavailableCompetitionRefresh
-from monitors.tracking import TrackingService, format_duration
+from services.models import RefreshSummary, UnavailableCompetitionRefresh
+from services.tracking import TrackingService, format_duration
 from core.models import TrackedCompetition
 
 
@@ -70,29 +70,28 @@ class TrackingRefreshNotificationTests(unittest.IsolatedAsyncioTestCase):
     async def test_automatic_refresh_skips_when_manual_refresh_holds_lock(self) -> None:
         service = TrackingService()
         service.refresh_all_active_leagues = AsyncMock()
-        service.dispatch_notifications = AsyncMock()
 
         await service.try_start_refresh("manual")
         try:
-            with self.assertLogs("monitors.tracking", level="INFO") as captured_logs:
-                summary = await service.monitor_once(bot=object())
+            with self.assertLogs("services.tracking", level="INFO") as captured_logs:
+                summary, _merges = await service.monitor_once()
         finally:
             await service.finish_refresh("manual")
 
         self.assertEqual(summary.tracks_requested, 0)
         self.assertEqual(summary.tracks_refreshed, 0)
         service.refresh_all_active_leagues.assert_not_awaited()
-        service.dispatch_notifications.assert_not_awaited()
         self.assertTrue(
             any("Skipping automatic refresh because another refresh is already running" in line
                 for line in captured_logs.output)
         )
 
-    async def test_automatic_refresh_does_not_notify_unavailable_competitions(self) -> None:
-        service = TrackingService()
-        service.notify_for_refresh_result = AsyncMock()
-        service.notify_for_unavailable_competition = AsyncMock()
-
+    @patch("interfaces.telegram.notifications.notify_for_unavailable_competition", new_callable=AsyncMock)
+    @patch("interfaces.telegram.notifications.notify_for_refresh_result", new_callable=AsyncMock)
+    async def test_automatic_refresh_does_not_notify_unavailable_competitions(
+        self, mock_notify_result, mock_notify_unavailable
+    ) -> None:
+        from interfaces.telegram.notifications import dispatch_tracking_notifications
         summary = RefreshSummary(
             tracks_requested=1,
             tracks_refreshed=0,
@@ -111,19 +110,21 @@ class TrackingRefreshNotificationTests(unittest.IsolatedAsyncioTestCase):
             elapsed_seconds=12.0,
         )
 
-        await service.dispatch_notifications(
+        await dispatch_tracking_notifications(
             bot=object(),
             summary=summary,
+            repository=object(),
             notify_failures=False,
         )
 
-        service.notify_for_unavailable_competition.assert_not_awaited()
+        mock_notify_unavailable.assert_not_awaited()
 
-    async def test_manual_refresh_notifies_unavailable_competitions(self) -> None:
-        service = TrackingService()
-        service.notify_for_refresh_result = AsyncMock()
-        service.notify_for_unavailable_competition = AsyncMock()
-
+    @patch("interfaces.telegram.notifications.notify_for_unavailable_competition", new_callable=AsyncMock)
+    @patch("interfaces.telegram.notifications.notify_for_refresh_result", new_callable=AsyncMock)
+    async def test_manual_refresh_notifies_unavailable_competitions(
+        self, mock_notify_result, mock_notify_unavailable
+    ) -> None:
+        from interfaces.telegram.notifications import dispatch_tracking_notifications
         summary = RefreshSummary(
             tracks_requested=1,
             tracks_refreshed=0,
@@ -142,15 +143,16 @@ class TrackingRefreshNotificationTests(unittest.IsolatedAsyncioTestCase):
             elapsed_seconds=12.0,
         )
 
-        await service.dispatch_notifications(
+        await dispatch_tracking_notifications(
             bot=object(),
             summary=summary,
+            repository=object(),
             notify_failures=True,
             force_unavailable_warnings=True,
             unavailable_warning_chat_id=123,
         )
 
-        service.notify_for_unavailable_competition.assert_awaited_once()
+        mock_notify_unavailable.assert_awaited_once()
 
     async def test_failed_extraction_does_not_remove_existing_matches(self) -> None:
         repository = _RepositoryStub()

@@ -1,6 +1,6 @@
 """Pre-match analytics block shared by /fin_match and /swe_match.
 
-Reuses the peak model's :class:`~monitors.peak_model.LeagueModel` (which already
+Reuses the peak model's :class:`~services.peak_model.LeagueModel` (which already
 carries per-team home/away goals + the finished-match list), so it computes —
 without any new fetch logic — the things a quick read wants before a game:
 
@@ -21,7 +21,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Callable, Optional
 
-from monitors.peak_model import LeagueModel, TeamStats
+from services.peak_model import LeagueModel, TeamStats
 
 
 @dataclass

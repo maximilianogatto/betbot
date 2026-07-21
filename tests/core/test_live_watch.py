@@ -10,7 +10,7 @@ from unittest.mock import AsyncMock
 
 import os
 from core.models import LiveEventSnapshot
-from monitors.live_watch import (
+from services.live_watch import (
     LiveWatchService,
     match_score,
     parse_fixture_line,
@@ -326,7 +326,7 @@ class LiveWatchServiceTests(unittest.IsolatedAsyncioTestCase):
         from datetime import datetime, timedelta, timezone
         from zoneinfo import ZoneInfo
 
-        from monitors.live_watch import sheet_timezone
+        from services.live_watch import sheet_timezone
 
         tz_arg = sheet_timezone()
         self.assertEqual(str(tz_arg), "America/Argentina/Buenos_Aires")
@@ -857,7 +857,7 @@ class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(remaining[0].id, keep.id)
 
     def test_kickoff_from_arg_time_tomorrow_shifting(self) -> None:
-        from monitors.live_watch import _kickoff_from_arg_time, _ARG_TZ
+        from services.live_watch import _kickoff_from_arg_time, _ARG_TZ
         import datetime as _dt
         from unittest.mock import patch
         
@@ -870,7 +870,7 @@ class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):
             def now(cls, tz=None):
                 return mock_now.astimezone(tz)
         
-        with patch("monitors.live_watch.datetime", MockDatetime):
+        with patch("services.live_watch.datetime", MockDatetime):
             # Test case 1: Kickoff is 1 hour in the past compared to now
             # It should stay today (timedelta <= 2.5 hours)
             target_time1 = now_arg - _dt.timedelta(hours=1)
@@ -1074,27 +1074,27 @@ class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):
         future_iso = (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat()
 
         # 1. Finished match (kickoff > 2h ago) is filtered out.
-        with patch("monitors.live_watch.parse_fixture_line", return_value=(None, "Finished", "Match", finished_iso)):
+        with patch("services.live_watch.parse_fixture_line", return_value=(None, "Finished", "Match", finished_iso)):
             added_finished = service.add_fixture_lines(chat_id, ["some line"])
             self.assertEqual(len(added_finished), 0)
 
         # 2. Recently started match (in play) is kept — this is the fix.
-        with patch("monitors.live_watch.parse_fixture_line", return_value=(None, "InPlay", "Match", in_play_iso)):
+        with patch("services.live_watch.parse_fixture_line", return_value=(None, "InPlay", "Match", in_play_iso)):
             added_in_play = service.add_fixture_lines(chat_id, ["some line"])
             self.assertEqual(len(added_in_play), 1)
 
         # 3. Future kickoff is kept.
-        with patch("monitors.live_watch.parse_fixture_line", return_value=(None, "Future", "Match", future_iso)):
+        with patch("services.live_watch.parse_fixture_line", return_value=(None, "Future", "Match", future_iso)):
             added_future = service.add_fixture_lines(chat_id, ["some line"])
             self.assertEqual(len(added_future), 1)
 
         # 3. Duplicate check (same fixture name "Future" vs "Match")
-        with patch("monitors.live_watch.parse_fixture_line", return_value=(None, "Future", "Match", future_iso)):
+        with patch("services.live_watch.parse_fixture_line", return_value=(None, "Future", "Match", future_iso)):
             added_dup = service.add_fixture_lines(chat_id, ["some line"])
             self.assertEqual(len(added_dup), 0)
 
         # 4. Batch duplicates check (two identical mock events in the same call)
-        with patch("monitors.live_watch.parse_fixture_line", return_value=(None, "Another", "Match", future_iso)):
+        with patch("services.live_watch.parse_fixture_line", return_value=(None, "Another", "Match", future_iso)):
             added_batch = service.add_fixture_lines(chat_id, ["line1", "line2"])
             self.assertEqual(len(added_batch), 1)
 
@@ -1105,7 +1105,7 @@ if __name__ == "__main__":
 
 class SheetParseTests(unittest.TestCase):
     def test_parse_sheet_fixture_lines(self) -> None:
-        from monitors.live_watch import parse_sheet_fixture_lines
+        from services.live_watch import parse_sheet_fixture_lines
         csv = (
             "Horario,Competición,Partido,Detalle\n"
             "14:00,Premier League,Arsenal vs Chelsea,clásico\n"
@@ -1119,13 +1119,13 @@ class SheetParseTests(unittest.TestCase):
         ])
 
     def test_parse_sheet_accent_insensitive_headers(self) -> None:
-        from monitors.live_watch import parse_sheet_fixture_lines
+        from services.live_watch import parse_sheet_fixture_lines
         # "Competicion" sin tilde también vale
         csv = "horario,competicion,partido,detalle\n,,X vs Y,\n"
         self.assertEqual(parse_sheet_fixture_lines(csv), ["X vs Y"])
 
     def test_parse_sheet_missing_columns_raises(self) -> None:
-        from monitors.live_watch import parse_sheet_fixture_lines
+        from services.live_watch import parse_sheet_fixture_lines
         with self.assertRaises(ValueError):
             parse_sheet_fixture_lines("Foo,Bar\n1,2\n")
 
@@ -1141,7 +1141,7 @@ class RenderLiveHitMarketsTests(unittest.TestCase):
         )
 
     def test_live_render_shows_handicap_and_goals(self) -> None:
-        from monitors.live_watch import LiveWatchHit
+        from services.live_watch import LiveWatchHit
 
         event = LiveEventSnapshot(
             platform="mrpunter_http",
@@ -1173,7 +1173,7 @@ class RenderLiveHitMarketsTests(unittest.TestCase):
         self.assertIn("1.90", text)
 
     def test_live_render_without_markets_is_graceful(self) -> None:
-        from monitors.live_watch import LiveWatchHit
+        from services.live_watch import LiveWatchHit
 
         event = LiveEventSnapshot(
             platform="bz_http", external_event_id="e2", home="A", away="B", minute="10'"

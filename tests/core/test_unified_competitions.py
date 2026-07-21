@@ -11,7 +11,7 @@ from core.extractor_base import Extractor, LeagueDiscoveryOption
 import os
 from core.models import PlatformDescriptor, ProviderCapabilities, CompetitionExtraction, EventSnapshot, CompetitionKey, ActiveEventUpsert, ActiveEventRecord
 from core.registry import ExtractorRegistry
-from monitors.tracking import TrackingService
+from services.tracking import TrackingService
 from adapters.storage import SqliteStorage
 from adapters.storage.connection import open_connection
 from adapters.storage.schema import initialize_schema

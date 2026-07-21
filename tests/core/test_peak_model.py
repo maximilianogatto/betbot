@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 from datetime import datetime, timedelta, timezone
 
-from monitors.peak_model import (
+from services.peak_model import (
     LeagueModel,
     PastMatch,
     PeakParams,

@@ -360,7 +360,7 @@ el bot). Cada tipo se backtestea por separado.
 
 ## 9. Fase 6 — Operación (post-G3)
 
-Job diario (infra de monitors existente): descargar fixtures próximos 7 días → congelar snapshot
+Job diario (infra de services existente): descargar fixtures próximos 7 días → congelar snapshot
 de features → predecir → comparar contra cuotas archivadas del día → ranking por EV con umbral →
 reporte + push Telegram (solo edge positivo). Cada predicción operativa se archiva con su cuota
 tomada y luego su cierre → el CLV prospectivo es la auditoría permanente del sistema (G4).

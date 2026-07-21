@@ -19,28 +19,12 @@ import json
 import logging
 import time
 
-from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.constants import ParseMode
-
-from interfaces.telegram.renderers import (
-    build_competition_unavailable_warning_message,
-    build_competition_url_message,
-    build_event_stats_message,
-    build_event_url_message,
-    build_grouped_new_event_alert_message,
-    build_grouped_odds_change_alert_message,
-    build_match_reminder_alert_message,
-    build_new_event_alert_message,
-    build_odds_change_alert_message,
-    split_telegram_message,
-)
 from core.extractor_base import CompetitionUnavailableError, LeagueDiscoveryOption
-from core.timezones import resolve_chat_timezone, set_display_timezone
-from monitors.change_detection import (
+from services.change_detection import (
     evaluate_subscription_odds_change,
     select_due_reminders,
 )
-from monitors.models import (
+from services.models import (
     CommandResult,
     CompetitionRefreshResult,
     OddsChange,
@@ -48,6 +32,7 @@ from monitors.models import (
     SubscriptionOddsAlert,
     UnavailableCompetitionRefresh,
 )
+from core.formatting import format_duration  # noqa: F401  (re-export)
 from core.models import (
     ActiveEventRecord,
     ActiveEventUpsert,
@@ -132,18 +117,7 @@ def _is_refresh_due(
     return (now - last_synced).total_seconds() >= interval - _REFRESH_DUE_GRACE_SECONDS
 
 
-def format_duration(seconds: float) -> str:
-    """Format one elapsed duration in a compact user-facing representation."""
-
-    whole_seconds = max(0, int(seconds))
-    hours, remainder = divmod(whole_seconds, 3600)
-    minutes, secs = divmod(remainder, 60)
-
-    if hours:
-        return f"{hours}h {minutes:02d}m {secs:02d}s"
-    if minutes:
-        return f"{minutes}m {secs:02d}s"
-    return f"{secs}s"
+# format_duration vive en core/formatting.py; se re-exporta acá por compat.
 
 
 class TrackingService:
@@ -282,13 +256,7 @@ class TrackingService:
                 ),
             )
 
-        if extraction.is_empty:
-            return CommandResult(
-                ok=True,
-                message=self._build_empty_pending_confirmation_message(pending_request),
-            )
-
-        return CommandResult(ok=True, message=self._build_pending_confirmation_message(pending_request))
+        return CommandResult(ok=True, message="", data=pending_request)
 
     async def confirm_pending_track(self, chat_id: int) -> CommandResult:
         """Confirm the latest pending tracking request for one Telegram chat."""
@@ -364,11 +332,12 @@ class TrackingService:
 
         return CommandResult(
             ok=True,
-            message=self._build_confirmation_message(
-                confirmed_request,
-                bootstrap_count=bootstrap_count,
-                bootstrap_error=bootstrap_error,
-            ),
+            message="",
+            data={
+                "confirmed_request": confirmed_request,
+                "bootstrap_count": bootstrap_count,
+                "bootstrap_error": bootstrap_error,
+            },
         )
 
     async def confirm_empty_pending_track(self, chat_id: int) -> CommandResult:
@@ -413,7 +382,10 @@ class TrackingService:
 
         return CommandResult(
             ok=True,
-            message=self._build_empty_confirmation_message(confirmed_request),
+            message="",
+            data={
+                "confirmed_request": confirmed_request,
+            },
         )
 
     def list_confirmed_tracks(self, chat_id: int) -> list[TrackedCompetitionSubscription]:
@@ -1275,259 +1247,27 @@ class TrackingService:
 
             return await asyncio.to_thread(self._apply_extraction_to_tracked_league, tracked_league_id, extraction)
 
-    async def monitor_once(self, bot: Bot) -> RefreshSummary:
-        """Run one global monitoring cycle and dispatch notifications."""
+    async def monitor_once(self) -> tuple[RefreshSummary, list[dict]]:
+        """Run one global monitoring cycle."""
 
         if not await self.try_start_refresh("automatic"):
             logger.info(
                 "Skipping automatic refresh because another refresh is already running: trigger=%s",
                 self.current_refresh_trigger,
             )
-            return self._build_empty_refresh_summary()
+            return self._build_empty_refresh_summary(), []
 
         try:
             summary = await self.refresh_due_leagues()
-            await self.dispatch_notifications(
-                bot,
-                summary,
-                notify_failures=False,
-            )
-            # Registry learning is an O(n²) fuzzy scan; only worth running when
-            # this cycle actually refreshed leagues (idle cycles change nothing).
+            merges = []
             if summary.league_results:
-                await self.learn_and_notify_league_merges(bot)
-            return summary
+                try:
+                    merges = await asyncio.to_thread(self.learn_unified_merges)
+                except Exception:
+                    logger.exception("League-merge learning failed.")
+            return summary, merges
         finally:
             await self.finish_refresh("automatic")
-
-    async def dispatch_notifications(
-        self,
-        bot: Bot,
-        summary: RefreshSummary,
-        *,
-        notify_failures: bool = False,
-        force_unavailable_warnings: bool = False,
-        unavailable_warning_chat_id: int | None = None,
-    ) -> None:
-        """Send new-event and odds-change notifications to matching subscribers."""
-
-        for result in summary.league_results:
-            await self.notify_for_refresh_result(bot, result)
-
-        if not notify_failures:
-            return
-
-        for unavailable in summary.unavailable_competitions:
-            await self.notify_for_unavailable_competition(
-                bot,
-                unavailable,
-                force_notify=force_unavailable_warnings,
-                target_chat_id=unavailable_warning_chat_id,
-            )
-
-    async def notify_for_refresh_result(self, bot: Bot, result: CompetitionRefreshResult) -> None:
-        """Send notifications for one refreshed league to all matching chats."""
-
-        subscriptions = await asyncio.to_thread(
-            self.repository.get_subscriptions_for_competition,
-            result.tracked_league.id,
-            only_enabled=True,
-        )
-
-        if not subscriptions:
-            return
-
-        for subscription in subscriptions:
-            # Render every message for this subscriber in their display timezone.
-            set_display_timezone(resolve_chat_timezone(subscription.telegram_chat_id))
-            await asyncio.to_thread(
-                self.repository.initialize_event_baselines,
-                subscription.telegram_chat_id,
-                result.tracked_league.id,
-                result.active_matches,
-            )
-
-            if subscription.notify_new_matches:
-                def _filter_unsent():
-                    return [
-                        match
-                        for match in result.new_matches
-                        if not self.repository.has_sent_alert(
-                            subscription.telegram_chat_id,
-                            result.tracked_league.id,
-                            match.fixture_id,
-                            "new_event",
-                        )
-                    ]
-                unsent_new_matches = await asyncio.to_thread(_filter_unsent)
-
-                if unsent_new_matches:
-                    if len(unsent_new_matches) == 1:
-                        await self._send_split_message(
-                            bot,
-                            subscription.telegram_chat_id,
-                            build_new_event_alert_message(
-                                result.tracked_league,
-                                unsent_new_matches[0],
-                            ),
-                            parse_mode=ParseMode.HTML,
-                        )
-                    else:
-                        await self._send_split_message(
-                            bot,
-                            subscription.telegram_chat_id,
-                            build_grouped_new_event_alert_message(
-                                result.tracked_league,
-                                unsent_new_matches,
-                            ),
-                            parse_mode=ParseMode.HTML,
-                        )
-
-                    await asyncio.to_thread(
-                        self.repository.mark_sent_alerts,
-                        subscription.telegram_chat_id,
-                        result.tracked_league.id,
-                        [match.fixture_id for match in unsent_new_matches],
-                        "new_event",
-                    )
-
-            pending_odds_alerts: list[SubscriptionOddsAlert] = []
-
-            for change in result.odds_changes:
-                alert = await asyncio.to_thread(
-                    evaluate_subscription_odds_change,
-                    self.repository,
-                    subscription,
-                    result.tracked_league,
-                    change.after,
-                    confirmation_refreshes=self.odds_change_confirmation_refreshes,
-                    flap_window_minutes=self.odds_flap_window_minutes,
-                    flap_epsilon=self.odds_flap_epsilon,
-                    fast_path_percent=self.odds_fast_path_percent,
-                )
-
-                if alert is not None and subscription.notify_odds_changes:
-                    pending_odds_alerts.append(alert)
-
-            if pending_odds_alerts:
-                if len(pending_odds_alerts) == 1:
-                    alert = pending_odds_alerts[0]
-                    await self._send_split_message(
-                        bot,
-                        subscription.telegram_chat_id,
-                        build_odds_change_alert_message(
-                            result.tracked_league,
-                            alert,
-                        ),
-                        parse_mode=ParseMode.HTML,
-                    )
-                else:
-                    await self._send_split_message(
-                        bot,
-                        subscription.telegram_chat_id,
-                        build_grouped_odds_change_alert_message(
-                            result.tracked_league,
-                            pending_odds_alerts,
-                        ),
-                        parse_mode=ParseMode.HTML,
-                    )
-
-                def _save_alerts():
-                    for alert in pending_odds_alerts:
-                        self.repository.upsert_event_baseline(
-                            subscription.telegram_chat_id,
-                            result.tracked_league.id,
-                            alert.match.fixture_id,
-                            baseline_home=alert.match.odds_home,
-                            baseline_draw=alert.match.odds_draw,
-                            baseline_away=alert.match.odds_away,
-                            baseline_markets_json=(
-                                alert.match.markets_json
-                                if alert.confirmed_baseline_markets_payload is None
-                                else json.dumps(
-                                    alert.confirmed_baseline_markets_payload,
-                                    ensure_ascii=False,
-                                    sort_keys=True,
-                                )
-                            ),
-                        )
-                        self.repository.resolve_small_change_with_current_baseline(
-                            subscription.telegram_chat_id,
-                            result.tracked_league.id,
-                            alert.match.fixture_id,
-                        )
-                await asyncio.to_thread(_save_alerts)
-
-            for match in result.reminder_matches:
-                await self._send_split_message(
-                    bot,
-                    subscription.telegram_chat_id,
-                    build_match_reminder_alert_message(result.tracked_league, match),
-                    parse_mode=ParseMode.HTML,
-                )
-
-        # Don't let the last subscriber's timezone leak to later work in this task.
-        set_display_timezone(None)
-
-        if result.reminder_matches:
-            await asyncio.to_thread(
-                self.repository.mark_events_alerted,
-                result.tracked_league.id,
-                [match.fixture_id for match in result.reminder_matches],
-            )
-
-    async def notify_for_unavailable_competition(
-        self,
-        bot: Bot,
-        unavailable: UnavailableCompetitionRefresh,
-        *,
-        force_notify: bool = False,
-        target_chat_id: int | None = None,
-    ) -> None:
-        """Send a warning for a competition that keeps failing to refresh."""
-
-        should_send = await asyncio.to_thread(
-            self.repository.should_send_unavailable_refresh_warning,
-            unavailable.tracked_league.id,
-            minimum_failures=UNAVAILABLE_WARNING_FAILURE_THRESHOLD,
-            cooldown_seconds=UNAVAILABLE_WARNING_COOLDOWN_SECONDS,
-        )
-        if not force_notify and not should_send:
-            return
-
-        subscriptions = await asyncio.to_thread(
-            self.repository.get_subscriptions_for_competition,
-            unavailable.tracked_league.id,
-            only_enabled=True,
-        )
-        if not subscriptions:
-            return
-
-        sent_any_warning = False
-        for subscription in subscriptions:
-            if target_chat_id is not None and subscription.telegram_chat_id != target_chat_id:
-                continue
-
-            track_number = self._get_track_number(
-                subscription.telegram_chat_id,
-                unavailable.tracked_league.id,
-            )
-            if track_number is None:
-                continue
-
-            await self._send_split_message(
-                bot,
-                subscription.telegram_chat_id,
-                build_competition_unavailable_warning_message(
-                    unavailable.tracked_league,
-                    track_number=track_number,
-                ),
-                parse_mode=ParseMode.HTML,
-            )
-            sent_any_warning = True
-
-        if sent_any_warning and not force_notify:
-            await asyncio.to_thread(self.repository.mark_unavailable_refresh_warning_sent, unavailable.tracked_league.id)
 
     def get_matches_for_track(
         self,
@@ -1551,284 +1291,7 @@ class TrackingService:
             only_future=True,
         )
 
-    def build_competition_url_message(
-        self,
-        chat_id: int,
-        track_number: int,
-    ) -> CommandResult:
-        """Build the user-facing message with the current competition URL."""
 
-        tracked_subscription = self._get_track_by_number(chat_id, track_number)
-        if tracked_subscription is None:
-            return CommandResult(
-                ok=False,
-                message="No encontré ese número de liga en /list_tracks.",
-            )
-
-        extractor = self.extractor_registry.get_for_platform(
-            tracked_subscription.tracked_league.platform
-        )
-        competition_url = extractor.build_competition_url(
-            competition_external_id=tracked_subscription.tracked_league.competition_external_id,
-            source_url=tracked_subscription.tracked_league.source_url,
-            metadata=_loads_optional_json(tracked_subscription.tracked_league.metadata_json),
-        )
-
-        if not competition_url:
-            return CommandResult(
-                ok=False,
-                message="⚠️ Esta plataforma no soporta links directos a competiciones.",
-            )
-
-        return CommandResult(
-            ok=True,
-            message=build_competition_url_message(
-                tracked_subscription.tracked_league,
-                competition_url,
-            ),
-        )
-
-    def build_event_url_message(
-        self,
-        tracked_subscription: TrackedCompetitionSubscription,
-        matches: Sequence[ActiveEventRecord],
-        event_number: int,
-    ) -> CommandResult:
-        """Build the user-facing message with one direct event URL."""
-
-        if event_number <= 0 or event_number > len(matches):
-            return CommandResult(
-                ok=False,
-                message="Elegí un número válido de partido de la última lista mostrada.",
-            )
-
-        match = matches[event_number - 1]
-        extractor = self.extractor_registry.get_for_platform(
-            tracked_subscription.tracked_league.platform
-        )
-        event_url = extractor.build_event_url(
-            competition_external_id=tracked_subscription.tracked_league.competition_external_id,
-            external_event_id=match.external_event_id,
-            source_url=tracked_subscription.tracked_league.source_url,
-            event_url=match.event_url,
-            competition_metadata=_loads_optional_json(tracked_subscription.tracked_league.metadata_json),
-            event_metadata=_loads_optional_json(match.raw_payload_json),
-        )
-
-        if not event_url:
-            return CommandResult(
-                ok=False,
-                message="⚠️ Esta plataforma no soporta links directos a eventos.",
-            )
-
-        return CommandResult(
-            ok=True,
-            message=build_event_url_message(match, event_url),
-        )
-
-    def build_event_stats_message(
-        self,
-        tracked_subscription: TrackedCompetitionSubscription,
-        matches: Sequence[ActiveEventRecord],
-        event_number: int,
-    ) -> CommandResult:
-        """Build the user-facing message with one direct Bet365Stats / Sportradar URL."""
-
-        del tracked_subscription
-
-        if event_number <= 0 or event_number > len(matches):
-            return CommandResult(
-                ok=False,
-                message="Elegí un número válido de partido de la última lista mostrada.",
-            )
-
-        match = matches[event_number - 1]
-
-        if not match.stats_url:
-            return CommandResult(
-                ok=False,
-                message="No encontré URL de stats para ese evento.",
-            )
-
-        return CommandResult(
-            ok=True,
-            message=build_event_stats_message(match, match.stats_url),
-        )
-
-    def build_refresh_summary_message(self, summary: RefreshSummary) -> CommandResult:
-        """Build the user-facing summary for `/refresh_tracks` or monitor logs."""
-
-        if summary.tracks_requested == 0:
-            return CommandResult(
-                ok=True,
-                message=(
-                    "No tenés ligas trackeadas todavía.\n"
-                    "Usá /track_url <url_de_plataforma> y después /confirm_track."
-                    f"\n\n⏱️ Tiempo total: {format_duration(summary.elapsed_seconds)}"
-                ),
-            )
-
-        lines = [
-            "Refresh completado." if not summary.failed_leagues else "Refresh completado con errores.",
-            f"Ligas intentadas: {summary.tracks_requested}",
-            f"Ligas actualizadas: {summary.tracks_refreshed}",
-            f"Partidos activos guardados: {summary.active_matches}",
-            f"Nuevos eventos detectados: {summary.new_events}",
-            f"Cambios de odds detectados: {summary.odds_changes}",
-        ]
-
-        if summary.failed_leagues:
-            lines.append(
-                f"Ligas con problemas ({len(summary.failed_leagues)}): {', '.join(summary.failed_leagues)}"
-            )
-        if summary.degraded_leagues:
-            lines.append(
-                f"Ligas degradadas ({len(summary.degraded_leagues)}): {', '.join(summary.degraded_leagues)}"
-            )
-        lines.append(f"⏱️ Tiempo total: {format_duration(summary.elapsed_seconds)}")
-
-        return CommandResult(ok=True, message="\n".join(lines))
-
-    def _build_pending_confirmation_message(self, pending_request: PendingCompetitionTrackRequest) -> str:
-        """Build the Telegram message shown after `/track_url` succeeds."""
-
-        return (
-            f"Encontré la liga {pending_request.league_name}.\n"
-            f"🌐 Plataforma: {pending_request.platform_display_name}\n"
-            f"🔑 Key: {pending_request.platform}\n"
-            f"🏷️ Competencia: {pending_request.topic}\n"
-            "Respondé /confirm_track para agregarla al tracking."
-        )
-
-    def _build_empty_pending_confirmation_message(
-        self,
-        pending_request: PendingCompetitionTrackRequest,
-    ) -> str:
-        """Build the Telegram message shown after detecting a valid empty league."""
-
-        return (
-            "⚠️ La liga fue detectada, pero actualmente no tiene partidos o cuotas disponibles.\n\n"
-            f"Liga: {pending_request.league_name}\n"
-            f"Plataforma: {pending_request.platform_display_name}\n"
-            f"URL: {pending_request.url}\n\n"
-            "¿Querés almacenarla igual para empezar a trackearla?\n"
-            "Respondé:\n"
-            "- /confirm_empty_track para guardarla igualmente\n"
-            "- /cancel para cancelar"
-        )
-
-    def _build_confirmation_message(
-        self,
-        confirmed_request: ConfirmedCompetitionTrackRequest,
-        *,
-        bootstrap_count: int | None,
-        bootstrap_error: str | None,
-    ) -> str:
-        """Build the Telegram message shown after `/confirm_track`."""
-
-        tracked_league = confirmed_request.tracked_league
-        subscription = confirmed_request.subscription
-
-        lines = [
-            "✅ Liga trackeada",
-            f"🌐 Plataforma: {tracked_league.platform_display_name}",
-            f"🏷️ Liga: {tracked_league.league_name}",
-            f"🔑 Competencia: {tracked_league.topic}",
-            "",
-            "📈 Notificaciones de cambios de cuotas: "
-            f"{'activadas' if subscription.notify_odds_changes else 'desactivadas'}",
-            f"🎯 {'Threshold por defecto' if confirmed_request.subscription_created else 'Threshold configurado'}: "
-            f"{subscription.change_percent_threshold:.1f}%",
-        ]
-
-        if bootstrap_count is not None:
-            lines.append(f"Estado inicial guardado: {bootstrap_count} partidos activos.")
-
-        if bootstrap_error is not None:
-            lines.append(
-                "No pude guardar el estado inicial ahora mismo. "
-                "El monitor lo volverá a intentar automáticamente."
-            )
-
-        lines.extend(self._build_known_league_lines(tracked_league))
-
-        return "\n".join(lines)
-
-    def _build_known_league_lines(self, tracked_league) -> list[str]:
-        """Registry card: what the bot already knows about this unified league.
-
-        When the league exists in the registry with other platforms or stats
-        links, the new subscriber inherits everything automatically — tell them.
-        """
-
-        unified_id = getattr(tracked_league, "unified_competition_id", None)
-        if unified_id is None:
-            return []
-        try:
-            siblings = self.repository.list_tracked_competitions_for_unified(unified_id)
-            stats_links = self.repository.list_stats_league_links(tracked_league.id)
-        except Exception:
-            return []
-        others = [s for s in siblings if s.id != tracked_league.id]
-        lines: list[str] = []
-        if others or stats_links:
-            lines.append("")
-            lines.append("✨ Liga conocida en el registro — heredás automáticamente:")
-            for sibling in others:
-                lines.append(f"  🏦 {sibling.platform}: {sibling.league_name}")
-            for link in stats_links:
-                lines.append(f"  📊 {link.stats_provider}: {link.stats_league_name}")
-        lines.extend(self._build_merge_suggestion_lines(tracked_league, unified_id))
-        return lines
-
-    def _build_merge_suggestion_lines(self, tracked_league, unified_id: int) -> list[str]:
-        """Suggest (never auto-link) leagues that look similar, for the user to confirm."""
-
-        try:
-            suggestions = self.repository.suggest_similar_unified(
-                tracked_league.league_name, exclude_unified_id=unified_id
-            )
-        except Exception:
-            return []
-        if not suggestions:
-            return []
-        lines = ["", "💡 ¿Es la misma liga que alguna de estas? (NO las uní automáticamente)"]
-        for s in suggestions:
-            lines.append(f"  • {s['name']}")
-        lines.append("Si coincide, fusionalas con /link_league (mirá /leagues para los números).")
-        return lines
-
-    def _build_empty_confirmation_message(
-        self,
-        confirmed_request: ConfirmedCompetitionTrackRequest,
-    ) -> str:
-        """Build the Telegram message shown after confirming an empty league."""
-
-        tracked_league = confirmed_request.tracked_league
-        subscription = confirmed_request.subscription
-
-        lines = [
-            "✅ Liga trackeada",
-            f"🌐 Plataforma: {tracked_league.platform_display_name}",
-            f"🏷️ Liga: {tracked_league.league_name}",
-            f"🔑 Competencia: {tracked_league.topic}",
-            "",
-            "📈 Notificaciones de cambios de cuotas: "
-            f"{'activadas' if subscription.notify_odds_changes else 'desactivadas'}",
-            f"🎯 {'Threshold por defecto' if confirmed_request.subscription_created else 'Threshold configurado'}: "
-            f"{subscription.change_percent_threshold:.1f}%",
-            "",
-            "La liga quedó guardada aunque todavía no tenga partidos activos.",
-        ]
-
-        if tracked_league.needs_name_resolution:
-            lines.append(
-                "Se usó un nombre provisorio y se reemplazará automáticamente cuando la plataforma muestre eventos reales."
-            )
-
-        lines.extend(self._build_known_league_lines(tracked_league))
-
-        return "\n".join(lines)
 
     async def _refresh_leagues(self, tracked_league_ids: Sequence[int]) -> RefreshSummary:
         """Refresh a deduplicated set of tracked leagues under one shared lock."""

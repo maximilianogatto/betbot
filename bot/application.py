@@ -17,9 +17,9 @@ from core.registry import extractor_registry
 from core.stats_provider_base import stats_provider_registry
 from extractors import register_default_extractors
 from stats_providers import register_default_stats_providers
-from monitors.live_watch import LiveWatchService
-from monitors.stats import StatsService
-from monitors.tracking import TrackingService
+from services.live_watch import LiveWatchService
+from services.stats import StatsService
+from services.tracking import TrackingService
 from adapters.storage import SqliteStorage  # facade greenfield (PR2-E2-S9)
 
 

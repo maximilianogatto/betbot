@@ -6,9 +6,9 @@ import unittest
 from unittest.mock import AsyncMock, patch
 
 from bot.handlers import MANUAL_REFRESH_TASK_KEY, refresh_tracks_command
-from monitors.models import CommandResult
-from monitors.models import RefreshSummary
-from monitors.tracking import TrackingService
+from services.models import CommandResult
+from services.models import RefreshSummary
+from services.tracking import TrackingService
 
 
 def _refresh_summary() -> RefreshSummary:
@@ -32,11 +32,6 @@ class RefreshTracksHandlerTests(unittest.IsolatedAsyncioTestCase):
             try_start_refresh=AsyncMock(return_value=True),
             finish_refresh=AsyncMock(),
             refresh_chat_tracks=AsyncMock(return_value=_refresh_summary()),
-            dispatch_notifications=AsyncMock(),
-            build_refresh_summary_message=lambda summary: CommandResult(
-                ok=True,
-                message="Refresh completado.\n⏱️ Tiempo total: 42s",
-            ),
         )
         message = SimpleNamespace(reply_text=AsyncMock())
         bot = SimpleNamespace(send_message=AsyncMock())
@@ -47,15 +42,27 @@ class RefreshTracksHandlerTests(unittest.IsolatedAsyncioTestCase):
             effective_chat=SimpleNamespace(id=123),
         )
 
-        with patch("bot.handlers.get_tracking_service", return_value=tracking_service):
+        summary_result = CommandResult(ok=True, message="Refresh completado.\n⏱️ Tiempo total: 42s")
+        with (
+            patch("bot.handlers.get_tracking_service", return_value=tracking_service),
+            patch("adapters.storage.get_storage", return_value=SimpleNamespace()),
+            patch(
+                "interfaces.telegram.notifications.dispatch_tracking_notifications",
+                new=AsyncMock(),
+            ) as dispatch_mock,
+            patch(
+                "interfaces.telegram.renderers.build_refresh_summary_message",
+                return_value=summary_result,
+            ),
+        ):
             await refresh_tracks_command(update, context)
-
-        message.reply_text.assert_awaited_once_with("🔄 Refrescando tracks, aguardá un momento...")
-        task = application.bot_data.get(MANUAL_REFRESH_TASK_KEY)
-        self.assertIsInstance(task, asyncio.Task)
-        await task
+            message.reply_text.assert_awaited_once_with("🔄 Refrescando tracks, aguardá un momento...")
+            task = application.bot_data.get(MANUAL_REFRESH_TASK_KEY)
+            self.assertIsInstance(task, asyncio.Task)
+            # La task corre DENTRO del with: si no, los patches ya expiraron.
+            await task
         tracking_service.refresh_chat_tracks.assert_awaited_once_with(123)
-        tracking_service.dispatch_notifications.assert_awaited_once()
+        dispatch_mock.assert_awaited_once()
         tracking_service.finish_refresh.assert_awaited_once_with("manual")
         bot.send_message.assert_awaited_once_with(
             chat_id=123,
@@ -109,7 +116,19 @@ class RefreshTracksHandlerTests(unittest.IsolatedAsyncioTestCase):
             effective_chat=SimpleNamespace(id=999),
         )
 
-        with patch("bot.handlers.get_tracking_service", return_value=tracking_service):
+        summary_result = CommandResult(ok=True, message="Refresh completado.\n⏱️ Tiempo total: 42s")
+        with (
+            patch("bot.handlers.get_tracking_service", return_value=tracking_service),
+            patch("adapters.storage.get_storage", return_value=SimpleNamespace()),
+            patch(
+                "interfaces.telegram.notifications.dispatch_tracking_notifications",
+                new=AsyncMock(),
+            ) as dispatch_mock,
+            patch(
+                "interfaces.telegram.renderers.build_refresh_summary_message",
+                return_value=summary_result,
+            ),
+        ):
             await refresh_tracks_command(update, context)
 
         task = application.bot_data.get(MANUAL_REFRESH_TASK_KEY)
@@ -126,11 +145,6 @@ class RefreshTracksHandlerTests(unittest.IsolatedAsyncioTestCase):
             try_start_refresh=AsyncMock(return_value=True),
             finish_refresh=AsyncMock(),
             refresh_chat_tracks=AsyncMock(return_value=_refresh_summary()),
-            dispatch_notifications=AsyncMock(),
-            build_refresh_summary_message=lambda summary: CommandResult(
-                ok=True,
-                message="Refresh completado.\n⏱️ Tiempo total: 42s",
-            ),
         )
         message = SimpleNamespace(reply_text=AsyncMock())
         bot = SimpleNamespace(send_message=AsyncMock())
@@ -151,6 +165,17 @@ class RefreshTracksHandlerTests(unittest.IsolatedAsyncioTestCase):
         with (
             patch("bot.handlers.get_tracking_service", return_value=tracking_service),
             patch("bot.handlers.split_telegram_message", side_effect=_capture_split_text),
+            patch("adapters.storage.get_storage", return_value=SimpleNamespace()),
+            patch(
+                "interfaces.telegram.notifications.dispatch_tracking_notifications",
+                new=AsyncMock(),
+            ),
+            patch(
+                "interfaces.telegram.renderers.build_refresh_summary_message",
+                return_value=CommandResult(
+                    ok=True, message="Refresh completado.\n⏱️ Tiempo total: 42s"
+                ),
+            ),
         ):
             await refresh_tracks_command(update, context)
             task = application.bot_data.get(MANUAL_REFRESH_TASK_KEY)
