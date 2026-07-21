@@ -1,0 +1,36 @@
+{
+  "experiment": "EXP-001-model-ladder",
+  "date_run": "2026-07-21T18:04:42.786484",
+  "dataset": {
+    "n_matches": 1394,
+    "range": [
+      "2025-04-05",
+      "2026-07-20"
+    ]
+  },
+  "tuning": {
+    "grid_halflife": [
+      null,
+      120.0,
+      240.0
+    ],
+    "grid_sigma": [
+      0.75,
+      1.5
+    ],
+    "window": [
+      "2025-07-01",
+      "2025-12-01"
+    ],
+    "best": {
+      "halflife_days": 120.0,
+      "ridge_sigma": 0.75,
+      "fit_rho": true
+    }
+  },
+  "final_window": [
+    "2026-01-01",
+    "2026-07-20"
+  ],
+  "refit": "weekly (Monday cutoff)"
+}

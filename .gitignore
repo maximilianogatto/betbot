@@ -80,3 +80,6 @@ sandbox/solcasino_research/
 # SQLite transitorios (WAL/SHM)
 data/*.sqlite3-wal
 data/*.sqlite3-shm
+
+# Research venv (recrear con uv venv research/.venv)
+research/.venv/
