@@ -145,12 +145,20 @@ class SQLiteSubscriptionsAdapter(SubscriptionsPort):
     def get_subscriptions_for_competition(
         self,
         tracked_id: int,
+        only_enabled: bool = True,
     ) -> list[CompetitionSubscription]:
+        """Suscripciones de una competencia.
+
+        `only_enabled=True` (default, = comportamiento previo) devuelve solo las
+        activas: es lo que usan las rutas de notificación. El parámetro existe por
+        paridad con el legacy — sin él, el job de tracking moría con TypeError al
+        notificar y el bot quedaba mudo.
+        """
+        query = "SELECT * FROM subscriptions WHERE competition_id = ?"
+        if only_enabled:
+            query += " AND enabled = 1"
         with open_connection() as conn:
-            rows = conn.execute(
-                "SELECT * FROM subscriptions WHERE competition_id = ? AND enabled = 1",
-                (tracked_id,)
-            ).fetchall()
+            rows = conn.execute(query, (tracked_id,)).fetchall()
             return [_row_to_subscription(row) for row in rows]
 
     def get_enabled_subscription_count(self, *args: Any) -> int:

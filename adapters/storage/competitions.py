@@ -530,14 +530,37 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
         self,
         competition_id: int,
         source_url: str,
-    ) -> None:
-        source_url = source_url.strip()
-        now_iso = datetime.now(timezone.utc).isoformat()
+        competition_external_id: str | None = None,
+        competition_name: str | None = None,
+        needs_name_resolution: bool | None = None,
+        payload: Any = None,
+    ) -> TrackedCompetition | None:
+        """Re-apunta una competencia a una URL nueva (paridad legacy).
+
+        Además del `source_url` puede actualizar la identidad (`external_id`), el
+        nombre y el payload, porque la URL nueva puede apuntar a otra competencia de
+        la misma casa. Devuelve la competencia ya actualizada: los callers la usan
+        para responderle al usuario. `needs_name_resolution` se acepta por paridad
+        pero el esquema greenfield no lo persiste.
+        """
+        assignments = ["source_url = ?", "updated_at = ?"]
+        params: list[Any] = [source_url.strip(), datetime.now(timezone.utc).isoformat()]
+        if competition_external_id is not None:
+            assignments.append("external_id = ?")
+            params.append(str(competition_external_id))
+        if competition_name is not None:
+            assignments.append("name = ?")
+            params.append(str(competition_name).strip())
+        if payload is not None:
+            assignments.append("metadata_json = ?")
+            params.append(payload if isinstance(payload, str) else json.dumps(payload))
+        params.append(competition_id)
         with open_connection() as conn:
             conn.execute(
-                "UPDATE competitions SET source_url = ?, updated_at = ? WHERE id = ?",
-                (source_url, now_iso, competition_id)
+                f"UPDATE competitions SET {', '.join(assignments)} WHERE id = ?",
+                params,
             )
+        return self.get_tracked_competition(competition_id)
 
     def sanitize_tracking_state(self) -> None:
         with open_connection() as conn:

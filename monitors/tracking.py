@@ -714,7 +714,7 @@ class TrackingService:
 
         conflicting_competition = self.repository.get_tracked_competition_by_identity(
             platform=extraction.platform,
-            competition_external_id=extraction.competition_external_id,
+            external_id=extraction.competition_external_id,
         )
         if conflicting_competition is not None and conflicting_competition.id != tracked_competition.id:
             return CommandResult(
