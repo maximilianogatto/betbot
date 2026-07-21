@@ -164,7 +164,7 @@ class RefreshTracksHandlerTests(unittest.IsolatedAsyncioTestCase):
 
         with (
             patch("interfaces.telegram.handlers.commands.get_tracking_service", return_value=tracking_service),
-            patch("interfaces.telegram.handlers.commands.split_telegram_message", side_effect=_capture_split_text),
+            patch("interfaces.telegram.handlers.common.split_telegram_message", side_effect=_capture_split_text),
             patch("adapters.storage.get_storage", return_value=SimpleNamespace()),
             patch(
                 "interfaces.telegram.notifications.dispatch_tracking_notifications",

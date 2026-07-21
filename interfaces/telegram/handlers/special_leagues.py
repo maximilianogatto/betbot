@@ -13,7 +13,7 @@ from telegram import Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
-from interfaces.telegram.handlers.common import logger, reply_text_chunks as _reply_text_chunks
+from interfaces.telegram.handlers.common import logger, _reply_text_chunks
 
 
 _SWE_LEAGUES: dict[str, tuple[str, str, str]] = {
