@@ -85,6 +85,54 @@ def point_in_time_ppg(matches: pd.DataFrame) -> pd.DataFrame:
     return feat
 
 
+# ------------------------------------------------- stacking DC + features
+
+STACK_FEATS = ["elo_diff", "mom5_diff", "adj_form5_diff", "sos5_diff",
+               "ppg_vs_stronger8_diff", "form5_pts_diff"]
+
+
+def make_stacked(oos_dc: pd.DataFrame, feats: pd.DataFrame, *,
+                 use_features: bool = True):
+    """Meta-logistic over out-of-sample DC probs (+ form/momentum features).
+
+    ``oos_dc``: walk-forward DC predictions for every match (match_id, date,
+    result, p_home/p_draw/p_away) — all out-of-sample, so training the meta
+    model on rows with date < cutoff introduces no leakage.
+    ``use_features=False`` is the ablation: pure recalibration of DC.
+    """
+
+    from sklearn.linear_model import LogisticRegression
+
+    base = oos_dc.set_index("match_id")
+    F = feats.set_index("match_id")
+
+    def design(ids: pd.Index) -> np.ndarray:
+        P = base.loc[ids, PCOLS].to_numpy(dtype=float).clip(1e-6, 1 - 1e-6)
+        X = np.log(P[:, [0, 1]] / P[:, [2]])  # logits vs away
+        if use_features:
+            xf = F.loc[ids, STACK_FEATS].to_numpy(dtype=float)
+            xf = np.where(np.isnan(xf), 0.0, xf)  # sin historia = neutro
+            X = np.hstack([X, xf])
+        return X
+
+    def model(train: pd.DataFrame, rows: pd.DataFrame) -> pd.DataFrame:
+        cutoff = rows["date"].min()
+        tr_ids = base.index.intersection(train.loc[train["date"] < cutoff, "match_id"])
+        te_ids = pd.Index(rows["match_id"])
+        fallback = base.reindex(te_ids)[PCOLS].to_numpy(dtype=float)
+        tr = base.loc[tr_ids]
+        if len(tr) < 150 or tr["result"].nunique() < 3:
+            return pd.DataFrame(fallback, columns=PCOLS)
+        clf = LogisticRegression(max_iter=2000, C=1.0)
+        clf.fit(design(tr_ids), tr["result"].to_numpy())
+        order_idx = [list(clf.classes_).index(c) for c in ORDER]
+        P = clf.predict_proba(design(te_ids))[:, order_idx]
+        model.last_coef = (list(clf.classes_), clf.coef_)  # inspección
+        return pd.DataFrame(P, columns=PCOLS)
+
+    return model
+
+
 # ------------------------------------------------- Poisson / Dixon-Coles
 
 def make_poisson(*, halflife_days: float | None, ridge_sigma: float = 1.0,
