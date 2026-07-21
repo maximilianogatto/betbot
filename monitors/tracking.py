@@ -2012,7 +2012,7 @@ class TrackingService:
                 current_event_ids,
                 remove_after_cycles=self.remove_missing_after_cycles,
             )
-        removed_past_count = self.repository.remove_past_events(tracked_league_id)
+        removed_past_count = self.repository.remove_past_events(hours_ago=4)
         active_matches = self.repository.get_active_events(tracked_league_id, only_future=True)
         active_by_fixture = {match.fixture_id: match for match in active_matches}
 
@@ -2098,7 +2098,7 @@ class TrackingService:
             current_event_ids,
             remove_after_cycles=self.remove_missing_after_cycles,
         )
-        self.repository.remove_past_events(tracked_league_id)
+        self.repository.remove_past_events(hours_ago=4)
 
         active_count = len(self.repository.get_active_events(tracked_league_id, only_future=True))
         logger.info(

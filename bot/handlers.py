@@ -1539,7 +1539,7 @@ async def stats_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE
     # Unión de partidos de TODAS las plataformas de la liga (sin repetidos).
     active_events = tracking_service.repository.get_active_events_for_unified_competition(
         selected_league["id"],
-        only_future=True,
+        only_future=False,
     )
     if not active_events:
         tracked_links = tracking_service.repository.list_tracked_competitions_for_unified(
@@ -1552,7 +1552,7 @@ async def stats_select_league(update: Update, context: ContextTypes.DEFAULT_TYPE
                 pass
         active_events = tracking_service.repository.get_active_events_for_unified_competition(
             selected_league["id"],
-            only_future=True,
+            only_future=False,
         )
 
     if not active_events:
@@ -3304,7 +3304,7 @@ async def matches_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             
             active_events = tracking_service.repository.get_active_events_for_unified_competition(
                 selected_league["id"],
-                only_future=True,
+                only_future=False,
             )
 
             if not active_events:
@@ -3317,7 +3317,7 @@ async def matches_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                         pass
                 active_events = tracking_service.repository.get_active_events_for_unified_competition(
                     selected_league["id"],
-                    only_future=True,
+                    only_future=False,
                 )
 
             if active_events:
@@ -3369,7 +3369,7 @@ async def matches_select_league(update: Update, context: ContextTypes.DEFAULT_TY
 
     active_events = tracking_service.repository.get_active_events_for_unified_competition(
         selected_league["id"],
-        only_future=True,
+        only_future=False,
     )
 
     if not active_events:
@@ -3382,7 +3382,7 @@ async def matches_select_league(update: Update, context: ContextTypes.DEFAULT_TY
                 pass
         active_events = tracking_service.repository.get_active_events_for_unified_competition(
             selected_league["id"],
-            only_future=True,
+            only_future=False,
         )
 
     if not active_events:

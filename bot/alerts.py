@@ -53,7 +53,7 @@ def build_new_event_alert_message(
     if tracked_league.unified_competition_id is not None:
         all_active = tracking_repository.get_active_events_for_unified_competition(
             tracked_league.unified_competition_id,
-            only_future=True,
+            only_future=False,
         )
         for active in all_active:
             if active.id != match.id and active.platform != match.platform:
@@ -105,7 +105,7 @@ def build_grouped_new_event_alert_message(
         if tracked_league.unified_competition_id is not None:
             all_active = tracking_repository.get_active_events_for_unified_competition(
                 tracked_league.unified_competition_id,
-                only_future=True,
+                only_future=False,
             )
             for active in all_active:
                 if active.id != match.id and active.platform != match.platform:
