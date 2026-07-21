@@ -400,3 +400,19 @@
 - **Tests:** verde; `./betbot/bin/python -m unittest discover -s tests -t .` → 667 OK. También validé el mismo comando ocultando temporalmente el directorio untracked `bot/handlers/` para simular checkout limpio → 667 OK.
 - **Notas/Bloqueos:** El worktree local conserva `bot/handlers/` como WIP untracked ajeno a este commit; no se incluyó en S9c-2. Para que no shadowee localmente al módulo trackeado, le apliqué un ajuste mínimo no commiteado de imports a facade. No hay referencias trackeadas a `storage.tracking_repository` fuera de documentación histórica/migración.
 - **Siguiente sugerido:** PR2-E3 (extraer renderers a `interfaces/telegram/renderers/`) o resolver explícitamente qué hacer con el WIP untracked `bot/handlers/` antes de arrancar E5.
+
+### 2026-07-22T00:00:00+02:00 · @claude · PR2-E7 · DONE
+- **Qué hice:** Se eliminó `core/flags.py` (mapeo de bitmask obsoleto).
+- **Por qué:** Código muerto sin referencias tras la migración del storage.
+- **Archivos:** core/flags.py
+- **Commit:** 9fcf278
+- **Tests:** Verde.
+
+### 2026-07-22T00:50:00+02:00 · @claude · PR2-E3 · DONE
+- **Qué hice:** Se extrajo `bot/alerts.py` y todas las funciones `build_*_message` / `render_*` a `interfaces/telegram/renderers/messages.py`, exponiendo la API pública en `interfaces/telegram/renderers/__init__.py`. Se reescribieron los imports correspondientes en handlers, jobs, tracking y tests. La lógica de identidad de partidos fue centralizada previamente en `core/match_identity.py`.
+- **Por qué:** Desacoplar la lógica de renderizado y presentación de la capa de Telegram y el core.
+- **Archivos:** bot/alerts.py, interfaces/telegram/renderers/__init__.py, interfaces/telegram/renderers/messages.py, core/match_identity.py
+- **Commit:** be5ca76
+- **Tests:** Verde. 674 tests pasados con éxito.
+- **Notas/Bloqueos:** Ninguno.
+- **Siguiente sugerido:** PR2-E4 (Mover servicios de monitors/ a services/ y adelgazarlos).
