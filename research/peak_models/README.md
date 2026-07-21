@@ -1,8 +1,16 @@
 # Peak models — research sandbox
 
 Dataset + guía para experimentar con modelos de predicción de partidos de las
-ligas de Finlandia (las "ligas especiales" del bot). La idea: vos probás los
-modelos en notebooks; acá tenés los datos listos y un mapa de qué hacer.
+ligas "especiales" del bot. La idea: vos probás los modelos en notebooks; acá
+tenés los datos listos y un mapa de qué hacer.
+
+> **Actualización 2026-07-21**: el dataset ahora es multi-país — Finlandia (5
+> ligas, Palloliitto), Suecia (6 ligas, svenskfotboll.se) y Noruega (6 ligas,
+> fotball.no) = **4.941 partidos, 17 ligas**. `loader.load_all()` carga todo con
+> columna `country`. Regenerar nórdicos: `PYTHONPATH=. betbot/bin/python
+> research/peak_models/build_dataset_nordics.py` (los fiksIds/competition ids de
+> cada temporada están mapeados ahí). Experimentos: ver
+> `../experiments/EXP-001-model-ladder/` y `../experiments/EXP-002-multiliga/`.
 
 ---
 
@@ -136,7 +144,14 @@ Para cada uno: **qué predice** y **cómo se entrena**.
   matriz de marcadores → 1X2 / over 2.5 / BTTS.
 - **`evaluate.py`** — harness walk-forward semanal + métricas (RPS, log-loss,
   Brier, ECE) + bootstrap pareado.
-- **`zoo.py`** — modelos con firma común para el harness (baselines + Poisson).
+- **`zoo.py`** — modelos con firma común para el harness (baselines + Poisson +
+  capa apilada DC→logística con features).
+- **`features.py`** — features point-in-time de forma/momentum: Elo, pendiente
+  de rating, sobre-rendimiento vs expectativa, SoS, PPG contra rivales más
+  fuertes. (EXP-002: NO agregan sobre DC — el decaimiento ya las contiene.)
+- **`g2_multiliga.ipynb`** — análisis de EXP-002: la escalera generaliza a SWE y
+  NOR con significancia (G2 superado); ligas femeninas las más predecibles;
+  ablación de momentum negativa; empates sobre-estimados en cola alta.
 
 Entorno: `uv venv research/.venv && uv pip install -p research/.venv/bin/python
 pandas numpy scipy scikit-learn matplotlib nbclient nbformat ipykernel`.

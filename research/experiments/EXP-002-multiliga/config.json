@@ -1,0 +1,35 @@
+{
+  "experiment": "EXP-002-multiliga",
+  "date_run": "2026-07-21T18:32:17.309810",
+  "dataset": {
+    "n": 4941,
+    "countries": {
+      "SWE": 1920,
+      "NOR": 1627,
+      "FIN": 1394
+    },
+    "leagues": 17,
+    "range": [
+      "2025-03-21",
+      "2026-07-20"
+    ]
+  },
+  "dc_params": {
+    "halflife_days": 120.0,
+    "ridge_sigma": 0.75,
+    "fit_rho": true
+  },
+  "stack_features": [
+    "elo_diff",
+    "mom5_diff",
+    "adj_form5_diff",
+    "sos5_diff",
+    "ppg_vs_stronger8_diff",
+    "form5_pts_diff"
+  ],
+  "refit": "weekly",
+  "final_window": [
+    "2026-01-01",
+    "2026-07-20"
+  ]
+}
