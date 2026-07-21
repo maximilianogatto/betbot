@@ -1,0 +1,241 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-1-egersund,2025-03-31,19:00,egersund,Egersund,mj-ndalen,Mjøndalen,3,2,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-1-kongsvinger,2025-03-31,19:00,kongsvinger,Kongsvinger,sane,Åsane,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-1-odd,2025-03-31,19:00,odd,Odd,skeid,Skeid,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-1-ranheim-tf,2025-03-31,19:00,ranheim-tf,Ranheim TF,lyn,Lyn,0,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-1-stab-k,2025-03-31,19:00,stab-k,Stabæk,h-dd,Hødd,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-1-start,2025-03-31,19:00,start,Start,sogndal,Sogndal,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-1-aalesund,2025-03-31,19:00,aalesund,Aalesund,lillestr-m,Lillestrøm,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-1-raufoss,2025-04-01,19:00,raufoss,Raufoss,moss,Moss,3,2,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-2-h-dd,2025-04-05,16:00,h-dd,Hødd,kongsvinger,Kongsvinger,0,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-2-lillestr-m,2025-04-05,16:00,lillestr-m,Lillestrøm,odd,Odd,1,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-2-mj-ndalen,2025-04-05,16:00,mj-ndalen,Mjøndalen,raufoss,Raufoss,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-2-moss,2025-04-05,16:00,moss,Moss,ranheim-tf,Ranheim TF,2,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-2-skeid,2025-04-05,16:00,skeid,Skeid,start,Start,1,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-2-sogndal,2025-04-05,16:00,sogndal,Sogndal,aalesund,Aalesund,3,4,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-2-sane,2025-04-05,16:00,sane,Åsane,egersund,Egersund,0,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-2-lyn,2025-04-06,17:00,lyn,Lyn,stab-k,Stabæk,0,1,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-3-egersund,2025-04-21,17:00,egersund,Egersund,skeid,Skeid,4,3,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-3-kongsvinger,2025-04-21,17:00,kongsvinger,Kongsvinger,moss,Moss,6,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-3-odd,2025-04-21,17:00,odd,Odd,lyn,Lyn,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-3-ranheim-tf,2025-04-21,17:00,ranheim-tf,Ranheim TF,sogndal,Sogndal,1,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-3-raufoss,2025-04-21,17:00,raufoss,Raufoss,sane,Åsane,3,2,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-3-stab-k,2025-04-21,17:00,stab-k,Stabæk,lillestr-m,Lillestrøm,0,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-3-start,2025-04-21,17:00,start,Start,h-dd,Hødd,1,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-3-aalesund,2025-04-21,17:00,aalesund,Aalesund,mj-ndalen,Mjøndalen,0,0,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-4-lyn,2025-04-27,17:00,lyn,Lyn,lillestr-m,Lillestrøm,0,1,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-4-moss,2025-04-27,17:00,moss,Moss,stab-k,Stabæk,4,2,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-4-mj-ndalen,2025-04-28,19:00,mj-ndalen,Mjøndalen,start,Start,2,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-4-raufoss,2025-04-28,19:00,raufoss,Raufoss,egersund,Egersund,0,1,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-4-skeid,2025-04-28,19:00,skeid,Skeid,kongsvinger,Kongsvinger,1,4,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-4-sogndal,2025-04-28,19:00,sogndal,Sogndal,odd,Odd,3,2,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-4-sane,2025-04-28,19:00,sane,Åsane,aalesund,Aalesund,0,0,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-4-h-dd,2025-04-29,19:00,h-dd,Hødd,ranheim-tf,Ranheim TF,0,1,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-5-lillestr-m,2025-05-03,16:00,lillestr-m,Lillestrøm,moss,Moss,3,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-5-odd,2025-05-03,16:00,odd,Odd,egersund,Egersund,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-5-ranheim-tf,2025-05-03,16:00,ranheim-tf,Ranheim TF,kongsvinger,Kongsvinger,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-5-sogndal,2025-05-03,16:00,sogndal,Sogndal,mj-ndalen,Mjøndalen,1,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-5-start,2025-05-03,16:00,start,Start,sane,Åsane,2,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-5-aalesund,2025-05-03,16:00,aalesund,Aalesund,raufoss,Raufoss,3,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-5-stab-k,2025-05-04,14:30,stab-k,Stabæk,skeid,Skeid,1,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-5-lyn,2025-05-04,17:00,lyn,Lyn,h-dd,Hødd,0,1,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-6-mj-ndalen,2025-05-11,17:00,mj-ndalen,Mjøndalen,ranheim-tf,Ranheim TF,1,4,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-6-raufoss,2025-05-11,17:00,raufoss,Raufoss,start,Start,0,0,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-6-h-dd,2025-05-11,17:00,h-dd,Hødd,sogndal,Sogndal,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-6-moss,2025-05-11,17:00,moss,Moss,lyn,Lyn,2,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-6-kongsvinger,2025-05-12,19:00,kongsvinger,Kongsvinger,odd,Odd,1,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-6-skeid,2025-05-12,19:00,skeid,Skeid,lillestr-m,Lillestrøm,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-6-sane,2025-05-12,19:00,sane,Åsane,stab-k,Stabæk,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-6-egersund,2025-07-22,18:00,egersund,Egersund,aalesund,Aalesund,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-7-ranheim-tf,2025-05-15,19:00,ranheim-tf,Ranheim TF,raufoss,Raufoss,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-7-lillestr-m,2025-05-16,18:00,lillestr-m,Lillestrøm,kongsvinger,Kongsvinger,2,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-7-lyn,2025-05-16,18:00,lyn,Lyn,skeid,Skeid,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-7-odd,2025-05-16,18:00,odd,Odd,moss,Moss,2,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-7-sogndal,2025-05-16,18:00,sogndal,Sogndal,sane,Åsane,2,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-7-stab-k,2025-05-16,18:00,stab-k,Stabæk,mj-ndalen,Mjøndalen,4,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-7-start,2025-05-16,18:00,start,Start,egersund,Egersund,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-7-aalesund,2025-05-16,18:00,aalesund,Aalesund,h-dd,Hødd,2,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-8-kongsvinger,2025-05-24,16:00,kongsvinger,Kongsvinger,lyn,Lyn,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-8-mj-ndalen,2025-05-24,16:00,mj-ndalen,Mjøndalen,lillestr-m,Lillestrøm,0,6,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-8-moss,2025-05-24,16:00,moss,Moss,skeid,Skeid,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-8-raufoss,2025-05-24,16:00,raufoss,Raufoss,stab-k,Stabæk,1,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-8-aalesund,2025-05-24,16:00,aalesund,Aalesund,start,Start,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-8-sane,2025-05-25,17:00,sane,Åsane,ranheim-tf,Ranheim TF,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-8-egersund,2025-05-25,17:00,egersund,Egersund,sogndal,Sogndal,0,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-8-h-dd,2025-05-25,17:00,h-dd,Hødd,odd,Odd,3,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-9-lyn,2025-05-29,19:00,lyn,Lyn,mj-ndalen,Mjøndalen,1,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-9-skeid,2025-05-30,19:00,skeid,Skeid,h-dd,Hødd,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-9-lillestr-m,2025-05-31,16:00,lillestr-m,Lillestrøm,egersund,Egersund,1,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-9-moss,2025-05-31,16:00,moss,Moss,start,Start,0,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-9-odd,2025-05-31,16:00,odd,Odd,sane,Åsane,1,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-9-ranheim-tf,2025-05-31,16:00,ranheim-tf,Ranheim TF,aalesund,Aalesund,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-9-sogndal,2025-05-31,16:00,sogndal,Sogndal,raufoss,Raufoss,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-9-stab-k,2025-05-31,16:00,stab-k,Stabæk,kongsvinger,Kongsvinger,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-10-kongsvinger,2025-06-14,16:00,kongsvinger,Kongsvinger,sogndal,Sogndal,4,2,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-10-h-dd,2025-06-14,18:00,h-dd,Hødd,lillestr-m,Lillestrøm,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-10-start,2025-06-15,14:30,start,Start,lyn,Lyn,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-10-egersund,2025-06-15,16:00,egersund,Egersund,ranheim-tf,Ranheim TF,3,4,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-10-mj-ndalen,2025-06-15,17:00,mj-ndalen,Mjøndalen,moss,Moss,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-10-raufoss,2025-06-15,17:00,raufoss,Raufoss,odd,Odd,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-10-sane,2025-06-15,17:00,sane,Åsane,skeid,Skeid,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-10-aalesund,2025-06-15,19:15,aalesund,Aalesund,stab-k,Stabæk,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-11-kongsvinger,2025-06-18,19:00,kongsvinger,Kongsvinger,aalesund,Aalesund,3,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-11-lillestr-m,2025-06-18,19:00,lillestr-m,Lillestrøm,sane,Åsane,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-11-lyn,2025-06-18,19:00,lyn,Lyn,raufoss,Raufoss,3,2,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-11-moss,2025-06-18,19:00,moss,Moss,h-dd,Hødd,3,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-11-odd,2025-06-18,19:00,odd,Odd,mj-ndalen,Mjøndalen,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-11-ranheim-tf,2025-06-18,19:00,ranheim-tf,Ranheim TF,start,Start,0,1,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-11-skeid,2025-06-18,19:00,skeid,Skeid,sogndal,Sogndal,1,4,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-11-stab-k,2025-06-18,19:00,stab-k,Stabæk,egersund,Egersund,1,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-12-egersund,2025-06-21,14:00,egersund,Egersund,kongsvinger,Kongsvinger,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-12-sane,2025-06-21,14:00,sane,Åsane,moss,Moss,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-12-ranheim-tf,2025-06-21,16:00,ranheim-tf,Ranheim TF,lillestr-m,Lillestrøm,0,4,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-12-raufoss,2025-06-21,16:00,raufoss,Raufoss,h-dd,Hødd,6,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-12-start,2025-06-21,16:00,start,Start,stab-k,Stabæk,5,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-12-aalesund,2025-06-21,16:00,aalesund,Aalesund,odd,Odd,1,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-12-sogndal,2025-06-22,17:00,sogndal,Sogndal,lyn,Lyn,1,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-12-mj-ndalen,2025-06-23,19:00,mj-ndalen,Mjøndalen,skeid,Skeid,1,4,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-13-h-dd,2025-06-28,14:00,h-dd,Hødd,mj-ndalen,Mjøndalen,3,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-13-kongsvinger,2025-06-28,14:00,kongsvinger,Kongsvinger,raufoss,Raufoss,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-13-lillestr-m,2025-06-28,16:00,lillestr-m,Lillestrøm,sogndal,Sogndal,0,0,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-13-moss,2025-06-28,16:00,moss,Moss,egersund,Egersund,2,4,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-13-odd,2025-06-28,16:00,odd,Odd,start,Start,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-13-skeid,2025-06-28,16:00,skeid,Skeid,aalesund,Aalesund,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-13-stab-k,2025-06-28,16:00,stab-k,Stabæk,ranheim-tf,Ranheim TF,1,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-13-lyn,2025-06-29,17:00,lyn,Lyn,sane,Åsane,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-14-egersund,2025-07-26,14:00,egersund,Egersund,lyn,Lyn,0,5,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-14-mj-ndalen,2025-07-26,14:00,mj-ndalen,Mjøndalen,kongsvinger,Kongsvinger,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-14-ranheim-tf,2025-07-26,14:00,ranheim-tf,Ranheim TF,odd,Odd,3,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-14-raufoss,2025-07-26,14:00,raufoss,Raufoss,skeid,Skeid,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-14-sogndal,2025-07-26,14:00,sogndal,Sogndal,stab-k,Stabæk,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-14-start,2025-07-26,14:00,start,Start,lillestr-m,Lillestrøm,0,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-14-aalesund,2025-07-26,14:00,aalesund,Aalesund,moss,Moss,2,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-14-sane,2025-07-26,14:00,sane,Åsane,h-dd,Hødd,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-15-h-dd,2025-07-30,18:00,h-dd,Hødd,egersund,Egersund,1,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-15-kongsvinger,2025-07-30,18:00,kongsvinger,Kongsvinger,start,Start,0,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-15-lyn,2025-07-30,18:00,lyn,Lyn,aalesund,Aalesund,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-15-mj-ndalen,2025-07-30,18:00,mj-ndalen,Mjøndalen,sane,Åsane,2,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-15-moss,2025-07-30,18:00,moss,Moss,sogndal,Sogndal,3,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-15-odd,2025-07-30,18:00,odd,Odd,stab-k,Stabæk,2,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-15-skeid,2025-07-30,18:00,skeid,Skeid,ranheim-tf,Ranheim TF,0,0,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-15-lillestr-m,2025-07-30,20:00,lillestr-m,Lillestrøm,raufoss,Raufoss,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-16-egersund,2025-08-02,16:00,egersund,Egersund,odd,Odd,1,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-16-ranheim-tf,2025-08-02,16:00,ranheim-tf,Ranheim TF,h-dd,Hødd,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-16-raufoss,2025-08-02,16:00,raufoss,Raufoss,lyn,Lyn,0,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-16-sogndal,2025-08-02,16:00,sogndal,Sogndal,skeid,Skeid,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-16-start,2025-08-02,16:00,start,Start,mj-ndalen,Mjøndalen,4,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-16-aalesund,2025-08-02,16:00,aalesund,Aalesund,kongsvinger,Kongsvinger,3,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-16-sane,2025-08-02,16:00,sane,Åsane,lillestr-m,Lillestrøm,1,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-16-stab-k,2025-08-02,16:00,stab-k,Stabæk,moss,Moss,3,3,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-17-lillestr-m,2025-08-10,14:30,lillestr-m,Lillestrøm,aalesund,Aalesund,5,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-17-h-dd,2025-08-10,17:00,h-dd,Hødd,start,Start,0,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-17-kongsvinger,2025-08-10,17:00,kongsvinger,Kongsvinger,stab-k,Stabæk,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-17-lyn,2025-08-10,17:00,lyn,Lyn,ranheim-tf,Ranheim TF,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-17-mj-ndalen,2025-08-10,17:00,mj-ndalen,Mjøndalen,sogndal,Sogndal,2,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-17-moss,2025-08-10,17:00,moss,Moss,sane,Åsane,1,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-17-odd,2025-08-10,17:00,odd,Odd,raufoss,Raufoss,1,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-17-skeid,2025-08-10,17:00,skeid,Skeid,egersund,Egersund,0,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-18-sogndal,2025-08-06,18:00,sogndal,Sogndal,h-dd,Hødd,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-18-egersund,2025-08-06,19:00,egersund,Egersund,lillestr-m,Lillestrøm,0,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-18-ranheim-tf,2025-08-06,19:00,ranheim-tf,Ranheim TF,moss,Moss,0,0,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-18-raufoss,2025-08-06,19:00,raufoss,Raufoss,kongsvinger,Kongsvinger,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-18-skeid,2025-08-06,19:00,skeid,Skeid,mj-ndalen,Mjøndalen,1,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-18-stab-k,2025-08-06,19:00,stab-k,Stabæk,aalesund,Aalesund,1,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-18-start,2025-08-06,19:00,start,Start,odd,Odd,2,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-18-sane,2025-08-06,19:00,sane,Åsane,lyn,Lyn,0,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-19-lillestr-m,2025-08-16,18:00,lillestr-m,Lillestrøm,start,Start,3,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-19-h-dd,2025-08-17,17:00,h-dd,Hødd,skeid,Skeid,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-19-moss,2025-08-17,17:00,moss,Moss,odd,Odd,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-19-kongsvinger,2025-08-18,19:00,kongsvinger,Kongsvinger,mj-ndalen,Mjøndalen,4,3,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-19-stab-k,2025-08-18,19:00,stab-k,Stabæk,sogndal,Sogndal,1,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-19-aalesund,2025-08-18,19:00,aalesund,Aalesund,ranheim-tf,Ranheim TF,6,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-19-sane,2025-08-18,19:00,sane,Åsane,raufoss,Raufoss,4,2,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-19-lyn,2025-08-19,19:00,lyn,Lyn,egersund,Egersund,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-20-egersund,2025-08-23,16:00,egersund,Egersund,sane,Åsane,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-20-mj-ndalen,2025-08-23,16:00,mj-ndalen,Mjøndalen,h-dd,Hødd,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-20-odd,2025-08-23,16:00,odd,Odd,kongsvinger,Kongsvinger,1,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-20-ranheim-tf,2025-08-23,16:00,ranheim-tf,Ranheim TF,stab-k,Stabæk,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-20-raufoss,2025-08-23,16:00,raufoss,Raufoss,lillestr-m,Lillestrøm,1,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-20-skeid,2025-08-23,16:00,skeid,Skeid,lyn,Lyn,2,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-20-sogndal,2025-08-23,16:00,sogndal,Sogndal,moss,Moss,3,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-20-start,2025-08-23,18:00,start,Start,aalesund,Aalesund,3,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-21-stab-k,2025-08-30,14:00,stab-k,Stabæk,start,Start,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-21-h-dd,2025-08-30,16:00,h-dd,Hødd,raufoss,Raufoss,2,4,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-21-kongsvinger,2025-08-30,16:00,kongsvinger,Kongsvinger,ranheim-tf,Ranheim TF,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-21-lillestr-m,2025-08-30,16:00,lillestr-m,Lillestrøm,skeid,Skeid,3,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-21-moss,2025-08-30,16:00,moss,Moss,mj-ndalen,Mjøndalen,3,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-21-sane,2025-08-30,16:00,sane,Åsane,sogndal,Sogndal,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-21-aalesund,2025-08-31,17:00,aalesund,Aalesund,egersund,Egersund,2,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-21-lyn,2025-08-31,19:00,lyn,Lyn,odd,Odd,0,0,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-22-egersund,2025-09-13,16:00,egersund,Egersund,stab-k,Stabæk,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-22-odd,2025-09-13,16:00,odd,Odd,h-dd,Hødd,1,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-22-ranheim-tf,2025-09-13,16:00,ranheim-tf,Ranheim TF,sane,Åsane,5,2,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-22-raufoss,2025-09-13,16:00,raufoss,Raufoss,aalesund,Aalesund,0,1,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-22-sogndal,2025-09-13,16:00,sogndal,Sogndal,lillestr-m,Lillestrøm,1,5,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-22-start,2025-09-13,16:00,start,Start,kongsvinger,Kongsvinger,2,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-22-skeid,2025-09-14,14:30,skeid,Skeid,moss,Moss,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-22-mj-ndalen,2025-09-14,17:00,mj-ndalen,Mjøndalen,lyn,Lyn,0,1,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-23-h-dd,2025-09-20,16:00,h-dd,Hødd,moss,Moss,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-23-lillestr-m,2025-09-20,16:00,lillestr-m,Lillestrøm,mj-ndalen,Mjøndalen,4,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-23-aalesund,2025-09-20,16:00,aalesund,Aalesund,skeid,Skeid,3,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-23-sane,2025-09-20,16:00,sane,Åsane,odd,Odd,0,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-23-start,2025-09-20,18:00,start,Start,ranheim-tf,Ranheim TF,2,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-23-kongsvinger,2025-09-21,17:00,kongsvinger,Kongsvinger,egersund,Egersund,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-23-lyn,2025-09-21,17:00,lyn,Lyn,sogndal,Sogndal,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-23-stab-k,2025-09-21,17:00,stab-k,Stabæk,raufoss,Raufoss,3,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-24-skeid,2025-09-27,14:00,skeid,Skeid,sane,Åsane,1,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-24-egersund,2025-09-27,16:00,egersund,Egersund,start,Start,2,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-24-sogndal,2025-09-28,14:30,sogndal,Sogndal,kongsvinger,Kongsvinger,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-24-h-dd,2025-09-29,19:00,h-dd,Hødd,lyn,Lyn,0,1,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-24-moss,2025-09-29,19:00,moss,Moss,lillestr-m,Lillestrøm,1,5,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-24-odd,2025-09-29,19:00,odd,Odd,aalesund,Aalesund,1,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-24-raufoss,2025-09-29,19:00,raufoss,Raufoss,ranheim-tf,Ranheim TF,1,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-24-mj-ndalen,2025-10-29,19:00,mj-ndalen,Mjøndalen,stab-k,Stabæk,3,2,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-25-kongsvinger,2025-10-04,16:00,kongsvinger,Kongsvinger,skeid,Skeid,3,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-25-lillestr-m,2025-10-04,16:00,lillestr-m,Lillestrøm,h-dd,Hødd,4,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-25-ranheim-tf,2025-10-04,16:00,ranheim-tf,Ranheim TF,egersund,Egersund,0,4,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-25-start,2025-10-04,16:00,start,Start,raufoss,Raufoss,4,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-25-aalesund,2025-10-04,16:00,aalesund,Aalesund,sogndal,Sogndal,2,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-25-sane,2025-10-04,16:00,sane,Åsane,mj-ndalen,Mjøndalen,2,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-25-lyn,2025-10-05,17:00,lyn,Lyn,moss,Moss,4,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-25-stab-k,2025-10-05,17:00,stab-k,Stabæk,odd,Odd,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-26-lillestr-m,2025-10-17,19:00,lillestr-m,Lillestrøm,lyn,Lyn,5,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-26-skeid,2025-10-18,14:00,skeid,Skeid,stab-k,Stabæk,0,5,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-26-egersund,2025-10-18,16:00,egersund,Egersund,raufoss,Raufoss,4,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-26-h-dd,2025-10-18,16:00,h-dd,Hødd,sane,Åsane,3,3,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-26-mj-ndalen,2025-10-18,16:00,mj-ndalen,Mjøndalen,aalesund,Aalesund,0,6,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-26-moss,2025-10-18,16:00,moss,Moss,kongsvinger,Kongsvinger,2,4,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-26-odd,2025-10-18,16:00,odd,Odd,ranheim-tf,Ranheim TF,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-26-sogndal,2025-10-18,16:00,sogndal,Sogndal,start,Start,0,0,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-27-egersund,2025-10-22,18:00,egersund,Egersund,moss,Moss,2,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-27-kongsvinger,2025-10-22,18:00,kongsvinger,Kongsvinger,h-dd,Hødd,3,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-27-odd,2025-10-22,18:00,odd,Odd,lillestr-m,Lillestrøm,1,7,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-27-ranheim-tf,2025-10-22,18:00,ranheim-tf,Ranheim TF,mj-ndalen,Mjøndalen,3,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-27-raufoss,2025-10-22,18:00,raufoss,Raufoss,sogndal,Sogndal,1,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-27-stab-k,2025-10-22,18:00,stab-k,Stabæk,sane,Åsane,2,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-27-start,2025-10-22,18:00,start,Start,skeid,Skeid,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-27-aalesund,2025-10-22,18:00,aalesund,Aalesund,lyn,Lyn,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-28-skeid,2025-10-25,14:00,skeid,Skeid,raufoss,Raufoss,1,4,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-28-h-dd,2025-10-25,16:00,h-dd,Hødd,stab-k,Stabæk,1,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-28-lillestr-m,2025-10-25,16:00,lillestr-m,Lillestrøm,ranheim-tf,Ranheim TF,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-28-lyn,2025-10-25,16:00,lyn,Lyn,kongsvinger,Kongsvinger,0,1,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-28-mj-ndalen,2025-10-25,16:00,mj-ndalen,Mjøndalen,odd,Odd,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-28-moss,2025-10-25,16:00,moss,Moss,aalesund,Aalesund,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-28-sogndal,2025-10-25,16:00,sogndal,Sogndal,egersund,Egersund,0,1,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-28-sane,2025-10-25,16:00,sane,Åsane,start,Start,2,2,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-29-egersund,2025-11-01,16:00,egersund,Egersund,h-dd,Hødd,0,0,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-29-kongsvinger,2025-11-01,16:00,kongsvinger,Kongsvinger,lillestr-m,Lillestrøm,0,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-29-odd,2025-11-01,16:00,odd,Odd,sogndal,Sogndal,1,4,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-29-ranheim-tf,2025-11-01,16:00,ranheim-tf,Ranheim TF,skeid,Skeid,4,2,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-29-start,2025-11-01,16:00,start,Start,moss,Moss,2,1,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-29-aalesund,2025-11-01,16:00,aalesund,Aalesund,sane,Åsane,3,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-29-raufoss,2025-11-02,17:00,raufoss,Raufoss,mj-ndalen,Mjøndalen,0,1,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-29-stab-k,2025-11-02,17:00,stab-k,Stabæk,lyn,Lyn,1,5,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-30-h-dd,2025-11-08,16:00,h-dd,Hødd,aalesund,Aalesund,0,0,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-30-lillestr-m,2025-11-08,16:00,lillestr-m,Lillestrøm,stab-k,Stabæk,3,0,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-30-lyn,2025-11-08,16:00,lyn,Lyn,start,Start,0,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-30-mj-ndalen,2025-11-08,16:00,mj-ndalen,Mjøndalen,egersund,Egersund,1,2,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-30-moss,2025-11-08,16:00,moss,Moss,raufoss,Raufoss,1,1,,,Played,D,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-30-skeid,2025-11-08,16:00,skeid,Skeid,odd,Odd,5,2,,,Played,H,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-30-sogndal,2025-11-08,16:00,sogndal,Sogndal,ranheim-tf,Ranheim TF,0,3,,,Played,A,NOR
+2025,NO-OBOS,OBOS-ligaen,199422,1,-,,199422-30-sane,2025-11-08,16:00,sane,Åsane,kongsvinger,Kongsvinger,0,0,,,Played,D,NOR

@@ -1,0 +1,183 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-1-notodden,2025-03-29,13:00,notodden,Notodden,vard-haugesund,Vard Haugesund,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-1-jerv,2025-03-29,13:00,jerv,Jerv,pors,Pors,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-1-lysekloster,2025-03-29,15:00,lysekloster,Lysekloster,sotra,Sotra,0,0,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-1-fl-y-flekker-y,2025-03-29,15:00,fl-y-flekker-y,Fløy-Flekkerøy,arendal,Arendal,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-1-sandnes-ulf,2025-03-30,13:00,sandnes-ulf,Sandnes Ulf,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,3,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-1-tr-ff,2025-03-30,15:00,tr-ff,Træff,brann-2,Brann  2,3,4,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-1-brattv-g,2025-03-30,16:00,brattv-g,Brattvåg,sandviken,Sandviken,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-2-vard-haugesund,2025-04-05,14:00,vard-haugesund,Vard Haugesund,jerv,Jerv,1,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-2-sandviken,2025-04-05,14:00,sandviken,Sandviken,lysekloster,Lysekloster,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-2-fk-eik-t-nsberg-871,2025-04-05,14:00,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,notodden,Notodden,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-2-arendal,2025-04-05,16:00,arendal,Arendal,sandnes-ulf,Sandnes Ulf,3,3,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-2-pors,2025-04-06,13:00,pors,Pors,tr-ff,Træff,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-2-sotra,2025-04-06,16:00,sotra,Sotra,fl-y-flekker-y,Fløy-Flekkerøy,6,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-2-brann-2,2025-04-07,14:00,brann-2,Brann  2,brattv-g,Brattvåg,4,3,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-3-vard-haugesund,2025-04-19,15:00,vard-haugesund,Vard Haugesund,sotra,Sotra,0,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-3-tr-ff,2025-04-19,15:00,tr-ff,Træff,brattv-g,Brattvåg,1,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-3-sandnes-ulf,2025-04-21,13:00,sandnes-ulf,Sandnes Ulf,pors,Pors,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-3-jerv,2025-04-21,14:00,jerv,Jerv,sandviken,Sandviken,1,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-3-fl-y-flekker-y,2025-04-21,15:00,fl-y-flekker-y,Fløy-Flekkerøy,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,0,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-3-notodden,2025-04-21,16:00,notodden,Notodden,arendal,Arendal,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-3-lysekloster,2025-04-21,18:00,lysekloster,Lysekloster,brann-2,Brann  2,3,2,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-4-fk-eik-t-nsberg-871,2025-04-27,13:00,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,vard-haugesund,Vard Haugesund,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-4-arendal,2025-04-27,13:00,arendal,Arendal,tr-ff,Træff,1,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-4-sotra,2025-04-27,13:00,sotra,Sotra,notodden,Notodden,1,3,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-4-brattv-g,2025-04-27,14:00,brattv-g,Brattvåg,jerv,Jerv,2,3,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-4-sandviken,2025-04-27,16:00,sandviken,Sandviken,fl-y-flekker-y,Fløy-Flekkerøy,5,3,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-4-pors,2025-04-27,16:00,pors,Pors,lysekloster,Lysekloster,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-4-brann-2,2025-04-28,16:30,brann-2,Brann  2,sandnes-ulf,Sandnes Ulf,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-5-arendal,2025-05-02,18:00,arendal,Arendal,sotra,Sotra,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-5-fk-eik-t-nsberg-871,2025-05-03,14:00,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,sandviken,Sandviken,3,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-5-notodden,2025-05-03,15:00,notodden,Notodden,pors,Pors,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-5-sandnes-ulf,2025-05-03,16:00,sandnes-ulf,Sandnes Ulf,tr-ff,Træff,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-5-fl-y-flekker-y,2025-05-03,16:00,fl-y-flekker-y,Fløy-Flekkerøy,jerv,Jerv,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-5-lysekloster,2025-05-04,13:00,lysekloster,Lysekloster,brattv-g,Brattvåg,1,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-5-vard-haugesund,2025-05-04,15:00,vard-haugesund,Vard Haugesund,brann-2,Brann  2,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-6-sandviken,2025-05-10,13:00,sandviken,Sandviken,notodden,Notodden,2,2,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-6-pors,2025-05-10,13:00,pors,Pors,vard-haugesund,Vard Haugesund,1,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-6-sotra,2025-05-10,13:00,sotra,Sotra,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,4,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-6-tr-ff,2025-05-11,12:00,tr-ff,Træff,lysekloster,Lysekloster,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-6-brattv-g,2025-05-11,13:00,brattv-g,Brattvåg,sandnes-ulf,Sandnes Ulf,2,5,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-6-brann-2,2025-05-12,15:00,brann-2,Brann  2,fl-y-flekker-y,Fløy-Flekkerøy,4,3,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-6-jerv,2025-05-16,18:00,jerv,Jerv,arendal,Arendal,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-7-sotra,2025-05-23,19:30,sotra,Sotra,sandviken,Sandviken,2,2,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-7-sandnes-ulf,2025-05-24,14:00,sandnes-ulf,Sandnes Ulf,lysekloster,Lysekloster,0,0,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-7-fk-eik-t-nsberg-871,2025-05-24,14:00,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,pors,Pors,4,4,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-7-vard-haugesund,2025-05-25,13:00,vard-haugesund,Vard Haugesund,brattv-g,Brattvåg,4,4,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-7-fl-y-flekker-y,2025-05-25,13:00,fl-y-flekker-y,Fløy-Flekkerøy,tr-ff,Træff,3,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-7-notodden,2025-05-25,16:00,notodden,Notodden,jerv,Jerv,2,3,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-7-arendal,2025-05-25,18:00,arendal,Arendal,brann-2,Brann  2,6,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-8-lysekloster,2025-05-31,13:00,lysekloster,Lysekloster,notodden,Notodden,0,0,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-8-tr-ff,2025-05-31,13:00,tr-ff,Træff,vard-haugesund,Vard Haugesund,1,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-8-pors,2025-05-31,13:00,pors,Pors,sotra,Sotra,0,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-8-jerv,2025-05-31,17:00,jerv,Jerv,sandnes-ulf,Sandnes Ulf,1,3,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-8-sandviken,2025-06-01,13:00,sandviken,Sandviken,arendal,Arendal,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-8-brattv-g,2025-06-01,15:00,brattv-g,Brattvåg,fl-y-flekker-y,Fløy-Flekkerøy,3,3,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-8-brann-2,2025-06-02,15:00,brann-2,Brann  2,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,2,2,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-9-vard-haugesund,2025-06-07,15:00,vard-haugesund,Vard Haugesund,sandnes-ulf,Sandnes Ulf,2,2,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-9-arendal,2025-06-08,13:00,arendal,Arendal,brattv-g,Brattvåg,3,3,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-9-fl-y-flekker-y,2025-06-08,14:00,fl-y-flekker-y,Fløy-Flekkerøy,lysekloster,Lysekloster,3,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-9-pors,2025-06-08,14:30,pors,Pors,sandviken,Sandviken,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-9-sotra,2025-06-08,16:00,sotra,Sotra,jerv,Jerv,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-9-fk-eik-t-nsberg-871,2025-06-09,14:30,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,tr-ff,Træff,2,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-9-notodden,2025-06-09,16:00,notodden,Notodden,brann-2,Brann  2,3,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-10-brann-2,2025-06-13,18:30,brann-2,Brann  2,sotra,Sotra,0,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-10-brattv-g,2025-06-14,13:00,brattv-g,Brattvåg,pors,Pors,4,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-10-sandviken,2025-06-14,14:00,sandviken,Sandviken,vard-haugesund,Vard Haugesund,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-10-jerv,2025-06-14,15:00,jerv,Jerv,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,4,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-10-sandnes-ulf,2025-06-14,16:00,sandnes-ulf,Sandnes Ulf,fl-y-flekker-y,Fløy-Flekkerøy,3,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-10-tr-ff,2025-06-15,14:00,tr-ff,Træff,notodden,Notodden,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-10-lysekloster,2025-06-15,17:30,lysekloster,Lysekloster,arendal,Arendal,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-11-vard-haugesund,2025-06-21,14:00,vard-haugesund,Vard Haugesund,arendal,Arendal,2,4,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-11-pors,2025-06-21,15:00,pors,Pors,fl-y-flekker-y,Fløy-Flekkerøy,0,0,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-11-notodden,2025-06-22,13:00,notodden,Notodden,sandnes-ulf,Sandnes Ulf,0,4,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-11-jerv,2025-06-22,14:30,jerv,Jerv,brann-2,Brann  2,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-11-sandviken,2025-06-22,16:00,sandviken,Sandviken,tr-ff,Træff,1,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-11-fk-eik-t-nsberg-871,2025-06-22,16:00,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,lysekloster,Lysekloster,0,0,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-11-sotra,2025-06-22,16:00,sotra,Sotra,brattv-g,Brattvåg,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-12-fl-y-flekker-y,2025-06-28,13:00,fl-y-flekker-y,Fløy-Flekkerøy,vard-haugesund,Vard Haugesund,2,2,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-12-sandnes-ulf,2025-06-28,14:00,sandnes-ulf,Sandnes Ulf,sandviken,Sandviken,5,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-12-arendal,2025-06-28,15:00,arendal,Arendal,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-12-brattv-g,2025-06-29,13:00,brattv-g,Brattvåg,notodden,Notodden,3,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-12-tr-ff,2025-06-29,14:30,tr-ff,Træff,sotra,Sotra,1,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-12-lysekloster,2025-06-29,16:00,lysekloster,Lysekloster,jerv,Jerv,3,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-12-brann-2,2025-07-01,16:00,brann-2,Brann  2,pors,Pors,0,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-13-sotra,2025-07-05,13:00,sotra,Sotra,sandnes-ulf,Sandnes Ulf,1,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-13-vard-haugesund,2025-07-05,15:00,vard-haugesund,Vard Haugesund,lysekloster,Lysekloster,4,4,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-13-pors,2025-07-05,15:00,pors,Pors,arendal,Arendal,1,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-13-notodden,2025-07-05,15:00,notodden,Notodden,fl-y-flekker-y,Fløy-Flekkerøy,1,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-13-sandviken,2025-07-06,12:30,sandviken,Sandviken,brann-2,Brann  2,1,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-13-jerv,2025-07-06,13:00,jerv,Jerv,tr-ff,Træff,2,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-13-fk-eik-t-nsberg-871,2025-07-06,16:00,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,brattv-g,Brattvåg,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-14-tr-ff,2025-07-12,13:00,tr-ff,Træff,pors,Pors,3,3,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-14-brattv-g,2025-07-12,13:00,brattv-g,Brattvåg,vard-haugesund,Vard Haugesund,2,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-14-sandnes-ulf,2025-07-13,13:00,sandnes-ulf,Sandnes Ulf,notodden,Notodden,7,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-14-arendal,2025-07-13,14:00,arendal,Arendal,sandviken,Sandviken,6,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-14-fl-y-flekker-y,2025-07-13,14:30,fl-y-flekker-y,Fløy-Flekkerøy,sotra,Sotra,1,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-14-lysekloster,2025-07-13,16:00,lysekloster,Lysekloster,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,1,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-14-brann-2,2025-07-14,16:00,brann-2,Brann  2,jerv,Jerv,2,4,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-15-fk-eik-t-nsberg-871,2025-08-09,15:00,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,arendal,Arendal,1,3,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-15-sandviken,2025-08-09,16:00,sandviken,Sandviken,sandnes-ulf,Sandnes Ulf,0,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-15-jerv,2025-08-09,18:00,jerv,Jerv,fl-y-flekker-y,Fløy-Flekkerøy,3,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-15-vard-haugesund,2025-08-09,19:00,vard-haugesund,Vard Haugesund,tr-ff,Træff,2,2,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-15-sotra,2025-08-10,13:00,sotra,Sotra,brann-2,Brann  2,5,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-15-notodden,2025-08-10,14:00,notodden,Notodden,lysekloster,Lysekloster,0,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-15-pors,2025-08-10,16:15,pors,Pors,brattv-g,Brattvåg,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-16-fl-y-flekker-y,2025-08-16,16:00,fl-y-flekker-y,Fløy-Flekkerøy,pors,Pors,0,3,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-16-brattv-g,2025-08-17,13:00,brattv-g,Brattvåg,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,1,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-16-tr-ff,2025-08-17,14:00,tr-ff,Træff,jerv,Jerv,0,1,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-16-arendal,2025-08-17,14:00,arendal,Arendal,notodden,Notodden,4,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-16-lysekloster,2025-08-17,15:00,lysekloster,Lysekloster,sandviken,Sandviken,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-16-sandnes-ulf,2025-08-17,16:00,sandnes-ulf,Sandnes Ulf,sotra,Sotra,0,0,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-16-brann-2,2025-08-18,17:00,brann-2,Brann  2,vard-haugesund,Vard Haugesund,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-17-sandviken,2025-08-23,13:00,sandviken,Sandviken,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,2,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-17-pors,2025-08-23,13:00,pors,Pors,sandnes-ulf,Sandnes Ulf,4,2,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-17-vard-haugesund,2025-08-24,13:00,vard-haugesund,Vard Haugesund,notodden,Notodden,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-17-fl-y-flekker-y,2025-08-24,13:00,fl-y-flekker-y,Fløy-Flekkerøy,brattv-g,Brattvåg,2,4,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-17-brann-2,2025-08-24,16:00,brann-2,Brann  2,arendal,Arendal,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-17-jerv,2025-08-24,16:00,jerv,Jerv,lysekloster,Lysekloster,0,1,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-17-sotra,2025-08-24,16:00,sotra,Sotra,tr-ff,Træff,0,0,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-18-lysekloster,2025-08-30,15:00,lysekloster,Lysekloster,vard-haugesund,Vard Haugesund,1,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-18-fk-eik-t-nsberg-871,2025-08-30,15:00,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,sotra,Sotra,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-18-arendal,2025-08-30,15:00,arendal,Arendal,pors,Pors,3,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-18-tr-ff,2025-08-31,13:00,tr-ff,Træff,fl-y-flekker-y,Fløy-Flekkerøy,2,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-18-brattv-g,2025-08-31,15:00,brattv-g,Brattvåg,brann-2,Brann  2,3,2,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-18-notodden,2025-08-31,15:00,notodden,Notodden,sandviken,Sandviken,0,1,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-18-sandnes-ulf,2025-08-31,16:00,sandnes-ulf,Sandnes Ulf,jerv,Jerv,4,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-19-vard-haugesund,2025-09-06,14:00,vard-haugesund,Vard Haugesund,sandviken,Sandviken,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-19-pors,2025-09-06,14:00,pors,Pors,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,0,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-19-brann-2,2025-09-06,15:00,brann-2,Brann  2,lysekloster,Lysekloster,0,4,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-19-fl-y-flekker-y,2025-09-06,15:00,fl-y-flekker-y,Fløy-Flekkerøy,notodden,Notodden,2,2,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-19-tr-ff,2025-09-07,13:00,tr-ff,Træff,sandnes-ulf,Sandnes Ulf,3,2,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-19-jerv,2025-09-07,13:00,jerv,Jerv,brattv-g,Brattvåg,4,3,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-19-sotra,2025-09-07,17:30,sotra,Sotra,arendal,Arendal,3,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-20-sandviken,2025-09-13,13:00,sandviken,Sandviken,pors,Pors,5,2,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-20-notodden,2025-09-13,13:00,notodden,Notodden,sotra,Sotra,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-20-arendal,2025-09-13,13:00,arendal,Arendal,vard-haugesund,Vard Haugesund,0,0,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-20-brattv-g,2025-09-13,15:00,brattv-g,Brattvåg,tr-ff,Træff,4,2,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-20-fk-eik-t-nsberg-871,2025-09-13,16:00,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,jerv,Jerv,2,3,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-20-lysekloster,2025-09-14,16:00,lysekloster,Lysekloster,fl-y-flekker-y,Fløy-Flekkerøy,3,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-20-sandnes-ulf,2025-09-15,16:30,sandnes-ulf,Sandnes Ulf,brann-2,Brann  2,5,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-21-sotra,2025-09-20,13:00,sotra,Sotra,pors,Pors,5,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-21-fl-y-flekker-y,2025-09-20,16:00,fl-y-flekker-y,Fløy-Flekkerøy,sandnes-ulf,Sandnes Ulf,0,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-21-jerv,2025-09-20,16:00,jerv,Jerv,notodden,Notodden,2,2,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-21-vard-haugesund,2025-09-21,13:00,vard-haugesund,Vard Haugesund,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-21-tr-ff,2025-09-21,13:00,tr-ff,Træff,arendal,Arendal,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-21-brann-2,2025-09-21,14:00,brann-2,Brann  2,sandviken,Sandviken,2,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-21-brattv-g,2025-09-21,16:00,brattv-g,Brattvåg,lysekloster,Lysekloster,2,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-22-sandviken,2025-09-26,19:30,sandviken,Sandviken,sotra,Sotra,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-22-sandnes-ulf,2025-09-27,15:00,sandnes-ulf,Sandnes Ulf,vard-haugesund,Vard Haugesund,4,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-22-arendal,2025-09-27,15:00,arendal,Arendal,fl-y-flekker-y,Fløy-Flekkerøy,9,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-22-notodden,2025-09-28,14:30,notodden,Notodden,brattv-g,Brattvåg,2,4,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-22-pors,2025-09-28,15:00,pors,Pors,jerv,Jerv,2,2,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-22-lysekloster,2025-09-28,16:00,lysekloster,Lysekloster,tr-ff,Træff,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-22-fk-eik-t-nsberg-871,2025-09-29,14:30,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,brann-2,Brann  2,0,0,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-23-vard-haugesund,2025-10-04,13:00,vard-haugesund,Vard Haugesund,pors,Pors,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-23-lysekloster,2025-10-04,14:00,lysekloster,Lysekloster,sandnes-ulf,Sandnes Ulf,2,3,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-23-brattv-g,2025-10-05,13:30,brattv-g,Brattvåg,arendal,Arendal,2,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-23-tr-ff,2025-10-05,14:00,tr-ff,Træff,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-23-fl-y-flekker-y,2025-10-05,16:00,fl-y-flekker-y,Fløy-Flekkerøy,sandviken,Sandviken,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-23-jerv,2025-10-05,16:00,jerv,Jerv,sotra,Sotra,2,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-23-brann-2,2025-10-06,15:30,brann-2,Brann  2,notodden,Notodden,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-24-sotra,2025-10-11,14:00,sotra,Sotra,vard-haugesund,Vard Haugesund,1,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-24-fk-eik-t-nsberg-871,2025-10-11,15:00,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,fl-y-flekker-y,Fløy-Flekkerøy,2,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-24-sandviken,2025-10-11,16:00,sandviken,Sandviken,jerv,Jerv,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-24-sandnes-ulf,2025-10-12,13:00,sandnes-ulf,Sandnes Ulf,brattv-g,Brattvåg,2,2,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-24-notodden,2025-10-12,13:00,notodden,Notodden,tr-ff,Træff,4,3,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-24-pors,2025-10-12,14:30,pors,Pors,brann-2,Brann  2,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-24-arendal,2025-10-12,16:00,arendal,Arendal,lysekloster,Lysekloster,3,2,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-25-lysekloster,2025-10-18,13:00,lysekloster,Lysekloster,pors,Pors,1,3,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-25-jerv,2025-10-18,13:00,jerv,Jerv,vard-haugesund,Vard Haugesund,2,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-25-notodden,2025-10-18,15:00,notodden,Notodden,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,0,1,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-25-sandnes-ulf,2025-10-18,16:00,sandnes-ulf,Sandnes Ulf,arendal,Arendal,4,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-25-fl-y-flekker-y,2025-10-19,14:30,fl-y-flekker-y,Fløy-Flekkerøy,brann-2,Brann  2,1,1,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-25-tr-ff,2025-10-19,15:00,tr-ff,Træff,sandviken,Sandviken,1,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-25-brattv-g,2025-10-19,16:00,brattv-g,Brattvåg,sotra,Sotra,2,0,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-26-vard-haugesund,2025-10-25,13:00,vard-haugesund,Vard Haugesund,fl-y-flekker-y,Fløy-Flekkerøy,4,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-26-sandviken,2025-10-25,13:00,sandviken,Sandviken,brattv-g,Brattvåg,2,4,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-26-brann-2,2025-10-25,13:00,brann-2,Brann  2,tr-ff,Træff,1,2,,,Played,A,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-26-pors,2025-10-25,13:00,pors,Pors,notodden,Notodden,2,2,,,Played,D,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-26-fk-eik-t-nsberg-871,2025-10-25,13:00,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,sandnes-ulf,Sandnes Ulf,3,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-26-arendal,2025-10-25,13:00,arendal,Arendal,jerv,Jerv,3,1,,,Played,H,NOR
+2025,NO-PN1,PostNord-ligaen avd. 1,199294,1,-,,199294-26-sotra,2025-10-25,13:00,sotra,Sotra,lysekloster,Lysekloster,2,3,,,Played,A,NOR

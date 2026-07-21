@@ -1,0 +1,183 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143052,2025-11-16,14:00,aik,AIK,ifk-norrk-ping-fk,IFK Norrköping FK,1,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143053,2025-11-16,14:00,bk-h-cken-ff,BK Häcken FF,pite-if-dff,Piteå IF DFF,1,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143054,2025-11-16,14:00,fc-roseng-rd,FC Rosengård,link-ping-fc,Linköping FC,3,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143055,2025-11-16,14:00,hammarby,Hammarby,if-brommapojkarna,IF Brommapojkarna,6,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143056,2025-11-16,14:00,kristianstads-dff,Kristianstads DFF,alings-s-if-ff,Alingsås IF FF,7,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143057,2025-11-16,14:00,malm-ff,Malmö FF,vittsj-gik,Vittsjö GIK,3,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143058,2025-11-16,14:00,v-xj,Växjö,djurg-rden,Djurgården,0,3,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143049,2025-11-10,19:00,link-ping-fc,Linköping FC,kristianstads-dff,Kristianstads DFF,2,2,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143051,2025-11-09,13:00,vittsj-gik,Vittsjö GIK,v-xj,Växjö,1,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143048,2025-11-08,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,malm-ff,Malmö FF,0,4,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143046,2025-11-08,14:00,djurg-rden,Djurgården,bk-h-cken-ff,BK Häcken FF,0,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143047,2025-11-08,14:00,if-brommapojkarna,IF Brommapojkarna,aik,AIK,3,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143050,2025-11-08,13:00,pite-if-dff,Piteå IF DFF,fc-roseng-rd,FC Rosengård,0,1,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143045,2025-11-07,19:00,alings-s-if-ff,Alingsås IF FF,hammarby,Hammarby,0,3,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143039,2025-11-02,16:00,bk-h-cken-ff,BK Häcken FF,link-ping-fc,Linköping FC,4,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143040,2025-11-02,16:00,fc-roseng-rd,FC Rosengård,alings-s-if-ff,Alingsås IF FF,0,0,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143041,2025-11-02,15:00,hammarby,Hammarby,ifk-norrk-ping-fk,IFK Norrköping FK,4,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143043,2025-11-02,13:00,malm-ff,Malmö FF,pite-if-dff,Piteå IF DFF,1,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143038,2025-11-01,13:00,aik,AIK,vittsj-gik,Vittsjö GIK,1,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143042,2025-11-01,13:00,kristianstads-dff,Kristianstads DFF,djurg-rden,Djurgården,2,4,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143044,2025-11-01,13:00,v-xj,Växjö,if-brommapojkarna,IF Brommapojkarna,2,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143037,2025-10-19,16:00,vittsj-gik,Vittsjö GIK,hammarby,Hammarby,0,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143034,2025-10-19,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,fc-roseng-rd,FC Rosengård,1,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143033,2025-10-19,14:00,if-brommapojkarna,IF Brommapojkarna,bk-h-cken-ff,BK Häcken FF,0,6,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143036,2025-10-19,14:00,pite-if-dff,Piteå IF DFF,kristianstads-dff,Kristianstads DFF,2,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143031,2025-10-18,16:00,alings-s-if-ff,Alingsås IF FF,v-xj,Växjö,3,3,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143032,2025-10-18,13:00,djurg-rden,Djurgården,malm-ff,Malmö FF,1,4,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143035,2025-10-17,19:00,link-ping-fc,Linköping FC,aik,AIK,1,4,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143030,2025-10-12,13:00,v-xj,Växjö,pite-if-dff,Piteå IF DFF,1,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143024,2025-10-11,16:00,aik,AIK,alings-s-if-ff,Alingsås IF FF,6,3,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143025,2025-10-11,15:00,bk-h-cken-ff,BK Häcken FF,hammarby,Hammarby,2,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143028,2025-10-11,15:00,kristianstads-dff,Kristianstads DFF,ifk-norrk-ping-fk,IFK Norrköping FK,0,1,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143029,2025-10-11,15:00,malm-ff,Malmö FF,link-ping-fc,Linköping FC,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143027,2025-10-11,14:00,if-brommapojkarna,IF Brommapojkarna,vittsj-gik,Vittsjö GIK,2,3,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143026,2025-10-11,13:00,fc-roseng-rd,FC Rosengård,djurg-rden,Djurgården,1,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143019,2025-10-05,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,v-xj,Växjö,2,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143022,2025-10-05,15:00,pite-if-dff,Piteå IF DFF,djurg-rden,Djurgården,0,0,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143020,2025-10-05,14:00,link-ping-fc,Linköping FC,if-brommapojkarna,IF Brommapojkarna,4,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143017,2025-10-04,16:00,alings-s-if-ff,Alingsås IF FF,bk-h-cken-ff,BK Häcken FF,0,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143021,2025-10-04,13:00,malm-ff,Malmö FF,fc-roseng-rd,FC Rosengård,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143023,2025-10-04,13:00,vittsj-gik,Vittsjö GIK,kristianstads-dff,Kristianstads DFF,1,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143018,2025-10-03,19:00,hammarby,Hammarby,aik,AIK,1,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143001,2025-10-01,18:30,malm-ff,Malmö FF,bk-h-cken-ff,BK Häcken FF,0,3,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143016,2025-09-28,16:00,v-xj,Växjö,hammarby,Hammarby,0,7,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143011,2025-09-28,15:00,djurg-rden,Djurgården,link-ping-fc,Linköping FC,3,2,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143012,2025-09-28,13:00,fc-roseng-rd,FC Rosengård,if-brommapojkarna,IF Brommapojkarna,2,5,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143015,2025-09-28,13:00,pite-if-dff,Piteå IF DFF,vittsj-gik,Vittsjö GIK,2,3,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143013,2025-09-27,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,alings-s-if-ff,Alingsås IF FF,3,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143014,2025-09-27,15:00,kristianstads-dff,Kristianstads DFF,malm-ff,Malmö FF,1,1,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143010,2025-09-27,13:00,aik,AIK,bk-h-cken-ff,BK Häcken FF,2,5,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143006,2025-09-22,19:00,djurg-rden,Djurgården,hammarby,Hammarby,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143005,2025-09-21,16:00,bk-h-cken-ff,BK Häcken FF,fc-roseng-rd,FC Rosengård,3,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143007,2025-09-20,14:00,if-brommapojkarna,IF Brommapojkarna,kristianstads-dff,Kristianstads DFF,1,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143003,2025-09-20,13:00,aik,AIK,v-xj,Växjö,1,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143004,2025-09-20,13:00,alings-s-if-ff,Alingsås IF FF,malm-ff,Malmö FF,0,4,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143009,2025-09-20,13:00,vittsj-gik,Vittsjö GIK,ifk-norrk-ping-fk,IFK Norrköping FK,0,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143008,2025-09-19,19:00,link-ping-fc,Linköping FC,pite-if-dff,Piteå IF DFF,2,2,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142999,2025-09-15,19:00,ifk-norrk-ping-fk,IFK Norrköping FK,djurg-rden,Djurgården,2,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143002,2025-09-14,15:00,pite-if-dff,Piteå IF DFF,if-brommapojkarna,IF Brommapojkarna,1,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142997,2025-09-14,13:00,fc-roseng-rd,FC Rosengård,aik,AIK,1,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142998,2025-09-13,15:00,hammarby,Hammarby,link-ping-fc,Linköping FC,3,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6143000,2025-09-13,15:00,kristianstads-dff,Kristianstads DFF,v-xj,Växjö,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142996,2025-09-13,13:00,alings-s-if-ff,Alingsås IF FF,vittsj-gik,Vittsjö GIK,0,1,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142993,2025-09-07,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,if-brommapojkarna,IF Brommapojkarna,3,3,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142990,2025-09-06,16:00,bk-h-cken-ff,BK Häcken FF,kristianstads-dff,Kristianstads DFF,1,1,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142995,2025-09-06,16:00,v-xj,Växjö,link-ping-fc,Linköping FC,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142991,2025-09-06,15:00,djurg-rden,Djurgården,alings-s-if-ff,Alingsås IF FF,5,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142989,2025-09-06,13:00,aik,AIK,pite-if-dff,Piteå IF DFF,0,1,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142992,2025-09-06,13:00,hammarby,Hammarby,malm-ff,Malmö FF,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142994,2025-09-05,18:00,vittsj-gik,Vittsjö GIK,fc-roseng-rd,FC Rosengård,3,2,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142985,2025-08-31,15:00,link-ping-fc,Linköping FC,alings-s-if-ff,Alingsås IF FF,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142983,2025-08-31,14:00,if-brommapojkarna,IF Brommapojkarna,djurg-rden,Djurgården,1,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142988,2025-08-31,13:00,vittsj-gik,Vittsjö GIK,bk-h-cken-ff,BK Häcken FF,0,4,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142984,2025-08-30,13:00,kristianstads-dff,Kristianstads DFF,aik,AIK,0,3,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142986,2025-08-30,13:00,malm-ff,Malmö FF,v-xj,Växjö,3,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142987,2025-08-30,13:00,pite-if-dff,Piteå IF DFF,ifk-norrk-ping-fk,IFK Norrköping FK,1,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142981,2025-08-24,15:00,link-ping-fc,Linköping FC,vittsj-gik,Vittsjö GIK,3,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142976,2025-08-24,13:00,alings-s-if-ff,Alingsås IF FF,pite-if-dff,Piteå IF DFF,1,3,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142977,2025-08-23,16:00,bk-h-cken-ff,BK Häcken FF,ifk-norrk-ping-fk,IFK Norrköping FK,1,3,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142975,2025-08-23,13:00,aik,AIK,djurg-rden,Djurgården,0,1,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142980,2025-08-23,13:00,if-brommapojkarna,IF Brommapojkarna,malm-ff,Malmö FF,2,5,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142978,2025-08-22,19:00,fc-roseng-rd,FC Rosengård,v-xj,Växjö,2,3,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142979,2025-08-22,19:00,hammarby,Hammarby,kristianstads-dff,Kristianstads DFF,1,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142972,2025-08-17,16:00,malm-ff,Malmö FF,aik,AIK,2,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142969,2025-08-17,14:00,djurg-rden,Djurgården,vittsj-gik,Vittsjö GIK,1,1,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142974,2025-08-17,14:00,v-xj,Växjö,bk-h-cken-ff,BK Häcken FF,0,5,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142970,2025-08-17,13:00,ifk-norrk-ping-fk,IFK Norrköping FK,link-ping-fc,Linköping FC,2,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142971,2025-08-16,15:00,kristianstads-dff,Kristianstads DFF,fc-roseng-rd,FC Rosengård,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142968,2025-08-16,14:00,alings-s-if-ff,Alingsås IF FF,if-brommapojkarna,IF Brommapojkarna,3,2,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142973,2025-08-16,13:00,pite-if-dff,Piteå IF DFF,hammarby,Hammarby,0,5,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142982,2025-08-12,19:00,fc-roseng-rd,FC Rosengård,hammarby,Hammarby,2,2,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142967,2025-08-10,13:00,vittsj-gik,Vittsjö GIK,pite-if-dff,Piteå IF DFF,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142961,2025-08-09,16:00,bk-h-cken-ff,BK Häcken FF,djurg-rden,Djurgården,4,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142960,2025-08-09,13:00,aik,AIK,kristianstads-dff,Kristianstads DFF,2,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142964,2025-08-08,19:00,hammarby,Hammarby,alings-s-if-ff,Alingsås IF FF,7,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142965,2025-08-08,19:00,if-brommapojkarna,IF Brommapojkarna,ifk-norrk-ping-fk,IFK Norrköping FK,1,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142966,2025-08-08,19:00,link-ping-fc,Linköping FC,v-xj,Växjö,0,4,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142963,2025-08-08,18:00,fc-roseng-rd,FC Rosengård,malm-ff,Malmö FF,0,1,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142953,2025-06-22,16:00,alings-s-if-ff,Alingsås IF FF,aik,AIK,1,4,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142954,2025-06-22,16:00,djurg-rden,Djurgården,v-xj,Växjö,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142956,2025-06-22,16:00,ifk-norrk-ping-fk,IFK Norrköping FK,hammarby,Hammarby,2,2,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142958,2025-06-22,16:00,malm-ff,Malmö FF,if-brommapojkarna,IF Brommapojkarna,1,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142959,2025-06-19,19:00,pite-if-dff,Piteå IF DFF,bk-h-cken-ff,BK Häcken FF,0,5,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142955,2025-06-19,18:00,fc-roseng-rd,FC Rosengård,vittsj-gik,Vittsjö GIK,2,2,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142957,2025-06-19,18:00,kristianstads-dff,Kristianstads DFF,link-ping-fc,Linköping FC,3,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142947,2025-06-16,19:00,hammarby,Hammarby,djurg-rden,Djurgården,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142950,2025-06-15,14:00,pite-if-dff,Piteå IF DFF,malm-ff,Malmö FF,0,3,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142946,2025-06-14,15:00,bk-h-cken-ff,BK Häcken FF,aik,AIK,6,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142948,2025-06-14,15:00,kristianstads-dff,Kristianstads DFF,if-brommapojkarna,IF Brommapojkarna,2,2,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142949,2025-06-14,15:00,link-ping-fc,Linköping FC,fc-roseng-rd,FC Rosengård,0,3,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142951,2025-06-14,15:00,vittsj-gik,Vittsjö GIK,alings-s-if-ff,Alingsås IF FF,1,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142952,2025-06-14,15:00,v-xj,Växjö,ifk-norrk-ping-fk,IFK Norrköping FK,1,1,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142944,2025-06-09,19:00,link-ping-fc,Linköping FC,bk-h-cken-ff,BK Häcken FF,0,5,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142941,2025-06-08,15:00,hammarby,Hammarby,vittsj-gik,Vittsjö GIK,3,2,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142943,2025-06-08,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,pite-if-dff,Piteå IF DFF,1,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142940,2025-06-07,16:00,alings-s-if-ff,Alingsås IF FF,kristianstads-dff,Kristianstads DFF,0,3,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142945,2025-06-07,15:00,malm-ff,Malmö FF,djurg-rden,Djurgården,4,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142942,2025-06-07,14:00,if-brommapojkarna,IF Brommapojkarna,v-xj,Växjö,2,3,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142939,2025-06-07,13:00,aik,AIK,fc-roseng-rd,FC Rosengård,1,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142933,2025-05-25,14:00,djurg-rden,Djurgården,if-brommapojkarna,IF Brommapojkarna,1,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142936,2025-05-25,14:00,pite-if-dff,Piteå IF DFF,link-ping-fc,Linköping FC,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142932,2025-05-24,15:00,alings-s-if-ff,Alingsås IF FF,ifk-norrk-ping-fk,IFK Norrköping FK,0,0,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142934,2025-05-24,15:00,fc-roseng-rd,FC Rosengård,bk-h-cken-ff,BK Häcken FF,0,1,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142935,2025-05-24,15:00,kristianstads-dff,Kristianstads DFF,hammarby,Hammarby,2,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142937,2025-05-24,15:00,vittsj-gik,Vittsjö GIK,malm-ff,Malmö FF,3,2,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142938,2025-05-24,15:00,v-xj,Växjö,aik,AIK,0,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142926,2025-05-20,19:00,djurg-rden,Djurgården,aik,AIK,4,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142929,2025-05-17,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,kristianstads-dff,Kristianstads DFF,1,4,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142930,2025-05-17,15:00,vittsj-gik,Vittsjö GIK,link-ping-fc,Linköping FC,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142928,2025-05-17,14:00,if-brommapojkarna,IF Brommapojkarna,fc-roseng-rd,FC Rosengård,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142927,2025-05-17,13:00,hammarby,Hammarby,pite-if-dff,Piteå IF DFF,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142931,2025-05-16,19:00,v-xj,Växjö,malm-ff,Malmö FF,2,4,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142925,2025-05-16,18:00,bk-h-cken-ff,BK Häcken FF,alings-s-if-ff,Alingsås IF FF,6,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142919,2025-05-11,15:00,bk-h-cken-ff,BK Häcken FF,if-brommapojkarna,IF Brommapojkarna,6,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142924,2025-05-11,13:00,pite-if-dff,Piteå IF DFF,v-xj,Växjö,0,1,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142920,2025-05-10,15:00,fc-roseng-rd,FC Rosengård,ifk-norrk-ping-fk,IFK Norrköping FK,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142921,2025-05-10,15:00,kristianstads-dff,Kristianstads DFF,vittsj-gik,Vittsjö GIK,3,2,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142922,2025-05-10,15:00,link-ping-fc,Linköping FC,djurg-rden,Djurgården,1,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142918,2025-05-10,13:00,aik,AIK,hammarby,Hammarby,1,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142923,2025-05-09,19:00,malm-ff,Malmö FF,alings-s-if-ff,Alingsås IF FF,1,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142912,2025-05-05,19:00,djurg-rden,Djurgården,ifk-norrk-ping-fk,IFK Norrköping FK,1,1,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142913,2025-05-05,19:00,hammarby,Hammarby,bk-h-cken-ff,BK Häcken FF,1,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142911,2025-05-04,15:00,alings-s-if-ff,Alingsås IF FF,fc-roseng-rd,FC Rosengård,1,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142914,2025-05-04,15:00,if-brommapojkarna,IF Brommapojkarna,pite-if-dff,Piteå IF DFF,3,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142916,2025-05-03,15:00,vittsj-gik,Vittsjö GIK,aik,AIK,0,0,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142917,2025-05-03,15:00,v-xj,Växjö,kristianstads-dff,Kristianstads DFF,2,3,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142915,2025-05-03,14:00,link-ping-fc,Linköping FC,malm-ff,Malmö FF,1,1,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142906,2025-04-27,15:00,djurg-rden,Djurgården,fc-roseng-rd,FC Rosengård,2,2,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142908,2025-04-27,13:00,kristianstads-dff,Kristianstads DFF,pite-if-dff,Piteå IF DFF,1,1,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142905,2025-04-26,15:00,alings-s-if-ff,Alingsås IF FF,link-ping-fc,Linköping FC,0,1,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142907,2025-04-26,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,bk-h-cken-ff,BK Häcken FF,0,4,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142909,2025-04-26,15:00,malm-ff,Malmö FF,hammarby,Hammarby,1,1,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142910,2025-04-26,15:00,v-xj,Växjö,vittsj-gik,Vittsjö GIK,2,2,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142904,2025-04-26,13:00,aik,AIK,if-brommapojkarna,IF Brommapojkarna,2,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142899,2025-04-21,15:00,fc-roseng-rd,FC Rosengård,kristianstads-dff,Kristianstads DFF,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142901,2025-04-20,14:00,link-ping-fc,Linköping FC,ifk-norrk-ping-fk,IFK Norrköping FK,1,1,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142898,2025-04-19,15:00,bk-h-cken-ff,BK Häcken FF,v-xj,Växjö,3,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142900,2025-04-19,14:00,if-brommapojkarna,IF Brommapojkarna,hammarby,Hammarby,1,4,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142897,2025-04-19,13:00,aik,AIK,malm-ff,Malmö FF,1,4,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142902,2025-04-18,15:00,pite-if-dff,Piteå IF DFF,alings-s-if-ff,Alingsås IF FF,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142903,2025-04-18,13:00,vittsj-gik,Vittsjö GIK,djurg-rden,Djurgården,1,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142892,2025-04-14,19:00,hammarby,Hammarby,fc-roseng-rd,FC Rosengård,4,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142890,2025-04-13,15:00,bk-h-cken-ff,BK Häcken FF,vittsj-gik,Vittsjö GIK,5,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142894,2025-04-13,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,aik,AIK,1,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142895,2025-04-13,15:00,malm-ff,Malmö FF,kristianstads-dff,Kristianstads DFF,1,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142896,2025-04-12,15:00,v-xj,Växjö,alings-s-if-ff,Alingsås IF FF,3,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142893,2025-04-12,14:00,if-brommapojkarna,IF Brommapojkarna,link-ping-fc,Linköping FC,3,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142891,2025-04-12,13:15,djurg-rden,Djurgården,pite-if-dff,Piteå IF DFF,3,3,,,Played,D,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142887,2025-03-30,15:00,pite-if-dff,Piteå IF DFF,aik,AIK,2,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142886,2025-03-30,14:00,malm-ff,Malmö FF,ifk-norrk-ping-fk,IFK Norrköping FK,0,2,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142883,2025-03-29,15:00,alings-s-if-ff,Alingsås IF FF,djurg-rden,Djurgården,1,4,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142888,2025-03-29,15:00,vittsj-gik,Vittsjö GIK,if-brommapojkarna,IF Brommapojkarna,1,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142889,2025-03-29,15:00,v-xj,Växjö,fc-roseng-rd,FC Rosengård,0,1,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142884,2025-03-29,14:00,kristianstads-dff,Kristianstads DFF,bk-h-cken-ff,BK Häcken FF,2,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142885,2025-03-29,14:00,link-ping-fc,Linköping FC,hammarby,Hammarby,0,5,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142877,2025-03-23,15:10,bk-h-cken-ff,BK Häcken FF,malm-ff,Malmö FF,2,3,,,Played,A,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142878,2025-03-23,15:00,djurg-rden,Djurgården,kristianstads-dff,Kristianstads DFF,2,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142880,2025-03-23,15:00,hammarby,Hammarby,v-xj,Växjö,4,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142879,2025-03-23,14:00,fc-roseng-rd,FC Rosengård,pite-if-dff,Piteå IF DFF,1,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142876,2025-03-22,15:00,aik,AIK,link-ping-fc,Linköping FC,2,0,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142881,2025-03-22,15:00,if-brommapojkarna,IF Brommapojkarna,alings-s-if-ff,Alingsås IF FF,5,1,,,Played,H,SWE
+2025,SW-DA,Damallsvenskan,123860,1,-,,6142882,2025-03-22,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,vittsj-gik,Vittsjö GIK,1,1,,,Played,D,SWE

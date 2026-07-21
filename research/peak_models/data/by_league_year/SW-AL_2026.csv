@@ -1,0 +1,106 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2026,SW-AL,Allsvenskan,133348,1,-,,6529928,2026-07-20,19:00,rgryte-is-fotboll,Örgryte IS Fotboll,djurg-rden,Djurgården,0,0,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529931,2026-07-20,19:00,kalmar-ff,Kalmar FF,malm-ff,Malmö FF,2,2,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529926,2026-07-19,16:30,hammarby,Hammarby,degerfors-if,Degerfors IF,4,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529930,2026-07-19,16:30,if-elfsborg,IF Elfsborg,ik-sirius-fk,IK Sirius FK,1,3,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529932,2026-07-19,16:30,halmstad,Halmstad,bk-h-cken,BK Häcken,0,2,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529925,2026-07-18,15:00,aik,AIK,gais,GAIS,2,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529927,2026-07-17,19:00,ifk-g-teborg,IFK Göteborg,if-brommapojkarna,IF Brommapojkarna,2,1,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529929,2026-07-17,19:00,mj-llby-aif,Mjällby AIF,v-ster-s-sk-fk,Västerås SK FK,0,0,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529917,2026-07-13,19:00,djurg-rden,Djurgården,halmstad,Halmstad,3,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529919,2026-07-12,16:30,gais,GAIS,if-elfsborg,IF Elfsborg,1,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529923,2026-07-12,16:30,if-brommapojkarna,IF Brommapojkarna,ik-sirius-fk,IK Sirius FK,1,2,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529918,2026-07-12,14:00,hammarby,Hammarby,kalmar-ff,Kalmar FF,2,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529922,2026-07-12,14:00,malm-ff,Malmö FF,ifk-g-teborg,IFK Göteborg,4,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529924,2026-07-12,14:00,v-ster-s-sk-fk,Västerås SK FK,degerfors-if,Degerfors IF,2,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529920,2026-07-11,17:30,rgryte-is-fotboll,Örgryte IS Fotboll,bk-h-cken,BK Häcken,4,3,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529921,2026-07-11,15:00,mj-llby-aif,Mjällby AIF,aik,AIK,1,2,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529910,2026-07-06,19:00,bk-h-cken,BK Häcken,djurg-rden,Djurgården,2,4,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529912,2026-07-06,19:00,if-brommapojkarna,IF Brommapojkarna,gais,GAIS,1,1,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529911,2026-07-05,16:30,if-elfsborg,IF Elfsborg,hammarby,Hammarby,1,2,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529909,2026-07-05,14:00,ifk-g-teborg,IFK Göteborg,aik,AIK,1,2,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529915,2026-07-05,14:00,kalmar-ff,Kalmar FF,rgryte-is-fotboll,Örgryte IS Fotboll,3,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529913,2026-07-04,15:00,degerfors-if,Degerfors IF,malm-ff,Malmö FF,0,1,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529916,2026-07-04,15:00,halmstad,Halmstad,v-ster-s-sk-fk,Västerås SK FK,1,3,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529914,2026-07-03,19:00,ik-sirius-fk,IK Sirius FK,mj-llby-aif,Mjällby AIF,4,4,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529904,2026-05-31,14:00,bk-h-cken,BK Häcken,hammarby,Hammarby,3,2,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529907,2026-05-31,14:00,degerfors-if,Degerfors IF,if-brommapojkarna,IF Brommapojkarna,2,2,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529908,2026-05-31,14:00,v-ster-s-sk-fk,Västerås SK FK,ifk-g-teborg,IFK Göteborg,4,5,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529901,2026-05-30,15:00,aik,AIK,ik-sirius-fk,IK Sirius FK,0,3,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529902,2026-05-30,15:00,gais,GAIS,kalmar-ff,Kalmar FF,3,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529906,2026-05-30,15:00,malm-ff,Malmö FF,halmstad,Halmstad,5,2,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529903,2026-05-29,19:00,rgryte-is-fotboll,Örgryte IS Fotboll,if-elfsborg,IF Elfsborg,2,2,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529895,2026-05-25,19:00,ifk-g-teborg,IFK Göteborg,mj-llby-aif,Mjällby AIF,1,1,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529897,2026-05-25,19:00,if-elfsborg,IF Elfsborg,bk-h-cken,BK Häcken,1,1,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529896,2026-05-24,16:30,malm-ff,Malmö FF,v-ster-s-sk-fk,Västerås SK FK,2,3,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529894,2026-05-24,14:00,hammarby,Hammarby,aik,AIK,1,2,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529898,2026-05-24,14:00,ik-sirius-fk,IK Sirius FK,gais,GAIS,2,1,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529899,2026-05-23,15:00,kalmar-ff,Kalmar FF,degerfors-if,Degerfors IF,2,1,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529900,2026-05-23,15:00,halmstad,Halmstad,rgryte-is-fotboll,Örgryte IS Fotboll,2,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529893,2026-05-22,19:00,djurg-rden,Djurgården,if-brommapojkarna,IF Brommapojkarna,1,2,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529946,2026-05-21,19:00,if-elfsborg,IF Elfsborg,mj-llby-aif,Mjällby AIF,1,1,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529944,2026-05-20,19:00,gais,GAIS,hammarby,Hammarby,2,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529888,2026-05-19,15:00,rgryte-is-fotboll,Örgryte IS Fotboll,ifk-g-teborg,IFK Göteborg,2,3,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529885,2026-05-18,19:00,djurg-rden,Djurgården,ik-sirius-fk,IK Sirius FK,2,3,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529889,2026-05-17,16:30,mj-llby-aif,Mjällby AIF,bk-h-cken,BK Häcken,0,1,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529891,2026-05-17,16:30,v-ster-s-sk-fk,Västerås SK FK,aik,AIK,1,1,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529886,2026-05-17,14:00,hammarby,Hammarby,malm-ff,Malmö FF,4,1,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529890,2026-05-17,14:00,if-brommapojkarna,IF Brommapojkarna,kalmar-ff,Kalmar FF,1,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529887,2026-05-16,15:00,gais,GAIS,degerfors-if,Degerfors IF,1,1,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529892,2026-05-16,15:00,halmstad,Halmstad,if-elfsborg,IF Elfsborg,1,1,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529882,2026-05-11,19:00,ik-sirius-fk,IK Sirius FK,rgryte-is-fotboll,Örgryte IS Fotboll,2,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529879,2026-05-10,16:30,bk-h-cken,BK Häcken,malm-ff,Malmö FF,3,2,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529877,2026-05-10,14:00,aik,AIK,djurg-rden,Djurgården,2,4,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529884,2026-05-10,14:00,kalmar-ff,Kalmar FF,halmstad,Halmstad,2,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529878,2026-05-09,15:00,ifk-g-teborg,IFK Göteborg,hammarby,Hammarby,0,1,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529881,2026-05-09,15:00,degerfors-if,Degerfors IF,mj-llby-aif,Mjällby AIF,1,4,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529883,2026-05-09,15:00,v-ster-s-sk-fk,Västerås SK FK,gais,GAIS,0,1,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529880,2026-05-08,19:00,if-elfsborg,IF Elfsborg,if-brommapojkarna,IF Brommapojkarna,2,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529869,2026-05-04,19:00,djurg-rden,Djurgården,ifk-g-teborg,IFK Göteborg,6,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529876,2026-05-04,19:00,halmstad,Halmstad,if-brommapojkarna,IF Brommapojkarna,1,3,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529871,2026-05-03,16:30,gais,GAIS,rgryte-is-fotboll,Örgryte IS Fotboll,4,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529873,2026-05-03,16:30,if-elfsborg,IF Elfsborg,aik,AIK,1,1,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529870,2026-05-03,14:00,hammarby,Hammarby,v-ster-s-sk-fk,Västerås SK FK,3,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529872,2026-05-03,14:00,malm-ff,Malmö FF,mj-llby-aif,Mjällby AIF,2,3,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529874,2026-05-02,15:00,degerfors-if,Degerfors IF,bk-h-cken,BK Häcken,1,1,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529875,2026-05-02,15:00,ik-sirius-fk,IK Sirius FK,kalmar-ff,Kalmar FF,3,2,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529861,2026-04-27,19:00,aik,AIK,malm-ff,Malmö FF,0,1,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529864,2026-04-27,19:00,rgryte-is-fotboll,Örgryte IS Fotboll,degerfors-if,Degerfors IF,1,1,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529865,2026-04-27,19:00,bk-h-cken,BK Häcken,ik-sirius-fk,IK Sirius FK,2,2,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529866,2026-04-27,19:00,mj-llby-aif,Mjällby AIF,halmstad,Halmstad,2,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529868,2026-04-27,19:00,kalmar-ff,Kalmar FF,if-elfsborg,IF Elfsborg,2,1,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529863,2026-04-26,16:30,ifk-g-teborg,IFK Göteborg,gais,GAIS,2,2,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529867,2026-04-26,16:30,if-brommapojkarna,IF Brommapojkarna,v-ster-s-sk-fk,Västerås SK FK,1,2,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529862,2026-04-26,14:00,djurg-rden,Djurgården,hammarby,Hammarby,1,1,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529854,2026-04-23,19:00,gais,GAIS,mj-llby-aif,Mjällby AIF,0,0,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529856,2026-04-23,19:00,malm-ff,Malmö FF,ik-sirius-fk,IK Sirius FK,2,3,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529858,2026-04-23,19:00,degerfors-if,Degerfors IF,aik,AIK,2,1,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529860,2026-04-23,19:00,kalmar-ff,Kalmar FF,ifk-g-teborg,IFK Göteborg,1,1,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529853,2026-04-22,19:00,hammarby,Hammarby,halmstad,Halmstad,1,1,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529855,2026-04-22,19:00,rgryte-is-fotboll,Örgryte IS Fotboll,if-brommapojkarna,IF Brommapojkarna,1,2,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529857,2026-04-22,19:00,if-elfsborg,IF Elfsborg,djurg-rden,Djurgården,2,1,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529859,2026-04-22,19:00,v-ster-s-sk-fk,Västerås SK FK,bk-h-cken,BK Häcken,3,3,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529848,2026-04-19,16:30,bk-h-cken,BK Häcken,gais,GAIS,2,1,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529845,2026-04-19,14:00,aik,AIK,kalmar-ff,Kalmar FF,1,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529847,2026-04-18,15:00,hammarby,Hammarby,rgryte-is-fotboll,Örgryte IS Fotboll,8,1,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529849,2026-04-18,15:00,mj-llby-aif,Mjällby AIF,if-brommapojkarna,IF Brommapojkarna,3,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529851,2026-04-18,15:00,ik-sirius-fk,IK Sirius FK,v-ster-s-sk-fk,Västerås SK FK,4,1,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529852,2026-04-18,15:00,halmstad,Halmstad,ifk-g-teborg,IFK Göteborg,1,1,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529846,2026-04-17,19:00,djurg-rden,Djurgården,malm-ff,Malmö FF,0,1,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529850,2026-04-17,19:00,degerfors-if,Degerfors IF,if-elfsborg,IF Elfsborg,0,1,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529841,2026-04-13,19:00,if-brommapojkarna,IF Brommapojkarna,aik,AIK,2,2,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529842,2026-04-13,19:00,ik-sirius-fk,IK Sirius FK,hammarby,Hammarby,2,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529840,2026-04-12,16:30,malm-ff,Malmö FF,gais,GAIS,3,1,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529837,2026-04-12,14:00,djurg-rden,Djurgården,kalmar-ff,Kalmar FF,3,2,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529844,2026-04-12,14:00,halmstad,Halmstad,degerfors-if,Degerfors IF,0,3,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529838,2026-04-11,15:00,ifk-g-teborg,IFK Göteborg,bk-h-cken,BK Häcken,0,2,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529839,2026-04-11,15:00,mj-llby-aif,Mjällby AIF,rgryte-is-fotboll,Örgryte IS Fotboll,0,2,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529843,2026-04-11,15:00,v-ster-s-sk-fk,Västerås SK FK,if-elfsborg,IF Elfsborg,2,2,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529831,2026-04-06,16:30,gais,GAIS,djurg-rden,Djurgården,0,1,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529833,2026-04-06,14:00,bk-h-cken,BK Häcken,if-brommapojkarna,IF Brommapojkarna,2,2,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529834,2026-04-06,14:00,if-elfsborg,IF Elfsborg,ifk-g-teborg,IFK Göteborg,2,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529832,2026-04-05,16:30,rgryte-is-fotboll,Örgryte IS Fotboll,malm-ff,Malmö FF,1,1,,,Played,D,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529829,2026-04-05,14:00,aik,AIK,halmstad,Halmstad,2,1,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529836,2026-04-05,14:00,kalmar-ff,Kalmar FF,v-ster-s-sk-fk,Västerås SK FK,0,1,,,Played,A,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529830,2026-04-04,15:00,hammarby,Hammarby,mj-llby-aif,Mjällby AIF,3,0,,,Played,H,SWE
+2026,SW-AL,Allsvenskan,133348,1,-,,6529835,2026-04-04,15:00,degerfors-if,Degerfors IF,ik-sirius-fk,IK Sirius FK,0,3,,,Played,A,SWE

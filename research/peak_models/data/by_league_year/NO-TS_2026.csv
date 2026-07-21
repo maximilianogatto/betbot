@@ -1,0 +1,69 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2026,NO-TS,Toppserien,206119,1,-,,206119-1-bod-glimt,2026-03-20,18:00,bod-glimt,Bodø/Glimt,h-nefoss-bk,Hønefoss BK,0,0,,,Played,D,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-1-molde,2026-03-20,18:00,molde,Molde,sk-brann,SK Brann,0,5,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-1-lsk-kvinner,2026-03-21,14:00,lsk-kvinner,LSK Kvinner,r-a-fotball-elite,Røa Fotball Elite,1,3,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-1-rosenborg-bk,2026-03-21,14:00,rosenborg-bk,Rosenborg BK,haugesund,Haugesund,1,1,,,Played,D,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-1-stab-k,2026-03-21,14:00,stab-k,Stabæk,lyn,Lyn,0,1,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-1-v-lerenga-fotball,2026-03-21,14:00,v-lerenga-fotball,Vålerenga Fotball,aafk-kvinner,AaFK Kvinner,0,2,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-2-haugesund,2026-03-28,13:00,haugesund,Haugesund,v-lerenga-fotball,Vålerenga Fotball,2,4,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-2-h-nefoss-bk,2026-03-28,13:00,h-nefoss-bk,Hønefoss BK,molde,Molde,3,1,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-2-lyn,2026-03-28,13:00,lyn,Lyn,lsk-kvinner,LSK Kvinner,1,1,,,Played,D,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-2-r-a-fotball-elite,2026-03-28,13:00,r-a-fotball-elite,Røa Fotball Elite,bod-glimt,Bodø/Glimt,1,1,,,Played,D,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-2-aafk-kvinner,2026-03-28,13:00,aafk-kvinner,AaFK Kvinner,stab-k,Stabæk,2,2,,,Played,D,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-2-sk-brann,2026-03-28,16:00,sk-brann,SK Brann,rosenborg-bk,Rosenborg BK,1,1,,,Played,D,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-3-molde,2026-04-01,14:00,molde,Molde,lyn,Lyn,0,0,,,Played,D,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-3-bod-glimt,2026-04-01,16:00,bod-glimt,Bodø/Glimt,sk-brann,SK Brann,1,4,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-3-haugesund,2026-04-01,16:00,haugesund,Haugesund,aafk-kvinner,AaFK Kvinner,3,1,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-3-lsk-kvinner,2026-04-01,16:00,lsk-kvinner,LSK Kvinner,stab-k,Stabæk,0,3,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-3-rosenborg-bk,2026-04-01,16:00,rosenborg-bk,Rosenborg BK,h-nefoss-bk,Hønefoss BK,2,0,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-3-v-lerenga-fotball,2026-04-01,16:00,v-lerenga-fotball,Vålerenga Fotball,r-a-fotball-elite,Røa Fotball Elite,4,0,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-4-aafk-kvinner,2026-04-24,18:00,aafk-kvinner,AaFK Kvinner,rosenborg-bk,Rosenborg BK,1,0,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-4-h-nefoss-bk,2026-04-25,14:00,h-nefoss-bk,Hønefoss BK,haugesund,Haugesund,2,3,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-4-lsk-kvinner,2026-04-25,14:00,lsk-kvinner,LSK Kvinner,molde,Molde,1,3,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-4-lyn,2026-04-25,14:00,lyn,Lyn,bod-glimt,Bodø/Glimt,9,0,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-4-r-a-fotball-elite,2026-04-25,14:00,r-a-fotball-elite,Røa Fotball Elite,sk-brann,SK Brann,0,2,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-4-stab-k,2026-04-25,14:00,stab-k,Stabæk,v-lerenga-fotball,Vålerenga Fotball,0,0,,,Played,D,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-5-haugesund,2026-05-02,14:00,haugesund,Haugesund,lyn,Lyn,0,3,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-5-molde,2026-05-02,14:00,molde,Molde,aafk-kvinner,AaFK Kvinner,2,3,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-5-r-a-fotball-elite,2026-05-02,14:00,r-a-fotball-elite,Røa Fotball Elite,rosenborg-bk,Rosenborg BK,0,1,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-5-v-lerenga-fotball,2026-05-02,16:00,v-lerenga-fotball,Vålerenga Fotball,lsk-kvinner,LSK Kvinner,3,2,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-5-sk-brann,2026-05-03,14:30,sk-brann,SK Brann,h-nefoss-bk,Hønefoss BK,6,0,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-5-bod-glimt,2026-05-03,18:00,bod-glimt,Bodø/Glimt,stab-k,Stabæk,0,4,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-6-sk-brann,2026-05-08,18:00,sk-brann,SK Brann,stab-k,Stabæk,1,0,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-6-h-nefoss-bk,2026-05-08,18:00,h-nefoss-bk,Hønefoss BK,v-lerenga-fotball,Vålerenga Fotball,0,3,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-6-lsk-kvinner,2026-05-08,18:00,lsk-kvinner,LSK Kvinner,haugesund,Haugesund,2,1,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-6-molde,2026-05-08,18:00,molde,Molde,r-a-fotball-elite,Røa Fotball Elite,4,0,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-6-rosenborg-bk,2026-05-08,18:00,rosenborg-bk,Rosenborg BK,bod-glimt,Bodø/Glimt,3,0,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-6-aafk-kvinner,2026-05-08,18:00,aafk-kvinner,AaFK Kvinner,lyn,Lyn,1,0,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-7-bod-glimt,2026-05-15,18:00,bod-glimt,Bodø/Glimt,lsk-kvinner,LSK Kvinner,0,6,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-7-haugesund,2026-05-15,18:00,haugesund,Haugesund,sk-brann,SK Brann,0,7,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-7-lyn,2026-05-15,18:00,lyn,Lyn,r-a-fotball-elite,Røa Fotball Elite,0,0,,,Played,D,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-7-stab-k,2026-05-15,18:00,stab-k,Stabæk,rosenborg-bk,Rosenborg BK,1,2,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-7-v-lerenga-fotball,2026-05-15,18:00,v-lerenga-fotball,Vålerenga Fotball,molde,Molde,1,2,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-7-aafk-kvinner,2026-05-15,18:00,aafk-kvinner,AaFK Kvinner,h-nefoss-bk,Hønefoss BK,2,0,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-8-sk-brann,2026-05-26,18:00,sk-brann,SK Brann,lyn,Lyn,4,0,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-8-lsk-kvinner,2026-05-26,18:00,lsk-kvinner,LSK Kvinner,h-nefoss-bk,Hønefoss BK,3,2,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-8-molde,2026-05-26,18:00,molde,Molde,rosenborg-bk,Rosenborg BK,2,3,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-8-r-a-fotball-elite,2026-05-26,18:00,r-a-fotball-elite,Røa Fotball Elite,aafk-kvinner,AaFK Kvinner,2,3,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-8-stab-k,2026-05-26,18:00,stab-k,Stabæk,haugesund,Haugesund,3,0,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-8-v-lerenga-fotball,2026-05-26,18:00,v-lerenga-fotball,Vålerenga Fotball,bod-glimt,Bodø/Glimt,7,1,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-9-h-nefoss-bk,2026-05-29,18:00,h-nefoss-bk,Hønefoss BK,stab-k,Stabæk,1,2,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-9-haugesund,2026-05-30,14:00,haugesund,Haugesund,r-a-fotball-elite,Røa Fotball Elite,2,1,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-9-aafk-kvinner,2026-05-30,14:00,aafk-kvinner,AaFK Kvinner,sk-brann,SK Brann,1,2,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-9-rosenborg-bk,2026-05-30,17:00,rosenborg-bk,Rosenborg BK,lsk-kvinner,LSK Kvinner,0,1,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-9-lyn,2026-05-31,14:30,lyn,Lyn,v-lerenga-fotball,Vålerenga Fotball,2,0,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-10-haugesund,2026-06-13,13:30,haugesund,Haugesund,bod-glimt,Bodø/Glimt,2,1,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-10-lsk-kvinner,2026-06-13,13:30,lsk-kvinner,LSK Kvinner,aafk-kvinner,AaFK Kvinner,0,3,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-10-lyn,2026-06-13,13:30,lyn,Lyn,rosenborg-bk,Rosenborg BK,4,4,,,Played,D,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-10-r-a-fotball-elite,2026-06-13,13:30,r-a-fotball-elite,Røa Fotball Elite,h-nefoss-bk,Hønefoss BK,1,1,,,Played,D,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-10-stab-k,2026-06-13,13:30,stab-k,Stabæk,molde,Molde,2,1,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-10-v-lerenga-fotball,2026-06-13,16:00,v-lerenga-fotball,Vålerenga Fotball,sk-brann,SK Brann,0,3,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-11-aafk-kvinner,2026-06-20,12:00,aafk-kvinner,AaFK Kvinner,bod-glimt,Bodø/Glimt,8,1,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-11-h-nefoss-bk,2026-06-20,14:30,h-nefoss-bk,Hønefoss BK,lyn,Lyn,1,0,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-11-molde,2026-06-20,14:30,molde,Molde,haugesund,Haugesund,3,3,,,Played,D,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-11-stab-k,2026-06-20,16:00,stab-k,Stabæk,r-a-fotball-elite,Røa Fotball Elite,0,1,,,Played,A,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-11-rosenborg-bk,2026-06-20,17:00,rosenborg-bk,Rosenborg BK,v-lerenga-fotball,Vålerenga Fotball,3,2,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-11-sk-brann,2026-06-21,14:00,sk-brann,SK Brann,lsk-kvinner,LSK Kvinner,0,0,,,Played,D,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-14-sk-brann,2026-04-28,18:00,sk-brann,SK Brann,haugesund,Haugesund,2,0,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-14-rosenborg-bk,2026-04-29,18:00,rosenborg-bk,Rosenborg BK,molde,Molde,1,0,,,Played,H,NOR
+2026,NO-TS,Toppserien,206119,1,-,,206119-14-v-lerenga-fotball,2026-04-29,18:00,v-lerenga-fotball,Vålerenga Fotball,stab-k,Stabæk,3,1,,,Played,H,NOR

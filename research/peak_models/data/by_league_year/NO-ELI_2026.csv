@@ -1,0 +1,106 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-1-hamkam,2026-03-14,16:00,hamkam,HamKam,viking,Viking,2,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-1-molde,2026-03-14,18:00,molde,Molde,rosenborg,Rosenborg,2,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-1-kristiansund,2026-03-15,14:30,kristiansund,Kristiansund,brann,Brann,3,2,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-1-kfum,2026-03-15,17:00,kfum,KFUM,start,Start,2,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-1-v-lerenga,2026-03-15,17:00,v-lerenga,Vålerenga,sandefjord-fotball,Sandefjord Fotball,1,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-1-aalesund,2026-03-15,17:00,aalesund,Aalesund,lillestr-m,Lillestrøm,1,3,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-1-troms,2026-03-15,19:15,troms,Tromsø,fredrikstad,Fredrikstad,4,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-1-sarpsborg-08,2026-04-15,19:00,sarpsborg-08,Sarpsborg 08,bod-glimt,Bodø/Glimt,1,1,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-2-start,2026-03-21,16:00,start,Start,aalesund,Aalesund,1,1,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-2-viking,2026-03-21,18:00,viking,Viking,molde,Molde,4,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-2-rosenborg,2026-03-22,14:30,rosenborg,Rosenborg,v-lerenga,Vålerenga,0,2,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-2-brann,2026-03-22,17:00,brann,Brann,troms,Tromsø,1,2,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-2-fredrikstad,2026-03-22,17:00,fredrikstad,Fredrikstad,kfum,KFUM,3,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-2-sandefjord-fotball,2026-03-22,17:00,sandefjord-fotball,Sandefjord Fotball,sarpsborg-08,Sarpsborg 08,0,2,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-2-lillestr-m,2026-05-20,19:00,lillestr-m,Lillestrøm,kristiansund,Kristiansund,1,2,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-3-v-lerenga,2026-04-06,14:30,v-lerenga,Vålerenga,viking,Viking,0,1,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-3-hamkam,2026-04-06,17:00,hamkam,HamKam,brann,Brann,1,5,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-3-kristiansund,2026-04-06,17:00,kristiansund,Kristiansund,bod-glimt,Bodø/Glimt,0,3,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-3-molde,2026-04-06,17:00,molde,Molde,lillestr-m,Lillestrøm,0,1,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-3-sarpsborg-08,2026-04-06,17:00,sarpsborg-08,Sarpsborg 08,start,Start,1,1,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-3-troms,2026-04-06,19:15,troms,Tromsø,rosenborg,Rosenborg,2,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-3-kfum,2026-04-07,19:00,kfum,KFUM,sandefjord-fotball,Sandefjord Fotball,1,2,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-3-aalesund,2026-04-07,19:00,aalesund,Aalesund,fredrikstad,Fredrikstad,2,3,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-4-lillestr-m,2026-04-11,14:00,lillestr-m,Lillestrøm,start,Start,3,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-4-troms,2026-04-11,16:00,troms,Tromsø,kristiansund,Kristiansund,2,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-4-viking,2026-04-11,18:00,viking,Viking,bod-glimt,Bodø/Glimt,5,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-4-rosenborg,2026-04-12,14:30,rosenborg,Rosenborg,sarpsborg-08,Sarpsborg 08,2,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-4-fredrikstad,2026-04-12,17:00,fredrikstad,Fredrikstad,v-lerenga,Vålerenga,1,1,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-4-molde,2026-04-12,17:00,molde,Molde,hamkam,HamKam,4,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-4-aalesund,2026-04-12,17:00,aalesund,Aalesund,kfum,KFUM,2,2,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-4-brann,2026-04-12,19:15,brann,Brann,sandefjord-fotball,Sandefjord Fotball,0,1,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-5-bod-glimt,2026-04-18,14:00,bod-glimt,Bodø/Glimt,aalesund,Aalesund,3,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-5-sandefjord-fotball,2026-04-18,16:00,sandefjord-fotball,Sandefjord Fotball,rosenborg,Rosenborg,0,0,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-5-viking,2026-04-18,18:00,viking,Viking,brann,Brann,3,2,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-5-v-lerenga,2026-04-19,14:30,v-lerenga,Vålerenga,lillestr-m,Lillestrøm,0,2,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-5-hamkam,2026-04-19,17:00,hamkam,HamKam,kfum,KFUM,4,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-5-kristiansund,2026-04-19,17:00,kristiansund,Kristiansund,fredrikstad,Fredrikstad,2,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-5-sarpsborg-08,2026-04-19,17:00,sarpsborg-08,Sarpsborg 08,troms,Tromsø,0,1,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-5-start,2026-04-19,19:15,start,Start,molde,Molde,1,1,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-6-fredrikstad,2026-04-25,16:00,fredrikstad,Fredrikstad,viking,Viking,1,2,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-6-rosenborg,2026-04-25,18:00,rosenborg,Rosenborg,brann,Brann,1,1,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-6-molde,2026-04-26,14:30,molde,Molde,v-lerenga,Vålerenga,5,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-6-hamkam,2026-04-26,17:00,hamkam,HamKam,start,Start,2,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-6-kfum,2026-04-26,17:00,kfum,KFUM,sarpsborg-08,Sarpsborg 08,1,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-6-troms,2026-04-26,17:00,troms,Tromsø,sandefjord-fotball,Sandefjord Fotball,3,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-6-aalesund,2026-04-26,17:00,aalesund,Aalesund,kristiansund,Kristiansund,1,1,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-6-lillestr-m,2026-04-26,19:15,lillestr-m,Lillestrøm,bod-glimt,Bodø/Glimt,0,2,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-7-viking,2026-05-01,18:00,viking,Viking,rosenborg,Rosenborg,3,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-7-brann,2026-05-02,18:00,brann,Brann,fredrikstad,Fredrikstad,3,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-7-lillestr-m,2026-05-03,14:30,lillestr-m,Lillestrøm,sarpsborg-08,Sarpsborg 08,4,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-7-kristiansund,2026-05-03,17:00,kristiansund,Kristiansund,hamkam,HamKam,1,1,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-7-sandefjord-fotball,2026-05-03,17:00,sandefjord-fotball,Sandefjord Fotball,aalesund,Aalesund,1,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-7-start,2026-05-03,17:00,start,Start,troms,Tromsø,1,1,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-7-v-lerenga,2026-05-03,19:15,v-lerenga,Vålerenga,kfum,KFUM,2,2,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-7-bod-glimt,2026-05-04,19:00,bod-glimt,Bodø/Glimt,molde,Molde,0,1,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-8-hamkam,2026-05-08,19:00,hamkam,HamKam,v-lerenga,Vålerenga,1,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-8-sarpsborg-08,2026-05-09,14:00,sarpsborg-08,Sarpsborg 08,fredrikstad,Fredrikstad,2,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-8-rosenborg,2026-05-10,14:30,rosenborg,Rosenborg,lillestr-m,Lillestrøm,2,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-8-kfum,2026-05-10,17:00,kfum,KFUM,viking,Viking,0,2,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-8-sandefjord-fotball,2026-05-10,17:00,sandefjord-fotball,Sandefjord Fotball,kristiansund,Kristiansund,2,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-8-troms,2026-05-10,17:00,troms,Tromsø,molde,Molde,2,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-8-start,2026-05-20,18:00,start,Start,bod-glimt,Bodø/Glimt,1,4,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-8-aalesund,2026-05-20,20:00,aalesund,Aalesund,brann,Brann,2,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-9-brann,2026-05-16,14:00,brann,Brann,kfum,KFUM,2,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-9-fredrikstad,2026-05-16,16:00,fredrikstad,Fredrikstad,hamkam,HamKam,2,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-9-lillestr-m,2026-05-16,16:00,lillestr-m,Lillestrøm,sandefjord-fotball,Sandefjord Fotball,3,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-9-molde,2026-05-16,16:00,molde,Molde,kristiansund,Kristiansund,1,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-9-rosenborg,2026-05-16,16:00,rosenborg,Rosenborg,aalesund,Aalesund,2,3,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-9-viking,2026-05-16,16:00,viking,Viking,start,Start,6,3,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-9-bod-glimt,2026-05-16,18:00,bod-glimt,Bodø/Glimt,troms,Tromsø,5,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-9-v-lerenga,2026-05-16,20:00,v-lerenga,Vålerenga,sarpsborg-08,Sarpsborg 08,3,2,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-10-bod-glimt,2026-05-24,16:00,bod-glimt,Bodø/Glimt,brann,Brann,3,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-10-kristiansund,2026-05-24,18:00,kristiansund,Kristiansund,viking,Viking,1,2,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-10-start,2026-05-25,14:30,start,Start,v-lerenga,Vålerenga,2,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-10-hamkam,2026-05-25,17:00,hamkam,HamKam,lillestr-m,Lillestrøm,2,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-10-kfum,2026-05-25,17:00,kfum,KFUM,rosenborg,Rosenborg,2,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-10-sarpsborg-08,2026-05-25,17:00,sarpsborg-08,Sarpsborg 08,molde,Molde,2,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-10-troms,2026-05-25,17:00,troms,Tromsø,aalesund,Aalesund,1,1,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-10-sandefjord-fotball,2026-05-25,19:15,sandefjord-fotball,Sandefjord Fotball,fredrikstad,Fredrikstad,1,1,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-11-brann,2026-05-29,19:00,brann,Brann,sarpsborg-08,Sarpsborg 08,1,2,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-11-fredrikstad,2026-05-29,19:00,fredrikstad,Fredrikstad,start,Start,2,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-11-kfum,2026-05-29,19:00,kfum,KFUM,troms,Tromsø,0,0,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-11-rosenborg,2026-05-29,19:00,rosenborg,Rosenborg,bod-glimt,Bodø/Glimt,2,2,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-11-v-lerenga,2026-05-29,19:00,v-lerenga,Vålerenga,kristiansund,Kristiansund,3,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-11-aalesund,2026-05-29,19:00,aalesund,Aalesund,hamkam,HamKam,2,2,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-11-molde,2026-05-30,16:00,molde,Molde,sandefjord-fotball,Sandefjord Fotball,2,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-13-fredrikstad,2026-07-11,14:00,fredrikstad,Fredrikstad,lillestr-m,Lillestrøm,0,2,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-13-aalesund,2026-07-11,16:00,aalesund,Aalesund,molde,Molde,2,2,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-13-troms,2026-07-11,18:00,troms,Tromsø,v-lerenga,Vålerenga,4,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-13-kfum,2026-07-12,14:30,kfum,KFUM,bod-glimt,Bodø/Glimt,0,2,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-13-brann,2026-07-12,17:00,brann,Brann,start,Start,2,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-13-rosenborg,2026-07-12,17:00,rosenborg,Rosenborg,kristiansund,Kristiansund,3,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-13-sandefjord-fotball,2026-07-12,17:00,sandefjord-fotball,Sandefjord Fotball,hamkam,HamKam,2,2,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-13-sarpsborg-08,2026-07-12,19:15,sarpsborg-08,Sarpsborg 08,viking,Viking,1,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-14-v-lerenga,2026-07-16,19:00,v-lerenga,Vålerenga,aalesund,Aalesund,6,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-14-bod-glimt,2026-07-17,19:15,bod-glimt,Bodø/Glimt,fredrikstad,Fredrikstad,1,0,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-14-hamkam,2026-07-18,14:00,hamkam,HamKam,troms,Tromsø,1,4,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-14-kristiansund,2026-07-18,16:00,kristiansund,Kristiansund,sarpsborg-08,Sarpsborg 08,0,0,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-14-lillestr-m,2026-07-18,16:00,lillestr-m,Lillestrøm,kfum,KFUM,2,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-14-start,2026-07-18,16:00,start,Start,rosenborg,Rosenborg,0,3,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-14-molde,2026-07-18,18:00,molde,Molde,brann,Brann,1,2,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-14-viking,2026-07-18,18:00,viking,Viking,sandefjord-fotball,Sandefjord Fotball,2,1,,,Played,H,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-15-troms,2026-04-15,19:00,troms,Tromsø,lillestr-m,Lillestrøm,0,0,,,Played,D,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-17-troms,2026-04-29,19:00,troms,Tromsø,brann,Brann,0,5,,,Played,A,NOR
+2026,NO-ELI,Eliteserien,206092,1,-,,206092-18-bod-glimt,2026-04-30,19:00,bod-glimt,Bodø/Glimt,start,Start,5,0,,,Played,H,NOR

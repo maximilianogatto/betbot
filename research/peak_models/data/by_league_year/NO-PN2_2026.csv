@@ -1,0 +1,84 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-1-rana-fk,2026-04-06,13:00,rana-fk,Rana FK,trygg-lade,Trygg/Lade,1,0,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-1-follo,2026-04-06,14:00,follo,Follo,h-nefoss-bk,Hønefoss BK,2,2,,,Played,D,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-1-ullensaker-kisa,2026-04-06,14:00,ullensaker-kisa,Ullensaker/Kisa,skeid,Skeid,5,3,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-1-junkeren,2026-04-06,15:30,junkeren,Junkeren,tromsdalen,Tromsdalen,1,1,,,Played,D,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-1-kjels-s,2026-04-06,16:00,kjels-s,Kjelsås,grorud,Grorud,2,1,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-1-eidsvold-tf,2026-04-06,16:00,eidsvold-tf,Eidsvold TF,l-renskog,Lørenskog,0,0,,,Played,D,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-1-stj-rdals-blink,2026-04-06,16:00,stj-rdals-blink,Stjørdals-Blink,levanger,Levanger,1,2,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-2-trygg-lade,2026-04-11,13:00,trygg-lade,Trygg/Lade,follo,Follo,2,2,,,Played,D,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-2-levanger,2026-04-11,14:00,levanger,Levanger,kjels-s,Kjelsås,1,2,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-2-grorud,2026-04-11,14:00,grorud,Grorud,eidsvold-tf,Eidsvold TF,0,0,,,Played,D,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-2-l-renskog,2026-04-11,14:30,l-renskog,Lørenskog,stj-rdals-blink,Stjørdals-Blink,2,1,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-2-h-nefoss-bk,2026-04-12,12:30,h-nefoss-bk,Hønefoss BK,rana-fk,Rana FK,2,1,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-2-tromsdalen,2026-04-12,15:00,tromsdalen,Tromsdalen,ullensaker-kisa,Ullensaker/Kisa,5,1,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-2-skeid,2026-04-12,16:00,skeid,Skeid,junkeren,Junkeren,1,0,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-3-skeid,2026-04-18,14:00,skeid,Skeid,l-renskog,Lørenskog,1,2,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-3-follo,2026-04-18,14:00,follo,Follo,grorud,Grorud,2,3,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-3-ullensaker-kisa,2026-04-18,14:00,ullensaker-kisa,Ullensaker/Kisa,h-nefoss-bk,Hønefoss BK,0,3,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-3-rana-fk,2026-04-19,13:00,rana-fk,Rana FK,levanger,Levanger,2,3,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-3-junkeren,2026-04-19,14:00,junkeren,Junkeren,trygg-lade,Trygg/Lade,3,2,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-3-eidsvold-tf,2026-04-19,14:30,eidsvold-tf,Eidsvold TF,stj-rdals-blink,Stjørdals-Blink,3,0,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-3-kjels-s,2026-04-19,17:00,kjels-s,Kjelsås,tromsdalen,Tromsdalen,3,2,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-4-grorud,2026-04-24,18:00,grorud,Grorud,skeid,Skeid,1,0,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-4-stj-rdals-blink,2026-04-25,13:00,stj-rdals-blink,Stjørdals-Blink,follo,Follo,1,2,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-4-junkeren,2026-04-25,14:00,junkeren,Junkeren,eidsvold-tf,Eidsvold TF,0,1,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-4-l-renskog,2026-04-25,14:00,l-renskog,Lørenskog,ullensaker-kisa,Ullensaker/Kisa,5,1,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-4-trygg-lade,2026-04-25,16:00,trygg-lade,Trygg/Lade,kjels-s,Kjelsås,1,3,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-4-tromsdalen,2026-04-25,16:00,tromsdalen,Tromsdalen,rana-fk,Rana FK,2,1,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-4-h-nefoss-bk,2026-04-26,15:00,h-nefoss-bk,Hønefoss BK,levanger,Levanger,0,1,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-5-skeid,2026-05-02,14:00,skeid,Skeid,eidsvold-tf,Eidsvold TF,1,2,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-5-kjels-s,2026-05-02,14:00,kjels-s,Kjelsås,l-renskog,Lørenskog,4,1,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-5-ullensaker-kisa,2026-05-02,14:30,ullensaker-kisa,Ullensaker/Kisa,stj-rdals-blink,Stjørdals-Blink,2,3,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-5-rana-fk,2026-05-02,18:00,rana-fk,Rana FK,grorud,Grorud,0,0,,,Played,D,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-5-levanger,2026-05-03,12:00,levanger,Levanger,tromsdalen,Tromsdalen,2,3,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-5-h-nefoss-bk,2026-05-03,13:00,h-nefoss-bk,Hønefoss BK,trygg-lade,Trygg/Lade,3,1,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-5-follo,2026-05-03,17:00,follo,Follo,junkeren,Junkeren,2,0,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-6-eidsvold-tf,2026-05-09,14:00,eidsvold-tf,Eidsvold TF,follo,Follo,4,1,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-6-junkeren,2026-05-09,15:00,junkeren,Junkeren,kjels-s,Kjelsås,2,3,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-6-stj-rdals-blink,2026-05-09,15:30,stj-rdals-blink,Stjørdals-Blink,skeid,Skeid,0,1,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-6-l-renskog,2026-05-10,13:00,l-renskog,Lørenskog,rana-fk,Rana FK,1,2,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-6-trygg-lade,2026-05-10,14:00,trygg-lade,Trygg/Lade,ullensaker-kisa,Ullensaker/Kisa,4,2,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-6-grorud,2026-05-10,15:00,grorud,Grorud,levanger,Levanger,2,3,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-6-tromsdalen,2026-05-10,16:30,tromsdalen,Tromsdalen,h-nefoss-bk,Hønefoss BK,0,3,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-7-tromsdalen,2026-05-14,13:00,tromsdalen,Tromsdalen,grorud,Grorud,0,2,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-7-h-nefoss-bk,2026-05-14,15:00,h-nefoss-bk,Hønefoss BK,stj-rdals-blink,Stjørdals-Blink,3,2,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-7-ullensaker-kisa,2026-05-15,19:00,ullensaker-kisa,Ullensaker/Kisa,eidsvold-tf,Eidsvold TF,2,5,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-7-kjels-s,2026-05-16,14:00,kjels-s,Kjelsås,skeid,Skeid,1,0,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-7-follo,2026-05-16,14:00,follo,Follo,l-renskog,Lørenskog,0,1,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-7-levanger,2026-05-16,15:00,levanger,Levanger,trygg-lade,Trygg/Lade,3,0,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-7-rana-fk,2026-05-16,17:00,rana-fk,Rana FK,junkeren,Junkeren,1,2,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-8-stj-rdals-blink,2026-05-23,13:30,stj-rdals-blink,Stjørdals-Blink,kjels-s,Kjelsås,1,1,,,Played,D,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-8-skeid,2026-05-23,14:00,skeid,Skeid,follo,Follo,2,0,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-8-grorud,2026-05-23,14:00,grorud,Grorud,h-nefoss-bk,Hønefoss BK,3,2,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-8-trygg-lade,2026-05-24,13:00,trygg-lade,Trygg/Lade,tromsdalen,Tromsdalen,1,2,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-8-eidsvold-tf,2026-05-25,14:30,eidsvold-tf,Eidsvold TF,rana-fk,Rana FK,4,1,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-8-junkeren,2026-05-25,15:00,junkeren,Junkeren,ullensaker-kisa,Ullensaker/Kisa,3,0,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-8-l-renskog,2026-05-25,16:00,l-renskog,Lørenskog,levanger,Levanger,1,0,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-9-kjels-s,2026-05-30,14:00,kjels-s,Kjelsås,eidsvold-tf,Eidsvold TF,0,4,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-9-follo,2026-05-30,14:00,follo,Follo,ullensaker-kisa,Ullensaker/Kisa,1,2,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-9-grorud,2026-05-31,13:00,grorud,Grorud,trygg-lade,Trygg/Lade,2,1,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-9-h-nefoss-bk,2026-05-31,14:00,h-nefoss-bk,Hønefoss BK,l-renskog,Lørenskog,1,1,,,Played,D,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-9-levanger,2026-05-31,16:00,levanger,Levanger,junkeren,Junkeren,3,0,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-9-rana-fk,2026-05-31,16:30,rana-fk,Rana FK,stj-rdals-blink,Stjørdals-Blink,3,2,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-9-tromsdalen,2026-05-31,16:30,tromsdalen,Tromsdalen,skeid,Skeid,2,0,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-10-follo,2026-06-12,18:00,follo,Follo,kjels-s,Kjelsås,1,4,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-10-ullensaker-kisa,2026-06-13,14:00,ullensaker-kisa,Ullensaker/Kisa,grorud,Grorud,2,1,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-10-skeid,2026-06-14,13:00,skeid,Skeid,rana-fk,Rana FK,3,3,,,Played,D,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-10-l-renskog,2026-06-14,14:00,l-renskog,Lørenskog,tromsdalen,Tromsdalen,6,0,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-10-eidsvold-tf,2026-06-14,15:00,eidsvold-tf,Eidsvold TF,levanger,Levanger,1,3,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-10-stj-rdals-blink,2026-06-14,15:00,stj-rdals-blink,Stjørdals-Blink,trygg-lade,Trygg/Lade,2,1,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-10-junkeren,2026-06-14,16:00,junkeren,Junkeren,h-nefoss-bk,Hønefoss BK,4,3,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-11-kjels-s,2026-06-20,14:00,kjels-s,Kjelsås,ullensaker-kisa,Ullensaker/Kisa,3,0,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-11-levanger,2026-06-20,14:00,levanger,Levanger,skeid,Skeid,2,1,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-11-tromsdalen,2026-06-20,14:30,tromsdalen,Tromsdalen,stj-rdals-blink,Stjørdals-Blink,2,4,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-11-h-nefoss-bk,2026-06-21,13:00,h-nefoss-bk,Hønefoss BK,eidsvold-tf,Eidsvold TF,2,1,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-11-trygg-lade,2026-06-21,14:30,trygg-lade,Trygg/Lade,l-renskog,Lørenskog,1,4,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-11-grorud,2026-06-21,17:00,grorud,Grorud,junkeren,Junkeren,3,0,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-12-eidsvold-tf,2026-06-26,18:00,eidsvold-tf,Eidsvold TF,tromsdalen,Tromsdalen,2,1,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-12-ullensaker-kisa,2026-06-27,13:00,ullensaker-kisa,Ullensaker/Kisa,rana-fk,Rana FK,1,3,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-12-kjels-s,2026-06-27,14:00,kjels-s,Kjelsås,h-nefoss-bk,Hønefoss BK,1,3,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-12-l-renskog,2026-06-27,14:00,l-renskog,Lørenskog,grorud,Grorud,1,0,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-12-skeid,2026-06-28,14:00,skeid,Skeid,trygg-lade,Trygg/Lade,7,1,,,Played,H,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-12-follo,2026-06-28,15:00,follo,Follo,levanger,Levanger,0,2,,,Played,A,NOR
+2026,NO-PN2,PostNord-ligaen avd. 2,206008,1,-,,206008-12-stj-rdals-blink,2026-06-28,15:00,stj-rdals-blink,Stjørdals-Blink,junkeren,Junkeren,1,1,,,Played,D,NOR

@@ -1,0 +1,71 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2026,SW-EE,Elitettan,133439,1,-,,6536397,2026-06-21,16:00,ifk-g-teborg,IFK Göteborg,trelleborgs-ff,Trelleborgs FF,3,1,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536400,2026-06-21,13:00,enskede-ik,Enskede IK,sandvikens-if,Sandvikens IF,4,0,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536401,2026-06-21,13:00,rebro-sk-fk,Örebro SK FK,ume-ik-ff,Umeå IK FF,1,0,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536396,2026-06-18,19:00,husqvarna-ff,Husqvarna FF,if-elfsborg,IF Elfsborg,1,1,,,Played,D,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536399,2026-06-18,19:00,link-ping-fc,Linköping FC,alings-s-if-ff,Alingsås IF FF,4,0,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536398,2026-06-18,18:30,jitex-bk,Jitex BK,kif-rebro-dff,KIF Örebro DFF,0,1,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536395,2026-06-17,18:00,bk-h-cken,BK Häcken,gamla-upsala-sk,Gamla Upsala SK,1,2,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536391,2026-06-14,16:00,kif-rebro-dff,KIF Örebro DFF,bk-h-cken,BK Häcken,3,0,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536390,2026-06-14,15:00,jitex-bk,Jitex BK,enskede-ik,Enskede IK,1,2,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536393,2026-06-14,14:00,trelleborgs-ff,Trelleborgs FF,rebro-sk-fk,Örebro SK FK,2,1,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536394,2026-06-14,13:00,ume-ik-ff,Umeå IK FF,link-ping-fc,Linköping FC,1,2,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536392,2026-06-13,14:00,sandvikens-if,Sandvikens IF,husqvarna-ff,Husqvarna FF,3,4,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536388,2026-06-13,13:00,alings-s-if-ff,Alingsås IF FF,gamla-upsala-sk,Gamla Upsala SK,0,0,,,Played,D,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536389,2026-06-13,13:00,if-elfsborg,IF Elfsborg,ifk-g-teborg,IFK Göteborg,1,1,,,Played,D,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536382,2026-05-31,16:00,husqvarna-ff,Husqvarna FF,link-ping-fc,Linköping FC,1,3,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536383,2026-05-30,16:00,if-elfsborg,IF Elfsborg,enskede-ik,Enskede IK,3,0,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536385,2026-05-30,16:00,kif-rebro-dff,KIF Örebro DFF,alings-s-if-ff,Alingsås IF FF,2,0,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536384,2026-05-30,13:00,ifk-g-teborg,IFK Göteborg,bk-h-cken,BK Häcken,2,1,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536386,2026-05-30,13:00,sandvikens-if,Sandvikens IF,jitex-bk,Jitex BK,0,0,,,Played,D,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536387,2026-05-30,12:00,ume-ik-ff,Umeå IK FF,trelleborgs-ff,Trelleborgs FF,0,2,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536381,2026-05-29,20:00,gamla-upsala-sk,Gamla Upsala SK,rebro-sk-fk,Örebro SK FK,1,1,,,Played,D,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536375,2026-05-23,16:00,bk-h-cken,BK Häcken,if-elfsborg,IF Elfsborg,0,1,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536377,2026-05-23,15:00,link-ping-fc,Linköping FC,sandvikens-if,Sandvikens IF,1,0,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536379,2026-05-23,14:00,trelleborgs-ff,Trelleborgs FF,husqvarna-ff,Husqvarna FF,3,0,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536374,2026-05-23,13:00,alings-s-if-ff,Alingsås IF FF,ume-ik-ff,Umeå IK FF,2,0,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536378,2026-05-23,13:00,enskede-ik,Enskede IK,gamla-upsala-sk,Gamla Upsala SK,4,1,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536376,2026-05-22,19:00,jitex-bk,Jitex BK,ifk-g-teborg,IFK Göteborg,0,3,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536380,2026-05-22,19:00,rebro-sk-fk,Örebro SK FK,kif-rebro-dff,KIF Örebro DFF,0,3,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536370,2026-05-16,16:00,ifk-g-teborg,IFK Göteborg,rebro-sk-fk,Örebro SK FK,2,1,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536369,2026-05-16,15:00,gamla-upsala-sk,Gamla Upsala SK,link-ping-fc,Linköping FC,0,2,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536371,2026-05-16,15:00,jitex-bk,Jitex BK,trelleborgs-ff,Trelleborgs FF,4,1,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536373,2026-05-16,14:00,ume-ik-ff,Umeå IK FF,sandvikens-if,Sandvikens IF,2,0,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536372,2026-05-16,13:00,kif-rebro-dff,KIF Örebro DFF,enskede-ik,Enskede IK,4,3,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536368,2026-05-15,19:00,bk-h-cken,BK Häcken,husqvarna-ff,Husqvarna FF,1,2,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536367,2026-05-15,18:30,alings-s-if-ff,Alingsås IF FF,if-elfsborg,IF Elfsborg,0,1,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536364,2026-05-10,13:00,sandvikens-if,Sandvikens IF,ifk-g-teborg,IFK Göteborg,0,5,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536365,2026-05-09,15:00,trelleborgs-ff,Trelleborgs FF,alings-s-if-ff,Alingsås IF FF,1,0,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536366,2026-05-09,14:00,rebro-sk-fk,Örebro SK FK,bk-h-cken,BK Häcken,2,1,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536360,2026-05-09,13:00,gamla-upsala-sk,Gamla Upsala SK,ume-ik-ff,Umeå IK FF,2,3,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536361,2026-05-09,13:00,husqvarna-ff,Husqvarna FF,enskede-ik,Enskede IK,0,1,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536363,2026-05-08,19:00,link-ping-fc,Linköping FC,kif-rebro-dff,KIF Örebro DFF,3,2,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536362,2026-05-07,19:00,if-elfsborg,IF Elfsborg,jitex-bk,Jitex BK,2,0,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536357,2026-05-03,13:00,kif-rebro-dff,KIF Örebro DFF,trelleborgs-ff,Trelleborgs FF,2,1,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536354,2026-05-02,15:00,if-elfsborg,IF Elfsborg,link-ping-fc,Linköping FC,0,0,,,Played,D,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536353,2026-05-02,14:00,bk-h-cken,BK Häcken,alings-s-if-ff,Alingsås IF FF,0,1,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536355,2026-05-02,13:00,ifk-g-teborg,IFK Göteborg,gamla-upsala-sk,Gamla Upsala SK,2,1,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536358,2026-05-02,13:00,enskede-ik,Enskede IK,ume-ik-ff,Umeå IK FF,1,1,,,Played,D,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536359,2026-05-01,15:00,rebro-sk-fk,Örebro SK FK,sandvikens-if,Sandvikens IF,1,1,,,Played,D,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536356,2026-05-01,13:00,jitex-bk,Jitex BK,husqvarna-ff,Husqvarna FF,1,1,,,Played,D,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536347,2026-04-26,14:00,gamla-upsala-sk,Gamla Upsala SK,if-elfsborg,IF Elfsborg,0,2,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536351,2026-04-26,14:00,trelleborgs-ff,Trelleborgs FF,enskede-ik,Enskede IK,1,3,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536349,2026-04-25,15:00,link-ping-fc,Linköping FC,jitex-bk,Jitex BK,1,1,,,Played,D,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536348,2026-04-25,14:00,husqvarna-ff,Husqvarna FF,rebro-sk-fk,Örebro SK FK,0,1,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536350,2026-04-25,14:00,sandvikens-if,Sandvikens IF,kif-rebro-dff,KIF Örebro DFF,1,5,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536352,2026-04-25,14:00,ume-ik-ff,Umeå IK FF,bk-h-cken,BK Häcken,4,1,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536346,2026-04-24,19:00,alings-s-if-ff,Alingsås IF FF,ifk-g-teborg,IFK Göteborg,1,1,,,Played,D,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536343,2026-04-06,13:00,enskede-ik,Enskede IK,ifk-g-teborg,IFK Göteborg,0,2,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536345,2026-04-06,12:00,ume-ik-ff,Umeå IK FF,kif-rebro-dff,KIF Örebro DFF,2,2,,,Played,D,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536342,2026-04-04,15:00,link-ping-fc,Linköping FC,bk-h-cken,BK Häcken,3,0,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536340,2026-04-04,14:00,gamla-upsala-sk,Gamla Upsala SK,husqvarna-ff,Husqvarna FF,2,2,,,Played,D,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536344,2026-04-04,14:00,trelleborgs-ff,Trelleborgs FF,sandvikens-if,Sandvikens IF,1,0,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536339,2026-04-03,13:00,alings-s-if-ff,Alingsås IF FF,jitex-bk,Jitex BK,0,3,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536341,2026-04-03,13:00,if-elfsborg,IF Elfsborg,rebro-sk-fk,Örebro SK FK,2,0,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536338,2026-03-28,17:00,rebro-sk-fk,Örebro SK FK,enskede-ik,Enskede IK,2,1,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536334,2026-03-28,16:00,ifk-g-teborg,IFK Göteborg,link-ping-fc,Linköping FC,2,3,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536332,2026-03-28,15:00,bk-h-cken,BK Häcken,trelleborgs-ff,Trelleborgs FF,2,4,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536337,2026-03-28,14:00,sandvikens-if,Sandvikens IF,gamla-upsala-sk,Gamla Upsala SK,1,2,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536333,2026-03-28,13:30,husqvarna-ff,Husqvarna FF,alings-s-if-ff,Alingsås IF FF,2,1,,,Played,H,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536336,2026-03-28,13:00,kif-rebro-dff,KIF Örebro DFF,if-elfsborg,IF Elfsborg,0,3,,,Played,A,SWE
+2026,SW-EE,Elitettan,133439,1,-,,6536335,2026-03-28,12:00,jitex-bk,Jitex BK,ume-ik-ff,Umeå IK FF,0,4,,,Played,A,SWE

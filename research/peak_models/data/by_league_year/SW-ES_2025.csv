@@ -1,0 +1,241 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2025,SW-ES,Ettan Södra,123862,1,-,,6155211,2025-11-08,15:00,ariana-fc,Ariana FC,torslanda-ik,Torslanda IK,1,4,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155212,2025-11-08,15:00,eskilsminne-if,Eskilsminne IF,j-nk-pings-s-dra-if,Jönköpings Södra IF,4,2,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155213,2025-11-08,15:00,fc-trollh-ttan,FC Trollhättan,norrby-if,Norrby IF,2,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155214,2025-11-08,15:00,husqvarna-ff,Husqvarna FF,fc-roseng-rd-1917,FC Rosengård 1917,5,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155215,2025-11-08,15:00,h-ssleholms-if,Hässleholms IF,ngelholms-ff,Ängelholms FF,3,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155216,2025-11-08,15:00,lunds-bk,Lunds BK,ifk-sk-vde-fk,IFK Skövde FK,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155217,2025-11-08,15:00,oskarshamns-aik,Oskarshamns AIK,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155218,2025-11-08,15:00,sk-vde-aik,Skövde AIK,bk-olympic,BK Olympic,3,2,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155203,2025-11-02,16:00,bk-olympic,BK Olympic,fc-trollh-ttan,FC Trollhättan,2,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155209,2025-11-02,14:00,torslanda-ik,Torslanda IK,lunds-bk,Lunds BK,3,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155205,2025-11-01,16:00,ifk-sk-vde-fk,IFK Skövde FK,eskilsminne-if,Eskilsminne IF,1,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155206,2025-11-01,16:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,ariana-fc,Ariana FC,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155210,2025-11-01,16:00,ngelholms-ff,Ängelholms FF,oskarshamns-aik,Oskarshamns AIK,1,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155204,2025-11-01,13:00,fc-roseng-rd-1917,FC Rosengård 1917,h-ssleholms-if,Hässleholms IF,1,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155207,2025-11-01,13:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,sk-vde-aik,Skövde AIK,5,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155208,2025-11-01,13:00,norrby-if,Norrby IF,husqvarna-ff,Husqvarna FF,4,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155199,2025-10-26,16:00,norrby-if,Norrby IF,ifk-sk-vde-fk,IFK Skövde FK,4,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155202,2025-10-26,16:00,ngelholms-ff,Ängelholms FF,eskilsminne-if,Eskilsminne IF,2,2,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155197,2025-10-25,16:00,husqvarna-ff,Husqvarna FF,torslanda-ik,Torslanda IK,5,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155200,2025-10-25,16:00,oskarshamns-aik,Oskarshamns AIK,lunds-bk,Lunds BK,2,2,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155201,2025-10-25,16:00,sk-vde-aik,Skövde AIK,h-ssleholms-if,Hässleholms IF,0,1,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155198,2025-10-25,14:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,fc-roseng-rd-1917,FC Rosengård 1917,2,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155195,2025-10-25,13:00,ariana-fc,Ariana FC,bk-olympic,BK Olympic,4,2,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155196,2025-10-25,13:00,fc-trollh-ttan,FC Trollhättan,j-nk-pings-s-dra-if,Jönköpings Södra IF,0,1,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155192,2025-10-19,16:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,1,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155187,2025-10-18,16:00,bk-olympic,BK Olympic,oskarshamns-aik,Oskarshamns AIK,2,2,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155188,2025-10-18,16:00,eskilsminne-if,Eskilsminne IF,sk-vde-aik,Skövde AIK,4,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155190,2025-10-18,16:00,h-ssleholms-if,Hässleholms IF,husqvarna-ff,Husqvarna FF,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155189,2025-10-18,13:00,fc-roseng-rd-1917,FC Rosengård 1917,ariana-fc,Ariana FC,1,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155194,2025-10-18,13:00,torslanda-ik,Torslanda IK,norrby-if,Norrby IF,1,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155191,2025-10-17,19:00,ifk-sk-vde-fk,IFK Skövde FK,fc-trollh-ttan,FC Trollhättan,1,4,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155193,2025-10-17,19:00,lunds-bk,Lunds BK,ngelholms-ff,Ängelholms FF,1,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155183,2025-10-12,16:00,h-ssleholms-if,Hässleholms IF,norrby-if,Norrby IF,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155180,2025-10-12,13:00,fc-roseng-rd-1917,FC Rosengård 1917,bk-olympic,BK Olympic,1,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155181,2025-10-11,16:00,fc-trollh-ttan,FC Trollhättan,torslanda-ik,Torslanda IK,4,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155185,2025-10-11,16:00,oskarshamns-aik,Oskarshamns AIK,j-nk-pings-s-dra-if,Jönköpings Södra IF,0,0,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155186,2025-10-11,16:00,sk-vde-aik,Skövde AIK,lunds-bk,Lunds BK,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155184,2025-10-11,13:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,eskilsminne-if,Eskilsminne IF,3,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155179,2025-10-10,19:00,ariana-fc,Ariana FC,ngelholms-ff,Ängelholms FF,1,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155182,2025-10-10,19:00,husqvarna-ff,Husqvarna FF,ifk-sk-vde-fk,IFK Skövde FK,1,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155175,2025-10-06,19:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,sk-vde-aik,Skövde AIK,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155172,2025-10-05,16:00,eskilsminne-if,Eskilsminne IF,oskarshamns-aik,Oskarshamns AIK,3,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155176,2025-10-05,16:00,norrby-if,Norrby IF,fc-roseng-rd-1917,FC Rosengård 1917,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155174,2025-10-04,16:00,ifk-sk-vde-fk,IFK Skövde FK,bk-olympic,BK Olympic,3,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155177,2025-10-04,16:00,torslanda-ik,Torslanda IK,h-ssleholms-if,Hässleholms IF,0,5,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155178,2025-10-04,16:00,ngelholms-ff,Ängelholms FF,fc-trollh-ttan,FC Trollhättan,1,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155173,2025-10-04,13:00,husqvarna-ff,Husqvarna FF,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,2,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155171,2025-10-03,19:00,ariana-fc,Ariana FC,lunds-bk,Lunds BK,0,1,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155165,2025-09-28,16:00,fc-trollh-ttan,FC Trollhättan,ariana-fc,Ariana FC,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155163,2025-09-27,16:00,bk-olympic,BK Olympic,norrby-if,Norrby IF,0,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155166,2025-09-27,16:00,h-ssleholms-if,Hässleholms IF,j-nk-pings-s-dra-if,Jönköpings Södra IF,1,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155169,2025-09-27,16:00,oskarshamns-aik,Oskarshamns AIK,ifk-sk-vde-fk,IFK Skövde FK,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155170,2025-09-27,15:00,sk-vde-aik,Skövde AIK,ngelholms-ff,Ängelholms FF,0,0,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155164,2025-09-27,13:00,eskilsminne-if,Eskilsminne IF,husqvarna-ff,Husqvarna FF,0,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155167,2025-09-27,13:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,torslanda-ik,Torslanda IK,3,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155168,2025-09-26,19:00,lunds-bk,Lunds BK,fc-roseng-rd-1917,FC Rosengård 1917,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155159,2025-09-21,16:00,norrby-if,Norrby IF,ariana-fc,Ariana FC,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155162,2025-09-21,16:00,ngelholms-ff,Ängelholms FF,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,1,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155156,2025-09-20,16:00,fc-roseng-rd-1917,FC Rosengård 1917,sk-vde-aik,Skövde AIK,3,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155157,2025-09-20,16:00,ifk-sk-vde-fk,IFK Skövde FK,h-ssleholms-if,Hässleholms IF,0,1,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155160,2025-09-20,16:00,oskarshamns-aik,Oskarshamns AIK,fc-trollh-ttan,FC Trollhättan,2,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155155,2025-09-20,13:00,bk-olympic,BK Olympic,lunds-bk,Lunds BK,3,2,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155161,2025-09-20,13:00,torslanda-ik,Torslanda IK,eskilsminne-if,Eskilsminne IF,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155158,2025-09-19,19:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,husqvarna-ff,Husqvarna FF,0,0,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155148,2025-09-14,16:00,eskilsminne-if,Eskilsminne IF,norrby-if,Norrby IF,2,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155152,2025-09-14,16:00,lunds-bk,Lunds BK,j-nk-pings-s-dra-if,Jönköpings Södra IF,1,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155147,2025-09-13,16:00,ariana-fc,Ariana FC,ifk-sk-vde-fk,IFK Skövde FK,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155149,2025-09-13,16:00,fc-roseng-rd-1917,FC Rosengård 1917,oskarshamns-aik,Oskarshamns AIK,0,1,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155151,2025-09-13,16:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,h-ssleholms-if,Hässleholms IF,3,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155150,2025-09-13,13:00,husqvarna-ff,Husqvarna FF,ngelholms-ff,Ängelholms FF,0,1,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155154,2025-09-13,13:00,torslanda-ik,Torslanda IK,bk-olympic,BK Olympic,1,5,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155153,2025-09-12,19:00,sk-vde-aik,Skövde AIK,fc-trollh-ttan,FC Trollhättan,1,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155144,2025-09-08,19:00,norrby-if,Norrby IF,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,4,2,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155139,2025-09-07,16:00,ariana-fc,Ariana FC,sk-vde-aik,Skövde AIK,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155140,2025-09-07,16:00,bk-olympic,BK Olympic,j-nk-pings-s-dra-if,Jönköpings Södra IF,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155141,2025-09-06,16:00,fc-trollh-ttan,FC Trollhättan,eskilsminne-if,Eskilsminne IF,1,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155145,2025-09-06,16:00,oskarshamns-aik,Oskarshamns AIK,husqvarna-ff,Husqvarna FF,1,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155143,2025-09-06,13:00,ifk-sk-vde-fk,IFK Skövde FK,torslanda-ik,Torslanda IK,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155146,2025-09-06,13:00,ngelholms-ff,Ängelholms FF,fc-roseng-rd-1917,FC Rosengård 1917,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155142,2025-09-05,19:00,h-ssleholms-if,Hässleholms IF,lunds-bk,Lunds BK,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155134,2025-09-01,19:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,ifk-sk-vde-fk,IFK Skövde FK,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155132,2025-08-31,16:00,fc-trollh-ttan,FC Trollhättan,h-ssleholms-if,Hässleholms IF,0,4,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155135,2025-08-31,16:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,bk-olympic,BK Olympic,4,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155133,2025-08-30,16:00,husqvarna-ff,Husqvarna FF,ariana-fc,Ariana FC,0,0,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155136,2025-08-30,16:00,lunds-bk,Lunds BK,norrby-if,Norrby IF,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155137,2025-08-30,16:00,sk-vde-aik,Skövde AIK,oskarshamns-aik,Oskarshamns AIK,3,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155131,2025-08-30,13:00,eskilsminne-if,Eskilsminne IF,fc-roseng-rd-1917,FC Rosengård 1917,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155138,2025-08-30,13:00,ngelholms-ff,Ängelholms FF,torslanda-ik,Torslanda IK,3,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155129,2025-08-25,19:00,norrby-if,Norrby IF,j-nk-pings-s-dra-if,Jönköpings Södra IF,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155128,2025-08-24,16:00,lunds-bk,Lunds BK,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,1,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155123,2025-08-23,16:00,ariana-fc,Ariana FC,oskarshamns-aik,Oskarshamns AIK,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155125,2025-08-23,16:00,fc-roseng-rd-1917,FC Rosengård 1917,fc-trollh-ttan,FC Trollhättan,1,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155127,2025-08-23,16:00,ifk-sk-vde-fk,IFK Skövde FK,ngelholms-ff,Ängelholms FF,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155124,2025-08-23,13:00,bk-olympic,BK Olympic,husqvarna-ff,Husqvarna FF,2,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155126,2025-08-23,13:00,h-ssleholms-if,Hässleholms IF,eskilsminne-if,Eskilsminne IF,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155130,2025-08-23,13:00,torslanda-ik,Torslanda IK,sk-vde-aik,Skövde AIK,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155118,2025-08-17,16:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,torslanda-ik,Torslanda IK,5,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155116,2025-08-16,16:00,fc-roseng-rd-1917,FC Rosengård 1917,ifk-sk-vde-fk,IFK Skövde FK,3,2,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155117,2025-08-16,16:00,fc-trollh-ttan,FC Trollhättan,husqvarna-ff,Husqvarna FF,3,3,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155119,2025-08-16,16:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,ariana-fc,Ariana FC,3,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155115,2025-08-16,13:00,eskilsminne-if,Eskilsminne IF,lunds-bk,Lunds BK,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155120,2025-08-16,13:00,oskarshamns-aik,Oskarshamns AIK,h-ssleholms-if,Hässleholms IF,1,4,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155121,2025-08-16,13:00,sk-vde-aik,Skövde AIK,norrby-if,Norrby IF,2,4,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155122,2025-08-15,19:00,ngelholms-ff,Ängelholms FF,bk-olympic,BK Olympic,0,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155108,2025-08-11,18:30,bk-olympic,BK Olympic,h-ssleholms-if,Hässleholms IF,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155113,2025-08-10,16:00,norrby-if,Norrby IF,oskarshamns-aik,Oskarshamns AIK,3,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155107,2025-08-09,16:00,ariana-fc,Ariana FC,eskilsminne-if,Eskilsminne IF,3,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155111,2025-08-09,16:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,ngelholms-ff,Ängelholms FF,0,0,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155112,2025-08-09,16:00,lunds-bk,Lunds BK,fc-trollh-ttan,FC Trollhättan,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155109,2025-08-09,13:00,husqvarna-ff,Husqvarna FF,sk-vde-aik,Skövde AIK,4,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155110,2025-08-09,13:00,ifk-sk-vde-fk,IFK Skövde FK,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,0,4,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155114,2025-08-09,13:00,torslanda-ik,Torslanda IK,fc-roseng-rd-1917,FC Rosengård 1917,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155101,2025-08-04,19:00,fc-trollh-ttan,FC Trollhättan,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,2,2,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155102,2025-08-04,19:00,h-ssleholms-if,Hässleholms IF,ariana-fc,Ariana FC,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155105,2025-08-04,19:00,sk-vde-aik,Skövde AIK,ifk-sk-vde-fk,IFK Skövde FK,0,0,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155100,2025-08-02,16:00,fc-roseng-rd-1917,FC Rosengård 1917,j-nk-pings-s-dra-if,Jönköpings Södra IF,0,1,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155104,2025-08-02,16:00,oskarshamns-aik,Oskarshamns AIK,torslanda-ik,Torslanda IK,0,1,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155106,2025-08-02,16:00,ngelholms-ff,Ängelholms FF,norrby-if,Norrby IF,0,4,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155103,2025-08-02,13:00,lunds-bk,Lunds BK,husqvarna-ff,Husqvarna FF,3,3,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155099,2025-07-02,19:00,eskilsminne-if,Eskilsminne IF,bk-olympic,BK Olympic,2,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155092,2025-06-28,16:00,bk-olympic,BK Olympic,sk-vde-aik,Skövde AIK,0,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155095,2025-06-28,16:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,fc-trollh-ttan,FC Trollhättan,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155096,2025-06-28,16:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,ngelholms-ff,Ängelholms FF,3,2,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155098,2025-06-28,16:00,oskarshamns-aik,Oskarshamns AIK,eskilsminne-if,Eskilsminne IF,0,0,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155094,2025-06-28,13:00,h-ssleholms-if,Hässleholms IF,ifk-sk-vde-fk,IFK Skövde FK,3,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155091,2025-06-27,19:00,ariana-fc,Ariana FC,fc-roseng-rd-1917,FC Rosengård 1917,1,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155093,2025-06-26,19:00,husqvarna-ff,Husqvarna FF,lunds-bk,Lunds BK,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155097,2025-06-26,19:00,norrby-if,Norrby IF,torslanda-ik,Torslanda IK,4,2,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155085,2025-06-22,16:00,fc-trollh-ttan,FC Trollhättan,fc-roseng-rd-1917,FC Rosengård 1917,0,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155087,2025-06-22,16:00,ifk-sk-vde-fk,IFK Skövde FK,oskarshamns-aik,Oskarshamns AIK,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155083,2025-06-19,19:00,bk-olympic,BK Olympic,ariana-fc,Ariana FC,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155084,2025-06-19,19:00,eskilsminne-if,Eskilsminne IF,h-ssleholms-if,Hässleholms IF,0,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155086,2025-06-19,19:00,husqvarna-ff,Husqvarna FF,norrby-if,Norrby IF,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155088,2025-06-19,19:00,lunds-bk,Lunds BK,sk-vde-aik,Skövde AIK,3,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155090,2025-06-19,19:00,ngelholms-ff,Ängelholms FF,j-nk-pings-s-dra-if,Jönköpings Södra IF,1,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155089,2025-06-18,19:00,torslanda-ik,Torslanda IK,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155075,2025-06-15,16:00,ariana-fc,Ariana FC,fc-trollh-ttan,FC Trollhättan,3,3,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155078,2025-06-15,16:00,ifk-sk-vde-fk,IFK Skövde FK,lunds-bk,Lunds BK,3,2,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155076,2025-06-14,16:00,fc-roseng-rd-1917,FC Rosengård 1917,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,0,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155080,2025-06-14,16:00,norrby-if,Norrby IF,eskilsminne-if,Eskilsminne IF,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155082,2025-06-14,16:00,ngelholms-ff,Ängelholms FF,husqvarna-ff,Husqvarna FF,6,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155079,2025-06-14,13:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,oskarshamns-aik,Oskarshamns AIK,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155081,2025-06-14,13:00,sk-vde-aik,Skövde AIK,torslanda-ik,Torslanda IK,3,2,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155077,2025-06-12,19:00,h-ssleholms-if,Hässleholms IF,bk-olympic,BK Olympic,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155069,2025-06-08,16:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,j-nk-pings-s-dra-if,Jönköpings Södra IF,2,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155071,2025-06-08,16:00,norrby-if,Norrby IF,h-ssleholms-if,Hässleholms IF,1,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155072,2025-06-07,16:00,oskarshamns-aik,Oskarshamns AIK,ariana-fc,Ariana FC,1,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155073,2025-06-07,16:00,sk-vde-aik,Skövde AIK,fc-roseng-rd-1917,FC Rosengård 1917,4,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155067,2025-06-06,16:00,eskilsminne-if,Eskilsminne IF,ngelholms-ff,Ängelholms FF,1,6,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155070,2025-06-06,13:00,lunds-bk,Lunds BK,bk-olympic,BK Olympic,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155074,2025-06-06,13:00,torslanda-ik,Torslanda IK,husqvarna-ff,Husqvarna FF,3,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155068,2025-06-05,19:00,fc-trollh-ttan,FC Trollhättan,ifk-sk-vde-fk,IFK Skövde FK,4,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155059,2025-06-01,16:00,ariana-fc,Ariana FC,norrby-if,Norrby IF,0,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155060,2025-06-01,16:00,bk-olympic,BK Olympic,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155061,2025-06-01,16:00,eskilsminne-if,Eskilsminne IF,fc-trollh-ttan,FC Trollhättan,2,2,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155064,2025-06-01,16:00,h-ssleholms-if,Hässleholms IF,sk-vde-aik,Skövde AIK,3,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155062,2025-06-01,13:00,fc-roseng-rd-1917,FC Rosengård 1917,torslanda-ik,Torslanda IK,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155063,2025-06-01,13:00,husqvarna-ff,Husqvarna FF,oskarshamns-aik,Oskarshamns AIK,0,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155065,2025-06-01,13:00,ifk-sk-vde-fk,IFK Skövde FK,j-nk-pings-s-dra-if,Jönköpings Södra IF,0,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155066,2025-06-01,13:00,ngelholms-ff,Ängelholms FF,lunds-bk,Lunds BK,1,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155051,2025-05-29,16:00,fc-trollh-ttan,FC Trollhättan,bk-olympic,BK Olympic,0,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155055,2025-05-29,16:00,norrby-if,Norrby IF,ngelholms-ff,Ängelholms FF,2,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155056,2025-05-29,16:00,oskarshamns-aik,Oskarshamns AIK,fc-roseng-rd-1917,FC Rosengård 1917,0,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155058,2025-05-29,13:00,torslanda-ik,Torslanda IK,ariana-fc,Ariana FC,0,0,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155052,2025-05-28,19:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,h-ssleholms-if,Hässleholms IF,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155053,2025-05-28,19:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,ifk-sk-vde-fk,IFK Skövde FK,11,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155054,2025-05-28,19:00,lunds-bk,Lunds BK,eskilsminne-if,Eskilsminne IF,2,2,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155057,2025-05-28,19:00,sk-vde-aik,Skövde AIK,husqvarna-ff,Husqvarna FF,3,3,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155043,2025-05-24,16:00,ariana-fc,Ariana FC,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,3,2,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155046,2025-05-24,16:00,husqvarna-ff,Husqvarna FF,j-nk-pings-s-dra-if,Jönköpings Södra IF,0,1,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155050,2025-05-24,16:00,ngelholms-ff,Ängelholms FF,sk-vde-aik,Skövde AIK,1,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155044,2025-05-24,13:00,bk-olympic,BK Olympic,eskilsminne-if,Eskilsminne IF,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155047,2025-05-24,13:00,h-ssleholms-if,Hässleholms IF,oskarshamns-aik,Oskarshamns AIK,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155048,2025-05-24,13:00,ifk-sk-vde-fk,IFK Skövde FK,norrby-if,Norrby IF,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155045,2025-05-23,19:00,fc-roseng-rd-1917,FC Rosengård 1917,lunds-bk,Lunds BK,0,1,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155049,2025-05-23,19:00,torslanda-ik,Torslanda IK,fc-trollh-ttan,FC Trollhättan,4,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155035,2025-05-19,18:30,bk-olympic,BK Olympic,ngelholms-ff,Ängelholms FF,2,2,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155042,2025-05-18,16:00,oskarshamns-aik,Oskarshamns AIK,sk-vde-aik,Skövde AIK,3,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155037,2025-05-17,16:00,h-ssleholms-if,Hässleholms IF,torslanda-ik,Torslanda IK,2,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155039,2025-05-17,16:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,fc-roseng-rd-1917,FC Rosengård 1917,3,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155040,2025-05-17,16:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,lunds-bk,Lunds BK,3,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155036,2025-05-17,13:00,eskilsminne-if,Eskilsminne IF,ariana-fc,Ariana FC,2,2,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155038,2025-05-16,19:00,ifk-sk-vde-fk,IFK Skövde FK,husqvarna-ff,Husqvarna FF,5,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155041,2025-05-16,19:00,norrby-if,Norrby IF,fc-trollh-ttan,FC Trollhättan,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155027,2025-05-11,16:00,fc-roseng-rd-1917,FC Rosengård 1917,norrby-if,Norrby IF,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155028,2025-05-11,16:00,fc-trollh-ttan,FC Trollhättan,ngelholms-ff,Ängelholms FF,0,0,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155030,2025-05-11,16:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,bk-olympic,BK Olympic,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155029,2025-05-10,16:00,husqvarna-ff,Husqvarna FF,eskilsminne-if,Eskilsminne IF,0,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155031,2025-05-10,16:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,oskarshamns-aik,Oskarshamns AIK,1,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155033,2025-05-10,16:00,sk-vde-aik,Skövde AIK,ariana-fc,Ariana FC,2,2,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155034,2025-05-10,13:00,torslanda-ik,Torslanda IK,ifk-sk-vde-fk,IFK Skövde FK,0,0,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155032,2025-05-09,19:00,lunds-bk,Lunds BK,h-ssleholms-if,Hässleholms IF,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155020,2025-05-05,19:00,bk-olympic,BK Olympic,fc-roseng-rd-1917,FC Rosengård 1917,2,2,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155023,2025-05-04,16:00,h-ssleholms-if,Hässleholms IF,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,1,4,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155022,2025-05-03,16:00,fc-trollh-ttan,FC Trollhättan,oskarshamns-aik,Oskarshamns AIK,3,3,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155024,2025-05-03,16:00,norrby-if,Norrby IF,lunds-bk,Lunds BK,2,2,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155026,2025-05-03,16:00,ngelholms-ff,Ängelholms FF,ifk-sk-vde-fk,IFK Skövde FK,4,3,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155019,2025-05-03,13:00,ariana-fc,Ariana FC,husqvarna-ff,Husqvarna FF,3,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155021,2025-05-03,13:00,eskilsminne-if,Eskilsminne IF,torslanda-ik,Torslanda IK,0,0,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155025,2025-05-03,13:00,sk-vde-aik,Skövde AIK,j-nk-pings-s-dra-if,Jönköpings Södra IF,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155014,2025-04-28,19:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,norrby-if,Norrby IF,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155016,2025-04-28,19:00,lunds-bk,Lunds BK,ariana-fc,Ariana FC,0,0,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155018,2025-04-27,16:00,torslanda-ik,Torslanda IK,ngelholms-ff,Ängelholms FF,2,4,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155012,2025-04-26,16:00,husqvarna-ff,Husqvarna FF,h-ssleholms-if,Hässleholms IF,2,2,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155013,2025-04-26,16:00,ifk-sk-vde-fk,IFK Skövde FK,sk-vde-aik,Skövde AIK,0,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155017,2025-04-26,16:00,oskarshamns-aik,Oskarshamns AIK,bk-olympic,BK Olympic,0,0,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155011,2025-04-26,13:00,fc-roseng-rd-1917,FC Rosengård 1917,eskilsminne-if,Eskilsminne IF,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155015,2025-04-26,13:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,fc-trollh-ttan,FC Trollhättan,2,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155006,2025-04-21,16:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,eskilsminne-if,Eskilsminne IF,3,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155004,2025-04-18,16:00,h-ssleholms-if,Hässleholms IF,fc-trollh-ttan,FC Trollhättan,0,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155005,2025-04-18,16:00,ifk-sk-vde-fk,IFK Skövde FK,fc-roseng-rd-1917,FC Rosengård 1917,1,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155008,2025-04-18,16:00,lunds-bk,Lunds BK,oskarshamns-aik,Oskarshamns AIK,3,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155003,2025-04-18,13:00,bk-olympic,BK Olympic,torslanda-ik,Torslanda IK,0,6,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155007,2025-04-18,13:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,husqvarna-ff,Husqvarna FF,3,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155010,2025-04-18,13:00,ngelholms-ff,Ängelholms FF,ariana-fc,Ariana FC,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155009,2025-04-17,19:00,norrby-if,Norrby IF,sk-vde-aik,Skövde AIK,2,2,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155000,2025-04-13,16:00,oskarshamns-aik,Oskarshamns AIK,norrby-if,Norrby IF,0,1,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155002,2025-04-13,13:00,torslanda-ik,Torslanda IK,j-nk-pings-s-dra-if,Jönköpings Södra IF,2,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154996,2025-04-12,16:00,eskilsminne-if,Eskilsminne IF,ifk-sk-vde-fk,IFK Skövde FK,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154998,2025-04-12,16:00,fc-trollh-ttan,FC Trollhättan,lunds-bk,Lunds BK,1,5,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154999,2025-04-12,16:00,husqvarna-ff,Husqvarna FF,bk-olympic,BK Olympic,2,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154997,2025-04-12,13:00,fc-roseng-rd-1917,FC Rosengård 1917,ngelholms-ff,Ängelholms FF,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6155001,2025-04-12,13:00,sk-vde-aik,Skövde AIK,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,1,4,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154995,2025-04-11,19:00,ariana-fc,Ariana FC,h-ssleholms-if,Hässleholms IF,3,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154992,2025-04-06,16:00,lunds-bk,Lunds BK,torslanda-ik,Torslanda IK,1,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154988,2025-04-05,16:00,bk-olympic,BK Olympic,ifk-sk-vde-fk,IFK Skövde FK,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154989,2025-04-05,16:00,husqvarna-ff,Husqvarna FF,fc-trollh-ttan,FC Trollhättan,3,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154993,2025-04-05,16:00,oskarshamns-aik,Oskarshamns AIK,ngelholms-ff,Ängelholms FF,0,0,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154987,2025-04-05,13:00,ariana-fc,Ariana FC,j-nk-pings-s-dra-if,Jönköpings Södra IF,0,0,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154991,2025-04-05,13:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,norrby-if,Norrby IF,0,2,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154994,2025-04-05,13:00,sk-vde-aik,Skövde AIK,eskilsminne-if,Eskilsminne IF,1,1,,,Played,D,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154990,2025-04-04,19:00,h-ssleholms-if,Hässleholms IF,fc-roseng-rd-1917,FC Rosengård 1917,0,1,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154983,2025-03-30,16:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,lunds-bk,Lunds BK,2,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154982,2025-03-29,16:00,ifk-sk-vde-fk,IFK Skövde FK,ariana-fc,Ariana FC,0,1,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154984,2025-03-29,16:00,norrby-if,Norrby IF,bk-olympic,BK Olympic,4,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154985,2025-03-29,16:00,torslanda-ik,Torslanda IK,oskarshamns-aik,Oskarshamns AIK,3,0,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154979,2025-03-29,13:00,eskilsminne-if,Eskilsminne IF,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,0,3,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154980,2025-03-29,13:00,fc-roseng-rd-1917,FC Rosengård 1917,husqvarna-ff,Husqvarna FF,2,1,,,Played,H,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154986,2025-03-29,13:00,ngelholms-ff,Ängelholms FF,h-ssleholms-if,Hässleholms IF,0,1,,,Played,A,SWE
+2025,SW-ES,Ettan Södra,123862,1,-,,6154981,2025-03-28,19:00,fc-trollh-ttan,FC Trollhättan,sk-vde-aik,Skövde AIK,6,1,,,Played,H,SWE

@@ -1,0 +1,85 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-1-sotra,2026-04-05,15:00,sotra,Sotra,lysekloster,Lysekloster,2,2,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-1-tr-ff,2026-04-06,13:00,tr-ff,Træff,brattv-g,Brattvåg,2,0,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-1-pors,2026-04-06,14:00,pors,Pors,kvik-halden,Kvik Halden,0,1,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-1-fk-eik-t-nsberg-871,2026-04-06,14:00,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,notodden,Notodden,0,1,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-1-bjarg,2026-04-06,14:00,bjarg,Bjarg,sandviken,Sandviken,3,1,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-1-mj-ndalen,2026-04-06,16:00,mj-ndalen,Mjøndalen,arendal,Arendal,4,1,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-1-vidar,2026-04-06,16:00,vidar,Vidar,jerv,Jerv,1,3,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-2-sandviken,2026-04-11,14:00,sandviken,Sandviken,sotra,Sotra,1,3,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-2-brattv-g,2026-04-11,14:00,brattv-g,Brattvåg,pors,Pors,2,1,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-2-lysekloster,2026-04-11,15:00,lysekloster,Lysekloster,vidar,Vidar,1,1,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-2-kvik-halden,2026-04-11,16:00,kvik-halden,Kvik Halden,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,1,0,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-2-notodden,2026-04-12,13:00,notodden,Notodden,tr-ff,Træff,1,2,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-2-jerv,2026-04-12,15:00,jerv,Jerv,mj-ndalen,Mjøndalen,1,0,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-2-arendal,2026-04-12,16:00,arendal,Arendal,bjarg,Bjarg,0,2,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-3-tr-ff,2026-04-18,12:00,tr-ff,Træff,sotra,Sotra,0,2,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-3-fk-eik-t-nsberg-871,2026-04-18,13:00,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,brattv-g,Brattvåg,0,2,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-3-bjarg,2026-04-18,13:00,bjarg,Bjarg,kvik-halden,Kvik Halden,1,2,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-3-mj-ndalen,2026-04-18,14:00,mj-ndalen,Mjøndalen,lysekloster,Lysekloster,2,1,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-3-pors,2026-04-18,15:00,pors,Pors,jerv,Jerv,0,3,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-3-vidar,2026-04-18,15:00,vidar,Vidar,sandviken,Sandviken,0,1,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-3-arendal,2026-04-18,16:00,arendal,Arendal,notodden,Notodden,2,2,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-4-lysekloster,2026-04-25,13:00,lysekloster,Lysekloster,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,3,1,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-4-sandviken,2026-04-25,13:00,sandviken,Sandviken,pors,Pors,0,1,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-4-notodden,2026-04-25,13:00,notodden,Notodden,bjarg,Bjarg,0,1,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-4-sotra,2026-04-25,15:00,sotra,Sotra,mj-ndalen,Mjøndalen,4,0,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-4-kvik-halden,2026-04-25,16:00,kvik-halden,Kvik Halden,arendal,Arendal,3,1,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-4-jerv,2026-04-26,13:00,jerv,Jerv,tr-ff,Træff,1,1,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-4-brattv-g,2026-04-26,14:30,brattv-g,Brattvåg,vidar,Vidar,3,0,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-5-kvik-halden,2026-05-02,13:00,kvik-halden,Kvik Halden,brattv-g,Brattvåg,0,2,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-5-bjarg,2026-05-02,14:00,bjarg,Bjarg,lysekloster,Lysekloster,2,2,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-5-fk-eik-t-nsberg-871,2026-05-02,15:00,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,jerv,Jerv,2,3,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-5-vidar,2026-05-03,14:00,vidar,Vidar,notodden,Notodden,0,5,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-5-tr-ff,2026-05-03,14:00,tr-ff,Træff,mj-ndalen,Mjøndalen,2,2,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-5-arendal,2026-05-03,15:00,arendal,Arendal,sandviken,Sandviken,0,0,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-5-pors,2026-05-03,16:00,pors,Pors,sotra,Sotra,0,0,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-6-lysekloster,2026-05-09,13:00,lysekloster,Lysekloster,pors,Pors,1,2,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-6-notodden,2026-05-09,15:00,notodden,Notodden,kvik-halden,Kvik Halden,1,1,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-6-sotra,2026-05-10,13:00,sotra,Sotra,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,6,0,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-6-brattv-g,2026-05-10,13:00,brattv-g,Brattvåg,arendal,Arendal,2,0,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-6-mj-ndalen,2026-05-10,15:00,mj-ndalen,Mjøndalen,vidar,Vidar,2,0,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-6-sandviken,2026-05-10,16:00,sandviken,Sandviken,tr-ff,Træff,4,2,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-6-jerv,2026-05-10,16:00,jerv,Jerv,bjarg,Bjarg,3,1,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-7-bjarg,2026-05-14,13:00,bjarg,Bjarg,brattv-g,Brattvåg,2,6,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-7-tr-ff,2026-05-14,14:30,tr-ff,Træff,lysekloster,Lysekloster,4,0,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-7-vidar,2026-05-14,15:30,vidar,Vidar,sotra,Sotra,1,3,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-7-kvik-halden,2026-05-16,13:00,kvik-halden,Kvik Halden,sandviken,Sandviken,0,0,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-7-fk-eik-t-nsberg-871,2026-05-16,15:00,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,mj-ndalen,Mjøndalen,1,2,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-7-arendal,2026-05-16,16:00,arendal,Arendal,jerv,Jerv,1,2,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-7-pors,2026-05-16,18:00,pors,Pors,notodden,Notodden,1,2,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-8-mj-ndalen,2026-05-23,14:00,mj-ndalen,Mjøndalen,sandviken,Sandviken,4,0,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-8-jerv,2026-05-23,16:00,jerv,Jerv,kvik-halden,Kvik Halden,2,1,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-8-fk-eik-t-nsberg-871,2026-05-23,17:00,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,vidar,Vidar,3,1,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-8-tr-ff,2026-05-24,14:00,tr-ff,Træff,pors,Pors,3,3,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-8-sotra,2026-05-25,14:00,sotra,Sotra,bjarg,Bjarg,1,2,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-8-lysekloster,2026-05-25,15:00,lysekloster,Lysekloster,arendal,Arendal,1,1,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-8-brattv-g,2026-05-25,15:00,brattv-g,Brattvåg,notodden,Notodden,2,0,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-9-bjarg,2026-05-30,13:00,bjarg,Bjarg,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,2,0,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-9-vidar,2026-05-30,17:00,vidar,Vidar,tr-ff,Træff,1,1,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-9-sandviken,2026-05-31,13:00,sandviken,Sandviken,brattv-g,Brattvåg,1,0,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-9-notodden,2026-05-31,16:00,notodden,Notodden,jerv,Jerv,0,0,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-9-arendal,2026-05-31,16:00,arendal,Arendal,sotra,Sotra,1,1,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-9-kvik-halden,2026-05-31,16:00,kvik-halden,Kvik Halden,lysekloster,Lysekloster,4,0,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-9-pors,2026-05-31,18:00,pors,Pors,mj-ndalen,Mjøndalen,1,0,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-10-vidar,2026-06-13,14:00,vidar,Vidar,pors,Pors,1,1,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-10-fk-eik-t-nsberg-871,2026-06-13,15:00,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,arendal,Arendal,0,0,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-10-mj-ndalen,2026-06-13,15:00,mj-ndalen,Mjøndalen,kvik-halden,Kvik Halden,3,3,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-10-lysekloster,2026-06-14,13:00,lysekloster,Lysekloster,notodden,Notodden,0,2,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-10-sotra,2026-06-14,13:00,sotra,Sotra,brattv-g,Brattvåg,0,1,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-10-jerv,2026-06-14,14:30,jerv,Jerv,sandviken,Sandviken,2,1,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-10-tr-ff,2026-06-14,14:30,tr-ff,Træff,bjarg,Bjarg,2,3,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-11-sandviken,2026-06-20,14:00,sandviken,Sandviken,lysekloster,Lysekloster,2,3,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-11-pors,2026-06-20,14:00,pors,Pors,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,2,0,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-11-notodden,2026-06-20,15:00,notodden,Notodden,mj-ndalen,Mjøndalen,1,2,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-11-bjarg,2026-06-20,15:00,bjarg,Bjarg,vidar,Vidar,3,1,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-11-kvik-halden,2026-06-20,15:30,kvik-halden,Kvik Halden,sotra,Sotra,2,1,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-11-arendal,2026-06-21,12:00,arendal,Arendal,tr-ff,Træff,3,1,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-11-brattv-g,2026-06-21,14:00,brattv-g,Brattvåg,jerv,Jerv,1,2,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-12-tr-ff,2026-06-27,12:00,tr-ff,Træff,fk-eik-t-nsberg-871,FK Eik Tønsberg 871,3,1,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-12-lysekloster,2026-06-27,13:00,lysekloster,Lysekloster,brattv-g,Brattvåg,1,1,,,Played,D,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-12-vidar,2026-06-27,13:00,vidar,Vidar,kvik-halden,Kvik Halden,2,4,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-12-mj-ndalen,2026-06-27,13:30,mj-ndalen,Mjøndalen,bjarg,Bjarg,1,0,,,Played,H,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-12-sandviken,2026-06-27,15:00,sandviken,Sandviken,notodden,Notodden,0,4,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-12-pors,2026-06-27,15:00,pors,Pors,arendal,Arendal,2,4,,,Played,A,NOR
+2026,NO-PN1,PostNord-ligaen avd. 1,206007,1,-,,206007-12-sotra,2026-06-28,17:00,sotra,Sotra,jerv,Jerv,1,3,,,Played,A,NOR

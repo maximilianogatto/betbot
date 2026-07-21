@@ -1,0 +1,113 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2026,SW-EN,Ettan Norra,133338,1,-,,6537812,2026-06-28,16:00,ume-fc,Umeå FC,fc-j-rf-lla,FC Järfälla,1,3,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537807,2026-06-27,16:00,fc-arlanda,FC Arlanda,if-karlstad-fotboll,IF Karlstad Fotboll,1,0,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537808,2026-06-27,16:00,gefle-if-ff,Gefle IF FF,ifk-stocksund,IFK Stocksund,2,1,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537811,2026-06-27,13:00,stockholm-internazionale,Stockholm Internazionale,enk-pings-sk-fk,Enköpings SK FK,2,0,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537805,2026-06-26,19:30,assyriska-ff,Assyriska FF,vasalund,Vasalund,3,1,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537806,2026-06-26,19:00,fbk-karlstad,FBK Karlstad,hammarby-tff,Hammarby TFF,0,7,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537810,2026-06-26,19:00,sollentuna-fk,Sollentuna FK,athletic-eskilstuna,Athletic Eskilstuna,1,4,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537809,2026-06-24,19:00,karlbergs-bk,Karlbergs BK,pite-if-ff,Piteå IF FF,3,1,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537797,2026-06-21,17:00,assyriska-ff,Assyriska FF,if-karlstad-fotboll,IF Karlstad Fotboll,2,2,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537798,2026-06-21,15:00,enk-pings-sk-fk,Enköpings SK FK,ume-fc,Umeå FC,3,1,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537802,2026-06-21,13:00,pite-if-ff,Piteå IF FF,athletic-eskilstuna,Athletic Eskilstuna,2,2,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537803,2026-06-18,19:30,sollentuna-fk,Sollentuna FK,fbk-karlstad,FBK Karlstad,0,2,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537799,2026-06-18,19:15,fc-arlanda,FC Arlanda,ifk-stocksund,IFK Stocksund,1,0,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537800,2026-06-18,19:00,gefle-if-ff,Gefle IF FF,stockholm-internazionale,Stockholm Internazionale,0,2,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537801,2026-06-18,19:00,hammarby-tff,Hammarby TFF,fc-j-rf-lla,FC Järfälla,1,1,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537804,2026-06-18,19:00,vasalund,Vasalund,karlbergs-bk,Karlbergs BK,0,4,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537789,2026-06-14,16:00,athletic-eskilstuna,Athletic Eskilstuna,assyriska-ff,Assyriska FF,1,0,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537790,2026-06-14,16:00,enk-pings-sk-fk,Enköpings SK FK,vasalund,Vasalund,1,1,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537795,2026-06-14,16:00,stockholm-internazionale,Stockholm Internazionale,fbk-karlstad,FBK Karlstad,3,1,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537794,2026-06-14,13:00,karlbergs-bk,Karlbergs BK,hammarby-tff,Hammarby TFF,0,2,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537791,2026-06-13,16:00,fc-j-rf-lla,FC Järfälla,fc-arlanda,FC Arlanda,2,3,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537792,2026-06-13,16:00,if-karlstad-fotboll,IF Karlstad Fotboll,gefle-if-ff,Gefle IF FF,2,0,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537793,2026-06-13,16:00,ifk-stocksund,IFK Stocksund,sollentuna-fk,Sollentuna FK,3,3,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537796,2026-06-12,19:00,ume-fc,Umeå FC,pite-if-ff,Piteå IF FF,2,0,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537784,2026-06-08,19:30,fc-j-rf-lla,FC Järfälla,ifk-stocksund,IFK Stocksund,1,6,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537788,2026-06-08,19:00,stockholm-internazionale,Stockholm Internazionale,vasalund,Vasalund,4,1,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537783,2026-06-07,16:00,fc-arlanda,FC Arlanda,assyriska-ff,Assyriska FF,2,0,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537787,2026-06-07,15:00,sollentuna-fk,Sollentuna FK,ume-fc,Umeå FC,1,1,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537786,2026-06-07,14:00,pite-if-ff,Piteå IF FF,enk-pings-sk-fk,Enköpings SK FK,0,2,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537785,2026-06-06,16:00,gefle-if-ff,Gefle IF FF,hammarby-tff,Hammarby TFF,0,4,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537782,2026-06-05,19:00,fbk-karlstad,FBK Karlstad,if-karlstad-fotboll,IF Karlstad Fotboll,2,3,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537781,2026-06-04,19:30,athletic-eskilstuna,Athletic Eskilstuna,karlbergs-bk,Karlbergs BK,3,2,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537780,2026-06-03,19:30,vasalund,Vasalund,fc-j-rf-lla,FC Järfälla,3,1,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537773,2026-06-02,19:30,assyriska-ff,Assyriska FF,enk-pings-sk-fk,Enköpings SK FK,4,2,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537774,2026-06-01,19:30,fc-arlanda,FC Arlanda,gefle-if-ff,Gefle IF FF,2,3,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537777,2026-05-31,16:00,karlbergs-bk,Karlbergs BK,fbk-karlstad,FBK Karlstad,1,1,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537779,2026-05-31,14:30,ume-fc,Umeå FC,ifk-stocksund,IFK Stocksund,2,2,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537778,2026-05-31,14:00,pite-if-ff,Piteå IF FF,stockholm-internazionale,Stockholm Internazionale,2,2,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537775,2026-05-30,16:00,hammarby-tff,Hammarby TFF,athletic-eskilstuna,Athletic Eskilstuna,1,2,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537776,2026-05-30,16:00,if-karlstad-fotboll,IF Karlstad Fotboll,sollentuna-fk,Sollentuna FK,0,0,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537765,2026-05-24,16:00,athletic-eskilstuna,Athletic Eskilstuna,vasalund,Vasalund,0,3,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537770,2026-05-24,16:00,sollentuna-fk,Sollentuna FK,pite-if-ff,Piteå IF FF,2,2,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537772,2026-05-24,13:00,ume-fc,Umeå FC,if-karlstad-fotboll,IF Karlstad Fotboll,0,2,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537767,2026-05-23,16:00,fbk-karlstad,FBK Karlstad,fc-arlanda,FC Arlanda,0,0,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537768,2026-05-23,16:00,fc-j-rf-lla,FC Järfälla,gefle-if-ff,Gefle IF FF,4,0,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537769,2026-05-23,16:00,ifk-stocksund,IFK Stocksund,assyriska-ff,Assyriska FF,3,3,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537771,2026-05-23,16:00,stockholm-internazionale,Stockholm Internazionale,karlbergs-bk,Karlbergs BK,2,1,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537766,2026-05-23,13:00,enk-pings-sk-fk,Enköpings SK FK,hammarby-tff,Hammarby TFF,0,1,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537757,2026-05-18,19:30,athletic-eskilstuna,Athletic Eskilstuna,fc-arlanda,FC Arlanda,0,0,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537758,2026-05-17,16:00,enk-pings-sk-fk,Enköpings SK FK,sollentuna-fk,Sollentuna FK,1,0,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537760,2026-05-17,16:00,gefle-if-ff,Gefle IF FF,assyriska-ff,Assyriska FF,0,0,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537762,2026-05-17,16:00,if-karlstad-fotboll,IF Karlstad Fotboll,vasalund,Vasalund,5,0,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537763,2026-05-17,16:00,ifk-stocksund,IFK Stocksund,pite-if-ff,Piteå IF FF,2,3,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537759,2026-05-17,13:00,fbk-karlstad,FBK Karlstad,ume-fc,Umeå FC,1,1,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537761,2026-05-16,16:00,hammarby-tff,Hammarby TFF,stockholm-internazionale,Stockholm Internazionale,3,1,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537764,2026-05-16,13:00,karlbergs-bk,Karlbergs BK,fc-j-rf-lla,FC Järfälla,1,3,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537752,2026-05-14,16:00,if-karlstad-fotboll,IF Karlstad Fotboll,ifk-stocksund,IFK Stocksund,1,0,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537749,2026-05-14,15:00,assyriska-ff,Assyriska FF,ume-fc,Umeå FC,1,5,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537753,2026-05-14,13:00,pite-if-ff,Piteå IF FF,fbk-karlstad,FBK Karlstad,1,5,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537756,2026-05-14,13:00,vasalund,Vasalund,gefle-if-ff,Gefle IF FF,1,0,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537750,2026-05-13,19:30,fc-arlanda,FC Arlanda,karlbergs-bk,Karlbergs BK,1,1,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537751,2026-05-13,19:30,fc-j-rf-lla,FC Järfälla,enk-pings-sk-fk,Enköpings SK FK,0,3,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537754,2026-05-13,19:00,sollentuna-fk,Sollentuna FK,hammarby-tff,Hammarby TFF,0,2,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537755,2026-05-13,19:00,stockholm-internazionale,Stockholm Internazionale,athletic-eskilstuna,Athletic Eskilstuna,0,2,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537748,2026-05-10,16:00,vasalund,Vasalund,pite-if-ff,Piteå IF FF,1,2,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537742,2026-05-09,16:00,fbk-karlstad,FBK Karlstad,fc-j-rf-lla,FC Järfälla,2,0,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537744,2026-05-09,16:00,hammarby-tff,Hammarby TFF,assyriska-ff,Assyriska FF,4,0,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537745,2026-05-09,16:00,ifk-stocksund,IFK Stocksund,stockholm-internazionale,Stockholm Internazionale,1,6,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537746,2026-05-09,16:00,karlbergs-bk,Karlbergs BK,if-karlstad-fotboll,IF Karlstad Fotboll,0,0,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537743,2026-05-09,13:00,fc-arlanda,FC Arlanda,sollentuna-fk,Sollentuna FK,1,1,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537747,2026-05-09,13:00,ume-fc,Umeå FC,gefle-if-ff,Gefle IF FF,2,2,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537741,2026-05-08,19:00,enk-pings-sk-fk,Enköpings SK FK,athletic-eskilstuna,Athletic Eskilstuna,2,1,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537733,2026-05-03,16:00,assyriska-ff,Assyriska FF,fc-j-rf-lla,FC Järfälla,3,3,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537738,2026-05-03,15:00,pite-if-ff,Piteå IF FF,fc-arlanda,FC Arlanda,1,2,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537740,2026-05-03,15:00,ume-fc,Umeå FC,karlbergs-bk,Karlbergs BK,2,1,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537739,2026-05-03,14:00,stockholm-internazionale,Stockholm Internazionale,sollentuna-fk,Sollentuna FK,1,1,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537734,2026-05-02,16:00,athletic-eskilstuna,Athletic Eskilstuna,fbk-karlstad,FBK Karlstad,0,2,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537735,2026-05-02,16:00,gefle-if-ff,Gefle IF FF,enk-pings-sk-fk,Enköpings SK FK,2,1,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537736,2026-05-02,16:00,if-karlstad-fotboll,IF Karlstad Fotboll,hammarby-tff,Hammarby TFF,0,2,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537737,2026-05-01,19:00,ifk-stocksund,IFK Stocksund,vasalund,Vasalund,2,2,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537729,2026-04-27,19:00,hammarby-tff,Hammarby TFF,vasalund,Vasalund,2,2,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537725,2026-04-26,16:00,athletic-eskilstuna,Athletic Eskilstuna,if-karlstad-fotboll,IF Karlstad Fotboll,0,2,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537728,2026-04-26,16:00,fc-j-rf-lla,FC Järfälla,pite-if-ff,Piteå IF FF,1,0,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537730,2026-04-26,16:00,karlbergs-bk,Karlbergs BK,gefle-if-ff,Gefle IF FF,3,2,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537732,2026-04-26,15:00,stockholm-internazionale,Stockholm Internazionale,ume-fc,Umeå FC,3,0,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537727,2026-04-25,16:00,fbk-karlstad,FBK Karlstad,ifk-stocksund,IFK Stocksund,1,0,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537731,2026-04-25,16:00,sollentuna-fk,Sollentuna FK,assyriska-ff,Assyriska FF,0,0,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537726,2026-04-24,19:30,enk-pings-sk-fk,Enköpings SK FK,fc-arlanda,FC Arlanda,1,7,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537722,2026-04-20,19:30,ifk-stocksund,IFK Stocksund,athletic-eskilstuna,Athletic Eskilstuna,4,4,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537717,2026-04-19,16:00,assyriska-ff,Assyriska FF,karlbergs-bk,Karlbergs BK,3,4,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537724,2026-04-19,15:00,vasalund,Vasalund,ume-fc,Umeå FC,3,1,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537723,2026-04-19,14:00,pite-if-ff,Piteå IF FF,hammarby-tff,Hammarby TFF,1,4,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537719,2026-04-18,16:00,fc-arlanda,FC Arlanda,stockholm-internazionale,Stockholm Internazionale,0,0,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537720,2026-04-18,16:00,gefle-if-ff,Gefle IF FF,sollentuna-fk,Sollentuna FK,1,2,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537721,2026-04-18,16:00,if-karlstad-fotboll,IF Karlstad Fotboll,fc-j-rf-lla,FC Järfälla,2,1,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537718,2026-04-18,13:00,enk-pings-sk-fk,Enköpings SK FK,fbk-karlstad,FBK Karlstad,2,1,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537714,2026-04-12,16:00,stockholm-internazionale,Stockholm Internazionale,if-karlstad-fotboll,IF Karlstad Fotboll,0,1,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537716,2026-04-12,16:00,vasalund,Vasalund,fbk-karlstad,FBK Karlstad,1,3,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537713,2026-04-12,14:00,pite-if-ff,Piteå IF FF,assyriska-ff,Assyriska FF,0,2,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537715,2026-04-12,13:00,ume-fc,Umeå FC,fc-arlanda,FC Arlanda,0,1,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537709,2026-04-11,16:00,fc-j-rf-lla,FC Järfälla,sollentuna-fk,Sollentuna FK,0,1,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537710,2026-04-11,16:00,gefle-if-ff,Gefle IF FF,athletic-eskilstuna,Athletic Eskilstuna,4,3,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537711,2026-04-11,16:00,ifk-stocksund,IFK Stocksund,hammarby-tff,Hammarby TFF,2,4,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537712,2026-04-10,19:30,karlbergs-bk,Karlbergs BK,enk-pings-sk-fk,Enköpings SK FK,1,3,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537706,2026-04-06,15:00,hammarby-tff,Hammarby TFF,ume-fc,Umeå FC,1,2,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537707,2026-04-06,13:00,if-karlstad-fotboll,IF Karlstad Fotboll,pite-if-ff,Piteå IF FF,2,1,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537701,2026-04-05,16:00,assyriska-ff,Assyriska FF,stockholm-internazionale,Stockholm Internazionale,1,2,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537702,2026-04-04,16:00,athletic-eskilstuna,Athletic Eskilstuna,fc-j-rf-lla,FC Järfälla,1,1,,,Played,D,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537708,2026-04-04,16:00,sollentuna-fk,Sollentuna FK,karlbergs-bk,Karlbergs BK,0,1,,,Played,A,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537703,2026-04-04,13:00,enk-pings-sk-fk,Enköpings SK FK,ifk-stocksund,IFK Stocksund,3,2,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537704,2026-04-03,16:00,fbk-karlstad,FBK Karlstad,gefle-if-ff,Gefle IF FF,2,1,,,Played,H,SWE
+2026,SW-EN,Ettan Norra,133338,1,-,,6537705,2026-04-03,13:00,fc-arlanda,FC Arlanda,vasalund,Vasalund,2,1,,,Played,H,SWE

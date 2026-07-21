@@ -37,6 +37,26 @@ def load_matches() -> pd.DataFrame:
     return _coerce(pd.read_csv(os.path.join(_DATA, "finland_matches_played.csv")))
 
 
+def load_all() -> pd.DataFrame:
+    """Finland + Sweden + Norway played-match masters, with a country column."""
+
+    frames = []
+    for fname, country in [
+        ("finland_matches_played.csv", "FIN"),
+        ("sweden_matches_played.csv", "SWE"),
+        ("norway_matches_played.csv", "NOR"),
+    ]:
+        path = os.path.join(_DATA, fname)
+        if os.path.exists(path):
+            df = _coerce(pd.read_csv(path))
+            if "country" not in df.columns:
+                df["country"] = country
+            frames.append(df)
+    out = pd.concat(frames, ignore_index=True)
+    out["match_id"] = out["match_id"].astype(str)
+    return out
+
+
 def load_league(code: str, season: str | int) -> pd.DataFrame:
     """Every fixture (played + scheduled) for one league+season."""
 

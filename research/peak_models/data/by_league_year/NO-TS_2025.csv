@@ -1,0 +1,136 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2025,NO-TS,Toppserien,199118,1,-,,199118-1-bod-glimt,2025-03-21,18:00,bod-glimt,Bodø/Glimt,r-a-fotball-elite,Røa Fotball Elite,1,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-1-h-nefoss-bk,2025-03-23,14:00,h-nefoss-bk,Hønefoss BK,stab-k,Stabæk,0,1,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-1-lsk-kvinner,2025-03-23,14:00,lsk-kvinner,LSK Kvinner,lyn,Lyn,2,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-1-v-lerenga-fotball,2025-03-23,16:00,v-lerenga-fotball,Vålerenga Fotball,kolbotn-il-elite,Kolbotn IL Elite,6,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-1-sk-brann,2025-03-23,18:00,sk-brann,SK Brann,rosenborg-bk,Rosenborg BK,3,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-2-stab-k,2025-03-28,18:00,stab-k,Stabæk,sk-brann,SK Brann,0,1,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-2-kolbotn-il-elite,2025-03-29,14:00,kolbotn-il-elite,Kolbotn IL Elite,lsk-kvinner,LSK Kvinner,0,2,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-2-lyn,2025-03-29,14:00,lyn,Lyn,h-nefoss-bk,Hønefoss BK,1,1,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-2-rosenborg-bk,2025-03-29,14:00,rosenborg-bk,Rosenborg BK,bod-glimt,Bodø/Glimt,2,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-2-r-a-fotball-elite,2025-03-29,14:00,r-a-fotball-elite,Røa Fotball Elite,v-lerenga-fotball,Vålerenga Fotball,0,1,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-3-h-nefoss-bk,2025-04-12,14:00,h-nefoss-bk,Hønefoss BK,rosenborg-bk,Rosenborg BK,2,3,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-3-lsk-kvinner,2025-04-12,14:00,lsk-kvinner,LSK Kvinner,r-a-fotball-elite,Røa Fotball Elite,1,2,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-3-stab-k,2025-04-12,14:00,stab-k,Stabæk,kolbotn-il-elite,Kolbotn IL Elite,1,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-3-v-lerenga-fotball,2025-04-12,16:00,v-lerenga-fotball,Vålerenga Fotball,lyn,Lyn,3,2,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-3-sk-brann,2025-04-12,18:00,sk-brann,SK Brann,bod-glimt,Bodø/Glimt,4,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-4-bod-glimt,2025-04-16,18:00,bod-glimt,Bodø/Glimt,lsk-kvinner,LSK Kvinner,0,4,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-4-kolbotn-il-elite,2025-04-16,18:00,kolbotn-il-elite,Kolbotn IL Elite,h-nefoss-bk,Hønefoss BK,3,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-4-lyn,2025-04-16,18:00,lyn,Lyn,stab-k,Stabæk,6,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-4-rosenborg-bk,2025-04-16,18:00,rosenborg-bk,Rosenborg BK,v-lerenga-fotball,Vålerenga Fotball,2,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-4-r-a-fotball-elite,2025-04-16,18:00,r-a-fotball-elite,Røa Fotball Elite,sk-brann,SK Brann,2,5,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-5-sk-brann,2025-04-22,18:00,sk-brann,SK Brann,kolbotn-il-elite,Kolbotn IL Elite,7,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-5-h-nefoss-bk,2025-04-22,18:00,h-nefoss-bk,Hønefoss BK,r-a-fotball-elite,Røa Fotball Elite,2,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-5-lsk-kvinner,2025-04-22,18:00,lsk-kvinner,LSK Kvinner,v-lerenga-fotball,Vålerenga Fotball,0,2,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-5-rosenborg-bk,2025-04-22,18:00,rosenborg-bk,Rosenborg BK,lyn,Lyn,3,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-5-stab-k,2025-04-22,18:00,stab-k,Stabæk,bod-glimt,Bodø/Glimt,2,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-6-bod-glimt,2025-04-25,18:00,bod-glimt,Bodø/Glimt,h-nefoss-bk,Hønefoss BK,1,2,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-6-kolbotn-il-elite,2025-04-26,12:00,kolbotn-il-elite,Kolbotn IL Elite,lyn,Lyn,1,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-6-v-lerenga-fotball,2025-04-26,14:00,v-lerenga-fotball,Vålerenga Fotball,sk-brann,SK Brann,0,3,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-6-r-a-fotball-elite,2025-04-26,16:00,r-a-fotball-elite,Røa Fotball Elite,rosenborg-bk,Rosenborg BK,1,1,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-6-lsk-kvinner,2025-04-26,18:00,lsk-kvinner,LSK Kvinner,stab-k,Stabæk,1,1,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-7-sk-brann,2025-04-29,18:00,sk-brann,SK Brann,lsk-kvinner,LSK Kvinner,1,1,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-7-h-nefoss-bk,2025-04-29,18:00,h-nefoss-bk,Hønefoss BK,v-lerenga-fotball,Vålerenga Fotball,0,4,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-7-lyn,2025-04-29,18:00,lyn,Lyn,bod-glimt,Bodø/Glimt,0,0,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-7-rosenborg-bk,2025-04-29,18:00,rosenborg-bk,Rosenborg BK,kolbotn-il-elite,Kolbotn IL Elite,1,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-7-stab-k,2025-04-29,18:00,stab-k,Stabæk,r-a-fotball-elite,Røa Fotball Elite,2,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-8-bod-glimt,2025-05-02,18:00,bod-glimt,Bodø/Glimt,kolbotn-il-elite,Kolbotn IL Elite,3,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-8-sk-brann,2025-05-02,18:00,sk-brann,SK Brann,h-nefoss-bk,Hønefoss BK,2,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-8-lsk-kvinner,2025-05-03,14:00,lsk-kvinner,LSK Kvinner,rosenborg-bk,Rosenborg BK,1,2,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-8-r-a-fotball-elite,2025-05-03,14:00,r-a-fotball-elite,Røa Fotball Elite,lyn,Lyn,2,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-8-stab-k,2025-05-03,14:00,stab-k,Stabæk,v-lerenga-fotball,Vålerenga Fotball,0,2,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-9-h-nefoss-bk,2025-05-10,14:00,h-nefoss-bk,Hønefoss BK,lsk-kvinner,LSK Kvinner,2,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-9-lyn,2025-05-10,14:00,lyn,Lyn,sk-brann,SK Brann,0,0,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-9-rosenborg-bk,2025-05-10,14:00,rosenborg-bk,Rosenborg BK,stab-k,Stabæk,3,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-9-v-lerenga-fotball,2025-05-10,14:00,v-lerenga-fotball,Vålerenga Fotball,bod-glimt,Bodø/Glimt,4,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-9-kolbotn-il-elite,2025-07-29,16:00,kolbotn-il-elite,Kolbotn IL Elite,r-a-fotball-elite,Røa Fotball Elite,2,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-10-bod-glimt,2025-05-15,18:00,bod-glimt,Bodø/Glimt,lyn,Lyn,2,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-10-sk-brann,2025-05-15,18:00,sk-brann,SK Brann,stab-k,Stabæk,3,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-10-lsk-kvinner,2025-05-15,18:00,lsk-kvinner,LSK Kvinner,kolbotn-il-elite,Kolbotn IL Elite,1,1,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-10-r-a-fotball-elite,2025-05-15,18:00,r-a-fotball-elite,Røa Fotball Elite,h-nefoss-bk,Hønefoss BK,0,0,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-10-v-lerenga-fotball,2025-05-15,18:00,v-lerenga-fotball,Vålerenga Fotball,rosenborg-bk,Rosenborg BK,2,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-11-h-nefoss-bk,2025-05-24,14:00,h-nefoss-bk,Hønefoss BK,bod-glimt,Bodø/Glimt,0,1,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-11-kolbotn-il-elite,2025-05-24,14:00,kolbotn-il-elite,Kolbotn IL Elite,v-lerenga-fotball,Vålerenga Fotball,1,6,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-11-lyn,2025-05-24,14:00,lyn,Lyn,r-a-fotball-elite,Røa Fotball Elite,1,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-11-rosenborg-bk,2025-05-24,14:00,rosenborg-bk,Rosenborg BK,sk-brann,SK Brann,0,2,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-11-stab-k,2025-05-25,14:30,stab-k,Stabæk,lsk-kvinner,LSK Kvinner,2,3,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-12-bod-glimt,2025-06-06,18:00,bod-glimt,Bodø/Glimt,rosenborg-bk,Rosenborg BK,0,4,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-12-sk-brann,2025-06-07,14:00,sk-brann,SK Brann,lyn,Lyn,0,1,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-12-lsk-kvinner,2025-06-07,14:00,lsk-kvinner,LSK Kvinner,h-nefoss-bk,Hønefoss BK,5,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-12-r-a-fotball-elite,2025-06-07,14:00,r-a-fotball-elite,Røa Fotball Elite,kolbotn-il-elite,Kolbotn IL Elite,2,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-12-v-lerenga-fotball,2025-06-07,18:00,v-lerenga-fotball,Vålerenga Fotball,stab-k,Stabæk,2,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-13-kolbotn-il-elite,2025-06-14,14:00,kolbotn-il-elite,Kolbotn IL Elite,stab-k,Stabæk,0,1,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-13-lyn,2025-06-14,14:00,lyn,Lyn,lsk-kvinner,LSK Kvinner,2,3,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-13-rosenborg-bk,2025-06-14,14:00,rosenborg-bk,Rosenborg BK,r-a-fotball-elite,Røa Fotball Elite,4,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-13-bod-glimt,2025-06-14,16:00,bod-glimt,Bodø/Glimt,v-lerenga-fotball,Vålerenga Fotball,0,3,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-13-h-nefoss-bk,2025-06-14,16:00,h-nefoss-bk,Hønefoss BK,sk-brann,SK Brann,0,3,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-14-sk-brann,2025-06-19,18:00,sk-brann,SK Brann,r-a-fotball-elite,Røa Fotball Elite,5,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-14-kolbotn-il-elite,2025-06-19,18:00,kolbotn-il-elite,Kolbotn IL Elite,rosenborg-bk,Rosenborg BK,2,5,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-14-lsk-kvinner,2025-06-19,18:00,lsk-kvinner,LSK Kvinner,bod-glimt,Bodø/Glimt,4,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-14-stab-k,2025-06-19,18:00,stab-k,Stabæk,lyn,Lyn,4,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-14-v-lerenga-fotball,2025-06-19,18:00,v-lerenga-fotball,Vålerenga Fotball,h-nefoss-bk,Hønefoss BK,7,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-15-bod-glimt,2025-08-05,18:00,bod-glimt,Bodø/Glimt,sk-brann,SK Brann,0,3,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-15-h-nefoss-bk,2025-08-05,18:00,h-nefoss-bk,Hønefoss BK,kolbotn-il-elite,Kolbotn IL Elite,2,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-15-lyn,2025-08-05,18:00,lyn,Lyn,v-lerenga-fotball,Vålerenga Fotball,1,1,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-15-rosenborg-bk,2025-08-05,18:00,rosenborg-bk,Rosenborg BK,lsk-kvinner,LSK Kvinner,5,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-15-r-a-fotball-elite,2025-08-05,18:00,r-a-fotball-elite,Røa Fotball Elite,stab-k,Stabæk,0,0,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-16-h-nefoss-bk,2025-08-09,14:00,h-nefoss-bk,Hønefoss BK,lyn,Lyn,1,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-16-kolbotn-il-elite,2025-08-09,14:00,kolbotn-il-elite,Kolbotn IL Elite,bod-glimt,Bodø/Glimt,1,2,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-16-stab-k,2025-08-09,14:00,stab-k,Stabæk,rosenborg-bk,Rosenborg BK,0,3,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-16-v-lerenga-fotball,2025-08-09,14:00,v-lerenga-fotball,Vålerenga Fotball,r-a-fotball-elite,Røa Fotball Elite,3,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-16-lsk-kvinner,2025-08-09,16:00,lsk-kvinner,LSK Kvinner,sk-brann,SK Brann,0,3,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-17-bod-glimt,2025-08-15,18:00,bod-glimt,Bodø/Glimt,stab-k,Stabæk,0,4,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-17-rosenborg-bk,2025-08-16,13:00,rosenborg-bk,Rosenborg BK,h-nefoss-bk,Hønefoss BK,0,0,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-17-lyn,2025-08-16,14:00,lyn,Lyn,kolbotn-il-elite,Kolbotn IL Elite,2,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-17-r-a-fotball-elite,2025-08-16,14:00,r-a-fotball-elite,Røa Fotball Elite,lsk-kvinner,LSK Kvinner,1,1,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-17-sk-brann,2025-08-16,16:00,sk-brann,SK Brann,v-lerenga-fotball,Vålerenga Fotball,2,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-18-kolbotn-il-elite,2025-08-20,18:00,kolbotn-il-elite,Kolbotn IL Elite,sk-brann,SK Brann,0,2,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-18-v-lerenga-fotball,2025-08-20,18:00,v-lerenga-fotball,Vålerenga Fotball,lsk-kvinner,LSK Kvinner,3,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-18-lyn,2025-08-23,14:00,lyn,Lyn,rosenborg-bk,Rosenborg BK,1,1,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-18-r-a-fotball-elite,2025-08-23,14:00,r-a-fotball-elite,Røa Fotball Elite,bod-glimt,Bodø/Glimt,1,1,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-18-stab-k,2025-08-23,14:00,stab-k,Stabæk,h-nefoss-bk,Hønefoss BK,1,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-19-h-nefoss-bk,2025-09-03,18:00,h-nefoss-bk,Hønefoss BK,v-lerenga-fotball,Vålerenga Fotball,0,1,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-19-bod-glimt,2025-09-05,18:00,bod-glimt,Bodø/Glimt,lyn,Lyn,1,2,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-19-rosenborg-bk,2025-09-06,14:00,rosenborg-bk,Rosenborg BK,stab-k,Stabæk,1,1,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-19-sk-brann,2025-09-06,16:00,sk-brann,SK Brann,r-a-fotball-elite,Røa Fotball Elite,3,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-19-lsk-kvinner,2025-09-07,14:30,lsk-kvinner,LSK Kvinner,kolbotn-il-elite,Kolbotn IL Elite,4,3,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-20-rosenborg-bk,2025-08-13,18:00,rosenborg-bk,Rosenborg BK,lsk-kvinner,LSK Kvinner,4,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-20-kolbotn-il-elite,2025-09-13,14:00,kolbotn-il-elite,Kolbotn IL Elite,r-a-fotball-elite,Røa Fotball Elite,1,2,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-20-stab-k,2025-09-13,14:00,stab-k,Stabæk,bod-glimt,Bodø/Glimt,2,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-20-sk-brann,2025-09-14,14:30,sk-brann,SK Brann,h-nefoss-bk,Hønefoss BK,2,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-20-v-lerenga-fotball,2025-09-24,18:00,v-lerenga-fotball,Vålerenga Fotball,lyn,Lyn,2,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-21-h-nefoss-bk,2025-09-20,14:00,h-nefoss-bk,Hønefoss BK,stab-k,Stabæk,0,2,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-21-r-a-fotball-elite,2025-09-20,14:00,r-a-fotball-elite,Røa Fotball Elite,bod-glimt,Bodø/Glimt,0,4,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-21-lsk-kvinner,2025-09-21,17:00,lsk-kvinner,LSK Kvinner,sk-brann,SK Brann,1,5,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-21-lyn,2025-09-21,17:00,lyn,Lyn,rosenborg-bk,Rosenborg BK,0,2,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-21-v-lerenga-fotball,2025-09-21,17:00,v-lerenga-fotball,Vålerenga Fotball,kolbotn-il-elite,Kolbotn IL Elite,4,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-22-rosenborg-bk,2025-10-02,18:00,rosenborg-bk,Rosenborg BK,r-a-fotball-elite,Røa Fotball Elite,2,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-22-bod-glimt,2025-10-03,18:00,bod-glimt,Bodø/Glimt,v-lerenga-fotball,Vålerenga Fotball,1,4,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-22-sk-brann,2025-10-03,18:00,sk-brann,SK Brann,lyn,Lyn,9,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-22-kolbotn-il-elite,2025-10-04,14:00,kolbotn-il-elite,Kolbotn IL Elite,h-nefoss-bk,Hønefoss BK,1,2,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-22-stab-k,2025-10-04,14:00,stab-k,Stabæk,lsk-kvinner,LSK Kvinner,2,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-23-lyn,2025-10-11,13:00,lyn,Lyn,kolbotn-il-elite,Kolbotn IL Elite,2,2,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-23-lsk-kvinner,2025-10-12,14:00,lsk-kvinner,LSK Kvinner,bod-glimt,Bodø/Glimt,1,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-23-r-a-fotball-elite,2025-10-12,14:00,r-a-fotball-elite,Røa Fotball Elite,stab-k,Stabæk,1,1,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-23-rosenborg-bk,2025-10-12,17:00,rosenborg-bk,Rosenborg BK,h-nefoss-bk,Hønefoss BK,8,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-23-v-lerenga-fotball,2025-10-12,17:00,v-lerenga-fotball,Vålerenga Fotball,sk-brann,SK Brann,2,4,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-24-bod-glimt,2025-10-19,14:30,bod-glimt,Bodø/Glimt,rosenborg-bk,Rosenborg BK,0,1,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-24-h-nefoss-bk,2025-10-19,14:30,h-nefoss-bk,Hønefoss BK,lyn,Lyn,2,2,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-24-kolbotn-il-elite,2025-10-19,14:30,kolbotn-il-elite,Kolbotn IL Elite,sk-brann,SK Brann,1,5,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-24-r-a-fotball-elite,2025-10-19,14:30,r-a-fotball-elite,Røa Fotball Elite,lsk-kvinner,LSK Kvinner,2,3,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-24-stab-k,2025-10-19,14:30,stab-k,Stabæk,v-lerenga-fotball,Vålerenga Fotball,0,4,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-25-kolbotn-il-elite,2025-09-25,18:00,kolbotn-il-elite,Kolbotn IL Elite,stab-k,Stabæk,1,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-25-lyn,2025-11-01,12:30,lyn,Lyn,r-a-fotball-elite,Røa Fotball Elite,4,2,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-25-sk-brann,2025-11-01,13:30,sk-brann,SK Brann,rosenborg-bk,Rosenborg BK,2,1,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-25-h-nefoss-bk,2025-11-02,12:30,h-nefoss-bk,Hønefoss BK,bod-glimt,Bodø/Glimt,3,2,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-25-v-lerenga-fotball,2025-11-02,12:30,v-lerenga-fotball,Vålerenga Fotball,lsk-kvinner,LSK Kvinner,2,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-26-bod-glimt,2025-11-07,18:00,bod-glimt,Bodø/Glimt,kolbotn-il-elite,Kolbotn IL Elite,1,2,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-26-lsk-kvinner,2025-11-07,18:00,lsk-kvinner,LSK Kvinner,lyn,Lyn,4,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-26-rosenborg-bk,2025-11-07,18:00,rosenborg-bk,Rosenborg BK,v-lerenga-fotball,Vålerenga Fotball,1,3,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-26-r-a-fotball-elite,2025-11-07,18:00,r-a-fotball-elite,Røa Fotball Elite,h-nefoss-bk,Hønefoss BK,1,1,,,Played,D,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-26-stab-k,2025-11-07,18:00,stab-k,Stabæk,sk-brann,SK Brann,1,3,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-27-sk-brann,2025-11-15,16:00,sk-brann,SK Brann,bod-glimt,Bodø/Glimt,8,0,,,Played,H,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-27-h-nefoss-bk,2025-11-15,16:00,h-nefoss-bk,Hønefoss BK,lsk-kvinner,LSK Kvinner,1,3,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-27-kolbotn-il-elite,2025-11-15,16:00,kolbotn-il-elite,Kolbotn IL Elite,rosenborg-bk,Rosenborg BK,2,4,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-27-lyn,2025-11-15,16:00,lyn,Lyn,stab-k,Stabæk,0,3,,,Played,A,NOR
+2025,NO-TS,Toppserien,199118,1,-,,199118-27-v-lerenga-fotball,2025-11-15,16:00,v-lerenga-fotball,Vålerenga Fotball,r-a-fotball-elite,Røa Fotball Elite,1,0,,,Played,H,NOR

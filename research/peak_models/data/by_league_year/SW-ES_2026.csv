@@ -1,0 +1,114 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2026,SW-ES,Ettan Södra,133339,1,-,,6538054,2026-07-01,19:00,eskilsminne-if,Eskilsminne IF,kristianstad-fc,Kristianstad FC,3,2,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538046,2026-06-28,13:00,bk-olympic,BK Olympic,eskilsminne-if,Eskilsminne IF,2,1,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538045,2026-06-27,16:00,ariana-fc-malm,Ariana FC Malmö,j-nk-pings-s-dra-if,Jönköpings Södra IF,1,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538051,2026-06-27,16:00,lunds-bk,Lunds BK,sk-vde-aik,Skövde AIK,2,1,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538052,2026-06-27,16:00,tvidabergs-ff,Åtvidabergs FF,roseng-rd-1917,Rosengård 1917,3,3,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538047,2026-06-27,13:00,fc-trollh-ttan,FC Trollhättan,ngelholms-ff,Ängelholms FF,1,1,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538050,2026-06-27,13:00,laholms-fk,Laholms FK,utsikten,Utsikten,3,1,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538048,2026-06-26,19:30,h-ssleholms-if,Hässleholms IF,tv-kers-if,Tvååkers IF,4,2,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538049,2026-06-26,19:00,kristianstad-fc,Kristianstad FC,trelleborgs-ff,Trelleborgs FF,0,0,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538037,2026-06-21,16:00,ariana-fc-malm,Ariana FC Malmö,bk-olympic,BK Olympic,1,2,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538040,2026-06-21,16:00,kristianstad-fc,Kristianstad FC,laholms-fk,Laholms FK,0,3,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538038,2026-06-18,19:00,eskilsminne-if,Eskilsminne IF,fc-trollh-ttan,FC Trollhättan,2,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538039,2026-06-18,19:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,lunds-bk,Lunds BK,0,0,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538041,2026-06-18,19:00,sk-vde-aik,Skövde AIK,h-ssleholms-if,Hässleholms IF,2,2,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538042,2026-06-18,19:00,trelleborgs-ff,Trelleborgs FF,roseng-rd-1917,Rosengård 1917,3,2,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538043,2026-06-18,19:00,tv-kers-if,Tvååkers IF,ngelholms-ff,Ängelholms FF,3,2,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538044,2026-06-17,19:30,utsikten,Utsikten,tvidabergs-ff,Åtvidabergs FF,0,3,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538030,2026-06-14,16:00,roseng-rd-1917,Rosengård 1917,sk-vde-aik,Skövde AIK,3,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538032,2026-06-14,13:00,h-ssleholms-if,Hässleholms IF,trelleborgs-ff,Trelleborgs FF,0,2,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538031,2026-06-13,16:00,fc-trollh-ttan,FC Trollhättan,kristianstad-fc,Kristianstad FC,1,1,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538036,2026-06-13,16:00,tvidabergs-ff,Åtvidabergs FF,eskilsminne-if,Eskilsminne IF,4,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538029,2026-06-13,13:00,bk-olympic,BK Olympic,laholms-fk,Laholms FK,3,2,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538034,2026-06-13,13:00,tv-kers-if,Tvååkers IF,j-nk-pings-s-dra-if,Jönköpings Södra IF,2,1,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538035,2026-06-13,13:00,ngelholms-ff,Ängelholms FF,utsikten,Utsikten,4,2,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538033,2026-06-12,19:00,lunds-bk,Lunds BK,ariana-fc-malm,Ariana FC Malmö,1,4,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538026,2026-06-08,19:30,utsikten,Utsikten,roseng-rd-1917,Rosengård 1917,0,1,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538027,2026-06-08,19:00,ngelholms-ff,Ängelholms FF,bk-olympic,BK Olympic,1,1,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538025,2026-06-07,16:00,trelleborgs-ff,Trelleborgs FF,sk-vde-aik,Skövde AIK,4,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538028,2026-06-07,16:00,tvidabergs-ff,Åtvidabergs FF,tv-kers-if,Tvååkers IF,2,2,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538021,2026-06-07,13:00,ariana-fc-malm,Ariana FC Malmö,eskilsminne-if,Eskilsminne IF,2,1,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538023,2026-06-07,13:00,kristianstad-fc,Kristianstad FC,lunds-bk,Lunds BK,1,1,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538022,2026-06-06,16:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,fc-trollh-ttan,FC Trollhättan,4,1,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538024,2026-06-04,19:00,laholms-fk,Laholms FK,h-ssleholms-if,Hässleholms IF,1,2,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538014,2026-06-03,19:00,bk-olympic,BK Olympic,lunds-bk,Lunds BK,1,3,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538016,2026-06-02,19:00,roseng-rd-1917,Rosengård 1917,ngelholms-ff,Ängelholms FF,1,2,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538019,2026-06-01,19:00,sk-vde-aik,Skövde AIK,j-nk-pings-s-dra-if,Jönköpings Södra IF,1,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538013,2026-05-30,16:00,ariana-fc-malm,Ariana FC Malmö,laholms-fk,Laholms FK,4,2,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538017,2026-05-30,16:00,fc-trollh-ttan,FC Trollhättan,tvidabergs-ff,Åtvidabergs FF,3,3,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538018,2026-05-30,16:00,h-ssleholms-if,Hässleholms IF,utsikten,Utsikten,3,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538020,2026-05-30,16:00,tv-kers-if,Tvååkers IF,kristianstad-fc,Kristianstad FC,1,2,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538015,2026-05-30,13:00,eskilsminne-if,Eskilsminne IF,trelleborgs-ff,Trelleborgs FF,2,3,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538006,2026-05-24,16:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,ngelholms-ff,Ängelholms FF,3,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538012,2026-05-24,16:00,tvidabergs-ff,Åtvidabergs FF,laholms-fk,Laholms FK,3,1,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538009,2026-05-23,16:00,sk-vde-aik,Skövde AIK,ariana-fc-malm,Ariana FC Malmö,0,4,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538011,2026-05-23,16:00,utsikten,Utsikten,trelleborgs-ff,Trelleborgs FF,0,0,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538005,2026-05-23,13:00,roseng-rd-1917,Rosengård 1917,bk-olympic,BK Olympic,2,1,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538010,2026-05-23,13:00,tv-kers-if,Tvååkers IF,fc-trollh-ttan,FC Trollhättan,1,1,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538007,2026-05-22,19:00,kristianstad-fc,Kristianstad FC,h-ssleholms-if,Hässleholms IF,1,3,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538008,2026-05-22,19:00,lunds-bk,Lunds BK,eskilsminne-if,Eskilsminne IF,4,2,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537997,2026-05-18,19:00,ariana-fc-malm,Ariana FC Malmö,tv-kers-if,Tvååkers IF,0,1,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538001,2026-05-18,19:00,laholms-fk,Laholms FK,roseng-rd-1917,Rosengård 1917,1,3,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538004,2026-05-18,19:00,ngelholms-ff,Ängelholms FF,kristianstad-fc,Kristianstad FC,0,1,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537998,2026-05-17,16:00,bk-olympic,BK Olympic,tvidabergs-ff,Åtvidabergs FF,2,3,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537999,2026-05-17,16:00,eskilsminne-if,Eskilsminne IF,sk-vde-aik,Skövde AIK,1,1,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538003,2026-05-17,16:00,trelleborgs-ff,Trelleborgs FF,fc-trollh-ttan,FC Trollhättan,2,2,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538000,2026-05-17,13:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,h-ssleholms-if,Hässleholms IF,2,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6538002,2026-05-17,13:00,lunds-bk,Lunds BK,utsikten,Utsikten,5,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537989,2026-05-14,16:00,fc-trollh-ttan,FC Trollhättan,ariana-fc-malm,Ariana FC Malmö,0,2,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537993,2026-05-14,16:00,trelleborgs-ff,Trelleborgs FF,j-nk-pings-s-dra-if,Jönköpings Södra IF,1,1,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537996,2026-05-14,16:00,ngelholms-ff,Ängelholms FF,tvidabergs-ff,Åtvidabergs FF,2,2,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537994,2026-05-14,13:00,tv-kers-if,Tvååkers IF,bk-olympic,BK Olympic,1,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537990,2026-05-13,19:00,h-ssleholms-if,Hässleholms IF,eskilsminne-if,Eskilsminne IF,1,3,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537991,2026-05-13,19:00,kristianstad-fc,Kristianstad FC,roseng-rd-1917,Rosengård 1917,1,2,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537992,2026-05-13,19:00,laholms-fk,Laholms FK,lunds-bk,Lunds BK,4,3,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537995,2026-05-13,19:00,utsikten,Utsikten,sk-vde-aik,Skövde AIK,2,3,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537985,2026-05-10,16:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,laholms-fk,Laholms FK,2,1,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537988,2026-05-10,13:00,tvidabergs-ff,Åtvidabergs FF,trelleborgs-ff,Trelleborgs FF,1,2,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537983,2026-05-09,16:00,eskilsminne-if,Eskilsminne IF,utsikten,Utsikten,4,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537984,2026-05-09,16:00,roseng-rd-1917,Rosengård 1917,tv-kers-if,Tvååkers IF,0,1,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537986,2026-05-09,16:00,fc-trollh-ttan,FC Trollhättan,lunds-bk,Lunds BK,1,1,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537987,2026-05-09,16:00,sk-vde-aik,Skövde AIK,ngelholms-ff,Ängelholms FF,1,1,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537982,2026-05-09,13:00,bk-olympic,BK Olympic,kristianstad-fc,Kristianstad FC,2,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537981,2026-05-08,19:00,ariana-fc-malm,Ariana FC Malmö,h-ssleholms-if,Hässleholms IF,3,2,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537980,2026-05-02,17:00,utsikten,Utsikten,ariana-fc-malm,Ariana FC Malmö,0,3,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537974,2026-05-02,16:00,fc-trollh-ttan,FC Trollhättan,roseng-rd-1917,Rosengård 1917,0,2,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537977,2026-05-02,16:00,sk-vde-aik,Skövde AIK,tvidabergs-ff,Åtvidabergs FF,0,0,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537976,2026-05-02,13:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,kristianstad-fc,Kristianstad FC,3,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537978,2026-05-02,13:00,trelleborgs-ff,Trelleborgs FF,bk-olympic,BK Olympic,2,1,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537979,2026-05-02,13:00,tv-kers-if,Tvååkers IF,laholms-fk,Laholms FK,1,2,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537973,2026-05-01,13:00,eskilsminne-if,Eskilsminne IF,ngelholms-ff,Ängelholms FF,0,6,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537975,2026-05-01,13:00,h-ssleholms-if,Hässleholms IF,lunds-bk,Lunds BK,0,1,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537965,2026-04-26,16:00,bk-olympic,BK Olympic,j-nk-pings-s-dra-if,Jönköpings Södra IF,3,1,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537968,2026-04-26,16:00,kristianstad-fc,Kristianstad FC,utsikten,Utsikten,4,1,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537969,2026-04-25,16:00,laholms-fk,Laholms FK,trelleborgs-ff,Trelleborgs FF,0,4,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537972,2026-04-25,16:00,tvidabergs-ff,Åtvidabergs FF,ariana-fc-malm,Ariana FC Malmö,3,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537966,2026-04-25,13:00,roseng-rd-1917,Rosengård 1917,eskilsminne-if,Eskilsminne IF,0,3,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537970,2026-04-25,13:00,lunds-bk,Lunds BK,tv-kers-if,Tvååkers IF,1,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537971,2026-04-25,13:00,ngelholms-ff,Ängelholms FF,h-ssleholms-if,Hässleholms IF,1,1,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537967,2026-04-24,19:00,fc-trollh-ttan,FC Trollhättan,sk-vde-aik,Skövde AIK,1,1,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537964,2026-04-19,16:00,tvidabergs-ff,Åtvidabergs FF,kristianstad-fc,Kristianstad FC,2,1,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537963,2026-04-19,13:00,ngelholms-ff,Ängelholms FF,lunds-bk,Lunds BK,0,0,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537962,2026-04-18,17:00,utsikten,Utsikten,fc-trollh-ttan,FC Trollhättan,1,2,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537958,2026-04-18,16:00,eskilsminne-if,Eskilsminne IF,j-nk-pings-s-dra-if,Jönköpings Södra IF,2,2,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537960,2026-04-18,16:00,sk-vde-aik,Skövde AIK,laholms-fk,Laholms FK,1,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537957,2026-04-18,13:00,ariana-fc-malm,Ariana FC Malmö,roseng-rd-1917,Rosengård 1917,1,1,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537961,2026-04-18,13:00,trelleborgs-ff,Trelleborgs FF,tv-kers-if,Tvååkers IF,4,1,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537959,2026-04-17,19:00,h-ssleholms-if,Hässleholms IF,bk-olympic,BK Olympic,4,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537951,2026-04-12,16:00,j-nk-pings-s-dra-if,Jönköpings Södra IF,utsikten,Utsikten,1,2,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537949,2026-04-11,16:00,bk-olympic,BK Olympic,fc-trollh-ttan,FC Trollhättan,1,2,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537952,2026-04-11,16:00,kristianstad-fc,Kristianstad FC,sk-vde-aik,Skövde AIK,0,0,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537954,2026-04-11,16:00,lunds-bk,Lunds BK,tvidabergs-ff,Åtvidabergs FF,2,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537953,2026-04-11,13:00,laholms-fk,Laholms FK,ngelholms-ff,Ängelholms FF,1,1,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537955,2026-04-11,13:00,trelleborgs-ff,Trelleborgs FF,ariana-fc-malm,Ariana FC Malmö,1,1,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537956,2026-04-11,13:00,tv-kers-if,Tvååkers IF,eskilsminne-if,Eskilsminne IF,1,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537950,2026-04-10,19:00,h-ssleholms-if,Hässleholms IF,roseng-rd-1917,Rosengård 1917,1,1,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537945,2026-04-06,13:00,sk-vde-aik,Skövde AIK,tv-kers-if,Tvååkers IF,0,0,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537948,2026-04-05,16:00,tvidabergs-ff,Åtvidabergs FF,j-nk-pings-s-dra-if,Jönköpings Södra IF,1,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537942,2026-04-04,13:00,eskilsminne-if,Eskilsminne IF,laholms-fk,Laholms FK,1,0,,,Played,H,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537943,2026-04-04,13:00,roseng-rd-1917,Rosengård 1917,lunds-bk,Lunds BK,2,2,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537944,2026-04-03,16:00,fc-trollh-ttan,FC Trollhättan,h-ssleholms-if,Hässleholms IF,3,4,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537946,2026-04-03,16:00,utsikten,Utsikten,bk-olympic,BK Olympic,1,3,,,Played,A,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537941,2026-04-03,13:00,ariana-fc-malm,Ariana FC Malmö,kristianstad-fc,Kristianstad FC,2,2,,,Played,D,SWE
+2026,SW-ES,Ettan Södra,133339,1,-,,6537947,2026-04-03,13:00,ngelholms-ff,Ängelholms FF,trelleborgs-ff,Trelleborgs FF,1,5,,,Played,A,SWE

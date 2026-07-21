@@ -1,0 +1,113 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-1-str-msgodset,2026-04-05,16:00,str-msgodset,Strømsgodset,stab-k,Stabæk,2,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-1-lyn,2026-04-06,14:30,lyn,Lyn,haugesund,Haugesund,2,4,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-1-odd,2026-04-06,14:30,odd,Odd,sogndal,Sogndal,4,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-1-sane,2026-04-06,14:30,sane,Åsane,moss,Moss,2,3,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-1-h-dd,2026-04-07,19:00,h-dd,Hødd,sandnes-ulf,Sandnes Ulf,2,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-1-kongsvinger,2026-04-07,19:00,kongsvinger,Kongsvinger,bryne,Bryne,3,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-1-egersund,2026-05-06,18:00,egersund,Egersund,raufoss,Raufoss,2,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-1-ranheim-tf,2026-06-07,17:00,ranheim-tf,Ranheim TF,str-mmen,Strømmen,2,2,,,Played,D,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-2-haugesund,2026-04-11,14:00,haugesund,Haugesund,str-msgodset,Strømsgodset,4,2,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-2-sandnes-ulf,2026-04-11,14:00,sandnes-ulf,Sandnes Ulf,odd,Odd,1,3,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-2-sogndal,2026-04-11,14:00,sogndal,Sogndal,lyn,Lyn,0,3,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-2-str-mmen,2026-04-11,14:00,str-mmen,Strømmen,egersund,Egersund,0,3,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-2-bryne,2026-04-12,17:00,bryne,Bryne,ranheim-tf,Ranheim TF,2,3,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-2-moss,2026-04-12,17:00,moss,Moss,h-dd,Hødd,1,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-2-stab-k,2026-04-12,17:00,stab-k,Stabæk,sane,Åsane,4,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-2-raufoss,2026-04-13,19:00,raufoss,Raufoss,kongsvinger,Kongsvinger,1,3,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-3-ranheim-tf,2026-04-17,19:00,ranheim-tf,Ranheim TF,raufoss,Raufoss,5,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-3-h-dd,2026-04-18,14:00,h-dd,Hødd,haugesund,Haugesund,0,2,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-3-kongsvinger,2026-04-18,14:00,kongsvinger,Kongsvinger,moss,Moss,2,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-3-str-msgodset,2026-04-18,14:00,str-msgodset,Strømsgodset,sogndal,Sogndal,3,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-3-egersund,2026-04-19,17:00,egersund,Egersund,bryne,Bryne,1,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-3-odd,2026-04-19,17:00,odd,Odd,stab-k,Stabæk,2,2,,,Played,D,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-3-sane,2026-04-19,17:00,sane,Åsane,str-mmen,Strømmen,4,5,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-3-lyn,2026-04-20,19:00,lyn,Lyn,sandnes-ulf,Sandnes Ulf,0,2,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-4-sogndal,2026-04-25,16:00,sogndal,Sogndal,sane,Åsane,2,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-4-str-mmen,2026-04-25,18:00,str-mmen,Strømmen,kongsvinger,Kongsvinger,2,2,,,Played,D,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-4-bryne,2026-04-25,20:00,bryne,Bryne,odd,Odd,1,2,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-4-moss,2026-04-26,17:00,moss,Moss,lyn,Lyn,2,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-4-raufoss,2026-04-26,17:00,raufoss,Raufoss,h-dd,Hødd,1,1,,,Played,D,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-4-sandnes-ulf,2026-04-26,17:00,sandnes-ulf,Sandnes Ulf,str-msgodset,Strømsgodset,1,1,,,Played,D,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-4-stab-k,2026-04-26,17:00,stab-k,Stabæk,haugesund,Haugesund,3,2,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-4-egersund,2026-04-27,19:00,egersund,Egersund,ranheim-tf,Ranheim TF,3,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-5-bryne,2026-05-01,16:00,bryne,Bryne,sogndal,Sogndal,3,3,,,Played,D,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-5-haugesund,2026-05-01,16:00,haugesund,Haugesund,sandnes-ulf,Sandnes Ulf,2,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-5-h-dd,2026-05-01,16:00,h-dd,Hødd,sane,Åsane,1,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-5-kongsvinger,2026-05-01,16:00,kongsvinger,Kongsvinger,egersund,Egersund,2,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-5-lyn,2026-05-01,16:00,lyn,Lyn,stab-k,Stabæk,0,4,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-5-odd,2026-05-01,16:00,odd,Odd,raufoss,Raufoss,1,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-5-str-msgodset,2026-05-01,16:00,str-msgodset,Strømsgodset,str-mmen,Strømmen,3,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-5-ranheim-tf,2026-05-01,20:00,ranheim-tf,Ranheim TF,moss,Moss,4,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-6-ranheim-tf,2026-05-08,19:00,ranheim-tf,Ranheim TF,kongsvinger,Kongsvinger,1,1,,,Played,D,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-6-moss,2026-05-10,17:00,moss,Moss,bryne,Bryne,2,3,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-6-raufoss,2026-05-10,17:00,raufoss,Raufoss,lyn,Lyn,0,1,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-6-sandnes-ulf,2026-05-10,17:00,sandnes-ulf,Sandnes Ulf,stab-k,Stabæk,0,1,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-6-sogndal,2026-05-10,17:00,sogndal,Sogndal,haugesund,Haugesund,5,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-6-str-mmen,2026-05-10,17:00,str-mmen,Strømmen,h-dd,Hødd,1,2,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-6-sane,2026-05-10,17:00,sane,Åsane,str-msgodset,Strømsgodset,0,3,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-6-egersund,2026-05-11,19:00,egersund,Egersund,odd,Odd,0,1,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-7-sandnes-ulf,2026-05-15,18:00,sandnes-ulf,Sandnes Ulf,egersund,Egersund,4,2,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-7-bryne,2026-05-16,16:00,bryne,Bryne,str-mmen,Strømmen,4,2,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-7-haugesund,2026-05-16,16:00,haugesund,Haugesund,sane,Åsane,1,1,,,Played,D,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-7-h-dd,2026-05-16,16:00,h-dd,Hødd,sogndal,Sogndal,2,2,,,Played,D,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-7-lyn,2026-05-16,16:00,lyn,Lyn,kongsvinger,Kongsvinger,0,3,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-7-odd,2026-05-16,16:00,odd,Odd,moss,Moss,2,3,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-7-stab-k,2026-05-16,16:00,stab-k,Stabæk,raufoss,Raufoss,1,2,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-7-str-msgodset,2026-05-16,16:00,str-msgodset,Strømsgodset,ranheim-tf,Ranheim TF,5,4,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-8-egersund,2026-05-20,19:00,egersund,Egersund,lyn,Lyn,0,0,,,Played,D,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-8-kongsvinger,2026-05-20,19:00,kongsvinger,Kongsvinger,odd,Odd,4,2,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-8-moss,2026-05-20,19:00,moss,Moss,str-msgodset,Strømsgodset,1,1,,,Played,D,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-8-ranheim-tf,2026-05-20,19:00,ranheim-tf,Ranheim TF,h-dd,Hødd,3,2,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-8-raufoss,2026-05-20,19:00,raufoss,Raufoss,bryne,Bryne,3,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-8-sogndal,2026-05-20,19:00,sogndal,Sogndal,stab-k,Stabæk,2,2,,,Played,D,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-8-str-mmen,2026-05-20,19:00,str-mmen,Strømmen,haugesund,Haugesund,0,7,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-8-sane,2026-05-20,19:00,sane,Åsane,sandnes-ulf,Sandnes Ulf,2,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-9-haugesund,2026-05-25,17:00,haugesund,Haugesund,moss,Moss,3,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-9-h-dd,2026-05-25,17:00,h-dd,Hødd,egersund,Egersund,3,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-9-lyn,2026-05-25,17:00,lyn,Lyn,str-mmen,Strømmen,1,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-9-odd,2026-05-25,17:00,odd,Odd,ranheim-tf,Ranheim TF,3,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-9-sandnes-ulf,2026-05-25,17:00,sandnes-ulf,Sandnes Ulf,sogndal,Sogndal,2,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-9-stab-k,2026-05-25,17:00,stab-k,Stabæk,kongsvinger,Kongsvinger,2,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-9-str-msgodset,2026-05-25,17:00,str-msgodset,Strømsgodset,bryne,Bryne,1,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-9-sane,2026-05-25,17:00,sane,Åsane,raufoss,Raufoss,3,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-10-moss,2026-05-30,16:00,moss,Moss,stab-k,Stabæk,2,2,,,Played,D,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-10-odd,2026-05-30,16:00,odd,Odd,lyn,Lyn,3,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-10-bryne,2026-05-31,17:00,bryne,Bryne,h-dd,Hødd,1,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-10-egersund,2026-05-31,17:00,egersund,Egersund,str-msgodset,Strømsgodset,0,5,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-10-kongsvinger,2026-05-31,17:00,kongsvinger,Kongsvinger,sane,Åsane,3,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-10-ranheim-tf,2026-05-31,17:00,ranheim-tf,Ranheim TF,sandnes-ulf,Sandnes Ulf,5,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-10-raufoss,2026-05-31,17:00,raufoss,Raufoss,haugesund,Haugesund,3,4,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-10-str-mmen,2026-05-31,17:00,str-mmen,Strømmen,sogndal,Sogndal,2,3,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-11-haugesund,2026-06-14,16:00,haugesund,Haugesund,ranheim-tf,Ranheim TF,4,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-11-h-dd,2026-06-14,16:00,h-dd,Hødd,kongsvinger,Kongsvinger,1,2,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-11-lyn,2026-06-14,16:00,lyn,Lyn,bryne,Bryne,0,3,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-11-sandnes-ulf,2026-06-14,16:00,sandnes-ulf,Sandnes Ulf,str-mmen,Strømmen,2,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-11-sogndal,2026-06-14,16:00,sogndal,Sogndal,moss,Moss,2,4,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-11-stab-k,2026-06-14,16:00,stab-k,Stabæk,egersund,Egersund,3,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-11-str-msgodset,2026-06-14,16:00,str-msgodset,Strømsgodset,raufoss,Raufoss,6,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-11-sane,2026-06-14,16:00,sane,Åsane,odd,Odd,2,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-12-ranheim-tf,2026-06-19,19:00,ranheim-tf,Ranheim TF,lyn,Lyn,3,2,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-12-bryne,2026-06-21,16:00,bryne,Bryne,sane,Åsane,1,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-12-egersund,2026-06-21,16:00,egersund,Egersund,haugesund,Haugesund,5,2,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-12-kongsvinger,2026-06-21,16:00,kongsvinger,Kongsvinger,str-msgodset,Strømsgodset,4,4,,,Played,D,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-12-moss,2026-06-21,16:00,moss,Moss,sandnes-ulf,Sandnes Ulf,1,4,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-12-odd,2026-06-21,16:00,odd,Odd,h-dd,Hødd,0,0,,,Played,D,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-12-raufoss,2026-06-21,16:00,raufoss,Raufoss,sogndal,Sogndal,3,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-12-str-mmen,2026-06-21,16:00,str-mmen,Strømmen,stab-k,Stabæk,1,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-13-haugesund,2026-06-27,16:00,haugesund,Haugesund,kongsvinger,Kongsvinger,4,2,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-13-lyn,2026-06-27,16:00,lyn,Lyn,h-dd,Hødd,1,4,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-13-sandnes-ulf,2026-06-27,16:00,sandnes-ulf,Sandnes Ulf,raufoss,Raufoss,3,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-13-stab-k,2026-06-27,16:00,stab-k,Stabæk,bryne,Bryne,2,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-13-str-mmen,2026-06-27,16:00,str-mmen,Strømmen,moss,Moss,3,2,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-13-sane,2026-06-27,16:00,sane,Åsane,ranheim-tf,Ranheim TF,3,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-13-str-msgodset,2026-06-27,18:00,str-msgodset,Strømsgodset,odd,Odd,2,2,,,Played,D,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-13-sogndal,2026-06-27,20:00,sogndal,Sogndal,egersund,Egersund,4,2,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-14-lyn,2026-07-02,18:00,lyn,Lyn,sane,Åsane,6,2,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-14-kongsvinger,2026-07-03,18:00,kongsvinger,Kongsvinger,sogndal,Sogndal,5,1,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-14-raufoss,2026-07-03,18:00,raufoss,Raufoss,str-mmen,Strømmen,1,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-14-ranheim-tf,2026-07-03,19:00,ranheim-tf,Ranheim TF,stab-k,Stabæk,2,5,,,Played,A,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-14-egersund,2026-07-04,14:00,egersund,Egersund,moss,Moss,3,0,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-14-h-dd,2026-07-04,16:00,h-dd,Hødd,str-msgodset,Strømsgodset,4,3,,,Played,H,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-14-bryne,2026-07-04,18:00,bryne,Bryne,sandnes-ulf,Sandnes Ulf,1,1,,,Played,D,NOR
+2026,NO-OBOS,OBOS-ligaen,206093,1,-,,206093-14-odd,2026-07-05,16:00,odd,Odd,haugesund,Haugesund,1,3,,,Played,A,NOR

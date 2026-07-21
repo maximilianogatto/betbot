@@ -1,0 +1,120 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2026,SW-SE,Superettan,133340,1,-,,6536069,2026-07-20,19:00,norrby-if,Norrby IF,gif-sundsvall,GIF Sundsvall,3,1,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536065,2026-07-19,15:00,ifk-v-rnamo,IFK Värnamo,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,2,3,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536071,2026-07-19,15:00,nordic-united-fc,Nordic United FC,rebro,Örebro,2,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536064,2026-07-19,13:00,ifk-norrk-ping-fk,IFK Norrköping FK,sandvikens-if,Sandvikens IF,3,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536066,2026-07-18,17:00,sters-if,Östers IF,ik-brage,IK Brage,3,2,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536068,2026-07-18,15:00,stersund,Östersund,landskrona-bois,Landskrona BoIS,2,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536067,2026-07-18,13:00,ik-oddevold,IK Oddevold,varbergs-bois-fc,Varbergs BoIS FC,2,4,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536060,2026-06-28,17:00,sandvikens-if,Sandvikens IF,helsingborgs-if,Helsingborgs IF,4,2,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536056,2026-06-28,15:00,landskrona-bois,Landskrona BoIS,ifk-v-rnamo,IFK Värnamo,1,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536057,2026-06-28,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,norrby-if,Norrby IF,0,1,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536059,2026-06-27,17:00,gif-sundsvall,GIF Sundsvall,stersund,Östersund,0,2,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536062,2026-06-27,17:00,nordic-united-fc,Nordic United FC,ik-oddevold,IK Oddevold,3,3,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536058,2026-06-27,15:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,rebro,Örebro,3,2,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536061,2026-06-27,15:00,varbergs-bois-fc,Varbergs BoIS FC,sters-if,Östers IF,2,1,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536063,2026-06-26,19:00,ik-brage,IK Brage,falkenbergs-ff,Falkenbergs FF,2,4,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536050,2026-06-22,19:05,rebro,Örebro,sandvikens-if,Sandvikens IF,1,1,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536051,2026-06-22,19:00,ik-oddevold,IK Oddevold,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,0,0,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536054,2026-06-22,19:00,varbergs-bois-fc,Varbergs BoIS FC,landskrona-bois,Landskrona BoIS,2,3,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536052,2026-06-21,17:00,stersund,Östersund,ifk-norrk-ping-fk,IFK Norrköping FK,0,2,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536053,2026-06-21,17:00,norrby-if,Norrby IF,nordic-united-fc,Nordic United FC,0,0,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536048,2026-06-21,15:00,helsingborgs-if,Helsingborgs IF,gif-sundsvall,GIF Sundsvall,5,2,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536049,2026-06-21,15:00,sters-if,Östers IF,falkenbergs-ff,Falkenbergs FF,1,3,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536055,2026-06-21,15:00,ik-brage,IK Brage,ifk-v-rnamo,IFK Värnamo,5,1,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536040,2026-06-16,19:00,landskrona-bois,Landskrona BoIS,nordic-united-fc,Nordic United FC,2,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536042,2026-06-16,19:00,ifk-v-rnamo,IFK Värnamo,helsingborgs-if,Helsingborgs IF,0,1,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536041,2026-06-15,19:05,ifk-norrk-ping-fk,IFK Norrköping FK,varbergs-bois-fc,Varbergs BoIS FC,2,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536044,2026-06-15,19:00,gif-sundsvall,GIF Sundsvall,sters-if,Östers IF,0,4,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536046,2026-06-14,17:00,sandvikens-if,Sandvikens IF,ik-brage,IK Brage,3,2,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536043,2026-06-14,15:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,stersund,Östersund,1,1,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536047,2026-06-14,15:00,falkenbergs-ff,Falkenbergs FF,rebro,Örebro,1,1,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536045,2026-06-14,13:00,norrby-if,Norrby IF,ik-oddevold,IK Oddevold,0,2,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536032,2026-06-11,19:00,helsingborgs-if,Helsingborgs IF,landskrona-bois,Landskrona BoIS,0,3,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536034,2026-06-10,19:00,rebro,Örebro,gif-sundsvall,GIF Sundsvall,0,1,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536037,2026-06-10,19:00,varbergs-bois-fc,Varbergs BoIS FC,norrby-if,Norrby IF,2,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536033,2026-06-09,19:00,sters-if,Östers IF,ifk-v-rnamo,IFK Värnamo,3,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536035,2026-06-09,19:00,ik-oddevold,IK Oddevold,ifk-norrk-ping-fk,IFK Norrköping FK,1,2,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536036,2026-06-09,19:00,sandvikens-if,Sandvikens IF,falkenbergs-ff,Falkenbergs FF,4,2,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536038,2026-06-09,19:00,nordic-united-fc,Nordic United FC,stersund,Östersund,1,1,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536039,2026-06-09,19:00,ik-brage,IK Brage,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,2,2,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536025,2026-05-31,17:00,helsingborgs-if,Helsingborgs IF,ifk-norrk-ping-fk,IFK Norrköping FK,0,2,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536029,2026-05-31,17:00,stersund,Östersund,rebro,Örebro,3,2,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536026,2026-05-31,15:00,ifk-v-rnamo,IFK Värnamo,nordic-united-fc,Nordic United FC,0,2,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536027,2026-05-30,17:00,sters-if,Östers IF,norrby-if,Norrby IF,2,1,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536030,2026-05-30,15:00,gif-sundsvall,GIF Sundsvall,sandvikens-if,Sandvikens IF,0,3,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536031,2026-05-30,15:00,falkenbergs-ff,Falkenbergs FF,ik-oddevold,IK Oddevold,2,1,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536024,2026-05-30,13:00,landskrona-bois,Landskrona BoIS,ik-brage,IK Brage,2,2,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536028,2026-05-30,13:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,varbergs-bois-fc,Varbergs BoIS FC,1,3,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536017,2026-05-26,19:00,rebro,Örebro,helsingborgs-if,Helsingborgs IF,1,2,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536016,2026-05-25,19:05,ifk-norrk-ping-fk,IFK Norrköping FK,sters-if,Östers IF,2,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536020,2026-05-24,17:00,sandvikens-if,Sandvikens IF,landskrona-bois,Landskrona BoIS,0,1,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536021,2026-05-24,15:00,varbergs-bois-fc,Varbergs BoIS FC,gif-sundsvall,GIF Sundsvall,1,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536022,2026-05-23,17:00,falkenbergs-ff,Falkenbergs FF,ifk-v-rnamo,IFK Värnamo,3,1,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536018,2026-05-23,15:00,ik-oddevold,IK Oddevold,stersund,Östersund,1,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536023,2026-05-23,15:00,nordic-united-fc,Nordic United FC,ik-brage,IK Brage,1,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536019,2026-05-23,13:00,norrby-if,Norrby IF,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,2,1,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536008,2026-05-19,19:00,helsingborgs-if,Helsingborgs IF,varbergs-bois-fc,Varbergs BoIS FC,1,3,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536011,2026-05-18,19:05,ik-oddevold,IK Oddevold,rebro,Örebro,4,1,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536013,2026-05-18,19:00,gif-sundsvall,GIF Sundsvall,landskrona-bois,Landskrona BoIS,2,1,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536009,2026-05-17,17:00,ifk-v-rnamo,IFK Värnamo,norrby-if,Norrby IF,2,2,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536010,2026-05-17,15:00,sters-if,Östers IF,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,1,4,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536014,2026-05-17,15:00,nordic-united-fc,Nordic United FC,falkenbergs-ff,Falkenbergs FF,1,4,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536012,2026-05-17,13:00,stersund,Östersund,sandvikens-if,Sandvikens IF,2,1,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536015,2026-05-16,17:00,ik-brage,IK Brage,ifk-norrk-ping-fk,IFK Norrköping FK,0,0,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536005,2026-05-14,17:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,gif-sundsvall,GIF Sundsvall,1,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536001,2026-05-13,19:00,helsingborgs-if,Helsingborgs IF,ik-oddevold,IK Oddevold,2,2,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536002,2026-05-13,19:00,ifk-norrk-ping-fk,IFK Norrköping FK,nordic-united-fc,Nordic United FC,1,1,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536004,2026-05-13,19:00,sters-if,Östers IF,sandvikens-if,Sandvikens IF,1,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536006,2026-05-13,19:00,falkenbergs-ff,Falkenbergs FF,varbergs-bois-fc,Varbergs BoIS FC,0,3,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536007,2026-05-13,19:00,ik-brage,IK Brage,stersund,Östersund,2,4,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536000,2026-05-12,19:00,landskrona-bois,Landskrona BoIS,norrby-if,Norrby IF,1,1,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6536003,2026-05-12,19:00,ifk-v-rnamo,IFK Värnamo,rebro,Örebro,0,1,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535995,2026-05-09,17:00,gif-sundsvall,GIF Sundsvall,ifk-norrk-ping-fk,IFK Norrköping FK,1,3,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535997,2026-05-09,17:00,sandvikens-if,Sandvikens IF,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,1,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535996,2026-05-09,15:00,norrby-if,Norrby IF,helsingborgs-if,Helsingborgs IF,3,3,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535993,2026-05-09,13:00,ik-oddevold,IK Oddevold,landskrona-bois,Landskrona BoIS,1,1,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535994,2026-05-09,13:00,stersund,Östersund,falkenbergs-ff,Falkenbergs FF,2,2,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535999,2026-05-09,13:00,nordic-united-fc,Nordic United FC,sters-if,Östers IF,4,2,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535992,2026-05-08,19:00,rebro,Örebro,ik-brage,IK Brage,0,3,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535998,2026-05-08,19:00,varbergs-bois-fc,Varbergs BoIS FC,ifk-v-rnamo,IFK Värnamo,3,2,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535991,2026-05-05,19:00,falkenbergs-ff,Falkenbergs FF,ifk-norrk-ping-fk,IFK Norrköping FK,1,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535984,2026-05-04,19:05,landskrona-bois,Landskrona BoIS,sters-if,Östers IF,2,2,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535985,2026-05-03,15:00,helsingborgs-if,Helsingborgs IF,ik-brage,IK Brage,2,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535987,2026-05-03,13:00,stersund,Östersund,ifk-v-rnamo,IFK Värnamo,3,2,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535988,2026-05-02,17:00,gif-sundsvall,GIF Sundsvall,ik-oddevold,IK Oddevold,1,3,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535989,2026-05-02,15:00,sandvikens-if,Sandvikens IF,norrby-if,Norrby IF,2,2,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535990,2026-05-02,15:00,varbergs-bois-fc,Varbergs BoIS FC,rebro,Örebro,0,0,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535986,2026-05-02,13:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,nordic-united-fc,Nordic United FC,0,2,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535976,2026-04-28,19:00,ifk-norrk-ping-fk,IFK Norrköping FK,landskrona-bois,Landskrona BoIS,1,3,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535983,2026-04-26,15:00,ik-brage,IK Brage,varbergs-bois-fc,Varbergs BoIS FC,2,2,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535977,2026-04-26,13:00,ifk-v-rnamo,IFK Värnamo,ik-oddevold,IK Oddevold,3,1,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535979,2026-04-25,17:00,rebro,Örebro,norrby-if,Norrby IF,1,1,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535982,2026-04-25,17:00,nordic-united-fc,Nordic United FC,sandvikens-if,Sandvikens IF,2,1,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535981,2026-04-25,15:00,falkenbergs-ff,Falkenbergs FF,gif-sundsvall,GIF Sundsvall,1,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535978,2026-04-25,13:00,sters-if,Östers IF,stersund,Östersund,1,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535980,2026-04-24,19:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,helsingborgs-if,Helsingborgs IF,4,1,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535970,2026-04-21,19:00,rebro,Örebro,ifk-norrk-ping-fk,IFK Norrköping FK,2,1,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535972,2026-04-20,19:05,gif-sundsvall,GIF Sundsvall,ik-brage,IK Brage,1,2,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535971,2026-04-20,19:00,ik-oddevold,IK Oddevold,sters-if,Östers IF,1,2,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535969,2026-04-19,15:00,helsingborgs-if,Helsingborgs IF,stersund,Östersund,2,1,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535973,2026-04-19,13:00,norrby-if,Norrby IF,falkenbergs-ff,Falkenbergs FF,2,2,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535968,2026-04-18,17:00,landskrona-bois,Landskrona BoIS,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,1,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535974,2026-04-18,15:00,sandvikens-if,Sandvikens IF,ifk-v-rnamo,IFK Värnamo,0,1,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535975,2026-04-18,13:00,varbergs-bois-fc,Varbergs BoIS FC,nordic-united-fc,Nordic United FC,4,1,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535961,2026-04-14,19:00,ifk-v-rnamo,IFK Värnamo,gif-sundsvall,GIF Sundsvall,3,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535965,2026-04-12,17:00,sandvikens-if,Sandvikens IF,varbergs-bois-fc,Varbergs BoIS FC,2,2,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535960,2026-04-12,15:00,landskrona-bois,Landskrona BoIS,falkenbergs-ff,Falkenbergs FF,1,2,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535967,2026-04-12,15:00,ik-brage,IK Brage,ik-oddevold,IK Oddevold,3,4,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535964,2026-04-11,17:00,stersund,Östersund,norrby-if,Norrby IF,1,1,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535966,2026-04-11,15:00,nordic-united-fc,Nordic United FC,helsingborgs-if,Helsingborgs IF,3,1,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535962,2026-04-11,13:00,sters-if,Östers IF,rebro,Örebro,0,0,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535963,2026-04-11,13:00,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,ifk-norrk-ping-fk,IFK Norrköping FK,0,1,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535955,2026-04-07,19:00,ik-oddevold,IK Oddevold,sandvikens-if,Sandvikens IF,2,2,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535954,2026-04-06,15:00,rebro,Örebro,landskrona-bois,Landskrona BoIS,1,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535958,2026-04-06,15:00,varbergs-bois-fc,Varbergs BoIS FC,stersund,Östersund,1,2,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535956,2026-04-06,13:00,gif-sundsvall,GIF Sundsvall,nordic-united-fc,Nordic United FC,3,2,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535959,2026-04-06,13:00,falkenbergs-ff,Falkenbergs FF,ljungskile-sk-herrfotboll,Ljungskile SK Herrfotboll,1,1,,,Played,D,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535957,2026-04-05,15:00,norrby-if,Norrby IF,ik-brage,IK Brage,0,1,,,Played,A,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535953,2026-04-04,12:30,ifk-norrk-ping-fk,IFK Norrköping FK,ifk-v-rnamo,IFK Värnamo,6,0,,,Played,H,SWE
+2026,SW-SE,Superettan,133340,1,-,,6535952,2026-04-03,15:00,helsingborgs-if,Helsingborgs IF,sters-if,Östers IF,4,1,,,Played,H,SWE

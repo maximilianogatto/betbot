@@ -1,0 +1,241 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2025,SW-EN,Ettan Norra,123861,1,-,,6155451,2025-11-09,15:00,athletic-eskilstuna,Athletic Eskilstuna,team-tg-ff,Team TG FF,1,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155452,2025-11-09,15:00,gefle-if-ff,Gefle IF FF,rebro-syrianska-if,Örebro Syrianska IF,3,3,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155453,2025-11-09,15:00,if-karlstad-fotboll,IF Karlstad Fotboll,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155454,2025-11-09,15:00,ifk-haninge,IFK Haninge,enk-pings-sk-fk,Enköpings SK FK,0,0,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155455,2025-11-09,15:00,ifk-stocksund,IFK Stocksund,vasalund,Vasalund,1,7,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155456,2025-11-09,15:00,nordic-united-fc,Nordic United FC,fc-arlanda,FC Arlanda,3,2,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155457,2025-11-09,15:00,sollentuna-fk,Sollentuna FK,karlbergs-bk,Karlbergs BK,2,2,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155458,2025-11-09,15:00,stockholm-internazionale,Stockholm Internazionale,assyriska-ff,Assyriska FF,0,1,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155446,2025-11-03,19:00,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,ifk-stocksund,IFK Stocksund,4,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155443,2025-11-02,16:00,assyriska-ff,Assyriska FF,gefle-if-ff,Gefle IF FF,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155444,2025-11-02,16:00,enk-pings-sk-fk,Enköpings SK FK,stockholm-internazionale,Stockholm Internazionale,0,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155449,2025-11-02,16:00,vasalund,Vasalund,ifk-haninge,IFK Haninge,3,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155448,2025-11-02,15:00,team-tg-ff,Team TG FF,sollentuna-fk,Sollentuna FK,0,0,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155445,2025-11-01,16:00,fc-arlanda,FC Arlanda,if-karlstad-fotboll,IF Karlstad Fotboll,3,5,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155447,2025-11-01,16:00,karlbergs-bk,Karlbergs BK,nordic-united-fc,Nordic United FC,1,4,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155450,2025-11-01,13:00,rebro-syrianska-if,Örebro Syrianska IF,athletic-eskilstuna,Athletic Eskilstuna,2,4,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155438,2025-10-26,16:00,ifk-haninge,IFK Haninge,team-tg-ff,Team TG FF,3,2,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155436,2025-10-26,13:00,fc-arlanda,FC Arlanda,vasalund,Vasalund,4,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155437,2025-10-26,13:00,gefle-if-ff,Gefle IF FF,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,2,4,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155435,2025-10-25,16:00,athletic-eskilstuna,Athletic Eskilstuna,stockholm-internazionale,Stockholm Internazionale,0,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155440,2025-10-25,16:00,karlbergs-bk,Karlbergs BK,assyriska-ff,Assyriska FF,2,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155439,2025-10-25,13:00,ifk-stocksund,IFK Stocksund,enk-pings-sk-fk,Enköpings SK FK,2,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155441,2025-10-25,13:00,sollentuna-fk,Sollentuna FK,nordic-united-fc,Nordic United FC,3,3,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155442,2025-10-24,19:00,rebro-syrianska-if,Örebro Syrianska IF,if-karlstad-fotboll,IF Karlstad Fotboll,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155429,2025-10-20,19:00,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,karlbergs-bk,Karlbergs BK,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155428,2025-10-19,16:00,enk-pings-sk-fk,Enköpings SK FK,fc-arlanda,FC Arlanda,1,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155431,2025-10-19,16:00,nordic-united-fc,Nordic United FC,ifk-haninge,IFK Haninge,6,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155434,2025-10-19,16:00,vasalund,Vasalund,athletic-eskilstuna,Athletic Eskilstuna,4,2,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155433,2025-10-19,13:00,team-tg-ff,Team TG FF,rebro-syrianska-if,Örebro Syrianska IF,0,1,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155430,2025-10-18,16:00,if-karlstad-fotboll,IF Karlstad Fotboll,sollentuna-fk,Sollentuna FK,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155432,2025-10-18,13:00,stockholm-internazionale,Stockholm Internazionale,gefle-if-ff,Gefle IF FF,2,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155427,2025-10-17,19:00,assyriska-ff,Assyriska FF,ifk-stocksund,IFK Stocksund,3,3,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155421,2025-10-12,16:00,gefle-if-ff,Gefle IF FF,nordic-united-fc,Nordic United FC,0,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155420,2025-10-12,15:30,fc-arlanda,FC Arlanda,team-tg-ff,Team TG FF,4,3,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155419,2025-10-11,16:00,athletic-eskilstuna,Athletic Eskilstuna,ifk-stocksund,IFK Stocksund,3,4,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155422,2025-10-11,16:00,ifk-haninge,IFK Haninge,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155425,2025-10-11,16:00,stockholm-internazionale,Stockholm Internazionale,if-karlstad-fotboll,IF Karlstad Fotboll,0,1,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155423,2025-10-11,13:00,karlbergs-bk,Karlbergs BK,vasalund,Vasalund,0,0,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155424,2025-10-11,13:00,sollentuna-fk,Sollentuna FK,assyriska-ff,Assyriska FF,2,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155426,2025-10-10,19:30,rebro-syrianska-if,Örebro Syrianska IF,enk-pings-sk-fk,Enköpings SK FK,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155412,2025-10-05,16:00,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,fc-arlanda,FC Arlanda,3,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155413,2025-10-05,16:00,if-karlstad-fotboll,IF Karlstad Fotboll,ifk-haninge,IFK Haninge,7,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155416,2025-10-05,16:00,team-tg-ff,Team TG FF,gefle-if-ff,Gefle IF FF,0,1,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155411,2025-10-04,16:00,enk-pings-sk-fk,Enköpings SK FK,assyriska-ff,Assyriska FF,3,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155415,2025-10-04,16:00,nordic-united-fc,Nordic United FC,athletic-eskilstuna,Athletic Eskilstuna,3,2,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155418,2025-10-04,16:00,rebro-syrianska-if,Örebro Syrianska IF,karlbergs-bk,Karlbergs BK,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155414,2025-10-04,13:00,ifk-stocksund,IFK Stocksund,sollentuna-fk,Sollentuna FK,2,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155417,2025-10-03,19:00,vasalund,Vasalund,stockholm-internazionale,Stockholm Internazionale,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155403,2025-09-28,16:00,assyriska-ff,Assyriska FF,ifk-haninge,IFK Haninge,3,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155404,2025-09-27,16:00,athletic-eskilstuna,Athletic Eskilstuna,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,3,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155405,2025-09-27,16:00,fc-arlanda,FC Arlanda,rebro-syrianska-if,Örebro Syrianska IF,0,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155406,2025-09-27,13:00,if-karlstad-fotboll,IF Karlstad Fotboll,enk-pings-sk-fk,Enköpings SK FK,2,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155407,2025-09-27,13:00,ifk-stocksund,IFK Stocksund,gefle-if-ff,Gefle IF FF,2,2,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155409,2025-09-27,13:00,sollentuna-fk,Sollentuna FK,stockholm-internazionale,Stockholm Internazionale,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155410,2025-09-27,12:00,team-tg-ff,Team TG FF,karlbergs-bk,Karlbergs BK,2,4,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155408,2025-09-26,19:00,nordic-united-fc,Nordic United FC,vasalund,Vasalund,4,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155398,2025-09-22,19:00,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,sollentuna-fk,Sollentuna FK,4,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155395,2025-09-21,16:00,assyriska-ff,Assyriska FF,fc-arlanda,FC Arlanda,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155397,2025-09-21,16:00,gefle-if-ff,Gefle IF FF,if-karlstad-fotboll,IF Karlstad Fotboll,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155401,2025-09-21,15:00,stockholm-internazionale,Stockholm Internazionale,team-tg-ff,Team TG FF,5,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155400,2025-09-20,16:00,karlbergs-bk,Karlbergs BK,athletic-eskilstuna,Athletic Eskilstuna,4,2,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155396,2025-09-20,13:00,enk-pings-sk-fk,Enköpings SK FK,nordic-united-fc,Nordic United FC,1,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155402,2025-09-20,13:00,rebro-syrianska-if,Örebro Syrianska IF,vasalund,Vasalund,0,5,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155399,2025-09-19,19:30,ifk-haninge,IFK Haninge,ifk-stocksund,IFK Stocksund,2,4,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155394,2025-09-14,16:00,vasalund,Vasalund,assyriska-ff,Assyriska FF,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155393,2025-09-14,13:00,team-tg-ff,Team TG FF,enk-pings-sk-fk,Enköpings SK FK,2,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155387,2025-09-13,16:00,athletic-eskilstuna,Athletic Eskilstuna,gefle-if-ff,Gefle IF FF,2,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155389,2025-09-13,16:00,if-karlstad-fotboll,IF Karlstad Fotboll,karlbergs-bk,Karlbergs BK,1,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155392,2025-09-13,16:00,nordic-united-fc,Nordic United FC,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155390,2025-09-13,13:00,ifk-haninge,IFK Haninge,rebro-syrianska-if,Örebro Syrianska IF,3,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155391,2025-09-13,12:00,ifk-stocksund,IFK Stocksund,stockholm-internazionale,Stockholm Internazionale,0,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155388,2025-09-12,19:30,sollentuna-fk,Sollentuna FK,fc-arlanda,FC Arlanda,2,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155379,2025-09-07,16:00,assyriska-ff,Assyriska FF,if-karlstad-fotboll,IF Karlstad Fotboll,2,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155386,2025-09-07,14:00,team-tg-ff,Team TG FF,vasalund,Vasalund,0,5,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155385,2025-09-07,13:00,stockholm-internazionale,Stockholm Internazionale,nordic-united-fc,Nordic United FC,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155381,2025-09-06,16:00,fc-arlanda,FC Arlanda,athletic-eskilstuna,Athletic Eskilstuna,2,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155383,2025-09-06,16:00,karlbergs-bk,Karlbergs BK,ifk-stocksund,IFK Stocksund,3,2,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155382,2025-09-06,13:00,gefle-if-ff,Gefle IF FF,ifk-haninge,IFK Haninge,2,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155384,2025-09-06,13:00,sollentuna-fk,Sollentuna FK,rebro-syrianska-if,Örebro Syrianska IF,3,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155380,2025-09-05,19:30,enk-pings-sk-fk,Enköpings SK FK,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,2,2,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155373,2025-09-01,19:00,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,assyriska-ff,Assyriska FF,4,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155371,2025-08-31,16:00,athletic-eskilstuna,Athletic Eskilstuna,if-karlstad-fotboll,IF Karlstad Fotboll,4,3,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155377,2025-08-31,16:00,vasalund,Vasalund,enk-pings-sk-fk,Enköpings SK FK,2,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155378,2025-08-31,16:00,rebro-syrianska-if,Örebro Syrianska IF,nordic-united-fc,Nordic United FC,0,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155374,2025-08-31,15:00,ifk-stocksund,IFK Stocksund,team-tg-ff,Team TG FF,3,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155372,2025-08-30,16:00,gefle-if-ff,Gefle IF FF,sollentuna-fk,Sollentuna FK,5,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155375,2025-08-30,16:00,karlbergs-bk,Karlbergs BK,ifk-haninge,IFK Haninge,3,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155376,2025-08-30,13:00,stockholm-internazionale,Stockholm Internazionale,fc-arlanda,FC Arlanda,0,0,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155370,2025-08-25,19:30,sollentuna-fk,Sollentuna FK,athletic-eskilstuna,Athletic Eskilstuna,4,3,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155363,2025-08-24,17:00,assyriska-ff,Assyriska FF,rebro-syrianska-if,Örebro Syrianska IF,3,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155364,2025-08-24,16:00,enk-pings-sk-fk,Enköpings SK FK,karlbergs-bk,Karlbergs BK,4,2,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155365,2025-08-24,16:00,fc-arlanda,FC Arlanda,gefle-if-ff,Gefle IF FF,2,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155367,2025-08-24,16:00,if-karlstad-fotboll,IF Karlstad Fotboll,vasalund,Vasalund,2,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155366,2025-08-24,15:00,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,team-tg-ff,Team TG FF,2,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155368,2025-08-24,13:00,ifk-haninge,IFK Haninge,stockholm-internazionale,Stockholm Internazionale,0,1,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155369,2025-08-23,16:00,nordic-united-fc,Nordic United FC,ifk-stocksund,IFK Stocksund,3,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155361,2025-08-17,16:00,team-tg-ff,Team TG FF,nordic-united-fc,Nordic United FC,0,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155355,2025-08-16,16:00,athletic-eskilstuna,Athletic Eskilstuna,assyriska-ff,Assyriska FF,2,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155357,2025-08-16,16:00,gefle-if-ff,Gefle IF FF,enk-pings-sk-fk,Enköpings SK FK,5,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155358,2025-08-16,16:00,ifk-stocksund,IFK Stocksund,if-karlstad-fotboll,IF Karlstad Fotboll,1,4,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155360,2025-08-16,13:00,stockholm-internazionale,Stockholm Internazionale,karlbergs-bk,Karlbergs BK,3,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155362,2025-08-16,13:00,rebro-syrianska-if,Örebro Syrianska IF,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,0,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155356,2025-08-15,19:30,fc-arlanda,FC Arlanda,ifk-haninge,IFK Haninge,5,4,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155359,2025-08-15,19:00,sollentuna-fk,Sollentuna FK,vasalund,Vasalund,3,2,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155348,2025-08-11,19:00,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,stockholm-internazionale,Stockholm Internazionale,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155352,2025-08-10,18:00,nordic-united-fc,Nordic United FC,assyriska-ff,Assyriska FF,1,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155353,2025-08-10,16:00,vasalund,Vasalund,gefle-if-ff,Gefle IF FF,4,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155349,2025-08-10,13:00,if-karlstad-fotboll,IF Karlstad Fotboll,team-tg-ff,Team TG FF,1,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155351,2025-08-09,16:00,karlbergs-bk,Karlbergs BK,fc-arlanda,FC Arlanda,1,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155350,2025-08-09,13:00,ifk-haninge,IFK Haninge,sollentuna-fk,Sollentuna FK,3,3,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155354,2025-08-09,13:00,rebro-syrianska-if,Örebro Syrianska IF,ifk-stocksund,IFK Stocksund,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155347,2025-08-08,19:00,enk-pings-sk-fk,Enköpings SK FK,athletic-eskilstuna,Athletic Eskilstuna,2,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155346,2025-08-04,19:00,vasalund,Vasalund,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155339,2025-08-03,15:00,assyriska-ff,Assyriska FF,team-tg-ff,Team TG FF,4,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155342,2025-08-03,13:00,ifk-stocksund,IFK Stocksund,fc-arlanda,FC Arlanda,2,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155340,2025-08-02,16:00,athletic-eskilstuna,Athletic Eskilstuna,ifk-haninge,IFK Haninge,3,2,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155341,2025-08-02,16:00,gefle-if-ff,Gefle IF FF,karlbergs-bk,Karlbergs BK,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155343,2025-08-02,16:00,nordic-united-fc,Nordic United FC,if-karlstad-fotboll,IF Karlstad Fotboll,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155344,2025-08-02,13:00,sollentuna-fk,Sollentuna FK,enk-pings-sk-fk,Enköpings SK FK,0,0,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155345,2025-08-02,13:00,stockholm-internazionale,Stockholm Internazionale,rebro-syrianska-if,Örebro Syrianska IF,3,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155338,2025-06-29,15:00,team-tg-ff,Team TG FF,ifk-stocksund,IFK Stocksund,2,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155333,2025-06-28,16:00,fc-arlanda,FC Arlanda,stockholm-internazionale,Stockholm Internazionale,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155335,2025-06-28,16:00,if-karlstad-fotboll,IF Karlstad Fotboll,gefle-if-ff,Gefle IF FF,2,2,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155336,2025-06-28,13:00,ifk-haninge,IFK Haninge,assyriska-ff,Assyriska FF,0,1,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155331,2025-06-27,19:00,athletic-eskilstuna,Athletic Eskilstuna,rebro-syrianska-if,Örebro Syrianska IF,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155337,2025-06-27,19:00,karlbergs-bk,Karlbergs BK,sollentuna-fk,Sollentuna FK,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155332,2025-06-25,19:00,enk-pings-sk-fk,Enköpings SK FK,vasalund,Vasalund,1,4,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155334,2025-06-25,19:00,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,nordic-united-fc,Nordic United FC,2,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155323,2025-06-22,17:00,assyriska-ff,Assyriska FF,sollentuna-fk,Sollentuna FK,0,0,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155325,2025-06-22,16:00,if-karlstad-fotboll,IF Karlstad Fotboll,athletic-eskilstuna,Athletic Eskilstuna,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155329,2025-06-22,16:00,team-tg-ff,Team TG FF,ifk-haninge,IFK Haninge,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155330,2025-06-22,16:00,rebro-syrianska-if,Örebro Syrianska IF,gefle-if-ff,Gefle IF FF,2,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155327,2025-06-21,16:00,nordic-united-fc,Nordic United FC,enk-pings-sk-fk,Enköpings SK FK,3,2,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155324,2025-06-19,19:30,fc-arlanda,FC Arlanda,karlbergs-bk,Karlbergs BK,0,1,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155326,2025-06-19,19:00,ifk-stocksund,IFK Stocksund,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,2,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155328,2025-06-19,19:00,stockholm-internazionale,Stockholm Internazionale,vasalund,Vasalund,0,0,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155315,2025-06-15,16:00,athletic-eskilstuna,Athletic Eskilstuna,fc-arlanda,FC Arlanda,1,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155320,2025-06-15,16:00,karlbergs-bk,Karlbergs BK,stockholm-internazionale,Stockholm Internazionale,0,0,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155316,2025-06-15,15:00,enk-pings-sk-fk,Enköpings SK FK,team-tg-ff,Team TG FF,2,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155322,2025-06-15,15:00,vasalund,Vasalund,rebro-syrianska-if,Örebro Syrianska IF,3,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155317,2025-06-14,16:00,gefle-if-ff,Gefle IF FF,assyriska-ff,Assyriska FF,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155318,2025-06-14,16:00,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,if-karlstad-fotboll,IF Karlstad Fotboll,3,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155319,2025-06-14,16:00,ifk-haninge,IFK Haninge,nordic-united-fc,Nordic United FC,2,2,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155321,2025-06-14,13:00,sollentuna-fk,Sollentuna FK,ifk-stocksund,IFK Stocksund,3,2,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155311,2025-06-09,19:30,nordic-united-fc,Nordic United FC,karlbergs-bk,Karlbergs BK,4,3,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155308,2025-06-08,16:00,fc-arlanda,FC Arlanda,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,1,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155309,2025-06-08,16:00,ifk-haninge,IFK Haninge,athletic-eskilstuna,Athletic Eskilstuna,9,3,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155313,2025-06-08,16:00,vasalund,Vasalund,if-karlstad-fotboll,IF Karlstad Fotboll,1,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155312,2025-06-08,14:00,team-tg-ff,Team TG FF,stockholm-internazionale,Stockholm Internazionale,1,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155310,2025-06-08,13:00,ifk-stocksund,IFK Stocksund,assyriska-ff,Assyriska FF,3,2,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155307,2025-06-07,13:00,enk-pings-sk-fk,Enköpings SK FK,gefle-if-ff,Gefle IF FF,2,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155314,2025-06-07,13:00,rebro-syrianska-if,Örebro Syrianska IF,sollentuna-fk,Sollentuna FK,2,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155303,2025-06-04,19:00,ifk-stocksund,IFK Stocksund,nordic-united-fc,Nordic United FC,1,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155302,2025-06-03,19:00,if-karlstad-fotboll,IF Karlstad Fotboll,rebro-syrianska-if,Örebro Syrianska IF,0,0,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155300,2025-06-02,19:00,gefle-if-ff,Gefle IF FF,fc-arlanda,FC Arlanda,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155305,2025-06-02,19:00,sollentuna-fk,Sollentuna FK,ifk-haninge,IFK Haninge,3,2,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155306,2025-06-02,19:00,stockholm-internazionale,Stockholm Internazionale,athletic-eskilstuna,Athletic Eskilstuna,4,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155299,2025-06-01,17:00,assyriska-ff,Assyriska FF,enk-pings-sk-fk,Enköpings SK FK,0,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155301,2025-06-01,16:00,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,vasalund,Vasalund,3,2,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155304,2025-06-01,14:00,karlbergs-bk,Karlbergs BK,team-tg-ff,Team TG FF,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155293,2025-05-29,16:00,gefle-if-ff,Gefle IF FF,stockholm-internazionale,Stockholm Internazionale,0,1,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155295,2025-05-29,16:00,if-karlstad-fotboll,IF Karlstad Fotboll,fc-arlanda,FC Arlanda,3,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155296,2025-05-29,16:00,nordic-united-fc,Nordic United FC,rebro-syrianska-if,Örebro Syrianska IF,3,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155291,2025-05-29,13:00,athletic-eskilstuna,Athletic Eskilstuna,karlbergs-bk,Karlbergs BK,0,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155294,2025-05-29,13:00,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,ifk-haninge,IFK Haninge,3,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155297,2025-05-29,13:00,team-tg-ff,Team TG FF,assyriska-ff,Assyriska FF,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155292,2025-05-28,19:00,enk-pings-sk-fk,Enköpings SK FK,ifk-stocksund,IFK Stocksund,5,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155298,2025-05-28,19:00,vasalund,Vasalund,sollentuna-fk,Sollentuna FK,4,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155283,2025-05-25,17:00,assyriska-ff,Assyriska FF,nordic-united-fc,Nordic United FC,2,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155290,2025-05-25,16:00,rebro-syrianska-if,Örebro Syrianska IF,team-tg-ff,Team TG FF,0,4,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155284,2025-05-24,16:00,athletic-eskilstuna,Athletic Eskilstuna,vasalund,Vasalund,0,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155286,2025-05-24,16:00,ifk-haninge,IFK Haninge,gefle-if-ff,Gefle IF FF,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155288,2025-05-24,16:00,sollentuna-fk,Sollentuna FK,if-karlstad-fotboll,IF Karlstad Fotboll,0,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155289,2025-05-24,13:00,stockholm-internazionale,Stockholm Internazionale,enk-pings-sk-fk,Enköpings SK FK,3,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155285,2025-05-23,19:30,fc-arlanda,FC Arlanda,ifk-stocksund,IFK Stocksund,5,3,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155287,2025-05-23,19:00,karlbergs-bk,Karlbergs BK,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155275,2025-05-18,16:00,assyriska-ff,Assyriska FF,athletic-eskilstuna,Athletic Eskilstuna,2,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155277,2025-05-18,16:00,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,rebro-syrianska-if,Örebro Syrianska IF,3,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155282,2025-05-18,14:00,vasalund,Vasalund,team-tg-ff,Team TG FF,6,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155278,2025-05-17,16:00,ifk-stocksund,IFK Stocksund,ifk-haninge,IFK Haninge,3,2,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155279,2025-05-17,16:00,karlbergs-bk,Karlbergs BK,gefle-if-ff,Gefle IF FF,0,1,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155280,2025-05-17,16:00,nordic-united-fc,Nordic United FC,stockholm-internazionale,Stockholm Internazionale,3,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155276,2025-05-17,13:00,enk-pings-sk-fk,Enköpings SK FK,if-karlstad-fotboll,IF Karlstad Fotboll,3,4,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155281,2025-05-16,19:30,fc-arlanda,FC Arlanda,sollentuna-fk,Sollentuna FK,2,2,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155269,2025-05-11,16:00,if-karlstad-fotboll,IF Karlstad Fotboll,ifk-stocksund,IFK Stocksund,4,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155272,2025-05-11,16:00,team-tg-ff,Team TG FF,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,0,1,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155274,2025-05-11,16:00,rebro-syrianska-if,Örebro Syrianska IF,assyriska-ff,Assyriska FF,1,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155273,2025-05-10,17:30,vasalund,Vasalund,nordic-united-fc,Nordic United FC,3,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155268,2025-05-10,16:00,gefle-if-ff,Gefle IF FF,athletic-eskilstuna,Athletic Eskilstuna,2,2,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155270,2025-05-10,16:00,ifk-haninge,IFK Haninge,karlbergs-bk,Karlbergs BK,0,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155271,2025-05-10,13:00,stockholm-internazionale,Stockholm Internazionale,sollentuna-fk,Sollentuna FK,4,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155267,2025-05-09,19:30,fc-arlanda,FC Arlanda,enk-pings-sk-fk,Enköpings SK FK,2,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155259,2025-05-05,19:00,assyriska-ff,Assyriska FF,vasalund,Vasalund,3,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155261,2025-05-04,16:00,gefle-if-ff,Gefle IF FF,ifk-stocksund,IFK Stocksund,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155264,2025-05-04,16:00,karlbergs-bk,Karlbergs BK,if-karlstad-fotboll,IF Karlstad Fotboll,2,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155266,2025-05-04,16:00,rebro-syrianska-if,Örebro Syrianska IF,stockholm-internazionale,Stockholm Internazionale,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155265,2025-05-04,14:00,nordic-united-fc,Nordic United FC,team-tg-ff,Team TG FF,1,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155260,2025-05-03,16:00,athletic-eskilstuna,Athletic Eskilstuna,sollentuna-fk,Sollentuna FK,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155263,2025-05-03,16:00,ifk-haninge,IFK Haninge,fc-arlanda,FC Arlanda,2,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155262,2025-05-03,13:00,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,enk-pings-sk-fk,Enköpings SK FK,0,1,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155251,2025-04-27,16:00,assyriska-ff,Assyriska FF,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,1,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155253,2025-04-27,16:00,if-karlstad-fotboll,IF Karlstad Fotboll,nordic-united-fc,Nordic United FC,2,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155258,2025-04-27,16:00,vasalund,Vasalund,fc-arlanda,FC Arlanda,0,0,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155255,2025-04-26,16:00,sollentuna-fk,Sollentuna FK,gefle-if-ff,Gefle IF FF,0,1,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155257,2025-04-26,16:00,team-tg-ff,Team TG FF,athletic-eskilstuna,Athletic Eskilstuna,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155252,2025-04-26,13:00,enk-pings-sk-fk,Enköpings SK FK,rebro-syrianska-if,Örebro Syrianska IF,1,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155256,2025-04-26,13:00,stockholm-internazionale,Stockholm Internazionale,ifk-haninge,IFK Haninge,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155254,2025-04-25,19:30,ifk-stocksund,IFK Stocksund,karlbergs-bk,Karlbergs BK,0,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155249,2025-04-20,14:00,sollentuna-fk,Sollentuna FK,team-tg-ff,Team TG FF,1,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155243,2025-04-19,16:00,athletic-eskilstuna,Athletic Eskilstuna,nordic-united-fc,Nordic United FC,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155244,2025-04-19,16:00,fc-arlanda,FC Arlanda,assyriska-ff,Assyriska FF,0,0,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155250,2025-04-19,13:00,stockholm-internazionale,Stockholm Internazionale,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,2,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155245,2025-04-18,16:00,gefle-if-ff,Gefle IF FF,vasalund,Vasalund,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155246,2025-04-18,16:00,ifk-haninge,IFK Haninge,if-karlstad-fotboll,IF Karlstad Fotboll,2,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155247,2025-04-18,13:00,ifk-stocksund,IFK Stocksund,rebro-syrianska-if,Örebro Syrianska IF,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155248,2025-04-18,13:00,karlbergs-bk,Karlbergs BK,enk-pings-sk-fk,Enköpings SK FK,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155235,2025-04-13,16:00,assyriska-ff,Assyriska FF,karlbergs-bk,Karlbergs BK,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155238,2025-04-13,16:00,if-karlstad-fotboll,IF Karlstad Fotboll,stockholm-internazionale,Stockholm Internazionale,0,1,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155240,2025-04-13,16:00,team-tg-ff,Team TG FF,fc-arlanda,FC Arlanda,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155241,2025-04-13,16:00,vasalund,Vasalund,ifk-stocksund,IFK Stocksund,3,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155239,2025-04-12,16:00,nordic-united-fc,Nordic United FC,gefle-if-ff,Gefle IF FF,3,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155236,2025-04-12,13:00,enk-pings-sk-fk,Enköpings SK FK,sollentuna-fk,Sollentuna FK,2,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155242,2025-04-12,13:00,rebro-syrianska-if,Örebro Syrianska IF,ifk-haninge,IFK Haninge,1,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155237,2025-04-11,19:00,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,athletic-eskilstuna,Athletic Eskilstuna,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155229,2025-04-05,18:00,gefle-if-ff,Gefle IF FF,team-tg-ff,Team TG FF,1,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155228,2025-04-05,16:00,fc-arlanda,FC Arlanda,nordic-united-fc,Nordic United FC,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155230,2025-04-05,16:00,if-karlstad-fotboll,IF Karlstad Fotboll,assyriska-ff,Assyriska FF,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155231,2025-04-05,16:00,ifk-haninge,IFK Haninge,vasalund,Vasalund,5,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155232,2025-04-05,13:00,karlbergs-bk,Karlbergs BK,rebro-syrianska-if,Örebro Syrianska IF,4,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155234,2025-04-05,13:00,stockholm-internazionale,Stockholm Internazionale,ifk-stocksund,IFK Stocksund,5,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155227,2025-04-04,19:00,athletic-eskilstuna,Athletic Eskilstuna,enk-pings-sk-fk,Enköpings SK FK,2,1,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155233,2025-04-04,19:00,sollentuna-fk,Sollentuna FK,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,2,3,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155219,2025-03-30,16:00,assyriska-ff,Assyriska FF,stockholm-internazionale,Stockholm Internazionale,1,1,,,Played,D,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155225,2025-03-30,16:00,vasalund,Vasalund,karlbergs-bk,Karlbergs BK,2,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155224,2025-03-30,13:00,team-tg-ff,Team TG FF,if-karlstad-fotboll,IF Karlstad Fotboll,1,4,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155221,2025-03-29,16:00,hammarby-tff-herrfotboll,Hammarby TFF Herrfotboll,gefle-if-ff,Gefle IF FF,2,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155223,2025-03-29,16:00,nordic-united-fc,Nordic United FC,sollentuna-fk,Sollentuna FK,2,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155222,2025-03-29,13:00,ifk-stocksund,IFK Stocksund,athletic-eskilstuna,Athletic Eskilstuna,1,2,,,Played,A,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155226,2025-03-29,13:00,rebro-syrianska-if,Örebro Syrianska IF,fc-arlanda,FC Arlanda,1,0,,,Played,H,SWE
+2025,SW-EN,Ettan Norra,123861,1,-,,6155220,2025-03-28,19:00,enk-pings-sk-fk,Enköpings SK FK,ifk-haninge,IFK Haninge,0,0,,,Played,D,SWE

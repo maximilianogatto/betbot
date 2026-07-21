@@ -1,0 +1,183 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2025,SW-EE,Elitettan,123859,1,-,,6150150,2025-11-15,15:00,eskilstuna-united-dff,Eskilstuna United DFF,mallbackens-if-sunne,Mallbackens IF Sunne,3,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150151,2025-11-15,15:00,if-elfsborg,IF Elfsborg,ume-ik-ff,Umeå IK FF,1,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150152,2025-11-15,15:00,ik-uppsala-fotboll,IK Uppsala Fotboll,bk-h-cken,BK Häcken,5,2,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150153,2025-11-15,15:00,jitex-bk,Jitex BK,rebro-sk-fk,Örebro SK FK,1,4,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150154,2025-11-15,15:00,kif-rebro-dff,KIF Örebro DFF,sunnan-sk,Sunnanå SK,5,4,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150155,2025-11-15,15:00,team-tg-ff,Team TG FF,gamla-upsala-sk,Gamla Upsala SK,2,2,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150156,2025-11-15,15:00,trelleborgs-ff,Trelleborgs FF,bollstan-s-sk,Bollstanäs SK,3,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150149,2025-11-08,16:00,rebro-sk-fk,Örebro SK FK,ik-uppsala-fotboll,IK Uppsala Fotboll,1,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150146,2025-11-08,15:00,mallbackens-if-sunne,Mallbackens IF Sunne,jitex-bk,Jitex BK,0,4,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150143,2025-11-08,14:00,bk-h-cken,BK Häcken,team-tg-ff,Team TG FF,1,1,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150145,2025-11-08,14:00,gamla-upsala-sk,Gamla Upsala SK,eskilstuna-united-dff,Eskilstuna United DFF,1,5,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150147,2025-11-08,14:00,sunnan-sk,Sunnanå SK,if-elfsborg,IF Elfsborg,1,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150144,2025-11-08,13:00,bollstan-s-sk,Bollstanäs SK,kif-rebro-dff,KIF Örebro DFF,1,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150148,2025-11-08,13:00,ume-ik-ff,Umeå IK FF,trelleborgs-ff,Trelleborgs FF,3,2,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150139,2025-11-02,12:00,jitex-bk,Jitex BK,sunnan-sk,Sunnanå SK,4,3,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150141,2025-11-02,12:00,team-tg-ff,Team TG FF,rebro-sk-fk,Örebro SK FK,0,1,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150142,2025-11-01,15:00,trelleborgs-ff,Trelleborgs FF,mallbackens-if-sunne,Mallbackens IF Sunne,4,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150137,2025-11-01,14:00,bollstan-s-sk,Bollstanäs SK,gamla-upsala-sk,Gamla Upsala SK,2,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150138,2025-11-01,13:00,ik-uppsala-fotboll,IK Uppsala Fotboll,ume-ik-ff,Umeå IK FF,2,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150140,2025-11-01,13:00,kif-rebro-dff,KIF Örebro DFF,eskilstuna-united-dff,Eskilstuna United DFF,0,5,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150136,2025-10-31,18:00,bk-h-cken,BK Häcken,if-elfsborg,IF Elfsborg,0,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150133,2025-10-19,14:00,sunnan-sk,Sunnanå SK,bollstan-s-sk,Bollstanäs SK,1,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150131,2025-10-18,16:00,if-elfsborg,IF Elfsborg,team-tg-ff,Team TG FF,1,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150132,2025-10-18,16:00,mallbackens-if-sunne,Mallbackens IF Sunne,kif-rebro-dff,KIF Örebro DFF,2,5,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150129,2025-10-18,15:00,eskilstuna-united-dff,Eskilstuna United DFF,trelleborgs-ff,Trelleborgs FF,2,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150135,2025-10-18,14:00,rebro-sk-fk,Örebro SK FK,bk-h-cken,BK Häcken,3,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150130,2025-10-18,13:00,gamla-upsala-sk,Gamla Upsala SK,ik-uppsala-fotboll,IK Uppsala Fotboll,0,5,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150134,2025-10-18,13:00,ume-ik-ff,Umeå IK FF,jitex-bk,Jitex BK,3,3,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150128,2025-10-12,13:00,ume-ik-ff,Umeå IK FF,mallbackens-if-sunne,Mallbackens IF Sunne,0,0,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150122,2025-10-11,17:00,bk-h-cken,BK Häcken,sunnan-sk,Sunnanå SK,1,1,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150124,2025-10-11,14:00,ik-uppsala-fotboll,IK Uppsala Fotboll,if-elfsborg,IF Elfsborg,1,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150123,2025-10-11,13:00,bollstan-s-sk,Bollstanäs SK,eskilstuna-united-dff,Eskilstuna United DFF,1,4,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150125,2025-10-11,13:00,rebro-sk-fk,Örebro SK FK,kif-rebro-dff,KIF Örebro DFF,2,3,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150126,2025-10-11,13:00,team-tg-ff,Team TG FF,jitex-bk,Jitex BK,0,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150127,2025-10-11,12:00,trelleborgs-ff,Trelleborgs FF,gamla-upsala-sk,Gamla Upsala SK,3,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150115,2025-10-05,16:00,eskilstuna-united-dff,Eskilstuna United DFF,ik-uppsala-fotboll,IK Uppsala Fotboll,3,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150120,2025-10-05,13:00,team-tg-ff,Team TG FF,ume-ik-ff,Umeå IK FF,1,7,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150119,2025-10-05,12:00,sunnan-sk,Sunnanå SK,trelleborgs-ff,Trelleborgs FF,2,3,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150118,2025-10-04,16:00,mallbackens-if-sunne,Mallbackens IF Sunne,gamla-upsala-sk,Gamla Upsala SK,1,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150116,2025-10-04,13:00,if-elfsborg,IF Elfsborg,kif-rebro-dff,KIF Örebro DFF,1,1,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150121,2025-10-04,13:00,rebro-sk-fk,Örebro SK FK,bollstan-s-sk,Bollstanäs SK,3,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150117,2025-10-03,19:00,jitex-bk,Jitex BK,bk-h-cken,BK Häcken,3,3,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150110,2025-09-28,15:00,ik-uppsala-fotboll,IK Uppsala Fotboll,sunnan-sk,Sunnanå SK,3,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150113,2025-09-28,14:00,ume-ik-ff,Umeå IK FF,eskilstuna-united-dff,Eskilstuna United DFF,1,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150112,2025-09-27,16:00,trelleborgs-ff,Trelleborgs FF,jitex-bk,Jitex BK,4,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150109,2025-09-27,14:00,gamla-upsala-sk,Gamla Upsala SK,bk-h-cken,BK Häcken,1,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150108,2025-09-27,13:00,bollstan-s-sk,Bollstanäs SK,if-elfsborg,IF Elfsborg,3,2,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150111,2025-09-27,13:00,kif-rebro-dff,KIF Örebro DFF,team-tg-ff,Team TG FF,5,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150114,2025-09-26,19:00,rebro-sk-fk,Örebro SK FK,mallbackens-if-sunne,Mallbackens IF Sunne,4,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150037,2025-09-24,19:00,ume-ik-ff,Umeå IK FF,kif-rebro-dff,KIF Örebro DFF,2,2,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150102,2025-09-21,16:00,eskilstuna-united-dff,Eskilstuna United DFF,rebro-sk-fk,Örebro SK FK,2,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150106,2025-09-21,13:00,mallbackens-if-sunne,Mallbackens IF Sunne,sunnan-sk,Sunnanå SK,1,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150101,2025-09-20,16:00,bk-h-cken,BK Häcken,trelleborgs-ff,Trelleborgs FF,0,4,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150104,2025-09-20,16:00,jitex-bk,Jitex BK,bollstan-s-sk,Bollstanäs SK,2,2,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150105,2025-09-20,13:00,kif-rebro-dff,KIF Örebro DFF,ume-ik-ff,Umeå IK FF,0,0,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150107,2025-09-20,13:00,team-tg-ff,Team TG FF,ik-uppsala-fotboll,IK Uppsala Fotboll,0,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150103,2025-09-20,12:30,if-elfsborg,IF Elfsborg,gamla-upsala-sk,Gamla Upsala SK,2,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150097,2025-09-14,13:00,sunnan-sk,Sunnanå SK,eskilstuna-united-dff,Eskilstuna United DFF,0,0,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150095,2025-09-13,18:00,ik-uppsala-fotboll,IK Uppsala Fotboll,bollstan-s-sk,Bollstanäs SK,6,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150098,2025-09-13,15:00,trelleborgs-ff,Trelleborgs FF,kif-rebro-dff,KIF Örebro DFF,0,0,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150099,2025-09-13,15:00,ume-ik-ff,Umeå IK FF,bk-h-cken,BK Häcken,2,2,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150094,2025-09-13,13:00,gamla-upsala-sk,Gamla Upsala SK,jitex-bk,Jitex BK,1,1,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150096,2025-09-13,13:00,mallbackens-if-sunne,Mallbackens IF Sunne,team-tg-ff,Team TG FF,0,1,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150100,2025-09-13,13:00,rebro-sk-fk,Örebro SK FK,if-elfsborg,IF Elfsborg,0,1,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150093,2025-09-07,16:00,rebro-sk-fk,Örebro SK FK,sunnan-sk,Sunnanå SK,3,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150089,2025-09-06,16:00,if-elfsborg,IF Elfsborg,eskilstuna-united-dff,Eskilstuna United DFF,0,1,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150087,2025-09-06,14:00,bk-h-cken,BK Häcken,mallbackens-if-sunne,Mallbackens IF Sunne,3,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150090,2025-09-06,14:00,jitex-bk,Jitex BK,ik-uppsala-fotboll,IK Uppsala Fotboll,1,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150088,2025-09-06,13:00,bollstan-s-sk,Bollstanäs SK,ume-ik-ff,Umeå IK FF,1,1,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150091,2025-09-06,13:00,kif-rebro-dff,KIF Örebro DFF,gamla-upsala-sk,Gamla Upsala SK,4,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150092,2025-09-06,12:00,team-tg-ff,Team TG FF,trelleborgs-ff,Trelleborgs FF,1,1,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150086,2025-08-31,16:00,sunnan-sk,Sunnanå SK,ume-ik-ff,Umeå IK FF,1,1,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150082,2025-08-31,14:00,gamla-upsala-sk,Gamla Upsala SK,rebro-sk-fk,Örebro SK FK,0,1,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150081,2025-08-30,15:00,eskilstuna-united-dff,Eskilstuna United DFF,jitex-bk,Jitex BK,3,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150083,2025-08-30,15:00,if-elfsborg,IF Elfsborg,trelleborgs-ff,Trelleborgs FF,2,2,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150084,2025-08-30,14:00,ik-uppsala-fotboll,IK Uppsala Fotboll,mallbackens-if-sunne,Mallbackens IF Sunne,6,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150080,2025-08-30,13:00,bollstan-s-sk,Bollstanäs SK,team-tg-ff,Team TG FF,2,4,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150085,2025-08-30,13:00,kif-rebro-dff,KIF Örebro DFF,bk-h-cken,BK Häcken,4,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150036,2025-08-27,19:00,team-tg-ff,Team TG FF,bk-h-cken,BK Häcken,0,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150079,2025-08-24,12:00,ume-ik-ff,Umeå IK FF,rebro-sk-fk,Örebro SK FK,1,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150073,2025-08-23,15:00,bk-h-cken,BK Häcken,bollstan-s-sk,Bollstanäs SK,2,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150078,2025-08-23,15:00,trelleborgs-ff,Trelleborgs FF,ik-uppsala-fotboll,IK Uppsala Fotboll,0,1,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150074,2025-08-23,14:00,gamla-upsala-sk,Gamla Upsala SK,sunnan-sk,Sunnanå SK,1,1,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150075,2025-08-23,14:00,jitex-bk,Jitex BK,kif-rebro-dff,KIF Örebro DFF,2,3,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150076,2025-08-23,13:00,if-elfsborg,IF Elfsborg,mallbackens-if-sunne,Mallbackens IF Sunne,0,1,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150077,2025-08-23,13:00,team-tg-ff,Team TG FF,eskilstuna-united-dff,Eskilstuna United DFF,0,1,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150066,2025-08-17,16:00,eskilstuna-united-dff,Eskilstuna United DFF,bk-h-cken,BK Häcken,4,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150071,2025-08-17,12:00,ume-ik-ff,Umeå IK FF,gamla-upsala-sk,Gamla Upsala SK,4,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150068,2025-08-16,14:00,ik-uppsala-fotboll,IK Uppsala Fotboll,kif-rebro-dff,KIF Örebro DFF,0,4,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150069,2025-08-16,14:00,mallbackens-if-sunne,Mallbackens IF Sunne,bollstan-s-sk,Bollstanäs SK,2,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150072,2025-08-16,13:00,rebro-sk-fk,Örebro SK FK,trelleborgs-ff,Trelleborgs FF,1,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150070,2025-08-15,19:00,sunnan-sk,Sunnanå SK,team-tg-ff,Team TG FF,2,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150067,2025-08-15,18:00,if-elfsborg,IF Elfsborg,jitex-bk,Jitex BK,3,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150043,2025-08-13,18:00,trelleborgs-ff,Trelleborgs FF,eskilstuna-united-dff,Eskilstuna United DFF,2,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150061,2025-08-09,16:00,eskilstuna-united-dff,Eskilstuna United DFF,if-elfsborg,IF Elfsborg,2,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150060,2025-08-09,15:00,bollstan-s-sk,Bollstanäs SK,ik-uppsala-fotboll,IK Uppsala Fotboll,0,4,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150059,2025-08-09,14:00,bk-h-cken,BK Häcken,rebro-sk-fk,Örebro SK FK,0,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150062,2025-08-09,13:00,gamla-upsala-sk,Gamla Upsala SK,team-tg-ff,Team TG FF,1,3,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150063,2025-08-09,13:00,jitex-bk,Jitex BK,ume-ik-ff,Umeå IK FF,0,4,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150064,2025-08-09,12:00,kif-rebro-dff,KIF Örebro DFF,mallbackens-if-sunne,Mallbackens IF Sunne,1,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150065,2025-08-09,12:00,trelleborgs-ff,Trelleborgs FF,sunnan-sk,Sunnanå SK,4,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150055,2025-08-03,14:00,sunnan-sk,Sunnanå SK,ik-uppsala-fotboll,IK Uppsala Fotboll,0,1,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150056,2025-08-03,13:00,team-tg-ff,Team TG FF,kif-rebro-dff,KIF Örebro DFF,0,6,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150053,2025-08-02,15:00,jitex-bk,Jitex BK,eskilstuna-united-dff,Eskilstuna United DFF,1,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150054,2025-08-02,14:00,mallbackens-if-sunne,Mallbackens IF Sunne,trelleborgs-ff,Trelleborgs FF,0,3,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150057,2025-08-02,13:00,ume-ik-ff,Umeå IK FF,bollstan-s-sk,Bollstanäs SK,3,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150058,2025-08-02,13:00,rebro-sk-fk,Örebro SK FK,gamla-upsala-sk,Gamla Upsala SK,1,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150052,2025-08-01,18:00,if-elfsborg,IF Elfsborg,bk-h-cken,BK Häcken,0,1,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150051,2025-07-27,15:00,trelleborgs-ff,Trelleborgs FF,rebro-sk-fk,Örebro SK FK,1,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150046,2025-07-27,14:00,eskilstuna-united-dff,Eskilstuna United DFF,ume-ik-ff,Umeå IK FF,0,1,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150047,2025-07-27,14:00,gamla-upsala-sk,Gamla Upsala SK,mallbackens-if-sunne,Mallbackens IF Sunne,6,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150050,2025-07-27,14:00,sunnan-sk,Sunnanå SK,bk-h-cken,BK Häcken,1,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150045,2025-07-26,13:00,bollstan-s-sk,Bollstanäs SK,jitex-bk,Jitex BK,0,3,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150048,2025-07-26,13:00,ik-uppsala-fotboll,IK Uppsala Fotboll,team-tg-ff,Team TG FF,1,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150049,2025-07-26,13:00,kif-rebro-dff,KIF Örebro DFF,if-elfsborg,IF Elfsborg,2,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150040,2025-06-22,16:00,if-elfsborg,IF Elfsborg,sunnan-sk,Sunnanå SK,3,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150044,2025-06-22,12:00,rebro-sk-fk,Örebro SK FK,ume-ik-ff,Umeå IK FF,1,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150042,2025-06-19,18:30,mallbackens-if-sunne,Mallbackens IF Sunne,ik-uppsala-fotboll,IK Uppsala Fotboll,0,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150039,2025-06-18,18:30,gamla-upsala-sk,Gamla Upsala SK,bollstan-s-sk,Bollstanäs SK,1,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150041,2025-06-18,15:00,jitex-bk,Jitex BK,team-tg-ff,Team TG FF,5,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150031,2025-06-14,15:00,bollstan-s-sk,Bollstanäs SK,rebro-sk-fk,Örebro SK FK,0,0,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150032,2025-06-14,15:00,eskilstuna-united-dff,Eskilstuna United DFF,gamla-upsala-sk,Gamla Upsala SK,4,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150034,2025-06-14,15:00,jitex-bk,Jitex BK,if-elfsborg,IF Elfsborg,2,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150035,2025-06-14,13:00,sunnan-sk,Sunnanå SK,mallbackens-if-sunne,Mallbackens IF Sunne,0,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150033,2025-06-11,19:00,ik-uppsala-fotboll,IK Uppsala Fotboll,trelleborgs-ff,Trelleborgs FF,4,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150038,2025-06-11,19:00,bk-h-cken,BK Häcken,kif-rebro-dff,KIF Örebro DFF,0,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150030,2025-06-08,16:00,trelleborgs-ff,Trelleborgs FF,team-tg-ff,Team TG FF,3,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150025,2025-06-08,15:00,bollstan-s-sk,Bollstanäs SK,sunnan-sk,Sunnanå SK,0,0,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150028,2025-06-08,14:00,ik-uppsala-fotboll,IK Uppsala Fotboll,rebro-sk-fk,Örebro SK FK,3,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150024,2025-06-07,14:00,bk-h-cken,BK Häcken,eskilstuna-united-dff,Eskilstuna United DFF,1,4,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150026,2025-06-07,13:00,gamla-upsala-sk,Gamla Upsala SK,ume-ik-ff,Umeå IK FF,0,5,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150027,2025-06-07,13:00,mallbackens-if-sunne,Mallbackens IF Sunne,if-elfsborg,IF Elfsborg,1,6,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150029,2025-06-06,14:00,kif-rebro-dff,KIF Örebro DFF,jitex-bk,Jitex BK,2,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150017,2025-05-25,14:00,eskilstuna-united-dff,Eskilstuna United DFF,team-tg-ff,Team TG FF,5,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150021,2025-05-25,13:00,sunnan-sk,Sunnanå SK,gamla-upsala-sk,Gamla Upsala SK,2,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150018,2025-05-24,16:00,if-elfsborg,IF Elfsborg,bollstan-s-sk,Bollstanäs SK,2,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150019,2025-05-24,15:00,jitex-bk,Jitex BK,trelleborgs-ff,Trelleborgs FF,1,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150020,2025-05-24,15:00,mallbackens-if-sunne,Mallbackens IF Sunne,bk-h-cken,BK Häcken,1,1,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150022,2025-05-24,13:00,ume-ik-ff,Umeå IK FF,ik-uppsala-fotboll,IK Uppsala Fotboll,2,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150023,2025-05-24,13:00,kif-rebro-dff,KIF Örebro DFF,rebro-sk-fk,Örebro SK FK,3,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150015,2025-05-18,16:30,ume-ik-ff,Umeå IK FF,sunnan-sk,Sunnanå SK,3,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150012,2025-05-18,15:00,eskilstuna-united-dff,Eskilstuna United DFF,kif-rebro-dff,KIF Örebro DFF,2,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150016,2025-05-18,14:00,rebro-sk-fk,Örebro SK FK,jitex-bk,Jitex BK,1,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150014,2025-05-18,13:00,team-tg-ff,Team TG FF,mallbackens-if-sunne,Mallbackens IF Sunne,1,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150011,2025-05-17,15:00,bollstan-s-sk,Bollstanäs SK,trelleborgs-ff,Trelleborgs FF,1,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150010,2025-05-17,14:00,bk-h-cken,BK Häcken,ik-uppsala-fotboll,IK Uppsala Fotboll,0,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150013,2025-05-17,14:00,gamla-upsala-sk,Gamla Upsala SK,if-elfsborg,IF Elfsborg,2,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150005,2025-05-11,13:00,ik-uppsala-fotboll,IK Uppsala Fotboll,jitex-bk,Jitex BK,3,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150003,2025-05-10,14:00,bk-h-cken,BK Häcken,gamla-upsala-sk,Gamla Upsala SK,5,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150007,2025-05-10,14:00,mallbackens-if-sunne,Mallbackens IF Sunne,eskilstuna-united-dff,Eskilstuna United DFF,1,1,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150004,2025-05-10,13:00,if-elfsborg,IF Elfsborg,rebro-sk-fk,Örebro SK FK,2,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150006,2025-05-10,13:00,kif-rebro-dff,KIF Örebro DFF,bollstan-s-sk,Bollstanäs SK,2,3,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150009,2025-05-10,12:00,trelleborgs-ff,Trelleborgs FF,ume-ik-ff,Umeå IK FF,0,1,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150008,2025-05-09,19:00,team-tg-ff,Team TG FF,sunnan-sk,Sunnanå SK,0,1,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149996,2025-05-04,15:00,bollstan-s-sk,Bollstanäs SK,bk-h-cken,BK Häcken,0,0,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150000,2025-05-04,15:00,trelleborgs-ff,Trelleborgs FF,if-elfsborg,IF Elfsborg,3,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150002,2025-05-04,13:00,rebro-sk-fk,Örebro SK FK,eskilstuna-united-dff,Eskilstuna United DFF,1,5,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149999,2025-05-04,12:00,sunnan-sk,Sunnanå SK,kif-rebro-dff,KIF Örebro DFF,1,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149997,2025-05-03,14:00,ik-uppsala-fotboll,IK Uppsala Fotboll,gamla-upsala-sk,Gamla Upsala SK,2,2,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149998,2025-05-01,15:00,jitex-bk,Jitex BK,mallbackens-if-sunne,Mallbackens IF Sunne,4,3,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6150001,2025-05-01,13:00,ume-ik-ff,Umeå IK FF,team-tg-ff,Team TG FF,2,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149994,2025-04-27,13:00,sunnan-sk,Sunnanå SK,rebro-sk-fk,Örebro SK FK,2,3,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149990,2025-04-26,16:00,eskilstuna-united-dff,Eskilstuna United DFF,bollstan-s-sk,Bollstanäs SK,3,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149991,2025-04-26,14:00,gamla-upsala-sk,Gamla Upsala SK,trelleborgs-ff,Trelleborgs FF,1,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149993,2025-04-26,13:00,mallbackens-if-sunne,Mallbackens IF Sunne,ume-ik-ff,Umeå IK FF,2,2,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149995,2025-04-26,12:00,team-tg-ff,Team TG FF,if-elfsborg,IF Elfsborg,1,4,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149989,2025-04-25,19:00,bk-h-cken,BK Häcken,jitex-bk,Jitex BK,0,1,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149992,2025-04-25,18:00,kif-rebro-dff,KIF Örebro DFF,ik-uppsala-fotboll,IK Uppsala Fotboll,1,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149983,2025-04-21,14:00,eskilstuna-united-dff,Eskilstuna United DFF,sunnan-sk,Sunnanå SK,2,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149982,2025-04-20,12:00,bk-h-cken,BK Häcken,ume-ik-ff,Umeå IK FF,1,1,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149986,2025-04-19,15:00,kif-rebro-dff,KIF Örebro DFF,trelleborgs-ff,Trelleborgs FF,1,2,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149984,2025-04-18,17:00,if-elfsborg,IF Elfsborg,ik-uppsala-fotboll,IK Uppsala Fotboll,2,2,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149987,2025-04-18,14:00,mallbackens-if-sunne,Mallbackens IF Sunne,rebro-sk-fk,Örebro SK FK,1,1,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149985,2025-04-18,13:00,jitex-bk,Jitex BK,gamla-upsala-sk,Gamla Upsala SK,4,3,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149988,2025-04-18,12:30,team-tg-ff,Team TG FF,bollstan-s-sk,Bollstanäs SK,2,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149981,2025-04-13,13:00,rebro-sk-fk,Örebro SK FK,team-tg-ff,Team TG FF,2,2,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149980,2025-04-13,12:30,ume-ik-ff,Umeå IK FF,if-elfsborg,IF Elfsborg,2,1,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149979,2025-04-12,15:00,trelleborgs-ff,Trelleborgs FF,bk-h-cken,BK Häcken,3,0,,,Played,H,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149975,2025-04-12,14:00,bollstan-s-sk,Bollstanäs SK,mallbackens-if-sunne,Mallbackens IF Sunne,2,2,,,Played,D,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149976,2025-04-12,14:00,gamla-upsala-sk,Gamla Upsala SK,kif-rebro-dff,KIF Örebro DFF,2,5,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149978,2025-04-12,13:00,sunnan-sk,Sunnanå SK,jitex-bk,Jitex BK,0,1,,,Played,A,SWE
+2025,SW-EE,Elitettan,123859,1,-,,6149977,2025-04-11,19:00,ik-uppsala-fotboll,IK Uppsala Fotboll,eskilstuna-united-dff,Eskilstuna United DFF,4,1,,,Played,H,SWE

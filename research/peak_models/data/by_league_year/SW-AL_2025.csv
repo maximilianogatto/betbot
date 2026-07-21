@@ -1,0 +1,241 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2025,SW-AL,Allsvenskan,123864,1,-,,6143385,2025-11-09,15:00,aik,AIK,halmstad,Halmstad,0,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143386,2025-11-09,15:00,hammarby,Hammarby,if-elfsborg,IF Elfsborg,3,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143387,2025-11-09,15:00,if-brommapojkarna,IF Brommapojkarna,degerfors-if,Degerfors IF,1,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143388,2025-11-09,15:00,ifk-g-teborg,IFK Göteborg,ifk-norrk-ping-fk,IFK Norrköping FK,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143389,2025-11-09,15:00,sters-if,Östers IF,djurg-rden,Djurgården,1,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143390,2025-11-09,15:00,malm-ff,Malmö FF,gais,GAIS,2,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143391,2025-11-09,15:00,mj-llby-aif,Mjällby AIF,bk-h-cken,BK Häcken,1,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143392,2025-11-09,15:00,ik-sirius-fk,IK Sirius FK,ifk-v-rnamo,IFK Värnamo,3,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143383,2025-11-03,19:00,degerfors-if,Degerfors IF,hammarby,Hammarby,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143384,2025-11-03,19:00,ifk-v-rnamo,IFK Värnamo,mj-llby-aif,Mjällby AIF,0,5,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143377,2025-11-02,16:30,djurg-rden,Djurgården,ifk-g-teborg,IFK Göteborg,0,0,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143379,2025-11-02,16:30,gais,GAIS,sters-if,Östers IF,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143378,2025-11-02,14:00,if-elfsborg,IF Elfsborg,aik,AIK,0,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143382,2025-11-02,14:00,halmstad,Halmstad,if-brommapojkarna,IF Brommapojkarna,0,0,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143381,2025-11-01,17:30,ifk-norrk-ping-fk,IFK Norrköping FK,ik-sirius-fk,IK Sirius FK,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143380,2025-11-01,15:00,bk-h-cken,BK Häcken,malm-ff,Malmö FF,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143373,2025-10-27,19:10,malm-ff,Malmö FF,hammarby,Hammarby,1,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143371,2025-10-27,19:00,if-brommapojkarna,IF Brommapojkarna,gais,GAIS,0,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143369,2025-10-26,16:30,aik,AIK,bk-h-cken,BK Häcken,2,2,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143376,2025-10-26,16:30,halmstad,Halmstad,ifk-g-teborg,IFK Göteborg,0,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143374,2025-10-26,14:00,mj-llby-aif,Mjällby AIF,ifk-norrk-ping-fk,IFK Norrköping FK,2,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143375,2025-10-26,14:00,ik-sirius-fk,IK Sirius FK,if-elfsborg,IF Elfsborg,4,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143372,2025-10-25,17:30,sters-if,Östers IF,degerfors-if,Degerfors IF,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143370,2025-10-25,15:00,djurg-rden,Djurgården,ifk-v-rnamo,IFK Värnamo,6,2,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143364,2025-10-20,19:10,ifk-g-teborg,IFK Göteborg,mj-llby-aif,Mjällby AIF,0,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143367,2025-10-20,19:00,degerfors-if,Degerfors IF,halmstad,Halmstad,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143362,2025-10-19,16:30,if-elfsborg,IF Elfsborg,sters-if,Östers IF,5,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143368,2025-10-19,16:30,ifk-v-rnamo,IFK Värnamo,if-brommapojkarna,IF Brommapojkarna,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143361,2025-10-19,14:00,hammarby,Hammarby,aik,AIK,2,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143363,2025-10-19,14:00,gais,GAIS,djurg-rden,Djurgården,3,2,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143365,2025-10-18,17:30,bk-h-cken,BK Häcken,ik-sirius-fk,IK Sirius FK,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143366,2025-10-18,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,malm-ff,Malmö FF,0,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143354,2025-10-05,16:30,if-brommapojkarna,IF Brommapojkarna,bk-h-cken,BK Häcken,1,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143359,2025-10-05,16:30,ik-sirius-fk,IK Sirius FK,malm-ff,Malmö FF,5,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143353,2025-10-05,14:00,aik,AIK,ifk-v-rnamo,IFK Värnamo,2,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143356,2025-10-05,14:00,ifk-g-teborg,IFK Göteborg,hammarby,Hammarby,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143355,2025-10-04,17:30,gais,GAIS,ifk-norrk-ping-fk,IFK Norrköping FK,2,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143357,2025-10-04,15:00,sters-if,Östers IF,halmstad,Halmstad,3,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143358,2025-10-04,15:00,mj-llby-aif,Mjällby AIF,if-elfsborg,IF Elfsborg,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143360,2025-10-04,15:00,degerfors-if,Degerfors IF,djurg-rden,Djurgården,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143350,2025-09-29,19:10,sters-if,Östers IF,ifk-g-teborg,IFK Göteborg,0,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143346,2025-09-29,19:00,djurg-rden,Djurgården,ik-sirius-fk,IK Sirius FK,8,2,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143345,2025-09-28,16:30,aik,AIK,gais,GAIS,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143351,2025-09-28,16:30,malm-ff,Malmö FF,ifk-v-rnamo,IFK Värnamo,3,2,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143347,2025-09-28,14:00,if-brommapojkarna,IF Brommapojkarna,mj-llby-aif,Mjällby AIF,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143352,2025-09-28,14:00,halmstad,Halmstad,hammarby,Hammarby,1,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143349,2025-09-27,17:30,bk-h-cken,BK Häcken,ifk-norrk-ping-fk,IFK Norrköping FK,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143348,2025-09-27,15:00,if-elfsborg,IF Elfsborg,degerfors-if,Degerfors IF,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143342,2025-09-22,19:10,ifk-norrk-ping-fk,IFK Norrköping FK,aik,AIK,3,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143344,2025-09-22,19:00,ifk-v-rnamo,IFK Värnamo,halmstad,Halmstad,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143343,2025-09-21,16:30,ik-sirius-fk,IK Sirius FK,degerfors-if,Degerfors IF,1,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143337,2025-09-21,14:00,hammarby,Hammarby,bk-h-cken,BK Häcken,4,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143339,2025-09-21,14:00,ifk-g-teborg,IFK Göteborg,if-brommapojkarna,IF Brommapojkarna,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143341,2025-09-20,17:30,mj-llby-aif,Mjällby AIF,sters-if,Östers IF,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143338,2025-09-20,15:00,gais,GAIS,if-elfsborg,IF Elfsborg,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143340,2025-09-20,15:00,malm-ff,Malmö FF,djurg-rden,Djurgården,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143332,2025-09-15,19:10,bk-h-cken,BK Häcken,ifk-g-teborg,IFK Göteborg,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143329,2025-09-15,19:00,aik,AIK,if-brommapojkarna,IF Brommapojkarna,2,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143331,2025-09-14,16:30,if-elfsborg,IF Elfsborg,malm-ff,Malmö FF,2,2,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143334,2025-09-14,16:30,ik-sirius-fk,IK Sirius FK,gais,GAIS,3,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143333,2025-09-14,15:00,sters-if,Östers IF,ifk-v-rnamo,IFK Värnamo,4,3,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143330,2025-09-14,14:00,djurg-rden,Djurgården,hammarby,Hammarby,3,3,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143335,2025-09-13,17:30,halmstad,Halmstad,ifk-norrk-ping-fk,IFK Norrköping FK,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143336,2025-09-13,15:00,degerfors-if,Degerfors IF,mj-llby-aif,Mjällby AIF,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143322,2025-08-31,16:30,hammarby,Hammarby,sters-if,Östers IF,4,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143324,2025-08-31,16:30,gais,GAIS,bk-h-cken,BK Häcken,2,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143321,2025-08-31,14:00,aik,AIK,ik-sirius-fk,IK Sirius FK,2,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143326,2025-08-31,14:00,malm-ff,Malmö FF,degerfors-if,Degerfors IF,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143328,2025-08-31,14:00,ifk-norrk-ping-fk,IFK Norrköping FK,djurg-rden,Djurgården,0,4,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143327,2025-08-30,17:30,mj-llby-aif,Mjällby AIF,halmstad,Halmstad,1,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143323,2025-08-30,15:00,if-brommapojkarna,IF Brommapojkarna,if-elfsborg,IF Elfsborg,3,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143325,2025-08-30,15:00,ifk-g-teborg,IFK Göteborg,ifk-v-rnamo,IFK Värnamo,1,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143315,2025-08-25,19:00,gais,GAIS,mj-llby-aif,Mjällby AIF,0,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143316,2025-08-25,19:00,sters-if,Östers IF,ifk-norrk-ping-fk,IFK Norrköping FK,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143314,2025-08-24,16:30,if-elfsborg,IF Elfsborg,halmstad,Halmstad,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143317,2025-08-24,16:30,malm-ff,Malmö FF,ifk-g-teborg,IFK Göteborg,0,0,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143319,2025-08-24,16:30,degerfors-if,Degerfors IF,aik,AIK,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143320,2025-08-24,16:30,ifk-v-rnamo,IFK Värnamo,bk-h-cken,BK Häcken,1,5,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143313,2025-08-24,14:00,djurg-rden,Djurgården,if-brommapojkarna,IF Brommapojkarna,1,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143318,2025-08-24,14:00,ik-sirius-fk,IK Sirius FK,hammarby,Hammarby,3,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143312,2025-08-18,19:00,ifk-v-rnamo,IFK Värnamo,degerfors-if,Degerfors IF,3,2,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143304,2025-08-17,16:30,hammarby,Hammarby,gais,GAIS,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143308,2025-08-17,16:30,bk-h-cken,BK Häcken,sters-if,Östers IF,0,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143309,2025-08-17,16:30,mj-llby-aif,Mjällby AIF,djurg-rden,Djurgården,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143306,2025-08-17,14:00,if-brommapojkarna,IF Brommapojkarna,ik-sirius-fk,IK Sirius FK,2,4,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143307,2025-08-17,14:00,ifk-g-teborg,IFK Göteborg,aik,AIK,2,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143310,2025-08-16,17:30,ifk-norrk-ping-fk,IFK Norrköping FK,if-elfsborg,IF Elfsborg,2,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143311,2025-08-16,15:00,halmstad,Halmstad,malm-ff,Malmö FF,0,4,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143297,2025-08-11,19:00,if-elfsborg,IF Elfsborg,ifk-v-rnamo,IFK Värnamo,2,2,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143298,2025-08-11,19:00,gais,GAIS,ifk-g-teborg,IFK Göteborg,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143299,2025-08-10,16:30,sters-if,Östers IF,if-brommapojkarna,IF Brommapojkarna,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143301,2025-08-10,16:30,ifk-norrk-ping-fk,IFK Norrköping FK,hammarby,Hammarby,0,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143296,2025-08-10,14:00,aik,AIK,djurg-rden,Djurgården,0,0,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143303,2025-08-10,14:00,degerfors-if,Degerfors IF,bk-h-cken,BK Häcken,0,0,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143302,2025-08-09,17:30,halmstad,Halmstad,ik-sirius-fk,IK Sirius FK,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143300,2025-08-09,15:00,malm-ff,Malmö FF,mj-llby-aif,Mjällby AIF,1,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143291,2025-08-04,19:00,ifk-g-teborg,IFK Göteborg,degerfors-if,Degerfors IF,3,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143294,2025-08-03,16:30,ik-sirius-fk,IK Sirius FK,sters-if,Östers IF,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143288,2025-08-03,14:00,djurg-rden,Djurgården,halmstad,Halmstad,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143292,2025-08-03,14:00,bk-h-cken,BK Häcken,if-elfsborg,IF Elfsborg,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143295,2025-08-02,17:30,ifk-v-rnamo,IFK Värnamo,gais,GAIS,2,2,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143290,2025-08-02,15:00,if-brommapojkarna,IF Brommapojkarna,ifk-norrk-ping-fk,IFK Norrköping FK,6,4,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143282,2025-07-28,19:00,if-elfsborg,IF Elfsborg,ifk-g-teborg,IFK Göteborg,4,3,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143285,2025-07-27,16:30,mj-llby-aif,Mjällby AIF,ik-sirius-fk,IK Sirius FK,2,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143287,2025-07-27,16:30,ifk-v-rnamo,IFK Värnamo,hammarby,Hammarby,2,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143280,2025-07-27,14:00,aik,AIK,sters-if,Östers IF,0,0,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143284,2025-07-27,14:00,bk-h-cken,BK Häcken,djurg-rden,Djurgården,1,6,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143286,2025-07-26,17:30,degerfors-if,Degerfors IF,ifk-norrk-ping-fk,IFK Norrköping FK,0,0,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143281,2025-07-26,15:00,if-brommapojkarna,IF Brommapojkarna,malm-ff,Malmö FF,2,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143283,2025-07-26,15:00,gais,GAIS,halmstad,Halmstad,3,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143276,2025-07-21,19:00,ifk-norrk-ping-fk,IFK Norrköping FK,ifk-v-rnamo,IFK Värnamo,3,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143273,2025-07-20,16:30,hammarby,Hammarby,if-brommapojkarna,IF Brommapojkarna,3,2,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143278,2025-07-20,16:30,halmstad,Halmstad,bk-h-cken,BK Häcken,0,0,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143275,2025-07-20,14:00,mj-llby-aif,Mjällby AIF,aik,AIK,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143277,2025-07-20,14:00,ik-sirius-fk,IK Sirius FK,ifk-g-teborg,IFK Göteborg,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143279,2025-07-19,17:30,degerfors-if,Degerfors IF,gais,GAIS,0,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143272,2025-07-19,15:00,djurg-rden,Djurgården,if-elfsborg,IF Elfsborg,1,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143274,2025-07-19,15:00,sters-if,Östers IF,malm-ff,Malmö FF,0,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143270,2025-07-14,19:00,ik-sirius-fk,IK Sirius FK,mj-llby-aif,Mjällby AIF,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143268,2025-07-13,18:30,bk-h-cken,BK Häcken,halmstad,Halmstad,4,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143264,2025-07-13,16:30,aik,AIK,degerfors-if,Degerfors IF,3,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143271,2025-07-13,16:30,ifk-v-rnamo,IFK Värnamo,djurg-rden,Djurgården,1,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143265,2025-07-13,14:00,if-brommapojkarna,IF Brommapojkarna,sters-if,Östers IF,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143266,2025-07-13,14:00,gais,GAIS,hammarby,Hammarby,3,2,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143269,2025-07-12,17:30,malm-ff,Malmö FF,ifk-norrk-ping-fk,IFK Norrköping FK,3,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143267,2025-07-12,15:00,ifk-g-teborg,IFK Göteborg,if-elfsborg,IF Elfsborg,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143262,2025-07-07,19:00,ifk-norrk-ping-fk,IFK Norrköping FK,if-brommapojkarna,IF Brommapojkarna,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143256,2025-07-06,16:30,djurg-rden,Djurgården,degerfors-if,Degerfors IF,5,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143258,2025-07-06,16:30,if-elfsborg,IF Elfsborg,bk-h-cken,BK Häcken,0,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143260,2025-07-06,14:00,ifk-g-teborg,IFK Göteborg,ik-sirius-fk,IK Sirius FK,3,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143263,2025-07-06,14:00,halmstad,Halmstad,aik,AIK,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143257,2025-07-05,17:30,hammarby,Hammarby,ifk-v-rnamo,IFK Värnamo,1,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143259,2025-07-05,15:00,gais,GAIS,malm-ff,Malmö FF,0,0,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143261,2025-07-05,15:00,sters-if,Östers IF,mj-llby-aif,Mjällby AIF,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143249,2025-06-30,19:00,djurg-rden,Djurgården,ifk-norrk-ping-fk,IFK Norrköping FK,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143253,2025-06-30,19:00,mj-llby-aif,Mjällby AIF,malm-ff,Malmö FF,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143251,2025-06-29,16:30,bk-h-cken,BK Häcken,gais,GAIS,1,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143255,2025-06-29,16:30,ifk-v-rnamo,IFK Värnamo,if-elfsborg,IF Elfsborg,0,0,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143248,2025-06-29,14:00,aik,AIK,ifk-g-teborg,IFK Göteborg,3,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143254,2025-06-29,14:00,degerfors-if,Degerfors IF,if-brommapojkarna,IF Brommapojkarna,0,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143252,2025-06-28,17:30,sters-if,Östers IF,ik-sirius-fk,IK Sirius FK,2,2,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143250,2025-06-28,15:00,hammarby,Hammarby,halmstad,Halmstad,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143243,2025-06-01,16:30,mj-llby-aif,Mjällby AIF,ifk-v-rnamo,IFK Värnamo,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143245,2025-06-01,16:30,ik-sirius-fk,IK Sirius FK,aik,AIK,3,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143240,2025-06-01,14:00,if-brommapojkarna,IF Brommapojkarna,ifk-g-teborg,IFK Göteborg,1,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143242,2025-06-01,14:00,malm-ff,Malmö FF,bk-h-cken,BK Häcken,3,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143246,2025-06-01,14:00,halmstad,Halmstad,djurg-rden,Djurgården,1,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143241,2025-05-31,15:00,if-elfsborg,IF Elfsborg,hammarby,Hammarby,0,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143244,2025-05-31,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,gais,GAIS,0,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143247,2025-05-31,15:00,degerfors-if,Degerfors IF,sters-if,Östers IF,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143193,2025-05-29,18:00,if-brommapojkarna,IF Brommapojkarna,djurg-rden,Djurgården,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143233,2025-05-26,19:10,hammarby,Hammarby,degerfors-if,Degerfors IF,1,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143237,2025-05-26,19:00,ifk-norrk-ping-fk,IFK Norrköping FK,mj-llby-aif,Mjällby AIF,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143232,2025-05-25,16:30,djurg-rden,Djurgården,bk-h-cken,BK Häcken,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143234,2025-05-25,16:30,if-brommapojkarna,IF Brommapojkarna,aik,AIK,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143236,2025-05-25,14:00,ifk-g-teborg,IFK Göteborg,malm-ff,Malmö FF,1,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143238,2025-05-25,14:00,halmstad,Halmstad,if-elfsborg,IF Elfsborg,1,4,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143235,2025-05-24,17:30,gais,GAIS,ik-sirius-fk,IK Sirius FK,2,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143239,2025-05-24,15:00,ifk-v-rnamo,IFK Värnamo,sters-if,Östers IF,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143289,2025-05-22,19:00,hammarby,Hammarby,mj-llby-aif,Mjällby AIF,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143293,2025-05-22,19:00,malm-ff,Malmö FF,aik,AIK,0,0,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143225,2025-05-19,19:10,if-elfsborg,IF Elfsborg,djurg-rden,Djurgården,4,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143229,2025-05-19,19:00,mj-llby-aif,Mjällby AIF,if-brommapojkarna,IF Brommapojkarna,1,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143230,2025-05-19,19:00,ik-sirius-fk,IK Sirius FK,ifk-norrk-ping-fk,IFK Norrköping FK,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143231,2025-05-19,19:00,degerfors-if,Degerfors IF,ifk-g-teborg,IFK Göteborg,1,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143227,2025-05-18,16:30,sters-if,Östers IF,gais,GAIS,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143228,2025-05-18,16:30,malm-ff,Malmö FF,halmstad,Halmstad,3,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143224,2025-05-18,14:00,aik,AIK,hammarby,Hammarby,0,0,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143226,2025-05-18,14:00,bk-h-cken,BK Häcken,ifk-v-rnamo,IFK Värnamo,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143216,2025-05-15,19:00,djurg-rden,Djurgården,mj-llby-aif,Mjällby AIF,1,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143218,2025-05-15,19:00,if-elfsborg,IF Elfsborg,if-brommapojkarna,IF Brommapojkarna,4,3,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143219,2025-05-15,19:00,ifk-g-teborg,IFK Göteborg,sters-if,Östers IF,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143221,2025-05-15,19:00,ifk-norrk-ping-fk,IFK Norrköping FK,degerfors-if,Degerfors IF,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143223,2025-05-15,19:00,ifk-v-rnamo,IFK Värnamo,malm-ff,Malmö FF,2,2,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143217,2025-05-14,19:00,hammarby,Hammarby,ik-sirius-fk,IK Sirius FK,3,2,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143220,2025-05-14,19:00,bk-h-cken,BK Häcken,aik,AIK,3,3,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143222,2025-05-14,19:00,halmstad,Halmstad,gais,GAIS,1,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143212,2025-05-12,19:10,ifk-g-teborg,IFK Göteborg,djurg-rden,Djurgården,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143213,2025-05-11,16:30,sters-if,Östers IF,if-elfsborg,IF Elfsborg,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143215,2025-05-11,16:30,degerfors-if,Degerfors IF,malm-ff,Malmö FF,1,4,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143208,2025-05-11,14:00,aik,AIK,mj-llby-aif,Mjällby AIF,2,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143209,2025-05-11,14:00,hammarby,Hammarby,ifk-norrk-ping-fk,IFK Norrköping FK,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143211,2025-05-10,17:30,gais,GAIS,ifk-v-rnamo,IFK Värnamo,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143214,2025-05-10,17:30,ik-sirius-fk,IK Sirius FK,bk-h-cken,BK Häcken,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143210,2025-05-10,15:00,if-brommapojkarna,IF Brommapojkarna,halmstad,Halmstad,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143201,2025-05-05,19:10,if-elfsborg,IF Elfsborg,gais,GAIS,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143203,2025-05-05,19:00,malm-ff,Malmö FF,if-brommapojkarna,IF Brommapojkarna,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143202,2025-05-04,16:30,sters-if,Östers IF,hammarby,Hammarby,0,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143204,2025-05-04,16:30,mj-llby-aif,Mjällby AIF,ifk-g-teborg,IFK Göteborg,1,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143200,2025-05-04,14:00,djurg-rden,Djurgården,aik,AIK,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143205,2025-05-04,14:00,ifk-norrk-ping-fk,IFK Norrköping FK,bk-h-cken,BK Häcken,0,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143206,2025-05-03,17:30,halmstad,Halmstad,ifk-v-rnamo,IFK Värnamo,4,2,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143207,2025-05-03,15:00,degerfors-if,Degerfors IF,ik-sirius-fk,IK Sirius FK,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143196,2025-04-29,19:00,malm-ff,Malmö FF,sters-if,Östers IF,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143194,2025-04-28,19:10,ifk-g-teborg,IFK Göteborg,gais,GAIS,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143198,2025-04-27,16:30,ik-sirius-fk,IK Sirius FK,halmstad,Halmstad,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143199,2025-04-27,16:30,ifk-v-rnamo,IFK Värnamo,ifk-norrk-ping-fk,IFK Norrköping FK,1,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143192,2025-04-27,16:00,aik,AIK,if-elfsborg,IF Elfsborg,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143195,2025-04-27,14:00,bk-h-cken,BK Häcken,hammarby,Hammarby,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143197,2025-04-27,14:00,mj-llby-aif,Mjällby AIF,degerfors-if,Degerfors IF,4,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143184,2025-04-24,19:00,djurg-rden,Djurgården,sters-if,Östers IF,1,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143187,2025-04-24,19:00,gais,GAIS,if-brommapojkarna,IF Brommapojkarna,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143189,2025-04-24,19:00,ifk-norrk-ping-fk,IFK Norrköping FK,ifk-g-teborg,IFK Göteborg,2,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143191,2025-04-24,19:00,ifk-v-rnamo,IFK Värnamo,aik,AIK,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143185,2025-04-23,19:00,hammarby,Hammarby,malm-ff,Malmö FF,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143186,2025-04-23,19:00,if-elfsborg,IF Elfsborg,ik-sirius-fk,IK Sirius FK,4,3,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143188,2025-04-23,19:00,bk-h-cken,BK Häcken,degerfors-if,Degerfors IF,3,4,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143190,2025-04-23,19:00,halmstad,Halmstad,mj-llby-aif,Mjällby AIF,1,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143176,2025-04-21,14:00,djurg-rden,Djurgården,gais,GAIS,0,0,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143178,2025-04-20,16:30,ifk-g-teborg,IFK Göteborg,bk-h-cken,BK Häcken,2,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143177,2025-04-20,14:00,if-brommapojkarna,IF Brommapojkarna,ifk-v-rnamo,IFK Värnamo,3,2,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143179,2025-04-20,14:00,sters-if,Östers IF,aik,AIK,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143182,2025-04-19,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,halmstad,Halmstad,3,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143183,2025-04-19,15:00,degerfors-if,Degerfors IF,if-elfsborg,IF Elfsborg,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143180,2025-04-18,15:00,malm-ff,Malmö FF,ik-sirius-fk,IK Sirius FK,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143181,2025-04-18,15:00,mj-llby-aif,Mjällby AIF,hammarby,Hammarby,3,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143168,2025-04-14,19:10,aik,AIK,malm-ff,Malmö FF,0,0,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143174,2025-04-14,19:00,halmstad,Halmstad,sters-if,Östers IF,1,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143171,2025-04-13,16:30,gais,GAIS,degerfors-if,Degerfors IF,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143173,2025-04-13,16:30,ik-sirius-fk,IK Sirius FK,if-brommapojkarna,IF Brommapojkarna,0,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143169,2025-04-13,14:00,hammarby,Hammarby,djurg-rden,Djurgården,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143175,2025-04-13,14:00,ifk-v-rnamo,IFK Värnamo,ifk-g-teborg,IFK Göteborg,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143170,2025-04-12,17:30,if-elfsborg,IF Elfsborg,ifk-norrk-ping-fk,IFK Norrköping FK,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143172,2025-04-12,15:00,bk-h-cken,BK Häcken,mj-llby-aif,Mjällby AIF,0,3,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143164,2025-04-07,19:10,malm-ff,Malmö FF,if-elfsborg,IF Elfsborg,2,1,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143165,2025-04-06,16:30,mj-llby-aif,Mjällby AIF,gais,GAIS,1,1,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143167,2025-04-06,16:30,degerfors-if,Degerfors IF,ifk-v-rnamo,IFK Värnamo,1,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143160,2025-04-06,14:00,aik,AIK,ifk-norrk-ping-fk,IFK Norrköping FK,4,3,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143161,2025-04-06,14:00,if-brommapojkarna,IF Brommapojkarna,hammarby,Hammarby,0,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143163,2025-04-05,17:30,sters-if,Östers IF,bk-h-cken,BK Häcken,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143162,2025-04-05,15:00,ifk-g-teborg,IFK Göteborg,halmstad,Halmstad,1,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143166,2025-04-05,15:00,ik-sirius-fk,IK Sirius FK,djurg-rden,Djurgården,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143155,2025-03-31,19:10,gais,GAIS,aik,AIK,0,1,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143159,2025-03-31,19:00,ifk-v-rnamo,IFK Värnamo,ik-sirius-fk,IK Sirius FK,1,2,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143157,2025-03-30,16:30,ifk-norrk-ping-fk,IFK Norrköping FK,sters-if,Östers IF,4,3,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143158,2025-03-30,16:30,halmstad,Halmstad,degerfors-if,Degerfors IF,0,5,,,Played,A,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143153,2025-03-30,14:00,hammarby,Hammarby,ifk-g-teborg,IFK Göteborg,4,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143154,2025-03-30,14:00,if-elfsborg,IF Elfsborg,mj-llby-aif,Mjällby AIF,2,2,,,Played,D,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143156,2025-03-29,17:30,bk-h-cken,BK Häcken,if-brommapojkarna,IF Brommapojkarna,2,0,,,Played,H,SWE
+2025,SW-AL,Allsvenskan,123864,1,-,,6143152,2025-03-29,15:00,djurg-rden,Djurgården,malm-ff,Malmö FF,0,1,,,Played,A,SWE

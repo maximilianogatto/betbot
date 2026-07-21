@@ -1,0 +1,241 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2025,SW-SE,Superettan,123863,1,-,,6144750,2025-11-08,15:00,gif-sundsvall,GIF Sundsvall,rgryte-is-fotboll,Örgryte IS Fotboll,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144751,2025-11-08,15:00,ik-brage,IK Brage,landskrona-bois,Landskrona BoIS,4,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144752,2025-11-08,15:00,ik-oddevold,IK Oddevold,helsingborgs-if,Helsingborgs IF,1,4,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144753,2025-11-08,15:00,kalmar-ff,Kalmar FF,falkenbergs-ff,Falkenbergs FF,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144754,2025-11-08,15:00,sandvikens-if,Sandvikens IF,stersund,Östersund,5,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144755,2025-11-08,15:00,trelleborgs-ff,Trelleborgs FF,rebro,Örebro,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144756,2025-11-08,15:00,utsikten,Utsikten,ume-fc,Umeå FC,1,4,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144757,2025-11-08,15:00,v-ster-s-sk-fk,Västerås SK FK,varbergs-bois-fc,Varbergs BoIS FC,4,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144744,2025-11-03,19:00,landskrona-bois,Landskrona BoIS,ik-oddevold,IK Oddevold,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144747,2025-11-02,15:00,rebro,Örebro,utsikten,Utsikten,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144743,2025-11-01,15:00,helsingborgs-if,Helsingborgs IF,gif-sundsvall,GIF Sundsvall,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144745,2025-11-01,15:00,ume-fc,Umeå FC,sandvikens-if,Sandvikens IF,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144746,2025-11-01,15:00,varbergs-bois-fc,Varbergs BoIS FC,ik-brage,IK Brage,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144749,2025-11-01,15:00,stersund,Östersund,trelleborgs-ff,Trelleborgs FF,2,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144742,2025-11-01,13:00,falkenbergs-ff,Falkenbergs FF,v-ster-s-sk-fk,Västerås SK FK,0,1,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144748,2025-11-01,13:00,rgryte-is-fotboll,Örgryte IS Fotboll,kalmar-ff,Kalmar FF,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144740,2025-10-26,15:00,rebro,Örebro,landskrona-bois,Landskrona BoIS,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144738,2025-10-26,13:00,trelleborgs-ff,Trelleborgs FF,falkenbergs-ff,Falkenbergs FF,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144734,2025-10-25,15:00,gif-sundsvall,GIF Sundsvall,kalmar-ff,Kalmar FF,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144735,2025-10-25,15:00,ik-brage,IK Brage,helsingborgs-if,Helsingborgs IF,3,2,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144736,2025-10-25,15:00,ik-oddevold,IK Oddevold,stersund,Östersund,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144737,2025-10-25,15:00,sandvikens-if,Sandvikens IF,utsikten,Utsikten,3,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144739,2025-10-25,13:00,ume-fc,Umeå FC,varbergs-bois-fc,Varbergs BoIS FC,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144741,2025-10-24,19:00,rgryte-is-fotboll,Örgryte IS Fotboll,v-ster-s-sk-fk,Västerås SK FK,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144727,2025-10-19,15:00,helsingborgs-if,Helsingborgs IF,rebro,Örebro,3,2,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144729,2025-10-19,15:00,landskrona-bois,Landskrona BoIS,ume-fc,Umeå FC,1,3,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144730,2025-10-19,13:00,utsikten,Utsikten,trelleborgs-ff,Trelleborgs FF,3,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144726,2025-10-18,17:00,falkenbergs-ff,Falkenbergs FF,rgryte-is-fotboll,Örgryte IS Fotboll,3,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144728,2025-10-18,15:00,kalmar-ff,Kalmar FF,ik-oddevold,IK Oddevold,3,2,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144731,2025-10-18,15:00,varbergs-bois-fc,Varbergs BoIS FC,sandvikens-if,Sandvikens IF,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144733,2025-10-18,15:00,stersund,Östersund,ik-brage,IK Brage,1,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144732,2025-10-18,13:00,v-ster-s-sk-fk,Västerås SK FK,gif-sundsvall,GIF Sundsvall,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144720,2025-10-06,19:00,landskrona-bois,Landskrona BoIS,varbergs-bois-fc,Varbergs BoIS FC,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144721,2025-10-06,19:00,sandvikens-if,Sandvikens IF,rgryte-is-fotboll,Örgryte IS Fotboll,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144722,2025-10-05,15:00,trelleborgs-ff,Trelleborgs FF,gif-sundsvall,GIF Sundsvall,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144724,2025-10-05,15:00,rebro,Örebro,falkenbergs-ff,Falkenbergs FF,4,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144719,2025-10-05,13:00,ik-oddevold,IK Oddevold,utsikten,Utsikten,1,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144718,2025-10-04,15:00,ik-brage,IK Brage,kalmar-ff,Kalmar FF,1,3,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144723,2025-10-04,15:00,ume-fc,Umeå FC,helsingborgs-if,Helsingborgs IF,1,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144725,2025-10-04,13:00,stersund,Östersund,v-ster-s-sk-fk,Västerås SK FK,1,6,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144713,2025-09-30,19:00,kalmar-ff,Kalmar FF,rebro,Örebro,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144717,2025-09-30,19:00,rgryte-is-fotboll,Örgryte IS Fotboll,landskrona-bois,Landskrona BoIS,2,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144711,2025-09-29,19:00,gif-sundsvall,GIF Sundsvall,ume-fc,Umeå FC,3,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144712,2025-09-29,19:00,helsingborgs-if,Helsingborgs IF,trelleborgs-ff,Trelleborgs FF,4,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144714,2025-09-29,19:00,utsikten,Utsikten,ik-brage,IK Brage,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144710,2025-09-28,15:00,falkenbergs-ff,Falkenbergs FF,stersund,Östersund,4,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144716,2025-09-28,15:00,v-ster-s-sk-fk,Västerås SK FK,sandvikens-if,Sandvikens IF,3,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144715,2025-09-28,13:00,varbergs-bois-fc,Varbergs BoIS FC,ik-oddevold,IK Oddevold,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144705,2025-09-25,19:00,sandvikens-if,Sandvikens IF,helsingborgs-if,Helsingborgs IF,0,1,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144706,2025-09-25,19:00,trelleborgs-ff,Trelleborgs FF,rgryte-is-fotboll,Örgryte IS Fotboll,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144707,2025-09-25,19:00,ume-fc,Umeå FC,v-ster-s-sk-fk,Västerås SK FK,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144709,2025-09-25,19:00,stersund,Östersund,utsikten,Utsikten,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144702,2025-09-24,19:00,ik-brage,IK Brage,gif-sundsvall,GIF Sundsvall,0,1,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144703,2025-09-24,19:00,ik-oddevold,IK Oddevold,falkenbergs-ff,Falkenbergs FF,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144704,2025-09-24,19:00,landskrona-bois,Landskrona BoIS,kalmar-ff,Kalmar FF,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144708,2025-09-24,19:00,rebro,Örebro,varbergs-bois-fc,Varbergs BoIS FC,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144696,2025-09-20,15:00,ik-brage,IK Brage,rebro,Örebro,4,5,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144697,2025-09-20,15:00,kalmar-ff,Kalmar FF,sandvikens-if,Sandvikens IF,4,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144698,2025-09-20,15:00,utsikten,Utsikten,landskrona-bois,Landskrona BoIS,4,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144695,2025-09-20,13:00,helsingborgs-if,Helsingborgs IF,rgryte-is-fotboll,Örgryte IS Fotboll,0,1,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144699,2025-09-20,13:00,varbergs-bois-fc,Varbergs BoIS FC,trelleborgs-ff,Trelleborgs FF,3,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144694,2025-09-19,19:00,falkenbergs-ff,Falkenbergs FF,gif-sundsvall,GIF Sundsvall,3,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144700,2025-09-19,19:00,v-ster-s-sk-fk,Västerås SK FK,ik-oddevold,IK Oddevold,2,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144701,2025-09-19,19:00,stersund,Östersund,ume-fc,Umeå FC,3,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144688,2025-09-16,19:00,helsingborgs-if,Helsingborgs IF,landskrona-bois,Landskrona BoIS,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144693,2025-09-15,19:00,rgryte-is-fotboll,Örgryte IS Fotboll,ume-fc,Umeå FC,3,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144691,2025-09-14,15:00,trelleborgs-ff,Trelleborgs FF,sandvikens-if,Sandvikens IF,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144690,2025-09-14,13:00,kalmar-ff,Kalmar FF,v-ster-s-sk-fk,Västerås SK FK,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144687,2025-09-13,15:00,gif-sundsvall,GIF Sundsvall,varbergs-bois-fc,Varbergs BoIS FC,2,3,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144689,2025-09-13,15:00,ik-oddevold,IK Oddevold,ik-brage,IK Brage,4,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144692,2025-09-13,15:00,rebro,Örebro,stersund,Östersund,2,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144686,2025-09-13,13:00,falkenbergs-ff,Falkenbergs FF,utsikten,Utsikten,3,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144682,2025-08-31,17:00,utsikten,Utsikten,rgryte-is-fotboll,Örgryte IS Fotboll,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144678,2025-08-31,15:00,ik-brage,IK Brage,trelleborgs-ff,Trelleborgs FF,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144681,2025-08-31,13:00,ume-fc,Umeå FC,ik-oddevold,IK Oddevold,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144679,2025-08-30,15:00,landskrona-bois,Landskrona BoIS,gif-sundsvall,GIF Sundsvall,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144680,2025-08-30,15:00,sandvikens-if,Sandvikens IF,rebro,Örebro,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144685,2025-08-30,15:00,stersund,Östersund,kalmar-ff,Kalmar FF,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144683,2025-08-30,13:00,varbergs-bois-fc,Varbergs BoIS FC,falkenbergs-ff,Falkenbergs FF,3,2,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144684,2025-08-30,13:00,v-ster-s-sk-fk,Västerås SK FK,helsingborgs-if,Helsingborgs IF,4,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144672,2025-08-26,19:00,kalmar-ff,Kalmar FF,helsingborgs-if,Helsingborgs IF,2,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144670,2025-08-25,19:00,falkenbergs-ff,Falkenbergs FF,sandvikens-if,Sandvikens IF,4,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144671,2025-08-25,19:00,gif-sundsvall,GIF Sundsvall,ik-oddevold,IK Oddevold,0,1,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144673,2025-08-25,19:00,trelleborgs-ff,Trelleborgs FF,landskrona-bois,Landskrona BoIS,1,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144676,2025-08-25,19:00,rebro,Örebro,ume-fc,Umeå FC,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144675,2025-08-24,15:00,v-ster-s-sk-fk,Västerås SK FK,utsikten,Utsikten,3,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144674,2025-08-24,13:00,varbergs-bois-fc,Varbergs BoIS FC,stersund,Östersund,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144677,2025-08-23,15:00,rgryte-is-fotboll,Örgryte IS Fotboll,ik-brage,IK Brage,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144665,2025-08-17,17:00,sandvikens-if,Sandvikens IF,landskrona-bois,Landskrona BoIS,0,1,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144668,2025-08-17,15:00,rebro,Örebro,rgryte-is-fotboll,Örgryte IS Fotboll,1,3,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144662,2025-08-16,15:00,helsingborgs-if,Helsingborgs IF,falkenbergs-ff,Falkenbergs FF,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144663,2025-08-16,15:00,ik-brage,IK Brage,v-ster-s-sk-fk,Västerås SK FK,3,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144666,2025-08-16,15:00,ume-fc,Umeå FC,kalmar-ff,Kalmar FF,0,1,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144669,2025-08-16,13:00,stersund,Östersund,gif-sundsvall,GIF Sundsvall,1,3,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144664,2025-08-15,19:00,ik-oddevold,IK Oddevold,trelleborgs-ff,Trelleborgs FF,3,2,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144667,2025-08-15,19:00,utsikten,Utsikten,varbergs-bois-fc,Varbergs BoIS FC,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144660,2025-08-12,19:00,v-ster-s-sk-fk,Västerås SK FK,rebro,Örebro,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144656,2025-08-10,15:00,helsingborgs-if,Helsingborgs IF,utsikten,Utsikten,3,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144659,2025-08-10,15:00,trelleborgs-ff,Trelleborgs FF,ume-fc,Umeå FC,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144657,2025-08-10,13:00,kalmar-ff,Kalmar FF,varbergs-bois-fc,Varbergs BoIS FC,2,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144654,2025-08-09,15:00,falkenbergs-ff,Falkenbergs FF,ik-brage,IK Brage,0,1,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144658,2025-08-09,15:00,landskrona-bois,Landskrona BoIS,stersund,Östersund,2,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144661,2025-08-09,15:00,rgryte-is-fotboll,Örgryte IS Fotboll,ik-oddevold,IK Oddevold,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144655,2025-08-09,13:00,gif-sundsvall,GIF Sundsvall,sandvikens-if,Sandvikens IF,1,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144649,2025-08-04,19:00,ume-fc,Umeå FC,falkenbergs-ff,Falkenbergs FF,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144646,2025-08-03,15:00,landskrona-bois,Landskrona BoIS,v-ster-s-sk-fk,Västerås SK FK,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144647,2025-08-02,17:00,sandvikens-if,Sandvikens IF,ik-brage,IK Brage,2,5,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144648,2025-08-02,15:00,trelleborgs-ff,Trelleborgs FF,kalmar-ff,Kalmar FF,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144650,2025-08-02,15:00,utsikten,Utsikten,gif-sundsvall,GIF Sundsvall,4,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144651,2025-08-02,15:00,varbergs-bois-fc,Varbergs BoIS FC,rgryte-is-fotboll,Örgryte IS Fotboll,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144653,2025-08-02,13:00,stersund,Östersund,helsingborgs-if,Helsingborgs IF,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144652,2025-08-01,19:00,rebro,Örebro,ik-oddevold,IK Oddevold,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144640,2025-07-28,19:00,helsingborgs-if,Helsingborgs IF,varbergs-bois-fc,Varbergs BoIS FC,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144644,2025-07-28,19:00,v-ster-s-sk-fk,Västerås SK FK,trelleborgs-ff,Trelleborgs FF,3,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144638,2025-07-27,15:00,falkenbergs-ff,Falkenbergs FF,landskrona-bois,Landskrona BoIS,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144645,2025-07-27,15:00,rgryte-is-fotboll,Örgryte IS Fotboll,stersund,Östersund,6,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144643,2025-07-27,13:00,kalmar-ff,Kalmar FF,utsikten,Utsikten,1,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144641,2025-07-26,17:00,ik-brage,IK Brage,ume-fc,Umeå FC,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144639,2025-07-26,15:00,gif-sundsvall,GIF Sundsvall,rebro,Örebro,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144642,2025-07-26,15:00,ik-oddevold,IK Oddevold,sandvikens-if,Sandvikens IF,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144632,2025-07-21,19:00,landskrona-bois,Landskrona BoIS,trelleborgs-ff,Trelleborgs FF,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144635,2025-07-21,19:00,utsikten,Utsikten,helsingborgs-if,Helsingborgs IF,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144631,2025-07-20,15:00,kalmar-ff,Kalmar FF,ik-brage,IK Brage,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144636,2025-07-20,13:00,varbergs-bois-fc,Varbergs BoIS FC,gif-sundsvall,GIF Sundsvall,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144633,2025-07-19,17:00,sandvikens-if,Sandvikens IF,v-ster-s-sk-fk,Västerås SK FK,0,3,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144630,2025-07-19,15:00,ik-oddevold,IK Oddevold,rgryte-is-fotboll,Örgryte IS Fotboll,0,1,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144634,2025-07-19,15:00,ume-fc,Umeå FC,rebro,Örebro,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144637,2025-07-19,15:00,stersund,Östersund,falkenbergs-ff,Falkenbergs FF,3,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144622,2025-06-29,15:00,falkenbergs-ff,Falkenbergs FF,ume-fc,Umeå FC,2,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144628,2025-06-29,13:00,rebro,Örebro,kalmar-ff,Kalmar FF,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144623,2025-06-28,15:00,gif-sundsvall,GIF Sundsvall,stersund,Östersund,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144625,2025-06-28,15:00,trelleborgs-ff,Trelleborgs FF,ik-oddevold,IK Oddevold,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144627,2025-06-28,13:00,v-ster-s-sk-fk,Västerås SK FK,landskrona-bois,Landskrona BoIS,1,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144629,2025-06-28,13:00,rgryte-is-fotboll,Örgryte IS Fotboll,helsingborgs-if,Helsingborgs IF,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144624,2025-06-27,19:00,ik-brage,IK Brage,sandvikens-if,Sandvikens IF,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144626,2025-06-27,19:00,varbergs-bois-fc,Varbergs BoIS FC,utsikten,Utsikten,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144614,2025-06-23,19:00,gif-sundsvall,GIF Sundsvall,trelleborgs-ff,Trelleborgs FF,4,2,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144615,2025-06-23,19:00,helsingborgs-if,Helsingborgs IF,ume-fc,Umeå FC,5,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144616,2025-06-22,17:00,ik-oddevold,IK Oddevold,varbergs-bois-fc,Varbergs BoIS FC,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144617,2025-06-22,17:00,kalmar-ff,Kalmar FF,rgryte-is-fotboll,Örgryte IS Fotboll,2,3,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144618,2025-06-22,17:00,landskrona-bois,Landskrona BoIS,rebro,Örebro,1,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144619,2025-06-22,15:00,sandvikens-if,Sandvikens IF,falkenbergs-ff,Falkenbergs FF,4,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144620,2025-06-22,15:00,utsikten,Utsikten,stersund,Östersund,1,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144621,2025-06-22,15:00,v-ster-s-sk-fk,Västerås SK FK,ik-brage,IK Brage,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144611,2025-06-15,17:00,varbergs-bois-fc,Varbergs BoIS FC,v-ster-s-sk-fk,Västerås SK FK,1,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144607,2025-06-15,15:00,ik-brage,IK Brage,rgryte-is-fotboll,Örgryte IS Fotboll,3,2,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144609,2025-06-15,15:00,trelleborgs-ff,Trelleborgs FF,utsikten,Utsikten,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144610,2025-06-14,17:00,ume-fc,Umeå FC,gif-sundsvall,GIF Sundsvall,0,1,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144606,2025-06-14,15:00,falkenbergs-ff,Falkenbergs FF,helsingborgs-if,Helsingborgs IF,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144608,2025-06-14,15:00,kalmar-ff,Kalmar FF,landskrona-bois,Landskrona BoIS,3,2,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144613,2025-06-14,15:00,stersund,Östersund,ik-oddevold,IK Oddevold,1,3,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144612,2025-06-13,19:00,rebro,Örebro,sandvikens-if,Sandvikens IF,0,1,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144600,2025-06-01,17:00,ik-oddevold,IK Oddevold,landskrona-bois,Landskrona BoIS,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144598,2025-06-01,15:00,gif-sundsvall,GIF Sundsvall,falkenbergs-ff,Falkenbergs FF,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144599,2025-06-01,15:00,helsingborgs-if,Helsingborgs IF,stersund,Östersund,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144601,2025-05-31,15:00,sandvikens-if,Sandvikens IF,varbergs-bois-fc,Varbergs BoIS FC,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144605,2025-05-31,15:00,rgryte-is-fotboll,Örgryte IS Fotboll,trelleborgs-ff,Trelleborgs FF,2,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144602,2025-05-31,13:00,utsikten,Utsikten,kalmar-ff,Kalmar FF,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144603,2025-05-31,13:00,v-ster-s-sk-fk,Västerås SK FK,ume-fc,Umeå FC,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144604,2025-05-30,19:00,rebro,Örebro,ik-brage,IK Brage,3,3,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144593,2025-05-27,19:00,sandvikens-if,Sandvikens IF,gif-sundsvall,GIF Sundsvall,0,1,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144594,2025-05-27,19:00,trelleborgs-ff,Trelleborgs FF,helsingborgs-if,Helsingborgs IF,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144590,2025-05-26,19:00,ik-brage,IK Brage,utsikten,Utsikten,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144591,2025-05-26,19:00,ik-oddevold,IK Oddevold,v-ster-s-sk-fk,Västerås SK FK,1,5,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144592,2025-05-26,19:00,landskrona-bois,Landskrona BoIS,falkenbergs-ff,Falkenbergs FF,0,3,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144595,2025-05-26,19:00,ume-fc,Umeå FC,rgryte-is-fotboll,Örgryte IS Fotboll,3,3,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144596,2025-05-25,15:00,varbergs-bois-fc,Varbergs BoIS FC,kalmar-ff,Kalmar FF,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144597,2025-05-24,15:00,stersund,Östersund,rebro,Örebro,3,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144583,2025-05-22,19:00,gif-sundsvall,GIF Sundsvall,ik-brage,IK Brage,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144584,2025-05-22,19:00,helsingborgs-if,Helsingborgs IF,ik-oddevold,IK Oddevold,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144585,2025-05-22,19:00,kalmar-ff,Kalmar FF,ume-fc,Umeå FC,2,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144587,2025-05-22,19:00,varbergs-bois-fc,Varbergs BoIS FC,landskrona-bois,Landskrona BoIS,4,2,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144582,2025-05-21,19:00,falkenbergs-ff,Falkenbergs FF,trelleborgs-ff,Trelleborgs FF,4,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144586,2025-05-21,19:00,utsikten,Utsikten,rebro,Örebro,4,4,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144588,2025-05-21,19:00,v-ster-s-sk-fk,Västerås SK FK,stersund,Östersund,1,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144589,2025-05-21,19:00,rgryte-is-fotboll,Örgryte IS Fotboll,sandvikens-if,Sandvikens IF,4,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144576,2025-05-19,19:00,landskrona-bois,Landskrona BoIS,helsingborgs-if,Helsingborgs IF,3,3,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144575,2025-05-18,15:00,ik-brage,IK Brage,ik-oddevold,IK Oddevold,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144578,2025-05-17,15:00,ume-fc,Umeå FC,utsikten,Utsikten,1,3,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144579,2025-05-17,15:00,rebro,Örebro,gif-sundsvall,GIF Sundsvall,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144581,2025-05-17,15:00,stersund,Östersund,sandvikens-if,Sandvikens IF,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144577,2025-05-17,13:00,trelleborgs-ff,Trelleborgs FF,v-ster-s-sk-fk,Västerås SK FK,5,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144574,2025-05-16,19:00,falkenbergs-ff,Falkenbergs FF,kalmar-ff,Kalmar FF,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144580,2025-05-16,19:00,rgryte-is-fotboll,Örgryte IS Fotboll,varbergs-bois-fc,Varbergs BoIS FC,5,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144567,2025-05-13,19:00,helsingborgs-if,Helsingborgs IF,ik-brage,IK Brage,1,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144570,2025-05-12,19:00,landskrona-bois,Landskrona BoIS,rgryte-is-fotboll,Örgryte IS Fotboll,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144569,2025-05-11,15:00,kalmar-ff,Kalmar FF,trelleborgs-ff,Trelleborgs FF,2,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144573,2025-05-11,13:00,stersund,Östersund,varbergs-bois-fc,Varbergs BoIS FC,0,1,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144566,2025-05-10,15:00,gif-sundsvall,GIF Sundsvall,v-ster-s-sk-fk,Västerås SK FK,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144568,2025-05-10,15:00,ik-oddevold,IK Oddevold,rebro,Örebro,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144572,2025-05-10,15:00,utsikten,Utsikten,falkenbergs-ff,Falkenbergs FF,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144571,2025-05-10,13:00,sandvikens-if,Sandvikens IF,ume-fc,Umeå FC,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144563,2025-05-06,19:00,v-ster-s-sk-fk,Västerås SK FK,kalmar-ff,Kalmar FF,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144559,2025-05-05,19:00,ik-brage,IK Brage,stersund,Östersund,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144564,2025-05-05,19:00,rebro,Örebro,trelleborgs-ff,Trelleborgs FF,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144565,2025-05-04,15:00,rgryte-is-fotboll,Örgryte IS Fotboll,falkenbergs-ff,Falkenbergs FF,4,2,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144561,2025-05-03,15:00,ume-fc,Umeå FC,landskrona-bois,Landskrona BoIS,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144562,2025-05-03,15:00,varbergs-bois-fc,Varbergs BoIS FC,helsingborgs-if,Helsingborgs IF,1,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144558,2025-05-03,13:00,gif-sundsvall,GIF Sundsvall,utsikten,Utsikten,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144560,2025-05-03,13:00,sandvikens-if,Sandvikens IF,ik-oddevold,IK Oddevold,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144550,2025-04-29,19:00,falkenbergs-ff,Falkenbergs FF,rebro,Örebro,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144556,2025-04-28,19:00,utsikten,Utsikten,v-ster-s-sk-fk,Västerås SK FK,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144551,2025-04-27,13:00,helsingborgs-if,Helsingborgs IF,kalmar-ff,Kalmar FF,1,5,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144554,2025-04-27,13:00,trelleborgs-ff,Trelleborgs FF,varbergs-bois-fc,Varbergs BoIS FC,0,4,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144555,2025-04-27,13:00,ume-fc,Umeå FC,ik-brage,IK Brage,0,1,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144552,2025-04-26,15:00,ik-oddevold,IK Oddevold,gif-sundsvall,GIF Sundsvall,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144553,2025-04-26,15:00,landskrona-bois,Landskrona BoIS,sandvikens-if,Sandvikens IF,1,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144557,2025-04-26,15:00,stersund,Östersund,rgryte-is-fotboll,Örgryte IS Fotboll,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144544,2025-04-22,19:00,helsingborgs-if,Helsingborgs IF,v-ster-s-sk-fk,Västerås SK FK,2,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144548,2025-04-21,13:00,varbergs-bois-fc,Varbergs BoIS FC,ume-fc,Umeå FC,4,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144545,2025-04-20,17:00,kalmar-ff,Kalmar FF,stersund,Östersund,2,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144543,2025-04-20,15:00,gif-sundsvall,GIF Sundsvall,landskrona-bois,Landskrona BoIS,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144546,2025-04-20,15:00,trelleborgs-ff,Trelleborgs FF,ik-brage,IK Brage,0,1,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144547,2025-04-20,13:00,utsikten,Utsikten,sandvikens-if,Sandvikens IF,4,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144542,2025-04-19,15:00,falkenbergs-ff,Falkenbergs FF,ik-oddevold,IK Oddevold,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144549,2025-04-19,15:00,rgryte-is-fotboll,Örgryte IS Fotboll,rebro,Örebro,3,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144540,2025-04-15,19:00,rebro,Örebro,helsingborgs-if,Helsingborgs IF,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144539,2025-04-14,19:00,v-ster-s-sk-fk,Västerås SK FK,falkenbergs-ff,Falkenbergs FF,1,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144534,2025-04-13,15:00,ik-brage,IK Brage,varbergs-bois-fc,Varbergs BoIS FC,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144538,2025-04-12,17:00,ume-fc,Umeå FC,stersund,Östersund,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144536,2025-04-12,15:00,landskrona-bois,Landskrona BoIS,utsikten,Utsikten,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144541,2025-04-12,15:00,rgryte-is-fotboll,Örgryte IS Fotboll,gif-sundsvall,GIF Sundsvall,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144537,2025-04-12,13:00,sandvikens-if,Sandvikens IF,trelleborgs-ff,Trelleborgs FF,2,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144535,2025-04-11,19:00,ik-oddevold,IK Oddevold,kalmar-ff,Kalmar FF,1,3,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144532,2025-04-08,19:00,v-ster-s-sk-fk,Västerås SK FK,rgryte-is-fotboll,Örgryte IS Fotboll,1,1,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144527,2025-04-07,19:00,ik-brage,IK Brage,falkenbergs-ff,Falkenbergs FF,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144531,2025-04-07,19:00,varbergs-bois-fc,Varbergs BoIS FC,rebro,Örebro,2,1,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144529,2025-04-06,13:00,ume-fc,Umeå FC,trelleborgs-ff,Trelleborgs FF,0,1,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144526,2025-04-05,15:00,helsingborgs-if,Helsingborgs IF,sandvikens-if,Sandvikens IF,1,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144528,2025-04-05,15:00,kalmar-ff,Kalmar FF,gif-sundsvall,GIF Sundsvall,1,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144533,2025-04-05,15:00,stersund,Östersund,landskrona-bois,Landskrona BoIS,3,3,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144530,2025-04-05,13:00,utsikten,Utsikten,ik-oddevold,IK Oddevold,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144524,2025-04-01,19:00,rebro,Örebro,v-ster-s-sk-fk,Västerås SK FK,0,2,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144520,2025-03-31,19:00,ik-oddevold,IK Oddevold,ume-fc,Umeå FC,1,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144523,2025-03-30,15:00,trelleborgs-ff,Trelleborgs FF,stersund,Östersund,0,1,,,Played,A,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144521,2025-03-30,13:00,landskrona-bois,Landskrona BoIS,ik-brage,IK Brage,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144518,2025-03-29,17:00,falkenbergs-ff,Falkenbergs FF,varbergs-bois-fc,Varbergs BoIS FC,2,2,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144519,2025-03-29,15:00,gif-sundsvall,GIF Sundsvall,helsingborgs-if,Helsingborgs IF,2,0,,,Played,H,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144522,2025-03-29,15:00,sandvikens-if,Sandvikens IF,kalmar-ff,Kalmar FF,0,0,,,Played,D,SWE
+2025,SW-SE,Superettan,123863,1,-,,6144525,2025-03-29,15:00,rgryte-is-fotboll,Örgryte IS Fotboll,utsikten,Utsikten,2,1,,,Played,H,SWE

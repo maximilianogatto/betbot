@@ -1,0 +1,78 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529616,2026-06-27,14:00,malm-ff,Malmö FF,kristianstads-dff,Kristianstads DFF,6,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529617,2026-06-25,18:00,pite-if-dff,Piteå IF DFF,hammarby,Hammarby,1,1,,,Played,D,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529615,2026-06-24,19:15,ik-uppsala-fotboll,IK Uppsala Fotboll,bk-h-cken-ff,BK Häcken FF,2,3,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529612,2026-06-24,19:00,aik,AIK,eskilstuna-united-dff,Eskilstuna United DFF,1,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529614,2026-06-24,19:00,ifk-norrk-ping-fk,IFK Norrköping FK,vittsj-gik,Vittsjö GIK,1,1,,,Played,D,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529618,2026-06-24,19:00,v-xj,Växjö,if-brommapojkarna,IF Brommapojkarna,2,1,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529613,2026-06-24,18:00,roseng-rd,Rosengård,djurg-rden,Djurgården,4,1,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529610,2026-06-18,19:00,ifk-norrk-ping-fk,IFK Norrköping FK,v-xj,Växjö,0,0,,,Played,D,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529605,2026-06-18,18:00,bk-h-cken-ff,BK Häcken FF,roseng-rd,Rosengård,2,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529611,2026-06-18,18:00,kristianstads-dff,Kristianstads DFF,ik-uppsala-fotboll,IK Uppsala Fotboll,3,2,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529607,2026-06-18,16:00,eskilstuna-united-dff,Eskilstuna United DFF,pite-if-dff,Piteå IF DFF,2,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529609,2026-06-18,15:00,if-brommapojkarna,IF Brommapojkarna,vittsj-gik,Vittsjö GIK,1,2,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529606,2026-06-17,19:00,djurg-rden,Djurgården,malm-ff,Malmö FF,0,1,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529608,2026-06-17,19:00,hammarby,Hammarby,aik,AIK,4,1,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529604,2026-06-13,16:00,v-xj,Växjö,ik-uppsala-fotboll,IK Uppsala Fotboll,4,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529601,2026-06-13,15:00,hammarby,Hammarby,bk-h-cken-ff,BK Häcken FF,0,1,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529599,2026-06-13,14:00,eskilstuna-united-dff,Eskilstuna United DFF,malm-ff,Malmö FF,1,1,,,Played,D,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529598,2026-06-13,13:00,aik,AIK,djurg-rden,Djurgården,3,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529600,2026-06-13,13:00,roseng-rd,Rosengård,ifk-norrk-ping-fk,IFK Norrköping FK,1,1,,,Played,D,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529602,2026-06-13,12:30,pite-if-dff,Piteå IF DFF,if-brommapojkarna,IF Brommapojkarna,1,2,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529603,2026-06-12,19:00,vittsj-gik,Vittsjö GIK,kristianstads-dff,Kristianstads DFF,1,1,,,Played,D,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529596,2026-05-31,15:00,malm-ff,Malmö FF,v-xj,Växjö,3,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529595,2026-05-31,14:00,kristianstads-dff,Kristianstads DFF,bk-h-cken-ff,BK Häcken FF,0,3,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529597,2026-05-31,14:00,vittsj-gik,Vittsjö GIK,hammarby,Hammarby,1,2,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529592,2026-05-31,13:00,roseng-rd,Rosengård,if-brommapojkarna,IF Brommapojkarna,1,2,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529591,2026-05-30,15:00,djurg-rden,Djurgården,eskilstuna-united-dff,Eskilstuna United DFF,0,0,,,Played,D,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529593,2026-05-30,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,pite-if-dff,Piteå IF DFF,1,2,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529594,2026-05-30,15:00,ik-uppsala-fotboll,IK Uppsala Fotboll,aik,AIK,2,2,,,Played,D,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529556,2026-05-27,19:00,aik,AIK,bk-h-cken-ff,BK Häcken FF,2,1,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529558,2026-05-27,19:00,eskilstuna-united-dff,Eskilstuna United DFF,hammarby,Hammarby,0,1,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529585,2026-05-24,15:00,bk-h-cken-ff,BK Häcken FF,ifk-norrk-ping-fk,IFK Norrköping FK,2,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529590,2026-05-24,15:00,v-xj,Växjö,vittsj-gik,Vittsjö GIK,0,2,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529586,2026-05-23,15:00,eskilstuna-united-dff,Eskilstuna United DFF,roseng-rd,Rosengård,0,3,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529588,2026-05-23,15:00,kristianstads-dff,Kristianstads DFF,hammarby,Hammarby,0,1,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529587,2026-05-23,14:00,if-brommapojkarna,IF Brommapojkarna,ik-uppsala-fotboll,IK Uppsala Fotboll,4,2,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529584,2026-05-23,13:00,aik,AIK,malm-ff,Malmö FF,2,2,,,Played,D,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529589,2026-05-22,18:00,pite-if-dff,Piteå IF DFF,djurg-rden,Djurgården,0,1,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529581,2026-05-20,19:00,hammarby,Hammarby,malm-ff,Malmö FF,2,1,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529578,2026-05-20,18:30,bk-h-cken-ff,BK Häcken FF,v-xj,Växjö,4,2,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529577,2026-05-17,15:00,aik,AIK,pite-if-dff,Piteå IF DFF,2,1,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529579,2026-05-17,15:00,eskilstuna-united-dff,Eskilstuna United DFF,ik-uppsala-fotboll,IK Uppsala Fotboll,1,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529582,2026-05-17,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,if-brommapojkarna,IF Brommapojkarna,3,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529583,2026-05-17,13:00,vittsj-gik,Vittsjö GIK,djurg-rden,Djurgården,1,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529580,2026-05-15,18:30,roseng-rd,Rosengård,kristianstads-dff,Kristianstads DFF,2,2,,,Played,D,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529570,2026-05-12,19:00,djurg-rden,Djurgården,hammarby,Hammarby,0,2,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529574,2026-05-11,18:00,malm-ff,Malmö FF,bk-h-cken-ff,BK Häcken FF,1,2,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529572,2026-05-10,15:00,ik-uppsala-fotboll,IK Uppsala Fotboll,vittsj-gik,Vittsjö GIK,3,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529575,2026-05-10,13:00,pite-if-dff,Piteå IF DFF,roseng-rd,Rosengård,2,1,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529573,2026-05-09,15:00,kristianstads-dff,Kristianstads DFF,ifk-norrk-ping-fk,IFK Norrköping FK,2,2,,,Played,D,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529576,2026-05-09,15:00,v-xj,Växjö,aik,AIK,3,3,,,Played,D,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529571,2026-05-09,14:00,if-brommapojkarna,IF Brommapojkarna,eskilstuna-united-dff,Eskilstuna United DFF,0,1,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529565,2026-05-06,19:00,hammarby,Hammarby,ik-uppsala-fotboll,IK Uppsala Fotboll,3,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529563,2026-05-06,18:30,bk-h-cken-ff,BK Häcken FF,djurg-rden,Djurgården,3,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529567,2026-05-03,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,eskilstuna-united-dff,Eskilstuna United DFF,0,2,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529569,2026-05-03,13:00,v-xj,Växjö,pite-if-dff,Piteå IF DFF,1,2,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529566,2026-05-02,14:00,if-brommapojkarna,IF Brommapojkarna,kristianstads-dff,Kristianstads DFF,3,2,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529564,2026-05-02,13:00,roseng-rd,Rosengård,malm-ff,Malmö FF,0,1,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529568,2026-05-02,13:00,vittsj-gik,Vittsjö GIK,aik,AIK,1,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529561,2026-04-26,15:00,malm-ff,Malmö FF,if-brommapojkarna,IF Brommapojkarna,2,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529562,2026-04-26,14:00,pite-if-dff,Piteå IF DFF,vittsj-gik,Vittsjö GIK,1,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529557,2026-04-25,15:00,djurg-rden,Djurgården,ifk-norrk-ping-fk,IFK Norrköping FK,1,1,,,Played,D,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529560,2026-04-25,15:00,kristianstads-dff,Kristianstads DFF,v-xj,Växjö,1,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529559,2026-04-25,14:00,ik-uppsala-fotboll,IK Uppsala Fotboll,roseng-rd,Rosengård,1,1,,,Played,D,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529551,2026-04-06,15:00,ifk-norrk-ping-fk,IFK Norrköping FK,malm-ff,Malmö FF,1,1,,,Played,D,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529550,2026-04-06,14:00,if-brommapojkarna,IF Brommapojkarna,hammarby,Hammarby,0,3,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529554,2026-04-06,13:00,vittsj-gik,Vittsjö GIK,bk-h-cken-ff,BK Häcken FF,1,2,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529549,2026-04-05,16:00,roseng-rd,Rosengård,aik,AIK,1,2,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529552,2026-04-05,15:00,ik-uppsala-fotboll,IK Uppsala Fotboll,pite-if-dff,Piteå IF DFF,0,0,,,Played,D,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529555,2026-04-03,15:00,v-xj,Växjö,eskilstuna-united-dff,Eskilstuna United DFF,3,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529553,2026-04-03,13:00,kristianstads-dff,Kristianstads DFF,djurg-rden,Djurgården,4,1,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529546,2026-03-29,16:00,hammarby,Hammarby,roseng-rd,Rosengård,3,1,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529543,2026-03-29,15:00,bk-h-cken-ff,BK Häcken FF,if-brommapojkarna,IF Brommapojkarna,3,2,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529544,2026-03-29,15:00,djurg-rden,Djurgården,v-xj,Växjö,2,1,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529547,2026-03-29,15:00,malm-ff,Malmö FF,ik-uppsala-fotboll,IK Uppsala Fotboll,3,0,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529548,2026-03-29,14:00,pite-if-dff,Piteå IF DFF,kristianstads-dff,Kristianstads DFF,2,3,,,Played,A,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529545,2026-03-28,15:00,eskilstuna-united-dff,Eskilstuna United DFF,vittsj-gik,Vittsjö GIK,2,1,,,Played,H,SWE
+2026,SW-DA,Damallsvenskan,133440,1,-,,6529542,2026-03-28,13:00,aik,AIK,ifk-norrk-ping-fk,IFK Norrköping FK,1,0,,,Played,H,SWE

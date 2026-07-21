@@ -1,0 +1,241 @@
+season,league_code,league_name,competition_id,group_id,group_name,round,match_id,date,time,home_team_id,home_team,away_team_id,away_team,home_goals,away_goals,ht_home,ht_away,status,result,country
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-1-str-msgodset,2025-03-29,16:00,str-msgodset,Strømsgodset,rosenborg,Rosenborg,1,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-1-fredrikstad,2025-03-29,18:00,fredrikstad,Fredrikstad,brann,Brann,3,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-1-v-lerenga,2025-03-30,14:30,v-lerenga,Vålerenga,viking,Viking,3,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-1-hamkam,2025-03-30,17:00,hamkam,HamKam,kristiansund,Kristiansund,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-1-kfum,2025-03-30,17:00,kfum,KFUM,sandefjord-fotball,Sandefjord Fotball,3,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-1-molde,2025-03-30,17:00,molde,Molde,sarpsborg-08,Sarpsborg 08,0,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-1-troms,2025-03-30,17:00,troms,Tromsø,haugesund,Haugesund,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-1-bryne,2025-03-30,19:15,bryne,Bryne,bod-glimt,Bodø/Glimt,0,1,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-2-bod-glimt,2025-04-05,16:00,bod-glimt,Bodø/Glimt,hamkam,HamKam,3,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-2-rosenborg,2025-04-05,18:00,rosenborg,Rosenborg,fredrikstad,Fredrikstad,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-2-brann,2025-04-06,14:30,brann,Brann,troms,Tromsø,3,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-2-haugesund,2025-04-06,17:00,haugesund,Haugesund,str-msgodset,Strømsgodset,0,5,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-2-kristiansund,2025-04-06,17:00,kristiansund,Kristiansund,bryne,Bryne,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-2-sandefjord-fotball,2025-04-06,17:00,sandefjord-fotball,Sandefjord Fotball,molde,Molde,3,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-2-sarpsborg-08,2025-04-06,17:00,sarpsborg-08,Sarpsborg 08,v-lerenga,Vålerenga,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-2-viking,2025-04-06,19:15,viking,Viking,kfum,KFUM,3,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-3-troms,2025-04-20,14:30,troms,Tromsø,kristiansund,Kristiansund,2,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-3-v-lerenga,2025-04-21,14:30,v-lerenga,Vålerenga,rosenborg,Rosenborg,0,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-3-bryne,2025-04-21,17:00,bryne,Bryne,haugesund,Haugesund,3,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-3-fredrikstad,2025-04-21,17:00,fredrikstad,Fredrikstad,sandefjord-fotball,Sandefjord Fotball,3,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-3-hamkam,2025-04-21,17:00,hamkam,HamKam,viking,Viking,2,5,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-3-kfum,2025-04-21,17:00,kfum,KFUM,sarpsborg-08,Sarpsborg 08,1,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-3-str-msgodset,2025-04-21,17:00,str-msgodset,Strømsgodset,brann,Brann,1,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-3-molde,2025-04-21,19:15,molde,Molde,bod-glimt,Bodø/Glimt,2,2,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-4-rosenborg,2025-04-27,14:30,rosenborg,Rosenborg,molde,Molde,0,0,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-4-bod-glimt,2025-04-27,17:00,bod-glimt,Bodø/Glimt,kfum,KFUM,3,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-4-brann,2025-04-27,17:00,brann,Brann,bryne,Bryne,3,2,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-4-haugesund,2025-04-27,17:00,haugesund,Haugesund,fredrikstad,Fredrikstad,0,0,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-4-kristiansund,2025-04-27,17:00,kristiansund,Kristiansund,v-lerenga,Vålerenga,0,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-4-sandefjord-fotball,2025-04-27,17:00,sandefjord-fotball,Sandefjord Fotball,hamkam,HamKam,2,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-4-sarpsborg-08,2025-04-27,17:15,sarpsborg-08,Sarpsborg 08,str-msgodset,Strømsgodset,2,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-4-viking,2025-04-27,19:15,viking,Viking,troms,Tromsø,4,4,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-5-hamkam,2025-05-02,19:00,hamkam,HamKam,kfum,KFUM,0,0,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-5-v-lerenga,2025-05-03,18:00,v-lerenga,Vålerenga,brann,Brann,2,4,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-5-molde,2025-05-04,17:00,molde,Molde,haugesund,Haugesund,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-5-str-msgodset,2025-05-04,17:00,str-msgodset,Strømsgodset,kristiansund,Kristiansund,1,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-5-troms,2025-05-04,17:00,troms,Tromsø,sandefjord-fotball,Sandefjord Fotball,0,1,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-5-viking,2025-05-04,17:00,viking,Viking,sarpsborg-08,Sarpsborg 08,0,0,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-5-rosenborg,2025-05-04,19:15,rosenborg,Rosenborg,bryne,Bryne,3,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-5-fredrikstad,2025-07-16,18:00,fredrikstad,Fredrikstad,bod-glimt,Bodø/Glimt,0,1,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-6-brann,2025-05-11,14:30,brann,Brann,rosenborg,Rosenborg,0,0,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-6-bryne,2025-05-11,17:00,bryne,Bryne,molde,Molde,0,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-6-kfum,2025-05-11,17:00,kfum,KFUM,troms,Tromsø,1,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-6-kristiansund,2025-05-11,17:00,kristiansund,Kristiansund,fredrikstad,Fredrikstad,0,1,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-6-sandefjord-fotball,2025-05-11,17:00,sandefjord-fotball,Sandefjord Fotball,v-lerenga,Vålerenga,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-6-sarpsborg-08,2025-05-11,17:00,sarpsborg-08,Sarpsborg 08,hamkam,HamKam,4,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-6-haugesund,2025-05-11,19:15,haugesund,Haugesund,viking,Viking,1,4,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-6-bod-glimt,2025-07-30,19:00,bod-glimt,Bodø/Glimt,str-msgodset,Strømsgodset,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-7-brann,2025-05-16,18:00,brann,Brann,sarpsborg-08,Sarpsborg 08,2,2,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-7-fredrikstad,2025-05-16,18:00,fredrikstad,Fredrikstad,kfum,KFUM,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-7-molde,2025-05-16,18:00,molde,Molde,kristiansund,Kristiansund,0,1,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-7-rosenborg,2025-05-16,18:00,rosenborg,Rosenborg,haugesund,Haugesund,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-7-str-msgodset,2025-05-16,18:00,str-msgodset,Strømsgodset,bryne,Bryne,0,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-7-troms,2025-05-16,18:00,troms,Tromsø,bod-glimt,Bodø/Glimt,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-7-viking,2025-05-16,18:00,viking,Viking,sandefjord-fotball,Sandefjord Fotball,3,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-7-v-lerenga,2025-05-16,20:00,v-lerenga,Vålerenga,hamkam,HamKam,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-8-bryne,2025-05-24,16:00,bryne,Bryne,fredrikstad,Fredrikstad,4,3,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-8-bod-glimt,2025-05-24,18:00,bod-glimt,Bodø/Glimt,rosenborg,Rosenborg,4,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-8-hamkam,2025-05-25,14:30,hamkam,HamKam,molde,Molde,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-8-kristiansund,2025-05-25,17:00,kristiansund,Kristiansund,viking,Viking,0,1,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-8-sandefjord-fotball,2025-05-25,17:00,sandefjord-fotball,Sandefjord Fotball,str-msgodset,Strømsgodset,3,2,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-8-sarpsborg-08,2025-05-25,17:00,sarpsborg-08,Sarpsborg 08,troms,Tromsø,0,1,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-8-haugesund,2025-05-25,19:15,haugesund,Haugesund,brann,Brann,0,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-8-kfum,2025-05-26,19:00,kfum,KFUM,v-lerenga,Vålerenga,0,1,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-9-str-msgodset,2025-05-31,16:00,str-msgodset,Strømsgodset,hamkam,HamKam,0,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-9-troms,2025-05-31,18:45,troms,Tromsø,v-lerenga,Vålerenga,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-9-fredrikstad,2025-06-01,14:30,fredrikstad,Fredrikstad,sarpsborg-08,Sarpsborg 08,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-9-brann,2025-06-01,17:00,brann,Brann,kristiansund,Kristiansund,4,2,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-9-bryne,2025-06-01,17:00,bryne,Bryne,sandefjord-fotball,Sandefjord Fotball,3,2,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-9-haugesund,2025-06-01,17:00,haugesund,Haugesund,bod-glimt,Bodø/Glimt,0,4,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-9-rosenborg,2025-06-01,17:00,rosenborg,Rosenborg,kfum,KFUM,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-9-molde,2025-06-01,19:15,molde,Molde,viking,Viking,0,1,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-10-bod-glimt,2025-06-21,18:00,bod-glimt,Bodø/Glimt,brann,Brann,3,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-10-v-lerenga,2025-06-22,14:30,v-lerenga,Vålerenga,molde,Molde,2,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-10-hamkam,2025-06-22,17:00,hamkam,HamKam,troms,Tromsø,1,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-10-kfum,2025-06-22,17:00,kfum,KFUM,str-msgodset,Strømsgodset,5,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-10-kristiansund,2025-06-22,17:00,kristiansund,Kristiansund,rosenborg,Rosenborg,4,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-10-sandefjord-fotball,2025-06-22,17:00,sandefjord-fotball,Sandefjord Fotball,haugesund,Haugesund,4,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-10-sarpsborg-08,2025-06-22,17:00,sarpsborg-08,Sarpsborg 08,bryne,Bryne,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-10-viking,2025-06-22,19:15,viking,Viking,fredrikstad,Fredrikstad,3,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-11-rosenborg,2025-06-28,18:00,rosenborg,Rosenborg,viking,Viking,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-11-haugesund,2025-06-29,14:30,haugesund,Haugesund,kristiansund,Kristiansund,0,0,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-11-bod-glimt,2025-06-29,17:00,bod-glimt,Bodø/Glimt,sarpsborg-08,Sarpsborg 08,1,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-11-bryne,2025-06-29,17:00,bryne,Bryne,hamkam,HamKam,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-11-fredrikstad,2025-06-29,17:00,fredrikstad,Fredrikstad,troms,Tromsø,0,1,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-11-molde,2025-06-29,17:00,molde,Molde,kfum,KFUM,2,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-11-str-msgodset,2025-06-29,19:15,str-msgodset,Strømsgodset,v-lerenga,Vålerenga,0,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-11-brann,2025-06-30,19:00,brann,Brann,sandefjord-fotball,Sandefjord Fotball,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-12-hamkam,2025-07-05,14:00,hamkam,HamKam,brann,Brann,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-12-viking,2025-07-05,16:00,viking,Viking,str-msgodset,Strømsgodset,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-12-v-lerenga,2025-07-05,18:00,v-lerenga,Vålerenga,fredrikstad,Fredrikstad,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-12-kristiansund,2025-07-05,20:00,kristiansund,Kristiansund,bod-glimt,Bodø/Glimt,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-12-troms,2025-07-05,22:00,troms,Tromsø,molde,Molde,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-12-kfum,2025-07-06,14:30,kfum,KFUM,bryne,Bryne,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-12-sandefjord-fotball,2025-07-06,14:30,sandefjord-fotball,Sandefjord Fotball,rosenborg,Rosenborg,2,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-12-sarpsborg-08,2025-07-06,14:30,sarpsborg-08,Sarpsborg 08,haugesund,Haugesund,3,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-13-bod-glimt,2025-07-12,16:00,bod-glimt,Bodø/Glimt,sandefjord-fotball,Sandefjord Fotball,2,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-13-fredrikstad,2025-07-12,18:00,fredrikstad,Fredrikstad,molde,Molde,4,2,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-13-bryne,2025-07-13,14:30,bryne,Bryne,v-lerenga,Vålerenga,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-13-haugesund,2025-07-13,17:00,haugesund,Haugesund,kfum,KFUM,0,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-13-kristiansund,2025-07-13,17:00,kristiansund,Kristiansund,sarpsborg-08,Sarpsborg 08,0,0,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-13-rosenborg,2025-07-13,17:00,rosenborg,Rosenborg,hamkam,HamKam,2,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-13-str-msgodset,2025-07-13,17:00,str-msgodset,Strømsgodset,troms,Tromsø,2,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-13-brann,2025-07-13,19:15,brann,Brann,viking,Viking,3,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-14-sarpsborg-08,2025-07-18,18:00,sarpsborg-08,Sarpsborg 08,rosenborg,Rosenborg,2,2,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-14-kfum,2025-07-19,14:00,kfum,KFUM,brann,Brann,2,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-14-molde,2025-07-19,16:00,molde,Molde,str-msgodset,Strømsgodset,4,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-14-viking,2025-07-19,18:00,viking,Viking,bod-glimt,Bodø/Glimt,2,4,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-14-v-lerenga,2025-07-20,14:30,v-lerenga,Vålerenga,haugesund,Haugesund,3,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-14-sandefjord-fotball,2025-07-20,17:00,sandefjord-fotball,Sandefjord Fotball,kristiansund,Kristiansund,6,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-14-troms,2025-07-20,17:00,troms,Tromsø,bryne,Bryne,3,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-14-hamkam,2025-07-20,19:15,hamkam,HamKam,fredrikstad,Fredrikstad,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-15-brann,2025-05-29,18:00,brann,Brann,molde,Molde,0,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-15-fredrikstad,2025-07-25,19:00,fredrikstad,Fredrikstad,str-msgodset,Strømsgodset,3,2,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-15-haugesund,2025-07-26,16:00,haugesund,Haugesund,hamkam,HamKam,0,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-15-kristiansund,2025-07-26,16:00,kristiansund,Kristiansund,kfum,KFUM,0,5,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-15-sandefjord-fotball,2025-07-26,16:00,sandefjord-fotball,Sandefjord Fotball,sarpsborg-08,Sarpsborg 08,3,2,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-15-bod-glimt,2025-07-26,18:00,bod-glimt,Bodø/Glimt,v-lerenga,Vålerenga,7,2,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-15-bryne,2025-07-27,14:30,bryne,Bryne,viking,Viking,1,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-15-rosenborg,2025-07-27,14:30,rosenborg,Rosenborg,troms,Tromsø,4,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-16-viking,2025-04-10,19:00,viking,Viking,kristiansund,Kristiansund,3,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-16-troms,2025-08-02,16:00,troms,Tromsø,fredrikstad,Fredrikstad,0,0,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-16-sarpsborg-08,2025-08-02,18:00,sarpsborg-08,Sarpsborg 08,brann,Brann,1,4,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-16-hamkam,2025-08-03,14:30,hamkam,HamKam,bod-glimt,Bodø/Glimt,1,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-16-kfum,2025-08-03,17:00,kfum,KFUM,rosenborg,Rosenborg,4,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-16-molde,2025-08-03,17:00,molde,Molde,bryne,Bryne,2,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-16-str-msgodset,2025-08-03,17:00,str-msgodset,Strømsgodset,haugesund,Haugesund,2,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-16-v-lerenga,2025-08-03,17:00,v-lerenga,Vålerenga,sandefjord-fotball,Sandefjord Fotball,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-17-fredrikstad,2025-04-09,19:00,fredrikstad,Fredrikstad,v-lerenga,Vålerenga,2,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-17-brann,2025-04-10,19:00,brann,Brann,str-msgodset,Strømsgodset,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-17-rosenborg,2025-05-01,18:00,rosenborg,Rosenborg,kristiansund,Kristiansund,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-17-molde,2025-08-09,16:00,molde,Molde,hamkam,HamKam,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-17-bod-glimt,2025-08-09,19:15,bod-glimt,Bodø/Glimt,troms,Tromsø,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-17-bryne,2025-08-10,17:00,bryne,Bryne,kfum,KFUM,0,0,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-17-haugesund,2025-08-10,17:00,haugesund,Haugesund,sarpsborg-08,Sarpsborg 08,3,2,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-17-sandefjord-fotball,2025-08-10,19:15,sandefjord-fotball,Sandefjord Fotball,viking,Viking,1,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-18-viking,2025-04-30,18:00,viking,Viking,haugesund,Haugesund,5,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-18-fredrikstad,2025-05-28,19:00,fredrikstad,Fredrikstad,rosenborg,Rosenborg,0,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-18-str-msgodset,2025-08-15,19:00,str-msgodset,Strømsgodset,bod-glimt,Bodø/Glimt,0,5,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-18-troms,2025-08-17,14:30,troms,Tromsø,brann,Brann,1,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-18-hamkam,2025-08-17,17:00,hamkam,HamKam,bryne,Bryne,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-18-kfum,2025-08-17,17:00,kfum,KFUM,molde,Molde,0,0,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-18-kristiansund,2025-08-17,17:00,kristiansund,Kristiansund,sandefjord-fotball,Sandefjord Fotball,2,2,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-18-v-lerenga,2025-08-17,19:15,v-lerenga,Vålerenga,sarpsborg-08,Sarpsborg 08,4,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-19-bod-glimt,2025-05-28,21:00,bod-glimt,Bodø/Glimt,viking,Viking,2,4,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-19-kfum,2025-08-22,19:00,kfum,KFUM,hamkam,HamKam,2,2,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-19-haugesund,2025-08-24,14:30,haugesund,Haugesund,v-lerenga,Vålerenga,2,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-19-bryne,2025-08-24,17:00,bryne,Bryne,str-msgodset,Strømsgodset,2,2,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-19-molde,2025-08-24,19:15,molde,Molde,troms,Tromsø,2,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-19-sarpsborg-08,2025-08-25,19:00,sarpsborg-08,Sarpsborg 08,kristiansund,Kristiansund,0,1,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-19-brann,2025-09-28,14:30,brann,Brann,fredrikstad,Fredrikstad,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-19-rosenborg,2025-10-29,21:00,rosenborg,Rosenborg,sandefjord-fotball,Sandefjord Fotball,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-20-v-lerenga,2025-08-30,18:00,v-lerenga,Vålerenga,bryne,Bryne,3,2,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-20-kristiansund,2025-08-31,14:30,kristiansund,Kristiansund,brann,Brann,2,2,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-20-fredrikstad,2025-08-31,17:00,fredrikstad,Fredrikstad,haugesund,Haugesund,2,2,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-20-hamkam,2025-08-31,17:00,hamkam,HamKam,sarpsborg-08,Sarpsborg 08,1,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-20-sandefjord-fotball,2025-08-31,17:00,sandefjord-fotball,Sandefjord Fotball,bod-glimt,Bodø/Glimt,1,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-20-troms,2025-08-31,17:00,troms,Tromsø,kfum,KFUM,2,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-20-viking,2025-08-31,17:00,viking,Viking,rosenborg,Rosenborg,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-20-str-msgodset,2025-08-31,19:15,str-msgodset,Strømsgodset,molde,Molde,3,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-21-bod-glimt,2025-09-12,19:00,bod-glimt,Bodø/Glimt,kristiansund,Kristiansund,7,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-21-molde,2025-09-13,16:00,molde,Molde,fredrikstad,Fredrikstad,1,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-21-brann,2025-09-13,18:00,brann,Brann,v-lerenga,Vålerenga,3,2,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-21-bryne,2025-09-14,14:30,bryne,Bryne,troms,Tromsø,0,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-21-hamkam,2025-09-14,17:00,hamkam,HamKam,str-msgodset,Strømsgodset,1,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-21-kfum,2025-09-14,17:00,kfum,KFUM,viking,Viking,2,2,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-21-sarpsborg-08,2025-09-14,17:00,sarpsborg-08,Sarpsborg 08,sandefjord-fotball,Sandefjord Fotball,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-21-haugesund,2025-09-14,19:15,haugesund,Haugesund,rosenborg,Rosenborg,0,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-22-fredrikstad,2025-09-20,14:00,fredrikstad,Fredrikstad,bryne,Bryne,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-22-sandefjord-fotball,2025-09-20,16:00,sandefjord-fotball,Sandefjord Fotball,brann,Brann,0,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-22-v-lerenga,2025-09-20,18:00,v-lerenga,Vålerenga,kfum,KFUM,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-22-rosenborg,2025-09-21,14:30,rosenborg,Rosenborg,bod-glimt,Bodø/Glimt,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-22-kristiansund,2025-09-21,17:00,kristiansund,Kristiansund,haugesund,Haugesund,2,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-22-str-msgodset,2025-09-21,17:00,str-msgodset,Strømsgodset,sarpsborg-08,Sarpsborg 08,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-22-troms,2025-09-21,17:00,troms,Tromsø,hamkam,HamKam,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-22-viking,2025-09-21,19:15,viking,Viking,molde,Molde,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-23-sarpsborg-08,2025-09-27,18:00,sarpsborg-08,Sarpsborg 08,viking,Viking,3,3,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-23-bryne,2025-09-28,17:00,bryne,Bryne,kristiansund,Kristiansund,2,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-23-hamkam,2025-09-28,17:00,hamkam,HamKam,rosenborg,Rosenborg,4,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-23-troms,2025-09-28,17:00,troms,Tromsø,str-msgodset,Strømsgodset,3,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-23-molde,2025-09-28,19:15,molde,Molde,v-lerenga,Vålerenga,4,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-23-haugesund,2025-09-29,19:00,haugesund,Haugesund,sandefjord-fotball,Sandefjord Fotball,2,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-23-kfum,2025-10-01,19:00,kfum,KFUM,fredrikstad,Fredrikstad,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-23-brann,2025-10-29,19:00,brann,Brann,bod-glimt,Bodø/Glimt,1,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-24-v-lerenga,2025-10-04,14:00,v-lerenga,Vålerenga,troms,Tromsø,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-24-sandefjord-fotball,2025-10-04,16:00,sandefjord-fotball,Sandefjord Fotball,bryne,Bryne,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-24-kristiansund,2025-10-04,18:00,kristiansund,Kristiansund,molde,Molde,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-24-viking,2025-10-05,14:30,viking,Viking,brann,Brann,3,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-24-bod-glimt,2025-10-05,17:00,bod-glimt,Bodø/Glimt,haugesund,Haugesund,2,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-24-fredrikstad,2025-10-05,17:00,fredrikstad,Fredrikstad,hamkam,HamKam,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-24-str-msgodset,2025-10-05,17:00,str-msgodset,Strømsgodset,kfum,KFUM,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-24-rosenborg,2025-10-05,19:15,rosenborg,Rosenborg,sarpsborg-08,Sarpsborg 08,2,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-25-sarpsborg-08,2025-10-18,14:00,sarpsborg-08,Sarpsborg 08,bod-glimt,Bodø/Glimt,2,5,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-25-bryne,2025-10-18,16:00,bryne,Bryne,rosenborg,Rosenborg,2,2,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-25-brann,2025-10-18,18:00,brann,Brann,haugesund,Haugesund,4,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-25-troms,2025-10-19,14:30,troms,Tromsø,viking,Viking,1,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-25-hamkam,2025-10-19,17:00,hamkam,HamKam,v-lerenga,Vålerenga,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-25-kfum,2025-10-19,17:00,kfum,KFUM,kristiansund,Kristiansund,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-25-molde,2025-10-19,17:00,molde,Molde,sandefjord-fotball,Sandefjord Fotball,1,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-25-str-msgodset,2025-10-19,19:15,str-msgodset,Strømsgodset,fredrikstad,Fredrikstad,0,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-26-viking,2025-10-25,16:00,viking,Viking,bryne,Bryne,5,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-26-sarpsborg-08,2025-10-25,18:00,sarpsborg-08,Sarpsborg 08,kfum,KFUM,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-26-rosenborg,2025-10-26,14:30,rosenborg,Rosenborg,brann,Brann,2,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-26-bod-glimt,2025-10-26,17:00,bod-glimt,Bodø/Glimt,molde,Molde,4,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-26-haugesund,2025-10-26,17:00,haugesund,Haugesund,troms,Tromsø,2,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-26-kristiansund,2025-10-26,17:00,kristiansund,Kristiansund,hamkam,HamKam,1,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-26-sandefjord-fotball,2025-10-26,17:00,sandefjord-fotball,Sandefjord Fotball,fredrikstad,Fredrikstad,0,0,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-26-v-lerenga,2025-10-26,19:15,v-lerenga,Vålerenga,str-msgodset,Strømsgodset,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-27-v-lerenga,2025-11-01,16:00,v-lerenga,Vålerenga,bod-glimt,Bodø/Glimt,3,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-27-molde,2025-11-01,18:00,molde,Molde,rosenborg,Rosenborg,4,2,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-27-str-msgodset,2025-11-02,14:30,str-msgodset,Strømsgodset,viking,Viking,1,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-27-bryne,2025-11-02,17:00,bryne,Bryne,brann,Brann,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-27-fredrikstad,2025-11-02,17:00,fredrikstad,Fredrikstad,kristiansund,Kristiansund,3,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-27-hamkam,2025-11-02,17:00,hamkam,HamKam,sandefjord-fotball,Sandefjord Fotball,3,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-27-kfum,2025-11-02,17:00,kfum,KFUM,haugesund,Haugesund,1,4,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-27-troms,2025-11-02,19:15,troms,Tromsø,sarpsborg-08,Sarpsborg 08,4,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-28-sarpsborg-08,2025-11-08,14:00,sarpsborg-08,Sarpsborg 08,fredrikstad,Fredrikstad,0,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-28-viking,2025-11-08,18:00,viking,Viking,hamkam,HamKam,3,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-28-rosenborg,2025-11-09,14:30,rosenborg,Rosenborg,v-lerenga,Vålerenga,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-28-bod-glimt,2025-11-09,17:00,bod-glimt,Bodø/Glimt,bryne,Bryne,5,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-28-brann,2025-11-09,17:00,brann,Brann,kfum,KFUM,1,1,,,Played,D,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-28-kristiansund,2025-11-09,17:00,kristiansund,Kristiansund,str-msgodset,Strømsgodset,2,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-28-sandefjord-fotball,2025-11-09,17:00,sandefjord-fotball,Sandefjord Fotball,troms,Tromsø,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-28-haugesund,2025-11-09,19:15,haugesund,Haugesund,molde,Molde,0,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-29-kfum,2025-11-21,19:00,kfum,KFUM,bod-glimt,Bodø/Glimt,1,2,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-29-troms,2025-11-22,14:00,troms,Tromsø,rosenborg,Rosenborg,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-29-v-lerenga,2025-11-22,16:00,v-lerenga,Vålerenga,kristiansund,Kristiansund,3,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-29-molde,2025-11-22,18:00,molde,Molde,brann,Brann,4,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-29-str-msgodset,2025-11-22,18:00,str-msgodset,Strømsgodset,sandefjord-fotball,Sandefjord Fotball,2,6,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-29-bryne,2025-11-23,14:30,bryne,Bryne,sarpsborg-08,Sarpsborg 08,0,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-29-hamkam,2025-11-23,14:30,hamkam,HamKam,haugesund,Haugesund,5,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-29-fredrikstad,2025-11-23,19:15,fredrikstad,Fredrikstad,viking,Viking,0,1,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-30-bod-glimt,2025-11-30,17:00,bod-glimt,Bodø/Glimt,fredrikstad,Fredrikstad,5,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-30-brann,2025-11-30,17:00,brann,Brann,hamkam,HamKam,3,1,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-30-haugesund,2025-11-30,17:00,haugesund,Haugesund,bryne,Bryne,1,4,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-30-kristiansund,2025-11-30,17:00,kristiansund,Kristiansund,troms,Tromsø,1,3,,,Played,A,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-30-rosenborg,2025-11-30,17:00,rosenborg,Rosenborg,str-msgodset,Strømsgodset,6,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-30-sandefjord-fotball,2025-11-30,17:00,sandefjord-fotball,Sandefjord Fotball,kfum,KFUM,2,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-30-sarpsborg-08,2025-11-30,17:00,sarpsborg-08,Sarpsborg 08,molde,Molde,1,0,,,Played,H,NOR
+2025,NO-ELI,Eliteserien,199603,1,-,,199603-30-viking,2025-11-30,17:00,viking,Viking,v-lerenga,Vålerenga,5,1,,,Played,H,NOR
