@@ -8,7 +8,7 @@ from telegram.ext import Application, ApplicationBuilder
 
 from bot.config import Settings
 from bot.error_handler import handle_error
-from bot.handlers import register_handlers
+from interfaces.telegram.handlers import register_handlers
 from bot.jobs import (
     start_orchestrated_scheduler,
     stop_orchestrated_scheduler,

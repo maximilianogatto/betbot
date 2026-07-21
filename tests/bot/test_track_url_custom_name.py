@@ -4,7 +4,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import AsyncMock, patch
 
-from bot import handlers
+from interfaces.telegram.handlers import commands as handlers
 
 
 class TrackUrlCustomNameTests(unittest.IsolatedAsyncioTestCase):
@@ -15,8 +15,8 @@ class TrackUrlCustomNameTests(unittest.IsolatedAsyncioTestCase):
         message = SimpleNamespace(reply_text=AsyncMock())
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=1))
         context = SimpleNamespace(args=args)
-        with patch("bot.handlers.get_tracking_service", return_value=service), patch(
-            "bot.handlers.reply_with_result", AsyncMock()
+        with patch("interfaces.telegram.handlers.commands.get_tracking_service", return_value=service), patch(
+            "interfaces.telegram.handlers.commands.reply_with_result", AsyncMock()
         ):
             await handlers.track_url_command(update, context)
         return service.create_pending_track_from_url.await_args.kwargs

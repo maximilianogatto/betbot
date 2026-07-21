@@ -4,7 +4,7 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
-from bot.handlers import (
+from interfaces.telegram.handlers import (
     help_command,
     help_matches_command,
     help_live_command,

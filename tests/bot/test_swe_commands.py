@@ -4,7 +4,7 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from bot.handlers import (
+from interfaces.telegram.handlers import (
     _convert_swe_to_arg_datetime,
     _resolve_swe_league,
     swe_fixtures_command,
@@ -184,7 +184,7 @@ class SweCupTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_cup_resolves_latest_season_only(self) -> None:
         from bot.special_leagues import SwedenLeagues
-        from bot.handlers import _SWE_LEAGUES
+        from interfaces.telegram.handlers import _SWE_LEAGUES
         client = MagicMock()
         client.get_competition_tree.return_value = _CUP_TREE
         s = SwedenLeagues(client, _SWE_LEAGUES)

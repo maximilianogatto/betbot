@@ -5,7 +5,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import AsyncMock, patch
 
-from bot.handlers import MANUAL_REFRESH_TASK_KEY, refresh_tracks_command
+from interfaces.telegram.handlers import MANUAL_REFRESH_TASK_KEY, refresh_tracks_command
 from services.models import CommandResult
 from services.models import RefreshSummary
 from services.tracking import TrackingService
@@ -44,7 +44,7 @@ class RefreshTracksHandlerTests(unittest.IsolatedAsyncioTestCase):
 
         summary_result = CommandResult(ok=True, message="Refresh completado.\n⏱️ Tiempo total: 42s")
         with (
-            patch("bot.handlers.get_tracking_service", return_value=tracking_service),
+            patch("interfaces.telegram.handlers.commands.get_tracking_service", return_value=tracking_service),
             patch("adapters.storage.get_storage", return_value=SimpleNamespace()),
             patch(
                 "interfaces.telegram.notifications.dispatch_tracking_notifications",
@@ -85,7 +85,7 @@ class RefreshTracksHandlerTests(unittest.IsolatedAsyncioTestCase):
 
         try:
             await tracking_service.try_start_refresh("automatic")
-            with patch("bot.handlers.get_tracking_service", return_value=tracking_service):
+            with patch("interfaces.telegram.handlers.commands.get_tracking_service", return_value=tracking_service):
                 await refresh_tracks_command(update, context)
         finally:
             await tracking_service.finish_refresh("automatic")
@@ -118,7 +118,7 @@ class RefreshTracksHandlerTests(unittest.IsolatedAsyncioTestCase):
 
         summary_result = CommandResult(ok=True, message="Refresh completado.\n⏱️ Tiempo total: 42s")
         with (
-            patch("bot.handlers.get_tracking_service", return_value=tracking_service),
+            patch("interfaces.telegram.handlers.commands.get_tracking_service", return_value=tracking_service),
             patch("adapters.storage.get_storage", return_value=SimpleNamespace()),
             patch(
                 "interfaces.telegram.notifications.dispatch_tracking_notifications",
@@ -163,8 +163,8 @@ class RefreshTracksHandlerTests(unittest.IsolatedAsyncioTestCase):
             return [text]
 
         with (
-            patch("bot.handlers.get_tracking_service", return_value=tracking_service),
-            patch("bot.handlers.split_telegram_message", side_effect=_capture_split_text),
+            patch("interfaces.telegram.handlers.commands.get_tracking_service", return_value=tracking_service),
+            patch("interfaces.telegram.handlers.commands.split_telegram_message", side_effect=_capture_split_text),
             patch("adapters.storage.get_storage", return_value=SimpleNamespace()),
             patch(
                 "interfaces.telegram.notifications.dispatch_tracking_notifications",

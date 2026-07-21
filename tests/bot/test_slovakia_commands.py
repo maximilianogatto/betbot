@@ -4,7 +4,7 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from bot.handlers import (
+from interfaces.telegram.handlers import (
     sk_leagues_command,
     sk_standings_command,
     sk_fixtures_command,

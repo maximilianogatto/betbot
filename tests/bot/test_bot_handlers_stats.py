@@ -4,7 +4,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import AsyncMock, Mock, patch
 
-from bot.handlers import (
+from interfaces.telegram.handlers import (
     EXPLORE_FIXTURES_CONTEXT_KEY,
     EXPLORE_MENU,
     EXPLORE_SELECTED_LEAGUE_CONTEXT_KEY,
@@ -47,7 +47,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         context = SimpleNamespace(args=[], user_data={})
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
-        with patch("bot.handlers.get_tracking_service", return_value=tracking_service):
+        with patch("interfaces.telegram.handlers.commands.get_tracking_service", return_value=tracking_service):
             state = await stats_command(update, context)
 
         self.assertEqual(state, SELECT_LEAGUE_FOR_STATS)
@@ -73,7 +73,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         )
         update = SimpleNamespace(message=message)
 
-        with patch("bot.handlers.get_stats_service", return_value=stats_service), patch(
+        with patch("interfaces.telegram.handlers.commands.get_stats_service", return_value=stats_service), patch(
             "interfaces.telegram.renderers.build_comparison_match_card_message", return_value=""
         ):
             await stats_command(update, context)
@@ -109,7 +109,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         )
         update = SimpleNamespace(message=message)
 
-        with patch("bot.handlers.get_stats_service", return_value=stats_service), patch(
+        with patch("interfaces.telegram.handlers.commands.get_stats_service", return_value=stats_service), patch(
             "interfaces.telegram.renderers.build_comparison_match_card_message", return_value=""
         ):
             state = await stats_select_match(update, context)
@@ -156,7 +156,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         )
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
-        with patch("bot.handlers.get_stats_service", return_value=stats_service):
+        with patch("interfaces.telegram.handlers.commands.get_stats_service", return_value=stats_service):
             state = await link_stats_enter_country(update, context)
 
         self.assertEqual(state, -1)
@@ -198,7 +198,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         )
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
-        with patch("bot.handlers.get_stats_service", return_value=stats_service):
+        with patch("interfaces.telegram.handlers.commands.get_stats_service", return_value=stats_service):
             state = await link_stats_enter_country(update, context)
 
         self.assertEqual(state, -1)
@@ -225,7 +225,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         )
         update = SimpleNamespace(message=message)
 
-        with patch("bot.handlers.get_stats_service", return_value=stats_service):
+        with patch("interfaces.telegram.handlers.commands.get_stats_service", return_value=stats_service):
             state = await link_stats_enter_country(update, context)
 
         self.assertEqual(state, -1)
@@ -257,7 +257,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         )
         update = SimpleNamespace(message=message)
 
-        with patch("bot.handlers.get_stats_service", return_value=stats_service):
+        with patch("interfaces.telegram.handlers.commands.get_stats_service", return_value=stats_service):
             state = await link_stats_enter_country(update, context)
 
         self.assertEqual(state, SELECT_LEAGUE_FOR_LINK_STATS)
@@ -288,14 +288,14 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         )
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
-        with patch("bot.handlers.get_stats_service", return_value=stats_service):
+        with patch("interfaces.telegram.handlers.commands.get_stats_service", return_value=stats_service):
             state = await track_stats_enter_country(update, context)
 
         self.assertEqual(state, SELECT_LEAGUE_FOR_TRACK_STATS)
         self.assertIn("track_stats_options", context.user_data)
 
         message.text = "1"
-        with patch("bot.handlers.get_stats_service", return_value=stats_service):
+        with patch("interfaces.telegram.handlers.commands.get_stats_service", return_value=stats_service):
             state = await track_stats_select_league(update, context)
 
         self.assertEqual(state, -1)
@@ -329,7 +329,7 @@ class StatsCommandHandlerTests(unittest.IsolatedAsyncioTestCase):
         )
         update = SimpleNamespace(message=message)
 
-        with patch("bot.handlers.get_stats_service", return_value=stats_service):
+        with patch("interfaces.telegram.handlers.commands.get_stats_service", return_value=stats_service):
             state = await explore_select_fixture(update, context)
 
         self.assertEqual(state, EXPLORE_MENU)

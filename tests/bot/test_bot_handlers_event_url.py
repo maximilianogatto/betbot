@@ -4,7 +4,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import AsyncMock, patch
 
-from bot.handlers import (
+from interfaces.telegram.handlers import (
     MATCHES_ACTIVE_CONTEXT_KEY,
     MATCHES_SELECTED_TRACK_CONTEXT_KEY,
     event_url_command,

@@ -4,7 +4,7 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, patch
 
-from bot.handlers import (
+from interfaces.telegram.handlers import (
     fin_help_command,
     fin_leagues_command,
     fin_standings_command,
@@ -97,7 +97,7 @@ class TestFinlandCommands(unittest.IsolatedAsyncioTestCase):
         mock_date = Mock()
         mock_date.today.return_value.isoformat.return_value = "2026-06-01"
         
-        with patch("bot.handlers.date", mock_date):
+        with patch("interfaces.telegram.handlers.commands.date", mock_date):
             with patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_matches_by_date", return_value=mock_matches), \
                  patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_league_ranking_list", return_value=_MOCK_FIN_LEAGUES):
                 await fin_today_command(update, context)
@@ -119,7 +119,7 @@ class TestFinlandCommands(unittest.IsolatedAsyncioTestCase):
         mock_date = Mock()
         mock_date.today.return_value.isoformat.return_value = "2026-06-01"
         
-        with patch("bot.handlers.date", mock_date):
+        with patch("interfaces.telegram.handlers.commands.date", mock_date):
             with patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_matches_by_date", return_value=mock_matches), \
                  patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_league_ranking_list", return_value=_MOCK_FIN_LEAGUES):
                 await fin_today_command(update, context)
@@ -142,7 +142,7 @@ class TestFinlandCommands(unittest.IsolatedAsyncioTestCase):
         mock_date = Mock()
         mock_date.today.return_value.isoformat.return_value = "2026-06-01"
         
-        with patch("bot.handlers.date", mock_date):
+        with patch("interfaces.telegram.handlers.commands.date", mock_date):
             with patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_matches_by_date", return_value=mock_matches), \
                  patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_league_ranking_list", return_value=_MOCK_FIN_LEAGUES):
                 await fin_today_command(update, context)
@@ -165,7 +165,7 @@ class TestFinlandCommands(unittest.IsolatedAsyncioTestCase):
         mock_date = Mock()
         mock_date.today.return_value.isoformat.return_value = "2026-06-01"
         
-        with patch("bot.handlers.date", mock_date):
+        with patch("interfaces.telegram.handlers.commands.date", mock_date):
             with patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_matches_by_date", return_value=mock_matches), \
                  patch("stats_providers.palloliitto.api_client.PalloliittoAPI.get_league_ranking_list", return_value=_MOCK_FIN_LEAGUES):
                 await fin_today_command(update, context)
@@ -203,7 +203,7 @@ class TestFinlandCommands(unittest.IsolatedAsyncioTestCase):
         self.assertIn("B-Team", args)
 
     def test_convert_fin_to_arg_datetime(self) -> None:
-        from bot.handlers import _convert_fin_to_arg_datetime
+        from interfaces.telegram.handlers import _convert_fin_to_arg_datetime
         # Finland is UTC+3 in summer (June), Argentina is UTC-3. 6 hours difference.
         d, t = _convert_fin_to_arg_datetime("2026-06-03", "14:00:00")
         self.assertEqual(d, "2026-06-03")
