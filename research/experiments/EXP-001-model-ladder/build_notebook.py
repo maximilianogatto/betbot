@@ -54,9 +54,7 @@ cells = [
     ),
     md("## 2. RPS por liga — ¿dónde aporta el modelo de goles?"),
     code(
-        "res['rps'] = np.concatenate([\n"
-        "    rps_per_match(g[PCOLS].to_numpy(), g['result'].to_numpy())\n"
-        "    for _, g in res.groupby('model', sort=False)])\n"
+        "res['rps'] = rps_per_match(res[PCOLS].to_numpy(), res['result'].to_numpy())\n"
         "by_lg = res.groupby(['model','league_code'])['rps'].mean().unstack().round(4)\n"
         "print(by_lg.to_string())\n"
         "by_lg.T.plot(kind='bar', figsize=(9,4))\n"
