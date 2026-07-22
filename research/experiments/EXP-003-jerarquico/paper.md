@@ -8,15 +8,25 @@
 
 ## Resumen
 
-Formalizamos la familia completa de modelos usados en el programa (tasa base, logística multinomial, histograma binneado, Poisson de fuerzas, Dixon-Coles, recalibración apilada, ratings dinámicos tipo Elo y el jerárquico multi-nivel), con sus postulados, ecuaciones, límites paramétricos y propiedades de estimación. Evaluamos todo bajo walk-forward semanal estricto en 2026 (1.619 partidos nunca vistos). Resultados principales: (i) el Dixon-Coles por liga con recalibración sigue siendo el mejor modelo global (RPS 0.2132); (ii) el jerárquico multi-división es **significativamente peor** en agregado (Δ=+0.0055, IC95 [+0.0018, +0.0094]) porque la transferencia de habilidad entre divisiones está sesgada — pero **gana en el cluster de ligas con datos escasos** (C1: 0.1966 vs 0.1995), el comportamiento exacto que la teoría de pooling parcial predice; (iii) la "anomalía M1" de EXP-001/002 **no supera un test pareado** (IC [−0.0113, +0.0311], n=90): era ruido de muestra chica amplificado por comparaciones múltiples, con un mecanismo plausible de no-estacionariedad (la localía de M1 cayó de 0.52 a 0.39 entre temporadas); (iv) el análisis de sensibilidad muestra una meseta amplia alrededor de (half-life 120 días, σ=0.75) — el modelo no es frágil a sus hiperparámetros — y la dinámica subyacente (mapa de Elo, kernel de decaimiento) es estable y no caótica en el rango operativo.
+Formalizamos la familia completa de modelos usados en el programa (tasa base, logística multinomial, histograma binneado, Poisson de fuerzas, Dixon-Coles, recalibración apilada, ratings dinámicos tipo Elo y el jerárquico multi-nivel), con sus postulados, ecuaciones, límites paramétricos y propiedades de estimación. Evaluamos todo bajo walk-forward semanal estricto en 2026 (1.619 partidos nunca vistos). Resultados principales: (i) el Dixon-Coles por liga con recalibración obtiene el menor RPS global (0.2132); (ii) el jerárquico multi-división es peor en agregado (Δ=+0.0055, IC95 i.i.d. [+0.0018, +0.0094]), aunque obtiene menor RPS en el cluster de ligas con datos escasos (C1: 0.1966 vs 0.1995); (iii) la "anomalía M1" de EXP-001/002 no se distingue de cero en el análisis pareado actual (IC i.i.d. [−0.0113, +0.0311], n=90), y coincide con un cambio descriptivo de localía entre temporadas (0.52 a 0.39); (iv) el análisis de sensibilidad muestra una meseta amplia alrededor de (half-life 120 días, σ=0.75). Los intervalos son provisionales porque el bootstrap implementado remuestrea partidos, no bloques temporales.
 
 ---
 
 ## 1. Introducción
 
-El objetivo del programa es producir probabilidades pre-partido calibradas $(p_H, p_D, p_A)$ — y, derivadas de la distribución de marcadores, probabilidades de over/under y BTTS — para ligas menores nórdicas, de modo de compararlas luego contra las probabilidades implícitas del mercado (fase bloqueada por el archivado de cuotas, Fase 0). La métrica primaria es el **Ranked Probability Score** (RPS), apropiada para el resultado ordinal H>D>A; secundarias: log-loss, Brier, ECE. Ninguna decisión se toma sobre accuracy.
+El objetivo del programa es producir probabilidades pre-partido calibradas $(p_H, p_D, p_A)$ — y, derivadas de la distribución de marcadores, probabilidades de over/under y BTTS — para ligas menores nórdicas, de modo de compararlas luego contra las probabilidades implícitas del mercado (fase bloqueada por el archivado de cuotas, Fase 0). Escribimos $Y\in\{H,D,A\}$ para victoria local, empate y victoria visitante, y $y_r=\mathbf 1(Y=r)$.
 
-Todos los experimentos usan el mismo protocolo: *walk-forward* semanal (cada lunes se reajusta con TODO lo anterior y se predice la semana), features congeladas al instante del partido (anti-leakage por construcción), hiperparámetros elegidos exclusivamente con 2025, y 2026 como conjunto de evaluación puro. Los intervalos de confianza son bootstrap pareado por partido (4.000 réplicas).
+La métrica primaria es el **Ranked Probability Score** (RPS), apropiada cuando las clases tienen el orden $H-D-A$:
+
+$$\mathrm{RPS}(p,y)=\frac{1}{2}\sum_{k=1}^{2}\left(\sum_{r=1}^{k}p_r-\sum_{r=1}^{k}y_r\right)^2.$$
+
+Como métricas secundarias usamos: (i) **log-loss**, $-\log p_Y$, que penaliza con especial severidad asignar probabilidad casi nula al resultado ocurrido; (ii) **Brier multiclase**, $\sum_r(p_r-y_r)^2$, una distancia cuadrática entre el vector pronosticado y el observado; y (iii) **Expected Calibration Error** para victoria local,
+
+$$\mathrm{ECE}_H=\sum_{b=1}^{B}\frac{n_b}{n}\,\left|\overline p_{H,b}-\overline y_{H,b}\right|,$$
+
+donde los partidos se separan aquí en ocho bins por cuantiles de $p_H$. RPS, log-loss y Brier son *proper scoring rules*: en esperanza se optimizan declarando la distribución predictiva verdadera. El ECE no lo es, depende del binneado y sólo resume calibración marginal de $H$; por eso se interpreta junto con la curva de calibración, no como criterio único. Ninguna decisión se toma sobre *accuracy*, que descarta toda la información contenida en las probabilidades no máximas.
+
+Todos los experimentos usan el mismo protocolo: *walk-forward* semanal (cada lunes se reajusta con todo lo anterior y se predice la semana), variables congeladas al instante del partido (anti-leakage por construcción), hiperparámetros elegidos exclusivamente con 2025, y 2026 como conjunto de evaluación puro. Los intervalos actualmente reportados se obtuvieron con un bootstrap pareado de partidos (4.000 réplicas). Este remuestreo conserva la comparación partido a partido entre modelos, pero supone independencia entre partidos; no preserva correlaciones dentro de una semana, liga o equipo. Por tanto, los intervalos y las probabilidades bootstrap deben considerarse provisionales hasta repetir el análisis con bloques temporales (idealmente semana × liga) o un procedimiento equivalente para datos dependientes.
 
 ### 1.1 Datos
 
@@ -46,23 +56,47 @@ $$P(Y=r \mid \text{liga } \ell) = \pi_{r\ell}, \qquad r \in \{H, D, A\}$$
 
 ### 2.2 G0 — Logística multinomial sobre Δppg
 
-**Postulado**: la única señal relevante es la diferencia de puntos-por-partido acumulados hasta la fecha, $x = \mathrm{ppg}_H - \mathrm{ppg}_A$, y las log-odds de cada resultado son **lineales** en $x$.
+**Variable de entrada.** En fútbol una victoria vale 3 puntos, un empate 1 y una derrota 0. Para cada equipo calculamos, usando sólo sus partidos anteriores de la misma temporada, liga y grupo, $\mathrm{ppg}=\text{puntos acumulados}/\text{partidos jugados}$. La única entrada del modelo es
+
+$$x=\Delta\mathrm{ppg}=\mathrm{ppg}_H-\mathrm{ppg}_A.$$
+
+Así, $x>0$ significa que el local llega con mayor rendimiento de tabla. Si alguno de los equipos todavía no jugó un partido, $x$ no está definido y la implementación vuelve a la tasa base de la liga.
+
+**Postulado.** G0 es una regresión logística multinomial (*softmax*), un modelo lineal generalizado estándar y no una ley específica del fútbol. Escogiendo $A$ como clase de referencia, se escribe de forma identificable como
+
+$$\log\frac{P(Y=H\mid x)}{P(Y=A\mid x)}=\alpha_H+\beta_Hx,\qquad
+\log\frac{P(Y=D\mid x)}{P(Y=A\mid x)}=\alpha_D+\beta_Dx.$$
 
 $$P(Y=r \mid x) = \frac{e^{\alpha_r + \beta_r x}}{\sum_{s} e^{\alpha_s + \beta_s x}}$$
 
-**Estimación**: la log-verosimilitud es **cóncava** → óptimo único, pero **sin forma cerrada** (Newton/L-BFGS). Es el modelo con menos parámetros que usa información de equipos (4 libres con la clase de referencia).
+con la convención $\alpha_A=\beta_A=0$. Decimos que es **lineal** porque cada *log-odds* contra la clase de referencia es una recta en $x$; las probabilidades mismas son curvas no lineales por la transformación softmax.
 
-**Límites**: $\beta_r \to 0$ colapsa a B0 (softmax de constantes = frecuencias). $\beta_H \to \infty$ produce un clasificador determinista escalón en $x=0$: probabilidades 0/1, log-loss no acotado ante un solo error — ilustra por qué accuracy y log-loss divergen. La linealidad en log-odds es su límite estructural: no puede representar la no-monotonía del empate (máximo en $x\approx0$) salvo por el juego entre las tres clases.
+**Parámetros libres e interpretación.** Quedan cuatro: dos interceptos $(\alpha_H,\alpha_D)$, que fijan las odds H/A y D/A cuando ambos equipos tienen el mismo PPG, y dos pendientes $(\beta_H,\beta_D)$, que miden cómo cambian esas log-odds por cada punto adicional de $\Delta\mathrm{ppg}$. La implementación ajusta un único conjunto global a todas las ligas; no hay interceptos ni pendientes específicos por liga. `scikit-learn` usa otra parametrización simétrica y regularizada por defecto, pero representa la misma familia de probabilidades; por ello “cuatro libres” describe el modelo identificable sin penalización, no literalmente el número de coeficientes almacenados por la librería.
+
+**Estimación.** La log-verosimilitud multinomial es cóncava. Sin separación completa, y fijada una referencia, el óptimo es único; no tiene forma cerrada y se obtiene numéricamente. En el código se usa `LogisticRegression` con su penalización L2 por defecto. Esa regularización debe declararse porque cambia el estimador respecto del MLE multinomial puro descrito por las ecuaciones.
+
+**Límites.** Si ambas pendientes valen cero, la predicción deja de depender de $x$ y se reduce a una tasa global constante (no exactamente B0, que en esta implementación tiene tasas distintas por liga). Cuando las diferencias entre pendientes crecen sin cota, el softmax se aproxima a regiones de decisión deterministas; las fronteras dependen también de los interceptos y no tienen por qué estar en $x=0$. La linealidad en log-odds es su restricción estructural. Aun así, $P(D\mid x)$ puede tener un máximo interior si su recta domina cerca de $x=0$ y las rectas H/A dominan en los extremos; lo que el modelo no puede representar son formas más complejas que las inducidas por tres rectas.
 
 ### 2.3 G0b — Histograma binneado sobre Δposición (modelo del director)
 
-**Postulado**: $P(Y=r \mid z)$ con $z = -(\mathrm{pos}_H - \mathrm{pos}_A)/N$ es **constante a trozos** en $B$ bins fijos de $[-1,1]$.
+**Variable de entrada.** Antes de cada partido se reconstruye la tabla usando puntos, diferencia de goles y goles a favor como desempates. Si $\mathrm{pos}=1$ denota el primer puesto y $N$ el número de equipos del grupo, definimos
 
-$$\hat P(Y=r \mid z \in b) = \frac{\#\{i \in b : y_i = r\}}{\#\{i \in b\}}$$
+$$z=-\frac{\mathrm{pos}_H-\mathrm{pos}_A}{N}=\frac{\mathrm{pos}_A-\mathrm{pos}_H}{N}.$$
 
-**Estimación**: exacta por conteo (es el MLE del modelo saturado por bin).
+Por tanto, $z>0$ significa que el local está mejor posicionado. La normalización por $N$ hace comparables, aproximadamente, grupos de tamaños distintos. La predicción no se emite desde esta variable hasta que ambos equipos tienen al menos cuatro partidos; antes se usa la tasa base de la liga.
 
-**Límites**: $B=1$ ≡ tasa base; $B\to\infty$ interpola los datos (varianza infinita — cada bin con 0 o 1 partidos). El trade-off sesgo-varianza óptimo escala como $B^* \sim n^{1/3}$ para funciones suaves; con $n\approx1.500$ por corte, $B=9$ está en el orden correcto. **Relación con G0**: son el mismo objeto estadístico (regresión de $Y$ sobre un resumen de la tabla); G0 impone suavidad paramétrica, G0b no impone nada. Empíricamente empatan (Δ=−0.0009, IC [−0.0053,+0.0034]) y G0b paga su flexibilidad con peor calibración (ECE 0.042 vs 0.027).
+**Modelo.** El intervalo $[-1,1]$ se divide en $B=9$ subintervalos fijos $I_b=[e_b,e_{b+1})$. Dentro de cada uno la distribución 1X2 se supone constante:
+
+$$\widehat P(Y=r\mid z\in I_b)=\widehat\pi_{rb}
+=\frac{n_{rb}}{n_b},\qquad
+n_{rb}=\sum_{i\in\mathcal T}\mathbf 1(z_i\in I_b,Y_i=r),\quad
+n_b=\sum_r n_{rb},$$
+
+donde $\mathcal T$ contiene únicamente partidos anteriores al corte walk-forward. En palabras: para predecir un partido, se calcula su diferencia normalizada de posición, se localiza el bin correspondiente y se devuelven las frecuencias históricas de H/D/A observadas en ese bin. Los conteos se agrupan entre ligas. Si el bin tiene menos de 15 partidos, la implementación usa el bin válido cuyo centro sea más cercano; si no hay ninguno, vuelve a la tasa base de la liga.
+
+**Estimación.** Condicionalmente a los bins, $\widehat\pi_{rb}=n_{rb}/n_b$ es el MLE multinomial por conteo. No hay optimización numérica ni parámetros compartidos entre bins: son $2B=18$ probabilidades libres (la tercera de cada bin queda fijada porque suman uno), aunque los fallbacks hacen que el predictor implementado no sea simplemente ese modelo saturado.
+
+**Límites.** Con $B=1$ se obtiene una tasa global agrupada, no la tasa base específica por liga. Al aumentar $B$ baja el sesgo de discretización pero crecen la varianza y la frecuencia de fallbacks; con muestras finitas, el límite $B\to\infty$ no define un estimador útil. La elección $B=9$ y el umbral 15 son hiperparámetros heurísticos del modelo del director: no se justifican aquí mediante una selección anidada, por lo que no corresponde presentar $9$ como un óptimo teórico. **Relación con G0:** ambos regresan el resultado sobre un resumen unidimensional de la tabla, pero no usan la misma variable ($\Delta$posición frente a $\Delta$PPG). G0 impone log-odds lineales y comparte cuatro parámetros; G0b permite saltos y usa muchos más parámetros locales. Empíricamente empatan (Δ=−0.0009, IC [−0.0053,+0.0034], intervalo provisional bajo bootstrap i.i.d.) y G0b muestra peor calibración marginal de H (ECE 0.042 vs 0.027).
 
 ### 2.4 M1 — Poisson independiente de fuerzas (Maher 1982) con shrinkage
 
@@ -71,17 +105,29 @@ $$\hat P(Y=r \mid z \in b) = \frac{\#\{i \in b : y_i = r\}}{\#\{i \in b\}}$$
 $$G_H \sim \mathrm{Poisson}(\lambda_H), \quad G_A \sim \mathrm{Poisson}(\lambda_A)$$
 $$\log\lambda_H = \mu + \gamma + \mathrm{atk}_h - \mathrm{def}_a, \qquad \log\lambda_A = \mu + \mathrm{atk}_a - \mathrm{def}_h$$
 
-De la matriz de marcadores $P(G_H=i, G_A=j) = p_i(\lambda_H)\, p_j(\lambda_A)$ (truncada en 10) se derivan **todas** las cuotas de interés: 1X2 (sumas por triángulos), over/under (anti-diagonales), BTTS ($i,j \ge 1$), goles por equipo — una sola pieza coherente, ventaja estructural sobre modelar cada mercado por separado.
+Aquí $\lambda_H=E[G_H\mid h,a]$ y $\lambda_A=E[G_A\mid h,a]$ son los goles esperados de local y visitante. Cada término es aditivo en escala logarítmica y, por tanto, multiplicativo en la escala de goles:
 
-**Identificabilidad**: la verosimilitud es invariante ante $\mathrm{atk}_i \to \mathrm{atk}_i + c$, $\mathrm{def}_i \to \mathrm{def}_i + c$ (la constante se absorbe en $\mu$). Lo resolvemos con el prior/penalización ridge
+$$\lambda_H=e^\mu e^\gamma e^{\mathrm{atk}_h}e^{-\mathrm{def}_a},\qquad
+\lambda_A=e^\mu e^{\mathrm{atk}_a}e^{-\mathrm{def}_h}.$$
+
+- $\mu$ es el nivel basal de goles por equipo y partido en la muestra de ajuste.
+- $\gamma$ es la ventaja de local común a la liga; $e^\gamma$ multiplica sólo la intensidad local.
+- $\mathrm{atk}_i$ es la fuerza ofensiva latente del equipo $i$: valores positivos elevan sus goles esperados.
+- $\mathrm{def}_i$ es la fortaleza defensiva latente bajo esta convención de signos: valores positivos reducen los goles esperados del rival porque aparece con signo menos.
+
+Con $T$ equipos se ajustan nominalmente $2T+2$ cantidades ($\mu,\gamma$ y un ataque y una defensa por equipo). No se ajusta un $\lambda$ libre para cada partido: cada par $(\lambda_H,\lambda_A)$ se calcula a partir de esos parámetros compartidos. Para un equipo nunca observado, la implementación usa ataque y defensa cero, es decir, el prior de “equipo promedio”.
+
+De la matriz de marcadores $P(G_H=i, G_A=j) = p_i(\lambda_H)\, p_j(\lambda_A)$ (evaluada para 0–10 goles y renormalizada) se derivan **todas** las cuotas de interés: 1X2 (sumas por triángulos), over/under (anti-diagonales), BTTS ($i,j \ge 1$), goles por equipo — una sola pieza coherente, ventaja estructural sobre modelar cada mercado por separado.
+
+**Identificabilidad.** Sin restricciones, varias traslaciones de los efectos de equipo dejan invariantes las intensidades; por ejemplo, sumar la misma constante a todos los ataques y defensas deja invariantes las diferencias $\mathrm{atk}-\mathrm{def}$. También pueden intercambiarse offsets globales con $\mu$. Por ello los niveles absolutos de ataque y defensa no son observables: sólo importan ciertas combinaciones. Lo resolvemos en la estimación con el prior/penalización ridge
 
 $$-\frac{1}{2\sigma^2}\sum_i (\mathrm{atk}_i^2 + \mathrm{def}_i^2)$$
 
-que equivale a un prior $\mathcal{N}(0,\sigma^2)$ (MAP): rompe la invariancia **y** encoge equipos con pocos partidos hacia el equipo promedio de la liga.
+que equivale a priors independientes $\mathcal{N}(0,\sigma^2)$ y a una estimación MAP. La penalización selecciona la representación centrada de menor norma y encoge los efectos hacia cero, que aquí representa al equipo promedio de la muestra de ajuste. No es un modelo bayesiano completo: $\sigma$ se fija externamente y no se integra la incertidumbre posterior.
 
-**Estimación**: log-verosimilitud penalizada cóncava en los parámetros naturales → óptimo único, sin forma cerrada; L-BFGS con gradiente analítico. **No hay solución exacta** (a diferencia de B0/G0b).
+**Estimación.** Para $\rho=0$, la log-verosimilitud Poisson penalizada es cóncava en los predictores lineales y la penalización elimina las direcciones planas de los efectos de equipo; no hay solución cerrada. La implementación usa L-BFGS-B con gradiente numérico y cotas sobre todos los parámetros. Por ello debe comprobarse y reportarse `converged`; las cotas también pueden producir soluciones de frontera. Cuando se ajusta $\rho$ (M2), la corrección de Dixon-Coles modifica esta geometría y no se invoca aquí una garantía global de unicidad.
 
-**Límites**: $\sigma \to 0$: todos los equipos idénticos → el modelo colapsa a "Poisson de liga + localía" (predicción constante por liga, un B0 goleado). $\sigma \to \infty$: MLE puro, varianza máxima en equipos nuevos (un ascendido con 2 partidos puede recibir ataque absurdo). La curva exacta de encogimiento normal-normal, $\kappa(n) = n\sigma^2/(n\sigma^2 + s^2)$, se muestra en la Fig. 8. $\lambda \to 0$ o $\infty$: la Poisson degenera (todo 0-0 / matriz truncada inválida) — los bounds $|\log\lambda|\le3$ lo previenen.
+**Límites.** Cuando $\sigma\to0$, todos los efectos de equipo se anulan y quedan sólo el nivel medio y la localía. Cuando $\sigma\to\infty$, desaparece el shrinkage y los equipos con poca historia pueden adquirir efectos extremos. La curva normal-normal $\kappa(n)=n\sigma^2/(n\sigma^2+s^2)$ de la Fig. 8 es una analogía didáctica unidimensional, no el factor exacto de shrinkage de esta regresión Poisson acoplada: aquí la información depende además de rivales, localía, pesos temporales y conectividad del calendario. La optimización acota cada parámetro individual en $[-3,3]$ (y $\gamma$ en $[-1.5,1.5]$); esto no equivale a imponer $|\log\lambda|\le3$, porque $\log\lambda$ es una suma de varios parámetros. La matriz de marcadores se evalúa para 0–10 goles por equipo y luego se renormaliza; conviene verificar que la masa truncada sea despreciable para las intensidades obtenidas.
 
 ### 2.5 M2 — Dixon-Coles: dependencia en marcadores bajos + decaimiento temporal
 
@@ -99,7 +145,7 @@ $$w_m = 2^{-\Delta t_m / H} \iff w_m = e^{-\xi \Delta t_m},\ \xi = \ln 2 / H$$
 
 **Límites**: $H \to \infty$ ($\xi\to0$): modelo estático (toda la historia pesa igual). $H \to 0$: solo cuenta el último partido → varianza infinita. El óptimo empírico $H \approx 120$ días (media temporada nórdica) es una **meseta ancha**, no un pico (Fig. 6): el modelo no es frágil a esta elección.
 
-**Conexión dinámica**: el kernel exponencial es exactamente el filtro estacionario de un modelo de estado con caminata aleatoria $\mathrm{atk}_{i,t} = \mathrm{atk}_{i,t-1} + \eta_t$ (Rue-Salvesen / Koopman-Lit): DC-con-decaimiento ≈ aproximación de estado estacionario de una EDO estocástica lineal $d\theta = -\theta\,dt/\tau + dW$. No hay EDOs deterministas en el modelo estático; la dinámica entra por esta vía.
+**Conexión dinámica.** El kernel exponencial introduce una escala de memoria, pero no es exactamente un filtro de Kalman ni convierte al ajuste estático en un modelo de estado. Una caminata aleatoria $\theta_t=\theta_{t-1}+\eta_t$ ni siquiera posee distribución estacionaria; un proceso de Ornstein–Uhlenbeck, $d\theta=-\theta\,dt/\tau+\sigma_\eta dW$, sí tiene reversión a la media y una memoria exponencial en su autocorrelación. El decaimiento usado aquí puede verse como una aproximación heurística a esa idea. Para afirmar equivalencia habría que especificar la ecuación de observación, las varianzas de proceso y medida y derivar el filtro resultante.
 
 ### 2.6 M3 — Recalibración apilada (stack_cal)
 
@@ -152,7 +198,7 @@ Descriptores por liga computados **solo con 2025** (la asignación queda congela
 
 - **Walk-forward semanal** idéntico a EXP-001/002; test 2026: 1.619 partidos.
 - **Hiperparámetros**: DC congelado de EXP-001 (H=120, σ=0.75, ρ ajustado) con transferencia verificada en SWE+NOR 2025 (0.1950 vs 0.1956 sin decaimiento); jerárquico: $\tau_\ell$ por grid 2025 (§2.8), $\tau_c = 0.25$, $\sigma = 0.75$ heredado.
-- **Comparaciones**: bootstrap pareado (4.000 réplicas) sobre el RPS por partido, conjunto común de partidos. Los desgloses por liga individual se reportan como descriptivos (n = 64-135; sin corrección B-H no se les atribuye significancia).
+- **Comparaciones**: bootstrap pareado i.i.d. (4.000 réplicas) sobre el RPS por partido, conjunto común de partidos. Es útil como análisis preliminar, pero no respeta dependencia temporal ni la inducida por equipos compartidos; antes de publicación deben recalcularse los IC con bloques semana × liga y contrastarse su sensibilidad a la elección del bloque. Los desgloses por liga individual se reportan como descriptivos (n = 64-135; sin corrección B-H no se les atribuye significancia).
 
 ## 5. Resultados
 
@@ -181,7 +227,7 @@ El nivel de cluster no cambia nada (jer_pais ≈ jer_cluster, Δ=0.0001): cohere
 | stack_cal | 0.1999 | **0.2155** |
 | b0_base_rate | 0.2423 | 0.2369 |
 
-**El resultado más instructivo del experimento**: el jerárquico **gana en C1** — Kakkonen (4 lohkos de ~10 equipos, la unidad más pobre en datos del dataset) y NL (8 equipos) — y pierde claramente en C2. Es pooling parcial de libro: compartir fuerza estadística ayuda exactamente donde cada unidad no puede sostener sus propios parámetros, y estorba donde sí puede (y el enlace entre divisiones introduce sesgo, §5.3). En C2, stack_cal supera a DC con IC que excluye 0 (−0.0009, IC [−0.0017, −0.0001]).
+**El resultado más instructivo del experimento**: el jerárquico obtiene menor RPS en C1 — Kakkonen (4 lohkos de ~10 equipos, la unidad más pobre en datos del dataset) y NL (8 equipos) — y mayor RPS en C2. El patrón es compatible con la hipótesis de que compartir fuerza estadística ayuda donde cada unidad tiene pocos datos y perjudica donde el sesgo de transferencia domina (§5.3), pero el análisis de subgrupo no fue pre-registrado y no se presenta un IC específico para la diferencia en C1. En C2, el IC i.i.d. de stack_cal frente a DC excluye 0 (−0.0009, [−0.0017, −0.0001]); falta comprobarlo con bloques.
 
 ### 5.3 El mecanismo del fracaso: transferencia sesgada entre divisiones
 
@@ -213,22 +259,50 @@ Conclusión del diagnóstico: (H2) **no se puede rechazar que sea fluctuación m
 
 ### 5.6 Sobre EDOs y dinámica del sistema — síntesis
 
-Ningún modelo de la familia contiene EDOs deterministas explícitas; la dinámica aparece en tres formas equivalentes entre sí: (1) el **kernel exponencial** de DC ($w = e^{-\xi\Delta t}$) es el filtro estacionario de una caminata aleatoria de fuerzas — la discretización de la EDO estocástica de Ornstein-Uhlenbeck $d\theta = -\theta\,dt/\tau + \sigma_\eta dW$; (2) el **mapa de Elo** es la aproximación estocástica (Robbins-Monro) de la EDO $\dot x = K(p^*-E(x))$; (3) el paso natural siguiente en esta dirección — no tomado aún por costo/beneficio — es el filtro de Kalman sobre fuerzas (Rue-Salvesen), que estima $\tau$ y $\sigma_\eta$ de los datos en lugar de fijar $H$. La evidencia de §5.4 (corrimientos de régimen entre temporadas) es el argumento empírico más fuerte a favor de ese paso.
+Ningún modelo ajustado contiene EDOs deterministas explícitas. Hay tres construcciones relacionadas, pero no equivalentes: (1) el **kernel exponencial** de DC ($w=e^{-\xi\Delta t}$) descuenta observaciones antiguas sin especificar una ley de evolución latente; (2) bajo condiciones de aproximación estocástica, el valor esperado del mapa de Elo se puede estudiar mediante la EDO $\dot x=K(p^*-E(x))$; y (3) un modelo de estado para las fuerzas especificaría explícitamente una transición —por ejemplo, caminata aleatoria u Ornstein–Uhlenbeck— y una ecuación de observación Poisson, y aplicaría filtrado aproximado. Sólo el tercero permitiría estimar y propagar incertidumbre dinámica de manera coherente. Los cambios descriptivos entre temporadas de §5.4 motivan investigar esa extensión, pero no identifican por sí solos el proceso dinámico.
 
 ## 6. Análisis de resultados — decisiones que fija este experimento
 
-1. **Modelo de producción ratificado**: DC por liga (H=120, σ=0.75, ρ) + recalibración OOS. Ni las features de forma (EXP-002) ni el jerárquico global (EXP-003) lo mejoran; ambos resultados negativos están cuantificados con IC.
-2. **El jerárquico queda para donde funciona**: C1 (M2/lohkos, ligas chicas). Implementación práctica candidata: *modelo por liga* como default, *jerárquico intra-liga* (pooling entre lohkos de M2) como variante — no el pooling entre divisiones, cuyo sesgo de escala está demostrado (Fig. 4).
-3. **La anomalía M1 se cierra**: no significativa; el mecanismo real identificado (no-estacionariedad de localía/empates entre temporadas) genera una mejora candidata concreta — localía por liga-temporada o dinámica (§5.6.3).
+1. **Candidato de producción**: DC por liga (H=120, σ=0.75, ρ) + recalibración OOS tiene el mejor desempeño agregado observado. Su adopción inferencial queda sujeta al bootstrap por bloques y su utilidad económica, a la comparación prospectiva con cuotas.
+2. **Jerárquico como hipótesis para muestras pequeñas**: el resultado descriptivo de C1 motiva probar pooling intra-liga entre lohkos de M2. No demuestra que esa variante funcione, porque el modelo evaluado y el subgrupo seleccionado no constituyen ese experimento.
+3. **Anomalía M1 no resuelta estadísticamente**: el intervalo actual cruza cero. El cambio de localía/empates sugiere probar localía por liga-temporada o dinámica, pero no establece el mecanismo causal.
 4. **El clustering fino no tiene soporte** con 17 ligas (silhouette 0.24-0.27 para k≥3); mantener C1/C2 como estratos de *reporte* y re-evaluar cuando entren Rumania/Eslovaquia/Islandia.
 5. **Empates**: sigue vigente el veto de EXP-002 (sobre-estimación en cola alta; ρ no alcanza a corregirla — Fig. 7 muestra que su palanca es demasiado corta). La recalibración es el camino, y con más datos, una corrección de empates dedicada.
-6. **Generalizabilidad**: la meseta de la Fig. 6 y la transferencia FIN→SWE+NOR sin re-tuning son la mejor evidencia disponible de que el sistema no está sobreajustado a una liga ni a una temporada. La prueba definitiva sigue siendo prospectiva (G4, paper trading — bloqueado por Fase 0).
+6. **Generalizabilidad**: la meseta de la Fig. 6 y la evaluación FIN→SWE+NOR sin re-tuning son evidencia favorable, pero limitada a países, temporadas y ligas emparentados. La prueba relevante para apuestas sigue siendo prospectiva contra probabilidades de mercado archivadas (G4, *paper trading* — bloqueado por Fase 0).
 
 ## 7. Conclusiones
 
-Sobre 4.941 partidos de 17 ligas nórdicas y una evaluación walk-forward estricta de 1.619 partidos de 2026: el modelo de goles Dixon-Coles por liga con recalibración out-of-sample es el mejor predictor probado (RPS 0.2132, log-loss 0.9940), superando con significancia a todos los baselines de tabla y a dos extensiones bien motivadas — features de momentum (EXP-002) y pooling jerárquico multi-división (EXP-003) — cuyos fracasos quedaron explicados mecanísticamente (la información de forma ya vive en el decaimiento temporal; la escala de habilidad no es comparable entre divisiones con 55 enlaces). El pooling parcial mostró su valor exactamente donde la teoría lo predice: en el cluster de datos escasos (−0.003 RPS en C1). Las ligas femeninas siguen siendo el segmento más predecible (RPS 0.15-0.19). La superficie de hiperparámetros es una meseta — el sistema es robusto, no afinado. Los tres resultados negativos de este ciclo (momentum, jerárquico global, anomalía M1) son el protocolo funcionando: cada uno vino con IC, mecanismo y decisión.
+Sobre 4.941 partidos de 17 ligas nórdicas y una evaluación walk-forward de 1.619 partidos de 2026, el modelo Dixon-Coles por liga con recalibración out-of-sample obtiene el menor RPS (0.2132) y log-loss (0.9940) entre los modelos probados. Las features de momentum y el pooling jerárquico multi-división no mejoran el resultado agregado. Los análisis de mecanismo sugieren dos explicaciones que deben tratarse como hipótesis y no como demostraciones causales: el decaimiento temporal podría absorber parte de la señal de forma, y una escala de habilidad común podría transferir mal a los equipos que cambian de división. El menor RPS del jerárquico en C1 (−0.003 frente a DC) es consistente con una ventaja del pooling en muestras pequeñas, pero requiere un contraste de subgrupo explícito. La meseta de hiperparámetros es evidencia de estabilidad dentro del grid estudiado, no una prueba general de ausencia de sobreajuste. Las conclusiones inferenciales quedan condicionadas a rehacer los intervalos con bloques.
 
 **Próximos pasos, en orden de valor esperado**: (1) **Fase 0 — archivado de cuotas** (sin esto no hay EV/ROI/CLV: el programa entero espera ese dato); (2) localía dinámica por liga-temporada (mecanismo M1); (3) jerárquico intra-liga para lohkos; (4) targets O/U y BTTS desde la matriz de marcadores ya emitida; (5) dataset Rumania/Eslovaquia/Islandia; (6) filtro de Kalman sobre fuerzas si (2) confirma la no-estacionariedad.
+
+## Adenda v2 — Respuesta a la revisión mayor (EXP-004, 2026-07-21)
+
+El referee (el director) dictaminó revisión mayor con 15 observaciones. Las
+computables se ejecutaron en `research/experiments/EXP-004-referee/`; resumen de
+qué cambió y qué sobrevivió:
+
+| # Referee | Acción | Resultado |
+|---|---|---|
+| §3 dependencia en los IC | Bootstrap por bloques: iid / semana / semana×liga / móviles de 4 semanas (`block_bootstrap.csv`) | **dc−g0 sobrevive en los 4 esquemas** (peor caso IC [−0.0151, −0.0025]); jer−dc sigue significativamente peor (móviles: [+0.0009,+0.0096]); **stack_cal−dc NO queda establecida en ningún esquema** (p≈0.95-0.96) — la frase "mejora significativa de log-loss" se retira; queda "mejora consistente no confirmada". El pareo explica el poco ensanchamiento: los shocks comunes de semana se cancelan en la diferencia. |
+| §6 ¿Poisson describe los goles? | Replay OOS de λ (1.619 partidos) + diagnósticos (`poisson_diagnostics.json`, EXP-004.2) | **Sobredispersión condicional real**: var. de residuos de Pearson H=1.274 (IC 1.150-1.404), A=1.135 (IC 1.044-1.228) — ambas excluyen 1. El 0-0 está **sobre-predicho** (obs 4.45% vs 5.58% con ρ; ρ<0 empuja en la dirección equivocada en 2026). Correlación residual H-A = −0.024 ≈ 0 (la independencia post-DC aguanta). Masa truncada ≈ 3·10⁻⁵ (irrelevante). Binomial negativa registrada como EXP-006 candidato (H5 de EXP-005). |
+| §12 calibración en profundidad | ECE/pendiente/intercepto/descomposición de Murphy para H, D y A; confiabilidad con IC por bin (`calibration_deep.json`, fig `reliability_3class.png`) | La patología está localizada: **pendiente de calibración del empate = 0.37** en DC (resolución 0.002 vs incertidumbre 0.168 — el modelo casi no puede distinguir empates y aún así exagera); stack_cal la sube a 0.68 y el ECE(D) baja 0.029→0.021. H y A: sobreconfianza leve (0.80/0.71 → 0.90/0.83). Esto muestra directamente de dónde venía la mejora de log-loss de stack_cal. |
+| §11 factorial G0 | Matriz 2×2 {Δppg, Δpos} × {logística, histograma} con fallbacks unificados (`factorial.json`) | **Las cuatro celdas son estadísticamente equivalentes** (RPS 0.2225-0.2253; los 4 contrastes cruzan 0). Ni la variable ni la forma funcional explican diferencias: todos son el mismo baseline de tabla. |
+| §15.10 ablaciones | DC completo vs −decay, −shrinkage, −ρ, −localía en 2025 (dev), IC por bloques (`ablations.json`) | Único componente individualmente significativo: **la localía** (Δ+0.0045, IC [+0.0014,+0.0078]). Decay +0.0007 y shrinkage +0.0004 direccionales no significativos; **ρ = 0.0000 de aporte** (−0.0002, ns) — coherente con el diagnóstico del 0-0. El valor del DC está en la estructura ataque/defensa + localía; los refinamientos son marginales. |
+| §7-§8 incertidumbre paramétrica | Laplace en VL: Hessiano→Σ, sd por equipo vs partidos efectivos, predictiva integrada vs plug-in (`laplace.json`, fig `laplace_sd_vs_n.png`) | La dispersión vertical del sd a igual n confirma §8 (la información depende de rivales/recencia, no solo de n). La integración ensancha poco las predictivas en ligas maduras (max p: 0.619→0.618 establecido; 0.572→0.569 con equipo nuevo): con 1.5 temporadas el plug-in es aceptable **en el centro**, pero la sobreconfianza de colas medida en §12 indica que en los extremos sí falta anchura — consistente con la sobredispersión. |
+| §5, §13 el test 2026 gastado / post hoc | **Pre-registración EXP-005** (`EXP-005-prospectivo/REGISTERED.md`): pipeline congelado, ventana 2026-07-22→11-30, H1-H5 especificadas (incluye "jer gana en C1" ahora como H3 pre-registrada y la sobredispersión como H5), una sola pasada al cierre | Desde este commit, todo número sobre la ventana nueva es confirmatorio o no existe. |
+| §4 comparación contra mercado | No computable sin cuotas archivadas | Sigue bloqueada por Fase 0; se pre-registrará por separado (CLV y log-loss vs probabilidad implícita sin margen). Las afirmaciones del paper se re-alcance: capacidad predictiva deportiva, no edge. |
+| §9 localía rígida | Aceptada como H4 condicional en EXP-005 (`dc_dyn_gamma` si se implementa antes del 2026-08-01 sin mirar la ventana) | Pendiente de implementación. |
+| §15.9 alternativas (Skellam, binomial negativa, Poisson bivariado) | Registradas como EXP-006 candidatos, condicionadas a H5 | Pendiente. |
+
+**Reformulaciones aceptadas**: (1) "modelo de producción ratificado" → "predictor
+probabilístico de referencia, pendiente de validación prospectiva y de mercado";
+(2) el modelo se describe como **"Poisson penalizado con interpretación MAP"**,
+no "bayesiano"; (3) toda comparación por liga individual es descriptiva; las
+únicas afirmaciones con carácter inferencial son las que sobrevivieron el
+bootstrap por bloques; (4) κ(n) de la Fig. 8 se re-etiqueta como ilustración
+del mecanismo, no como el shrinkage exacto del modelo (el real es el de
+`laplace.json`).
 
 ## Reproducibilidad
 
