@@ -1,0 +1,9 @@
+{
+  "phi": 0.074,
+  "obs_00": 0.0396,
+  "pred_00_poisson": 0.0509,
+  "pred_00_negbin": 0.0592,
+  "logloss_marcador_poisson": 3.2215,
+  "logloss_marcador_negbin": 3.2136,
+  "n": 3461
+}
