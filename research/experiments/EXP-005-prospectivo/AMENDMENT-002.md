@@ -12,7 +12,8 @@ La pre-registración estableció que H4 se activaría "si se implementa antes de
 2026-08-01 sin mirar datos de la ventana; si no llega, se cae". Se implementó
 (`models.py::fit_poisson`, parámetro `gamma_halflife`, con perfil de
 verosimilitud de solución cerrada) y se tuneó exclusivamente con 2025
-(`dyn_gamma_tuning.py`, walk-forward jul→nov, más leave-one-country-out).
+(`dyn_gamma_tuning.py`, walk-forward jul→nov, más sensibilidad excluyendo un
+país por vez).
 Resultado: **señal nula**.
 
 | H_γ (días) | RPS 2025 | log-loss 2025 |
@@ -27,9 +28,10 @@ Mejor candidato vs base (IC por bloques semanales):
 - ΔRPS = **−0.0000**, IC [−0.0002, +0.0002] — centrado en cero.
 - Δlog-loss = −0.0002, IC [−0.0008, +0.0004].
 
-Leave-one-country-out: el H_γ óptimo cambia de país a país (sin FIN gana 240,
-sin SWE gana 30, sin NOR gana 60) — no hay un valor estable, síntoma de que se
-está ajustando ruido.
+Al excluir un país por vez, el H_γ óptimo cambia (sin FIN gana 240, sin SWE gana
+30, sin NOR gana 60). Esto no es validación en el país retenido; muestra que el
+ranking es sensible a qué subconjunto se evalúa y no aporta evidencia de un
+valor transferible.
 
 ## Interpretación mecanística
 

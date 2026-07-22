@@ -93,6 +93,27 @@ def week_block_ci(values: np.ndarray, weeks: np.ndarray, n_boot: int = 4000,
             float(np.quantile(boot, 0.975)), float(min(p, 1.0)))
 
 
+def week_block_slope(x: np.ndarray, y: np.ndarray, weeks: np.ndarray,
+                     n_boot: int = 4000, seed: int = 23) -> dict:
+    """Pendiente OLS de y~1+x con IC remuestreando semanas completas."""
+
+    rng = np.random.default_rng(seed)
+    df = pd.DataFrame({"x": x, "y": y, "week": weeks})
+    groups = [g for _, g in df.groupby("week", sort=True)]
+
+    def slope(z: pd.DataFrame) -> float:
+        return float(np.polyfit(z["x"].to_numpy(), z["y"].to_numpy(), 1)[0])
+
+    boot = np.empty(n_boot)
+    for i in range(n_boot):
+        pick = rng.integers(0, len(groups), size=len(groups))
+        boot[i] = slope(pd.concat([groups[j] for j in pick], ignore_index=True))
+    return {"slope": slope(df),
+            "ci_lo": float(np.quantile(boot, 0.025)),
+            "ci_hi": float(np.quantile(boot, 0.975)),
+            "n_weeks": len(groups)}
+
+
 def main() -> None:
     d26 = pd.read_csv(HERE / "lambdas_2026.csv", parse_dates=["date"])
     d26["week"] = d26["date"].dt.to_period("W").astype(str)
@@ -156,6 +177,12 @@ def main() -> None:
         ax.errorbar(xs, ys, yerr=[np.array(ys) - los, np.array(his) - ys],
                     fmt="o-", ms=4, lw=1.4, capsize=2, color=c, label=name)
         h2[name] = {"lam": [round(v, 3) for v in xs], "r2": [round(v, 3) for v in ys]}
+        trend = week_block_slope(x["lam"].to_numpy(), x["r2"].to_numpy(),
+                                 x["week"].to_numpy())
+        h2[name]["linear_trend"] = {k: round(v, 4) if isinstance(v, float) else v
+                                     for k, v in trend.items()}
+        print(f"{name}: pendiente r²~lambda = {trend['slope']:.4f} "
+              f"IC=({trend['ci_lo']:.4f},{trend['ci_hi']:.4f})")
         # phi de Var=lam+phi*lam^2:  E[(y-lam)^2 - lam] = phi*lam^2
         z = (x["y"] - x["lam"]) ** 2 - x["lam"]
         phi = float((z * x["lam"] ** 2).sum() / (x["lam"] ** 4).sum())

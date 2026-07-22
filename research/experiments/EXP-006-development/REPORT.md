@@ -19,29 +19,33 @@ salieron negativas o matizadas**. Eso es el método funcionando.
 |---|---|---|---|
 | 3 | Localía dinámica (H6) | "la mayor mejora próxima" (apuesta #1) | **Nula.** ΔRPS = 0.0000, IC [−0.0002,+0.0002]; H_γ óptimo inestable entre países. **H4 retirada del cierre** (AMENDMENT-002). |
 | 2 | Recalibrador de empate con s,d (H4-dir) | "la mejora de log-loss" (apuesta #2) | **Matizada-negativa.** Mejora la pendiente del empate 0.37→0.51 pero **menos que stack_cal** (0.68) y no le gana (Δlog-loss vs stack_cal = +0.0042, IC [+0.0000,+0.0079]). |
-| 1 | Estructura de la sobredispersión (H1,H2) | "concentrada en ligas/regímenes; mezcla > NB uniforme" (apuesta #3) | **Matizada.** φ **global** estable (0.076→0.074) pero por-liga **no replica** (corr 2025→2026 = −0.02). E[r²\|λ] **plano**, no creciente ⇒ quasi-Poisson, no NB. NB drop-in **empeora el 0-0** (como predijo el director). |
+| 1 | Estructura de la sobredispersión (H1,H2) | "concentrada en ligas/regímenes; mezcla > NB uniforme" (apuesta #3) | **Matizada.** El exceso global replica ($\overline{r²}$ 1.200→1.205), pero la dispersión por liga no conserva su ranking (corr 2025→2026 = −0.02). La pendiente de $E[r²\mid\lambda]$ es negativa en 2026 y no distinguible de cero en 2025, no la forma creciente de NB. NB drop-in **empeora el 0-0**. |
 | 4 | Fijar ρ=0 (H7) | "parsimonia sin perder capacidad" | **Confirmada.** ΔRPS(ρ=0 − ρ ajustado) = −0.0002, IC [−0.0004,+0.0001] < umbral 0.0005; ρ=0 además no sobrepredice el 0-0. Recomendado para producción. |
 
 ---
 
 ## Línea 3 — Localía dinámica (apuesta #1 del director): NULA
 
-Implementación: kernel propio $w^\gamma_m = 2^{-\Delta t/H_\gamma}$ para γ,
-re-estimada perfilando la verosimilitud Poisson. El perfil tiene **solución
+Implementación: kernel propio $w^\gamma_m = 2^{-\Delta t/H_\gamma}$ para γ.
+Después del ajuste conjunto base, se reestima γ condicionalmente manteniendo
+$\mu$, ataque y defensa fijos. Este perfil condicional tiene **solución
 cerrada**: $e^{\hat\gamma} = \frac{\sum_m w^\gamma_m\, g_{H,m}}{\sum_m w^\gamma_m\, \lambda^0_{H,m}}$
 con $\lambda^0 = e^{\mu + \mathrm{atk}_h - \mathrm{def}_a}$ (intensidad local sin
 localía). Costo ~0.
 
 Tuning solo-2025 (`dyn_gamma_tuning.json`): todos los $H_\gamma \in \{30,60,120,240\}$
 dan RPS 0.1951–0.1952, idénticos al base. Mejor vs base: ΔRPS −0.0000, IC
-[−0.0002,+0.0002]. Leave-one-country-out: el óptimo salta (240 sin FIN, 30 sin
-SWE, 60 sin NOR) — ajuste de ruido.
+[−0.0002,+0.0002]. Al excluir un país por vez, el óptimo salta (240 sin FIN, 30
+sin SWE, 60 sin NOR). Esto es una sensibilidad por subconjuntos —no una
+validación sobre el país retenido— y no apoya un valor transferible de
+$H_\gamma$.
 
 **Por qué falló una hipótesis bien motivada**: la ablación mostró que la localía
-*importa* (quitarla cuesta +0.0045 RPS), pero γ es un único escalar por liga que
-el decaimiento de 120 días ya estima bien; su deriva entre temporadas (M1
-0.52→0.39) la absorbe el propio kernel general. No quedaba residuo para un
-segundo kernel. **Decisión**: H4 no entra al cierre (AMENDMENT-002).
+*importa* (quitarla cuesta +0.0045 RPS), pero permitir que γ use otra escala
+temporal no mejora las predicciones en este diseño. Es compatible con que el
+kernel general ya capture suficiente deriva, aunque el resultado nulo no prueba
+ese mecanismo ni descarta otras dinámicas de localía. **Decisión**: H4 no entra
+al cierre (AMENDMENT-002).
 
 ## Línea 2 — El empate como problema propio (apuesta #2): NO SUPERA A stack_cal
 
@@ -65,43 +69,52 @@ recalibración logística genérica de los dos logits del DC (que ya contiene $d
 implícitamente). **Decisión**: stack_cal sigue siendo la capa de calibración; no
 se adopta el recalibrador específico.
 
-## Línea 1 — Estructura de la sobredispersión (apuesta #3): global y plana, no per-liga ni NB
+## Línea 1 — Estructura de la sobredispersión: global, no estable por liga y no compatible con la forma NB simple
 
 ![Sobredispersión por liga, estabilidad entre temporadas](../EXP-004-referee/fig/overdispersion_by_league.png)
 *Fig. 1 — Dispersión de Pearson r̄² por liga: 2025 (eje x) vs 2026 (eje y). Si la
-sobredispersión fuera una propiedad estable de cada liga, los puntos caerían sobre
-la diagonal. No lo hacen: correlación −0.02. NL pasa de 1.93 a 1.10; M1L de 0.83 a
-1.31. La sobredispersión por liga es esencialmente irrepetible entre temporadas ⇒
-una dispersión jerárquica por liga ajustaría ruido. Bajo control de comparaciones
+dispersión estimada fuera una propiedad estable y bien medida de cada liga,
+esperaríamos asociación positiva. No aparece: correlación −0.02. NL pasa de 1.93
+a 1.10; M1L de 0.83 a 1.31. Con sólo 17 ligas y estimadores ruidosos, esto no
+demuestra homogeneidad; sí desaconseja fijar dispersión por liga con estos datos.
+Bajo control de comparaciones
 múltiples (Benjamini-Hochberg, FDR 10%) solo 4 ligas superan r̄²=1 en 2026
 (NO-TS, M1, NO-OBOS, M2), y no son las mismas que en 2025.*
 
 ![Sobredispersión vs intensidad](../EXP-004-referee/fig/overdispersion_by_lambda.png)
 *Fig. 2 — E[r²|λ] por deciles de intensidad prevista, con IC 95% por bloques
-semanales, en ambas temporadas. La curva es aproximadamente **plana** en ~1.1–1.4,
-no creciente. Una binomial negativa (Var = λ+φλ²) predice E[r²|λ] = 1+φλ
-**creciente** con λ — lo que NO se observa. La forma plana es la firma de una
-sobredispersión **multiplicativa constante** (quasi-Poisson, Var ≈ cλ), no de una NB.*
+semanales, en ambas temporadas. Una binomial negativa (Var = λ+φλ²) predice
+E[r²|λ] = 1+φλ. La figura es un diagnóstico; la pendiente lineal y su IC por
+bloques se reportan numéricamente para evitar decidir “plano” sólo a ojo.*
 
 Hallazgos (`overdispersion_structure.json`):
-1. **La dispersión global φ es estable**: 0.076 (2025) → 0.074 (2026). Hay un
-   exceso real y reproducible.
-2. **Pero no es per-liga**: r̄² por liga tiene correlación −0.02 entre temporadas
-   (Fig. 1). Modelar dispersión jerárquica por liga sería ajustar ruido — refuta
-   la parte "concentrada en ligas" de la apuesta #3.
-3. **Su forma es plana en λ** (Fig. 2), no creciente ⇒ apunta a **quasi-Poisson**
-   (dispersión multiplicativa constante), no a NB.
+1. **El exceso global replica**: $\overline{r²}=1.200$ en 2025 y 1.205 en 2026.
+   El coeficiente obtenido al forzar la forma NB también es semejante
+   (0.076→0.074), pero esa semejanza no valida la forma funcional NB.
+2. **No hay estabilidad demostrada por liga**: r̄² por liga tiene correlación
+   −0.02 entre temporadas (Fig. 1). Con la muestra actual, una dispersión libre
+   por liga tiene alto riesgo de ajustar ruido; esto no excluye heterogeneidad
+   real que un modelo jerárquico con más temporadas pudiera detectar.
+3. La pendiente de $r²$ contra $\lambda$ es **negativa en 2026**: −0.113, IC
+   semanal [−0.190,−0.029]; en 2025 es −0.029 [−0.134,+0.078]. Esto contradice
+   la tendencia creciente $1+\phi\lambda$ de una NB simple, pero tampoco
+   demuestra una razón constante quasi-Poisson. Hay heterogeneidad temporal en
+   la forma del residuo. Además, **quasi-Poisson no es una distribución
+   predictiva**: especifica $\operatorname{Var}(Y\mid\lambda)=c\lambda$, pero no
+   proporciona una PMF, probabilidades 1X2, log-loss ni probabilidad de 0–0.
 4. **NB drop-in** (`negbin_dropin.py`, misma media, φ=0.074): predice 0-0 = 0.059
    vs Poisson 0.051 vs observado **0.040** — **NB empeora el 0-0**, tal como el
    director predijo, aunque mejora marginalmente el log-loss de marcador
    (3.214 vs 3.222) arreglando colas altas. Trade-off desfavorable dado que el
    defecto vivo es el 0-0.
 
-**Decisión**: no adoptar NB ni dispersión per-liga. El candidato coherente con la
-evidencia es una sobredispersión **global multiplicativa** (quasi-Poisson) o la
-mezcla abierto/cerrado del director (H3), que puede generar dispersión de razón
-constante. La mezcla queda como el único candidato distribucional vivo, a
-implementar y testear en desarrollo antes de cualquier promoción.
+**Decisión**: no adoptar todavía NB ni dispersión por liga. Quasi-Poisson puede
+servir como diagnóstico de varianza o para errores estándar, pero no reemplaza
+la distribución de marcadores. El candidato generativo vivo es una mezcla
+abierto/cerrado u otra distribución explícita capaz de reproducir conjuntamente
+colas, marcadores bajos y la forma no creciente de $E[r²\mid\lambda]$. Debe
+compararse contra NB por log-loss de marcador, RPS y calibración, no elegirse
+sólo por el 0–0.
 
 ## Línea 4 — ρ=0 (H7): CONFIRMADA por parsimonia
 

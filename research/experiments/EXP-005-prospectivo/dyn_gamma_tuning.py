@@ -3,7 +3,7 @@
 La localía gamma se re-estima con kernel propio 2^(-dt/H_gamma) (perfil con
 solución cerrada, ver models.py). Acá se elige H_gamma con:
 1. pseudo-walk-forward 2025 (test jul→nov) sobre los 3 países;
-2. repetición leave-one-country-out (¿el óptimo es estable?);
+2. sensibilidad excluyendo un país por vez (¿el ranking es estable?);
 3. contraste vs el DC congelado (gamma con el kernel general de 120d).
 
 El H_gamma elegido queda CONGELADO en AMENDMENT-002 con el hash del commit.
@@ -65,7 +65,8 @@ def main() -> None:
         print(f"{best} − dc_base [{metric}]: Δ={bs['delta_mean']:+.4f} "
               f"IC=({bs['ci_lo']:+.4f},{bs['ci_hi']:+.4f})", flush=True)
 
-    # leave-one-country-out: ¿el ranking de H_gamma es estable?
+    # Sensibilidad por subconjuntos: se excluye un país tanto del ajuste como
+    # de la evaluación. No es validación de transferencia al país retenido.
     loco = {}
     for held_out in ["FIN", "SWE", "NOR"]:
         sub = df[df["country"] != held_out]
@@ -74,7 +75,7 @@ def main() -> None:
         rank = r.groupby("model")["rps"].mean().sort_values()
         loco[held_out] = {m: round(v, 4) for m, v in rank.items()}
         print(f"sin {held_out}: {list(rank.index)}", flush=True)
-    out["leave_one_country_out"] = loco
+    out["leave_one_country_excluded_sensitivity"] = loco
 
     json.dump(out, open(HERE / "dyn_gamma_tuning.json", "w"), indent=2)
     print("→ dyn_gamma_tuning.json", flush=True)
