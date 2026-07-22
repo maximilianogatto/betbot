@@ -260,6 +260,7 @@ def fit_poisson(
     ridge_sigma: float = 1.0,
     fit_rho: bool = False,
     fit_home_adv: bool = True,
+    gamma_halflife: float | None = None,
 ) -> PoissonFit | None:
     """MLE of the attack/defence Poisson model on matches strictly before ``asof``.
 
@@ -326,6 +327,22 @@ def fit_poisson(
                    options={"maxiter": 500})
 
     mu, gamma, rho, atk, dfc = unpack(res.x)
+
+    # dc_dyn_gamma (H6/H4-EXP005): la localía puede cambiar más rápido que las
+    # fuerzas. Re-estimamos SOLO gamma con su propio kernel 2^(-dt/H_gamma)
+    # perfilando la verosimilitud Poisson (los demás parámetros quedan fijos).
+    # El perfil es concavo con solución CERRADA:
+    #   e^gamma = sum(w' * goles_local) / sum(w' * lambda0),
+    #   lambda0 = exp(mu + atk_h - def_a)  (intensidad local sin localía).
+    # (Se ignoran los términos rho en el perfil: corrección de segundo orden.)
+    if gamma_halflife is not None:
+        wg = 0.5 ** (((asof - g["date"]).dt.days.to_numpy(dtype=float))
+                     / gamma_halflife)
+        lam0 = np.exp(mu + atk[hi] - dfc[ai])
+        num, den = float(np.sum(wg * hg)), float(np.sum(wg * lam0))
+        if num > 0 and den > 0:
+            gamma = float(np.log(num / den))
+
     return PoissonFit(
         teams=teams, mu=float(mu), home_adv=float(gamma), rho=float(rho),
         attack={t: float(atk[t_idx[t]]) for t in teams},

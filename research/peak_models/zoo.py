@@ -237,7 +237,8 @@ def make_stacked(oos_dc: pd.DataFrame, feats: pd.DataFrame, *,
 # ------------------------------------------------- Poisson / Dixon-Coles
 
 def make_poisson(*, halflife_days: float | None, ridge_sigma: float = 1.0,
-                 fit_rho: bool = False, fit_home_adv: bool = True):
+                 fit_rho: bool = False, fit_home_adv: bool = True,
+                 gamma_halflife: float | None = None):
     """Per-league attack/defence Poisson, fitted fresh at every cutoff."""
 
     def model(train: pd.DataFrame, rows: pd.DataFrame) -> pd.DataFrame:
@@ -252,6 +253,7 @@ def make_poisson(*, halflife_days: float | None, ridge_sigma: float = 1.0,
                     train[train["league_code"] == lg], asof=cutoff,
                     halflife_days=halflife_days, ridge_sigma=ridge_sigma,
                     fit_rho=fit_rho, fit_home_adv=fit_home_adv,
+                    gamma_halflife=gamma_halflife,
                 )
             fit = fits[lg]
             if fit is None:
