@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-from bot.jobs.base import (
-    OrchestratedScheduler,
-    ScheduledJob,
-)
+from runtime.scheduler import OrchestratedScheduler, ScheduledJob
 from bot.jobs.tasks import (
     DbPruningJob,
     LiveWatchJob,

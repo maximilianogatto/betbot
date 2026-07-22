@@ -10,7 +10,7 @@ from typing import Any
 
 from telegram.ext import Application
 
-from bot.jobs.base import ScheduledJob, OrchestratedScheduler
+from runtime.scheduler import OrchestratedScheduler, ScheduledJob
 from monitoring import (
     append_monitor_log,
     format_monitor_log_block,
