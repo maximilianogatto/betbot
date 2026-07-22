@@ -1,0 +1,30 @@
+{
+  "liga": "VL",
+  "sd_media_atk": 0.314,
+  "ejemplos": [
+    {
+      "partido": "IFK Mariehamn Fotboll vs FC Lahti",
+      "tipo": "establecido",
+      "plugin_H": 0.116,
+      "plugin_D": 0.264,
+      "plugin_A": 0.619,
+      "integrada_H": 0.127,
+      "integrada_D": 0.255,
+      "integrada_A": 0.618,
+      "max_p_plugin": 0.619,
+      "max_p_integrada": 0.618
+    },
+    {
+      "partido": "IFK Mariehamn Fotboll vs TPS Juniorijalkapallo",
+      "tipo": "con equipo nuevo",
+      "plugin_H": 0.159,
+      "plugin_D": 0.269,
+      "plugin_A": 0.572,
+      "integrada_H": 0.172,
+      "integrada_D": 0.259,
+      "integrada_A": 0.569,
+      "max_p_plugin": 0.572,
+      "max_p_integrada": 0.569
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "dc_best_H": {
+    "ece": 0.031,
+    "slope": 0.798,
+    "intercept": -0.041,
+    "cal_in_large": 0.0004,
+    "reliability": 0.0017,
+    "resolution": 0.02731,
+    "uncertainty": 0.24688,
+    "brier": 0.22126
+  },
+  "dc_best_D": {
+    "ece": 0.0289,
+    "slope": 0.374,
+    "intercept": -0.826,
+    "cal_in_large": 0.0077,
+    "reliability": 0.00197,
+    "resolution": 0.00212,
+    "uncertainty": 0.16769,
+    "brier": 0.16754
+  },
+  "dc_best_A": {
+    "ece": 0.0431,
+    "slope": 0.712,
+    "intercept": -0.136,
+    "cal_in_large": -0.0081,
+    "reliability": 0.00291,
+    "resolution": 0.02001,
+    "uncertainty": 0.22529,
+    "brier": 0.20819
+  },
+  "stack_cal_H": {
+    "ece": 0.0282,
+    "slope": 0.895,
+    "intercept": -0.052,
+    "cal_in_large": 0.0075,
+    "reliability": 0.00199,
+    "resolution": 0.02819,
+    "uncertainty": 0.24688,
+    "brier": 0.22068
+  },
+  "stack_cal_D": {
+    "ece": 0.021,
+    "slope": 0.678,
+    "intercept": -0.386,
+    "cal_in_large": -0.0075,
+    "reliability": 0.00139,
+    "resolution": 0.00256,
+    "uncertainty": 0.16769,
+    "brier": 0.16651
+  },
+  "stack_cal_A": {
+    "ece": 0.0379,
+    "slope": 0.831,
+    "intercept": -0.098,
+    "cal_in_large": 0.0,
+    "reliability": 0.00135,
+    "resolution": 0.01844,
+    "uncertainty": 0.22529,
+    "brier": 0.2082
+  }
+}

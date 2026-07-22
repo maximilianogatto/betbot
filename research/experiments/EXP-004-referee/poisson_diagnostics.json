@@ -1,0 +1,463 @@
+{
+  "dispersion_global": {
+    "H": 1.2498,
+    "A": 1.1883
+  },
+  "dispersion_por_liga": [
+    {
+      "liga": "M1",
+      "lado": "H",
+      "media": 1.867,
+      "var": 3.285,
+      "dispersion": 1.76,
+      "n": 90
+    },
+    {
+      "liga": "M1",
+      "lado": "A",
+      "media": 1.622,
+      "var": 1.743,
+      "dispersion": 1.075,
+      "n": 90
+    },
+    {
+      "liga": "M1L",
+      "lado": "H",
+      "media": 1.351,
+      "var": 1.902,
+      "dispersion": 1.408,
+      "n": 74
+    },
+    {
+      "liga": "M1L",
+      "lado": "A",
+      "media": 1.122,
+      "var": 0.958,
+      "dispersion": 0.854,
+      "n": 74
+    },
+    {
+      "liga": "M2",
+      "lado": "H",
+      "media": 2.159,
+      "var": 3.073,
+      "dispersion": 1.423,
+      "n": 195
+    },
+    {
+      "liga": "M2",
+      "lado": "A",
+      "media": 1.713,
+      "var": 2.01,
+      "dispersion": 1.173,
+      "n": 195
+    },
+    {
+      "liga": "NL",
+      "lado": "H",
+      "media": 1.962,
+      "var": 2.744,
+      "dispersion": 1.399,
+      "n": 52
+    },
+    {
+      "liga": "NL",
+      "lado": "A",
+      "media": 1.635,
+      "var": 2.236,
+      "dispersion": 1.368,
+      "n": 52
+    },
+    {
+      "liga": "NO-1DK",
+      "lado": "H",
+      "media": 1.625,
+      "var": 2.302,
+      "dispersion": 1.416,
+      "n": 64
+    },
+    {
+      "liga": "NO-1DK",
+      "lado": "A",
+      "media": 1.719,
+      "var": 3.158,
+      "dispersion": 1.837,
+      "n": 64
+    },
+    {
+      "liga": "NO-ELI",
+      "lado": "H",
+      "media": 1.79,
+      "var": 1.975,
+      "dispersion": 1.103,
+      "n": 105
+    },
+    {
+      "liga": "NO-ELI",
+      "lado": "A",
+      "media": 1.162,
+      "var": 1.214,
+      "dispersion": 1.045,
+      "n": 105
+    },
+    {
+      "liga": "NO-OBOS",
+      "lado": "H",
+      "media": 2.17,
+      "var": 2.178,
+      "dispersion": 1.004,
+      "n": 112
+    },
+    {
+      "liga": "NO-OBOS",
+      "lado": "A",
+      "media": 1.58,
+      "var": 2.12,
+      "dispersion": 1.341,
+      "n": 112
+    },
+    {
+      "liga": "NO-PN1",
+      "lado": "H",
+      "media": 1.56,
+      "var": 1.647,
+      "dispersion": 1.056,
+      "n": 84
+    },
+    {
+      "liga": "NO-PN1",
+      "lado": "A",
+      "media": 1.417,
+      "var": 1.619,
+      "dispersion": 1.143,
+      "n": 84
+    },
+    {
+      "liga": "NO-PN2",
+      "lado": "H",
+      "media": 1.904,
+      "var": 2.113,
+      "dispersion": 1.11,
+      "n": 83
+    },
+    {
+      "liga": "NO-PN2",
+      "lado": "A",
+      "media": 1.554,
+      "var": 1.518,
+      "dispersion": 0.977,
+      "n": 83
+    },
+    {
+      "liga": "NO-TS",
+      "lado": "H",
+      "media": 1.735,
+      "var": 3.63,
+      "dispersion": 2.092,
+      "n": 68
+    },
+    {
+      "liga": "NO-TS",
+      "lado": "A",
+      "media": 1.588,
+      "var": 2.514,
+      "dispersion": 1.583,
+      "n": 68
+    },
+    {
+      "liga": "SW-AL",
+      "lado": "H",
+      "media": 1.762,
+      "var": 1.933,
+      "dispersion": 1.097,
+      "n": 105
+    },
+    {
+      "liga": "SW-AL",
+      "lado": "A",
+      "media": 1.371,
+      "var": 1.351,
+      "dispersion": 0.985,
+      "n": 105
+    },
+    {
+      "liga": "SW-DA",
+      "lado": "H",
+      "media": 1.649,
+      "var": 1.731,
+      "dispersion": 1.049,
+      "n": 77
+    },
+    {
+      "liga": "SW-DA",
+      "lado": "A",
+      "media": 1.117,
+      "var": 0.894,
+      "dispersion": 0.8,
+      "n": 77
+    },
+    {
+      "liga": "SW-EE",
+      "lado": "H",
+      "media": 1.443,
+      "var": 1.526,
+      "dispersion": 1.057,
+      "n": 70
+    },
+    {
+      "liga": "SW-EE",
+      "lado": "A",
+      "media": 1.414,
+      "var": 1.637,
+      "dispersion": 1.158,
+      "n": 70
+    },
+    {
+      "liga": "SW-EN",
+      "lado": "H",
+      "media": 1.464,
+      "var": 1.458,
+      "dispersion": 0.996,
+      "n": 112
+    },
+    {
+      "liga": "SW-EN",
+      "lado": "A",
+      "media": 1.75,
+      "var": 2.369,
+      "dispersion": 1.354,
+      "n": 112
+    },
+    {
+      "liga": "SW-ES",
+      "lado": "H",
+      "media": 1.637,
+      "var": 1.662,
+      "dispersion": 1.015,
+      "n": 113
+    },
+    {
+      "liga": "SW-ES",
+      "lado": "A",
+      "media": 1.451,
+      "var": 1.536,
+      "dispersion": 1.058,
+      "n": 113
+    },
+    {
+      "liga": "SW-SE",
+      "lado": "H",
+      "media": 1.639,
+      "var": 1.656,
+      "dispersion": 1.011,
+      "n": 119
+    },
+    {
+      "liga": "SW-SE",
+      "lado": "A",
+      "media": 1.462,
+      "var": 1.318,
+      "dispersion": 0.902,
+      "n": 119
+    },
+    {
+      "liga": "VL",
+      "lado": "H",
+      "media": 1.521,
+      "var": 1.579,
+      "dispersion": 1.038,
+      "n": 96
+    },
+    {
+      "liga": "VL",
+      "lado": "A",
+      "media": 1.146,
+      "var": 1.41,
+      "dispersion": 1.231,
+      "n": 96
+    }
+  ],
+  "goles_obs_vs_pred_H": [
+    [
+      0,
+      0.2075,
+      0.2132
+    ],
+    [
+      1,
+      0.2903,
+      0.2934
+    ],
+    [
+      2,
+      0.2434,
+      0.2316
+    ],
+    [
+      3,
+      0.1396,
+      0.1382
+    ],
+    [
+      4,
+      0.0741,
+      0.0697
+    ],
+    [
+      5,
+      0.0253,
+      0.0316
+    ],
+    [
+      6,
+      0.0117,
+      0.0134
+    ],
+    [
+      7,
+      0.0043,
+      0.0054
+    ],
+    [
+      8,
+      0.0025,
+      0.0022
+    ]
+  ],
+  "celdas_bajas": [
+    {
+      "celda": "0-0",
+      "obs": 0.0445,
+      "pred_rho": 0.0558,
+      "pred_sin_rho": 0.0531
+    },
+    {
+      "celda": "1-0",
+      "obs": 0.071,
+      "pred_rho": 0.074,
+      "pred_sin_rho": 0.0768
+    },
+    {
+      "celda": "0-1",
+      "obs": 0.0611,
+      "pred_rho": 0.0639,
+      "pred_sin_rho": 0.0667
+    },
+    {
+      "celda": "1-1",
+      "obs": 0.0939,
+      "pred_rho": 0.0964,
+      "pred_sin_rho": 0.0937
+    }
+  ],
+  "masa_truncada_media": 0.0001306647427182026,
+  "corr_residual_pearson": -0.0242,
+  "dispersion_pearson_condicional": {
+    "H": 1.2736,
+    "A": 1.1349
+  },
+  "dispersion_pearson_por_liga": [
+    {
+      "league_code": "M1",
+      "disp_H": 1.644,
+      "disp_A": 1.244,
+      "n": 90.0
+    },
+    {
+      "league_code": "M1L",
+      "disp_H": 1.627,
+      "disp_A": 1.033,
+      "n": 74.0
+    },
+    {
+      "league_code": "M2",
+      "disp_H": 1.582,
+      "disp_A": 1.02,
+      "n": 195.0
+    },
+    {
+      "league_code": "NL",
+      "disp_H": 0.912,
+      "disp_A": 1.284,
+      "n": 52.0
+    },
+    {
+      "league_code": "NO-1DK",
+      "disp_H": 1.347,
+      "disp_A": 1.48,
+      "n": 64.0
+    },
+    {
+      "league_code": "NO-ELI",
+      "disp_H": 1.003,
+      "disp_A": 1.132,
+      "n": 105.0
+    },
+    {
+      "league_code": "NO-OBOS",
+      "disp_H": 1.425,
+      "disp_A": 1.366,
+      "n": 112.0
+    },
+    {
+      "league_code": "NO-PN1",
+      "disp_H": 1.075,
+      "disp_A": 1.283,
+      "n": 84.0
+    },
+    {
+      "league_code": "NO-PN2",
+      "disp_H": 1.197,
+      "disp_A": 0.953,
+      "n": 83.0
+    },
+    {
+      "league_code": "NO-TS",
+      "disp_H": 1.802,
+      "disp_A": 1.149,
+      "n": 68.0
+    },
+    {
+      "league_code": "SW-AL",
+      "disp_H": 1.325,
+      "disp_A": 1.021,
+      "n": 105.0
+    },
+    {
+      "league_code": "SW-DA",
+      "disp_H": 0.963,
+      "disp_A": 0.67,
+      "n": 77.0
+    },
+    {
+      "league_code": "SW-EE",
+      "disp_H": 1.046,
+      "disp_A": 0.87,
+      "n": 70.0
+    },
+    {
+      "league_code": "SW-EN",
+      "disp_H": 0.992,
+      "disp_A": 1.501,
+      "n": 112.0
+    },
+    {
+      "league_code": "SW-ES",
+      "disp_H": 1.15,
+      "disp_A": 1.241,
+      "n": 113.0
+    },
+    {
+      "league_code": "SW-SE",
+      "disp_H": 1.16,
+      "disp_A": 1.082,
+      "n": 119.0
+    },
+    {
+      "league_code": "VL",
+      "disp_H": 1.155,
+      "disp_A": 0.99,
+      "n": 96.0
+    }
+  ]
+}

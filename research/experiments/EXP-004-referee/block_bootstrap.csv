@@ -1,0 +1,17 @@
+comparacion,esquema,delta,ci_lo,ci_hi,p_mejor,n_bloques
+dc_best − g0_logistic_dppg,iid,-0.0086,-0.0141,-0.0031,1.0,1619
+dc_best − g0_logistic_dppg,week,-0.0086,-0.0142,-0.003,0.999,20
+dc_best − g0_logistic_dppg,week_league,-0.0086,-0.0151,-0.0025,0.997,222
+dc_best − g0_logistic_dppg,moving4,-0.0086,-0.0141,-0.0052,1.0,20
+stack_cal − dc_best,iid,-0.0007,-0.0015,0.0001,0.956,1619
+stack_cal − dc_best,week,-0.0007,-0.0014,0.0001,0.961,20
+stack_cal − dc_best,week_league,-0.0007,-0.0015,0.0001,0.96,222
+stack_cal − dc_best,moving4,-0.0007,-0.0013,0.0001,0.953,20
+jer_pais − dc_best,iid,0.0055,0.0016,0.0093,0.001,1619
+jer_pais − dc_best,week,0.0055,0.0016,0.0091,0.003,20
+jer_pais − dc_best,week_league,0.0055,0.0018,0.0092,0.002,222
+jer_pais − dc_best,moving4,0.0055,0.0009,0.0096,0.013,20
+dc_best − b0_base_rate,iid,-0.0238,-0.0306,-0.0169,1.0,1619
+dc_best − b0_base_rate,week,-0.0238,-0.0305,-0.0171,1.0,20
+dc_best − b0_base_rate,week_league,-0.0238,-0.0318,-0.0163,1.0,222
+dc_best − b0_base_rate,moving4,-0.0238,-0.0312,-0.0159,1.0,20

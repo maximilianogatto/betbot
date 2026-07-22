@@ -259,6 +259,7 @@ def fit_poisson(
     halflife_days: float | None = None,
     ridge_sigma: float = 1.0,
     fit_rho: bool = False,
+    fit_home_adv: bool = True,
 ) -> PoissonFit | None:
     """MLE of the attack/defence Poisson model on matches strictly before ``asof``.
 
@@ -318,7 +319,8 @@ def fit_poisson(
 
     x0 = np.zeros(3 + 2 * n)
     x0[0] = np.log(max(np.average((hg + ag) / 2, weights=w), 0.2))
-    bounds = [(-3, 3), (-1.5, 1.5), ((-0.5, 0.5) if fit_rho else (0.0, 0.0))]
+    bounds = [(-3, 3), ((-1.5, 1.5) if fit_home_adv else (0.0, 0.0)),
+              ((-0.5, 0.5) if fit_rho else (0.0, 0.0))]
     bounds += [(-3, 3)] * (2 * n)
     res = minimize(nll, x0, method="L-BFGS-B", bounds=bounds,
                    options={"maxiter": 500})
