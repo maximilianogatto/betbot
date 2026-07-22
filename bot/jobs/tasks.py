@@ -358,7 +358,8 @@ async def _orchestrated_peak_digest(application: Application) -> None:
             fin_api.close()
             swe_client.close()
             
-        from core.timezones import resolve_chat_timezone, use_timezone
+        from core.timezones import use_timezone
+        from services.timezones import resolve_chat_timezone
         for chat_id in chat_ids:
             try:
                 with use_timezone(resolve_chat_timezone(chat_id)):

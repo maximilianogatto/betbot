@@ -15,7 +15,8 @@ from typing import Any
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.constants import ParseMode
 
-from core.timezones import resolve_chat_timezone, set_display_timezone
+from core.timezones import set_display_timezone
+from services.timezones import resolve_chat_timezone
 from services.models import (
     RefreshSummary,
     CompetitionRefreshResult,

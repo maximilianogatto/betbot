@@ -8,7 +8,7 @@ from __future__ import annotations
 from adapters.storage import get_storage
 from core.timezones import COMMON_TIMEZONES
 from core.timezones import get_zoneinfo
-from core.timezones import resolve_chat_timezone
+from services.timezones import resolve_chat_timezone
 from core.timezones import set_display_timezone
 from core.timezones import tz_offset_label
 from interfaces.telegram.handlers.live_watch import HELP_LIVE_MESSAGE

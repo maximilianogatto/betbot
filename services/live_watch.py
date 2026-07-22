@@ -22,7 +22,8 @@ from zoneinfo import ZoneInfo
 
 from core.extractor_base import Extractor
 from core.models import LiveEventSnapshot, LiveWatchEntry, LiveWatchSettings
-from core.timezones import default_timezone, resolve_chat_timezone
+from core.timezones import default_timezone
+from services.timezones import resolve_chat_timezone
 from core.registry import ExtractorRegistry, extractor_registry as global_extractor_registry
 from core.league_naming import team_name_similarity, normalize_team_name
 from adapters.storage import SqliteStorage, get_storage

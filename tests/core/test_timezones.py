@@ -7,11 +7,11 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from interfaces.telegram.renderers import format_display_datetime
+from services.timezones import resolve_chat_timezone
 from core.timezones import (
     current_display_timezone,
     default_timezone,
     get_zoneinfo,
-    resolve_chat_timezone,
     tz_offset_label,
     use_timezone,
 )

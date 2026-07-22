@@ -42,7 +42,6 @@ from core.timezones import (
     COMMON_TIMEZONES,
     current_display_timezone,
     get_zoneinfo,
-    resolve_chat_timezone,
     set_display_timezone,
     tz_offset_label,
 )

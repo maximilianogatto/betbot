@@ -92,21 +92,6 @@ def use_timezone(tz: ZoneInfo | None):
         _display_tz.reset(token)
 
 
-def resolve_chat_timezone(chat_id: int | None) -> ZoneInfo:
-    """Resolve a chat's saved timezone, falling back to the default."""
-
-    if chat_id is None:
-        return default_timezone()
-    try:
-        from adapters.storage import get_storage
-        tracking_repository = get_storage()
-
-        name = tracking_repository.get_chat_timezone(chat_id)
-    except Exception:
-        name = None
-    return get_zoneinfo(name) or default_timezone()
-
-
 def tz_offset_label(tz: ZoneInfo, when: datetime | None = None) -> str:
     """Short offset label for display, e.g. ``UTC-03`` or ``UTC+05:30``."""
 
