@@ -1,0 +1,104 @@
+{
+  "deficit_global_2025": {
+    "obs_P0": 0.2161,
+    "pois_P0": 0.2413,
+    "diff": -0.0252,
+    "ci_lo": -0.04,
+    "ci_hi": -0.0102
+  },
+  "deficit_global_2026": {
+    "obs_P0": 0.2335,
+    "pois_P0": 0.2414,
+    "diff": -0.0079,
+    "ci_lo": -0.0209,
+    "ci_hi": 0.005
+  },
+  "jensen_demo_lambda1.3": [
+    {
+      "spread": 0.2,
+      "P0_poisson": 0.2725,
+      "P0_mezcla_mean_preserving": 0.2818
+    },
+    {
+      "spread": 0.4,
+      "P0_poisson": 0.2725,
+      "P0_mezcla_mean_preserving": 0.3102
+    },
+    {
+      "spread": 0.6,
+      "P0_poisson": 0.2725,
+      "P0_mezcla_mean_preserving": 0.3597
+    }
+  ],
+  "cell00_2026": {
+    "obs": 0.0445,
+    "pred_rho": 0.0558,
+    "pred_rho0": 0.0531
+  },
+  "shape_ratio_P1_P0": {
+    "2025": [
+      {
+        "lam": 0.76,
+        "obs_P1_P0": 0.824,
+        "poisson_ratio_lambda": 0.76
+      },
+      {
+        "lam": 1.116,
+        "obs_P1_P0": 1.159,
+        "poisson_ratio_lambda": 1.116
+      },
+      {
+        "lam": 1.372,
+        "obs_P1_P0": 1.514,
+        "poisson_ratio_lambda": 1.372
+      },
+      {
+        "lam": 1.647,
+        "obs_P1_P0": 1.856,
+        "poisson_ratio_lambda": 1.647
+      },
+      {
+        "lam": 2.021,
+        "obs_P1_P0": 2.534,
+        "poisson_ratio_lambda": 2.021
+      },
+      {
+        "lam": 2.917,
+        "obs_P1_P0": 2.605,
+        "poisson_ratio_lambda": 2.917
+      }
+    ],
+    "2026": [
+      {
+        "lam": 0.799,
+        "obs_P1_P0": 1.016,
+        "poisson_ratio_lambda": 0.799
+      },
+      {
+        "lam": 1.134,
+        "obs_P1_P0": 1.106,
+        "poisson_ratio_lambda": 1.134
+      },
+      {
+        "lam": 1.359,
+        "obs_P1_P0": 1.307,
+        "poisson_ratio_lambda": 1.359
+      },
+      {
+        "lam": 1.609,
+        "obs_P1_P0": 1.217,
+        "poisson_ratio_lambda": 1.609
+      },
+      {
+        "lam": 1.96,
+        "obs_P1_P0": 1.667,
+        "poisson_ratio_lambda": 1.96
+      },
+      {
+        "lam": 2.778,
+        "obs_P1_P0": 2.263,
+        "poisson_ratio_lambda": 2.778
+      }
+    ]
+  }
+}
