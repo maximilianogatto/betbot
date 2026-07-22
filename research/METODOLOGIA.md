@@ -105,7 +105,8 @@ partido (asume independencia), por bloques de semana (respeta que toda la semana
 sale del mismo ajuste), semana×liga, y bloques móviles de 4 semanas. Si el IC
 excluye al 0 en todas las variantes, la diferencia es robusta a la dependencia;
 si solo en la iid, es sospechosa. (dc−g0 sobrevivió a las cuatro;
-stack_cal−dc no quedó establecida en ninguna.)
+para `stack_cal−dc`, la mejora no quedó establecida en RPS, pero sí en
+log-loss. Por eso las métricas no deben intercambiarse al redactar conclusiones.)
 
 ## 6. Cómo se compara el modelo con la realidad
 

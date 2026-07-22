@@ -353,111 +353,17 @@
   "masa_truncada_media": 0.0001306647427182026,
   "corr_residual_pearson": -0.0242,
   "dispersion_pearson_condicional": {
-    "H": 1.2736,
-    "A": 1.1349
-  },
-  "dispersion_pearson_por_liga": [
-    {
-      "league_code": "M1",
-      "disp_H": 1.644,
-      "disp_A": 1.244,
-      "n": 90.0
+    "H": {
+      "estimate": 1.2746,
+      "ci_week_lo": 1.1715,
+      "ci_week_hi": 1.3858,
+      "n_weeks": 20
     },
-    {
-      "league_code": "M1L",
-      "disp_H": 1.627,
-      "disp_A": 1.033,
-      "n": 74.0
-    },
-    {
-      "league_code": "M2",
-      "disp_H": 1.582,
-      "disp_A": 1.02,
-      "n": 195.0
-    },
-    {
-      "league_code": "NL",
-      "disp_H": 0.912,
-      "disp_A": 1.284,
-      "n": 52.0
-    },
-    {
-      "league_code": "NO-1DK",
-      "disp_H": 1.347,
-      "disp_A": 1.48,
-      "n": 64.0
-    },
-    {
-      "league_code": "NO-ELI",
-      "disp_H": 1.003,
-      "disp_A": 1.132,
-      "n": 105.0
-    },
-    {
-      "league_code": "NO-OBOS",
-      "disp_H": 1.425,
-      "disp_A": 1.366,
-      "n": 112.0
-    },
-    {
-      "league_code": "NO-PN1",
-      "disp_H": 1.075,
-      "disp_A": 1.283,
-      "n": 84.0
-    },
-    {
-      "league_code": "NO-PN2",
-      "disp_H": 1.197,
-      "disp_A": 0.953,
-      "n": 83.0
-    },
-    {
-      "league_code": "NO-TS",
-      "disp_H": 1.802,
-      "disp_A": 1.149,
-      "n": 68.0
-    },
-    {
-      "league_code": "SW-AL",
-      "disp_H": 1.325,
-      "disp_A": 1.021,
-      "n": 105.0
-    },
-    {
-      "league_code": "SW-DA",
-      "disp_H": 0.963,
-      "disp_A": 0.67,
-      "n": 77.0
-    },
-    {
-      "league_code": "SW-EE",
-      "disp_H": 1.046,
-      "disp_A": 0.87,
-      "n": 70.0
-    },
-    {
-      "league_code": "SW-EN",
-      "disp_H": 0.992,
-      "disp_A": 1.501,
-      "n": 112.0
-    },
-    {
-      "league_code": "SW-ES",
-      "disp_H": 1.15,
-      "disp_A": 1.241,
-      "n": 113.0
-    },
-    {
-      "league_code": "SW-SE",
-      "disp_H": 1.16,
-      "disp_A": 1.082,
-      "n": 119.0
-    },
-    {
-      "league_code": "VL",
-      "disp_H": 1.155,
-      "disp_A": 0.99,
-      "n": 96.0
+    "A": {
+      "estimate": 1.1361,
+      "ci_week_lo": 1.0429,
+      "ci_week_hi": 1.2402,
+      "n_weeks": 20
     }
-  ]
+  }
 }

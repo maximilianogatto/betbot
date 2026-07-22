@@ -24,7 +24,8 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
-from research.peak_models.evaluate import PCOLS, rps_per_match  # noqa: E402
+from research.peak_models.evaluate import (  # noqa: E402
+    PCOLS, logloss_per_match, rps_per_match)
 
 HERE = Path(__file__).parent
 HERE.mkdir(exist_ok=True)
@@ -40,6 +41,8 @@ def load_results() -> pd.DataFrame:
     res = pd.concat([r3, r2[r3.columns.intersection(r2.columns)]], ignore_index=True)
     res["match_id"] = res["match_id"].astype(str)
     res["rps"] = rps_per_match(res[PCOLS].to_numpy(), res["result"].to_numpy())
+    res["log_loss"] = logloss_per_match(
+        res[PCOLS].to_numpy(), res["result"].to_numpy())
     return res
 
 
@@ -96,20 +99,22 @@ def main() -> None:
     for target, base in comparisons:
         common = wide[target].index.intersection(wide[base].index)
         t = wide[target].loc[common]
-        d = t["rps"] - wide[base].loc[common, "rps"]
         week = t["cutoff"].astype(str)
         wl = week + "|" + t["league_code"]
-        for scheme, blocks in [("iid", week), ("week", week),
-                               ("week_league", wl), ("moving4", week)]:
-            bs = block_bootstrap(d, blocks, scheme=scheme)
-            key = f"{target}_vs_{base}"
-            out.setdefault(key, {})[scheme] = bs
-            rows.append({"comparacion": f"{target} − {base}", "esquema": scheme,
-                         "delta": round(bs["delta_mean"], 4),
-                         "ci_lo": round(bs["ci_lo"], 4),
-                         "ci_hi": round(bs["ci_hi"], 4),
-                         "p_mejor": round(bs["p_better"], 3),
-                         "n_bloques": bs["n_blocks"]})
+        for metric in ("rps", "log_loss"):
+            d = t[metric] - wide[base].loc[common, metric]
+            for scheme, blocks in [("iid", week), ("week", week),
+                                   ("week_league", wl), ("moving4", week)]:
+                bs = block_bootstrap(d, blocks, scheme=scheme)
+                key = f"{target}_vs_{base}"
+                out.setdefault(key, {}).setdefault(metric, {})[scheme] = bs
+                rows.append({"comparacion": f"{target} − {base}",
+                             "metrica": metric, "esquema": scheme,
+                             "delta": round(bs["delta_mean"], 4),
+                             "ci_lo": round(bs["ci_lo"], 4),
+                             "ci_hi": round(bs["ci_hi"], 4),
+                             "p_mejor": round(bs["p_better"], 3),
+                             "n_bloques": bs["n_blocks"]})
     table = pd.DataFrame(rows)
     print(table.to_string(index=False))
     json.dump(out, open(HERE / "block_bootstrap.json", "w"), indent=2)

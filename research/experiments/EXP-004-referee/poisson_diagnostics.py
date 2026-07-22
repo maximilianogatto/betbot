@@ -137,6 +137,30 @@ def main() -> None:
     out["corr_residual_pearson"] = round(float(np.corrcoef(rh, ra)[0, 1]), 4)
     print("corr residual H-A:", out["corr_residual_pearson"])
 
+    # --- 4b. dispersión condicional y CI por bloques semanales -----------
+    # E[r^2] debe ser aproximadamente 1 bajo una Poisson bien especificada,
+    # con r=(y-lambda)/sqrt(lambda). Remuestreamos semanas completas para no
+    # tratar como independientes partidos generados bajo el mismo régimen.
+    d["week"] = pd.to_datetime(d["date"]).dt.to_period("W").astype(str)
+    rng = np.random.default_rng(17)
+    weeks = sorted(d["week"].unique())
+    conditional = {}
+    for side, resid in [("H", rh), ("A", ra)]:
+        tmp = pd.DataFrame({"r2": np.asarray(resid) ** 2, "week": d["week"]})
+        groups = [g["r2"].to_numpy() for _, g in tmp.groupby("week", sort=True)]
+        boot = np.empty(4000)
+        for i in range(len(boot)):
+            pick = rng.integers(0, len(groups), size=len(groups))
+            boot[i] = np.concatenate([groups[j] for j in pick]).mean()
+        conditional[side] = {
+            "estimate": round(float(tmp["r2"].mean()), 4),
+            "ci_week_lo": round(float(np.quantile(boot, 0.025)), 4),
+            "ci_week_hi": round(float(np.quantile(boot, 0.975)), 4),
+            "n_weeks": len(weeks),
+        }
+    out["dispersion_pearson_condicional"] = conditional
+    print("dispersión Pearson condicional:", conditional)
+
     # --- 5. calibración de λ por deciles ---------------------------------
     fig, ax = plt.subplots(figsize=(6.5, 4))
     for lam, goals, c, lbl in [(d["lam_h"], d["hg"], "#2a78d6", "local"),
