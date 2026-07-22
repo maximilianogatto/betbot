@@ -20,6 +20,8 @@ from telegram.ext import ContextTypes
 from telegram.ext import ConversationHandler
 import asyncio
 
+from monitoring import format_system_metrics_message
+from monitoring import get_system_metrics
 from interfaces.telegram.handlers.common import (
     _clear_all_selection_context,
     _selection_target,
@@ -422,5 +424,110 @@ async def cancel_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if target is not None:
         await target.reply_text("Operación cancelada.", reply_markup=ReplyKeyboardRemove())
     return ConversationHandler.END
+
+
+GUIDE_MESSAGE = (
+    "🧭 <b>Guía rápida</b>\n\n"
+    "<b>1 · Seguir una liga</b>\n"
+    "  /track_league <i>(interactivo)</i> o <code>/track_url &lt;url&gt;</code> → /confirm_track\n"
+    "  /list_tracks — revisá lo que seguís\n\n"
+    "<b>2 · Ver partidos y odds</b>\n"
+    "  /matches → <code>/event_url &lt;n&gt;</code> para el link del partido\n\n"
+    "<b>3 · Alertas de cuotas</b>\n"
+    "  /odds_on · <code>/set_change_percent 20</code>\n"
+    "  /check_little_changes → <code>/confirm_change &lt;n&gt;</code> o /confirm_all_little_changes\n\n"
+    "<b>4 · Estadísticas</b>\n"
+    "  <code>/stats &lt;n&gt;</code> · si la casa no trae stats: /link_stats → /stats_links\n\n"
+    "<b>5 · En vivo</b>\n"
+    "  /watch_live → /watching\n\n"
+    "💡 <i>Si un link cambia:</i> <code>/update_track_url &lt;n&gt; &lt;url&gt;</code>"
+)
+
+
+async def photo_guidance_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Guide the user when they send a photo without any command."""
+
+    del context
+    if update.message is None:
+        return
+
+    await update.message.reply_text(
+        "📸 Recibí tu imagen.\n\n"
+        "Si esta imagen contiene una tabla de fixture y querés que vigile los partidos en vivo, "
+        "subila de nuevo agregando como epígrafe/comentario el comando `/watch_live`."
+    )
+
+
+async def guide_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle the `/guide` command."""
+
+    del context
+
+    if update.message is None:
+        return
+
+    await update.message.reply_text(GUIDE_MESSAGE, parse_mode=ParseMode.HTML)
+
+
+async def ping_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle the `/ping` command."""
+
+    del context
+
+    if update.message is None:
+        return
+
+    await update.message.reply_text("pong")
+
+
+async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle the `/status` command."""
+
+    del context
+
+    if update.message is None:
+        return
+
+    await update.message.reply_text("El bot está online y funcionando correctamente.")
+
+
+async def resources_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle `/resources` with runtime resource metrics."""
+
+    if update.message is None:
+        return
+
+    metrics = get_system_metrics()
+    await update.message.reply_text(format_system_metrics_message(metrics))
+
+
+async def echo_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle the `/echo` command."""
+
+    if update.message is None:
+        return
+
+    text_to_echo = " ".join(context.args).strip()
+
+    if not text_to_echo:
+        await update.message.reply_text(
+            "Usá /echo seguido de un texto. Ejemplo: /echo hola mundo"
+        )
+        return
+
+    await update.message.reply_text(text_to_echo)
+
+
+async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle unsupported Telegram commands."""
+
+    del context
+
+    if update.message is None:
+        return
+
+    await update.message.reply_text(
+        "Todavía no conozco ese comando. Usá /help para ver la lista disponible."
+    )
 
 

@@ -13,7 +13,14 @@ from telegram import Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
-from interfaces.telegram.handlers.common import logger, _reply_text_chunks
+from interfaces.telegram.handlers.common import (
+    _get_country_adapter,
+    _reply_text_chunks,
+    _show_league_selector,
+    _show_today_matches_selector,
+    get_country_selector_keyboard,
+    logger,
+)
 
 
 _SWE_LEAGUES: dict[str, tuple[str, str, str]] = {
@@ -685,5 +692,90 @@ async def no_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         "• Corré `/no_fixtures [LIGA]` para ver fixtures de una liga."
     )
     await _run_special_match(update.message, (getattr(context, 'args', None) or []), _norway_adapter(), usage_guide)
+
+
+async def today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if update.message is None:
+        return
+    args = context.args or []
+    if args:
+        code = args[0].lower().strip()
+        adapter = _get_country_adapter(code)
+        if adapter:
+            await _run_special_today(update.message, args[1:], adapter)
+            return
+    await update.message.reply_text(
+        "Seleccioná un país para ver los partidos de hoy:",
+        reply_markup=get_country_selector_keyboard("today")
+    )
+
+
+async def standings_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if update.message is None:
+        return
+    args = context.args or []
+    if len(args) >= 2:
+        code = args[0].lower().strip()
+        adapter = _get_country_adapter(code)
+        if adapter:
+            usage = f"❌ *Falta el código de liga.*\n\nUso: `/standings {code} [CÓDIGO]`"
+            await _run_special_standings(update.message, args[1:], adapter, usage)
+            return
+    elif len(args) == 1:
+        code = args[0].lower().strip()
+        adapter = _get_country_adapter(code)
+        if adapter:
+            await _show_league_selector(update, code, "standings")
+            return
+    await update.message.reply_text(
+        "Seleccioná un país para ver la tabla de posiciones:",
+        reply_markup=get_country_selector_keyboard("standings")
+    )
+
+
+async def fixtures_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if update.message is None:
+        return
+    args = context.args or []
+    if len(args) >= 2:
+        code = args[0].lower().strip()
+        adapter = _get_country_adapter(code)
+        if adapter:
+            usage = f"❌ *Falta el código de liga.*\n\nUso: `/fixtures {code} [CÓDIGO]`"
+            await _run_special_fixtures(update.message, args[1:], adapter, usage)
+            return
+    elif len(args) == 1:
+        code = args[0].lower().strip()
+        adapter = _get_country_adapter(code)
+        if adapter:
+            await _show_league_selector(update, code, "fixtures")
+            return
+    await update.message.reply_text(
+        "Seleccioná un país para ver el fixture:",
+        reply_markup=get_country_selector_keyboard("fixtures")
+    )
+
+
+async def match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if update.message is None:
+        return
+    args = context.args or []
+    if len(args) >= 2:
+        code = args[0].lower().strip()
+        adapter = _get_country_adapter(code)
+        if adapter:
+            usage = f"❌ *Falta el ID del partido.*\n\nUso: `/match {code} [ID]`"
+            await _run_special_match(update.message, args[1:], adapter, usage)
+            return
+    elif len(args) == 1:
+        code = args[0].lower().strip()
+        adapter = _get_country_adapter(code)
+        if adapter:
+            await _show_today_matches_selector(update, code)
+            return
+    await update.message.reply_text(
+        "Seleccioná un país para ver los partidos y elegir uno:",
+        reply_markup=get_country_selector_keyboard("match")
+    )
 
 

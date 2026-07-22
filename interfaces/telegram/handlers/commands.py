@@ -138,6 +138,14 @@ from interfaces.telegram.handlers.peak import (  # noqa: F401
 )
 
 from interfaces.telegram.handlers.system import (  # noqa: F401
+    GUIDE_MESSAGE,
+    echo_command,
+    guide_command,
+    photo_guidance_handler,
+    ping_command,
+    resources_command,
+    status_command,
+    unknown_command,
     HELP_LEAGUES_MESSAGE,
     HELP_MATCHES_MESSAGE,
     HELP_MESSAGE,
@@ -279,6 +287,10 @@ from interfaces.telegram.handlers.common import (  # noqa: F401
 )
 
 from interfaces.telegram.handlers.special_leagues import (  # noqa: F401
+    fixtures_command,
+    match_command,
+    standings_command,
+    today_command,
     _SWE_LEAGUES,
     _AL_LEAGUE_USAGE,
     _FIN_LEAGUE_USAGE,
@@ -349,22 +361,6 @@ from interfaces.telegram.handlers.special_leagues import (  # noqa: F401
 
 
 
-GUIDE_MESSAGE = (
-    "🧭 <b>Guía rápida</b>\n\n"
-    "<b>1 · Seguir una liga</b>\n"
-    "  /track_league <i>(interactivo)</i> o <code>/track_url &lt;url&gt;</code> → /confirm_track\n"
-    "  /list_tracks — revisá lo que seguís\n\n"
-    "<b>2 · Ver partidos y odds</b>\n"
-    "  /matches → <code>/event_url &lt;n&gt;</code> para el link del partido\n\n"
-    "<b>3 · Alertas de cuotas</b>\n"
-    "  /odds_on · <code>/set_change_percent 20</code>\n"
-    "  /check_little_changes → <code>/confirm_change &lt;n&gt;</code> o /confirm_all_little_changes\n\n"
-    "<b>4 · Estadísticas</b>\n"
-    "  <code>/stats &lt;n&gt;</code> · si la casa no trae stats: /link_stats → /stats_links\n\n"
-    "<b>5 · En vivo</b>\n"
-    "  /watch_live → /watching\n\n"
-    "💡 <i>Si un link cambia:</i> <code>/update_track_url &lt;n&gt; &lt;url&gt;</code>"
-)
 
 
 
@@ -383,18 +379,8 @@ GUIDE_MESSAGE = (
 
 
 
-async def photo_guidance_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Guide the user when they send a photo without any command."""
 
-    del context
-    if update.message is None:
-        return
 
-    await update.message.reply_text(
-        "📸 Recibí tu imagen.\n\n"
-        "Si esta imagen contiene una tabla de fixture y querés que vigile los partidos en vivo, "
-        "subila de nuevo agregando como epígrafe/comentario el comando `/watch_live`."
-    )
 
 
 
@@ -435,15 +421,9 @@ async def photo_guidance_handler(update: Update, context: ContextTypes.DEFAULT_T
 
 
 
-async def guide_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle the `/guide` command."""
 
-    del context
 
-    if update.message is None:
-        return
 
-    await update.message.reply_text(GUIDE_MESSAGE, parse_mode=ParseMode.HTML)
 
 
 
@@ -456,36 +436,18 @@ async def guide_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 
 
-async def ping_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle the `/ping` command."""
 
-    del context
 
-    if update.message is None:
-        return
 
-    await update.message.reply_text("pong")
 
 
-async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle the `/status` command."""
 
-    del context
 
-    if update.message is None:
-        return
 
-    await update.message.reply_text("El bot está online y funcionando correctamente.")
 
 
-async def resources_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle `/resources` with runtime resource metrics."""
 
-    if update.message is None:
-        return
 
-    metrics = get_system_metrics()
-    await update.message.reply_text(format_system_metrics_message(metrics))
 
 
 
@@ -514,21 +476,10 @@ async def resources_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
 
 
-async def echo_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle the `/echo` command."""
 
-    if update.message is None:
-        return
 
-    text_to_echo = " ".join(context.args).strip()
 
-    if not text_to_echo:
-        await update.message.reply_text(
-            "Usá /echo seguido de un texto. Ejemplo: /echo hola mundo"
-        )
-        return
 
-    await update.message.reply_text(text_to_echo)
 
 
 
@@ -622,34 +573,6 @@ async def echo_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle unsupported Telegram commands."""
-
-    del context
-
-    if update.message is None:
-        return
-
-    await update.message.reply_text(
-        "Todavía no conozco ese comando. Usá /help para ver la lista disponible."
-    )
 
 
 def register_handlers(application: Application) -> None:
@@ -1015,115 +938,8 @@ def register_handlers(application: Application) -> None:
 
 
 
-def _build_match_selection_message(
-    tracked_league: TrackedCompetitionSubscription,
-    matches: list[ActiveEventRecord],
-) -> str:
-    """Build the second prompt used by `/matches`."""
-
-    lines = [f"Qué partido quiere ver de {tracked_league.tracked_league.league_name}?"]
-    lines.append("1 - Ver todos")
-
-    for index, match in enumerate(matches, start=2):
-        lines.append(f"{index} - {match.home} vs {match.away}")
-
-    return "\n".join(lines)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-_FIN_COMPETITION_ID = "spljp26"  # 2026 SPL Jalkapallo season; all FIN leagues share it.
-
 # Full senior hierarchy (mirrors /fin_leagues). Fallback when the live ranking
 # list is unavailable; also drives /fin_today classification + names.
-_FIN_SENIOR_FALLBACK: dict[str, str] = {
-    "VL": "Veikkausliiga (Tier 1)", "NL": "Kansallinen Liiga (Damas T1)",
-    "M1L": "Ykkösliiga (Tier 2)", "N1": "Naisten Ykkönen (Damas T2)",
-    "M1": "Ykkönen (Tier 3)", "N2": "Naisten Kakkonen (Damas T3)",
-    "M2": "Kakkonen (Tier 4)", "N3": "Naisten Kolmonen (Damas T4)",
-    "M3": "Kolmonen (Tier 5)", "N4": "Naisten Nelonen (Damas T5)",
-    "M4": "Nelonen (Tier 6)", "N5": "Naisten Vitonen (Damas T6)",
-    "M5": "Vitonen (Tier 7)", "M6": "Kutonen (Tier 8)", "M7": "Seiska (Tier 9)",
-    "MSC": "Suomen Cup (Copa)", "LC": "Liigacup (Copa)",
-    "NSC": "Naisten Suomen Cup (Copa Damas)", "M1LCUP": "Ykkösliigacup",
-    "MRC": "Miesten Regions Cup", "MRRC": "Miesten Roots Cup",
-}
-
-
-
-def _resolve_fin_league(code: str) -> tuple[str, str] | None:
-    """Resolve a league code to (competition_id, category_id).
-
-    Accepts ANY federation category code shown in /fin_leagues (the season's
-    competition_id is shared across leagues); an unknown code just yields no
-    data downstream instead of a hard "invalid code" rejection.
-    """
-    code = (code or "").strip().upper()
-    if not code:
-        return None
-    return (_FIN_COMPETITION_ID, code)
-
-
-def _fin_senior_catalog(api) -> dict[str, dict]:
-    """{category_id: {name, tier, gender}} for senior leagues + cups.
-
-    Uses the live federation ranking list (same source as /fin_leagues) so the
-    set stays in sync; falls back to a static hierarchy if unavailable.
-    """
-    catalog: dict[str, dict] = {}
-    try:
-        for l in api.get_league_ranking_list() or []:
-            cid = str(l.get("category_id") or "")
-            if cid:
-                catalog[cid] = {"name": l.get("name") or cid, "tier": l.get("tier"), "gender": l.get("gender")}
-    except Exception:
-        pass
-    if not catalog:
-        catalog = {c: {"name": n, "tier": None, "gender": None} for c, n in _FIN_SENIOR_FALLBACK.items()}
-    return catalog
-
-
-def _fin_competitions_for_category(api, code: str, season: str = "2026") -> list[str]:
-    """All competition_ids that host a category code this season.
-
-    National leagues (VL, M1, M2, NL, N1, N2, cups) → one competition (spljp26).
-    Regional leagues (Kolmonen M3, Nelonen M4, women N3+) run as SEVERAL regional
-    competitions (Etelä/Länsi/Pohjois/Itä/Åland), so there is no single table.
-    """
-
-    code = (code or "").strip().upper()
-    if not code:
-        return []
-    comps: list[str] = []
-    try:
-        for c in api.get_categories(season) or []:
-            if str(c.get("category_id")) == code:
-                cid = str(c.get("competition_id") or "")
-                if cid and cid not in comps:
-                    comps.append(cid)
-    except Exception:
-        pass
-    return comps
-
-
 # ============ Special-league commands: generic runners (Finland aesthetic) ============
 # Both /fin_* and /swe_* go through ONE set of renderers so they look identical.
 
@@ -1157,163 +973,9 @@ def _fin_competitions_for_category(api, code: str, season: str = "2026") -> list
 
 
 
-def _md_escape(text: str) -> str:
-    """Escape Markdown-significant chars in free text (team names, etc.)."""
-    s = str(text)
-    for ch in ("\\", "_", "*", "`", "[", "]"):
-        s = s.replace(ch, "\\" + ch)
-    return s
-
-
-def _format_fin_squad(team_label: str, players: list, icon: str) -> list[str]:
-    """Render a team's full XI (with shirt, captain, scorers) + bench."""
-
-    def _order(p):
-        try:
-            return (int(p.get("position_order") or 999), int(p.get("shirt_number") or 999))
-        except (TypeError, ValueError):
-            return (999, 999)
-
-    starters = sorted([p for p in players if str(p.get("start")) == "1"], key=_order)
-    bench = [p for p in players if str(p.get("start")) == "0"]
-    out = [f"\n{icon} *{team_label}* — XI ({len(starters)}):"]
-    for p in starters:
-        num = str(p.get("shirt_number") or "?").rjust(2)
-        cap = " Ⓒ" if str(p.get("captain")) in ("1", "true", "True") else ""
-        pos = p.get("position_en") or p.get("position") or ""
-        posn = f" _{pos}_" if pos else ""
-        try:
-            g = int(p.get("goals") or 0)
-        except (TypeError, ValueError):
-            g = 0
-        goals = f" {g}⚽" if g > 0 else ""
-        out.append(f"  `{num}` {p.get('player_name')}{cap}{posn}{goals}")
-    if bench:
-        names = ", ".join(f"{p.get('shirt_number')} {p.get('player_name')}" for p in bench[:12])
-        out.append(f"  🔁 _Banco:_ {names}")
-    return out
-
-
-
-
 # ===================== Svenskfotboll (Swedish FA) commands =====================
 # Mirrors the Finland (/fin_*) integration: standalone commands backed by the
 # Swedish FA's HTTP feeds (svenskfotboll.se / FOGIS). 2026-season competition ids.
-
-
-
-
-def _swe_resolve_comp_for_teams(client, home: str, away: str) -> str | None:
-    """Find which tracked Swedish competition has BOTH teams (for analytics).
-
-    The /swe_match endpoint only gives team names, not a league id, so we scan
-    the known leagues' standings and match by normalised team name.
-    """
-
-    from services.special_peak import _norm_team
-
-    h, a = _norm_team(home), _norm_team(away)
-    if not h or not a:
-        return None
-    for _code, (cid, _name, _tier) in _SWE_LEAGUES.items():
-        try:
-            data = client.get_standings(cid)
-            teams = {_norm_team(t.get("team")) for t in (data.get("teams") or [])}
-        except Exception:
-            continue
-        if h in teams and a in teams:
-            return cid
-    return None
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-async def _swe_matches_reply(update: Update, name: str, code: str, data: dict, *, header: str) -> None:
-    matches = data.get("matches") or []
-    if not matches:
-        await update.message.reply_text("⚠️ No hay partidos para mostrar.")
-        return
-    lines = [f"{header}: <b>{name}</b> (2026)", "━━━━━━━━━━━━━━━━━━━━"]
-    for mtch in matches[:25]:
-        d_arg, t_arg = _convert_swe_to_arg_datetime(mtch.get("start_time_local"))
-        score = ""
-        if mtch.get("home_score") is not None and mtch.get("away_score") is not None:
-            score = f" [{mtch.get('home_score')}-{mtch.get('away_score')}]"
-        home_esc = escape_html(mtch.get('home','?'))
-        away_esc = escape_html(mtch.get('away','?'))
-        lines.append(f"<code>{d_arg} {t_arg}</code> {home_esc} vs {away_esc}{score}")
-        lines.append(f"    🆔 <code>/swe_match {mtch.get('match_id','')}</code>")
-    await _reply_text_chunks(update.message, "\n".join(lines), parse_mode=ParseMode.HTML)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1350,84 +1012,7 @@ from datetime import date
 
 
 
-async def today_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if update.message is None:
-        return
-    args = context.args or []
-    if args:
-        code = args[0].lower().strip()
-        adapter = _get_country_adapter(code)
-        if adapter:
-            await _run_special_today(update.message, args[1:], adapter)
-            return
-    await update.message.reply_text(
-        "Seleccioná un país para ver los partidos de hoy:",
-        reply_markup=get_country_selector_keyboard("today")
-    )
 
-async def standings_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if update.message is None:
-        return
-    args = context.args or []
-    if len(args) >= 2:
-        code = args[0].lower().strip()
-        adapter = _get_country_adapter(code)
-        if adapter:
-            usage = f"❌ *Falta el código de liga.*\n\nUso: `/standings {code} [CÓDIGO]`"
-            await _run_special_standings(update.message, args[1:], adapter, usage)
-            return
-    elif len(args) == 1:
-        code = args[0].lower().strip()
-        adapter = _get_country_adapter(code)
-        if adapter:
-            await _show_league_selector(update, code, "standings")
-            return
-    await update.message.reply_text(
-        "Seleccioná un país para ver la tabla de posiciones:",
-        reply_markup=get_country_selector_keyboard("standings")
-    )
 
-async def fixtures_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if update.message is None:
-        return
-    args = context.args or []
-    if len(args) >= 2:
-        code = args[0].lower().strip()
-        adapter = _get_country_adapter(code)
-        if adapter:
-            usage = f"❌ *Falta el código de liga.*\n\nUso: `/fixtures {code} [CÓDIGO]`"
-            await _run_special_fixtures(update.message, args[1:], adapter, usage)
-            return
-    elif len(args) == 1:
-        code = args[0].lower().strip()
-        adapter = _get_country_adapter(code)
-        if adapter:
-            await _show_league_selector(update, code, "fixtures")
-            return
-    await update.message.reply_text(
-        "Seleccioná un país para ver el fixture:",
-        reply_markup=get_country_selector_keyboard("fixtures")
-    )
 
-async def match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if update.message is None:
-        return
-    args = context.args or []
-    if len(args) >= 2:
-        code = args[0].lower().strip()
-        adapter = _get_country_adapter(code)
-        if adapter:
-            usage = f"❌ *Falta el ID del partido.*\n\nUso: `/match {code} [ID]`"
-            await _run_special_match(update.message, args[1:], adapter, usage)
-            return
-    elif len(args) == 1:
-        code = args[0].lower().strip()
-        adapter = _get_country_adapter(code)
-        if adapter:
-            await _show_today_matches_selector(update, code)
-            return
-    await update.message.reply_text(
-        "Seleccioná un país para ver los partidos y elegir uno:",
-        reply_markup=get_country_selector_keyboard("match")
-    )
 
