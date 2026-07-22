@@ -15,8 +15,8 @@ class TrackUrlCustomNameTests(unittest.IsolatedAsyncioTestCase):
         message = SimpleNamespace(reply_text=AsyncMock())
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=1))
         context = SimpleNamespace(args=args)
-        with patch("interfaces.telegram.handlers.commands.get_tracking_service", return_value=service), patch(
-            "interfaces.telegram.handlers.commands.reply_with_result", AsyncMock()
+        with patch("interfaces.telegram.handlers.tracking.get_tracking_service", return_value=service), patch(
+            "interfaces.telegram.handlers.tracking.reply_with_result", AsyncMock()
         ):
             await handlers.track_url_command(update, context)
         return service.create_pending_track_from_url.await_args.kwargs

@@ -44,7 +44,7 @@ class RefreshTracksHandlerTests(unittest.IsolatedAsyncioTestCase):
 
         summary_result = CommandResult(ok=True, message="Refresh completado.\n⏱️ Tiempo total: 42s")
         with (
-            patch("interfaces.telegram.handlers.commands.get_tracking_service", return_value=tracking_service),
+            patch("interfaces.telegram.handlers.tracking.get_tracking_service", return_value=tracking_service),
             patch("adapters.storage.get_storage", return_value=SimpleNamespace()),
             patch(
                 "interfaces.telegram.notifications.dispatch_tracking_notifications",
@@ -85,7 +85,7 @@ class RefreshTracksHandlerTests(unittest.IsolatedAsyncioTestCase):
 
         try:
             await tracking_service.try_start_refresh("automatic")
-            with patch("interfaces.telegram.handlers.commands.get_tracking_service", return_value=tracking_service):
+            with patch("interfaces.telegram.handlers.tracking.get_tracking_service", return_value=tracking_service):
                 await refresh_tracks_command(update, context)
         finally:
             await tracking_service.finish_refresh("automatic")
@@ -118,7 +118,7 @@ class RefreshTracksHandlerTests(unittest.IsolatedAsyncioTestCase):
 
         summary_result = CommandResult(ok=True, message="Refresh completado.\n⏱️ Tiempo total: 42s")
         with (
-            patch("interfaces.telegram.handlers.commands.get_tracking_service", return_value=tracking_service),
+            patch("interfaces.telegram.handlers.tracking.get_tracking_service", return_value=tracking_service),
             patch("adapters.storage.get_storage", return_value=SimpleNamespace()),
             patch(
                 "interfaces.telegram.notifications.dispatch_tracking_notifications",
@@ -163,7 +163,7 @@ class RefreshTracksHandlerTests(unittest.IsolatedAsyncioTestCase):
             return [text]
 
         with (
-            patch("interfaces.telegram.handlers.commands.get_tracking_service", return_value=tracking_service),
+            patch("interfaces.telegram.handlers.tracking.get_tracking_service", return_value=tracking_service),
             patch("interfaces.telegram.handlers.common.split_telegram_message", side_effect=_capture_split_text),
             patch("adapters.storage.get_storage", return_value=SimpleNamespace()),
             patch(
