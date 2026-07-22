@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 import hashlib
 import json
@@ -26,6 +27,17 @@ MARKET_TYPE_LABELS = {
 TRACKING_META_KEY = "__tracking_meta__"
 RECENT_SNAPSHOT_HISTORY_SIZE = 4
 
+# Política anti-ruido: solo alertan las CAÍDAS de cuota (corrección de una cuota
+# sobreestimada) y solo cuando son sostenidas (varios snapshots confirmados
+# seguidos bajando) o bruscas (posible bug). Las subas y los reprices únicos
+# van al digest de cambios pequeños sin notificar.
+SUSTAINED_DROP_MIN_STEPS = 2
+TREND_STEP_MIN_DROP_PERCENT = 1.0
+TREND_RESET_RISE_PERCENT = 2.0
+
+ALERT_KIND_SUSTAINED_DROP = "sustained_drop"
+ALERT_KIND_BUG_DROP = "bug_drop"
+
 
 def evaluate_subscription_odds_change(
     repository: SqliteStorage,
@@ -40,11 +52,19 @@ def evaluate_subscription_odds_change(
 ) -> SubscriptionOddsAlert | None:
     """Evaluate one global odds change against a specific chat baseline.
 
+    Solo notifica caídas de cuota, en dos variantes:
+    - caída sostenida: la misma selección baja en >=``SUSTAINED_DROP_MIN_STEPS``
+      snapshots confirmados consecutivos y la caída acumulada supera el umbral
+      del chat. Un rebote (suba >=``TREND_RESET_RISE_PERCENT``%) resetea la racha.
+    - posible bug: una caída brusca de >=``fast_path_percent``% en un solo paso.
+
+    Las subas y los reprices únicos por debajo de ese umbral actualizan el estado
+    y el digest de cambios pequeños pero nunca notifican.
+
     ``fast_path_percent``: si un cambio supera este % (en puntos porcentuales) y no
     está flapeando, se confirma en el PRIMER sighting en vez de esperar
-    ``confirmation_refreshes`` ciclos. Pensado para saltos grandes tipo gol, donde
-    el movimiento es real y permanente y no queremos perder un ciclo confirmándolo.
-    ``None`` desactiva el fast-path (comportamiento clásico).
+    ``confirmation_refreshes`` ciclos. Además actúa como umbral de "caída brusca"
+    para la alerta de posible bug. ``None`` desactiva ambas cosas.
     """
 
     baseline = repository.get_event_baseline(
@@ -84,6 +104,8 @@ def evaluate_subscription_odds_change(
 
     if max_percent_change is None or current_snapshot_hash == stable_snapshot_hash:
         cleared_meta = _clear_pending_tracking_meta(tracking_meta)
+        # Volvió al baseline: cualquier caída acumulada quedó revertida.
+        cleared_meta.pop("trend", None)
         repository.upsert_event_baseline(
             subscription.telegram_chat_id,
             tracked_league.id,
@@ -148,29 +170,60 @@ def evaluate_subscription_odds_change(
         )
         return None
 
-    should_notify = (
-        subscription.notify_odds_changes
-        and max_percent_change >= subscription.change_percent_threshold
+    trend_state = _normalize_trend_state(tracking_meta.get("trend"))
+    updated_trend, alert_candidates = _apply_drop_trends(
+        trend_state,
+        change_details,
+        bug_drop_percent=fast_path_percent,
+        sustained_threshold_percent=subscription.change_percent_threshold,
     )
 
-    confirmed_meta = _mark_confirmed_snapshot(
-        tracking_meta,
-        replaced_hash=stable_snapshot_hash,
-        confirmed_at=now_iso,
-    )
-    confirmed_payload_with_meta = _embed_tracking_meta(
-        current_payload,
-        confirmed_meta,
+    should_notify = (
+        subscription.notify_odds_changes
+        and bool(alert_candidates)
+        and not is_flapping
     )
 
     if should_notify:
+        # Tras alertar, la caída acumulada arranca de cero para esa selección.
+        for detail, _kind in alert_candidates:
+            entry = updated_trend.get(_trend_key(detail))
+            if entry is not None:
+                entry["origin"] = entry["last"]
+
+        confirmed_meta = _mark_confirmed_snapshot(
+            tracking_meta,
+            replaced_hash=stable_snapshot_hash,
+            confirmed_at=now_iso,
+        )
+        confirmed_meta = _set_trend_meta(confirmed_meta, updated_trend)
+        confirmed_payload_with_meta = _embed_tracking_meta(
+            current_payload,
+            confirmed_meta,
+        )
+
+        alert_details = sorted(
+            (detail for detail, _kind in alert_candidates),
+            key=lambda detail: (
+                -detail.percent_change,
+                detail.market_name,
+                detail.selection,
+                detail.line or "",
+            ),
+        )
+        alert_kind = (
+            ALERT_KIND_BUG_DROP
+            if any(kind == ALERT_KIND_BUG_DROP for _detail, kind in alert_candidates)
+            else ALERT_KIND_SUSTAINED_DROP
+        )
         return SubscriptionOddsAlert(
             match=match,
             baseline=baseline,
-            max_percent_change=max_percent_change,
-            change_details=tuple(change_details),
-            changed_market_types=_collect_changed_market_types(change_details),
+            max_percent_change=alert_details[0].percent_change,
+            change_details=tuple(alert_details),
+            changed_market_types=_collect_changed_market_types(alert_details),
             confirmed_baseline_markets_payload=confirmed_payload_with_meta,
+            alert_kind=alert_kind,
         )
 
     repository.upsert_event_baseline(
@@ -182,7 +235,7 @@ def evaluate_subscription_odds_change(
         baseline_away=baseline.baseline_away,
         baseline_markets_json=_serialize_tracking_payload(
             baseline_payload,
-            updated_meta,
+            _set_trend_meta(updated_meta, updated_trend),
         ),
     )
     repository.upsert_small_change(
@@ -576,7 +629,109 @@ def _prune_tracking_meta(tracking_meta: dict[str, Any]) -> dict[str, Any]:
     recent_hashes = normalized_meta.get("recent_hashes")
     if not recent_hashes:
         normalized_meta.pop("recent_hashes", None)
+    if not normalized_meta.get("trend"):
+        normalized_meta.pop("trend", None)
     return normalized_meta
+
+
+def _trend_key(detail: MarketChangeDetail) -> str:
+    return "|".join(
+        [
+            detail.market_type,
+            detail.market_name,
+            detail.selection,
+            detail.line or "",
+        ]
+    )
+
+
+def _normalize_trend_state(raw_trend: object) -> dict[str, dict[str, Any]]:
+    if not isinstance(raw_trend, dict):
+        return {}
+
+    normalized: dict[str, dict[str, Any]] = {}
+    for key, entry in raw_trend.items():
+        if not isinstance(entry, dict):
+            continue
+        origin = _coerce_float(entry.get("origin"))
+        last = _coerce_float(entry.get("last"))
+        drops = int(entry.get("drops", 0) or 0)
+        if origin is None or last is None or origin <= 0 or drops <= 0:
+            continue
+        normalized[str(key)] = {"origin": origin, "last": last, "drops": drops}
+    return normalized
+
+
+def _set_trend_meta(
+    tracking_meta: dict[str, Any],
+    trend_state: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    normalized_meta = dict(tracking_meta or {})
+    if trend_state:
+        normalized_meta["trend"] = trend_state
+    else:
+        normalized_meta.pop("trend", None)
+    return normalized_meta
+
+
+def _apply_drop_trends(
+    trend_state: dict[str, dict[str, Any]],
+    change_details: Sequence[MarketChangeDetail],
+    *,
+    bug_drop_percent: float | None,
+    sustained_threshold_percent: float,
+) -> tuple[dict[str, dict[str, Any]], list[tuple[MarketChangeDetail, str]]]:
+    """Update per-selection drop streaks with one confirmed snapshot.
+
+    ``change_details`` compara baseline vs actual; el paso real de esta selección
+    se mide contra el último valor confirmado (``last``), no contra el baseline,
+    para poder contar caídas consecutivas sin duplicar snapshots repetidos.
+    Devuelve el estado actualizado y las selecciones que ameritan alerta, cada
+    una con su detalle reescrito (before=origen, percent=caída acumulada para
+    sostenidas; before=valor previo para caídas bruscas).
+    """
+
+    updated_trend = {key: dict(entry) for key, entry in trend_state.items()}
+    alert_candidates: list[tuple[MarketChangeDetail, str]] = []
+
+    for detail in change_details:
+        key = _trend_key(detail)
+        previous = updated_trend.get(key)
+        previous_odds = float(previous["last"]) if previous else detail.before
+        if previous_odds <= 0:
+            continue
+
+        step_percent = (previous_odds - detail.after) / previous_odds * 100
+
+        if step_percent >= TREND_STEP_MIN_DROP_PERCENT:
+            origin = float(previous["origin"]) if previous else previous_odds
+            drops = int(previous["drops"]) + 1 if previous else 1
+            updated_trend[key] = {"origin": origin, "last": detail.after, "drops": drops}
+
+            if bug_drop_percent is not None and step_percent >= bug_drop_percent:
+                alert_candidates.append(
+                    (
+                        replace(detail, before=previous_odds, percent_change=step_percent),
+                        ALERT_KIND_BUG_DROP,
+                    )
+                )
+                continue
+
+            cumulative_percent = (origin - detail.after) / origin * 100
+            if drops >= SUSTAINED_DROP_MIN_STEPS and cumulative_percent >= sustained_threshold_percent:
+                alert_candidates.append(
+                    (
+                        replace(detail, before=origin, percent_change=cumulative_percent),
+                        ALERT_KIND_SUSTAINED_DROP,
+                    )
+                )
+        elif step_percent <= -TREND_RESET_RISE_PERCENT:
+            # Rebote: si vuelve a subir, la corrección no era tal y la racha muere.
+            updated_trend.pop(key, None)
+        elif previous is not None:
+            previous["last"] = detail.after
+
+    return updated_trend, alert_candidates
 
 
 def _clear_pending_tracking_meta(tracking_meta: dict[str, Any]) -> dict[str, Any]:

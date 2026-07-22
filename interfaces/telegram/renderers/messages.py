@@ -131,6 +131,16 @@ def build_grouped_new_event_alert_message(
     return "\n".join(lines)
 
 
+_ALERT_KIND_LINES = {
+    "sustained_drop": "📉 <b>Tipo:</b> Caída sostenida (viene corrigiendo hacia abajo)",
+    "bug_drop": "🚨 <b>Tipo:</b> Caída brusca (posible cuota errónea)",
+}
+
+
+def _format_alert_kind_line(alert_kind: str) -> str:
+    return _ALERT_KIND_LINES.get(alert_kind, _ALERT_KIND_LINES["sustained_drop"])
+
+
 def build_odds_change_alert_message(
     tracked_league: TrackedCompetition,
     alert: SubscriptionOddsAlert,
@@ -140,7 +150,8 @@ def build_odds_change_alert_message(
     current = alert.match
     baseline = alert.baseline
     lines = [
-        f"📈 <b>Cambio de odds - {escape(tracked_league.platform_display_name)}</b>",
+        f"📉 <b>Caída de odds - {escape(tracked_league.platform_display_name)}</b>",
+        _format_alert_kind_line(alert.alert_kind),
         f"🏷️ <b>Liga:</b> {escape(tracked_league.league_name)}",
         f"⚽ <b>Partido:</b> {escape(current.home)} vs {escape(current.away)}",
         f"🕒 <b>Horario:</b> {escape(format_kickoff_text(current))}",
@@ -181,7 +192,7 @@ def build_odds_change_alert_message(
             lines.extend(_build_market_change_detail_lines(extra_market_details, max_items=6))
 
     lines.append("")
-    lines.append(f"📊 <b>Variación máxima:</b> {alert.max_percent_change:.1f}%")
+    lines.append(f"📊 <b>Caída máxima:</b> {alert.max_percent_change:.1f}%")
     return "\n".join(lines)
 
 
@@ -198,7 +209,7 @@ def build_grouped_odds_change_alert_message(
         f"🌐 <b>Plataforma:</b> {escape(tracked_league.platform_display_name)}",
         f"🏷️ <b>Liga:</b> {escape(tracked_league.league_name)}",
         "",
-        f"📈 <b>Cambios de odds:</b> {total_changes}",
+        f"📉 <b>Caídas de odds:</b> {total_changes}",
     ]
 
     visible_alerts = alerts if max_items is None else alerts[:max_items]
@@ -208,6 +219,7 @@ def build_grouped_odds_change_alert_message(
         lines.append("")
         lines.append(f"🕒 <b>{escape(format_kickoff_text(current))}</b>")
         lines.append(f"⚽ {escape(current.home)} vs {escape(current.away)}")
+        lines.append(_format_alert_kind_line(alert.alert_kind))
         lines.append(f"📌 Mercados: {escape(_format_changed_market_types(alert.changed_market_types))}")
         if "1x2" in alert.changed_market_types:
             lines.append(
@@ -232,7 +244,7 @@ def build_grouped_odds_change_alert_message(
         extra_market_details = _details_without_1x2(alert.change_details)
         if extra_market_details:
             lines.extend(_build_market_change_detail_lines(extra_market_details, max_items=3))
-        lines.append(f"📊 Variación máxima: {alert.max_percent_change:.1f}%")
+        lines.append(f"📊 Caída máxima: {alert.max_percent_change:.1f}%")
 
     return "\n".join(lines)
 

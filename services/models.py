@@ -48,6 +48,8 @@ class SubscriptionOddsAlert:
     change_details: tuple[MarketChangeDetail, ...]
     changed_market_types: tuple[str, ...]
     confirmed_baseline_markets_payload: dict[str, Any] | None = None
+    # "sustained_drop" (caída sostenida) o "bug_drop" (caída brusca, posible error).
+    alert_kind: str = "sustained_drop"
 
 
 @dataclass(frozen=True)
