@@ -20,10 +20,7 @@ import logging
 import time
 
 from core.extractor_base import CompetitionUnavailableError, LeagueDiscoveryOption
-from services.change_detection import (
-    evaluate_subscription_odds_change,
-    select_due_reminders,
-)
+from services.change_detection import select_due_reminders
 from services.models import (
     CommandResult,
     CompetitionRefreshResult,

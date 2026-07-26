@@ -967,30 +967,42 @@ Dado que se ha decidido **prescindir de históricos de cuotas redundantes** y ar
 
 ## 16. Checklist de Implementación Detallado
 
-- [ ] **Fase 0: Preparación**
-  - [ ] Ejecutar `pytest tests/` y verificar que pase el 100% de la suite de pruebas actual.
-  - [ ] Generar un backup completo del archivo de base de datos de producción (`betbot.db`).
-- [ ] **Fase 1: Puertos y Dataclasses**
-  - [ ] Definir el puerto abstracto `EventListener` en `core/listener.py`.
-  - [ ] Normalizar las dataclasses de cuotas y snapshots (`Odds1X2`, `EventSnapshot`) en `core/models.py`.
-- [ ] **Fase 2: Extracción de Servicios**
-  - [ ] Crear y migrar lógica a `TrackingService`, `LiveWatchService` y `StatsService`.
-  - [ ] Implementar inyección de dependencias en `bot/application.py`.
-- [ ] **Fase 2.5: Extracción de Renderers**
-  - [ ] Mover helpers y builders de mensajes HTML/Markdown a `bot/renderers/`.
-  - [ ] Asegurar que todos los servicios devuelvan únicamente DTOs y no código de Telegram.
-- [ ] **Fase 3: EventBus**
-  - [ ] Acoplar la publicación de eventos (`OddsChangedEvent`, etc.) desde el Core.
-  - [ ] Suscribir `TelegramEventListener` al bus para realizar los envíos reactivos.
-- [ ] **Fase 4: Reorganización de Jobs**
-  - [ ] Eliminar `bot/jobs/legacy.py` y descartar la lógica del scheduler de Telegram.
-  - [ ] Implementar el loop asíncrono neutro en `runtime/scheduler.py` para disparar métodos del Core.
-- [ ] **Fase 5: Inicialización de SQLite Greenfield**
-  - [ ] Escribir esquema simplificado de base de datos actual-state en `adapters/storage/schema.py`.
-  - [ ] Detener el bot de Telegram de producción, renombrar la base de datos vieja para backup e iniciar el bot con base de datos limpia de cero.
-- [ ] **Fase 6: Preservación de Comandos**
-  - [ ] Mapear los mismos comandos de Telegram antiguos en `interfaces/telegram/handlers/`.
-  - [ ] Realizar pruebas funcionales manuales en canal de desarrollo.
+> **Estado al 2026-07-23.** Esta checklist estaba desactualizada: marcaba como
+> pendientes fases que ya se habían cerrado. Se verificó cada ítem contra el
+> código, no contra la memoria.
+
+- [x] **Fase 0: Preparación**
+  - [x] Ejecutar la suite y verificar que pase al 100% (`./run_tests.sh`, no `pytest`).
+  - [x] Generar un backup completo de la base de datos de producción.
+- [x] **Fase 1: Puertos y Dataclasses**
+  - [x] Definir el puerto abstracto `EventListener` en `core/listener.py`.
+  - [x] Normalizar las dataclasses de cuotas y snapshots (`Odds1X2`, `EventSnapshot`) en `core/models.py`.
+- [x] **Fase 2: Extracción de Servicios**
+  - [x] Crear y migrar lógica a `TrackingService`, `LiveWatchService` y `StatsService`.
+  - [x] Implementar inyección de dependencias en `bot/application.py`.
+- [x] **Fase 2.5: Extracción de Renderers**
+  - [x] Mover helpers y builders de mensajes a `interfaces/telegram/renderers/` (no `bot/renderers/`).
+  - [x] Asegurar que todos los servicios devuelvan únicamente DTOs y no código de Telegram.
+        Lo garantiza `tests/test_architecture_layers.py`: `services/` no puede importar `interfaces/`.
+- [~] **Fase 3: EventBus** — *parcial, a propósito*
+  - [x] Suscribir `TelegramEventListener` al bus (`bot/application.py`, en `post_init`).
+  - [x] Publicar `MatchLiveEvent` desde el Core: `LiveWatchService.poll_once()` publica y el
+        listener envía. Es el aviso one-way genuino (detectar → avisar, sin estado).
+  - [ ] `OddsChangedEvent` **no** se cableó. Hoy la decisión de si una variación amerita alerta
+        (baselines, confirmación, dedup, escrituras en la DB) ocurre dentro de
+        `interfaces/telegram/notifications.py`. Publicar desde ahí sería interfaz → bus → interfaz:
+        indirección sin ganancia. Cablearlo de verdad exige mover la iteración de suscripciones y
+        la evaluación de baselines a `TrackingService`, que es un refactor propio del pipeline de
+        notificaciones — no un cambio de una línea. Queda como trabajo separado y explícito.
+- [x] **Fase 4: Reorganización de Jobs**
+  - [x] Eliminar `bot/jobs/legacy.py` y descartar la lógica del scheduler de Telegram.
+  - [x] Implementar el loop asíncrono neutro en `runtime/scheduler.py` (sin imports de telegram/bot/interfaces).
+- [x] **Fase 5: Inicialización de SQLite Greenfield**
+  - [x] Escribir el esquema en `adapters/storage/schema.py`.
+  - [x] Migrar los datos con `scripts/migrate_legacy_to_greenfield.py` (se migró, no se arrancó de cero).
+- [x] **Fase 6: Preservación de Comandos**
+  - [x] Mapear los comandos en `interfaces/telegram/handlers/`, ya partidos por dominio (E5).
+  - [x] Pruebas funcionales en el bot local y verificación en producción tras el deploy.
 
 ---
 
