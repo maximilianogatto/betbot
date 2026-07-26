@@ -17,7 +17,7 @@ from monitoring import (
     get_metric_warnings,
     get_system_metrics,
 )
-from services.live_watch import LiveWatchService, parse_sheet_fixture_lines, render_live_hit, sheet_timezone
+from services.live_watch import LiveWatchService, parse_sheet_fixture_lines, sheet_timezone
 from services.stats import StatsService
 from services.tracking import TrackingService
 from interfaces.telegram.renderers import format_duration
@@ -240,14 +240,9 @@ async def _orchestrated_live_watch(application: Application) -> None:
     service = application.bot_data.get(LIVE_WATCH_SERVICE_KEY)
     if not isinstance(service, LiveWatchService):
         return
+    # poll_once() publica cada hit al EventBus; el TelegramEventListener
+    # registrado en el arranque es quien manda los mensajes.
     hits = await service.poll_once()
-    for hit in hits:
-        try:
-            await application.bot.send_message(
-                chat_id=hit.entry.chat_id, text=render_live_hit(hit)
-            )
-        except Exception:
-            logger.exception("Failed to send live-watch alert chat_id=%s", hit.entry.chat_id)
     if hits:
         logger.info("Live-watch cycle fired %s alert(s).", len(hits))
 

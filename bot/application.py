@@ -13,8 +13,10 @@ from bot.jobs import (
     start_orchestrated_scheduler,
     stop_orchestrated_scheduler,
 )
+from core.event_bus import event_bus
 from core.registry import extractor_registry
 from core.stats_provider_base import stats_provider_registry
+from interfaces.telegram.listeners import TelegramEventListener
 from extractors import register_default_extractors
 from stats_providers import register_default_stats_providers
 from services.live_watch import LiveWatchService
@@ -61,6 +63,9 @@ def create_application(settings: Settings) -> Application:
     async def post_init(application: Application) -> None:
         """Start background monitoring after the bot runtime is ready."""
 
+        # El listener se suscribe antes de arrancar los jobs: si un ciclo
+        # publicara un aviso con el bus todavía vacío, ese aviso se perdería.
+        TelegramEventListener(application.bot).register(event_bus)
         await start_orchestrated_scheduler(application, settings)
 
     async def post_shutdown(application: Application) -> None:

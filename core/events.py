@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
-from core.models import MatchSnapshot, Odds1X2
+from core.models import LiveWatchHit, MatchSnapshot, Odds1X2
 
 @dataclass(frozen=True)
 class OddsChangedEvent:
@@ -26,21 +26,22 @@ class OddsChangedEvent:
 
 @dataclass(frozen=True)
 class MatchLiveEvent:
-    """Triggered when a watched match starts or experiences a critical in-play event."""
+    """Un fixture vigilado entró en vivo o tuvo un evento crítico (gol, roja...).
 
-    chat_id: int
-    event_id: int | str
-    home: str
-    away: str
-    platform: str
-    minute: str
-    home_score: int
-    away_score: int
-    home_red_cards: int
-    away_red_cards: int
-    is_kickoff: bool = False
-    event_type: str = "update"  # 'kickoff' | 'goal' | 'red_card' | 'yellow_card' | 'update'
+    Transporta el `LiveWatchHit` entero en vez de copiar sus campos sueltos: el
+    mensaje que se le manda al usuario se arma con la entrada vigilada, la fase
+    y el snapshot completo (tarjetas, país, competencia, stats). Aplanarlo
+    perdería datos que el aviso necesita.
+    """
+
+    hit: LiveWatchHit
     timestamp: datetime = field(default_factory=datetime.now)
+
+    @property
+    def chat_id(self) -> int:
+        """Chat al que va el aviso; la entrada vigilada es la fuente de verdad."""
+
+        return self.hit.entry.chat_id
 
 @dataclass(frozen=True)
 class RotationAlertEvent:

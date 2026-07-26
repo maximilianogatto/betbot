@@ -21,7 +21,16 @@ from typing import Iterable, Any
 from zoneinfo import ZoneInfo
 
 from core.extractor_base import Extractor
-from core.models import LiveEventSnapshot, LiveWatchEntry, LiveWatchSettings
+from core.event_bus import event_bus
+from core.events import MatchLiveEvent
+# LiveWatchHit se re-exporta: nació acá y varios módulos lo importan de este
+# nombre, pero ahora vive en core para que MatchLiveEvent pueda transportarlo.
+from core.models import (  # noqa: F401
+    LiveEventSnapshot,
+    LiveWatchEntry,
+    LiveWatchHit,
+    LiveWatchSettings,
+)
 from core.timezones import default_timezone
 from services.timezones import resolve_chat_timezone
 from core.registry import ExtractorRegistry, extractor_registry as global_extractor_registry
@@ -134,17 +143,6 @@ def match_score(entry: Any, event: Any) -> float:
     if home < SIDE_FLOOR or away < SIDE_FLOOR:
         return 0.0
     return (home + away) / 2.0
-
-
-@dataclass(frozen=True)
-class LiveWatchHit:
-    """A watch entry that just matched an event (live, prematch, or countdown)."""
-
-    entry: LiveWatchEntry
-    event: LiveEventSnapshot | None = None
-    score: float = 0.0
-    phase: str = "live"  # "live" | "pre" | "countdown" | "goal" | "red_card" | "yellow_card"
-    custom_message: str | None = None
 
 
 class LiveWatchService:
@@ -474,7 +472,31 @@ class LiveWatchService:
                 self._auto_track_matched_event_league(event, entry.chat_id)
                 hits.append(LiveWatchHit(entry=entry, event=event, score=score, phase="pre"))
 
+        await self._publish_hits(hits)
         return hits
+
+    async def _publish_hits(self, hits: list[LiveWatchHit]) -> None:
+        """Publica cada hit al bus para que las interfaces suscritas avisen.
+
+        Los hits se siguen devolviendo además de publicarse: quien llama puede
+        querer el resultado (los tests lo usan) sin depender de que haya un
+        listener registrado.
+        """
+
+        if not hits:
+            return
+
+        undelivered = 0
+        for hit in hits:
+            result = await event_bus.publish(MatchLiveEvent(hit=hit))
+            undelivered += result.failed
+
+        if undelivered:
+            logger.warning(
+                "Live-watch: %s de %s aviso(s) no se pudieron entregar.",
+                undelivered,
+                len(hits),
+            )
 
     @staticmethod
     def _best_known_platform_match(

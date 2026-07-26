@@ -7,6 +7,7 @@ import unittest
 from core.event_bus import EventBus
 from core.events import MatchLiveEvent, OddsChangedEvent
 from core.listener import EventListener
+from core.models import LiveWatchEntry, LiveWatchHit
 
 
 class _Recorder(EventListener):
@@ -22,14 +23,13 @@ class _Exploding(EventListener):
         raise RuntimeError("boom")
 
 
-def _live_event(**overrides) -> MatchLiveEvent:
-    payload = dict(
-        chat_id=1, event_id=1, home="A", away="B", platform="x",
-        minute="1", home_score=0, away_score=0,
-        home_red_cards=0, away_red_cards=0,
+def _live_event(chat_id: int = 1, phase: str = "live") -> MatchLiveEvent:
+    entry = LiveWatchEntry(
+        id=1, chat_id=chat_id, home="A", away="B", league_hint=None, note=None,
+        status="watching", matched_platform=None, matched_event_id=None,
+        matched_minute=None, created_at="...", fired_at=None,
     )
-    payload.update(overrides)
-    return MatchLiveEvent(**payload)
+    return MatchLiveEvent(hit=LiveWatchHit(entry=entry, phase=phase))
 
 
 class EventBusTests(unittest.IsolatedAsyncioTestCase):

@@ -784,9 +784,25 @@ class LeagueDiscoveryOption:
     raw_payload: dict[str, Any] | None = None
 
 
+@dataclass(frozen=True)
+class LiveWatchHit:
+    """Una entrada vigilada que acaba de coincidir con un evento.
+
+    Vive en core (y no en services/live_watch.py, donde nació) porque
+    `MatchLiveEvent` lo transporta: el core no puede importar desde services.
+    """
+
+    entry: LiveWatchEntry
+    event: LiveEventSnapshot | None = None
+    score: float = 0.0
+    phase: str = "live"  # "live" | "pre" | "countdown" | "goal" | "red_card" | "yellow_card"
+    custom_message: str | None = None
+
+
 __all__ = [
     "CompetitionExtraction",
     "CompetitionKey",
+    "LiveWatchHit",
     "EventKey",
     "EventSnapshot",
     "LiveEventSnapshot",
