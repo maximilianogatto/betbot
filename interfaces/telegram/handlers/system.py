@@ -501,23 +501,6 @@ async def resources_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     await update.message.reply_text(format_system_metrics_message(metrics))
 
 
-async def echo_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle the `/echo` command."""
-
-    if update.message is None:
-        return
-
-    text_to_echo = " ".join(context.args).strip()
-
-    if not text_to_echo:
-        await update.message.reply_text(
-            "Usá /echo seguido de un texto. Ejemplo: /echo hola mundo"
-        )
-        return
-
-    await update.message.reply_text(text_to_echo)
-
-
 async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle unsupported Telegram commands."""
 

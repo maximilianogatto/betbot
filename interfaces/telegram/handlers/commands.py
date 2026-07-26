@@ -138,7 +138,6 @@ from interfaces.telegram.handlers.peak import (  # noqa: F401
 
 from interfaces.telegram.handlers.system import (  # noqa: F401
     GUIDE_MESSAGE,
-    echo_command,
     guide_command,
     photo_guidance_handler,
     ping_command,
@@ -673,7 +672,6 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("ping", ping_command))
     application.add_handler(CommandHandler("status", status_command))
     application.add_handler(CommandHandler("resources", resources_command))
-    application.add_handler(CommandHandler("echo", echo_command))
     application.add_handler(CommandHandler("track_url", track_url_command))
     application.add_handler(
         MessageHandler(filters.Regex(re.compile(r'^ligas:', re.IGNORECASE)), bulk_track_message_handler)
