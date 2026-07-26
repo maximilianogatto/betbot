@@ -83,3 +83,7 @@ data/*.sqlite3-shm
 
 # Research venv (recrear con uv venv research/.venv)
 research/.venv/
+
+# Tokens de sesión volcados a disco (session_manager.py --> tokens/sportradar/token.txt).
+# Son credenciales: no entran al repo.
+tokens/
