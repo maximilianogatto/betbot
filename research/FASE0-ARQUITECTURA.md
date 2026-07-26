@@ -18,9 +18,9 @@ archivo nueva**, no revive la vieja.
 | Pieza | Dónde | Qué da para Fase 0 |
 |---|---|---|
 | Tabla `events` (current-state) | `adapters/storage/schema.py:105` | Registro vivo por `(platform, external_event_id)`: `odds_home/draw/away`, `markets_json`, `status` (PREMATCH/LIVE/FINISHED), `scheduled_at`, `first_seen_at`, `last_seen_at`. **Es el "calendario / tracking pre-match" que preguntabas — ya está.** |
-| Pollers de odds | `services/tracking.py`, `services/live_watch.py` → `EventsStore.upsert_active_events` (`adapters/storage/events.py:56`) | El punto único donde entran las cuotas nuevas: el hook de archivado va acá. |
+| Pollers de odds | `services/tracking.py`, `services/live_watch.py` → `EventsStore.upsert_active_events` (`adapters/storage/events.py:56`) | Punto de entrada de cuotas. El archivado debe ser una operación explícita de servicio/puerto, no un efecto lateral oculto del adapter current-state. |
 | 9 extractores de odds | `extractors/` | La fuente. Ya normalizan a `odds_home/draw/away` + `markets_json`. |
-| `unified_competitions` + registro de ligas | `adapters/storage/competitions.py` | La **correspondencia inequívoca partido↔mercado** cross-plataforma que exige el spec — ya resuelve el entity matching. |
+| `unified_competitions` + registro de ligas | `adapters/storage/competitions.py` | Unifica **ligas**, no partidos. Acota candidatos, pero no resuelve la identidad del mismo encuentro entre plataformas. |
 | Interfaz común de stats providers | `stats_providers/*/provider.py` | Los 6 providers YA implementan `search_leagues / list_fixtures / resolve_match / build_match_report`. La unificación es de *contenido de datos*, no de interfaz. |
 | Captura de token sportradar | `stats_providers/sportradar_http/engine/session_manager.py` | Captura y reusa un token `T` firmado desde respuestas de red; **no genera la firma** (línea 23). Este es el "ajustar la generación del token" — es refresco/captura, no minteo. |
 
@@ -32,7 +32,10 @@ archivo nueva**, no revive la vieja.
    pre-kickoff (la cuota que importa para CLV).
 3. **No hay resultado final archivado junto al evento** para etiquetar sin
    re-scrapear (depende de la paridad de providers, §4).
-4. **Paridad de providers incompleta**: para etiquetar el archivo de odds con
+4. **Falta identidad canónica de partido cross-plataforma**: `events` sólo es
+   único por `(platform, external_event_id)`. Hace falta `canonical_events` con
+   aliases, o una clave equivalente, antes de comparar casas.
+5. **Paridad de providers incompleta**: para etiquetar el archivo de odds con
    resultados de TODAS las ligas hace falta que sofascore/footystats/flashscore/
    especiales entreguen la misma superficie (fixtures + resultados + tablas) que
    sportradar, cada uno por sus endpoints.
@@ -44,37 +47,50 @@ archivo nueva**, no revive la vieja.
 ```
 odds_history(
   id INTEGER PK,
-  event_pk INTEGER REFERENCES events(id),   -- linkea al current-state (correspondencia inequívoca)
-  platform TEXT, external_event_id TEXT,     -- redundante pero robusto ante borrado de events
+  source_event_pk INTEGER,                   -- referencia lógica; sin FK si la DB es separada
+  canonical_event_id INTEGER,                -- nullable hasta resolver identidad cross-platform
+  platform TEXT, external_event_id TEXT,
   unified_competition_id INTEGER,            -- para joins por liga
   captured_at TEXT NOT NULL,                 -- timestamp UTC del snapshot
-  snapshot_kind TEXT,                        -- 'opening' | 'intermediate' | 'closing'
+  provider_observed_at TEXT,                 -- si la fuente expone timestamp propio
   status TEXT,                               -- PREMATCH/LIVE/FINISHED al momento
   odds_home REAL, odds_draw REAL, odds_away REAL,
   markets_json TEXT,                         -- comprimido (zlib) si supera N bytes
   is_suspended INTEGER DEFAULT 0             -- registrar cuotas suspendidas/incompletas
 )
-índice: (event_pk, captured_at), (unified_competition_id, captured_at)
+índice único/idempotencia: (platform, external_event_id, captured_at, hash_payload)
+índices de lectura: (source_event_pk, captured_at),
+                    (canonical_event_id, captured_at),
+                    (unified_competition_id, captured_at)
 ```
 
-### Lógica de captura (en `upsert_active_events`)
+### Lógica de captura
 
-- **Apertura**: primer snapshot que se ve del evento (`first_seen_at` == ahora) →
-  `snapshot_kind='opening'`.
+Definir un `OddsArchivePort` y llamarlo explícitamente desde la orquestación de
+tracking después de resolver el `event_id` —o usar una unidad de trabajo si se
+exige atomicidad con el upsert. Evitar que `SQLiteEventsAdapter` escriba
+silenciosamente en una segunda base.
+
+- **Semántica honesta**: el primer registro es `first_observed`, no
+  necesariamente la apertura real. El cierre disponible será
+  `last_observed_prematch`, no necesariamente la closing line oficial.
 - **Intermedios**: append solo si las cuotas 1X2 (o el hash de `markets_json`)
   **cambiaron** respecto del último snapshot archivado (dedup / idempotencia —
   requisito del spec). No archivar polls idénticos.
-- **Cierre**: cuando `now ≥ scheduled_at − δ` (δ ~ pocos minutos) y el evento aún
-  PREMATCH, forzar un snapshot `snapshot_kind='closing'` — el último estricto
-  pre-kickoff. El poller de `live_watch` ya conoce los kickoffs.
+- **Cierre observado**: conservar snapshots crudos y derivar por consulta el
+  último con `captured_at < actual_start_at`. Un poll a `scheduled_at−δ` no
+  garantiza ser el último; si no hay hora real de inicio, debe declararse la
+  aproximación.
+- **Roles derivados**: no escribir `opening/closing` al ingerir. Se calculan
+  desde la serie para mantener el archivo verdaderamente append-only.
 - **Suspendidas/incompletas**: si el extractor devuelve odds nulas/parciales,
   archivar con `is_suspended=1` en vez de descartar (auditable).
 
 ### Resultado final
 
-- Cuando `status` pasa a FINISHED, escribir el marcador final en el evento (o en
-  una tabla `event_results`), tomándolo del stats provider (§4). Etiqueta el
-  archivo sin re-scrapear.
+- `upsert_active_events` no actualiza actualmente `status` ni resultados. Fase 0
+  necesita un flujo explícito de transición y una tabla `event_results`;
+  no debe suponerse que FINISHED ya se persiste.
 
 ### Presupuesto de disco (VM GCP 10GB, ya tuvo disk-full — ver memoria)
 
@@ -108,10 +124,12 @@ temporada, ascendidos), nunca selección retrospectiva de segmentos.
 
 ## 6. Alcance de la sesión dedicada (acotado)
 
-Incluye: tabla `odds_history` + hook de captura (apertura/intermedio/cierre/
+Incluye: DB/tablas de archivo + `OddsArchivePort` y captura explícita
+(first/intermedios/last-observed-prematch/
 dedup/suspendidas) + resultado final + arreglo del token sportradar + matriz de
 paridad de providers y cierre de los faltantes. Tests bajo `tests/`
-(`./run_tests.sh`). Commits chicos. Migración de esquema con el patrón greenfield
+(`./run_tests.sh`). Añadir las tablas nuevas a `EXPECTED_TABLES`. Commits chicos.
+Migración de esquema con el patrón greenfield
 (no tocar `FORBIDDEN_LEGACY_TABLES`).
 
 Excluye: el cálculo de métricas de mercado (q_r, CLV, z_r) y el modelo de value —
@@ -119,9 +137,12 @@ esos vienen después, cuando el archivo tenga datos.
 
 ## 7. Preguntas abiertas para el arranque de la sesión
 
-- ¿Archivo en la misma DB (`data/tracking.sqlite3`) o base separada para no
-  inflar la operativa? (recomendación inicial: tabla en la misma DB con rotación,
-  revisar tras estimar volumen).
+- ¿Archivo en la misma DB o base separada? Por el antecedente de disco lleno y
+  el carácter append-only, se recomienda **DB separada**, WAL, métricas de
+  tamaño y backup. No rotar/borrar datos de investigación sin exportación
+  verificada.
 - δ de la ventana de "cierre": ¿minutos fijos o adaptativo por liga?
 - ¿El resultado final va en `events` (nueva columna) o en `event_results`
   separada? (separada es más limpia y no ensucia el current-state).
+- ¿Cómo se modelan `canonical_events` y sus aliases por plataforma para evitar
+  falsos matches entre partidos de la misma liga y fecha?

@@ -72,23 +72,31 @@ def load() -> tuple[pd.DataFrame, pd.DataFrame]:
 
 def contract(lam: np.ndarray, a: float, tau: float) -> np.ndarray:
     lam = np.maximum(np.asarray(lam, dtype=float), 1e-9)  # evita log(0)
+    if a == 0 or tau <= 0:
+        return lam.copy()
     low = lam < tau
     out = lam.copy()
     out[low] = np.exp((1 - a) * np.log(lam[low]) + a * np.log(tau))
     return out
 
 
-def score_logloss(d: pd.DataFrame, a: float, tau: float, maxg: int = 12) -> float:
+def score_logloss_per_match(
+    d: pd.DataFrame, a: float, tau: float, maxg: int = 12
+) -> np.ndarray:
     ks = np.arange(maxg + 1)
     lh = contract(d["lam_h"].to_numpy(), a, tau)
     la = contract(d["lam_a"].to_numpy(), a, tau)
-    ll = 0.0
+    ll = np.empty(len(d))
     for i in range(len(d)):
         ph = poisson.pmf(ks, lh[i]); ph /= ph.sum()
         pa = poisson.pmf(ks, la[i]); pa /= pa.sum()
         gh = min(int(d["hg"].iat[i]), maxg); ga = min(int(d["ag"].iat[i]), maxg)
-        ll += -np.log(max(ph[gh] * pa[ga], 1e-12))
-    return ll / len(d)
+        ll[i] = -np.log(max(ph[gh] * pa[ga], 1e-12))
+    return ll
+
+
+def score_logloss(d: pd.DataFrame, a: float, tau: float, maxg: int = 12) -> float:
+    return float(score_logloss_per_match(d, a, tau, maxg).mean())
 
 
 def fit_correction(d: pd.DataFrame) -> tuple[float, float]:
@@ -113,16 +121,22 @@ def fit_global_c(d: pd.DataFrame) -> float:
     return float(r.x[0])
 
 
-def nb_score_logloss(d: pd.DataFrame, phi: float, maxg: int = 12) -> float:
+def nb_logloss_per_match(
+    d: pd.DataFrame, phi: float, maxg: int = 12
+) -> np.ndarray:
     ks = np.arange(maxg + 1)
     r = 1.0 / phi
-    ll = 0.0
-    for row in d.itertuples():
+    ll = np.empty(len(d))
+    for i, row in enumerate(d.itertuples()):
         ph = nbinom.pmf(ks, r, r / (r + row.lam_h)); ph /= ph.sum()
         pa = nbinom.pmf(ks, r, r / (r + row.lam_a)); pa /= pa.sum()
         gh = min(int(row.hg), maxg); ga = min(int(row.ag), maxg)
-        ll += -np.log(max(ph[gh] * pa[ga], 1e-12))
-    return ll / len(d)
+        ll[i] = -np.log(max(ph[gh] * pa[ga], 1e-12))
+    return ll
+
+
+def nb_score_logloss(d: pd.DataFrame, phi: float, maxg: int = 12) -> float:
+    return float(nb_logloss_per_match(d, phi, maxg).mean())
 
 
 def rps_1x2(d: pd.DataFrame, a: float, tau: float) -> np.ndarray:
@@ -164,16 +178,27 @@ def low_decile_bias(d: pd.DataFrame, a: float, tau: float) -> dict:
 
 def p0_by_decile(d: pd.DataFrame, a: float, tau: float) -> list:
     sides = pd.concat([
-        pd.DataFrame({"y": d.hg, "lam": d.lam_h}),
-        pd.DataFrame({"y": d.ag, "lam": d.lam_a})], ignore_index=True)
+        pd.DataFrame({"y": d.hg, "lam": d.lam_h, "week": d.week}),
+        pd.DataFrame({"y": d.ag, "lam": d.lam_a, "week": d.week})], ignore_index=True)
     sides["dec"] = pd.qcut(sides["lam"], 10, duplicates="drop")
     rows = []
     for dec, g in sides.groupby("dec", observed=True):
         lamc = contract(g["lam"].to_numpy(), a, tau)
+        obs = (g["y"] == 0).to_numpy(dtype=float)
+        gap_pois = wblock(
+            obs - np.exp(-g["lam"].to_numpy()), g["week"].to_numpy(),
+            seed=41)
+        gap_corr = wblock(obs - np.exp(-lamc), g["week"].to_numpy(), seed=43)
         rows.append({"lam": round(float(g["lam"].mean()), 3),
                      "obs_P0": round(float((g["y"] == 0).mean()), 4),
                      "pois_P0": round(float(np.exp(-g["lam"]).mean()), 4),
-                     "corr_P0": round(float(np.exp(-lamc).mean()), 4)})
+                     "corr_P0": round(float(np.exp(-lamc).mean()), 4),
+                     "obs_minus_pois": round(gap_pois[0], 4),
+                     "obs_minus_pois_ci": [round(gap_pois[1], 4),
+                                           round(gap_pois[2], 4)],
+                     "obs_minus_corr": round(gap_corr[0], 4),
+                     "obs_minus_corr_ci": [round(gap_corr[1], 4),
+                                           round(gap_corr[2], 4)]})
     return rows
 
 
@@ -199,6 +224,22 @@ def main() -> None:
     }
     out["logloss_marcador_2026"] = {k: round(v, 4) for k, v in scores.items()}
     print("log-loss marcador 2026:", out["logloss_marcador_2026"])
+    ll = {
+        "poisson": score_logloss_per_match(d26, 0.0, 0.0),
+        "correccion_lambda": score_logloss_per_match(d26, a, tau),
+        "global_c": score_logloss_per_match(d26c, 0.0, 0.0),
+        "negbin": nb_logloss_per_match(d26, PHI),
+    }
+    ll_contrasts = {}
+    for baseline in ("poisson", "global_c", "negbin"):
+        mll, loll, hill = wblock(
+            ll["correccion_lambda"] - ll[baseline],
+            d26["week"].to_numpy(), seed=47)
+        ll_contrasts[f"correccion_vs_{baseline}"] = {
+            "delta": round(mll, 4), "ci_lo": round(loll, 4),
+            "ci_hi": round(hill, 4)}
+    out["logloss_block_contrasts_2026"] = ll_contrasts
+    print("IC log-loss por bloques:", ll_contrasts)
 
     # ---- RPS 1X2 pareado (correccion vs poisson) ------------------------
     rps_c = rps_1x2(d26, a, tau)
@@ -226,12 +267,22 @@ def main() -> None:
         ah, th = fit_correction(tr)
         ll_p = score_logloss(te, 0.0, 0.0)
         ll_c = score_logloss(te, ah, th)
+        ll_delta = (
+            score_logloss_per_match(te, ah, th)
+            - score_logloss_per_match(te, 0.0, 0.0)
+        )
+        ll_bs = wblock(ll_delta, te["week"].to_numpy(), seed=53)
         rps_dc = rps_1x2(te, ah, th) - rps_1x2(te, 0.0, 0.0)
+        rps_bs = wblock(rps_dc, te["week"].to_numpy(), seed=59)
         rot[held] = {"a": round(ah, 3), "tau": round(th, 3),
                      "logloss_poisson": round(ll_p, 4),
                      "logloss_correccion": round(ll_c, 4),
                      "delta_logloss": round(ll_c - ll_p, 4),
-                     "delta_rps": round(float(rps_dc.mean()), 4)}
+                     "delta_logloss_ci": [round(ll_bs[1], 4),
+                                          round(ll_bs[2], 4)],
+                     "delta_rps": round(float(rps_dc.mean()), 4),
+                     "delta_rps_ci": [round(rps_bs[1], 4),
+                                      round(rps_bs[2], 4)]}
         print(f"  sin {held}→eval {held}: a={ah:.2f} τ={th:.2f} "
               f"Δlogloss={ll_c-ll_p:+.4f} Δrps={rps_dc.mean():+.4f}")
     out["country_rotation"] = rot
