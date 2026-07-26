@@ -3,9 +3,18 @@
 from __future__ import annotations
 
 import logging
+from dataclasses import dataclass
 from typing import Any, Callable, Coroutine, Type
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass(frozen=True)
+class DeliveryResult:
+    """Cuántos listeners recibieron un evento y cuántos fallaron al procesarlo."""
+
+    delivered: int
+    failed: int
 
 class EventBus:
     """Publish-subscribe event bus for dispatching domain events asynchronously."""
@@ -34,19 +43,30 @@ class EventBus:
             ]
             logger.debug("Unsubscribed %s from event %s", callback.__name__, event_type.__name__)
 
-    async def publish(self, event: Any) -> None:
-        """Publish an event asynchronously to all subscribed listeners."""
+    async def publish(self, event: Any) -> "DeliveryResult":
+        """Publish an event asynchronously to all subscribed listeners.
+
+        Devuelve cuántas entregas salieron bien y cuántas fallaron. Las
+        excepciones de un listener se aíslan (no frenan a los demás ni al
+        publicador), pero NO se descartan en silencio: el llamador recibe el
+        conteo y puede sumarlo a sus logs. Un aviso que no llega tiene que
+        poder verse desde afuera.
+        """
         event_type = type(event)
         listeners = self._listeners.get(event_type, [])
         if not listeners:
             logger.debug("No listeners registered for event %s", event_type.__name__)
-            return
+            return DeliveryResult(delivered=0, failed=0)
 
         logger.debug("Publishing event %s to %d listeners", event_type.__name__, len(listeners))
+        delivered = 0
+        failed = 0
         for callback in listeners:
             try:
                 await callback(event)
+                delivered += 1
             except Exception as e:
+                failed += 1
                 logger.error(
                     "Error executing callback %s for event %s: %s",
                     getattr(callback, "__name__", "anonymous"),
@@ -54,8 +74,9 @@ class EventBus:
                     e,
                     exc_info=True,
                 )
+        return DeliveryResult(delivered=delivered, failed=failed)
 
 # Global shared instance of the EventBus
 event_bus = EventBus()
 
-__all__ = ["EventBus", "event_bus"]
+__all__ = ["DeliveryResult", "EventBus", "event_bus"]

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
@@ -22,7 +22,7 @@ class OddsChangedEvent:
     max_change_percent: float
     markets_diff: dict[str, Any]
     event_url: str | None = None
-    timestamp: datetime = datetime.now()
+    timestamp: datetime = field(default_factory=datetime.now)
 
 @dataclass(frozen=True)
 class MatchLiveEvent:
@@ -40,7 +40,7 @@ class MatchLiveEvent:
     away_red_cards: int
     is_kickoff: bool = False
     event_type: str = "update"  # 'kickoff' | 'goal' | 'red_card' | 'yellow_card' | 'update'
-    timestamp: datetime = datetime.now()
+    timestamp: datetime = field(default_factory=datetime.now)
 
 @dataclass(frozen=True)
 class RotationAlertEvent:
@@ -51,4 +51,4 @@ class RotationAlertEvent:
     match_snapshot: MatchSnapshot
     peak_score: float
     rotation_details: dict[str, Any]
-    timestamp: datetime = datetime.now()
+    timestamp: datetime = field(default_factory=datetime.now)
