@@ -22,7 +22,7 @@ describirse como una intervención localizada únicamente en el decil inferior.
 | No empeora RPS 1X2 > 0.0005 | Δ = **−0.0009**, IC [−0.0018, +0.0000] — mejora, no empeora | **Sí** |
 | Reduce el sesgo Y−λ del decil bajo | 0.205 [0.112,0.291] → **0.030 [−0.064,0.120]** (ahora incluye 0) | **Sí** |
 | Mejora P(0) sin déficit en intensidades medias | Cierra el primer decil, pero en el tercero crea déficit de ceros: obs−corregido=+0.0457, IC [+0.0068,+0.0833] | **No** |
-| Mismo signo en los tres países | FIN/SWE/NOR tienen Δll negativo, pero FIN cruza cero [−0.0240,+0.0016]; en RPS sólo NOR excluye cero | **Direccional, no robusto 3/3** |
+| Mismo signo en los tres países (criterio pre-registrado) | FIN/SWE/NOR: Δlog-loss todos <0 → **el criterio literal se cumple 3/3**. El criterio más fuerte (efecto individualmente establecido) NO: log-loss excluye cero en **2/3** (SWE, NOR; FIN [−0.024,+0.0016] cruza), RPS en **1/3** (solo NOR) | **Consistencia direccional 3/3; evidencia individual 2/3 (LL) y 1/3 (RPS)** |
 | No requiere parámetros por temporada | a=0.20/τ=2.14 (2025) vs a=0.31/τ=1.80 (2026); los de 2025 **transfieren** a 2026 (eval principal) y la rotación es estable (a≈0.20-0.24) | **Parcial** (ver caveat) |
 
 Supera de forma estable a Poisson y a la **corrección global constante**
@@ -32,8 +32,13 @@ superioridad sobre NB no queda establecida.
 
 ![Corrección de λ y su efecto en P(0)](fig/lambda_correction.png)
 *Izq.: la contracción empuja las intensidades hacia arriba y se funde con la
-identidad en λ≥τ. Der.: cierra gran parte del déficit en los primeros dos bins,
-pero sobrecorrige algunos bins medios. Los IC por bin están en el JSON.*
+identidad en λ≥τ. Centro: P(0) puntual por decil (observado/Poisson/corregido).
+Der. (panel de residuos con IC 95% semanal, agregado tras la revisión): obs−Poisson
+(rojo) es negativo y excluye cero en los deciles bajos —el déficit original de
+ceros— mientras que obs−corregido (verde) lo cierra ahí pero cruza a **positivo
+en los deciles 3 y 7** (λ≈1.14 y 1.7), con IC que excluyen cero: la corrección
+sobre-eleva λ y pasa a predecir muy pocos ceros a intensidad media. Es la
+sobrecorrección que el panel central puntual escondía.*
 
 ## Encuadre de evidencia (regla del director)
 
@@ -61,3 +66,20 @@ fijar los valores de 2025 y tratar cualquier re-ajuste como violación.
 No se construyó CMP ni hurdle. La corrección elimina el sesgo medio del decil
 bajo, pero la sobrecorrección intermedia impide usarla todavía como nuevo
 baseline para diagnosticar un residuo de forma.
+
+## Reproducibilidad (entorno fijado)
+
+Dependencias/versiones en `research/requirements.txt` (Python 3.13). Verificado:
+un venv limpio creado desde ese archivo reproduce los números de este informe
+bit a bit (a=0.202, τ=2.140; vs-Poisson −0.0158 [−0.022,−0.0096]; vs-NB −0.0052
+[−0.0127,+0.0028]).
+
+```bash
+uv venv research/.venv --python 3.13
+uv pip install -p research/.venv/bin/python -r research/requirements.txt
+research/.venv/bin/python research/experiments/EXP-006-development/lambda_correction.py
+```
+
+(Depende de `research/experiments/EXP-004-referee/lambdas_{2025,2026}.csv`; si
+faltan, regenerarlos con `poisson_diagnostics.py` y `overdispersion_structure.py`
+del mismo directorio, en ese orden.)

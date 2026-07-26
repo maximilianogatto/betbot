@@ -287,8 +287,8 @@ def main() -> None:
               f"Δlogloss={ll_c-ll_p:+.4f} Δrps={rps_dc.mean():+.4f}")
     out["country_rotation"] = rot
 
-    # ---- figuras --------------------------------------------------------
-    fig, axes = plt.subplots(1, 2, figsize=(10, 3.6))
+    # ---- figuras (3 paneles; el 3ro es residuos con IC — corrección del referee)
+    fig, axes = plt.subplots(1, 3, figsize=(13.5, 3.8))
     xx = np.linspace(0.2, 2.5, 200)
     axes[0].plot(xx, contract(xx, a, tau), color="#008300", lw=2, label=f"a={a:.2f}, τ={tau:.2f}")
     axes[0].plot(xx, xx, "--", color="#c9c8c2", lw=1, label="identidad (a=0)")
@@ -301,8 +301,22 @@ def main() -> None:
     axes[1].plot(dec["lam"], dec["pois_P0"], "o-", color="#e34948", ms=4, label="Poisson")
     axes[1].plot(dec["lam"], dec["corr_P0"], "o-", color="#008300", ms=4, label="corregido")
     axes[1].set_xlabel("λ (media del decil)"); axes[1].set_ylabel("P(Y=0)")
-    axes[1].set_title("P(0) por intensidad: ¿la corrección cierra el déficit?")
+    axes[1].set_title("P(0) por intensidad")
     axes[1].legend(frameon=False, fontsize=8)
+    # panel de residuos: obs − pred, con IC por bloques semanales
+    pois_lo = dec["obs_minus_pois"] - np.array([c[0] for c in dec["obs_minus_pois_ci"]])
+    pois_hi = np.array([c[1] for c in dec["obs_minus_pois_ci"]]) - dec["obs_minus_pois"]
+    corr_lo = dec["obs_minus_corr"] - np.array([c[0] for c in dec["obs_minus_corr_ci"]])
+    corr_hi = np.array([c[1] for c in dec["obs_minus_corr_ci"]]) - dec["obs_minus_corr"]
+    axes[2].errorbar(dec["lam"] - 0.02, dec["obs_minus_pois"], yerr=[pois_lo, pois_hi],
+                     fmt="o-", color="#e34948", ms=4, lw=1.3, capsize=2, label="obs − Poisson")
+    axes[2].errorbar(dec["lam"] + 0.02, dec["obs_minus_corr"], yerr=[corr_lo, corr_hi],
+                     fmt="o-", color="#008300", ms=4, lw=1.3, capsize=2, label="obs − corregido")
+    axes[2].axhline(0, color="#52514e", lw=1)
+    axes[2].set_xlabel("λ (media del decil)")
+    axes[2].set_ylabel("P(Y=0) observada − predicha")
+    axes[2].set_title("Residuos de P(0) con IC 95% semanal\n(>0 = predice pocos ceros; <0 = demasiados)")
+    axes[2].legend(frameon=False, fontsize=8)
     fig.tight_layout(); fig.savefig(FIG / "lambda_correction.png"); plt.close(fig)
 
     json.dump(out, open(HERE / "lambda_correction.json", "w"), indent=2)

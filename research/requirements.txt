@@ -1,0 +1,23 @@
+# Entorno de investigación (separado del bot operativo, que NO usa estos paquetes).
+# Versiones fijadas del entorno donde se produjeron los resultados de research/experiments/.
+# Python 3.13.12.
+#
+# Recrear exactamente:
+#   uv venv research/.venv --python 3.13
+#   uv pip install -p research/.venv/bin/python -r research/requirements.txt
+#
+# Correr cualquier experimento (ejemplo):
+#   research/.venv/bin/python research/experiments/EXP-006-development/lambda_correction.py
+#
+# Regenerar los λ OOS de los que dependen los diagnósticos (si faltan los CSV):
+#   research/.venv/bin/python research/experiments/EXP-004-referee/poisson_diagnostics.py
+#   research/.venv/bin/python research/experiments/EXP-004-referee/overdispersion_structure.py
+
+matplotlib==3.11.1
+numpy==2.5.1
+pandas==3.0.3
+scipy==1.18.0
+scikit-learn==1.9.0
+nbformat==5.10.4
+nbclient==0.11.0
+ipykernel==7.3.0
