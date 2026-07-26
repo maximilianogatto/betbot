@@ -17,17 +17,26 @@ es un *déficit* de ceros, no un exceso.
    ±0.4 lleva P(0) de 0.273 a 0.310. Una NB hace lo mismo. **Ambas empujan el
    0-0 en la dirección equivocada** respecto del déficit observado.
 
-2. **El déficit de ceros es estructural y REPLICA — en baja intensidad**
+2. **El déficit de ceros aparece en ambas temporadas — en baja intensidad**
    (`fig/zeros_deficit_by_lambda.png`). Estratificando P(Y=0)−Poisson por decil
    de λ: en el decil más bajo (λ<1) el déficit es −0.08 (2025) y −0.10 (2026),
-   **ambos con IC 95% por bloques que excluyen 0**. Es el primer residuo
-   condicional que encontramos que se mantiene entre temporadas. En λ alto el
+   **ambos con IC 95% por bloques que excluyen 0**. Es una replicación interna
+   exploratoria: el decil se destacó después de inspeccionar diez bins y no hubo
+   corrección por selección/multiplicidad. Debe congelarse como hipótesis para
+   una ventana nueva antes de llamarlo confirmatorio. En λ alto el
    déficit se desvanece o invierte — por eso el promedio global era no
    significativo en 2026 (−0.008) mientras el condicional a baja λ sí lo es.
 
 3. **ρ agrava el 0-0**: obs 0.044 | DC(ρ) 0.056 | DC(ρ=0) 0.053. ρ=0 mejora pero
    sigue sobreprediciendo. Refuerza la Línea 4 (ρ=0) y muestra que el 0-0 no se
    arregla por la vía de ρ.
+
+4. **En el decil bajo también se subestima la media de goles**: en 2025,
+   $\overline\lambda=0.663$ frente a 0.859 goles observados; en 2026, 0.706
+   frente a 0.910. El JSON guarda los IC semanales de
+   $\overline{Y-\lambda}$. Esto favorece investigar primero una recalibración
+   suave de la media antes que una distribución hurdle/CMP: el defecto no está
+   limitado a $P(0)$.
 
 ## Consecuencia para la Línea 1 (cambia de dirección)
 
@@ -45,12 +54,13 @@ de rechazo del director):
 - **Distribución con menos masa en 0 a media baja**: Conway-Maxwell-Poisson con
   ν>1 (sub-dispersa) o un hurdle en el cero. Más complejo.
 
-Lo que **queda descartado por esta nota**: NB como sustitución (agrava el 0-0,
-ya visto) y la mezcla mean-preserving abierto/cerrado (agrava el 0-0 por Jensen).
-Una mezcla NO mean-preserving equivale a corregir la media — mejor atacarlo
-directamente como corrección de media a baja λ.
+Lo que **queda desaconsejado por esta nota**: NB como sustitución (agrava el
+0-0, ya visto) y una mezcla abierto/cerrado que preserve la media condicional de
+cada partido (agrava el cero por Jensen). La objeción no descarta una mezcla con
+pesos predecibles que corrija una media mal especificada; en ese caso debe
+compararse con una corrección directa de media, más parsimoniosa.
 
-**Regla del director satisfecha**: este es un residuo *medido y estable entre
-temporadas* (a diferencia de la dispersión per-liga o la pendiente E[r²|λ], que
-no replican). Es el único candidato con base empírica para justificar más
-complejidad distribucional — y apunta en dirección contraria a la NB.
+**Estado de evidencia**: es un residuo medido con el mismo signo en dos
+temporadas de desarrollo, pero seleccionado post hoc. Justifica formular un
+test prospectivo o una validación cruzada por temporada; todavía no justifica
+promover complejidad distribucional.

@@ -80,13 +80,33 @@ def main() -> None:
               f"{g['p0_pois'].mean():.4f}  Δ={m:+.4f} IC=({lo:+.4f},{hi:+.4f})")
 
     fig, ax = plt.subplots(figsize=(6.8, 4))
+    by_lambda = {}
     for season, c in [("2026", "#008300"), ("2025", "#eda100")]:
         g = x[x.season == season].copy()
         g["dec"] = pd.qcut(g["lam"], 10, duplicates="drop")
         xs, ys, los, his = [], [], [], []
-        for _, gg in g.groupby("dec", observed=True):
+        rows = []
+        for dec, gg in g.groupby("dec", observed=True):
             m, lo, hi = wblock_ci(gg["defbit"].to_numpy(), gg["week"].to_numpy())
+            mean_delta, mean_lo, mean_hi = wblock_ci(
+                (gg["y"] - gg["lam"]).to_numpy(), gg["week"].to_numpy(),
+                seed=37)
             xs.append(gg["lam"].mean()); ys.append(m); los.append(lo); his.append(hi)
+            rows.append({
+                "lambda_interval": str(dec),
+                "n": int(len(gg)),
+                "lambda_mean": round(float(gg["lam"].mean()), 4),
+                "obs_P0": round(float(gg["is0"].mean()), 4),
+                "pois_P0": round(float(gg["p0_pois"].mean()), 4),
+                "diff": round(m, 4),
+                "ci_week_lo": round(lo, 4),
+                "ci_week_hi": round(hi, 4),
+                "mean_goals": round(float(gg["y"].mean()), 4),
+                "mean_goals_minus_lambda": round(mean_delta, 4),
+                "mean_diff_ci_week_lo": round(mean_lo, 4),
+                "mean_diff_ci_week_hi": round(mean_hi, 4),
+            })
+        by_lambda[season] = rows
         ax.errorbar(xs, ys, yerr=[np.array(ys) - los, np.array(his) - ys],
                     fmt="o-", ms=4, lw=1.4, capsize=2, color=c, label=season)
     ax.axhline(0, color="#52514e", lw=1)
@@ -96,6 +116,7 @@ def main() -> None:
                  "IC 95% por bloques semanales")
     ax.legend(frameon=False)
     fig.tight_layout(); fig.savefig(FIG / "zeros_deficit_by_lambda.png"); plt.close(fig)
+    out["zero_deficit_by_lambda_decile"] = by_lambda
 
     # ---- 2. Jensen: la mezcla mean-preserving SUBE P(0) -----------------
     # dos escalas c1<1<c2 con pi tal que pi*c1+(1-pi)*c2=1; P0_mix=pi*e^{-c1 λ}+
@@ -131,22 +152,29 @@ def main() -> None:
         print(f"0-0 2026: obs {obs00:.4f} | DC(ρ) {p00_rho/n:.4f} | "
               f"DC(ρ=0) {p00_norho/n:.4f}")
 
-    # ---- 4. ¿media o forma? ratio P1/P0 observado vs Poisson (=λ) --------
-    # Por decil: si obs P1/P0 ≈ λ, la forma es Poisson y el problema es la media.
+    # ---- 4. ¿media o forma? ratio P1/P0 observado vs Poisson -------------
+    # Para un único lambda, P1/P0=lambda. Dentro de un bin heterogéneo la
+    # predicción correcta de la mezcla de Poissons NO es mean(lambda), sino
+    # sum(lambda_i exp(-lambda_i)) / sum(exp(-lambda_i)).
     ratios = {}
     for season, g in x.groupby("season"):
         g = g.copy(); g["dec"] = pd.qcut(g["lam"], 6, duplicates="drop")
         rr = []
-        for _, gg in g.groupby("dec", observed=True):
+        for dec, gg in g.groupby("dec", observed=True):
             p0 = (gg["y"] == 0).mean(); p1 = (gg["y"] == 1).mean()
+            pred_p0 = np.exp(-gg["lam"].to_numpy())
+            pred_ratio = float(
+                np.sum(gg["lam"].to_numpy() * pred_p0) / np.sum(pred_p0))
             rr.append({"lam": round(float(gg["lam"].mean()), 3),
+                       "lambda_interval": str(dec),
                        "obs_P1_P0": round(float(p1 / p0), 3) if p0 > 0 else None,
-                       "poisson_ratio_lambda": round(float(gg["lam"].mean()), 3)})
+                       "poisson_mixture_P1_P0": round(pred_ratio, 3)})
         ratios[season] = rr
     out["shape_ratio_P1_P0"] = ratios
-    print("ratio P1/P0 (Poisson predice = λ):")
+    print("ratio P1/P0 (observado vs mezcla Poisson exacta del bin):")
     for s, rr in ratios.items():
-        print(f"  {s}:", [(r["lam"], r["obs_P1_P0"]) for r in rr])
+        print(f"  {s}:", [(r["lam"], r["obs_P1_P0"],
+                            r["poisson_mixture_P1_P0"]) for r in rr])
 
     json.dump(out, open(HERE / "zeros_diagnosis.json", "w"), indent=2)
     print("→ zeros_diagnosis.json + fig/zeros_deficit_by_lambda.png")

@@ -131,9 +131,10 @@ equivalencia, el resultado confirmatorio es insensible a la elección.
 - **Mezcla abierto/cerrado** (Línea 1, H3): **pre-check negativo** — ver
   `../EXP-004-referee/ZEROS-NOTE.md`. El defecto dominante del Poisson es un
   *déficit* de ceros a baja intensidad (decil bajo λ<1: −0.08 en 2025, −0.10 en
-  2026, ambos IC excluyen 0 — residuo estable entre temporadas), y una mezcla
-  mean-preserving **aumenta** P(0) por Jensen (verificado numéricamente). NB y
-  mezcla van en dirección contraria al defecto medido. El candidato coherente es
+  2026, ambos IC excluyen 0 — replicación interna exploratoria, seleccionada
+  después de inspeccionar los bins), y una mezcla
+  que preserve la media condicional **aumenta** P(0) por Jensen. NB y esa mezcla
+  van en dirección contraria al defecto medido. El candidato coherente es
   una **corrección de media/forma a baja intensidad** (λ-floor, o CMP ν>1 /
   hurdle), no una distribución más sobredispersa. Redefine la Línea 1.
 - **Jerárquico intra-M2** (Línea 5, H8): pooling entre lohkos de la MISMA
