@@ -69,10 +69,14 @@ baseline para diagnosticar un residuo de forma.
 
 ## Reproducibilidad (entorno fijado)
 
-Dependencias/versiones en `research/requirements.txt` (Python 3.13). Verificado:
-un venv limpio creado desde ese archivo reproduce los números de este informe
-bit a bit (a=0.202, τ=2.140; vs-Poisson −0.0158 [−0.022,−0.0096]; vs-NB −0.0052
-[−0.0127,+0.0028]).
+Dependencias/versiones en `research/requirements.txt` (Python 3.13). **Reproducción
+numérica verificada en un venv limpio en esta plataforma** (macOS/arm64): los
+números de este informe se reprodujeron (a=0.202, τ=2.140; vs-Poisson −0.0158
+[−0.022,−0.0096]; vs-NB −0.0052 [−0.0127,+0.0028]). Caveat: `research/requirements.txt`
+**no es un lockfile completo** — no fija la revisión exacta de Python, las
+dependencias transitivas, la plataforma ni hashes. Para reproducibilidad "bit a
+bit" haría falta un lock completo (p.ej. `uv lock`) y comparar hashes de los
+artefactos; esto es reproducibilidad local fuerte, no bit-exacta cross-plataforma.
 
 ```bash
 uv venv research/.venv --python 3.13
