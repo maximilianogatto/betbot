@@ -51,7 +51,8 @@ Todas con **ρ=0**; matriz de marcadores con el bin de cola `Y≥12` de §5.
    `scipy.optimize.minimize_scalar(method="bounded", bounds=(0,1))` (1-D
    determinista, sin punto inicial).
    - **Regla de τ (bins disjuntos, cerrados)** (issue #2): bordes = deciles de λ
-     del `inner_train` **con `q0=min(λ)` y `q100=max(λ)`**; se **eliminan bordes
+     **del conjunto recibido por el fit** (cubre inequívocamente inner fits, refit
+     sobre `outer_train` y fit final) **con `q0=min(λ)` y `q100=max(λ)`**; se **eliminan bordes
      duplicados**; bins `[q_k, q_{k+1})` salvo el último **cerrado a derecha**
      `[q_{k}, q_{100}]`; **bins vacíos se omiten**. En cada bin, sesgo
      `mean(Y−λ)` con IC bloque-semana bajo semilla `seed_τ(fit)` (§5, issue #3).
@@ -172,6 +173,7 @@ descriptivos, no como evidencia de mecanismo).
 
 ## 7. Fuera de alcance
 
-CMP y hurdle en pausa. No se toca producción ni EXP-005. **No se ejecuta hasta
-aprobación de la v3; si el director prefiere el objeto "familia fija", se
-reescribe como Opción B antes de correr.**
+CMP y hurdle en pausa. No se toca producción ni EXP-005. **v3.1 APROBADA por el
+director (Opción A). Orden autorizado: implementar → tests sintéticos/fixtures →
+verificar contra cada cláusula → recién ahí la corrida única sobre 2025 →
+publicar TODO aunque promotion_pass=False, sin modificar reglas ni parámetros.**
