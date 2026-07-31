@@ -785,6 +785,67 @@ class LeagueDiscoveryOption:
 
 
 @dataclass(frozen=True)
+class MatchResult:
+    """Cómo terminó un partido, con los indicadores que explican el resultado.
+
+    Es el registro histórico sobre el que después se corren análisis: por eso se
+    guarda el payload crudo del provider además de las columnas normalizadas
+    (normalizar entre 6 providers es la parte difícil, y el crudo evita perder
+    datos que hoy no sabemos que vamos a querer).
+
+    `status` distingue FINISHED de SUSPENDED/POSTPONED a propósito: un partido
+    suspendido guardado como 0-0 envenena cualquier análisis posterior.
+    """
+
+    # Identidad
+    home: str
+    away: str
+    status: str  # FINISHED | SUSPENDED | POSTPONED | UNKNOWN
+    source: str  # live_watch | manual | tracking
+    recorded_at: str
+    id: int | None = None
+    platform: str | None = None
+    external_event_id: str | None = None
+    unified_competition_id: int | None = None
+    competition_name: str | None = None
+    country_name: str | None = None
+    kickoff_at: str | None = None
+    actual_start_at: str | None = None
+
+    # Nivel 1: sin esto no se puede evaluar nada
+    final_home_score: int | None = None
+    final_away_score: int | None = None
+    ht_home_score: int | None = None
+    ht_away_score: int | None = None
+
+    # Nivel 2: los que explican el resultado
+    xg_home: float | None = None
+    xg_away: float | None = None
+    shots_on_target_home: int | None = None
+    shots_on_target_away: int | None = None
+    red_cards_home: int | None = None
+    red_cards_away: int | None = None
+    goal_minutes_json: str | None = None      # [{"minute": 23, "team": "home"}, ...]
+    red_card_minutes_json: str | None = None
+
+    # Trazabilidad
+    stats_provider: str | None = None
+    stats_match_id: str | None = None
+    raw_payload_json: str | None = None       # crudo del provider (nivel 3 vive acá)
+    updated_at: str | None = None
+
+    @property
+    def is_settled(self) -> bool:
+        """True sólo si el partido terminó y tiene marcador utilizable."""
+
+        return (
+            self.status == "FINISHED"
+            and self.final_home_score is not None
+            and self.final_away_score is not None
+        )
+
+
+@dataclass(frozen=True)
 class LiveWatchHit:
     """Una entrada vigilada que acaba de coincidir con un evento.
 
@@ -803,6 +864,7 @@ __all__ = [
     "CompetitionExtraction",
     "CompetitionKey",
     "LiveWatchHit",
+    "MatchResult",
     "EventKey",
     "EventSnapshot",
     "LiveEventSnapshot",

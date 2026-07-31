@@ -18,6 +18,7 @@ EXPECTED_TABLES = [
     "peak_digest_subscriptions",
     "chat_settings",
     "pending_track_requests",
+    "match_results",
 ]
 
 FORBIDDEN_LEGACY_TABLES = [
@@ -266,7 +267,53 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
             payload_json TEXT,
             created_at TEXT NOT NULL, expires_at TEXT
         );
+
+        -- Archivo histórico de cómo terminó cada partido.
+        -- A diferencia de `events` (current-state, se pisa en cada poll), esta
+        -- tabla acumula: es el dataset sobre el que corren los análisis.
+        CREATE TABLE IF NOT EXISTS match_results (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            platform TEXT,
+            external_event_id TEXT,
+            unified_competition_id INTEGER REFERENCES unified_competitions(id) ON DELETE SET NULL,
+            home TEXT NOT NULL,
+            away TEXT NOT NULL,
+            competition_name TEXT,
+            country_name TEXT,
+            kickoff_at TEXT,
+            actual_start_at TEXT,
+            -- Nivel 1: sin esto no se puede evaluar nada.
+            -- status distingue FINISHED de SUSPENDED/POSTPONED a propósito: un
+            -- suspendido guardado como 0-0 envenena cualquier análisis.
+            status TEXT NOT NULL,
+            final_home_score INTEGER, final_away_score INTEGER,
+            ht_home_score INTEGER, ht_away_score INTEGER,
+            -- Nivel 2: los que explican el resultado.
+            xg_home REAL, xg_away REAL,
+            shots_on_target_home INTEGER, shots_on_target_away INTEGER,
+            red_cards_home INTEGER, red_cards_away INTEGER,
+            goal_minutes_json TEXT,
+            red_card_minutes_json TEXT,
+            -- Trazabilidad. El crudo del provider guarda el nivel 3 (posesión,
+            -- corners) sin ensuciar el esquema con columnas poco predictivas.
+            stats_provider TEXT,
+            stats_match_id TEXT,
+            raw_payload_json TEXT,
+            source TEXT NOT NULL,
+            recorded_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+        );
+        -- Idempotencia: re-consultar un partido actualiza su fila, no la duplica.
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_match_results_platform_event
+        ON match_results(platform, external_event_id)
+        WHERE platform IS NOT NULL AND external_event_id IS NOT NULL;
+
+        CREATE INDEX IF NOT EXISTS idx_match_results_competition
+        ON match_results(unified_competition_id, kickoff_at);
+
+        CREATE INDEX IF NOT EXISTS idx_match_results_kickoff
+        ON match_results(kickoff_at);
         """
     )
-    # Set the user version to 5
-    connection.execute("PRAGMA user_version = 5")
+    # Set the user version to 6
+    connection.execute("PRAGMA user_version = 6")
