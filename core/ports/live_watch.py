@@ -74,6 +74,10 @@ class LiveWatchPort(Protocol):
         """Clean up completed or expired live watch entries."""
         ...
 
+    def pop_expired_live_watches(self) -> list[LiveWatchEntry]:
+        """Delete expired entries and return them, so callers can archive first."""
+        ...
+
     def get_live_watch_settings(
         self,
         chat_id: int,

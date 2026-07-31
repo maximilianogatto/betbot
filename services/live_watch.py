@@ -30,6 +30,7 @@ from core.models import (  # noqa: F401
     LiveWatchEntry,
     LiveWatchHit,
     LiveWatchSettings,
+    MatchResult,
 )
 from core.timezones import default_timezone
 from services.timezones import resolve_chat_timezone
@@ -524,9 +525,51 @@ class LiveWatchService:
 
 
     def purge_expired(self) -> int:
-        """Delete watch entries whose time has passed (kickoff+grace, or stale)."""
+        """Delete watch entries whose time has passed (kickoff+grace, or stale).
 
-        return self.repository.purge_expired_live_watches()
+        Antes de borrarlas, archiva el último estado en vivo observado: es la
+        única oportunidad de dejar registro de cómo terminó el partido.
+        """
+
+        expired = self.repository.pop_expired_live_watches()
+        for entry in expired:
+            try:
+                self._archive_expired_entry(entry)
+            except Exception:
+                # Archivar es best-effort: no puede romper la purga ni el ciclo.
+                logger.exception("No pude archivar el resultado del watch id=%s", entry.id)
+        return len(expired)
+
+    def _archive_expired_entry(self, entry: LiveWatchEntry) -> None:
+        """Guarda en el archivo histórico el último estado visto de un fixture."""
+
+        state = _last_observed_state(entry)
+        if state is None:
+            # Nunca se lo vio en vivo: no hay nada que archivar.
+            return
+
+        platform, observed = state
+        minute = observed.get("minute")
+        self.repository.record_match_result(
+            MatchResult(
+                home=entry.home,
+                away=entry.away,
+                # El minuto decide si esto es un resultado final o una foto
+                # parcial. Marcarlo mal haría que un 1-0 del minuto 20 entrara
+                # a los análisis como resultado definitivo.
+                status="FINISHED" if _looks_finished(minute) else "UNKNOWN",
+                source="live_watch",
+                recorded_at=datetime.now(timezone.utc).isoformat(),
+                platform=platform,
+                external_event_id=str(observed.get("event_id") or "") or None,
+                kickoff_at=entry.kickoff_at,
+                final_home_score=observed.get("home_score"),
+                final_away_score=observed.get("away_score"),
+                red_cards_home=observed.get("home_red_cards"),
+                red_cards_away=observed.get("away_red_cards"),
+                raw_payload_json=json.dumps(observed, ensure_ascii=False, sort_keys=True),
+            )
+        )
 
     def get_recommended_poll_interval(self, default_normal: float = 15.0, default_fast: float = 10.0) -> float:
         """Determine the next sleep interval based on active watch state.
@@ -612,6 +655,49 @@ class LiveWatchService:
                 e,
             )
 
+
+
+# Minuto desde el cual se considera que un marcador observado es final.
+# 85' deja margen para descuento sin tomar por final una foto del minuto 70.
+FULL_TIME_MINUTE_FLOOR = 85
+
+
+def _last_observed_state(entry: LiveWatchEntry) -> tuple[str, dict[str, Any]] | None:
+    """Devuelve (plataforma, estado) de la observación más reciente del fixture.
+
+    `live_state` está indexado por plataforma y puede tener varias si el partido
+    se vio en más de una casa. Se elige la observación más nueva, que es la más
+    cerca del final.
+    """
+
+    states = entry.live_state or {}
+    candidates = [
+        (platform, state)
+        for platform, state in states.items()
+        # "_alerts" no es una plataforma: es el registro de avisos ya enviados.
+        if platform != "_alerts" and isinstance(state, dict) and state.get("home_score") is not None
+    ]
+    if not candidates:
+        return None
+    return max(candidates, key=lambda item: str(item[1].get("observed_at") or ""))
+
+
+def _looks_finished(minute: Any) -> bool:
+    """True si el minuto observado indica que el partido ya había terminado.
+
+    Los feeds usan etiquetas humanas ("88'", "90+3", "FT", "Finalizado"). Sin un
+    minuto lo bastante avanzado NO se puede afirmar que el marcador sea final:
+    puede ser la última foto antes de perder el partido de vista. En ese caso el
+    resultado se archiva como UNKNOWN y queda fuera de los análisis.
+    """
+
+    if not isinstance(minute, str):
+        return False
+    label = minute.strip().lower()
+    if any(token in label for token in ("ft", "final", "terminado", "fin")):
+        return True
+    match = re.search(r"\d+", label)
+    return bool(match) and int(match.group()) >= FULL_TIME_MINUTE_FLOOR
 
 
 def _event_live_state(event: LiveEventSnapshot) -> dict[str, Any]:

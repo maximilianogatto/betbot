@@ -241,31 +241,52 @@ class SQLiteLiveWatchAdapter(LiveWatchPort):
                 )
             return cursor.rowcount
 
-    def purge_expired_live_watches(
+    def pop_expired_live_watches(
         self,
         *args: Any,
         **kwargs: Any,
-    ) -> int:
+    ) -> list[LiveWatchEntry]:
+        """Borra las entradas vencidas y DEVUELVE las que borró.
+
+        Devolverlas es lo que permite archivar el partido antes de perderlo: el
+        último estado en vivo observado vive en la entrada, y al borrarla se iba
+        sin dejar registro de cómo terminó.
+        """
+
         kickoff_grace = kwargs.get("kickoff_grace_hours", 2.0)
         stale = kwargs.get("stale_hours", 16.0)
         fired_retain = kwargs.get("fired_retain_hours", 3.0)
-        
+
         now = datetime.now(timezone.utc)
         kickoff_cutoff = (now - timedelta(hours=kickoff_grace)).isoformat()
         stale_cutoff = (now - timedelta(hours=stale)).isoformat()
         fired_cutoff = (now - timedelta(hours=fired_retain)).isoformat()
-        
+
         with open_connection() as conn:
-            cursor = conn.execute(
+            rows = conn.execute(
                 """
                 DELETE FROM live_watch_entries
                 WHERE (status = 'watching' AND kickoff_at IS NOT NULL AND kickoff_at < ?)
                    OR (status = 'watching' AND kickoff_at IS NULL AND created_at < ?)
                    OR (status = 'fired' AND fired_at IS NOT NULL AND fired_at < ?)
+                RETURNING *
                 """,
                 (kickoff_cutoff, stale_cutoff, fired_cutoff)
-            )
-            return cursor.rowcount
+            ).fetchall()
+        return [_row_to_live_watch(row) for row in rows]
+
+    def purge_expired_live_watches(
+        self,
+        *args: Any,
+        **kwargs: Any,
+    ) -> int:
+        """Compatibilidad: purga y devuelve sólo el conteo.
+
+        Delega en `pop_expired_live_watches` para que la definición de "vencida"
+        viva en un solo lugar.
+        """
+
+        return len(self.pop_expired_live_watches(*args, **kwargs))
 
     def get_live_watch_settings(
         self,
