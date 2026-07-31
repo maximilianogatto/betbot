@@ -1,10 +1,13 @@
-# Pre-registración v3: rediseño de la corrección de λ (protocolo 2025-only)
+# Pre-registración v3.1: rediseño de la corrección de λ (protocolo 2025-only)
 
-**Estado**: CONGELADO al commitear. Resuelve la contradicción central de la v2
-(mezclar "evaluar un procedimiento adaptativo" con "promover una familia fija")
-adoptando la **Opción A** del dictamen: *el candidato es el procedimiento de
-selección completo*, no un par (a,τ) ni una familia elegida retrospectivamente.
-Solo 2025; nada ≥ 27-jul-2026. No se ejecuta hasta que el director apruebe la v3.
+**Estado**: CONGELADO al commitear. v3 adoptó la **Opción A** (el candidato es el
+procedimiento de selección P, no un (a,τ) ni familia fija). v3.1 cierra las 6
+precisiones bloqueantes del dictamen: NB con φ de `outer_train` (#1); bins de τ
+con extremos/cierre/vacíos (#2); semilla determinista de τ (#3); agregación
+regional por etiqueta relativa congelada (#4); bin de cola `Y≥12` (#5); rama
+explícita `φ≤0`→Poisson (#6). Solo 2025; nada ≥ 27-jul-2026. **Aprobación
+condicional del director recibida sujeta a estas 6 precisiones; ejecutar una
+única vez tras su confirmación de que quedaron bien.**
 
 > **Objeto científico (elección explícita, no se combinan)**: se promueve/archiva
 > el **procedimiento adaptativo P** definido abajo, y para una ventana futura se
@@ -36,7 +39,7 @@ entero para una ventana futura. Si no pasa, **se archiva** (no se re-ajusta nada
 
 ## 2. Especificaciones (cerradas)
 
-Todas con **ρ=0**; matriz de marcadores con truncamiento y renormalización de §5.
+Todas con **ρ=0**; matriz de marcadores con el bin de cola `Y≥12` de §5.
 
 1. **`S_poisson`**: λ'=λ.
 2. **`S_full`**: `log λ' = (1−a)log λ + a log τ` si λ<τ, `log λ` si λ≥τ; (a,τ)
@@ -47,18 +50,23 @@ Todas con **ρ=0**; matriz de marcadores con truncamiento y renormalización de 
 3. **`S_tau_fixed`**: τ por **regla de train** (abajo); a por
    `scipy.optimize.minimize_scalar(method="bounded", bounds=(0,1))` (1-D
    determinista, sin punto inicial).
-   - **Regla de τ (bins disjuntos, sin dilución de cola)**: deciles de λ del
-     `inner_train`; en cada **bin disjunto** `[q_k, q_{k+1})` se computa el sesgo
-     `mean(Y−λ)` con IC bloque-semana. τ = **borde izquierdo del primer bin
-     (de menor a mayor λ) cuyo IC de sesgo incluye 0** (donde el sesgo positivo de
-     baja intensidad deja de ser detectable). Si **todos** los bins incluyen 0 →
-     τ = q10 (corrección mínima). Si **ningún** bin incluye 0 y todos los sesgos
-     son > 0 → τ = q90 (corregir todo el rango bajo). Caso degenerado (ningún bin
-     incluye 0, signos mezclados) → τ = mediana de λ, `tau_fallback=True`.
+   - **Regla de τ (bins disjuntos, cerrados)** (issue #2): bordes = deciles de λ
+     del `inner_train` **con `q0=min(λ)` y `q100=max(λ)`**; se **eliminan bordes
+     duplicados**; bins `[q_k, q_{k+1})` salvo el último **cerrado a derecha**
+     `[q_{k}, q_{100}]`; **bins vacíos se omiten**. En cada bin, sesgo
+     `mean(Y−λ)` con IC bloque-semana bajo semilla `seed_τ(fit)` (§5, issue #3).
+     τ = **borde izquierdo del primer bin (menor→mayor λ) cuyo IC de sesgo
+     incluye 0**. Si **todos** incluyen 0 → τ=q0 (corrección nula: λ<q0 vacío).
+     Si **ninguno** incluye 0 y todos los sesgos son > 0 → τ=q100. Caso
+     degenerado (ninguno incluye 0, signos mezclados) → τ=mediana(λ),
+     `tau_fallback=True`.
 4. **`S_negbin`** (solo comparador externo, **no** entra a la selección interna):
-   `Var=λ+φλ²`, φ estimado por momentos **en cada inner-train**
-   `φ̂ = Σ((y−λ)²−λ)λ² / Σλ⁴`, con **`φ = max(0, φ̂)`** (si 0 → Poisson en ese fold).
-   PMF: `scipy.stats.nbinom(n=1/φ, p=(1/φ)/((1/φ)+λ))`, renormalizada como en §5.
+   `Var=λ+φλ²`. **Para cada outer fold, una única φ estimada con TODO
+   `outer_train`** (no inner-train; issue #1), por momentos
+   `φ̂ = Σ((y−λ)²−λ)λ² / Σλ⁴`, y se predice w_o. **Rama explícita** (issue #6):
+   si `φ̂ ≤ 0` → se usa **exactamente la PMF de Poisson** (no se evalúa `nbinom`
+   con φ=0, que es indefinido). Si `φ̂ > 0`: `r=1/φ̂`, PMF
+   `scipy.stats.nbinom(n=r, p=r/(r+λ))` con el bin de cola de §5.
 
 ## 3. Selección interna e inner_eligible (resuelve #2, #4)
 
@@ -97,7 +105,7 @@ Todas con **ρ=0**; matriz de marcadores con truncamiento y renormalización de 
   pipeline anidado (eso mediría otra incertidumbre). P se promueve **sólo si**:
   1. Δlog-loss marcador P vs `S_poisson` < 0, IC **excluye 0**.
   2. Δlog-loss marcador P vs `S_negbin` < 0, IC **excluye 0** (el comparador NB
-     se predice en cada outer fold con su φ de inner-train; es comparador, no se
+     se predice en cada outer fold con su φ de `outer_train`; es comparador, no se
      elige).
   3. RPS 1X2 P vs Poisson: IC del Δ **enteramente < +0.0005**.
   4. **Equivalencia P(0)**: en las 3 regiones, IC completo de `P0_obs−P0_pred`
@@ -110,13 +118,27 @@ Todas con **ρ=0**; matriz de marcadores con truncamiento y renormalización de 
 - **No hay desempate externo entre familias**: el externo sólo emite un veredicto
   sí/no sobre P vs {Poisson, NB}. La pregunta "qué familia" se responde de forma
   **descriptiva** (frecuencia de selección), nunca por ranking de log-loss externo.
+- **Agregación regional entre folds** (issue #4; cada fold tiene tertiles
+  distintos): cada observación de test se etiqueta baja/media/alta con los
+  **tertiles calculados en su propio `train`**, y la etiqueta queda **congelada**
+  junto con su predicción. El residuo externo de una región agrupa todas las
+  predicciones OOS con esa **etiqueta relativa** — "baja" = tercio bajo respecto
+  del contexto histórico de cada fold, **no** un intervalo fijo de λ. El bootstrap
+  remuestrea semanas preservando (etiqueta, predicción, observado).
 
 ## 5. Detalles congelados (resuelve #7 y adicionales)
 
-- `maxg=12`; PMF por lado renormalizada a suma 1 tras truncar (Poisson y NB).
+- **Grilla de goles por lado `{0,…,12}` con bin de cola** (issue #5): `p_k=pmf(k,λ)`
+  para k=0..11 y **`p_12 = 1 − cdf(11,λ)`** (masa `Y≥12`). Suma 1 exacta, **sin
+  renormalizar**. El observado `g` se mapea a `min(g,12)`. Ídem NB con su cola.
 - log-loss marcador `−log(clip(P(g_h,g_a),1e-12,1))`; RPS `½Σ_{H<D<A}(cumP−cumY)²`.
 - Bootstrap: no-paramétrico por bloque-semana `W-SUN`, `n_boot=4000`, percentil.
   Semillas: score `47`, RPS `7`, región/P0/sesgo `41/43`, selección-estabilidad `71`.
+- **Semilla de la regla de τ** (issue #3): cada fit de `S_tau_fixed` usa
+  `seed_τ(fit) = 41000 + ordinal`, con `ordinal` **determinista** por posición del
+  fit: `ordinal = 1000·outer_ix + inner_ix` (refit sobre `outer_train`: `inner_ix=999`;
+  fit final sobre todo-2025: `outer_ix=999, inner_ix=999`). Evita reutilizar la
+  misma secuencia pseudoaleatoria entre folds de tamaño compatible.
 - Optimizador: como en §2 (S_full multi-start a0=0.5; S_tau_fixed 1-D bounded).
 - **Márgenes con interpretación registrada** (issue #3/adic.):
   - `ε0 = 0.02` en P(0): dos puntos porcentuales, ~1/4 del déficit de baja
@@ -137,6 +159,16 @@ región por fold; diagnósticos descriptivos de identificabilidad de (a,τ) de
 de selección §4.6). Figuras: perfil (a,τ) con contornos; residuos de P(0) por
 región con IC y bandas ±ε0. Entorno: `research/requirements.txt` (repro local,
 no lockfile — ver LAMBDA-CORRECTION.md).
+
+## 6bis. Caveat científico registrado (no bloqueante)
+
+Al ser P un **selector predictivo**, la identificabilidad de (a,τ) dejó
+correctamente de ser gate. Eso cambia la pregunta científica: este experimento
+responde **si un algoritmo adaptativo mejora predicciones de forma estable**, NO
+**si existe un mecanismo paramétrico identificable**. Utilidad predictiva ≠
+identificación mecanística. Si el experimento se incorpora al paper, se declara
+explícitamente así (los diagnósticos de identificabilidad de (a,τ) quedan como
+descriptivos, no como evidencia de mecanismo).
 
 ## 7. Fuera de alcance
 
