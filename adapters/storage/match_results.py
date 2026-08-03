@@ -70,6 +70,28 @@ class SQLiteMatchResultsAdapter(MatchResultsPort):
             ).fetchone()
         return _row_to_result(row) if row is not None else None
 
+    def list_match_results_pending_enrichment(self, *, limit: int = 20) -> list[MatchResult]:
+        """Resultados a los que todavía les falta pasar por un proveedor de stats.
+
+        Son los archivados desde el live: tienen marcador pero no xG, o quedaron
+        con el estado sin confirmar porque se los dejó de ver antes del final.
+        Se devuelven los más recientes primero — son los que más importan y los
+        que el proveedor todavía tiene disponibles.
+        """
+
+        with open_connection() as conn:
+            rows = conn.execute(
+                """
+                SELECT * FROM match_results
+                WHERE stats_provider IS NULL
+                  AND (status = 'UNKNOWN' OR xg_home IS NULL)
+                ORDER BY kickoff_at DESC, id DESC
+                LIMIT ?
+                """,
+                (int(limit),),
+            ).fetchall()
+        return [_row_to_result(row) for row in rows]
+
     def list_match_results(
         self,
         *,

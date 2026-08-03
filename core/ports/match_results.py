@@ -21,6 +21,10 @@ class MatchResultsPort(Protocol):
         """Devuelve el resultado archivado de un partido de una plataforma."""
         ...
 
+    def list_match_results_pending_enrichment(self, *, limit: int = 20) -> list[MatchResult]:
+        """Resultados que todavía no pasaron por un proveedor de stats."""
+        ...
+
     def list_match_results(
         self,
         *,
