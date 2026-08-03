@@ -63,23 +63,6 @@ class FairLine:
         }
 
 
-def _diff_distribution(ph: list[float], pa: list[float]) -> dict[int, float]:
-    """Distribución de (goles_home − goles_away)."""
-    diff: dict[int, float] = {}
-    for i, pi in enumerate(ph):
-        for j, pj in enumerate(pa):
-            diff[i - j] = diff.get(i - j, 0.0) + pi * pj
-    return diff
-
-
-def _total_distribution(ph: list[float], pa: list[float]) -> dict[int, float]:
-    total: dict[int, float] = {}
-    for i, pi in enumerate(ph):
-        for j, pj in enumerate(pa):
-            total[i + j] = total.get(i + j, 0.0) + pi * pj
-    return total
-
-
 def _fair_handicap(diff: dict[int, float]) -> float:
     """Hándicap asiático justo para el LOCAL (línea de cuarto que equilibra el AH).
 
@@ -112,35 +95,43 @@ def _fair_total_line(total: dict[int, float]) -> float:
     return best_g
 
 
-def fair_line(lam_home: float, lam_away: float, *, max_goals: int = MAX_GOALS) -> FairLine:
-    ph = _side_pmf(lam_home, max_goals)
+def fair_line(lam_home: float, lam_away: float, *, max_goals: int = MAX_GOALS,
+              current_home: int = 0, current_away: int = 0) -> FairLine:
+    """Línea justa desde intensidades. Con ``current_*`` es la línea EN VIVO del
+    resultado final: goles finales = marcador actual + goles restantes (Poisson
+    con ``lam_*`` = intensidad RESTANTE). Sin marcador (default 0-0) es pre-match.
+    """
+    ph = _side_pmf(lam_home, max_goals)   # goles restantes por lado
     pa = _side_pmf(lam_away, max_goals)
+    ch, ca = current_home, current_away
 
     p_home = p_draw = p_away = 0.0
+    p_over25 = p_btts = 0.0
+    diff: dict[int, float] = {}
+    total: dict[int, float] = {}
     for i, pi in enumerate(ph):
         for j, pj in enumerate(pa):
             m = pi * pj
-            if i > j:
+            fh, fa = ch + i, ca + j                 # marcador final
+            if fh > fa:
                 p_home += m
-            elif i == j:
+            elif fh == fa:
                 p_draw += m
             else:
                 p_away += m
-
-    total = _total_distribution(ph, pa)
-    p_over25 = sum(v for k, v in total.items() if k >= 3)
-    p_under25 = 1.0 - p_over25
-    p_btts = sum(ph[i] * pa[j] for i in range(1, len(ph)) for j in range(1, len(pa)))
-
-    diff = _diff_distribution(ph, pa)
-    fair_handicap = _fair_handicap(diff)
-    fair_goal_line = _fair_total_line(total)
+            if fh + fa >= 3:
+                p_over25 += m
+            if fh >= 1 and fa >= 1:
+                p_btts += m
+            diff[fh - fa] = diff.get(fh - fa, 0.0) + m
+            total[fh + fa] = total.get(fh + fa, 0.0) + m
 
     return FairLine(
         lam_home=lam_home, lam_away=lam_away,
         p_home=p_home, p_draw=p_draw, p_away=p_away,
-        p_over25=p_over25, p_under25=p_under25, p_btts=p_btts,
-        expected_total_goals=lam_home + lam_away,
-        expected_supremacy=lam_home - lam_away,
-        fair_handicap=fair_handicap, fair_goal_line=fair_goal_line,
+        p_over25=p_over25, p_under25=1.0 - p_over25, p_btts=p_btts,
+        expected_total_goals=(ch + ca) + lam_home + lam_away,
+        expected_supremacy=(ch - ca) + lam_home - lam_away,
+        fair_handicap=_fair_handicap(diff),
+        fair_goal_line=_fair_total_line(total),
     )
