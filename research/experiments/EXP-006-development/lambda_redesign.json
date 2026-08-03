@@ -1,0 +1,84 @@
+{
+  "protocol": "LAMBDA-REDESIGN-PROTOCOL.md v3.1 (Opci\u00f3n A)",
+  "date_run": "2026-08-03T16:28:58.147776",
+  "n_lambda_matches": 2925,
+  "n_outer_test_matches": 2280,
+  "n_outer_folds": 27,
+  "selection_frequency": {
+    "S_poisson": 27
+  },
+  "final_selection_all2025": {
+    "family": "S_poisson",
+    "a": 0.0,
+    "tau": 0.0
+  },
+  "promotion_pass": {
+    "promotion_pass": false,
+    "gate1_vs_poisson": {
+      "delta": 0.0,
+      "ci": [
+        0.0,
+        0.0
+      ],
+      "pass": false
+    },
+    "gate2_vs_negbin": {
+      "delta": 0.0021127518758184303,
+      "ci": [
+        -0.007394070570388606,
+        0.012592851028180599
+      ],
+      "pass": false
+    },
+    "gate3_rps": {
+      "delta": 0.0,
+      "ci": [
+        0.0,
+        0.0
+      ],
+      "pass": true
+    },
+    "gate4_p0_regions": {
+      "ci": {
+        "baja": [
+          -0.06570134573098775,
+          -0.09999196599138656,
+          -0.027780041432405565
+        ],
+        "media": [
+          -0.019653330979943418,
+          -0.035566720666684884,
+          -0.0035543865596523944
+        ],
+        "alta": [
+          0.001016938922314518,
+          -0.012392397379673467,
+          0.013925540877781833
+        ]
+      },
+      "pass": false
+    },
+    "gate5_bias_low": {
+      "delta": 0.20144404209798006,
+      "ci": [
+        0.12441737228858046,
+        0.27660649951659855
+      ],
+      "pass": false
+    },
+    "gate6_stability": {
+      "modal_freq": 1.0,
+      "counts": {
+        "S_poisson": 27
+      },
+      "pass": true
+    }
+  },
+  "means": {
+    "ll_P": 3.2323144665402066,
+    "ll_poisson": 3.2323144665402066,
+    "ll_negbin": 3.230201714664388,
+    "rps_P": 0.19873484987942044,
+    "rps_poisson": 0.19873484987942044
+  }
+}

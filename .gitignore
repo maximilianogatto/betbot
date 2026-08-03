@@ -87,3 +87,7 @@ research/.venv/
 # Tokens de sesión volcados a disco (session_manager.py --> tokens/sportradar/token.txt).
 # Son credenciales: no entran al repo.
 tokens/
+
+# λ 2025 regenerados por la corrida (grande, se regenera con run_lambda_redesign.py)
+research/experiments/EXP-006-development/lambdas_2025_full.csv
+research/experiments/EXP-006-development/lambda_redesign_oos_*.csv
