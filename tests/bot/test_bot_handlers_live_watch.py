@@ -473,6 +473,7 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
                 "18:00 USA USL League Two | Texoma vs Fort Worth (Locales +4t5)",
             ],
             times_tz=sheet_timezone(),
+            skip_recently_removed=True,
         )
         mock_reply_chunks.assert_awaited_once()
         reply_content = mock_reply_chunks.await_args[0][1]

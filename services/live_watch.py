@@ -30,6 +30,7 @@ from core.models import (  # noqa: F401
     LiveWatchEntry,
     LiveWatchHit,
     LiveWatchSettings,
+    LiveWatchTombstone,
     MatchResult,
 )
 from core.timezones import default_timezone
@@ -47,9 +48,33 @@ COMBINED_FLOOR = 0.70
 # kickoff: 90' + halftime + stoppage. Kept in sync with the 2h purge grace in
 # SQLiteLiveWatchAdapter.purge_expired_live_watches.
 _MATCH_OVER_GRACE = timedelta(hours=2)
+# Cuánto tiempo un partido que salió de la vigilancia queda en la papelera
+# bloqueando su re-importación desde la planilla. Dos días cubre el caso real:
+# el partido se jugó, la fila sigue en el Excel, y el usuario la limpia recién
+# días después.
+TOMBSTONE_RETENTION_DAYS = 2.0
+# Mismo piso que la deduplicación contra la watchlist activa.
+_DUPLICATE_FLOOR = 0.85
 
 
 
+
+
+def _same_fixture_in(home: str, away: str, candidates: Iterable[Any]) -> bool:
+    """¿Alguno de `candidates` (watches o tombstones) es este mismo partido?
+
+    Compara por nombre de equipo con el mismo piso que la deduplicación de la
+    watchlist: los dos lados tienen que parecerse, así "River - Boca" no colisiona
+    con "Boca - River".
+    """
+
+    for candidate in candidates:
+        if (
+            team_name_similarity(home, candidate.home) >= _DUPLICATE_FLOOR
+            and team_name_similarity(away, candidate.away) >= _DUPLICATE_FLOOR
+        ):
+            return True
+    return False
 
 
 def _parse_iso_datetime(dt_str: str | None) -> datetime | None:
@@ -171,6 +196,7 @@ class LiveWatchService:
         lines: Iterable[str],
         *,
         times_tz: ZoneInfo | None = None,
+        skip_recently_removed: bool = False,
     ) -> list[LiveWatchEntry]:
         """Parse pasted fixture lines and add each as a watch entry.
 
@@ -183,10 +209,21 @@ class LiveWatchService:
         default to the chat's display timezone, while sheet imports must pass
         :func:`sheet_timezone` because the shared sheet is written in Argentina
         time regardless of where each chat lives. Kickoffs are stored in UTC.
+
+        ``skip_recently_removed`` consulta la papelera además de la watchlist
+        activa. Lo usa el auto-import de la planilla: una fila que ya se jugó
+        sigue en el Excel, su entrada original ya fue purgada, y sin la papelera
+        el import la volvía a cargar. Un pegado manual NO lo usa a propósito —
+        si el usuario re-pega un partido a mano, lo quiere.
         """
 
         added: list[LiveWatchEntry] = []
         existing_watches = self.repository.list_live_watches(chat_id, status="watching")
+        tombstones = (
+            self.repository.list_live_watch_tombstones(chat_id)
+            if skip_recently_removed
+            else []
+        )
         chat_tz = times_tz or resolve_chat_timezone(chat_id)
 
         for raw in lines:
@@ -212,15 +249,17 @@ class LiveWatchService:
                     pass
 
             # 2. Skip duplicates
-            is_dup = False
-            for entry in existing_watches:
-                sim_home = team_name_similarity(home, entry.home)
-                sim_away = team_name_similarity(away, entry.away)
-                if sim_home >= 0.85 and sim_away >= 0.85:
-                    is_dup = True
-                    break
-            if is_dup:
+            if _same_fixture_in(home, away, existing_watches):
                 logger.info("Skipping watch entry %s vs %s because it is a duplicate", home, away)
+                continue
+
+            # 3. Skip lo que está en la papelera (ya se jugó o se borró hace poco)
+            if _same_fixture_in(home, away, tombstones):
+                logger.info(
+                    "Skipping watch entry %s vs %s: está en la papelera del live-watch",
+                    home,
+                    away,
+                )
                 continue
 
             new_entry = self.repository.add_live_watch(
@@ -241,10 +280,48 @@ class LiveWatchService:
         return self.repository.list_live_watches(chat_id, status=status)
 
     def remove_watch(self, chat_id: int, watch_id: int) -> bool:
-        return self.repository.remove_live_watch(chat_id, watch_id)
+        entry = self.repository.get_live_watch(chat_id, watch_id)
+        removed = self.repository.remove_live_watch(chat_id, watch_id)
+        if removed and entry is not None:
+            self._send_to_trash(entry, reason="removed")
+        return removed
 
     def remove_watch_by_local_id(self, chat_id: int, local_id: int) -> bool:
-        return self.repository.remove_live_watch_by_local_id(chat_id, local_id)
+        entry = self.repository.get_live_watch_by_local_id(chat_id, local_id)
+        removed = self.repository.remove_live_watch_by_local_id(chat_id, local_id)
+        if removed and entry is not None:
+            self._send_to_trash(entry, reason="removed")
+        return removed
+
+    def list_trash(self, chat_id: int) -> list[LiveWatchTombstone]:
+        """Partidos en la papelera del chat (los vencidos ya no aparecen)."""
+
+        return self.repository.list_live_watch_tombstones(chat_id)
+
+    def _send_to_trash(self, entry: LiveWatchEntry, *, reason: str) -> None:
+        """Deja constancia de que este fixture salió de la vigilancia.
+
+        Best-effort: si la papelera falla, el borrado igual ya ocurrió y no tiene
+        sentido romper la purga ni el comando del usuario por eso.
+        """
+
+        try:
+            self.repository.record_live_watch_tombstone(
+                entry.chat_id,
+                entry.home,
+                entry.away,
+                league_hint=entry.league_hint,
+                kickoff_at=entry.kickoff_at,
+                reason=reason,
+                retention_days=TOMBSTONE_RETENTION_DAYS,
+            )
+        except Exception:
+            logger.exception(
+                "No pude mandar a la papelera el watch id=%s (%s vs %s)",
+                entry.id,
+                entry.home,
+                entry.away,
+            )
 
     def clear_watches(self, chat_id: int, *, status: str | None = None) -> int:
         return self.repository.clear_live_watches(chat_id, status=status)
@@ -528,7 +605,9 @@ class LiveWatchService:
         """Delete watch entries whose time has passed (kickoff+grace, or stale).
 
         Antes de borrarlas, archiva el último estado en vivo observado: es la
-        única oportunidad de dejar registro de cómo terminó el partido.
+        única oportunidad de dejar registro de cómo terminó el partido. Además
+        las manda a la papelera, para que el auto-import de la planilla no las
+        vuelva a cargar mientras la fila siga en el Excel.
         """
 
         expired = self.repository.pop_expired_live_watches()
@@ -538,6 +617,15 @@ class LiveWatchService:
             except Exception:
                 # Archivar es best-effort: no puede romper la purga ni el ciclo.
                 logger.exception("No pude archivar el resultado del watch id=%s", entry.id)
+            self._send_to_trash(entry, reason="expired")
+
+        # La papelera se vacía sola acá: este ciclo ya corre seguido y así no
+        # hace falta un job aparte.
+        try:
+            self.repository.purge_expired_live_watch_tombstones()
+        except Exception:
+            logger.exception("No pude vaciar la papelera vencida del live-watch")
+
         return len(expired)
 
     def _archive_expired_entry(self, entry: LiveWatchEntry) -> None:

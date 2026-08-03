@@ -5,9 +5,23 @@ import sqlite3
 from datetime import datetime, timezone, timedelta
 from typing import Any
 
-from core.models import LiveWatchEntry, LiveWatchSettings
+from core.models import LiveWatchEntry, LiveWatchSettings, LiveWatchTombstone
 from core.ports.live_watch import LiveWatchPort
 from adapters.storage.connection import open_connection
+
+def _row_to_tombstone(row: sqlite3.Row) -> LiveWatchTombstone:
+    return LiveWatchTombstone(
+        id=int(row["id"]),
+        chat_id=int(row["chat_id"]),
+        home=str(row["home"]),
+        away=str(row["away"]),
+        league_hint=row["league_hint"],
+        kickoff_at=row["kickoff_at"],
+        reason=str(row["reason"]),
+        created_at=str(row["created_at"]),
+        expires_at=str(row["expires_at"]),
+    )
+
 
 def _row_to_live_watch(row: sqlite3.Row) -> LiveWatchEntry:
     return LiveWatchEntry(
@@ -287,6 +301,69 @@ class SQLiteLiveWatchAdapter(LiveWatchPort):
         """
 
         return len(self.pop_expired_live_watches(*args, **kwargs))
+
+    # ----- papelera (tombstones) -----
+
+    def record_live_watch_tombstone(
+        self,
+        chat_id: int,
+        home: str,
+        away: str,
+        league_hint: str | None = None,
+        kickoff_at: str | None = None,
+        reason: str = "expired",
+        retention_days: float = 2.0,
+    ) -> LiveWatchTombstone:
+        now = datetime.now(timezone.utc)
+        expires_at = (now + timedelta(days=retention_days)).isoformat()
+        with open_connection() as conn:
+            cursor = conn.execute(
+                """
+                INSERT INTO live_watch_tombstones (
+                    chat_id, home, away, league_hint, kickoff_at, reason, created_at, expires_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    chat_id,
+                    home.strip(),
+                    away.strip(),
+                    league_hint,
+                    kickoff_at,
+                    reason,
+                    now.isoformat(),
+                    expires_at,
+                ),
+            )
+            row = conn.execute(
+                "SELECT * FROM live_watch_tombstones WHERE id = ?",
+                (cursor.lastrowid,),
+            ).fetchone()
+            return _row_to_tombstone(row)
+
+    def list_live_watch_tombstones(self, chat_id: int) -> list[LiveWatchTombstone]:
+        """Sólo las vigentes: una papelera vencida no debe frenar una re-carga."""
+
+        now_iso = datetime.now(timezone.utc).isoformat()
+        with open_connection() as conn:
+            rows = conn.execute(
+                """
+                SELECT * FROM live_watch_tombstones
+                WHERE chat_id = ? AND expires_at > ?
+                ORDER BY id
+                """,
+                (chat_id, now_iso),
+            ).fetchall()
+            return [_row_to_tombstone(row) for row in rows]
+
+    def purge_expired_live_watch_tombstones(self) -> int:
+        now_iso = datetime.now(timezone.utc).isoformat()
+        with open_connection() as conn:
+            cursor = conn.execute(
+                "DELETE FROM live_watch_tombstones WHERE expires_at <= ?",
+                (now_iso,),
+            )
+            return cursor.rowcount
 
     def get_live_watch_settings(
         self,
