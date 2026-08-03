@@ -345,7 +345,15 @@ async def _orchestrated_sheet_import(application: Application) -> None:
                     logger.warning("Sheet auto-import: %s", err)
                     lines = []
                 added = (
-                    service.add_fixture_lines(chat_id, lines, times_tz=sheet_timezone())
+                    service.add_fixture_lines(
+                        chat_id,
+                        lines,
+                        times_tz=sheet_timezone(),
+                        # La planilla conserva las filas de los partidos ya
+                        # jugados; sin la papelera el import los volvía a cargar
+                        # apenas cambiaba el hash del CSV.
+                        skip_recently_removed=True,
+                    )
                     if lines
                     else []
                 )

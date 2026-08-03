@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Protocol, Any
-from core.models import LiveWatchEntry, LiveWatchSettings
+from core.models import LiveWatchEntry, LiveWatchSettings, LiveWatchTombstone
 
 class LiveWatchPort(Protocol):
     """Port defining operations for registering and monitoring live fixture alerts."""
@@ -76,6 +76,27 @@ class LiveWatchPort(Protocol):
 
     def pop_expired_live_watches(self) -> list[LiveWatchEntry]:
         """Delete expired entries and return them, so callers can archive first."""
+        ...
+
+    def record_live_watch_tombstone(
+        self,
+        chat_id: int,
+        home: str,
+        away: str,
+        league_hint: str | None = None,
+        kickoff_at: str | None = None,
+        reason: str = "expired",
+        retention_days: float = 2.0,
+    ) -> LiveWatchTombstone:
+        """Send a fixture to the trash so it is not re-imported for a while."""
+        ...
+
+    def list_live_watch_tombstones(self, chat_id: int) -> list[LiveWatchTombstone]:
+        """List the chat's still-valid tombstones (expired ones are ignored)."""
+        ...
+
+    def purge_expired_live_watch_tombstones(self) -> int:
+        """Empty the trash of tombstones past their retention window."""
         ...
 
     def get_live_watch_settings(

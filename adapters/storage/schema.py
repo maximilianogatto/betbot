@@ -14,6 +14,7 @@ EXPECTED_TABLES = [
     "stats_league_subscriptions",
     "stats_payload_cache",
     "live_watch_entries",
+    "live_watch_tombstones",
     "live_watch_settings",
     "peak_digest_subscriptions",
     "chat_settings",
@@ -236,6 +237,24 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
             UNIQUE(chat_id, chat_local_id)
         );
         CREATE INDEX IF NOT EXISTS idx_live_watch_chat_status ON live_watch_entries(chat_id, status);
+
+        -- Papelera: partidos que salieron de la vigilancia (se jugaron o se
+        -- borraron a mano). Existe para que el auto-import de la planilla no
+        -- vuelva a cargar un partido que ya pasó y que sigue en el Excel: la
+        -- entrada original ya no está, así que sin esta tabla no hay contra qué
+        -- deduplicar. Se limpia sola pasado `expires_at` (2 días).
+        CREATE TABLE IF NOT EXISTS live_watch_tombstones (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            chat_id INTEGER NOT NULL,
+            home TEXT NOT NULL, away TEXT NOT NULL,
+            league_hint TEXT,
+            kickoff_at TEXT,
+            reason TEXT NOT NULL,                       -- expired | removed
+            created_at TEXT NOT NULL,
+            expires_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_live_watch_tombstones_chat
+        ON live_watch_tombstones(chat_id, expires_at);
 
 
         CREATE TABLE IF NOT EXISTS live_watch_settings (
