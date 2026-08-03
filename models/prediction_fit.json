@@ -1,0 +1,1739 @@
+{
+ "model_version": "dc-perleague-rho0-v1",
+ "created_at": "2026-08-03T22:16:57.437822+00:00",
+ "trained_through": "2026-07-20",
+ "config": {
+  "halflife_days": 120.0,
+  "ridge_sigma": 0.75,
+  "fit_rho": false
+ },
+ "note": "Dixon-Coles por liga (\u03c1=0). S\u00f3lo n\u00f3rdicas; fuera de estas ligas la l\u00ednea es 'no disponible'. \u03bb_h=exp(\u03bc+local\u00eda+atk_h\u2212def_a), \u03bb_a=exp(\u03bc+atk_a\u2212def_h).",
+ "leagues": {
+  "M1": {
+   "mu": 0.40601,
+   "home_adv": 0.188216,
+   "rho": 0.0,
+   "n_matches": 252,
+   "teams": {
+    "60494": {
+     "atk": 0.163873,
+     "def": 0.27587,
+     "name": "Mikkelin Palloilijat"
+    },
+    "60521": {
+     "atk": -0.229171,
+     "def": 0.108369,
+     "name": "FC Jazz Juniorit"
+    },
+    "60536": {
+     "atk": -0.354901,
+     "def": -0.477523,
+     "name": "KPV Juniorit"
+    },
+    "60690": {
+     "atk": 0.201907,
+     "def": 0.011143,
+     "name": "Salon Palloilijat"
+    },
+    "60702": {
+     "atk": -0.02408,
+     "def": -0.341875,
+     "name": "Atlantis FC Edustus"
+    },
+    "60704": {
+     "atk": -0.274146,
+     "def": 0.048809,
+     "name": "Tampereen Pallo-Veikot"
+    },
+    "60860": {
+     "atk": 0.064496,
+     "def": -0.40377,
+     "name": "Football Club International Turku"
+    },
+    "60929": {
+     "atk": 0.067902,
+     "def": 0.072401,
+     "name": "Pallokerho Keski-Uusimaa"
+    },
+    "60973": {
+     "atk": 0.075684,
+     "def": 0.258507,
+     "name": "Rovaniemen Palloseura"
+    },
+    "62296": {
+     "atk": -0.171671,
+     "def": 0.00242,
+     "name": "Espoon Palloseuran Jalkapallo"
+    },
+    "63440": {
+     "atk": 0.074326,
+     "def": 0.142965,
+     "name": "Vantaan Jalkapalloseura"
+    },
+    "106331": {
+     "atk": 0.098096,
+     "def": -0.307228,
+     "name": "Kuopion Palloseura"
+    },
+    "106449": {
+     "atk": 0.081183,
+     "def": 0.142392,
+     "name": "Oulun Luistinseura"
+    },
+    "106945": {
+     "atk": -0.018346,
+     "def": 0.597328,
+     "name": "Jalkapalloseura Tampere United"
+    },
+    "144858": {
+     "atk": 0.244522,
+     "def": -0.129403,
+     "name": "JJK Jyv\u00e4skyl\u00e4"
+    }
+   }
+  },
+  "M1L": {
+   "mu": 0.220304,
+   "home_adv": 0.131592,
+   "rho": 0.0,
+   "n_matches": 209,
+   "teams": {
+    "50775": {
+     "atk": 0.133593,
+     "def": 0.597459,
+     "name": "Pallokerho-35"
+    },
+    "60487": {
+     "atk": 0.02301,
+     "def": -0.301021,
+     "name": "K\u00e4pyl\u00e4n Pallo"
+    },
+    "60494": {
+     "atk": -0.219272,
+     "def": 0.012596,
+     "name": "Mikkelin Palloilijat"
+    },
+    "60495": {
+     "atk": 0.080999,
+     "def": -0.32344,
+     "name": "Eken\u00e4s Idrottsf\u00f6rening"
+    },
+    "60561": {
+     "atk": 0.191138,
+     "def": 0.045945,
+     "name": "Football Club Haka"
+    },
+    "60676": {
+     "atk": -0.219866,
+     "def": -0.149807,
+     "name": "J\u00e4rvenp\u00e4\u00e4n Palloseura"
+    },
+    "60690": {
+     "atk": -0.293083,
+     "def": -0.24872,
+     "name": "Salon Palloilijat"
+    },
+    "60692": {
+     "atk": -0.14576,
+     "def": -0.040835,
+     "name": "Helsingin Jalkapalloklubi"
+    },
+    "60969": {
+     "atk": 0.279365,
+     "def": 0.091665,
+     "name": "FC Lahti"
+    },
+    "60971": {
+     "atk": 0.393326,
+     "def": -0.194867,
+     "name": "TPS Juniorijalkapallo"
+    },
+    "60972": {
+     "atk": 0.229709,
+     "def": 0.215077,
+     "name": "FC KTP Kotka"
+    },
+    "129811": {
+     "atk": 0.058597,
+     "def": 0.367108,
+     "name": "Jippo"
+    },
+    "168874": {
+     "atk": -0.512717,
+     "def": -0.072471,
+     "name": "SJK Akatemia"
+    }
+   }
+  },
+  "M2": {
+   "mu": 0.492571,
+   "home_adv": 0.277966,
+   "rho": 0.0,
+   "n_matches": 522,
+   "teams": {
+    "48924": {
+     "atk": 0.072422,
+     "def": 0.166217,
+     "name": "Pallo-Pojat Juniorit"
+    },
+    "49735": {
+     "atk": 0.018813,
+     "def": 0.424711,
+     "name": "HIFK Soccer"
+    },
+    "49949": {
+     "atk": 0.070942,
+     "def": 0.131629,
+     "name": "Helsingin Palloseura"
+    },
+    "49973": {
+     "atk": -0.223112,
+     "def": 0.035769,
+     "name": "Puistolan Urheilijat"
+    },
+    "60492": {
+     "atk": 0.253942,
+     "def": 0.100381,
+     "name": "Gamlakarleby Bollklubb"
+    },
+    "60496": {
+     "atk": -0.060913,
+     "def": -0.147892,
+     "name": "FC Vaajakoski"
+    },
+    "60537": {
+     "atk": -0.569692,
+     "def": -0.294154,
+     "name": "Nurmij\u00e4rven Jalkapalloseura"
+    },
+    "60549": {
+     "atk": -0.20548,
+     "def": 0.018773,
+     "name": "GrIFK - Fotboll"
+    },
+    "60554": {
+     "atk": 0.221749,
+     "def": 0.221907,
+     "name": "Football Club Kiffen 08"
+    },
+    "60647": {
+     "atk": -0.150813,
+     "def": -0.22178,
+     "name": "Idrottsf\u00f6reningen Kamraterna Vasa"
+    },
+    "60666": {
+     "atk": -0.159504,
+     "def": -0.004776,
+     "name": "Tornion Pallo-47"
+    },
+    "60686": {
+     "atk": 0.369883,
+     "def": -0.182663,
+     "name": "Idrottsf\u00f6reningen Kraft"
+    },
+    "60696": {
+     "atk": -0.07112,
+     "def": -0.230813,
+     "name": "Musan Salama"
+    },
+    "60702": {
+     "atk": 0.530419,
+     "def": -0.274836,
+     "name": "Atlantis FC Edustus"
+    },
+    "60704": {
+     "atk": 0.302341,
+     "def": 0.24318,
+     "name": "Tampereen Pallo-Veikot"
+    },
+    "60996": {
+     "atk": 0.263502,
+     "def": 0.79177,
+     "name": "Idrottsf\u00f6reningen Kamraterna i \u00c5bo"
+    },
+    "61004": {
+     "atk": -0.170772,
+     "def": -0.251175,
+     "name": "Jalkapalloseura Hercules"
+    },
+    "61010": {
+     "atk": -0.172768,
+     "def": 0.297214,
+     "name": "Pepo Lappeenranta"
+    },
+    "61483": {
+     "atk": -0.630028,
+     "def": -0.603919,
+     "name": "Haminan Pallo-Kissat Edustus"
+    },
+    "61562": {
+     "atk": 0.174064,
+     "def": -0.046757,
+     "name": "Lahden Reipas"
+    },
+    "61723": {
+     "atk": -0.461945,
+     "def": -0.380289,
+     "name": "Union Plaani"
+    },
+    "61766": {
+     "atk": -0.098028,
+     "def": 0.170013,
+     "name": "Jakobstads Bollklubb"
+    },
+    "62296": {
+     "atk": 0.051406,
+     "def": 0.184259,
+     "name": "Espoon Palloseuran Jalkapallo"
+    },
+    "62416": {
+     "atk": 0.604913,
+     "def": 0.7119,
+     "name": "FC Honka"
+    },
+    "63411": {
+     "atk": -0.139625,
+     "def": -0.054085,
+     "name": "Esbo Bollklubb"
+    },
+    "63440": {
+     "atk": 0.418847,
+     "def": 0.355742,
+     "name": "Vantaan Jalkapalloseura"
+    },
+    "106602": {
+     "atk": -0.365241,
+     "def": -0.797049,
+     "name": "Jyv\u00e4skyl\u00e4n Seudun Palloseura"
+    },
+    "106905": {
+     "atk": 0.553391,
+     "def": 0.217533,
+     "name": "Ilves"
+    },
+    "107307": {
+     "atk": -0.043924,
+     "def": 0.229456,
+     "name": "Pallo-Iirot"
+    },
+    "108059": {
+     "atk": 0.218608,
+     "def": -0.069575,
+     "name": "Oulunsalon Pallo"
+    },
+    "129934": {
+     "atk": -0.345043,
+     "def": -0.185654,
+     "name": "MYPA"
+    },
+    "131834": {
+     "atk": -0.116301,
+     "def": -0.078585,
+     "name": "SJK Akatemia"
+    },
+    "144364": {
+     "atk": 0.016077,
+     "def": -0.323181,
+     "name": "Fotbollsf\u00f6reningen JARO Jalkapalloseura"
+    },
+    "169909": {
+     "atk": 0.389206,
+     "def": 0.073773,
+     "name": "Vaasan Palloseura"
+    },
+    "35117343": {
+     "atk": 0.095151,
+     "def": 0.178744,
+     "name": "\u00c4\u00e4nekosken Huima"
+    },
+    "35121579": {
+     "atk": -0.065021,
+     "def": 0.425113,
+     "name": "H\u00e4meenlinnan Jalkapalloseura"
+    },
+    "35135803": {
+     "atk": -0.575115,
+     "def": -0.82869,
+     "name": "Atlantis Football Club"
+    }
+   }
+  },
+  "NL": {
+   "mu": 0.340291,
+   "home_adv": 0.209914,
+   "rho": 0.0,
+   "n_matches": 138,
+   "teams": {
+    "60532": {
+     "atk": 0.464947,
+     "def": 0.185024,
+     "name": "\u00c5land United"
+    },
+    "60671": {
+     "atk": -0.258922,
+     "def": -0.273483,
+     "name": "PK-35 Vantaa"
+    },
+    "60682": {
+     "atk": 0.559143,
+     "def": 0.796502,
+     "name": "Helsingin Jalkapalloklubi"
+    },
+    "60691": {
+     "atk": -0.803219,
+     "def": -0.396294,
+     "name": "Idrottsf\u00f6reningen Kamraterna Vasa"
+    },
+    "60776": {
+     "atk": 0.187638,
+     "def": -0.012353,
+     "name": "Ilves"
+    },
+    "60781": {
+     "atk": -0.008348,
+     "def": 0.321633,
+     "name": "Helsingin Palloseura"
+    },
+    "60884": {
+     "atk": -0.238073,
+     "def": -0.485124,
+     "name": "Jyv\u00e4skyl\u00e4n Pallokerho"
+    },
+    "143879": {
+     "atk": -0.325703,
+     "def": -0.050706,
+     "name": "Pallokerho-35"
+    },
+    "157420": {
+     "atk": 0.392312,
+     "def": 0.09685,
+     "name": "Kuopion Palloseura"
+    },
+    "35209545": {
+     "atk": 0.030229,
+     "def": -0.181844,
+     "name": "IF Gnistan"
+    }
+   }
+  },
+  "NO-1DK": {
+   "mu": 0.389623,
+   "home_adv": 0.026177,
+   "rho": 0.0,
+   "n_matches": 196,
+   "teams": {
+    "aafk-fortuna": {
+     "atk": 0.500201,
+     "def": 0.572615,
+     "name": "AaFK Fortuna"
+    },
+    "arna-bj-rnar": {
+     "atk": 0.325775,
+     "def": 0.209189,
+     "name": "Arna-Bj\u00f8rnar"
+    },
+    "bryne": {
+     "atk": -0.588424,
+     "def": 0.18388,
+     "name": "Bryne"
+    },
+    "frigg": {
+     "atk": -0.887932,
+     "def": -0.494221,
+     "name": "Frigg"
+    },
+    "fyllingsdalen": {
+     "atk": -0.295963,
+     "def": -0.307182,
+     "name": "Fyllingsdalen"
+    },
+    "grei": {
+     "atk": 0.168798,
+     "def": -0.408418,
+     "name": "Grei"
+    },
+    "hamkam": {
+     "atk": -0.383621,
+     "def": -0.167323,
+     "name": "HamKam"
+    },
+    "haugesund": {
+     "atk": 0.4887,
+     "def": 0.23388,
+     "name": "Haugesund"
+    },
+    "ik-start-kvinner": {
+     "atk": 0.145942,
+     "def": 0.28854,
+     "name": "IK Start Kvinner"
+    },
+    "kil-hemne": {
+     "atk": -0.257876,
+     "def": -0.110202,
+     "name": "KIL/Hemne"
+    },
+    "klepp": {
+     "atk": -0.234425,
+     "def": -0.861675,
+     "name": "Klepp"
+    },
+    "kolbotn-il-elite": {
+     "atk": -0.113921,
+     "def": -0.083112,
+     "name": "Kolbotn IL Elite"
+    },
+    "molde": {
+     "atk": 0.456733,
+     "def": 0.126908,
+     "name": "Molde"
+    },
+    "odds-ballklubb": {
+     "atk": -0.118375,
+     "def": 0.074651,
+     "name": "Odds Ballklubb"
+    },
+    "sane": {
+     "atk": 0.119381,
+     "def": 0.54572,
+     "name": "\u00c5sane"
+    },
+    "troms-il": {
+     "atk": 0.255875,
+     "def": 0.174789,
+     "name": "Troms\u00f8 IL"
+    },
+    "viking": {
+     "atk": 0.418499,
+     "def": 0.02213,
+     "name": "Viking"
+    }
+   }
+  },
+  "NO-ELI": {
+   "mu": 0.172041,
+   "home_adv": 0.386444,
+   "rho": 0.0,
+   "n_matches": 345,
+   "teams": {
+    "aalesund": {
+     "atk": 0.003336,
+     "def": -0.349954,
+     "name": "Aalesund"
+    },
+    "bod-glimt": {
+     "atk": 0.528521,
+     "def": 0.491371,
+     "name": "Bod\u00f8/Glimt"
+    },
+    "brann": {
+     "atk": 0.292635,
+     "def": 0.030323,
+     "name": "Brann"
+    },
+    "bryne": {
+     "atk": -0.127957,
+     "def": -0.175313,
+     "name": "Bryne"
+    },
+    "fredrikstad": {
+     "atk": -0.213141,
+     "def": 0.058394,
+     "name": "Fredrikstad"
+    },
+    "hamkam": {
+     "atk": 0.093586,
+     "def": -0.164239,
+     "name": "HamKam"
+    },
+    "haugesund": {
+     "atk": -0.345252,
+     "def": -0.494646,
+     "name": "Haugesund"
+    },
+    "kfum": {
+     "atk": -0.240801,
+     "def": 0.046454,
+     "name": "KFUM"
+    },
+    "kristiansund": {
+     "atk": -0.40181,
+     "def": -0.074977,
+     "name": "Kristiansund"
+    },
+    "lillestr-m": {
+     "atk": 0.109091,
+     "def": 0.37168,
+     "name": "Lillestr\u00f8m"
+    },
+    "molde": {
+     "atk": 0.079751,
+     "def": 0.141865,
+     "name": "Molde"
+    },
+    "rosenborg": {
+     "atk": -0.009713,
+     "def": 0.112345,
+     "name": "Rosenborg"
+    },
+    "sandefjord-fotball": {
+     "atk": -0.078027,
+     "def": 0.14494,
+     "name": "Sandefjord Fotball"
+    },
+    "sarpsborg-08": {
+     "atk": -0.095482,
+     "def": 0.131592,
+     "name": "Sarpsborg 08"
+    },
+    "start": {
+     "atk": -0.220339,
+     "def": -0.27808,
+     "name": "Start"
+    },
+    "str-msgodset": {
+     "atk": -0.139089,
+     "def": -0.444737,
+     "name": "Str\u00f8msgodset"
+    },
+    "troms": {
+     "atk": 0.144715,
+     "def": 0.326978,
+     "name": "Troms\u00f8"
+    },
+    "v-lerenga": {
+     "atk": 0.100833,
+     "def": -0.167289,
+     "name": "V\u00e5lerenga"
+    },
+    "viking": {
+     "atk": 0.518451,
+     "def": 0.293792,
+     "name": "Viking"
+    }
+   }
+  },
+  "NO-OBOS": {
+   "mu": 0.38269,
+   "home_adv": 0.268684,
+   "rho": 0.0,
+   "n_matches": 352,
+   "teams": {
+    "aalesund": {
+     "atk": 0.065305,
+     "def": 0.327105,
+     "name": "Aalesund"
+    },
+    "bryne": {
+     "atk": -0.259096,
+     "def": 0.085731,
+     "name": "Bryne"
+    },
+    "egersund": {
+     "atk": -0.040279,
+     "def": 0.046239,
+     "name": "Egersund"
+    },
+    "h-dd": {
+     "atk": -0.16688,
+     "def": 0.12892,
+     "name": "H\u00f8dd"
+    },
+    "haugesund": {
+     "atk": 0.524666,
+     "def": -0.098811,
+     "name": "Haugesund"
+    },
+    "kongsvinger": {
+     "atk": 0.282799,
+     "def": 0.12097,
+     "name": "Kongsvinger"
+    },
+    "lillestr-m": {
+     "atk": 0.492613,
+     "def": 0.609251,
+     "name": "Lillestr\u00f8m"
+    },
+    "lyn": {
+     "atk": -0.217541,
+     "def": -0.140274,
+     "name": "Lyn"
+    },
+    "mj-ndalen": {
+     "atk": -0.246033,
+     "def": -0.260728,
+     "name": "Mj\u00f8ndalen"
+    },
+    "moss": {
+     "atk": -0.094058,
+     "def": -0.242438,
+     "name": "Moss"
+    },
+    "odd": {
+     "atk": -0.081523,
+     "def": 0.117514,
+     "name": "Odd"
+    },
+    "ranheim-tf": {
+     "atk": 0.207019,
+     "def": -0.263261,
+     "name": "Ranheim TF"
+    },
+    "raufoss": {
+     "atk": -0.30401,
+     "def": -0.174621,
+     "name": "Raufoss"
+    },
+    "sandnes-ulf": {
+     "atk": -0.108635,
+     "def": 0.185234,
+     "name": "Sandnes Ulf"
+    },
+    "sane": {
+     "atk": -0.213737,
+     "def": -0.131004,
+     "name": "\u00c5sane"
+    },
+    "skeid": {
+     "atk": -0.261993,
+     "def": -0.252347,
+     "name": "Skeid"
+    },
+    "sogndal": {
+     "atk": 0.030408,
+     "def": -0.28488,
+     "name": "Sogndal"
+    },
+    "stab-k": {
+     "atk": 0.146282,
+     "def": 0.243431,
+     "name": "Stab\u00e6k"
+    },
+    "start": {
+     "atk": 0.064412,
+     "def": 0.284602,
+     "name": "Start"
+    },
+    "str-mmen": {
+     "atk": -0.309282,
+     "def": -0.314065,
+     "name": "Str\u00f8mmen"
+    },
+    "str-msgodset": {
+     "atk": 0.491309,
+     "def": 0.016212,
+     "name": "Str\u00f8msgodset"
+    }
+   }
+  },
+  "NO-PN1": {
+   "mu": 0.295758,
+   "home_adv": 0.228214,
+   "rho": 0.0,
+   "n_matches": 266,
+   "teams": {
+    "arendal": {
+     "atk": 0.064291,
+     "def": 0.029241,
+     "name": "Arendal"
+    },
+    "bjarg": {
+     "atk": 0.17162,
+     "def": 0.000875,
+     "name": "Bjarg"
+    },
+    "brann-2": {
+     "atk": -0.150815,
+     "def": -0.291622,
+     "name": "Brann  2"
+    },
+    "brattv-g": {
+     "atk": 0.258376,
+     "def": 0.380031,
+     "name": "Brattv\u00e5g"
+    },
+    "fk-eik-t-nsberg-871": {
+     "atk": -0.453108,
+     "def": -0.139566,
+     "name": "FK Eik T\u00f8nsberg 871"
+    },
+    "fl-y-flekker-y": {
+     "atk": -0.288709,
+     "def": -0.433279,
+     "name": "Fl\u00f8y-Flekker\u00f8y"
+    },
+    "jerv": {
+     "atk": 0.280853,
+     "def": 0.329702,
+     "name": "Jerv"
+    },
+    "kvik-halden": {
+     "atk": 0.237442,
+     "def": 0.235534,
+     "name": "Kvik Halden"
+    },
+    "lysekloster": {
+     "atk": -0.106919,
+     "def": -0.144129,
+     "name": "Lysekloster"
+    },
+    "mj-ndalen": {
+     "atk": 0.146741,
+     "def": 0.186727,
+     "name": "Mj\u00f8ndalen"
+    },
+    "notodden": {
+     "atk": 0.01626,
+     "def": 0.2168,
+     "name": "Notodden"
+    },
+    "pors": {
+     "atk": -0.109808,
+     "def": -0.042114,
+     "name": "Pors"
+    },
+    "sandnes-ulf": {
+     "atk": 0.475243,
+     "def": 0.154452,
+     "name": "Sandnes Ulf"
+    },
+    "sandviken": {
+     "atk": -0.2804,
+     "def": -0.130441,
+     "name": "Sandviken"
+    },
+    "sotra": {
+     "atk": 0.177714,
+     "def": 0.276166,
+     "name": "Sotra"
+    },
+    "tr-ff": {
+     "atk": 0.133747,
+     "def": -0.147193,
+     "name": "Tr\u00e6ff"
+    },
+    "vard-haugesund": {
+     "atk": -0.101981,
+     "def": -0.053119,
+     "name": "Vard Haugesund"
+    },
+    "vidar": {
+     "atk": -0.470187,
+     "def": -0.431018,
+     "name": "Vidar"
+    }
+   }
+  },
+  "NO-PN2": {
+   "mu": 0.42575,
+   "home_adv": 0.221156,
+   "rho": 0.0,
+   "n_matches": 265,
+   "teams": {
+    "alta": {
+     "atk": 0.113907,
+     "def": -0.367745,
+     "name": "Alta"
+    },
+    "asker": {
+     "atk": -0.271801,
+     "def": -0.325295,
+     "name": "Asker"
+    },
+    "eidsvold-tf": {
+     "atk": 0.2073,
+     "def": 0.271881,
+     "name": "Eidsvold TF"
+    },
+    "follo": {
+     "atk": -0.377259,
+     "def": -0.142158,
+     "name": "Follo"
+    },
+    "grorud": {
+     "atk": -0.01832,
+     "def": 0.384984,
+     "name": "Grorud"
+    },
+    "h-nefoss-bk": {
+     "atk": 0.252066,
+     "def": 0.079761,
+     "name": "H\u00f8nefoss BK"
+    },
+    "junkeren": {
+     "atk": -0.231044,
+     "def": -0.026429,
+     "name": "Junkeren"
+    },
+    "kjels-s": {
+     "atk": 0.210737,
+     "def": 0.105645,
+     "name": "Kjels\u00e5s"
+    },
+    "l-renskog": {
+     "atk": 0.170923,
+     "def": 0.560037,
+     "name": "L\u00f8renskog"
+    },
+    "levanger": {
+     "atk": 0.076414,
+     "def": 0.296983,
+     "name": "Levanger"
+    },
+    "rana-fk": {
+     "atk": -0.060265,
+     "def": 0.013795,
+     "name": "Rana FK"
+    },
+    "skeid": {
+     "atk": 0.014923,
+     "def": 0.072866,
+     "name": "Skeid"
+    },
+    "stj-rdals-blink": {
+     "atk": -0.083983,
+     "def": -0.04997,
+     "name": "Stj\u00f8rdals-Blink"
+    },
+    "str-mmen": {
+     "atk": 0.321908,
+     "def": 0.451546,
+     "name": "Str\u00f8mmen"
+    },
+    "strindheim-tf": {
+     "atk": -0.107615,
+     "def": -0.257493,
+     "name": "Strindheim TF"
+    },
+    "tromsdalen": {
+     "atk": 0.02256,
+     "def": -0.124496,
+     "name": "Tromsdalen"
+    },
+    "trygg-lade": {
+     "atk": -0.242337,
+     "def": -0.475146,
+     "name": "Trygg/Lade"
+    },
+    "ullensaker-kisa": {
+     "atk": 0.000905,
+     "def": -0.469517,
+     "name": "Ullensaker/Kisa"
+    }
+   }
+  },
+  "NO-TS": {
+   "mu": 0.350025,
+   "home_adv": 0.065282,
+   "rho": 0.0,
+   "n_matches": 203,
+   "teams": {
+    "aafk-kvinner": {
+     "atk": 0.434232,
+     "def": 0.28586,
+     "name": "AaFK Kvinner"
+    },
+    "bod-glimt": {
+     "atk": -0.600767,
+     "def": -0.818378,
+     "name": "Bod\u00f8/Glimt"
+    },
+    "h-nefoss-bk": {
+     "atk": -0.428233,
+     "def": -0.246334,
+     "name": "H\u00f8nefoss BK"
+    },
+    "haugesund": {
+     "atk": -0.029417,
+     "def": -0.381789,
+     "name": "Haugesund"
+    },
+    "kolbotn-il-elite": {
+     "atk": -0.21392,
+     "def": -0.418495,
+     "name": "Kolbotn IL Elite"
+    },
+    "lsk-kvinner": {
+     "atk": 0.041427,
+     "def": -0.054709,
+     "name": "LSK Kvinner"
+    },
+    "lyn": {
+     "atk": 0.019721,
+     "def": 0.05765,
+     "name": "Lyn"
+    },
+    "molde": {
+     "atk": 0.211254,
+     "def": -0.170945,
+     "name": "Molde"
+    },
+    "r-a-fotball-elite": {
+     "atk": -0.527503,
+     "def": -0.083882,
+     "name": "R\u00f8a Fotball Elite"
+    },
+    "rosenborg-bk": {
+     "atk": 0.209387,
+     "def": 0.27406,
+     "name": "Rosenborg BK"
+    },
+    "sk-brann": {
+     "atk": 0.613816,
+     "def": 1.112063,
+     "name": "SK Brann"
+    },
+    "stab-k": {
+     "atk": -0.115329,
+     "def": 0.332006,
+     "name": "Stab\u00e6k"
+    },
+    "v-lerenga-fotball": {
+     "atk": 0.385274,
+     "def": 0.112777,
+     "name": "V\u00e5lerenga Fotball"
+    }
+   }
+  },
+  "SW-AL": {
+   "mu": 0.261328,
+   "home_adv": 0.223225,
+   "rho": 0.0,
+   "n_matches": 345,
+   "teams": {
+    "aik": {
+     "atk": 0.009415,
+     "def": 0.171976,
+     "name": "AIK"
+    },
+    "bk-h-cken": {
+     "atk": 0.260172,
+     "def": -0.110417,
+     "name": "BK H\u00e4cken"
+    },
+    "degerfors-if": {
+     "atk": -0.378315,
+     "def": -0.100651,
+     "name": "Degerfors IF"
+    },
+    "djurg-rden": {
+     "atk": 0.323391,
+     "def": 0.221534,
+     "name": "Djurg\u00e5rden"
+    },
+    "gais": {
+     "atk": -0.069582,
+     "def": 0.422704,
+     "name": "GAIS"
+    },
+    "halmstad": {
+     "atk": -0.570653,
+     "def": -0.218667,
+     "name": "Halmstad"
+    },
+    "hammarby": {
+     "atk": 0.380215,
+     "def": 0.372709,
+     "name": "Hammarby"
+    },
+    "if-brommapojkarna": {
+     "atk": -0.069666,
+     "def": -0.042229,
+     "name": "IF Brommapojkarna"
+    },
+    "if-elfsborg": {
+     "atk": -0.125806,
+     "def": 0.045148,
+     "name": "IF Elfsborg"
+    },
+    "ifk-g-teborg": {
+     "atk": -0.062701,
+     "def": -0.177584,
+     "name": "IFK G\u00f6teborg"
+    },
+    "ifk-norrk-ping-fk": {
+     "atk": -0.137218,
+     "def": -0.141571,
+     "name": "IFK Norrk\u00f6ping FK"
+    },
+    "ifk-v-rnamo": {
+     "atk": -0.056669,
+     "def": -0.388303,
+     "name": "IFK V\u00e4rnamo"
+    },
+    "ik-sirius-fk": {
+     "atk": 0.571154,
+     "def": 0.075566,
+     "name": "IK Sirius FK"
+    },
+    "kalmar-ff": {
+     "atk": -0.145137,
+     "def": 0.069318,
+     "name": "Kalmar FF"
+    },
+    "malm-ff": {
+     "atk": 0.29386,
+     "def": 0.001855,
+     "name": "Malm\u00f6 FF"
+    },
+    "mj-llby-aif": {
+     "atk": 0.056111,
+     "def": 0.324947,
+     "name": "Mj\u00e4llby AIF"
+    },
+    "rgryte-is-fotboll": {
+     "atk": -0.223997,
+     "def": -0.364827,
+     "name": "\u00d6rgryte IS Fotboll"
+    },
+    "sters-if": {
+     "atk": -0.236954,
+     "def": -0.091797,
+     "name": "\u00d6sters IF"
+    },
+    "v-ster-s-sk-fk": {
+     "atk": 0.182599,
+     "def": -0.069312,
+     "name": "V\u00e4ster\u00e5s SK FK"
+    }
+   }
+  },
+  "SW-DA": {
+   "mu": 0.164059,
+   "home_adv": 0.266677,
+   "rho": 0.0,
+   "n_matches": 259,
+   "teams": {
+    "aik": {
+     "atk": 0.229973,
+     "def": -0.042282,
+     "name": "AIK"
+    },
+    "alings-s-if-ff": {
+     "atk": -0.327761,
+     "def": -0.627775,
+     "name": "Alings\u00e5s IF FF"
+    },
+    "bk-h-cken-ff": {
+     "atk": 0.572853,
+     "def": 0.559347,
+     "name": "BK H\u00e4cken FF"
+    },
+    "djurg-rden": {
+     "atk": -0.243348,
+     "def": -0.089925,
+     "name": "Djurg\u00e5rden"
+    },
+    "eskilstuna-united-dff": {
+     "atk": -0.41669,
+     "def": 0.400166,
+     "name": "Eskilstuna United DFF"
+    },
+    "fc-roseng-rd": {
+     "atk": -0.175245,
+     "def": -0.099959,
+     "name": "FC Roseng\u00e5rd"
+    },
+    "hammarby": {
+     "atk": 0.445282,
+     "def": 0.708778,
+     "name": "Hammarby"
+    },
+    "if-brommapojkarna": {
+     "atk": 0.097255,
+     "def": -0.363988,
+     "name": "IF Brommapojkarna"
+    },
+    "ifk-norrk-ping-fk": {
+     "atk": -0.220752,
+     "def": 0.183243,
+     "name": "IFK Norrk\u00f6ping FK"
+    },
+    "ik-uppsala-fotboll": {
+     "atk": -0.065458,
+     "def": -0.320684,
+     "name": "IK Uppsala Fotboll"
+    },
+    "kristianstads-dff": {
+     "atk": 0.157437,
+     "def": -0.268677,
+     "name": "Kristianstads DFF"
+    },
+    "link-ping-fc": {
+     "atk": -0.134525,
+     "def": -0.392782,
+     "name": "Link\u00f6ping FC"
+    },
+    "malm-ff": {
+     "atk": 0.392571,
+     "def": 0.481963,
+     "name": "Malm\u00f6 FF"
+    },
+    "pite-if-dff": {
+     "atk": -0.219107,
+     "def": 0.021685,
+     "name": "Pite\u00e5 IF DFF"
+    },
+    "roseng-rd": {
+     "atk": 0.055385,
+     "def": -0.006676,
+     "name": "Roseng\u00e5rd"
+    },
+    "v-xj": {
+     "atk": 0.020849,
+     "def": -0.194787,
+     "name": "V\u00e4xj\u00f6"
+    },
+    "vittsj-gik": {
+     "atk": -0.168803,
+     "def": 0.052307,
+     "name": "Vittsj\u00f6 GIK"
+    }
+   }
+  },
+  "SW-EE": {
+   "mu": 0.254721,
+   "home_adv": 0.08236,
+   "rho": 0.0,
+   "n_matches": 252,
+   "teams": {
+    "alings-s-if-ff": {
+     "atk": -0.686489,
+     "def": 0.121264,
+     "name": "Alings\u00e5s IF FF"
+    },
+    "bk-h-cken": {
+     "atk": -0.390902,
+     "def": -0.345881,
+     "name": "BK H\u00e4cken"
+    },
+    "bollstan-s-sk": {
+     "atk": -0.239305,
+     "def": -0.354555,
+     "name": "Bollstan\u00e4s SK"
+    },
+    "enskede-ik": {
+     "atk": 0.326886,
+     "def": 0.012457,
+     "name": "Enskede IK"
+    },
+    "eskilstuna-united-dff": {
+     "atk": 0.480143,
+     "def": 0.518198,
+     "name": "Eskilstuna United DFF"
+    },
+    "gamla-upsala-sk": {
+     "atk": -0.172423,
+     "def": -0.3429,
+     "name": "Gamla Upsala SK"
+    },
+    "husqvarna-ff": {
+     "atk": -0.006823,
+     "def": -0.252226,
+     "name": "Husqvarna FF"
+    },
+    "if-elfsborg": {
+     "atk": 0.05308,
+     "def": 0.726191,
+     "name": "IF Elfsborg"
+    },
+    "ifk-g-teborg": {
+     "atk": 0.470569,
+     "def": 0.301897,
+     "name": "IFK G\u00f6teborg"
+    },
+    "ik-uppsala-fotboll": {
+     "atk": 0.392076,
+     "def": 0.30404,
+     "name": "IK Uppsala Fotboll"
+    },
+    "jitex-bk": {
+     "atk": -0.003262,
+     "def": -0.081139,
+     "name": "Jitex BK"
+    },
+    "kif-rebro-dff": {
+     "atk": 0.555124,
+     "def": 0.052374,
+     "name": "KIF \u00d6rebro DFF"
+    },
+    "link-ping-fc": {
+     "atk": 0.392064,
+     "def": 0.513526,
+     "name": "Link\u00f6ping FC"
+    },
+    "mallbackens-if-sunne": {
+     "atk": -0.387714,
+     "def": -0.44682,
+     "name": "Mallbackens IF Sunne"
+    },
+    "rebro-sk-fk": {
+     "atk": -0.164357,
+     "def": 0.164361,
+     "name": "\u00d6rebro SK FK"
+    },
+    "sandvikens-if": {
+     "atk": -0.544162,
+     "def": -0.387138,
+     "name": "Sandvikens IF"
+    },
+    "sunnan-sk": {
+     "atk": -0.163917,
+     "def": -0.303794,
+     "name": "Sunnan\u00e5 SK"
+    },
+    "team-tg-ff": {
+     "atk": -0.307788,
+     "def": -0.361266,
+     "name": "Team TG FF"
+    },
+    "trelleborgs-ff": {
+     "atk": 0.241038,
+     "def": 0.044156,
+     "name": "Trelleborgs FF"
+    },
+    "ume-ik-ff": {
+     "atk": 0.157054,
+     "def": 0.118503,
+     "name": "Ume\u00e5 IK FF"
+    }
+   }
+  },
+  "SW-EN": {
+   "mu": 0.479742,
+   "home_adv": -0.062898,
+   "rho": 0.0,
+   "n_matches": 352,
+   "teams": {
+    "assyriska-ff": {
+     "atk": -0.017053,
+     "def": -0.141596,
+     "name": "Assyriska FF"
+    },
+    "athletic-eskilstuna": {
+     "atk": 0.090174,
+     "def": -0.118978,
+     "name": "Athletic Eskilstuna"
+    },
+    "enk-pings-sk-fk": {
+     "atk": -0.008991,
+     "def": -0.031001,
+     "name": "Enk\u00f6pings SK FK"
+    },
+    "fbk-karlstad": {
+     "atk": 0.026425,
+     "def": 0.035781,
+     "name": "FBK Karlstad"
+    },
+    "fc-arlanda": {
+     "atk": 0.000246,
+     "def": 0.38191,
+     "name": "FC Arlanda"
+    },
+    "fc-j-rf-lla": {
+     "atk": -0.032278,
+     "def": -0.193238,
+     "name": "FC J\u00e4rf\u00e4lla"
+    },
+    "gefle-if-ff": {
+     "atk": -0.218227,
+     "def": -0.14454,
+     "name": "Gefle IF FF"
+    },
+    "hammarby-tff": {
+     "atk": 0.463574,
+     "def": 0.611966,
+     "name": "Hammarby TFF"
+    },
+    "hammarby-tff-herrfotboll": {
+     "atk": 0.215906,
+     "def": 0.279854,
+     "name": "Hammarby TFF Herrfotboll"
+    },
+    "if-karlstad-fotboll": {
+     "atk": 0.051929,
+     "def": 0.533041,
+     "name": "IF Karlstad Fotboll"
+    },
+    "ifk-haninge": {
+     "atk": -0.014601,
+     "def": -0.397283,
+     "name": "IFK Haninge"
+    },
+    "ifk-stocksund": {
+     "atk": 0.212926,
+     "def": -0.470642,
+     "name": "IFK Stocksund"
+    },
+    "karlbergs-bk": {
+     "atk": 0.057248,
+     "def": -0.025299,
+     "name": "Karlbergs BK"
+    },
+    "nordic-united-fc": {
+     "atk": 0.333007,
+     "def": 0.247796,
+     "name": "Nordic United FC"
+    },
+    "pite-if-ff": {
+     "atk": -0.255379,
+     "def": -0.298031,
+     "name": "Pite\u00e5 IF FF"
+    },
+    "rebro-syrianska-if": {
+     "atk": -0.256671,
+     "def": -0.241937,
+     "name": "\u00d6rebro Syrianska IF"
+    },
+    "sollentuna-fk": {
+     "atk": -0.345641,
+     "def": 0.027761,
+     "name": "Sollentuna FK"
+    },
+    "stockholm-internazionale": {
+     "atk": 0.163767,
+     "def": 0.499616,
+     "name": "Stockholm Internazionale"
+    },
+    "team-tg-ff": {
+     "atk": -0.433728,
+     "def": -0.295442,
+     "name": "Team TG FF"
+    },
+    "ume-fc": {
+     "atk": -0.100544,
+     "def": -0.078249,
+     "name": "Ume\u00e5 FC"
+    },
+    "vasalund": {
+     "atk": 0.072235,
+     "def": -0.181835,
+     "name": "Vasalund"
+    }
+   }
+  },
+  "SW-ES": {
+   "mu": 0.306368,
+   "home_adv": 0.159771,
+   "rho": 0.0,
+   "n_matches": 353,
+   "teams": {
+    "ariana-fc": {
+     "atk": -0.062689,
+     "def": -0.008218,
+     "name": "Ariana FC"
+    },
+    "ariana-fc-malm": {
+     "atk": 0.25625,
+     "def": 0.246007,
+     "name": "Ariana FC Malm\u00f6"
+    },
+    "bk-olympic": {
+     "atk": 0.080596,
+     "def": -0.114591,
+     "name": "BK Olympic"
+    },
+    "eskilsminne-if": {
+     "atk": 0.097351,
+     "def": -0.175995,
+     "name": "Eskilsminne IF"
+    },
+    "fc-roseng-rd-1917": {
+     "atk": -0.316258,
+     "def": -0.099977,
+     "name": "FC Roseng\u00e5rd 1917"
+    },
+    "fc-trollh-ttan": {
+     "atk": -0.037546,
+     "def": -0.18066,
+     "name": "FC Trollh\u00e4ttan"
+    },
+    "h-ssleholms-if": {
+     "atk": 0.202531,
+     "def": 0.054364,
+     "name": "H\u00e4ssleholms IF"
+    },
+    "husqvarna-ff": {
+     "atk": 0.095057,
+     "def": -0.04137,
+     "name": "Husqvarna FF"
+    },
+    "ifk-sk-vde-fk": {
+     "atk": -0.277299,
+     "def": -0.266763,
+     "name": "IFK Sk\u00f6vde FK"
+    },
+    "j-nk-pings-s-dra-if": {
+     "atk": -0.092941,
+     "def": 0.404367,
+     "name": "J\u00f6nk\u00f6pings S\u00f6dra IF"
+    },
+    "kristianstad-fc": {
+     "atk": -0.31359,
+     "def": -0.017566,
+     "name": "Kristianstad FC"
+    },
+    "laholms-fk": {
+     "atk": 0.089497,
+     "def": -0.275191,
+     "name": "Laholms FK"
+    },
+    "ljungskile-sk-herrfotboll": {
+     "atk": 0.47422,
+     "def": 0.223965,
+     "name": "Ljungskile SK Herrfotboll"
+    },
+    "lunds-bk": {
+     "atk": 0.094601,
+     "def": 0.146246,
+     "name": "Lunds BK"
+    },
+    "ngelholms-ff": {
+     "atk": 0.012479,
+     "def": -0.039872,
+     "name": "\u00c4ngelholms FF"
+    },
+    "norrby-if": {
+     "atk": 0.344286,
+     "def": 0.240691,
+     "name": "Norrby IF"
+    },
+    "oskarshamns-aik": {
+     "atk": -0.258435,
+     "def": 0.048181,
+     "name": "Oskarshamns AIK"
+    },
+    "roseng-rd-1917": {
+     "atk": 0.098282,
+     "def": 0.109568,
+     "name": "Roseng\u00e5rd 1917"
+    },
+    "sk-vde-aik": {
+     "atk": -0.402863,
+     "def": -0.053757,
+     "name": "Sk\u00f6vde AIK"
+    },
+    "torslanda-ik": {
+     "atk": -0.115758,
+     "def": -0.315097,
+     "name": "Torslanda IK"
+    },
+    "trelleborgs-ff": {
+     "atk": 0.360635,
+     "def": 0.461608,
+     "name": "Trelleborgs FF"
+    },
+    "tv-kers-if": {
+     "atk": -0.090886,
+     "def": 0.102257,
+     "name": "Tv\u00e5\u00e5kers IF"
+    },
+    "tvidabergs-ff": {
+     "atk": 0.347562,
+     "def": 0.070469,
+     "name": "\u00c5tvidabergs FF"
+    },
+    "utsikten": {
+     "atk": -0.588605,
+     "def": -0.518428,
+     "name": "Utsikten"
+    }
+   }
+  },
+  "SW-SE": {
+   "mu": 0.273134,
+   "home_adv": 0.148523,
+   "rho": 0.0,
+   "n_matches": 359,
+   "teams": {
+    "falkenbergs-ff": {
+     "atk": 0.271109,
+     "def": 0.029477,
+     "name": "Falkenbergs FF"
+    },
+    "gif-sundsvall": {
+     "atk": -0.440785,
+     "def": -0.316463,
+     "name": "GIF Sundsvall"
+    },
+    "helsingborgs-if": {
+     "atk": 0.142979,
+     "def": -0.274219,
+     "name": "Helsingborgs IF"
+    },
+    "ifk-norrk-ping-fk": {
+     "atk": 0.098972,
+     "def": 0.684538,
+     "name": "IFK Norrk\u00f6ping FK"
+    },
+    "ifk-v-rnamo": {
+     "atk": -0.267708,
+     "def": -0.401036,
+     "name": "IFK V\u00e4rnamo"
+    },
+    "ik-brage": {
+     "atk": 0.238958,
+     "def": -0.284282,
+     "name": "IK Brage"
+    },
+    "ik-oddevold": {
+     "atk": 0.144461,
+     "def": -0.103805,
+     "name": "IK Oddevold"
+    },
+    "kalmar-ff": {
+     "atk": 0.121045,
+     "def": 0.461385,
+     "name": "Kalmar FF"
+    },
+    "landskrona-bois": {
+     "atk": -0.076193,
+     "def": 0.177935,
+     "name": "Landskrona BoIS"
+    },
+    "ljungskile-sk-herrfotboll": {
+     "atk": -0.031726,
+     "def": 0.048748,
+     "name": "Ljungskile SK Herrfotboll"
+    },
+    "nordic-united-fc": {
+     "atk": 0.060491,
+     "def": 0.012545,
+     "name": "Nordic United FC"
+    },
+    "norrby-if": {
+     "atk": -0.152902,
+     "def": 0.059524,
+     "name": "Norrby IF"
+    },
+    "rebro": {
+     "atk": -0.337697,
+     "def": -0.06572,
+     "name": "\u00d6rebro"
+    },
+    "rgryte-is-fotboll": {
+     "atk": 0.106833,
+     "def": 0.192605,
+     "name": "\u00d6rgryte IS Fotboll"
+    },
+    "sandvikens-if": {
+     "atk": 0.035014,
+     "def": -0.067706,
+     "name": "Sandvikens IF"
+    },
+    "sters-if": {
+     "atk": 0.089907,
+     "def": -0.127769,
+     "name": "\u00d6sters IF"
+    },
+    "stersund": {
+     "atk": -0.028703,
+     "def": 0.054712,
+     "name": "\u00d6stersund"
+    },
+    "trelleborgs-ff": {
+     "atk": -0.393837,
+     "def": -0.138828,
+     "name": "Trelleborgs FF"
+    },
+    "ume-fc": {
+     "atk": -0.160789,
+     "def": -0.166986,
+     "name": "Ume\u00e5 FC"
+    },
+    "utsikten": {
+     "atk": -0.007395,
+     "def": -0.173749,
+     "name": "Utsikten"
+    },
+    "v-ster-s-sk-fk": {
+     "atk": 0.333727,
+     "def": 0.339434,
+     "name": "V\u00e4ster\u00e5s SK FK"
+    },
+    "varbergs-bois-fc": {
+     "atk": 0.249129,
+     "def": 0.061088,
+     "name": "Varbergs BoIS FC"
+    }
+   }
+  },
+  "VL": {
+   "mu": 0.189203,
+   "home_adv": 0.201922,
+   "rho": 0.0,
+   "n_matches": 273,
+   "teams": {
+    "60493": {
+     "atk": -0.105715,
+     "def": -0.030124,
+     "name": "Oulun edustusjalkapallo AC Oulu"
+    },
+    "60534": {
+     "atk": 0.143133,
+     "def": -0.036653,
+     "name": "IF Gnistan"
+    },
+    "60561": {
+     "atk": -0.216467,
+     "def": -0.244396,
+     "name": "Football Club Haka"
+    },
+    "60731": {
+     "atk": 0.347907,
+     "def": -0.061727,
+     "name": "Helsingin Jalkapalloklubin Liiga-HJK"
+    },
+    "60745": {
+     "atk": 0.366925,
+     "def": -0.193345,
+     "name": "Ilves"
+    },
+    "60756": {
+     "atk": 0.305648,
+     "def": 0.375138,
+     "name": "Kuopion Palloseura"
+    },
+    "60759": {
+     "atk": -0.537237,
+     "def": -0.400977,
+     "name": "IFK Mariehamn Fotboll"
+    },
+    "60901": {
+     "atk": 0.019215,
+     "def": 0.311014,
+     "name": "Vaasan Palloseura"
+    },
+    "60969": {
+     "atk": -0.094328,
+     "def": 0.398418,
+     "name": "FC Lahti"
+    },
+    "60970": {
+     "atk": 0.135759,
+     "def": -0.061171,
+     "name": "SEIN\u00c4JOEN JALKAPALLOKERHO"
+    },
+    "60971": {
+     "atk": -0.080549,
+     "def": 0.109048,
+     "name": "TPS Juniorijalkapallo"
+    },
+    "60972": {
+     "atk": -0.133478,
+     "def": -0.365834,
+     "name": "FC KTP Kotka"
+    },
+    "60974": {
+     "atk": -0.19143,
+     "def": -0.273387,
+     "name": "Fotbollsf\u00f6reningen JARO Jalkapalloseura"
+    },
+    "60987": {
+     "atk": 0.039546,
+     "def": 0.476077,
+     "name": "Football Club International Turku"
+    }
+   }
+  }
+ }
+}
