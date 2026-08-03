@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from core.extractor_base import Extractor
@@ -16,6 +17,8 @@ from extractors.mystake_http import MystakeHttpExtractor, mystake_is_configured
 from extractors.solcasino_http import SolcasinoHttpExtractor, solcasino_is_configured
 from extractors.xbet_http import XBetHttpExtractor
 
+logger = logging.getLogger(__name__)
+
 
 def register_default_extractors(
     registry: ExtractorRegistry,
@@ -25,49 +28,58 @@ def register_default_extractors(
     """Register the built-in extractor set used by the current bot."""
 
     browser_enabled = _extractor_browser_enabled(settings)
+    disabled = tuple(getattr(settings, "disabled_platforms", ()) or ())
     registered: list[Extractor] = []
 
-    if _should_register_provider(Bet365Extractor, browser_enabled=browser_enabled):
+    if _should_register_provider(Bet365Extractor, browser_enabled=browser_enabled, disabled_platforms=disabled):
         registered.append(
             registry.register(Bet365Extractor(settings=_build_bet365_settings(settings)))
         )
-    if _should_register_provider(XBetHttpExtractor, browser_enabled=browser_enabled):
+    if _should_register_provider(XBetHttpExtractor, browser_enabled=browser_enabled, disabled_platforms=disabled):
         registered.append(registry.register(XBetHttpExtractor()))
     # Mystake registers only once a real REST host is configured (MYSTAKE_API_BASE_URL).
     if mystake_is_configured() and _should_register_provider(
-        MystakeHttpExtractor, browser_enabled=browser_enabled
+        MystakeHttpExtractor, browser_enabled=browser_enabled, disabled_platforms=disabled
     ):
         registered.append(registry.register(MystakeHttpExtractor()))
     # Solcasino (Betby/sptpub) registers once a brand id + api host are available.
     if solcasino_is_configured() and _should_register_provider(
-        SolcasinoHttpExtractor, browser_enabled=browser_enabled
+        SolcasinoHttpExtractor, browser_enabled=browser_enabled, disabled_platforms=disabled
     ):
         registered.append(registry.register(SolcasinoHttpExtractor()))
     # BZ (m.bz.com, Sportradar-id sportsbook) registers once a base URL exists.
     if bz_is_configured() and _should_register_provider(
-        BzHttpExtractor, browser_enabled=browser_enabled
+        BzHttpExtractor, browser_enabled=browser_enabled, disabled_platforms=disabled
     ):
         registered.append(registry.register(BzHttpExtractor()))
     # Betovo (Altenar) registers once a frontend host + integration are available.
     if betovo_is_configured() and _should_register_provider(
-        BetovoHttpExtractor, browser_enabled=browser_enabled
+        BetovoHttpExtractor, browser_enabled=browser_enabled, disabled_platforms=disabled
     ):
         registered.append(registry.register(BetovoHttpExtractor()))
     # BetWarrior (Kambi) registers once an api host + offering are available.
     if betwarrior_is_configured() and _should_register_provider(
-        BetWarriorHttpExtractor, browser_enabled=browser_enabled
+        BetWarriorHttpExtractor, browser_enabled=browser_enabled, disabled_platforms=disabled
     ):
         registered.append(registry.register(BetWarriorHttpExtractor()))
     # MrPunter (FSB) registers once an api host is available.
     if mrpunter_is_configured() and _should_register_provider(
-        MrPunterHttpExtractor, browser_enabled=browser_enabled
+        MrPunterHttpExtractor, browser_enabled=browser_enabled, disabled_platforms=disabled
     ):
         registered.append(registry.register(MrPunterHttpExtractor()))
     # Betsson (OBG) registers once a brand id + market code are available.
     if betsson_is_configured() and _should_register_provider(
-        BetssonHttpExtractor, browser_enabled=browser_enabled
+        BetssonHttpExtractor, browser_enabled=browser_enabled, disabled_platforms=disabled
     ):
         registered.append(registry.register(BetssonHttpExtractor()))
+
+    logger.info(
+        "Extractores activos (%d): %s",
+        len(registered),
+        ", ".join(e.name for e in registered) or "ninguno",
+    )
+    if disabled:
+        logger.info("Plataformas apagadas por BOT_DISABLED_PLATFORMS: %s", ", ".join(disabled))
 
     return registered
 
@@ -76,10 +88,30 @@ def _should_register_provider(
     extractor: type[Extractor],
     *,
     browser_enabled: bool,
+    disabled_platforms: tuple[str, ...] = (),
 ) -> bool:
     """Return whether a provider can be enabled in the current runtime."""
 
+    if _is_disabled(extractor, disabled_platforms):
+        return False
     return browser_enabled or extractor.provider_capabilities.supports_browserless
+
+
+def _is_disabled(extractor: type[Extractor], disabled_platforms: tuple[str, ...]) -> bool:
+    """True si la plataforma está apagada a mano vía BOT_DISABLED_PLATFORMS.
+
+    Se acepta el nombre con y sin el sufijo `_http` para que en la variable de
+    entorno valga escribir `bz` o `bz_http` indistintamente.
+    """
+
+    if not disabled_platforms:
+        return False
+    name = str(getattr(extractor, "name", "")).strip().lower()
+    if not name:
+        return False
+    aliases = {name, name.removesuffix("_http")}
+    return any(entry.removesuffix("_http") in {a.removesuffix("_http") for a in aliases}
+               for entry in disabled_platforms)
 
 
 def _extractor_browser_enabled(settings: Any | None) -> bool:

@@ -20,6 +20,10 @@ class Settings:
     tracking_live_refresh_seconds: int = 20
     tracking_max_parallel_refreshes: int = 3
     extractor_browser_enabled: bool = True
+    # Plataformas apagadas a mano (BOT_DISABLED_PLATFORMS). Es una blocklist y
+    # no una allowlist a propósito: un extractor nuevo entra habilitado en vez
+    # de quedar apagado en silencio por olvidarse de listarlo.
+    disabled_platforms: tuple[str, ...] = ()
     extractor_max_parallel_competitions: int = 1
     extractor_max_parallel_pages: int = 3
     extractor_max_parallel_event_pages: int = 1
@@ -113,6 +117,12 @@ def load_settings() -> Settings:
         variable_name="TRACKING_MAX_PARALLEL_REFRESHES",
     )
     extractor_browser_enabled = _parse_bool(os.getenv("EXTRACTOR_BROWSER_ENABLED", "true"))
+    # Se acepta con y sin el sufijo "_http" para que valga escribir "bz" o "bz_http".
+    disabled_platforms = tuple(
+        name.strip().lower()
+        for name in (os.getenv("BOT_DISABLED_PLATFORMS") or "").split(",")
+        if name.strip()
+    )
     extractor_max_parallel_competitions = _parse_positive_int(
         _first_env_value(
             "EXTRACTOR_MAX_PARALLEL_COMPETITIONS",
@@ -283,6 +293,7 @@ def load_settings() -> Settings:
         tracking_refresh_interval_seconds=tracking_refresh_interval_seconds,
         tracking_max_parallel_refreshes=tracking_max_parallel_refreshes,
         extractor_browser_enabled=extractor_browser_enabled,
+        disabled_platforms=disabled_platforms,
         extractor_max_parallel_competitions=extractor_max_parallel_competitions,
         extractor_max_parallel_pages=extractor_max_parallel_pages,
         extractor_max_parallel_event_pages=extractor_max_parallel_event_pages,
