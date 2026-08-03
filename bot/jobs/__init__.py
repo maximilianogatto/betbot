@@ -6,6 +6,7 @@ from runtime.scheduler import OrchestratedScheduler, ScheduledJob
 from bot.jobs.tasks import (
     DbPruningJob,
     LiveWatchJob,
+    MatchEnrichmentJob,
     PeakDigestJob,
     ResourceMonitorJob,
     SheetImportJob,
@@ -25,6 +26,7 @@ __all__ = [
     "StatsSessionRefreshJob",
     "StatsPrefetchJob",
     "LiveWatchJob",
+    "MatchEnrichmentJob",
     "SheetImportJob",
     "PeakDigestJob",
     "start_orchestrated_scheduler",

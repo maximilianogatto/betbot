@@ -122,6 +122,22 @@ class StatsPrefetchJob(ScheduledJob):
         await _orchestrated_stats_prefetch(application)
 
 
+class MatchEnrichmentJob(ScheduledJob):
+    """Completa con un proveedor de stats los resultados recién archivados."""
+
+    def __init__(self, interval: float = 3600.0, initial_delay: float = 300.0) -> None:
+        # Arranca con demora: recién archivado, el proveedor todavía puede no
+        # tener cargadas las estadísticas del partido.
+        super().__init__("match_enrichment", initial_delay)
+        self.interval = interval
+
+    def get_interval(self, application: Application) -> float:
+        return self.interval
+
+    async def run(self, application: Application) -> None:
+        await _orchestrated_match_enrichment(application)
+
+
 class LiveWatchJob(ScheduledJob):
     """Job that services in-play status of matches with a dynamic interval."""
 
@@ -215,6 +231,29 @@ async def _orchestrated_stats_session_refresh(application: Application) -> None:
     if not isinstance(stats_service, StatsService):
         return
     await stats_service.ensure_provider_sessions_fresh(min_ttl_seconds=5400.0)
+
+
+async def _orchestrated_match_enrichment(application: Application) -> None:
+    """Completa los resultados archivados que aún no pasaron por un proveedor."""
+
+    from core.stats_provider_base import stats_provider_registry
+    from services.match_enrichment import MatchEnrichmentService
+    from adapters.storage import get_storage
+
+    settings = application.bot_data.get("settings")
+    provider_key = getattr(settings, "match_enrichment_provider", "sofascore_http")
+    available = {provider.name for provider in stats_provider_registry.list_registered()}
+    if provider_key not in available:
+        logger.info(
+            "Enriquecimiento desactivado: el proveedor %s no está registrado.", provider_key
+        )
+        return
+
+    service = MatchEnrichmentService(
+        repository=get_storage(),
+        provider_registry=stats_provider_registry,
+    )
+    await service.enrich_pending(provider_key=provider_key)
 
 
 async def _orchestrated_stats_prefetch(application: Application) -> None:
@@ -429,6 +468,10 @@ async def start_orchestrated_scheduler(application: Application, settings: Any) 
             StatsPrefetchJob(settings.stats_prefetch_interval_seconds, initial_delay=90.0)
         )
         
+    # 5b. Completar los resultados archivados con datos del proveedor de stats.
+    if not replay_only:
+        scheduler.register_job(MatchEnrichmentJob())
+
     # 6. Register Live Watch Monitor
     if settings.live_watch_enabled:
         scheduler.register_job(
