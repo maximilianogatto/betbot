@@ -2,15 +2,18 @@
 
 Existe porque no alcanzaba con sacar una variable de entorno: los `*_is_configured()`
 caen a una URL por defecto, así que la plataforma se registraba igual.
+
+Los tests construyen `Settings` a mano en vez de leer el `.env` del proyecto:
+`load_settings()` exige ese archivo en disco, así que depender de él haría que
+la suite pase donde hay un `.env` y falle en un checkout limpio.
 """
 from __future__ import annotations
 
-from dataclasses import replace
 import os
 import unittest
 from unittest.mock import patch
 
-from bot.config import load_settings
+from bot.config import Settings, load_settings
 from core.registry import ExtractorRegistry
 from extractors import register_default_extractors
 
@@ -19,31 +22,36 @@ def _registered_names(disabled: tuple[str, ...]) -> set[str]:
     """Nombres de los extractores que quedan registrados con esa lista de apagados."""
 
     registry = ExtractorRegistry()
-    settings = replace(load_settings(), disabled_platforms=disabled)
+    settings = Settings(telegram_bot_token="x", disabled_platforms=disabled)
     register_default_extractors(registry, settings=settings)
     return {extractor.name for extractor in registry.list_registered()}
 
 
 class DisabledPlatformsSettingTests(unittest.TestCase):
+    """El parseo de la variable de entorno."""
+
+    def _load(self, raw: str | None) -> Settings:
+        env = {"TELEGRAM_BOT_TOKEN": "x"}
+        if raw is not None:
+            env["BOT_DISABLED_PLATFORMS"] = raw
+        with patch.dict(os.environ, env, clear=False):
+            if raw is None:
+                os.environ.pop("BOT_DISABLED_PLATFORMS", None)
+            # load_settings() exige un .env en disco; acá sólo interesa el parseo.
+            with patch("bot.config.load_dotenv", return_value=True):
+                return load_settings()
+
     def test_parses_a_comma_separated_list(self) -> None:
-        with patch.dict(os.environ, {"BOT_DISABLED_PLATFORMS": "bz, Rainbet_HTTP ,"}):
-            settings = load_settings()
-        self.assertEqual(settings.disabled_platforms, ("bz", "rainbet_http"))
+        self.assertEqual(
+            self._load("bz, Rainbet_HTTP ,").disabled_platforms,
+            ("bz", "rainbet_http"),
+        )
 
     def test_defaults_to_empty(self) -> None:
-        with patch.dict(os.environ, {}, clear=False):
-            os.environ.pop("BOT_DISABLED_PLATFORMS", None)
-            settings = load_settings()
-        self.assertEqual(settings.disabled_platforms, ())
+        self.assertEqual(self._load(None).disabled_platforms, ())
 
 
 class DisabledPlatformsRegistrationTests(unittest.TestCase):
-    def setUp(self) -> None:
-        # Un token cualquiera: load_settings() lo exige y no se usa acá.
-        self._env = patch.dict(os.environ, {"TELEGRAM_BOT_TOKEN": "x"})
-        self._env.start()
-        self.addCleanup(self._env.stop)
-
     def test_a_disabled_platform_is_not_registered(self) -> None:
         enabled = _registered_names(())
         self.assertIn("bz_http", enabled, "bz debería registrarse cuando no está apagado")
