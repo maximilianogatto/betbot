@@ -67,5 +67,56 @@ class PredictionServiceTests(unittest.TestCase):
             self.svc.predict("EPL", "strong", "weak")
 
 
+class TeamResolutionTests(unittest.TestCase):
+    def setUp(self) -> None:
+        art = {
+            "model_version": "test-v1", "trained_through": "2026-07-20",
+            "leagues": {"XL": {"mu": 0.2, "home_adv": 0.25, "rho": 0.0, "n_matches": 100,
+                "teams": {
+                    "1": {"atk": 0.3, "def": 0.2, "name": "Helsingin Jalkapalloklubi HJK"},
+                    "2": {"atk": -0.1, "def": 0.0, "name": "Football Club International Turku"},
+                    "3": {"atk": 0.0, "def": 0.1, "name": "FC Lahti"},
+                }}},
+        }
+        aliases = {"XL": {"HJK Helsinki": "1", "Inter Turku": "2"}}
+        self._af = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False)
+        json.dump(art, self._af); self._af.close()
+        self._al = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False)
+        json.dump(aliases, self._al); self._al.close()
+        self.svc = PredictionService(self._af.name, self._al.name)
+
+    def tearDown(self) -> None:
+        Path(self._af.name).unlink(missing_ok=True)
+        Path(self._al.name).unlink(missing_ok=True)
+
+    def test_exact_and_close_match(self) -> None:
+        tid, s = self.svc.resolve_team("XL", "FC Lahti")
+        self.assertEqual(tid, "3")
+        self.assertAlmostEqual(s, 1.0, places=6)
+        tid2, _ = self.svc.resolve_team("XL", "Lahti FC")   # orden distinto
+        self.assertEqual(tid2, "3")
+
+    def test_alias_bridges_federation_name_gap(self) -> None:
+        # 'HJK Helsinki' no matchea 'Helsingin Jalkapalloklubi HJK' por fuzzy solo
+        self.assertEqual(self.svc.resolve_team("XL", "HJK Helsinki")[0], "1")
+        self.assertEqual(self.svc.resolve_team("XL", "Inter Turku")[0], "2")
+
+    def test_unknown_team_returns_none(self) -> None:
+        tid, s = self.svc.resolve_team("XL", "Real Madrid CF")
+        self.assertIsNone(tid)
+        self.assertLess(s, 0.85)
+
+    def test_predict_by_names_end_to_end(self) -> None:
+        pred, reason = self.svc.predict_by_names("XL", "HJK Helsinki", "FC Lahti")
+        self.assertEqual(reason, "")
+        self.assertIsNotNone(pred)
+        self.assertEqual(pred.home_team_id, "1")
+
+    def test_predict_by_names_reports_unresolved(self) -> None:
+        pred, reason = self.svc.predict_by_names("XL", "HJK Helsinki", "Equipo Fantasma")
+        self.assertIsNone(pred)
+        self.assertIn("Fantasma", reason)
+
+
 if __name__ == "__main__":
     unittest.main()
