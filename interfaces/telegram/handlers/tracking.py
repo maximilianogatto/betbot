@@ -5,6 +5,7 @@ Se apoya en `common.py` para el vocabulario compartido; nunca importa desde
 """
 from __future__ import annotations
 
+from adapters.storage import get_storage
 from core.extractor_base import LeagueDiscoveryOption
 from core.models import ActiveEventRecord
 from core.models import PlatformDescriptor
@@ -835,7 +836,6 @@ async def refresh_tracks_command(update: Update, context: ContextTypes.DEFAULT_T
             summary = await tracking_service.refresh_chat_tracks(update.effective_chat.id)
 
             from interfaces.telegram.notifications import dispatch_tracking_notifications
-            from adapters.storage import get_storage
             from interfaces.telegram.renderers import build_refresh_summary_message
 
             repository = get_storage()
