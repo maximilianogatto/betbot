@@ -8,7 +8,18 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from services.prediction import PredictionService, PredictionUnavailable
+from services.prediction import (
+    PredictionService, PredictionUnavailable, league_code_for_unified_id)
+
+
+class _FakeCompetitionsStore:
+    """Imita get_unified_competition del adapter real (duck-typed)."""
+
+    def __init__(self, records: dict) -> None:
+        self._records = records
+
+    def get_unified_competition(self, unified_id: int):
+        return self._records.get(unified_id)
 
 
 def _artifact() -> dict:
@@ -171,6 +182,32 @@ class LeagueResolutionTests(unittest.TestCase):
         pred, reason = self.svc.predict_for_fixture("La Liga", "Real", "Barsa")
         self.assertIsNone(pred)
         self.assertIn("no mapea", reason)
+
+    def test_competition_id_to_league_code_weld(self) -> None:
+        store = _FakeCompetitionsStore({
+            10: {"id": 10, "name": "Veikkausliiga", "display_name": "Veikkausliiga",
+                 "country": "Finland", "gender": "M"},
+            11: {"id": 11, "name": "Ettan Norra", "display_name": "Ettan Norra",
+                 "country": "Sweden", "gender": "M"},
+        })
+        self.assertEqual(league_code_for_unified_id(store, 10, self.svc), "VL")
+        self.assertEqual(league_code_for_unified_id(store, 11, self.svc), "SW-EN")
+
+    def test_weld_resolves_by_name_when_country_null(self) -> None:
+        store = _FakeCompetitionsStore({
+            20: {"id": 20, "name": "Veikkausliiga", "display_name": None,
+                 "country": None, "gender": None},
+        })
+        self.assertEqual(league_code_for_unified_id(store, 20, self.svc), "VL")
+
+    def test_weld_unknown_or_missing_returns_none(self) -> None:
+        store = _FakeCompetitionsStore({
+            30: {"id": 30, "name": "Premier League", "display_name": "Premier League",
+                 "country": "England", "gender": "M"},
+        })
+        self.assertIsNone(league_code_for_unified_id(store, 30, self.svc))   # no en el modelo
+        self.assertIsNone(league_code_for_unified_id(store, 99, self.svc))   # id inexistente
+        self.assertIsNone(league_code_for_unified_id(store, None, self.svc))
 
 
 if __name__ == "__main__":

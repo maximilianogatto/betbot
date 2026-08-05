@@ -226,3 +226,25 @@ class PredictionService:
         if lg is None:
             return None, f"competición '{competition_name}' no mapea a ninguna liga del modelo"
         return self.predict_by_names(lg, home_name, away_name)
+
+    def resolve_league_for_unified(self, competition: dict | None) -> str | None:
+        """unified_competition (dict con name/display_name/country/gender) -> league_code."""
+        if not competition:
+            return None
+        name = competition.get("display_name") or competition.get("name") or ""
+        return self.resolve_league(name, country=competition.get("country"),
+                                   gender=competition.get("gender"))
+
+
+def league_code_for_unified_id(store, unified_competition_id: int,
+                               svc: "PredictionService") -> str | None:
+    """Soldadura competition_id -> league_code: lee la unified_competition del store
+    (``get_unified_competition``) y la resuelve. ``store`` = puerto de competiciones.
+
+    Mantiene puro a ``PredictionService`` (no accede a la DB); la lectura la hace el
+    store y la resolución el service. Devuelve None si no existe o no mapea.
+    """
+    if unified_competition_id is None:
+        return None
+    record = store.get_unified_competition(unified_competition_id)
+    return svc.resolve_league_for_unified(record)
