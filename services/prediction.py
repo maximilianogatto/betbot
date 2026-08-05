@@ -18,11 +18,13 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from core.fair_line import FairLine, fair_line
-from core.league_naming import normalize_team_name, team_name_similarity
+from core.league_naming import (
+    normalize_league_name, normalize_team_name, team_name_similarity)
 
 _MODELS_DIR = Path(__file__).resolve().parents[1] / "models"
 _DEFAULT_ARTIFACT = _MODELS_DIR / "prediction_fit.json"
 _DEFAULT_ALIASES = _MODELS_DIR / "team_aliases.json"
+_DEFAULT_LEAGUE_MAP = _MODELS_DIR / "league_map.json"
 _RESOLVE_THRESHOLD = 0.85    # confianza mínima (igual que el merge de ligas)
 _RESOLVE_MARGIN = 0.05       # el mejor debe superar al segundo por esto (anti-ambigüedad)
 
@@ -45,12 +47,30 @@ class PredictionUnavailable(Exception):
 
 class PredictionService:
     def __init__(self, artifact_path: str | Path | None = None,
-                 aliases_path: str | Path | None = None) -> None:
+                 aliases_path: str | Path | None = None,
+                 league_map_path: str | Path | None = None) -> None:
         self._path = Path(artifact_path) if artifact_path else _DEFAULT_ARTIFACT
         self._aliases_path = Path(aliases_path) if aliases_path else _DEFAULT_ALIASES
+        self._league_map_path = Path(league_map_path) if league_map_path else _DEFAULT_LEAGUE_MAP
         self._artifact: dict | None = None
         self._aliases: dict | None = None
+        self._league_map: list | None = None
         self._index: dict[str, dict] = {}   # league_code -> {"exact": {norm: id}, "cands": [(id, name)]}
+
+    def _load_league_map(self) -> list:
+        """Lista de (league_code, country, gender, [patrones_normalizados])."""
+        if self._league_map is None:
+            try:
+                raw = json.loads(self._league_map_path.read_text())
+            except (FileNotFoundError, ValueError):
+                raw = {}
+            self._league_map = [
+                (lg, spec.get("country"), spec.get("gender"),
+                 [normalize_league_name(p) for p in spec.get("patterns", [])])
+                for lg, spec in raw.items()
+                if not lg.startswith("_") and isinstance(spec, dict)
+            ]
+        return self._league_map
 
     def _load_aliases(self) -> dict:
         """Alias por liga {league: {alias: team_id}}. Archivo de datos, no esquema.
@@ -172,3 +192,37 @@ class PredictionService:
         if unresolved:
             return None, "no se resolvió: " + "; ".join(unresolved)
         return self.predict_or_reason(league_code, hid, aid)
+
+    def resolve_league(self, competition_name: str, *, country: str | None = None,
+                       gender: str | None = None) -> str | None:
+        """Competición del bot -> league_code del modelo, o None si no matchea.
+
+        Matchea patrones normalizados por substring; country/gender desambiguan
+        cuando se proveen. Devuelve None si no hay match único (nunca adivina).
+        """
+        norm = normalize_league_name(competition_name)
+        if not norm:
+            return None
+        hits = []
+        for lg, c, g, patterns in self._load_league_map():
+            if country and c and country.upper()[:3] != c.upper()[:3]:
+                continue
+            if gender and g and gender.upper()[:1] != g.upper()[:1]:
+                continue
+            if any(p and p in norm for p in patterns):
+                hits.append((lg, max(len(p) for p in patterns if p and p in norm)))
+        if not hits:
+            return None
+        hits.sort(key=lambda x: -x[1])          # patrón más largo = más específico
+        if len(hits) > 1 and hits[0][1] == hits[1][1]:
+            return None                          # ambiguo sin desempate -> no adivina
+        return hits[0][0]
+
+    def predict_for_fixture(self, competition_name: str, home_name: str,
+                            away_name: str, *, country: str | None = None,
+                            gender: str | None = None):
+        """Flujo completo del bot: (competición, nombres) -> (Prediction|None, motivo)."""
+        lg = self.resolve_league(competition_name, country=country, gender=gender)
+        if lg is None:
+            return None, f"competición '{competition_name}' no mapea a ninguna liga del modelo"
+        return self.predict_by_names(lg, home_name, away_name)

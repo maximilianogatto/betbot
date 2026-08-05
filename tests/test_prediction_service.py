@@ -118,5 +118,60 @@ class TeamResolutionTests(unittest.TestCase):
         self.assertIn("Fantasma", reason)
 
 
+class LeagueResolutionTests(unittest.TestCase):
+    def setUp(self) -> None:
+        art = {
+            "model_version": "test-v1", "trained_through": "2026-07-20",
+            "leagues": {
+                "VL": {"mu": 0.2, "home_adv": 0.25, "rho": 0.0, "n_matches": 100,
+                       "teams": {"1": {"atk": 0.3, "def": 0.2, "name": "HJK"},
+                                 "2": {"atk": -0.1, "def": 0.0, "name": "Inter Turku"}}},
+                "SW-EN": {"mu": 0.3, "home_adv": 0.2, "rho": 0.0, "n_matches": 80,
+                          "teams": {"9": {"atk": 0.1, "def": 0.1, "name": "Team N"}}},
+            },
+        }
+        lmap = {
+            "VL": {"country": "FIN", "gender": "M", "patterns": ["veikkausliiga"]},
+            "SW-EN": {"country": "SWE", "gender": "M", "patterns": ["ettan norra"]},
+            "SW-ES": {"country": "SWE", "gender": "M", "patterns": ["ettan sodra"]},
+        }
+        self._af = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False)
+        json.dump(art, self._af); self._af.close()
+        self._lm = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False)
+        json.dump(lmap, self._lm); self._lm.close()
+        self.svc = PredictionService(self._af.name, None, self._lm.name)
+
+    def tearDown(self) -> None:
+        Path(self._af.name).unlink(missing_ok=True)
+        Path(self._lm.name).unlink(missing_ok=True)
+
+    def test_resolve_league_by_name(self) -> None:
+        self.assertEqual(self.svc.resolve_league("Veikkausliiga"), "VL")
+        self.assertEqual(self.svc.resolve_league("Finland - Veikkausliiga"), "VL")
+        self.assertEqual(self.svc.resolve_league("Ettan Norra"), "SW-EN")
+
+    def test_resolve_league_unknown_returns_none(self) -> None:
+        self.assertIsNone(self.svc.resolve_league("Premier League"))
+
+    def test_resolve_league_ambiguous_returns_none(self) -> None:
+        # "Ettan" (sin Norra/Södra) matchea patrones distintos por igual -> None
+        self.assertIsNone(self.svc.resolve_league("Ettan"))
+
+    def test_country_gender_disambiguation(self) -> None:
+        self.assertEqual(self.svc.resolve_league("Veikkausliiga", country="FIN", gender="M"), "VL")
+        self.assertIsNone(self.svc.resolve_league("Veikkausliiga", country="SWE"))
+
+    def test_predict_for_fixture_end_to_end(self) -> None:
+        pred, reason = self.svc.predict_for_fixture(
+            "Veikkausliiga", "HJK", "Inter Turku", country="FIN", gender="M")
+        self.assertEqual(reason, "")
+        self.assertEqual(pred.league_code, "VL")
+
+    def test_predict_for_fixture_league_unmapped(self) -> None:
+        pred, reason = self.svc.predict_for_fixture("La Liga", "Real", "Barsa")
+        self.assertIsNone(pred)
+        self.assertIn("no mapea", reason)
+
+
 if __name__ == "__main__":
     unittest.main()

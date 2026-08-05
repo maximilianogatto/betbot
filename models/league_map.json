@@ -1,0 +1,20 @@
+{
+  "_note": "research league_code -> identidad de la liga real (país, género, patrones de nombre normalizados). Cierra el flujo competición-del-bot -> league_code del modelo sin tocar el esquema. Patrones se matchean por substring contra el nombre normalizado; país/género desambiguan.",
+  "VL":     {"country": "FIN", "gender": "M", "patterns": ["veikkausliiga"]},
+  "M1L":    {"country": "FIN", "gender": "M", "patterns": ["ykkosliiga", "ykkonen liiga"]},
+  "M1":     {"country": "FIN", "gender": "M", "patterns": ["ykkonen"]},
+  "M2":     {"country": "FIN", "gender": "M", "patterns": ["kakkonen"]},
+  "NL":     {"country": "FIN", "gender": "F", "patterns": ["kansallinen liiga", "naisten liiga"]},
+  "SW-AL":  {"country": "SWE", "gender": "M", "patterns": ["allsvenskan"]},
+  "SW-SE":  {"country": "SWE", "gender": "M", "patterns": ["superettan"]},
+  "SW-EN":  {"country": "SWE", "gender": "M", "patterns": ["ettan norra", "ettan north"]},
+  "SW-ES":  {"country": "SWE", "gender": "M", "patterns": ["ettan sodra", "ettan south"]},
+  "SW-DA":  {"country": "SWE", "gender": "F", "patterns": ["damallsvenskan"]},
+  "SW-EE":  {"country": "SWE", "gender": "F", "patterns": ["elitettan"]},
+  "NO-ELI": {"country": "NOR", "gender": "M", "patterns": ["eliteserien"]},
+  "NO-OBOS":{"country": "NOR", "gender": "M", "patterns": ["obos ligaen", "obosligaen", "1 divisjon menn", "forste divisjon"]},
+  "NO-PN1": {"country": "NOR", "gender": "M", "patterns": ["postnord ligaen avd 1", "norsk tipping ligaen avd 1", "2 divisjon avd 1"]},
+  "NO-PN2": {"country": "NOR", "gender": "M", "patterns": ["postnord ligaen avd 2", "norsk tipping ligaen avd 2", "2 divisjon avd 2"]},
+  "NO-TS":  {"country": "NOR", "gender": "F", "patterns": ["toppserien"]},
+  "NO-1DK": {"country": "NOR", "gender": "F", "patterns": ["1 divisjon kvinner", "forste divisjon kvinner", "toppserien 2"]}
+}
