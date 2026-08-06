@@ -11,13 +11,13 @@ from pathlib import Path
 import tempfile
 from types import SimpleNamespace
 import unittest
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, patch
 
 from adapters.storage import SqliteStorage
 from adapters.storage.connection import open_connection
 from adapters.storage.schema import initialize_schema
 from core.event_bus import EventBus, event_bus
-from core.events import MatchLiveEvent
+from core.events import MatchLiveEvent, NewMatchesEvent
 from core.models import LiveEventSnapshot, LiveWatchEntry, LiveWatchHit
 from interfaces.telegram.listeners import TelegramEventListener
 from services.live_watch import LiveWatchService
@@ -148,3 +148,60 @@ class LiveWatchEndToEndTests(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TrackingEventRenderingTests(unittest.IsolatedAsyncioTestCase):
+    """Lo que antes hacía notify_for_refresh_result y ahora hace el listener."""
+
+    def setUp(self) -> None:
+        from tests.bot.test_notification_service import _league, _match
+        self._league, self._match = _league, _match
+        self.bot = SimpleNamespace(send_message=AsyncMock())
+        self.listener = TelegramEventListener(self.bot)
+
+    def _new_matches(self, *ids: str) -> NewMatchesEvent:
+        return NewMatchesEvent(
+            chat_id=123,
+            tracked_league=self._league(),
+            matches=tuple(self._match(i) for i in ids),
+        )
+
+    async def test_several_new_matches_go_in_one_grouped_message(self) -> None:
+        await self.listener.handle(self._new_matches("m1", "m2", "m3"))
+
+        self.assertEqual(self.bot.send_message.await_count, 1)
+        self.assertIn("Local", self.bot.send_message.await_args.kwargs["text"])
+
+    async def test_a_single_new_match_uses_the_individual_message(self) -> None:
+        await self.listener.handle(self._new_matches("m1"))
+
+        self.assertEqual(self.bot.send_message.await_count, 1)
+
+    async def test_the_display_timezone_does_not_leak_after_rendering(self) -> None:
+        """Si quedara seteada, el próximo chat vería horarios en zona ajena."""
+
+        with patch("interfaces.telegram.listeners.set_display_timezone") as tz_mock:
+            await self.listener.handle(self._new_matches("m1"))
+
+        self.assertIsNone(tz_mock.call_args_list[-1].args[0])
+
+    async def test_the_timezone_is_cleared_even_if_rendering_explodes(self) -> None:
+        with (
+            patch("interfaces.telegram.listeners.set_display_timezone") as tz_mock,
+            patch(
+                "interfaces.telegram.listeners.build_new_event_alert_message",
+                side_effect=RuntimeError("render roto"),
+            ),
+        ):
+            with self.assertRaises(RuntimeError):
+                await self.listener.handle(self._new_matches("m1"))
+
+        self.assertIsNone(tz_mock.call_args_list[-1].args[0])
+
+    async def test_a_send_failure_propagates_so_the_bus_counts_it(self) -> None:
+        """Tragarla acá haría que el publicador marque como enviado algo que no llegó."""
+
+        self.bot.send_message = AsyncMock(side_effect=RuntimeError("telegram caído"))
+
+        with self.assertRaises(RuntimeError):
+            await self.listener.handle(self._new_matches("m1"))
