@@ -984,16 +984,17 @@ Dado que se ha decidido **prescindir de históricos de cuotas redundantes** y ar
   - [x] Mover helpers y builders de mensajes a `interfaces/telegram/renderers/` (no `bot/renderers/`).
   - [x] Asegurar que todos los servicios devuelvan únicamente DTOs y no código de Telegram.
         Lo garantiza `tests/test_architecture_layers.py`: `services/` no puede importar `interfaces/`.
-- [~] **Fase 3: EventBus** — *parcial, a propósito*
+- [x] **Fase 3: EventBus** — completa
   - [x] Suscribir `TelegramEventListener` al bus (`bot/application.py`, en `post_init`).
-  - [x] Publicar `MatchLiveEvent` desde el Core: `LiveWatchService.poll_once()` publica y el
-        listener envía. Es el aviso one-way genuino (detectar → avisar, sin estado).
-  - [ ] `OddsChangedEvent` **no** se cableó. Hoy la decisión de si una variación amerita alerta
-        (baselines, confirmación, dedup, escrituras en la DB) ocurre dentro de
-        `interfaces/telegram/notifications.py`. Publicar desde ahí sería interfaz → bus → interfaz:
-        indirección sin ganancia. Cablearlo de verdad exige mover la iteración de suscripciones y
-        la evaluación de baselines a `TrackingService`, que es un refactor propio del pipeline de
-        notificaciones — no un cambio de una línea. Queda como trabajo separado y explícito.
+  - [x] Publicar `MatchLiveEvent` desde el Core: `LiveWatchService.poll_once()` publica.
+  - [x] Publicar `NewMatchesEvent`, `OddsChangedEvent` y `MatchRemindersEvent`:
+        `services/notifications.py` decide (suscripciones, baselines, deduplicación),
+        publica, y persiste **sólo si la entrega salió bien** (`DeliveryResult`).
+        Eso conserva la entrega al menos una vez que antes dependía de mandar
+        antes de marcar. Los dos caminos (refresh automático y `/refresh`) usan
+        el mismo dispatch, así no pueden divergir.
+  - [x] `interfaces/telegram/notifications.py` queda con lo que no es aviso por
+        chat: advertencias de ligas que fallan y merges de ligas.
 - [x] **Fase 4: Reorganización de Jobs**
   - [x] Eliminar `bot/jobs/legacy.py` y descartar la lógica del scheduler de Telegram.
   - [x] Implementar el loop asíncrono neutro en `runtime/scheduler.py` (sin imports de telegram/bot/interfaces).
