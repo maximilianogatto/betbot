@@ -784,6 +784,36 @@ class LeagueDiscoveryOption:
     raw_payload: dict[str, Any] | None = None
 
 
+# Viven en core (y no en services/models.py, donde nacieron) porque los
+# eventos de dominio los transportan: core no puede importar de services.
+@dataclass(frozen=True)
+class MarketChangeDetail:
+    """Represent one concrete odds change inside a normalized market payload."""
+
+    market_type: str
+    market_name: str
+    selection: str
+    line: str | None
+    before: float
+    after: float
+    percent_change: float
+
+
+@dataclass(frozen=True)
+class SubscriptionOddsAlert:
+    """Represent one odds alert decision for a specific chat baseline."""
+
+    match: ActiveEventRecord
+    baseline: EventBaseline
+    max_percent_change: float
+    change_details: tuple[MarketChangeDetail, ...]
+    changed_market_types: tuple[str, ...]
+    confirmed_baseline_markets_payload: dict[str, Any] | None = None
+    # "sustained_drop" (caída sostenida) o "bug_drop" (caída brusca, posible error).
+    alert_kind: str = "sustained_drop"
+
+
+
 @dataclass(frozen=True)
 class MatchResult:
     """Cómo terminó un partido, con los indicadores que explican el resultado.
@@ -864,7 +894,9 @@ __all__ = [
     "CompetitionExtraction",
     "CompetitionKey",
     "LiveWatchHit",
+    "MarketChangeDetail",
     "MatchResult",
+    "SubscriptionOddsAlert",
     "EventKey",
     "EventSnapshot",
     "LiveEventSnapshot",

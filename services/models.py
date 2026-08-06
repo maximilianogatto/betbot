@@ -5,7 +5,15 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from core.models import ActiveEventRecord, EventBaseline, TrackedCompetition
+# Re-exportados: nacieron acá y medio repo los importa de este nombre, pero
+# ahora viven en core para que los eventos de dominio puedan transportarlos.
+from core.models import (  # noqa: F401
+    ActiveEventRecord,
+    EventBaseline,
+    MarketChangeDetail,
+    SubscriptionOddsAlert,
+    TrackedCompetition,
+)
 
 
 @dataclass(frozen=True)
@@ -23,33 +31,6 @@ class OddsChange:
 
     before: ActiveEventRecord
     after: ActiveEventRecord
-
-
-@dataclass(frozen=True)
-class MarketChangeDetail:
-    """Represent one concrete odds change inside a normalized market payload."""
-
-    market_type: str
-    market_name: str
-    selection: str
-    line: str | None
-    before: float
-    after: float
-    percent_change: float
-
-
-@dataclass(frozen=True)
-class SubscriptionOddsAlert:
-    """Represent one odds alert decision for a specific chat baseline."""
-
-    match: ActiveEventRecord
-    baseline: EventBaseline
-    max_percent_change: float
-    change_details: tuple[MarketChangeDetail, ...]
-    changed_market_types: tuple[str, ...]
-    confirmed_baseline_markets_payload: dict[str, Any] | None = None
-    # "sustained_drop" (caída sostenida) o "bug_drop" (caída brusca, posible error).
-    alert_kind: str = "sustained_drop"
 
 
 @dataclass(frozen=True)
