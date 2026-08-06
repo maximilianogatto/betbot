@@ -834,16 +834,36 @@ async def refresh_tracks_command(update: Update, context: ContextTypes.DEFAULT_T
         try:
             summary = await tracking_service.refresh_chat_tracks(update.effective_chat.id)
 
-            from interfaces.telegram.notifications import dispatch_tracking_notifications
+            from interfaces.telegram.notifications import notify_unavailable_competitions
             from adapters.storage import get_storage
             from interfaces.telegram.renderers import build_refresh_summary_message
+            from core.event_bus import event_bus
+            from services.notifications import (
+                NotificationService,
+                dispatch_refresh_notifications,
+            )
 
             repository = get_storage()
-            await dispatch_tracking_notifications(
+            # Mismo camino que el refresh automático: un solo lugar donde se
+            # decide y se entrega, así los dos no pueden divergir.
+            settings = context.application.bot_data.get("settings")
+            await dispatch_refresh_notifications(
+                NotificationService(
+                    repository,
+                    odds_change_confirmation_refreshes=getattr(settings, "odds_change_confirmation_refreshes", 1),
+                    odds_flap_window_minutes=getattr(settings, "odds_flap_window_minutes", 15),
+                    odds_flap_epsilon=getattr(settings, "odds_flap_epsilon", 0.05),
+                    odds_fast_path_percent=getattr(settings, "odds_fast_path_percent", 15.0),
+                ),
+                summary,
+                event_bus,
+            )
+            # El refresh manual sí avisa por las ligas que vienen fallando: lo
+            # pidió una persona y espera saber qué no se pudo refrescar.
+            await notify_unavailable_competitions(
                 context.bot,
                 summary,
                 repository,
-                notify_failures=True,
                 force_unavailable_warnings=True,
                 unavailable_warning_chat_id=update.effective_chat.id,
             )

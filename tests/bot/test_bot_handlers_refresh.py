@@ -47,7 +47,7 @@ class RefreshTracksHandlerTests(unittest.IsolatedAsyncioTestCase):
             patch("interfaces.telegram.handlers.tracking.get_tracking_service", return_value=tracking_service),
             patch("adapters.storage.get_storage", return_value=SimpleNamespace()),
             patch(
-                "interfaces.telegram.notifications.dispatch_tracking_notifications",
+                "services.notifications.dispatch_refresh_notifications",
                 new=AsyncMock(),
             ) as dispatch_mock,
             patch(
@@ -121,7 +121,7 @@ class RefreshTracksHandlerTests(unittest.IsolatedAsyncioTestCase):
             patch("interfaces.telegram.handlers.tracking.get_tracking_service", return_value=tracking_service),
             patch("adapters.storage.get_storage", return_value=SimpleNamespace()),
             patch(
-                "interfaces.telegram.notifications.dispatch_tracking_notifications",
+                "services.notifications.dispatch_refresh_notifications",
                 new=AsyncMock(),
             ) as dispatch_mock,
             patch(
@@ -167,7 +167,7 @@ class RefreshTracksHandlerTests(unittest.IsolatedAsyncioTestCase):
             patch("interfaces.telegram.handlers.common.split_telegram_message", side_effect=_capture_split_text),
             patch("adapters.storage.get_storage", return_value=SimpleNamespace()),
             patch(
-                "interfaces.telegram.notifications.dispatch_tracking_notifications",
+                "services.notifications.dispatch_refresh_notifications",
                 new=AsyncMock(),
             ),
             patch(

@@ -180,17 +180,42 @@ class PeakDigestJob(ScheduledJob):
 
 # --- Orchestrated Execution Helper Implementations ---
 
+
+def _build_notification_service(application: Application, repository: Any):
+    """Arma el NotificationService con los umbrales configurados."""
+
+    from services.notifications import NotificationService
+
+    settings = application.bot_data.get("settings")
+    return NotificationService(
+        repository,
+        odds_change_confirmation_refreshes=getattr(settings, "odds_change_confirmation_refreshes", 1),
+        odds_flap_window_minutes=getattr(settings, "odds_flap_window_minutes", 15),
+        odds_flap_epsilon=getattr(settings, "odds_flap_epsilon", 0.05),
+        odds_fast_path_percent=getattr(settings, "odds_fast_path_percent", 15.0),
+    )
+
+
 async def _orchestrated_tracking_monitor(application: Application) -> None:
     tracking_service = application.bot_data.get(TRACKING_SERVICE_KEY)
     if not isinstance(tracking_service, TrackingService):
         return
     summary, merges = await tracking_service.monitor_once()
 
-    from interfaces.telegram.notifications import dispatch_tracking_notifications, notify_league_merges
+    from interfaces.telegram.notifications import notify_league_merges
     from adapters.storage import get_storage
+    from core.event_bus import event_bus
+    from services.notifications import NotificationService, dispatch_refresh_notifications
     repository = get_storage()
 
-    await dispatch_tracking_notifications(application.bot, summary, repository)
+    # Los avisos de partidos van por el bus: el service decide, el listener de
+    # Telegram redacta y manda, y sólo con la entrega confirmada se persiste.
+    await dispatch_refresh_notifications(
+        _build_notification_service(application, repository), summary, event_bus
+    )
+
+    # El merge de ligas sigue por la ruta directa: no es un aviso por chat sino
+    # una notificación con botón de deshacer y su propia resolución de destinatarios.
     if merges:
         await notify_league_merges(application.bot, merges, repository)
 

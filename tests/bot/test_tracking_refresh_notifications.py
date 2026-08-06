@@ -87,11 +87,10 @@ class TrackingRefreshNotificationTests(unittest.IsolatedAsyncioTestCase):
         )
 
     @patch("interfaces.telegram.notifications.notify_for_unavailable_competition", new_callable=AsyncMock)
-    @patch("interfaces.telegram.notifications.notify_for_refresh_result", new_callable=AsyncMock)
-    async def test_automatic_refresh_does_not_notify_unavailable_competitions(
-        self, mock_notify_result, mock_notify_unavailable
+    async def test_unforced_warnings_delegate_the_decision_to_the_repository(
+        self, mock_notify_unavailable
     ) -> None:
-        from interfaces.telegram.notifications import dispatch_tracking_notifications
+        from interfaces.telegram.notifications import notify_unavailable_competitions
         summary = RefreshSummary(
             tracks_requested=1,
             tracks_refreshed=0,
@@ -110,21 +109,24 @@ class TrackingRefreshNotificationTests(unittest.IsolatedAsyncioTestCase):
             elapsed_seconds=12.0,
         )
 
-        await dispatch_tracking_notifications(
+        # El ciclo automático ya no llama a esta función en absoluto: la
+        # garantía de no spamear advertencias es estructural, no un flag.
+        await notify_unavailable_competitions(
             bot=object(),
             summary=summary,
             repository=object(),
-            notify_failures=False,
         )
 
-        mock_notify_unavailable.assert_not_awaited()
+        # Sin forzar, la decisión de avisar queda en manos del repositorio
+        # (umbral de fallos + cooldown), que acá no autoriza nada.
+        mock_notify_unavailable.assert_awaited_once()
+        self.assertFalse(mock_notify_unavailable.await_args.kwargs["force_notify"])
 
     @patch("interfaces.telegram.notifications.notify_for_unavailable_competition", new_callable=AsyncMock)
-    @patch("interfaces.telegram.notifications.notify_for_refresh_result", new_callable=AsyncMock)
     async def test_manual_refresh_notifies_unavailable_competitions(
-        self, mock_notify_result, mock_notify_unavailable
+        self, mock_notify_unavailable
     ) -> None:
-        from interfaces.telegram.notifications import dispatch_tracking_notifications
+        from interfaces.telegram.notifications import notify_unavailable_competitions
         summary = RefreshSummary(
             tracks_requested=1,
             tracks_refreshed=0,
@@ -143,11 +145,10 @@ class TrackingRefreshNotificationTests(unittest.IsolatedAsyncioTestCase):
             elapsed_seconds=12.0,
         )
 
-        await dispatch_tracking_notifications(
+        await notify_unavailable_competitions(
             bot=object(),
             summary=summary,
             repository=object(),
-            notify_failures=True,
             force_unavailable_warnings=True,
             unavailable_warning_chat_id=123,
         )

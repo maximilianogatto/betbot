@@ -46,7 +46,7 @@ class TrackingMonitorJobTests(unittest.IsolatedAsyncioTestCase):
             # El job dispatchea por interfaces/telegram antes de loguear.
             patch("adapters.storage.get_storage", return_value=SimpleNamespace()),
             patch(
-                "interfaces.telegram.notifications.dispatch_tracking_notifications",
+                "services.notifications.dispatch_refresh_notifications",
                 new=AsyncMock(),
             ),
             patch(

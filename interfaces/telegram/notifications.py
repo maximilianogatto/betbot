@@ -41,34 +41,21 @@ UNAVAILABLE_WARNING_FAILURE_THRESHOLD = 5
 UNAVAILABLE_WARNING_COOLDOWN_SECONDS = 3600 * 24  # 24 hours
 
 
-async def dispatch_tracking_notifications(
+async def notify_unavailable_competitions(
     bot: Bot,
     summary: RefreshSummary,
     repository: Any,
     *,
-    notify_failures: bool = False,
     force_unavailable_warnings: bool = False,
     unavailable_warning_chat_id: int | None = None,
-    odds_change_confirmation_refreshes: int = 1,
-    odds_flap_window_minutes: int = 15,
-    odds_flap_epsilon: float = 0.05,
-    odds_fast_path_percent: float = 15.0,
 ) -> None:
-    """Send new-event and odds-change notifications to matching subscribers."""
+    """Avisa por las competencias que vienen fallando al refrescarse.
 
-    for result in summary.league_results:
-        await notify_for_refresh_result(
-            bot,
-            result,
-            repository,
-            odds_change_confirmation_refreshes=odds_change_confirmation_refreshes,
-            odds_flap_window_minutes=odds_flap_window_minutes,
-            odds_flap_epsilon=odds_flap_epsilon,
-            odds_fast_path_percent=odds_fast_path_percent,
-        )
-
-    if not notify_failures:
-        return
+    Los avisos de partidos (nuevos, cambios de cuota, recordatorios) ya NO pasan
+    por acá: los resuelve `services.notifications` y los publica al EventBus.
+    Esto se queda porque es una advertencia operativa sobre una liga rota, no un
+    aviso por chat sobre un partido.
+    """
 
     for unavailable in summary.unavailable_competitions:
         await notify_for_unavailable_competition(
@@ -77,167 +64,6 @@ async def dispatch_tracking_notifications(
             repository,
             force_notify=force_unavailable_warnings,
             target_chat_id=unavailable_warning_chat_id,
-        )
-
-
-async def notify_for_refresh_result(
-    bot: Bot,
-    result: CompetitionRefreshResult,
-    repository: Any,
-    *,
-    odds_change_confirmation_refreshes: int = 1,
-    odds_flap_window_minutes: int = 15,
-    odds_flap_epsilon: float = 0.05,
-    odds_fast_path_percent: float = 15.0,
-) -> None:
-    """Send notifications for one refreshed league to all matching chats."""
-
-    subscriptions = await asyncio.to_thread(
-        repository.get_subscriptions_for_competition,
-        result.tracked_league.id,
-        only_enabled=True,
-    )
-
-    if not subscriptions:
-        return
-
-    for subscription in subscriptions:
-        # Render every message for this subscriber in their display timezone.
-        set_display_timezone(resolve_chat_timezone(subscription.telegram_chat_id))
-        await asyncio.to_thread(
-            repository.initialize_event_baselines,
-            subscription.telegram_chat_id,
-            result.tracked_league.id,
-            result.active_matches,
-        )
-
-        if subscription.notify_new_matches:
-            def _filter_unsent():
-                return [
-                    match
-                    for match in result.new_matches
-                    if not repository.has_sent_alert(
-                        subscription.telegram_chat_id,
-                        result.tracked_league.id,
-                        match.fixture_id,
-                        "new_event",
-                    )
-                ]
-            unsent_new_matches = await asyncio.to_thread(_filter_unsent)
-
-            if unsent_new_matches:
-                if len(unsent_new_matches) == 1:
-                    await _send_split_message(
-                        bot,
-                        subscription.telegram_chat_id,
-                        build_new_event_alert_message(
-                            result.tracked_league,
-                            unsent_new_matches[0],
-                        ),
-                        parse_mode=ParseMode.HTML,
-                    )
-                else:
-                    await _send_split_message(
-                        bot,
-                        subscription.telegram_chat_id,
-                        build_grouped_new_event_alert_message(
-                            result.tracked_league,
-                            unsent_new_matches,
-                        ),
-                        parse_mode=ParseMode.HTML,
-                    )
-
-                await asyncio.to_thread(
-                    repository.mark_sent_alerts,
-                    subscription.telegram_chat_id,
-                    result.tracked_league.id,
-                    [match.fixture_id for match in unsent_new_matches],
-                    "new_event",
-                )
-
-        pending_odds_alerts: list[SubscriptionOddsAlert] = []
-
-        for change in result.odds_changes:
-            alert = await asyncio.to_thread(
-                evaluate_subscription_odds_change,
-                repository,
-                subscription,
-                result.tracked_league,
-                change.after,
-                confirmation_refreshes=odds_change_confirmation_refreshes,
-                flap_window_minutes=odds_flap_window_minutes,
-                flap_epsilon=odds_flap_epsilon,
-                fast_path_percent=odds_fast_path_percent,
-            )
-
-            if alert is not None and subscription.notify_odds_changes:
-                pending_odds_alerts.append(alert)
-
-        if pending_odds_alerts:
-            if len(pending_odds_alerts) == 1:
-                alert = pending_odds_alerts[0]
-                await _send_split_message(
-                    bot,
-                    subscription.telegram_chat_id,
-                    build_odds_change_alert_message(
-                        result.tracked_league,
-                        alert,
-                    ),
-                    parse_mode=ParseMode.HTML,
-                )
-            else:
-                await _send_split_message(
-                    bot,
-                    subscription.telegram_chat_id,
-                    build_grouped_odds_change_alert_message(
-                        result.tracked_league,
-                        pending_odds_alerts,
-                    ),
-                    parse_mode=ParseMode.HTML,
-                )
-
-            def _save_alerts():
-                for alert in pending_odds_alerts:
-                    repository.upsert_event_baseline(
-                        subscription.telegram_chat_id,
-                        result.tracked_league.id,
-                        alert.match.fixture_id,
-                        baseline_home=alert.match.odds_home,
-                        baseline_draw=alert.match.odds_draw,
-                        baseline_away=alert.match.odds_away,
-                        baseline_markets_json=(
-                            alert.match.markets_json
-                            if alert.confirmed_baseline_markets_payload is None
-                            else json.dumps(
-                                alert.confirmed_baseline_markets_payload,
-                                ensure_ascii=False,
-                                sort_keys=True,
-                            )
-                        ),
-                    )
-                    repository.resolve_small_change_with_current_baseline(
-                        subscription.telegram_chat_id,
-                        result.tracked_league.id,
-                        alert.match.fixture_id,
-                    )
-            await asyncio.to_thread(_save_alerts)
-
-        for match in result.reminder_matches:
-            await _send_split_message(
-                bot,
-                subscription.telegram_chat_id,
-                build_match_reminder_alert_message(result.tracked_league, match),
-                parse_mode=ParseMode.HTML,
-            )
-
-    # Don't let the last subscriber's timezone leak to later work in this task.
-    set_display_timezone(None)
-
-    if result.reminder_matches:
-        await asyncio.to_thread(
-            repository.mark_events_alerted,
-            result.tracked_league.id,
-            [match.fixture_id for match in result.reminder_matches],
         )
 
 
