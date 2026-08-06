@@ -6,23 +6,52 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
-from core.models import LiveWatchHit, MatchSnapshot, Odds1X2
+from core.models import (
+    ActiveEventRecord,
+    LiveWatchHit,
+    MatchSnapshot,
+    Odds1X2,
+    SubscriptionOddsAlert,
+    TrackedCompetition,
+)
+
+@dataclass(frozen=True)
+class NewMatchesEvent:
+    """Aparecieron partidos nuevos en una liga que el chat sigue."""
+
+    chat_id: int
+    tracked_league: TrackedCompetition
+    matches: tuple[ActiveEventRecord, ...]
+    timestamp: datetime = field(default_factory=datetime.now)
+
 
 @dataclass(frozen=True)
 class OddsChangedEvent:
-    """Triggered when a significant odds variation is detected compared to baseline."""
+    """Cuotas que se movieron lo suficiente como para avisarle al chat.
+
+    Transporta las alertas YA evaluadas contra el baseline del chat (con su
+    confirmación y su anti-flapping): decidir si el movimiento amerita aviso es
+    lógica de dominio y ocurre antes de publicar. El listener sólo redacta.
+
+    La versión anterior de esta clase se diseñó contra un modelo imaginado
+    (campos sueltos de odds) y nunca llegó a usarse.
+    """
 
     chat_id: int
-    event_id: int
-    home: str
-    away: str
-    platform: str
-    previous_odds: Odds1X2
-    current_odds: Odds1X2
-    max_change_percent: float
-    markets_diff: dict[str, Any]
-    event_url: str | None = None
+    tracked_league: TrackedCompetition
+    alerts: tuple[SubscriptionOddsAlert, ...]
     timestamp: datetime = field(default_factory=datetime.now)
+
+
+@dataclass(frozen=True)
+class MatchRemindersEvent:
+    """Se acercan partidos que el chat pidió que le recuerden."""
+
+    chat_id: int
+    tracked_league: TrackedCompetition
+    matches: tuple[ActiveEventRecord, ...]
+    timestamp: datetime = field(default_factory=datetime.now)
+
 
 @dataclass(frozen=True)
 class MatchLiveEvent:
