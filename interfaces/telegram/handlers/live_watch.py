@@ -274,7 +274,12 @@ async def import_sheet_command(update: Update, context: ContextTypes.DEFAULT_TYP
         service = get_live_watch_service(context)
         # Sheet times are Argentina wall-clock, not this chat's display timezone.
         added = service.add_fixture_lines(
-            update.effective_chat.id, lines_to_add, times_tz=sheet_timezone()
+            update.effective_chat.id,
+            lines_to_add,
+            times_tz=sheet_timezone(),
+            # La planilla arrastra filas de partidos ya jugados: la papelera evita
+            # re-cargarlos. Un pegado manual sigue sin este filtro.
+            skip_recently_removed=True,
         )
 
         total_read = len(lines_to_add)
@@ -283,7 +288,7 @@ async def import_sheet_command(update: Update, context: ContextTypes.DEFAULT_TYP
 
         if not added:
             await loading_msg.edit_text(
-                f"📋 Se leyeron {total_read} partidos de la planilla, pero todos fueron omitidos por estar en el pasado o ya estar duplicados en tu lista."
+                f"📋 Se leyeron {total_read} partidos de la planilla, pero todos fueron omitidos por estar en el pasado, ya estar duplicados en tu lista o haber salido de vigilancia hace menos de 2 días."
             )
             return
 
@@ -291,7 +296,7 @@ async def import_sheet_command(update: Update, context: ContextTypes.DEFAULT_TYP
             f"📊 *¡Importación completada con éxito!*",
             f"Se leyeron {total_read} partidos de la planilla.",
             f"➕ *Nuevos en vigilancia:* {total_added}",
-            f"⏭️ *Omitidos (pasados/duplicados):* {skipped}",
+            f"⏭️ *Omitidos (pasados/duplicados/papelera):* {skipped}",
             "\n━━━━━━━━━━━━━━━━━━━━\n"
         ]
         for entry in added:

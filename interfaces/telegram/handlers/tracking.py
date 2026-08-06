@@ -5,6 +5,7 @@ Se apoya en `common.py` para el vocabulario compartido; nunca importa desde
 """
 from __future__ import annotations
 
+from adapters.storage import get_storage
 from core.extractor_base import LeagueDiscoveryOption
 from core.models import ActiveEventRecord
 from core.models import PlatformDescriptor

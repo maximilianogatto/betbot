@@ -349,6 +349,26 @@ class LiveWatchEntry:
 
 
 @dataclass(frozen=True)
+class LiveWatchTombstone:
+    """Un fixture que salió de la vigilancia y todavía no debe volver a entrar.
+
+    La papelera del live-watch: el auto-import de la planilla la consulta para
+    no re-cargar un partido que ya se jugó pero que el usuario todavía no borró
+    del Excel.
+    """
+
+    id: int
+    chat_id: int
+    home: str
+    away: str
+    league_hint: str | None
+    kickoff_at: str | None
+    reason: str  # 'expired' | 'removed'
+    created_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
 class LiveWatchSettings:
     """Per-chat switches for high-frequency live-watch alerts."""
 

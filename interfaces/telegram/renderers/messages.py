@@ -487,12 +487,18 @@ def build_event_stats_message(match: ActiveEventRecord, stats_url: str) -> str:
 
 
 def split_telegram_message(text: str, max_len: int = TELEGRAM_SAFE_MESSAGE_LIMIT) -> list[str]:
-    """Split a long Telegram message on line boundaries when possible."""
+    """Split a message using Telegram's UTF-16 length accounting.
+
+    Telegram measures message limits in UTF-16 code units, not Python Unicode
+    code points.  Emoji (notably the country flags used by ``/leagues``) take
+    more than one unit, so using ``len`` can produce chunks Telegram rejects as
+    too long even though they look safely below the limit here.
+    """
 
     if max_len <= 0:
         raise ValueError("max_len debe ser mayor que cero.")
 
-    if len(text) <= max_len:
+    if _telegram_text_length(text) <= max_len:
         return [text]
 
     chunks: list[str] = []
@@ -500,7 +506,7 @@ def split_telegram_message(text: str, max_len: int = TELEGRAM_SAFE_MESSAGE_LIMIT
     current_length = 0
 
     for line in text.split("\n"):
-        line_length = len(line)
+        line_length = _telegram_text_length(line)
         separator_length = 1 if current_lines else 0
 
         if line_length > max_len:
@@ -528,10 +534,25 @@ def split_telegram_message(text: str, max_len: int = TELEGRAM_SAFE_MESSAGE_LIMIT
 
 
 def _split_long_line(line: str, max_len: int) -> list[str]:
-    return [
-        line[index:index + max_len]
-        for index in range(0, len(line), max_len)
-    ]
+    chunks: list[str] = []
+    start = 0
+    current_length = 0
+    for index, character in enumerate(line):
+        character_length = _telegram_text_length(character)
+        if current_length + character_length > max_len and index > start:
+            chunks.append(line[start:index])
+            start = index
+            current_length = 0
+        current_length += character_length
+    if start < len(line):
+        chunks.append(line[start:])
+    return chunks
+
+
+def _telegram_text_length(text: str) -> int:
+    """Return the number of UTF-16 code units Telegram applies to its limit."""
+
+    return len(text.encode("utf-16-le")) // 2
 
 
 def build_all_matches_message(
