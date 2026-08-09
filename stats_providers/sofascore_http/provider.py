@@ -150,12 +150,7 @@ class SofaScoreHttpStatsProvider(StatsProvider):
         return options
 
     async def describe_league(self, league_id: str) -> StatsLeagueOption | None:
-        """Resolve one SofaScore league id or public tournament URL.
-
-        Direct URLs are important for Telegram linking because SofaScore country
-        discovery is API-backed and can be challenged, while public tournament
-        pages still include the tournament and season identity in Next.js data.
-        """
+        """Resolve one SofaScore league id or public tournament URL."""
 
         identity = _parse_league_identity(league_id)
         if identity is None:
@@ -164,29 +159,46 @@ class SofaScoreHttpStatsProvider(StatsProvider):
         season_id = identity.get("season_id")
         raw_payload: dict[str, Any] = {"input": league_id, "parsed_identity": identity}
 
-        page_info: dict[str, Any] = {}
-        if _looks_like_sofascore_url(league_id):
-            html = await self._call(self._client.get_public_html, league_id)
-            page_info = _extract_tournament_page_info(html)
-            if not page_info:
-                return None
-            raw_payload["public_page"] = page_info
-            tournament_id = int(page_info.get("tournament_id") or tournament_id)
-            season_id = str(page_info.get("season_id") or season_id or "") or None
+        league_name = ""
+        country_name = None
 
-        season: dict[str, Any] | None = None
-        if not page_info:
+        if hasattr(self._client, "get_unique_tournament"):
+            try:
+                tournament_meta = await self._cached_payload(
+                    f"unique_tournament:{tournament_id}",
+                    self._client.get_unique_tournament,
+                    tournament_id,
+                )
+                if tournament_meta:
+                    league_name = str(tournament_meta.get("name") or "")
+                    category = tournament_meta.get("category") if isinstance(tournament_meta.get("category"), dict) else {}
+                    country = category.get("country") if isinstance(category.get("country"), dict) else {}
+                    country_name = str(country.get("name") or category.get("name") or "") or None
+                    raw_payload["tournament_meta"] = tournament_meta
+            except Exception as exc:
+                logger.warning("Failed to fetch unique tournament meta tournament_id=%s: %s", tournament_id, exc)
+
+        if not league_name and _looks_like_sofascore_url(league_id):
+            try:
+                html = await self._call(self._client.get_public_html, league_id)
+                page_info = _extract_tournament_page_info(html)
+                if page_info:
+                    raw_payload["public_page"] = page_info
+                    league_name = str(page_info.get("league_name") or league_name)
+                    country_name = str(page_info.get("country_name") or country_name or "") or None
+                    season_id = str(page_info.get("season_id") or season_id or "") or None
+            except Exception as exc:
+                logger.warning("Failed to fetch public html for league %s: %s", league_id, exc)
+
+        if not season_id:
             season = await self._current_season(tournament_id, preferred_season_id=_safe_int(season_id))
             if season:
-                season_id = str(season.get("id") or season_id or "") or None
+                season_id = str(season.get("id") or "") or None
                 raw_payload["season"] = season
 
-        league_name = (
-            str(page_info.get("league_name") or "")
-            or (str(season.get("name") or "") if season else "")
-            or f"SofaScore Tournament {tournament_id}"
-        )
-        country_name = str(page_info.get("country_name") or "") or None
+        if not league_name:
+            league_name = f"SofaScore Tournament {tournament_id}"
+
         return StatsLeagueOption(
             provider=self.name,
             provider_display_name=self.display_name,
@@ -253,7 +265,7 @@ class SofaScoreHttpStatsProvider(StatsProvider):
         return fixtures[:limit] if limit is not None else fixtures
 
     async def get_league_overview(self, league_id: str) -> dict[str, Any] | None:
-        """Return compact standings and fixtures for future `/explore_stats` use."""
+        """Return compact standings and fixtures for `/explore_stats` use."""
 
         identity = _parse_league_identity(league_id)
         if identity is None:
@@ -263,32 +275,50 @@ class SofaScoreHttpStatsProvider(StatsProvider):
         if not season:
             return None
         season_id = int(season["id"])
-        try:
-            standings = await self._cached_payload(
-                f"tournament:{tournament_id}:season:{season_id}:standings",
-                self._client.get_season_standings,
-                tournament_id,
-                season_id,
-            )
-        except Exception as exc:
-            logger.warning(
-                "SofaScore standings unavailable tournament_id=%s season_id=%s reason=%s",
-                tournament_id,
-                season_id,
-                exc,
-            )
-            standings = []
+
+        standings_by_type: dict[str, Any] = {}
+        standings_fn = getattr(self._client, "get_season_standings_by_type", None)
+        if callable(standings_fn):
+            for st_type in ("total", "home", "away"):
+                try:
+                    tables = await self._cached_payload(
+                        f"tournament:{tournament_id}:season:{season_id}:standings:{st_type}",
+                        standings_fn,
+                        tournament_id,
+                        season_id,
+                        st_type,
+                    )
+                    standings_by_type[st_type] = normalize_standings(tables)
+                except Exception as exc:
+                    logger.warning("SofaScore standings %s unavailable: %s", st_type, exc)
+        else:
+            try:
+                tables = await self._cached_payload(
+                    f"tournament:{tournament_id}:season:{season_id}:standings",
+                    self._client.get_season_standings,
+                    tournament_id,
+                    season_id,
+                )
+                standings_by_type["total"] = normalize_standings(tables)
+            except Exception as exc:
+                logger.warning("SofaScore standings unavailable: %s", exc)
+
         fixtures = await self.list_fixtures(league_id)
+        league_name = season.get("name") or f"Tournament {league_id}"
+
         return {
             "league_id": str(league_id),
             "season_id": str(season_id),
-            "league_name": season.get("name") or f"Tournament {league_id}",
+            "league_name": league_name,
             "source_url": self.build_league_url(league_id),
-            "standings": normalize_standings(standings),
+            "standings": standings_by_type.get("total") or {},
+            "standings_split": standings_by_type,
             "fixtures": [normalize_fixture_overview(fixture.raw_payload or {}) for fixture in fixtures],
             "teams": [],
             "top_goals": [],
         }
+
+
 
     async def resolve_match(
         self,
@@ -377,6 +407,54 @@ class SofaScoreHttpStatsProvider(StatsProvider):
             self._client,
             event_id,
         )
+        if isinstance(snapshot, dict):
+            match = snapshot.get("match") if isinstance(snapshot.get("match"), dict) else {}
+            league_id = match.get("league_id")
+            season_id = match.get("season_id")
+            home_id = match.get("home_id")
+            away_id = match.get("away_id")
+
+            # Enrich with standings if tournament + season present
+            if league_id and season_id and "standings" not in snapshot:
+                overview = await self.get_league_overview(f"{league_id}:{season_id}")
+                if overview and "standings" in overview:
+                    snapshot["standings"] = overview["standings"]
+
+            # Enrich with H2H past events if available
+            if "h2h_events" not in snapshot:
+                try:
+                    h2h_events = await self._cached_payload(
+                        f"event:{event_id}:h2h_events",
+                        self._client.get_json,
+                        f"event/{event_id}/h2h/events",
+                    )
+                    snapshot["h2h_events"] = h2h_events.get("events") or []
+                except Exception:
+                    snapshot["h2h_events"] = []
+
+            # Enrich with home and away team form/last events
+            if home_id and "home_last_events" not in snapshot:
+                try:
+                    home_last = await self._cached_payload(
+                        f"team:{home_id}:last_events",
+                        self._client.get_team_last_events,
+                        int(home_id),
+                    )
+                    snapshot["home_last_events"] = home_last
+                except Exception:
+                    snapshot["home_last_events"] = []
+
+            if away_id and "away_last_events" not in snapshot:
+                try:
+                    away_last = await self._cached_payload(
+                        f"team:{away_id}:last_events",
+                        self._client.get_team_last_events,
+                        int(away_id),
+                    )
+                    snapshot["away_last_events"] = away_last
+                except Exception:
+                    snapshot["away_last_events"] = []
+
         match = snapshot.get("match") if isinstance(snapshot, dict) else {}
         home = match.get("home") or "Local"
         away = match.get("away") or "Visitante"
@@ -388,6 +466,7 @@ class SofaScoreHttpStatsProvider(StatsProvider):
             data=snapshot,
             generated_at=datetime.now(UTC).isoformat(),
         )
+
 
     def build_match_url(self, stats_match_id: str) -> str | None:
         """Return a stable API URL because a public match slug is not always known."""

@@ -37,7 +37,7 @@ class SofaScoreHTTPSettings:
     retry_delay_seconds: float = 0.35
     min_request_interval_seconds: float = 0.15
     cache_ttl_seconds: float = 30.0
-    impersonate: str | None = None
+    impersonate: str | None = "chrome124"
 
 
 class SofaScoreHTTPClient:
@@ -89,6 +89,13 @@ class SofaScoreHTTPClient:
         if cached is not None:
             return cached
         last_error: Exception | None = None
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            "Accept": "*/*",
+            "Accept-Language": "es-ES,es;q=0.9,en;q=0.8",
+            "Referer": "https://www.sofascore.com/",
+            "Origin": "https://www.sofascore.com",
+        }
         for attempt in range(1, self.settings.retries + 1):
             try:
                 with self._request_lock:
@@ -97,6 +104,7 @@ class SofaScoreHTTPClient:
                     self._last_request_started_at = started_at
                     response = self._session.get(
                         url,
+                        headers=headers,
                         timeout=self.settings.timeout_seconds,
                         impersonate=self.settings.impersonate,
                     )
@@ -136,6 +144,13 @@ class SofaScoreHTTPClient:
         """
 
         last_error: Exception | None = None
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            "Accept": "*/*",
+            "Accept-Language": "es-ES,es;q=0.9,en;q=0.8",
+            "Referer": "https://www.sofascore.com/",
+            "Origin": "https://www.sofascore.com",
+        }
         for attempt in range(1, self.settings.retries + 1):
             try:
                 with self._request_lock:
@@ -144,6 +159,7 @@ class SofaScoreHTTPClient:
                     self._last_request_started_at = started_at
                     response = self._session.get(
                         url,
+                        headers=headers,
                         timeout=self.settings.timeout_seconds,
                         impersonate=self.settings.impersonate,
                     )
@@ -167,6 +183,26 @@ class SofaScoreHTTPClient:
                 if attempt < self.settings.retries:
                     self._sleep(self.settings.retry_delay_seconds)
         raise SofaScoreHTTPError(f"SofaScore public GET {url} failed after retries: {last_error}") from last_error
+
+    def get_unique_tournament(self, unique_tournament_id: int) -> dict[str, Any]:
+        """Return unique tournament metadata."""
+
+        return _dict_value(self.get_json(f"unique-tournament/{unique_tournament_id}"), "uniqueTournament")
+
+    def get_season_standings_by_type(
+        self, unique_tournament_id: int, season_id: int, standing_type: str = "total"
+    ) -> list[dict[str, Any]]:
+        """Return standings tables for one season (total, home, or away)."""
+
+        return _dict_items(
+            self.get_json(f"unique-tournament/{unique_tournament_id}/season/{season_id}/standings/{standing_type}"),
+            "standings",
+        )
+
+    def get_team_last_events(self, team_id: int, page: int = 0) -> list[dict[str, Any]]:
+        """Return recent matches for one team."""
+
+        return _dict_items(self.get_json(f"team/{team_id}/events/last/{page}"), "events")
 
     def _cached_payload(self, url: str, *, ttl: float) -> dict[str, Any] | None:
         if ttl <= 0:
