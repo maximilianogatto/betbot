@@ -674,6 +674,19 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+# Dump del token a disco para no tener que copiarlo de la consola. tokens/ está en
+# .gitignore: es una credencial y no entra al repo.
+TOKEN_DUMP_PATH = Path("tokens/sportradar/token.txt")
+
+
+def _dump_token(state: SportradarSessionState) -> None:
+    TOKEN_DUMP_PATH.parent.mkdir(parents=True, exist_ok=True)
+    TOKEN_DUMP_PATH.write_text(
+        f"token={state.signed_token.raw}\nexpiration={state.token_expiration()}\n",
+        encoding="utf-8",
+    )
+
+
 async def run_cli_async(args: argparse.Namespace) -> int:
     urls = tuple(args.urls or DEFAULT_BOOTSTRAP_URLS)
     if args.compare:
@@ -706,6 +719,7 @@ async def run_cli_async(args: argparse.Namespace) -> int:
         print(f"\n--- TOKEN (copiá esta línea para /sportradar_token) ---")
         print(usable_state.signed_token.raw)
         print(f"--- expira: {usable_state.token_expiration()} ---")
+        _dump_token(usable_state)
     print(f"Wrote {args.out_dir / 'session_bootstrap_report.md'}")
     return 0
 
