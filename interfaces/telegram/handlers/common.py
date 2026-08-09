@@ -233,6 +233,46 @@ def _parse_selection_number(text: str | None, upper_bound: int) -> int | None:
 _CANCEL_CALLBACK_DATA = "cxl"
 
 
+def sort_leagues_by_country_and_name(leagues: list[Any]) -> list[Any]:
+    """Sort a list of leagues (dicts, objects or strings) by country then league name."""
+    from core.league_naming import name_country_flag
+
+    def _sort_key(item: Any) -> tuple[str, str]:
+        name = ""
+        if isinstance(item, dict):
+            name = str(item.get("name") or item.get("league_name") or "")
+        elif hasattr(item, "league_name") and getattr(item, "league_name"):
+            name = str(getattr(item, "league_name"))
+        elif hasattr(item, "name") and getattr(item, "name"):
+            name = str(getattr(item, "name"))
+        else:
+            name = str(item)
+        country, _ = name_country_flag(name)
+        return (country or "zzz", name.lower())
+
+    return sorted(leagues, key=_sort_key)
+
+
+def format_league_label(name: str) -> str:
+    """Format a league name with its country flag emoji prefix if not already present."""
+    from core.league_naming import name_country_flag
+
+    if not name:
+        return ""
+    country, flag = name_country_flag(name)
+    if flag and not name.strip().startswith(flag):
+        return f"{flag} {name}"
+    return name
+
+
+def get_subscribed_unified_leagues(chat_id: int) -> list[dict[str, Any]]:
+    """Return subscribed unified competitions sorted by country then league name."""
+    from adapters.storage import get_storage
+
+    unified = get_storage().list_subscribed_unified_competitions(chat_id)
+    return sort_leagues_by_country_and_name(unified)
+
+
 def _build_choice_keyboard(labels, prefix: str, *, cancel: bool = True):
     """Build a one-column inline keyboard; each button carries ``f'{prefix}:{index}'``.
 

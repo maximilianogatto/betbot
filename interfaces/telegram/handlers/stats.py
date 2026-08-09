@@ -13,6 +13,8 @@ from core.stats_models import MatchIdentityCandidate
 from core.stats_models import StatsLeagueOption
 from core.stats_models import StatsProviderDescriptor
 from interfaces.telegram.handlers.common import EXPLORE_TRACKS_CONTEXT_KEY
+from interfaces.telegram.handlers.common import format_league_label
+from interfaces.telegram.handlers.common import sort_leagues_by_country_and_name
 from interfaces.telegram.handlers.common import LINK_STATS_OPTIONS_CONTEXT_KEY
 from interfaces.telegram.handlers.common import LINK_STATS_PROVIDERS_CONTEXT_KEY
 from interfaces.telegram.handlers.common import LINK_STATS_SELECTED_PROVIDER_CONTEXT_KEY
@@ -221,6 +223,7 @@ async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         unified_leagues = tracking_service.repository.list_subscribed_unified_competitions(
             update.effective_chat.id
         )
+        unified_leagues = sort_leagues_by_country_and_name(unified_leagues)
         if not unified_leagues:
             await update.message.reply_text(
                 "No tenés ligas trackeadas todavía.\n"
@@ -231,7 +234,7 @@ async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         context.user_data[STATS_TRACKS_CONTEXT_KEY] = unified_leagues
         await update.message.reply_text(
             _build_unified_league_selection_message("De qué liga querés ver stats?", unified_leagues),
-            reply_markup=_build_choice_keyboard([lg["name"] for lg in unified_leagues], "stx_league"),
+            reply_markup=_build_choice_keyboard([format_league_label(lg["name"]) for lg in unified_leagues], "stx_league"),
         )
         return SELECT_LEAGUE_FOR_STATS
 
