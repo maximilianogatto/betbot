@@ -108,6 +108,19 @@ _COUNTRY_ALIASES: dict[str, str] = {
     "australian": "australia", "italiana": "italy", "italian": "italy",
 }
 
+# Región/competición → país, SOLO para inferir el país cuando el nombre no lo dice
+# ("NPL Victoria"). Deliberadamente NO se aplica en normalize_league_name: reescribir
+# el nombre de la liga a su país borra la identidad y funde competiciones distintas
+# del mismo país en una sola (NPL Victoria == NSW NPL == A-League).
+# Se comparan como conjuntos de tokens, así que el orden no importa.
+_COUNTRY_HINT_TOKENS: tuple[tuple[frozenset[str], str], ...] = (
+    (frozenset({"npl", "victoria"}), "australia"),
+    (frozenset({"npl", "nsw"}), "australia"),
+    (frozenset({"npl", "queensland"}), "australia"),
+    (frozenset({"npl", "tasmania"}), "australia"),
+    (frozenset({"npl", "capital"}), "australia"),
+)
+
 # Number words (en + es) and roman numerals → digit string.
 _NUMBER_WORDS: dict[str, str] = {
     "one": "1", "two": "2", "three": "3", "four": "4", "five": "5",
@@ -132,7 +145,10 @@ _TOKEN_ALIASES: dict[str, str] = {
     "femenino": "women", "femenina": "women", "women": "women", "woman": "women",
     "damas": "women", "dam": "women", "mujeres": "women", "féminas": "women", "feminas": "women",
     "f": "women", "w": "women", 'femenil': "women", "fem": "women",
-    "sub": "u", "u": "u", "juvenil": "youth", "youth": "youth", "reserva": "reserves", "reserves": "reserves", "res": "reserves"
+    "sub": "u", "u": "u", "juvenil": "youth", "youth": "youth", "reserva": "reserves", "reserves": "reserves", "res": "reserves",
+    # Adjetivo de región → sustantivo: las casas alternan "Victorian Premier League"
+    # y "Victoria Premier League" para la misma competición.
+    "victorian": "victoria",
 }
 
 # Tokens dropped as noise (incl. men markers → treat unmarked as men).
@@ -293,6 +309,12 @@ def extract_league_traits(name: str | None) -> dict[str, str | None]:
 
     tokens = normalize_league_name(name).split()
     country = next((t for t in tokens if t in _CANONICAL_COUNTRIES), None)
+    if country is None:
+        token_set = set(tokens)
+        country = next(
+            (hinted for hint, hinted in _COUNTRY_HINT_TOKENS if hint <= token_set),
+            None,
+        )
     gender = "F" if "women" in tokens else None
     age = next((t for t in tokens if _AGE_RE.match(t)), None)
     return {
