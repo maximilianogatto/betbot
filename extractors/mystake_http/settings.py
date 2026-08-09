@@ -11,6 +11,7 @@ from dataclasses import dataclass
 import os
 
 DEFAULT_BASE_URL = "https://analytics-sp.googleserv.tech"
+DEFAULT_CACHE_BASE_URL = "https://wss-eu-uk1.ws-amazon.com"
 
 
 @dataclass(frozen=True)
@@ -20,6 +21,7 @@ class MystakeHttpSettings:
     base_url: str = DEFAULT_BASE_URL
     api_path: str = "/api/prematch"
     sport_api_path: str = "/api/sport"
+    cache_base_url: str = DEFAULT_CACHE_BASE_URL
     region: str = "as"
     sport_id: int = 1
     language: int = 28
@@ -48,8 +50,10 @@ def load_mystake_settings() -> MystakeHttpSettings:
     """Build settings from environment variables (with working defaults)."""
 
     base_url = (os.getenv("MYSTAKE_API_BASE_URL") or DEFAULT_BASE_URL).strip().rstrip("/")
+    cache_base_url = (os.getenv("MYSTAKE_CACHE_BASE_URL") or DEFAULT_CACHE_BASE_URL).strip().rstrip("/")
     return MystakeHttpSettings(
         base_url=base_url,
+        cache_base_url=cache_base_url,
         region=(os.getenv("MYSTAKE_REGION") or "as").strip(),
         sport_id=int(os.getenv("MYSTAKE_SPORT_ID", "1")),
         language=int(os.getenv("MYSTAKE_LANGUAGE", "28")),

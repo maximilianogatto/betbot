@@ -8,6 +8,7 @@ def _live_extractors():
     from extractors.betwarrior_http.extractor import BetWarriorHttpExtractor
     from extractors.bz_http.extractor import BzHttpExtractor
     from extractors.mrpunter_http.extractor import MrPunterHttpExtractor
+    from extractors.mystake_http.extractor import MystakeHttpExtractor
     from extractors.solcasino_http.extractor import SolcasinoHttpExtractor
     from extractors.xbet_http.extractor import XBetHttpExtractor
 
@@ -15,6 +16,7 @@ def _live_extractors():
         BzHttpExtractor,
         BetovoHttpExtractor,
         BetWarriorHttpExtractor,
+        MystakeHttpExtractor,
         SolcasinoHttpExtractor,
         MrPunterHttpExtractor,
         XBetHttpExtractor,
