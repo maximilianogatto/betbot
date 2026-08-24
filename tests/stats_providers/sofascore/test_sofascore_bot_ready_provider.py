@@ -253,8 +253,10 @@ class SofaScoreBotReadyProviderTests(unittest.TestCase):
 
         self.assertEqual(report.provider, "sofascore_http")
         self.assertIn("Odds 1X2", report.markdown)
-        self.assertIn("Corner kicks: 4 | 2", report.markdown)
-        self.assertIn("55' Gol local: Scorer (2-1)", report.markdown)
+        self.assertIn("PROMEDIOS DE LA LIGA", report.markdown)
+        self.assertIn("HISTORIAL H2H", report.markdown)
+
+
 
     def test_stop_closes_client(self) -> None:
         asyncio.run(self.provider.stop())

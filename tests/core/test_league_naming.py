@@ -22,6 +22,25 @@ class LeagueNamingTests(unittest.TestCase):
             "Australia · U23 Victoria Premier League 1",
         ))
 
+    def test_region_adjective_matches_region_noun(self) -> None:
+        # Caso real de los logs: dos casas escriben la misma liga como
+        # "Victorian" y "Victoria".
+        self.assertTrue(same_league(
+            "Australia · Victorian Premier League Women",
+            "Australia · Victoria Premier League, Women",
+        ))
+
+    def test_australian_states_are_different_leagues(self) -> None:
+        # Guardia de regresión: mapear nombres de liga al país en _COUNTRY_ALIASES
+        # borraba la identidad y fundía TODAS las ligas australianas en una sola.
+        self.assertFalse(same_league("NPL Victoria", "NSW NPL"))
+        self.assertFalse(same_league("Queensland NPL", "Tasmania NPL"))
+        self.assertFalse(same_league("A-League", "Victoria NPL"))
+        self.assertFalse(same_league(
+            "Australia. South Australia NPL. Women",
+            "Australia · Victoria Premier League, Women",
+        ))
+
     def test_roman_numerals(self) -> None:
         self.assertTrue(same_league("Serie A II", "Serie A 2"))
         self.assertEqual(normalize_league_name("Division III"), normalize_league_name("Division 3"))
@@ -76,6 +95,13 @@ class LeagueTraitsTests(unittest.TestCase):
         traits = extract_league_traits("Inglaterra Premier League Sub-20")
         self.assertEqual(traits["country"], "england")
         self.assertEqual(traits["age_group"], "U20")
+
+    def test_traits_country_inferred_from_competition(self) -> None:
+        # El nombre no dice "Australia", pero NPL + estado la identifican.
+        self.assertEqual(extract_league_traits("NPL Victoria")["country"], "australia")
+        self.assertEqual(extract_league_traits("NSW NPL")["country"], "australia")
+        # Sin señal reconocible no se inventa país.
+        self.assertIsNone(extract_league_traits("Premier League 1")["country"])
 
     def test_traits_unmarked_is_men(self) -> None:
         traits = extract_league_traits("Superettan")

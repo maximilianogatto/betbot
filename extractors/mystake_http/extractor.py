@@ -22,20 +22,30 @@ from __future__ import annotations
 
 import asyncio
 from collections import Counter
+import logging
 import re
 import time
 from typing import Any
 from urllib.parse import parse_qs, urlparse
 
 from core.extractor_base import Extractor, LeagueDiscoveryOption
-from core.models import CompetitionExtraction, EventSnapshot, ProviderCapabilities
+from core.models import CompetitionExtraction, EventSnapshot, LiveEventSnapshot, ProviderCapabilities
+from adapters.storage import get_storage
 from extractors.mystake_http import header as header_module
 from extractors.mystake_http.client import MystakeHttpClient
-from extractors.mystake_http.parser import build_competition_extraction, decode_json_field
+from extractors.mystake_http.parser import (
+    build_competition_extraction,
+    decode_json_field,
+    live_events_from_mobile_header,
+    live_event_from_game,
+    parse_teams,
+    prematch_event_from_game,
+)
 from extractors.mystake_http.settings import MystakeHttpSettings, load_mystake_settings
 
 _SUPPORTED_HOSTS = ("mystake.bet", "analytics-sp.googleserv.tech")
 _CHAMP_SCHEME_RE = re.compile(r"^mystake:champ:(\d+)$", re.IGNORECASE)
+logger = logging.getLogger(__name__)
 
 
 class MystakeHttpExtractor(Extractor):
@@ -45,8 +55,10 @@ class MystakeHttpExtractor(Extractor):
     display_name = "Mystake"
     supported_domains = _SUPPORTED_HOSTS
     supported_capabilities = ("ligas",)
-    provider_capabilities = ProviderCapabilities(supports_http=True, supports_browserless=True)
+    provider_capabilities = ProviderCapabilities(supports_http=True, supports_live=True, supports_browserless=True)
     supports_league_discovery = True  # via getheader tree (sports -> regions -> champs)
+    supports_live_detection = True  # best-effort via live cache update ids + game detail refetch
+    supports_prematch_listing = True  # tracked Mystake leagues only, via getheader + gameall
 
     # The header (~380KB) lists every league; cache it briefly so a refresh
     # sweep or a discovery search reuses one download instead of one per league.
@@ -57,6 +69,10 @@ class MystakeHttpExtractor(Extractor):
         self._header_cache: dict[str, Any] | None = None
         self._header_cached_at = 0.0
         self._header_lock = asyncio.Lock()
+        self._client = MystakeHttpClient(self.settings)
+
+    async def stop(self) -> None:
+        await self._client.aclose()
 
     @classmethod
     def can_handle_url(cls, url: str) -> bool:
@@ -71,7 +87,7 @@ class MystakeHttpExtractor(Extractor):
     async def extract_league(self, url: str) -> CompetitionExtraction:
         if not self.can_handle_url(url):
             raise ValueError(f"{self.name} cannot handle URL: {url}")
-        client = MystakeHttpClient(self.settings)
+        client = self._client
 
         # Preferred: a getprematchgameall URL carrying the league's game ids.
         game_ids = _game_ids_from_gameall_url(url)
@@ -125,7 +141,7 @@ class MystakeHttpExtractor(Extractor):
     ) -> list[LeagueDiscoveryOption]:
         """Discover trackable leagues by country from the header tree."""
 
-        client = MystakeHttpClient(self.settings)
+        client = self._client
         tree = await self._get_header(client)
         return header_module.build_league_options(
             tree,
@@ -136,6 +152,64 @@ class MystakeHttpExtractor(Extractor):
             query=query,
             limit=limit,
         )
+
+    async def list_live_events(self) -> list[LiveEventSnapshot]:
+        """Return Mystake in-play soccer events from the live cache.
+
+        Primary source: ``live/headerformobile/<region>``. It is a compact HTTP
+        cache snapshot with active games, score, minute, red cards and featured
+        odds. The older ``live/games`` changed-id cache remains as a fallback
+        for compatibility with older captures.
+        """
+
+        client = self._client
+        try:
+            mobile_header = await client.fetch_live_header_mobile()
+        except Exception:
+            logger.exception("Mystake live mobile header fetch failed; trying legacy live cache.")
+            mobile_header = {}
+
+        events = live_events_from_mobile_header(mobile_header, sport_id=self.settings.sport_id)
+        if mobile_header or events:
+            return events
+
+        updates = await client.fetch_live_game_updates()
+        ids = _game_ids_from_update_cache(updates)
+        if not ids:
+            return []
+        raw = await client.fetch_games(ids)
+        return await self._live_events_from_raw_games(client, raw)
+
+    async def list_prematch_events(self) -> list[LiveEventSnapshot]:
+        """Return prematch-listed events for active Mystake tracked leagues only."""
+
+        client = self._client
+        champ_ids = _active_mystake_champ_ids()
+        if not champ_ids:
+            return []
+        tree = await self._get_header(client)
+        live_like: list[LiveEventSnapshot] = []
+        for champ_id in champ_ids:
+            league = header_module.find_champ(tree, champ_id=champ_id, sport_id=self.settings.sport_id)
+            if league is None or not league.game_ids:
+                continue
+            raw = await client.fetch_games(list(league.game_ids))
+            games = decode_json_field(raw.get("game")) if isinstance(raw, dict) else []
+            teams = parse_teams(raw.get("teams")) if isinstance(raw, dict) else {}
+            comp_name = _display_league_name(league)
+            for game in games or []:
+                if not isinstance(game, dict) or str(game.get("ch")) != str(champ_id):
+                    continue
+                snapshot = prematch_event_from_game(
+                    game,
+                    teams,
+                    competition_external_id=str(champ_id),
+                    competition_name=comp_name,
+                    country_name=league.region_name,
+                )
+                if snapshot is not None:
+                    live_like.append(snapshot)
+        return live_like
 
     async def _resolve_league_name(self, client: MystakeHttpClient, champ_id: str) -> str | None:
         """Best-effort: look up the translated league name for a champ id."""
@@ -168,6 +242,32 @@ class MystakeHttpExtractor(Extractor):
     def build_competition_url(self, *, competition_external_id, source_url=None, metadata=None) -> str | None:
         del source_url, metadata
         return f"mystake:champ:{competition_external_id}"
+
+    async def _live_events_from_raw_games(
+        self,
+        client: MystakeHttpClient,
+        raw: dict[str, Any],
+    ) -> list[LiveEventSnapshot]:
+        games = decode_json_field(raw.get("game")) if isinstance(raw, dict) else []
+        teams = parse_teams(raw.get("teams")) if isinstance(raw, dict) else {}
+        tree = await self._get_header(client)
+        events: list[LiveEventSnapshot] = []
+        for game in games or []:
+            if not isinstance(game, dict) or game.get("ch") is None:
+                continue
+            champ_id = str(game["ch"])
+            league = header_module.find_champ(tree, champ_id=champ_id, sport_id=self.settings.sport_id)
+            comp_name = _display_league_name(league) if league is not None else f"Mystake liga {champ_id}"
+            event = live_event_from_game(
+                game,
+                teams,
+                competition_external_id=champ_id,
+                competition_name=comp_name,
+                country_name=league.region_name if league is not None else None,
+            )
+            if event is not None:
+                events.append(event)
+        return events
 
 
 def _game_ids_from_gameall_url(url: str) -> list[int]:
@@ -220,3 +320,49 @@ def _game_ids_for_champ(topgames: list, *, sport_id: int, champ_id: str) -> list
                 if game_id is not None:
                     ids.append(int(game_id))
     return ids
+
+
+def _game_ids_from_update_cache(payload: dict[str, Any]) -> list[int]:
+    """Collect changed live game ids from the cache/get live envelope."""
+
+    ids: list[int] = []
+    if not isinstance(payload, dict):
+        return ids
+    deleted = {
+        str(item.get("GameId"))
+        for item in payload.get("DeleteList") or []
+        if isinstance(item, dict) and item.get("GameId") is not None
+    }
+    for item in payload.get("UpdateList") or []:
+        if not isinstance(item, dict) or item.get("GameId") is None:
+            continue
+        game_id = str(item["GameId"])
+        if game_id in deleted:
+            continue
+        try:
+            ids.append(int(game_id))
+        except (TypeError, ValueError):
+            continue
+    return ids
+
+
+def _active_mystake_champ_ids() -> list[str]:
+    """Return active tracked Mystake champ ids, best-effort outside tests."""
+
+    try:
+        tracked = get_storage().list_globally_active_competitions()
+    except Exception:
+        return []
+    return [
+        str(comp.competition_external_id)
+        for comp in tracked
+        if getattr(comp, "platform", None) == MystakeHttpExtractor.name and getattr(comp, "enabled", True)
+    ]
+
+
+def _display_league_name(league: header_module.LeagueNode) -> str:
+    return (
+        f"{league.region_name} · {league.champ_name}"
+        if league.region_name.lower() not in league.champ_name.lower()
+        else league.champ_name
+    )

@@ -67,6 +67,25 @@ class Bet365ExtractorSettings:
     allow_legacy_fallback: bool = False
 
 
+
+def _coerce_sync_term(value: Any) -> str:
+    """Normaliza el término que devuelve el callback ``xcft`` de bet365.
+
+    bet365 pasó a resolver ese callback con un objeto ``{"token": "..."}`` en vez
+    del término suelto. El valor termina como header ``X-Net-Sync-Term``, así que
+    un dict rompe el encoding de la request. Aceptamos las dos formas para no
+    depender de esa envoltura si vuelve a cambiar.
+    """
+
+    if isinstance(value, str):
+        return value
+    if isinstance(value, dict):
+        for key in ("token", "term", "value"):
+            candidate = value.get(key)
+            if isinstance(candidate, str) and candidate:
+                return candidate
+    return ""
+
 def validate_bet365_league_url(url: str) -> str:
     """Validate and normalize a Bet365 league URL."""
     normalized_url = url.strip()
@@ -280,7 +299,7 @@ class Bet365HttpClient:
                     });
                 }
                 """
-                league_token = await page.evaluate(js_code, markets_api_url)
+                league_token = _coerce_sync_term(await page.evaluate(js_code, markets_api_url))
                 if not league_token:
                     await context.close()
                     await browser.close()
@@ -347,8 +366,11 @@ class Bet365HttpClient:
                     """
                     results = await page.evaluate(js_batch_code, coupon_urls)
                     for res in results:
-                        if res and res.get("term"):
-                            coupon_tokens[res["url"]] = res["term"]
+                        if not res:
+                            continue
+                        term = _coerce_sync_term(res.get("term"))
+                        if term:
+                            coupon_tokens[res["url"]] = term
                 
                 await context.close()
                 await browser.close()

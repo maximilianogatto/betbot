@@ -39,6 +39,8 @@ from interfaces.telegram.handlers.common import (
     _selection_target,
     _send_text_chunks,
     escape_html,
+    format_league_label,
+    get_subscribed_unified_leagues,
     get_tracking_service,
     logger,
     reply_with_result,
@@ -452,16 +454,7 @@ def _subscribed_unified(chat_id: int) -> list[dict]:
     # Las sin país detectado van al final. Este orden es la fuente única del índice
     # N que usan /league, /link_league, /unlink_league, etc. → display y selección
     # quedan consistentes.
-    from core.league_naming import extract_league_traits
-
-    unified = get_storage().list_subscribed_unified_competitions(chat_id)
-    return sorted(
-        unified,
-        key=lambda u: (
-            extract_league_traits(u.get("name")).get("country") or "zzzz",
-            (u.get("name") or "").lower(),
-        ),
-    )
+    return get_subscribed_unified_leagues(chat_id)
 
 
 async def leagues_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -986,7 +979,7 @@ async def matches_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     context.user_data["matches_full_odds"] = full_odds
 
     tracking_service = get_tracking_service(context)
-    unified_leagues = tracking_service.repository.list_subscribed_unified_competitions(update.effective_chat.id)
+    unified_leagues = _subscribed_unified(update.effective_chat.id)
 
     if not unified_leagues:
         await update.message.reply_text(
@@ -1034,8 +1027,9 @@ async def matches_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     await update.message.reply_text(
         _build_unified_league_selection_message("Qué liga quiere ver?", unified_leagues),
-        reply_markup=_build_choice_keyboard([lg["name"] for lg in unified_leagues], "mx_league"),
+        reply_markup=_build_choice_keyboard([format_league_label(lg["name"]) for lg in unified_leagues], "mx_league"),
     )
+
     return SELECT_LEAGUE_FOR_MATCHES
 
 
@@ -1191,9 +1185,7 @@ async def untrack_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     logger.info("Comando /untrack recibido.")
 
     tracking_service = get_tracking_service(context)
-    unified_leagues = tracking_service.repository.list_subscribed_unified_competitions(
-        update.effective_chat.id
-    )
+    unified_leagues = _subscribed_unified(update.effective_chat.id)
 
     if not unified_leagues:
         await update.message.reply_text(
@@ -1205,8 +1197,9 @@ async def untrack_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     context.user_data[UNTRACK_TRACKS_CONTEXT_KEY] = unified_leagues
     await update.message.reply_text(
         "¿Qué liga querés dejar de trackear? (se quita de todas sus plataformas)",
-        reply_markup=_build_choice_keyboard([lg["name"] for lg in unified_leagues], "un_league"),
+        reply_markup=_build_choice_keyboard([format_league_label(lg["name"]) for lg in unified_leagues], "un_league"),
     )
+
     return SELECT_LEAGUE_FOR_UNTRACK
 
 
@@ -1338,9 +1331,7 @@ async def set_change_percent_command(update: Update, context: ContextTypes.DEFAU
         return ConversationHandler.END
 
     tracking_service = get_tracking_service(context)
-    unified_leagues = tracking_service.repository.list_subscribed_unified_competitions(
-        update.effective_chat.id
-    )
+    unified_leagues = _subscribed_unified(update.effective_chat.id)
 
     if not unified_leagues:
         await update.message.reply_text(
@@ -1354,7 +1345,7 @@ async def set_change_percent_command(update: Update, context: ContextTypes.DEFAU
 
     await update.message.reply_text(
         f"¿Qué liga querés configurar con umbral {percent:.1f}%?",
-        reply_markup=_build_choice_keyboard([lg["name"] for lg in unified_leagues], "chg_league"),
+        reply_markup=_build_choice_keyboard([format_league_label(lg["name"]) for lg in unified_leagues], "chg_league"),
     )
     return SELECT_LEAGUE_FOR_CHANGE_PERCENT
 
@@ -1471,9 +1462,7 @@ async def _start_odds_toggle(
         return ConversationHandler.END
 
     tracking_service = get_tracking_service(context)
-    unified_leagues = tracking_service.repository.list_subscribed_unified_competitions(
-        update.effective_chat.id
-    )
+    unified_leagues = _subscribed_unified(update.effective_chat.id)
 
     if not unified_leagues:
         await update.message.reply_text(
@@ -1492,8 +1481,9 @@ async def _start_odds_toggle(
     )
     await update.message.reply_text(
         prompt,
-        reply_markup=_build_choice_keyboard([lg["name"] for lg in unified_leagues], "odds_league"),
+        reply_markup=_build_choice_keyboard([format_league_label(lg["name"]) for lg in unified_leagues], "odds_league"),
     )
+
     return SELECT_LEAGUE_FOR_ODDS
 
 

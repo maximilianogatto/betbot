@@ -1,0 +1,22 @@
+{
+  "_note": "Alias nombre-de-casa -> team_id del modelo, por liga. Puentea el hueco que el fuzzy no cubre (nombre legal de federacion vs nombre comun). Archivo de datos, extensible (curado o aprendido desde live). Regenerar/ampliar sin tocar el esquema.",
+  "VL": {
+    "HJK Helsinki": "60731",
+    "HJK": "60731",
+    "Inter Turku": "60987",
+    "FC Inter Turku": "60987",
+    "KuPS": "60756",
+    "KuPS Kuopio": "60756",
+    "VPS": "60901",
+    "VPS Vaasa": "60901",
+    "SJK": "60970",
+    "SJK Seinajoki": "60970",
+    "AC Oulu": "60493",
+    "KTP": "60972",
+    "TPS": "60971",
+    "TPS Turku": "60971",
+    "Haka": "60561",
+    "FF Jaro": "60974",
+    "Jaro": "60974"
+  }
+}
