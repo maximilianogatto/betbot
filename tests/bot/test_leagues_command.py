@@ -40,6 +40,9 @@ class LeaguesCommandTests(unittest.IsolatedAsyncioTestCase):
             "interfaces.telegram.handlers.tracking.get_storage",
             return_value=_repository(unified),
         ), patch(
+            "adapters.storage.get_storage",
+            return_value=_repository(unified),
+        ), patch(
             "bot.canonical_leagues.build_league_card",
             side_effect=lambda repo, uid: cards[uid],
         ), patch(
@@ -66,6 +69,9 @@ class LeaguesCommandTests(unittest.IsolatedAsyncioTestCase):
             "interfaces.telegram.handlers.tracking.get_storage",
             return_value=_repository(unified),
         ), patch(
+            "adapters.storage.get_storage",
+            return_value=_repository(unified),
+        ), patch(
             "bot.canonical_leagues.build_league_card",
             side_effect=lambda repo, uid: seen.append(uid) or f"c{uid}",
         ), patch(
@@ -86,6 +92,9 @@ class LeaguesCommandTests(unittest.IsolatedAsyncioTestCase):
             "interfaces.telegram.handlers.tracking.get_storage",
             return_value=_repository(unified),
         ), patch(
+            "adapters.storage.get_storage",
+            return_value=_repository(unified),
+        ), patch(
             "bot.canonical_leagues.build_league_card",
             side_effect=lambda repo, uid: f"carta-{uid}",
         ), patch(
@@ -101,6 +110,9 @@ class LeaguesCommandTests(unittest.IsolatedAsyncioTestCase):
     async def test_league_command_rechaza_indice_fuera_de_rango(self) -> None:
         with patch(
             "interfaces.telegram.handlers.tracking.get_storage",
+            return_value=_repository([{"id": 7, "name": "Kazakhstan First Division"}]),
+        ), patch(
+            "adapters.storage.get_storage",
             return_value=_repository([{"id": 7, "name": "Kazakhstan First Division"}]),
         ):
             update = _update()
