@@ -30,8 +30,15 @@ import re
 from dataclasses import dataclass
 from typing import Any
 
-from adapters.storage import get_storage
-from core.league_naming import extract_league_traits, league_name_similarity
+from dotenv import load_dotenv
+
+# El script corre fuera del runtime del bot, así que carga el .env por su
+# cuenta: sin esto no ve SPORTRADAR_REPLAY_ONLY y el proveedor intentaría
+# mintear un token con Chromium en una VM donde justamente lo desactivamos.
+load_dotenv()
+
+from adapters.storage import get_storage  # noqa: E402
+from core.league_naming import extract_league_traits, league_name_similarity  # noqa: E402
 
 # Entradas del catálogo que no son ligas sino mercados o registros internos.
 _NOISE = re.compile(
@@ -151,7 +158,9 @@ async def run(chat_id: int, provider_name: str, apply: bool, limit: int | None) 
         if not competitions:
             continue
 
-        existing = storage.list_stats_league_links(unified_competition_id=uid)
+        # El adapter propaga la herencia: consultando por una competencia de la
+        # liga unificada devuelve los links de todas sus plataformas.
+        existing = storage.list_stats_league_links(competitions[0].id)
         if any(link.stats_provider == provider_name for link in existing):
             proposals.append(Proposal(uid, name, country, 0, "", "", 1.0, 0.0, "ya_linkeada"))
             continue
