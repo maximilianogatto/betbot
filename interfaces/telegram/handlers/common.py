@@ -233,21 +233,50 @@ def _parse_selection_number(text: str | None, upper_bound: int) -> int | None:
 _CANCEL_CALLBACK_DATA = "cxl"
 
 
+def _league_country_and_name(item: Any) -> tuple[str | None, str]:
+    """País y nombre de una liga, venga en la forma que venga.
+
+    Los selectores manejan dos formas distintas: las ligas unificadas llegan
+    como dicts (`{"name": ...}`) y los tracks por plataforma como objetos con
+    el nombre anidado en `tracked_league.competition_name`. Sin contemplar el
+    segundo caso, el orden caía al `str(item)` —el repr del objeto— y las
+    ligas salían desordenadas.
+    """
+
+    from core.league_naming import name_country_flag
+
+    name = ""
+    if isinstance(item, dict):
+        name = str(item.get("name") or item.get("league_name") or "")
+    else:
+        tracked = getattr(item, "tracked_league", None)
+        if tracked is not None and getattr(tracked, "competition_name", None):
+            name = str(tracked.competition_name)
+        elif getattr(item, "league_name", None):
+            name = str(item.league_name)
+        elif getattr(item, "name", None):
+            name = str(item.name)
+        elif getattr(item, "label", None):
+            name = str(item.label)
+        else:
+            name = str(item)
+    country, _ = name_country_flag(name)
+    return country, name
+
+
+def league_display_name(item: Any) -> str:
+    """Etiqueta lista para un botón: bandera + nombre, ordenable por país."""
+
+    _, name = _league_country_and_name(item)
+    return format_league_label(name)
+
+
 def sort_leagues_by_country_and_name(leagues: list[Any]) -> list[Any]:
     """Sort a list of leagues (dicts, objects or strings) by country then league name."""
     from core.league_naming import name_country_flag
 
     def _sort_key(item: Any) -> tuple[str, str]:
-        name = ""
-        if isinstance(item, dict):
-            name = str(item.get("name") or item.get("league_name") or "")
-        elif hasattr(item, "league_name") and getattr(item, "league_name"):
-            name = str(getattr(item, "league_name"))
-        elif hasattr(item, "name") and getattr(item, "name"):
-            name = str(getattr(item, "name"))
-        else:
-            name = str(item)
-        country, _ = name_country_flag(name)
+        country, name = _league_country_and_name(item)
         return (country or "zzz", name.lower())
 
     return sorted(leagues, key=_sort_key)

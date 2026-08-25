@@ -14,6 +14,7 @@ from core.stats_models import StatsLeagueOption
 from core.stats_models import StatsProviderDescriptor
 from interfaces.telegram.handlers.common import EXPLORE_TRACKS_CONTEXT_KEY
 from interfaces.telegram.handlers.common import format_league_label
+from interfaces.telegram.handlers.common import league_display_name
 from interfaces.telegram.handlers.common import sort_leagues_by_country_and_name
 from interfaces.telegram.handlers.common import LINK_STATS_OPTIONS_CONTEXT_KEY
 from interfaces.telegram.handlers.common import LINK_STATS_PROVIDERS_CONTEXT_KEY
@@ -504,10 +505,13 @@ async def explore_stats_command(update: Update, context: ContextTypes.DEFAULT_TY
         )
         return ConversationHandler.END
 
+    linked = sort_leagues_by_country_and_name(linked)
     context.user_data[EXPLORE_TRACKS_CONTEXT_KEY] = linked
     await update.message.reply_text(
         "¿Qué liga querés explorar?",
-        reply_markup=_build_choice_keyboard([lg.label for lg in linked], "exp_league"),
+        reply_markup=_build_choice_keyboard(
+            [league_display_name(lg) for lg in linked], "exp_league"
+        ),
     )
     return EXPLORE_SELECT_LEAGUE
 
@@ -707,12 +711,15 @@ async def link_stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
         )
         return ConversationHandler.END
 
+    # El orden se fija ANTES de guardar: el botón selecciona por índice sobre
+    # esta misma lista, así que ordenar sólo las etiquetas elegiría otra liga.
+    tracked_leagues = sort_leagues_by_country_and_name(tracked_leagues)
     context.user_data[LINK_STATS_TRACKS_CONTEXT_KEY] = tracked_leagues
 
     await update.message.reply_text(
         _build_track_selection_message("¿Qué liga de odds querés vincular con stats?", tracked_leagues),
         reply_markup=_build_choice_keyboard(
-            [t.tracked_league.competition_name for t in tracked_leagues], "ls_track"
+            [league_display_name(t) for t in tracked_leagues], "ls_track"
         ),
     )
     return SELECT_TRACK_FOR_LINK_STATS
