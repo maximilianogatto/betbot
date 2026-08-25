@@ -271,7 +271,7 @@ def _get_sportradar_provider(context: ContextTypes.DEFAULT_TYPE):
             return runtime
     # Fallback: iterate the provider registry directly.
     from core.stats_provider_base import stats_provider_registry
-    for provider in stats_provider_registry.providers:
+    for provider in stats_provider_registry.list_registered():
         runtime = getattr(provider, "_runtime", None)
         if isinstance(runtime, SportradarBotReadyProvider):
             return runtime
