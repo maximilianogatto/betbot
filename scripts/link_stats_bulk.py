@@ -30,15 +30,8 @@ import re
 from dataclasses import dataclass
 from typing import Any
 
-from dotenv import load_dotenv
-
-# El script corre fuera del runtime del bot, así que carga el .env por su
-# cuenta: sin esto no ve SPORTRADAR_REPLAY_ONLY y el proveedor intentaría
-# mintear un token con Chromium en una VM donde justamente lo desactivamos.
-load_dotenv()
-
-from adapters.storage import get_storage  # noqa: E402
-from core.league_naming import extract_league_traits, league_name_similarity  # noqa: E402
+from adapters.storage import get_storage
+from core.league_naming import extract_league_traits, league_name_similarity
 
 # Entradas del catálogo que no son ligas sino mercados o registros internos.
 _NOISE = re.compile(
@@ -234,6 +227,15 @@ async def run(chat_id: int, provider_name: str, apply: bool, limit: int | None) 
 
 
 def main() -> None:
+    # El .env se carga acá y no al importar: el módulo lo importan los tests, y
+    # cargar el entorno del disco al importarlo les cambia la configuración por
+    # debajo (ya pasó con SPORTRADAR_BOOTSTRAP_MODE). Como programa sí hace
+    # falta: sin SPORTRADAR_REPLAY_ONLY el proveedor intentaría mintear un token
+    # con Chromium en una VM donde lo desactivamos por falta de RAM.
+    from dotenv import load_dotenv
+
+    load_dotenv()
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--chat-id", type=int, required=True)
     parser.add_argument("--provider", default="sportradar_statshub")
