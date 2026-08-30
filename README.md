@@ -1,541 +1,223 @@
-# BetBot: Bet365 League Tracking for Telegram
+# BetBot
 
-This project is now focused on one practical workflow:
+Bot de Telegram que sigue competiciones de fútbol en varias casas de apuestas,
+detecta cambios de cuotas, avisa cuando un partido vigilado entra en vivo y
+genera reportes estadísticos desde proveedores externos.
 
-1. track Bet365 leagues from Telegram by URL
-2. confirm the league manually
-3. keep one global scraped state per league
-4. fan out notifications to subscribed Telegram chats
+Arrancó siendo un seguidor de ligas de Bet365 y hoy son **9 casas** y **11
+proveedores de estadísticas**, con el dominio separado de Telegram para poder
+agregar plataformas sin tocar el resto.
 
-The design stays intentionally simple:
+---
 
-- one real platform for now: Bet365
-- one tracking flow: `/track_url` -> `/confirm_track`
-- one global store for current fixtures and odds
-- one subscription layer per Telegram chat
+## Qué hace
 
-## Current commands
+**Sigue ligas y detecta movimientos de cuota.** Se agrega una competición por
+URL, el bot la refresca periódicamente y avisa de partidos nuevos y de cambios
+de cuota que superen el umbral configurado por chat. Los cambios chicos no
+generan aviso: se acumulan y se revisan a pedido.
 
-- `/start`: welcome message
-- `/help`: command list
-- `/guide`: quick usage guide
-- `/ping`: replies with `pong`
-- `/status`: reports that the bot is online
-- `/resources`: shows simple runtime resource metrics
-- `/echo <text>`: echoes back the provided text
-- `/track_url <url>`: extract a Bet365 league and store it as pending
-- `/confirm_track`: confirm the latest pending league for the current chat
-- `/list_tracks`: list tracked leagues for the current chat
-- `/refresh_tracks`: refresh the tracked leagues for the current chat
-- `/matches`: browse stored active matches by numeric selection
-- `/link_stats`: link one odds-tracked league to an external stats league
-- `/stats_links`: list odds-league to stats-league links
-- `/track_stats`: follow an external stats league without requiring odds tracking
-- `/stats_tracks`: list standalone stats league subscriptions
-- `/explore_stats`: browse cached standings, fixtures, teams and provider-native match reports
-- `/stats`: generate stats for one sportsbook event from the latest `/matches` list
-- `/untrack`: stop tracking one league by numeric selection
-- `/odds_on`: enable odds-change notifications for one league by numeric selection
-- `/odds_off`: disable odds-change notifications for one league by numeric selection
-- `/set_change_percent <n>`: set the minimum percent change required to trigger an odds alert
-- `/check_little_changes`: list pending small odds changes for the current chat
-- `/confirm_change <n>`: confirm one pending little change and move the baseline forward
-- `/confirm_all_little_changes`: confirm every pending little change
-- `/cancel`: cancel the current interactive selection
+**Unifica la misma liga entre casas.** La "Primera Nacional" de una casa y la de
+otra son la misma competición: el registro canónico las agrupa bajo una *liga
+unificada*, de modo que los comandos muestran una entrada por liga y no una por
+plataforma. Vincular estadísticas a una plataforma se hereda al resto.
 
-## Main flow
+**Vigila partidos en vivo.** Una lista de partidos a seguir —cargada a mano o
+importada de una planilla— se cruza contra los feeds en vivo de las casas que
+los exponen, y dispara avisos de gol, roja y amarilla.
 
-### 1. Track a league by URL
+**Genera reportes de estadísticas.** Tabla, forma, historial y reportes de
+partido desde el proveedor vinculado a cada liga.
 
-```text
-/track_url https://www.bet365.es/#/AC/B1/C1/D1002/E120757998/G40/
+**Calcula picos de rotación** (`/peaks`), con su propio modelo y backtest.
+
+---
+
+## Arquitectura
+
+La regla es que las dependencias apuntan siempre hacia adentro, y hay un test
+que lo verifica (`tests/test_architecture_layers.py`): si alguien importa
+Telegram desde un servicio, la suite falla.
+
+```
+core/          dominio puro: modelos, eventos, naming de ligas, línea justa.
+               No importa nada del proyecto.
+core/ports/    interfaces que el dominio necesita (13 puertos)
+
+services/      lógica de negocio: tracking, detección de cambios, live watch,
+               stats, predicción, peak. No sabe que Telegram existe.
+
+adapters/      implementaciones de los puertos
+  storage/     SQLite: un adapter por agregado + facade
+
+interfaces/    entrada y salida
+  telegram/    handlers, renderers y listener del bus de eventos
+  cli/
+
+runtime/       scheduler neutral (asyncio), sin dependencia del framework
+extractors/    una casa de apuestas por paquete
+stats_providers/ un proveedor de estadísticas por paquete
+research/      notebooks y experimentos del modelo (fuera del runtime)
 ```
 
-The bot validates the URL, opens the Bet365 page with Playwright, reads the
-internal page state, and extracts:
+Los avisos viajan por un **bus de eventos**: los servicios publican
+`NewMatchesEvent`, `OddsChangedEvent`, `MatchLiveEvent`; el listener de Telegram
+los traduce a mensajes. Por eso el núcleo se puede ejercitar sin un bot.
 
-- `league_name`
-- `platform=bet365`
-- `topic`
+---
 
-The league is not activated yet. The bot asks for confirmation.
+## Plataformas
 
-### 2. Confirm the league
+**Casas de apuestas** (`extractors/`):
 
-```text
-/confirm_track
-```
+| Extractor | Cómo obtiene los datos | En vivo |
+| :--- | :--- | :---: |
+| `bet365` | Playwright (navegador) | — |
+| `xbet_http` | HTTP (LineFeed / LiveFeed) | ✅ |
+| `betsson_http` | HTTP (OBG) | ✅ |
+| `betwarrior_http` | HTTP (Kambi) | ✅ |
+| `bz_http` | HTTP | ✅ |
+| `betovo_http` | HTTP (Altenar) | ✅ |
+| `mrpunter_http` | HTTP (FSB) | ✅ |
+| `mystake_http` | HTTP | ✅ |
+| `solcasino_http` | HTTP (Betby) | ✅ |
 
-After confirmation:
+Salvo Bet365 y 1xBet, cada extractor se registra sólo si su configuración está
+presente en el `.env`. `BOT_DISABLED_PLATFORMS` permite apagar cualquiera.
 
-- the league is stored globally
-- the current chat gets a subscription row
-- the league appears in `/list_tracks`
-- the bot stores an initial silent snapshot of current matches so the first
-  monitor cycle does not mark every existing fixture as "new"
+**Proveedores de estadísticas** (`stats_providers/`): `sportradar_http`
+(Statshub), `sofascore_http`, `flashscore_http`, `footystats_http`, y los
+federativos `palloliitto` (FIN), `svenskfotboll_http` (SWE), `norway_http`,
+`romania_http`, `slovakia_http`, `algeria_http`, `special_federation`.
 
-### 3. Monitor the league
+Sólo Sportradar necesita un token que se mintea con navegador; el resto es HTTP
+directo.
 
-The bot runs a periodic monitor loop in the background.
+---
 
-Each cycle:
+## Comandos
 
-1. loads globally active leagues
-2. scrapes each league once
-3. updates the current global state for its fixtures
-4. detects new matches using `fixture_id`
-5. detects odds changes by comparing `odds_home`, `odds_draw`, and `odds_away`
-6. removes fixtures that disappeared or already passed
-7. sends Telegram notifications to subscribed chats according to each chat's flags
+Son ~98. Agrupados por lo que hacen:
 
-## Persistence model
+**Ligas y seguimiento** — `/track_url`, `/competition_url`, `/event_url`,
+`/confirm_track`, `/update_track_url`, `/list_tracks`, `/refresh_tracks`,
+`/untrack`, `/leagues`, `/league`, `/link_league`, `/unlink_league`,
+`/relink_leagues`, `/platforms`
 
-The key design rule is:
+**Partidos y cuotas** — `/matches`, `/match`, `/view_match`, `/today`,
+`/fixtures`, `/standings`, `/odds_on`, `/odds_off`, `/set_change_percent`,
+`/check_little_changes`, `/confirm_change`, `/confirm_all_little_changes`,
+`/reminders_league`, `/reminders_match`
 
-- subscriptions are per chat
-- scraped league state is global
+**Estadísticas** — `/stats`, `/stats_leagues`, `/stats_links`, `/stats_tracks`,
+`/link_stats`, `/track_stats`, `/explore_stats`, `/sportradar_token`
 
-That avoids duplicating the same Bet365 fixtures and odds when several chats
-track the same league.
+**En vivo** — `/watch_live`, `/watching`, `/unwatch`, `/live_match`,
+`/live_status`, `/live_settings`, `/view_live_match`, `/import_sheet`
 
-### Pending track requests
+**Picos** — `/peaks`, `/peak_on`, `/peak_off`, `/peak_today`
 
-Stored in `pending_track_requests`:
+**Ligas con soporte federativo propio** — prefijos `al_` (Argelia), `fin_`
+(Finlandia), `no_` (Noruega), `ro_` (Rumania), `sk_` (Eslovaquia), `swe_`
+(Suecia), cada uno con `_today`, `_fixtures`, `_standings`, `_leagues`,
+`_match`, `_help`
 
-- `telegram_chat_id`
-- `platform`
-- `url`
-- `topic`
-- `league_name`
-- `payload_json`
-- `created_at`
-- `expires_at`
+**Sistema** — `/start`, `/help`, `/guide`, `/ping`, `/status`, `/resources`,
+`/cancel`, y las ayudas por tema (`/help_leagues`, `/help_live`,
+`/help_matches`, `/help_stats`)
 
-### Globally tracked leagues
+---
 
-Stored in `tracked_leagues`:
+## Persistencia
 
-- `id`
-- `platform`
-- `url`
-- `topic`
-- `league_name`
-- `enabled`
-- `last_scraped_at`
-- `created_at`
-- `updated_at`
+SQLite, esquema *current-state*: 20 tablas creadas por
+`adapters/storage/schema.py`.
 
-### Chat subscriptions
+La distinción que ordena el diseño:
 
-Stored in `tracked_league_subscriptions`:
+- **`events`** guarda el estado actual de cada partido y se pisa en cada
+  refresco. No acumula historial.
+- **`match_results`** es el archivo histórico: acumula cómo terminó cada partido
+  y es el dataset sobre el que corren los análisis. Distingue `FINISHED` de
+  `SUSPENDED`/`POSTPONED` a propósito, porque un suspendido guardado como 0-0
+  envenena cualquier estadística.
 
-- `telegram_chat_id`
-- `tracked_league_id`
-- `enabled`
-- `notify_new_matches`
-- `notify_odds_changes`
-- `change_percent_threshold`
-- `created_at`
-- `updated_at`
+Las suscripciones son por chat; el estado scrapeado es global, para no duplicar
+los mismos partidos cuando varios chats siguen la misma liga. Cada chat compara
+contra su propia baseline, así que distintos umbrales conviven sin duplicar el
+estado.
 
-### Active global fixtures
+---
 
-Stored in `active_matches`:
+## Instalación
 
-- `tracked_league_id`
-- `fixture_id`
-- `home`
-- `away`
-- `kickoff_label_date`
-- `kickoff_label_time`
-- `kickoff_at`
-- `odds_home`
-- `odds_draw`
-- `odds_away`
-- `last_seen_at`
-- `created_at`
-- `updated_at`
-
-### Per-chat baselines
-
-Stored in `subscription_match_baselines`:
-
-- `telegram_chat_id`
-- `tracked_league_id`
-- `fixture_id`
-- `baseline_home`
-- `baseline_draw`
-- `baseline_away`
-- `updated_at`
-
-Each chat compares odds changes against its own baseline instead of against the
-previous global scrape. That avoids duplicating the global match state while
-still allowing different sensitivity levels per chat.
-
-### Little changes
-
-Stored in `little_changes`:
-
-- `telegram_chat_id`
-- `tracked_league_id`
-- `fixture_id`
-- `baseline_home`, `baseline_draw`, `baseline_away`
-- `current_home`, `current_draw`, `current_away`
-- `max_percent_change`
-- `status`
-
-If the change stays below the configured threshold, the bot does not send an
-automatic odds alert. Instead, it updates the pending `little_change` for that
-chat so it can be reviewed later with `/check_little_changes`.
-
-## Notifications
-
-### New match
-
-When a new `fixture_id` appears, the bot sends a notification to chats where:
-
-- the subscription is enabled
-- `notify_new_matches = true`
-
-### Odds change
-
-When `odds_home`, `odds_draw`, or `odds_away` changes, the bot compares the
-current odds against the per-chat baseline and calculates:
-
-`abs(current - baseline) / baseline * 100`
-
-using the maximum valid variation across `1`, `X`, and `2`.
-
-If the change is large enough, the bot sends a notification to chats where:
-
-- the subscription is enabled
-- `notify_odds_changes = true`
-- `max_percent_change >= change_percent_threshold`
-
-After sending the alert, the chat baseline is updated automatically to the
-current odds so the same move is not reported over and over again.
-
-If the change is smaller than the threshold:
-
-- the global odds still update normally
-- the chat baseline stays unchanged
-- the change is stored as a pending `little_change`
-
-## Match browsing
-
-Use:
-
-```text
-/matches
-```
-
-The bot asks:
-
-1. which tracked league you want to inspect
-2. which match you want to see
-
-You reply using numbers, for example:
-
-```text
-1
-2
-```
-
-Then the bot returns either:
-
-- all matches from that league
-
-## Stats providers and daily cache
-
-Stats providers are independent from sportsbook odds extractors. A single
-provider-native league can be linked to one or more odds leagues with
-`/link_stats`, or followed independently with `/track_stats`.
-
-Standalone stats tracking is intended for teams and leagues you want to inspect
-even when no sportsbook collector has discovered the match. `/explore_stats`
-can browse those leagues and generate a provider-native match report directly.
-
-The background stats prefetch job defaults to one run per day:
-
-```env
-STATS_PREFETCH_ENABLED=true
-STATS_PREFETCH_INTERVAL_SECONDS=86400
-STATS_PREFETCH_TTL_SECONDS=90000
-```
-
-Current HTTP stats providers include Sportradar Statshub, SofaScore and
-FootyStats. FootyStats uses a narrow public HTTP fallback for discovery,
-standings, fixtures and lightweight live scores. Set `FOOTYSTATS_API_KEY` when
-a licensed key is available to prepare richer official API coverage.
-- or one selected match
-
-Each match message includes:
-
-- league
-- kickoff
-- home vs away
-- odds `1 / X / 2`
-
-## Quick guide
-
-1. `/track_url <url>`
-2. `/confirm_track`
-3. `/list_tracks`
-4. `/matches`
-5. `/odds_on`
-6. `/set_change_percent 20`
-7. `/check_little_changes`
-8. `/confirm_change <n>` or `/confirm_all_little_changes`
-
-## Untracking
-
-Use:
-
-```text
-/untrack
-```
-
-The bot shows your tracked leagues with numbers. After selecting one:
-
-- your chat subscription is removed
-- if no enabled subscriptions remain for that league, its stored active fixtures are cleaned
-- orphaned global league rows are automatically purged by the SQLite sanitation step
-
-This keeps the global state lean without duplicating or accumulating stale data.
-
-## Environment variables
-
-Copy the example file first:
+Requiere Python 3.11+.
 
 ```bash
-cp .env.example .env
-```
-
-Current variables:
-
-```env
-TELEGRAM_BOT_TOKEN=123456789:replace_with_your_real_token
-LOG_LEVEL=INFO
-TRACKING_REFRESH_INTERVAL_SECONDS=120
-TRACKING_MAX_PARALLEL_REFRESHES=3
-EXTRACTOR_MAX_PARALLEL_COMPETITIONS=3
-EXTRACTOR_MAX_PARALLEL_PAGES=3
-EXTRACTOR_MAX_PARALLEL_EVENT_PAGES=3
-EXTRACTOR_PAGE_REUSE_ENABLED=false
-EXTRACTOR_BROWSER_RESTART_AFTER_N_REFRESHES=
-EXTRACTOR_BROWSER_RESTART_IDLE_TTL_SECONDS=
-EXTRACTOR_PAGE_LOAD_TIMEOUT_MS=60000
-EXTRACTOR_POST_LOAD_WAIT_MS=4000
-EXTRACTOR_CAPTURE_ATTEMPTS=2
-EXTRACTOR_EVENT_CAPTURE_ATTEMPTS=1
-TRACKING_DEFAULT_CHANGE_THRESHOLD_PERCENT=20.0
-TRACKING_DEFAULT_NOTIFY_ODDS_CHANGES=true
-TRACKING_REMOVE_MISSING_AFTER_CYCLES=3
-```
-
-### What they mean
-
-- `TELEGRAM_BOT_TOKEN`: required BotFather token
-- `LOG_LEVEL`: console logging verbosity
-- `TRACKING_REFRESH_INTERVAL_SECONDS`: interval of the background tracking monitor loop
-- `TRACKING_MAX_PARALLEL_REFRESHES`: legacy alias for competition refresh parallelism
-- `EXTRACTOR_MAX_PARALLEL_COMPETITIONS`: max number of competitions refreshed in parallel per cycle
-- `EXTRACTOR_MAX_PARALLEL_PAGES`: global max number of Playwright pages processed in parallel
-- `EXTRACTOR_MAX_PARALLEL_EVENT_PAGES`: per-league max number of concurrent event captures
-- `EXTRACTOR_PAGE_REUSE_ENABLED`: reuses Playwright pages between captures when possible
-- `EXTRACTOR_BROWSER_RESTART_AFTER_N_REFRESHES`: optional browser recycle threshold measured in completed Bet365 league refreshes
-- `EXTRACTOR_BROWSER_RESTART_IDLE_TTL_SECONDS`: optional browser recycle threshold after staying idle
-- `EXTRACTOR_PAGE_LOAD_TIMEOUT_MS`: page load and runtime wait timeout
-- `EXTRACTOR_POST_LOAD_WAIT_MS`: extra wait after runtime readiness before extraction
-- `EXTRACTOR_CAPTURE_ATTEMPTS`: retry count for league response capture
-- `EXTRACTOR_EVENT_CAPTURE_ATTEMPTS`: retry count for event `I3` response capture
-- `TRACKING_DEFAULT_CHANGE_THRESHOLD_PERCENT`: default threshold persisted for new chat subscriptions
-- `TRACKING_DEFAULT_NOTIFY_ODDS_CHANGES`: default odds-change notification flag for new chat subscriptions
-- `TRACKING_REMOVE_MISSING_AFTER_CYCLES`: how many refresh cycles an event can stay missing before removal
-- `ENABLE_MONITORING`: enables periodic resource monitoring in background
-- `MONITOR_INTERVAL_SECONDS`: interval of the resource monitor loop
-- `MONITOR_LOG_TO_FILE`: when `true`, also writes monitor blocks to `monitor.log`
-- `MONITOR_CHROMIUM_RAM_ALERT_MB`: warning threshold for total Chromium RAM
-
-Legacy compatibility:
-
-- `BET365_REFRESH_INTERVAL_SECONDS`
-- `BET365_MAX_PARALLEL_PAGES`
-- `BET365_PAGE_LOAD_TIMEOUT_MS`
-- `BET365_POST_LOAD_WAIT_MS`
-
-Those legacy names are still accepted by the loader, but the internal app configuration now uses the generic `TRACKING_*` and `EXTRACTOR_*` names.
-
-## Resource monitoring
-
-The project can also monitor runtime resources without changing the bot flow.
-
-When enabled, the background monitor logs:
-
-- RAM used by the bot process
-- CPU used by the bot process
-- total system RAM usage
-- number of Chromium processes
-- total RAM used by Chromium
-- SQLite database size
-
-Enable it in `.env`:
-
-```env
-ENABLE_MONITORING=true
-MONITOR_INTERVAL_SECONDS=60
-MONITOR_LOG_TO_FILE=false
-MONITOR_CHROMIUM_RAM_ALERT_MB=800
-```
-
-When active, the bot prints blocks like:
-
-```text
-[MONITOR]
-RAM bot: 180.4 MB
-CPU bot: 6.2 %
-RAM sistema: 54.8 % (8421.3 MB)
-Chromium: 4 procesos (512.6 MB)
-DB: 1.3 MB
-```
-
-If system RAM goes above 90% or Chromium RAM goes above the configured
-threshold, the bot logs a warning.
-
-You can also request the same metrics from Telegram with:
-
-```text
-/stats
-```
-
-## Install and run
-
-Before starting, you need:
-
-- Python 3.11 or newer
-- internet access to download Python packages and Playwright Chromium
-
-### Linux and macOS
-
-From the project root:
-
-```bash
-chmod +x install.sh run.sh
-./install.sh
-```
-
-Then edit `.env` and run:
-
-```bash
+./install.sh          # crea el venv, instala deps y Playwright Chromium
+cp .env.example .env  # completar TELEGRAM_BOT_TOKEN
 ./run.sh
 ```
 
-### Windows
+En Windows, `install.ps1` y `run.ps1`.
 
-From PowerShell in the project root:
+### Configuración
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\install.ps1
-```
+Todo se configura por `.env` (ver `.env.example`, que documenta cada variable).
+Los grupos:
 
-Then edit `.env` and run:
+| Prefijo | Para qué |
+| :--- | :--- |
+| `TELEGRAM_BOT_TOKEN` | requerido |
+| `EXTRACTOR_*` | paralelismo, timeouts y reciclado del navegador |
+| `TRACKING_*` | intervalos de refresco y umbrales por defecto |
+| `STATS_*`, `SPORTRADAR_*` | prefetch, caché y modo de bootstrap del token |
+| `LIVE_WATCH_*` | vigilancia en vivo e importación de planilla |
+| `BOT_PROXY_URL`, `BOT_PROXY_PLATFORMS` | salida por VPN, selectiva por casa |
+| `MONITOR_*` | monitoreo de recursos |
 
-```powershell
-.\run.ps1
-```
+### Salida por VPN
 
-### What the install scripts do
+Algunas casas bloquean IPs de datacenter. `deploy/VPN-SETUP.md` explica el
+esquema: wireproxy expone un SOCKS5 local y `BOT_PROXY_PLATFORMS` lista **sólo**
+las plataformas que deben salir por ahí. El resto —incluido Telegram— sale
+directo, que es más rápido y más estable.
 
-- create `betbot/` if you are not already inside a virtual environment
-- upgrade `pip`
-- install `requirements.txt`
-- install Playwright Chromium
-- create `.env` from `.env.example` if it does not exist
+### Token de Sportradar
 
-Note for Linux:
-if Chromium fails because of missing system libraries, run:
-
-```bash
-python -m playwright install chromium
-python -m playwright install --with-deps chromium
-```
-
-### What the run scripts do
-
-- activate the virtual environment
-- verify that `.env` exists
-- verify that `TELEGRAM_BOT_TOKEN` is not empty or left as the example value
-- start the bot with `python main.py`
-
-### Compatibility scripts
-
-The older setup entrypoints still exist and now delegate to the new installers:
-
-- `setup.sh` -> `install.sh`
-- `setup.ps1` -> `install.ps1`
-
-## Run the bot
-
-If you prefer to run manually after installation:
+Statshub firma su token con JavaScript, así que hace falta un navegador real, y
+Akamai bloquea el headless. En un server chico conviene **replay-only**: el
+token se genera en una máquina con navegador
 
 ```bash
-python main.py
+python -m stats_providers.sportradar_http.engine.session_manager --headed --seconds 8
 ```
 
-## Project structure
+y se le pasa al bot mandando el `.json` por Telegram con `/sportradar_token` en
+el pie. Dura ~24 h. Detalles y la alternativa con Xvfb en
+`deploy/SPORTRADAR-CHROME.md`.
 
-```text
-.
-├── bot
-│   ├── alerts.py
-│   ├── application.py
-│   ├── config.py
-│   ├── error_handler.py
-│   ├── handlers.py
-│   └── jobs.py
-├── core
-│   ├── extractor_base.py
-│   ├── models.py
-│   └── registry.py
-├── data
-├── extractors
-│   ├── __init__.py
-│   └── bet365
-│       ├── __init__.py
-│       ├── client.py
-│       └── extractor.py
-├── services
-│   └── tracking.py
-├── sandbox
-├── storage
-│   └── tracking_repository.py
-├── .env.example
-├── install.ps1
-├── install.sh
-├── main.py
-├── monitoring.py
-├── README.md
-├── requirements.txt
-├── run.ps1
-├── run.sh
-├── setup.ps1
-└── setup.sh
+---
+
+## Desarrollo
+
+```bash
+./run_tests.sh -t .                                  # suite completa
+python -m unittest discover -s tests -t .            # equivalente
 ```
 
-## Why this is ready to grow
+Son ~840 tests. Conviene correrlos con una base limpia
+(`BETBOT_DB_PATH=/tmp/test.sqlite3`): algunos tests tocan el almacenamiento y
+una base con esquema viejo produce fallos que no son del código.
 
-The current architecture already separates:
+**Herramientas de línea de comandos** (`scripts/`, `cli.py`):
 
-- Telegram handlers
-- Bet365 extraction
-- persistent subscription state
-- global league/fixture state
-- periodic monitoring
+```bash
+python cli.py stats                                  # tamaño y filas de la DB
+python cli.py list-competitions                      # ligas bajo seguimiento
+python -m scripts.link_stats_bulk --chat-id N        # linkeo masivo (dry-run)
+python -m scripts.seed_leagues                       # semilla del registro
+```
 
-That means future steps can extend the system without redesigning the core:
-
-- richer date parsing from Bet365
-- better match formatting
-- extra commands for subscription management
-- more precise odds-change rules
-- support for other platforms later, if you decide to add them
+`migration/` conserva el registro del rediseño (`LOG.md`, `TASKS.md`,
+`PORTS_SPEC.md`) y `REPORTE_ARQUITECTURA_BetBot.md` el diseño de referencia.
