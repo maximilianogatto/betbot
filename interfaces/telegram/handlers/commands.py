@@ -123,6 +123,11 @@ from interfaces.telegram.handlers.tracking import (  # noqa: F401
     update_track_url_command,
 )
 
+from interfaces.telegram.handlers.bets import (  # noqa: F401
+    HELP_BETS_MESSAGE,
+    help_bets_command,
+    register_bet_handlers,
+)
 from interfaces.telegram.handlers.peak import (  # noqa: F401
     _PEAK_SCORES_CACHE,
     _get_cached_peaks,
@@ -916,6 +921,9 @@ def register_handlers(application: Application) -> None:
 
     application.add_handler(CommandHandler("cancel", cancel_command))
     application.add_handler(MessageHandler(filters.PHOTO & ~filters.COMMAND, photo_guidance_handler))
+    # Libro de apuestas: antes del catch-all de comandos desconocidos, que si no
+    # se los come a todos.
+    register_bet_handlers(application)
     application.add_handler(MessageHandler(filters.COMMAND, unknown_command))
 
 

@@ -46,7 +46,8 @@ HELP_MESSAGE = (
     "  /help_matches — odds y seguimiento de partidos\n"
     "  /help_live — partidos en vivo\n"
     "  /help_stats — estadísticas H2H y ligas especiales\n"
-    "  /help_leagues — ligas cross-plataforma y recordatorios\n\n"
+    "  /help_leagues — ligas cross-plataforma y recordatorios\n"
+    "  /help_apuestas — registro de apuestas y de picks ajenos\n\n"
     "💡 <i>Primer paso:</i> /track_league"
 )
 

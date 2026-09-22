@@ -21,6 +21,9 @@ EXPECTED_TABLES = [
     "pending_track_requests",
     "match_results",
     "odds_history",
+    "bets",
+    "bet_legs",
+    "ledger_settings",
 ]
 
 FORBIDDEN_LEGACY_TABLES = [
@@ -364,7 +367,83 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
         ON odds_history(platform, external_event_id, captured_at);
         CREATE INDEX IF NOT EXISTS idx_odds_history_competition
         ON odds_history(unified_competition_id, captured_at);
+
+        -- ── Libro de apuestas ────────────────────────────────────────────
+        -- Registro de lo que se apostó, para poder medir después qué funciona.
+        -- Guarda TODO: las que salieron bien, las que salieron mal, y las que
+        -- se descartaron (modo paper). Sin las descartadas sólo se puede medir
+        -- qué apuestas malas se hicieron, nunca qué buenas se dejaron pasar.
+        CREATE TABLE IF NOT EXISTS bets (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            created_at TEXT NOT NULL,              -- cuándo se cargó
+            placed_at TEXT,                        -- cuándo se hizo la apuesta
+            source TEXT NOT NULL,                  -- telegram | cli | import | llm
+            chat_id INTEGER,
+            bookmaker TEXT,
+            bookmaker_family TEXT,                 -- rusas | independiente | bet365
+            ticket_id TEXT,
+            stake REAL NOT NULL,
+            currency TEXT NOT NULL DEFAULT 'USD',
+            fx_to_usd REAL,                        -- 1 para USD/USDT; tipo de cambio si ARS
+            stake_usd REAL,
+            odds_total REAL NOT NULL,              -- cuota del ticket (producto en combinadas)
+            -- real: plata de verdad. paper: un pick registrado sin plata (1u)
+            -- para medir una fuente; no suma a la exposición ni a los límites.
+            mode TEXT NOT NULL DEFAULT 'real',
+            status TEXT NOT NULL DEFAULT 'open',   -- open|won|lost|half_won|half_lost|push|void|cashout
+            return_amount REAL, profit REAL, profit_usd REAL,
+            settled_at TEXT,
+            settlement_source TEXT,                -- auto | manual
+            scenario TEXT,                         -- hipótesis de fondo (exposición correlacionada)
+            thesis TEXT, tags TEXT, notes TEXT,
+            model_probability REAL
+        );
+        CREATE INDEX IF NOT EXISTS idx_bets_status ON bets(status, placed_at);
+        CREATE INDEX IF NOT EXISTS idx_bets_mode ON bets(mode, settled_at);
+
+        -- La pata es la unidad de análisis: se enlaza a un partido, se liquida
+        -- y se agrupa por liga, mercado o minuto de entrada.
+        CREATE TABLE IF NOT EXISTS bet_legs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            bet_id INTEGER NOT NULL REFERENCES bets(id) ON DELETE CASCADE,
+            -- Identidad del partido. Sin FK a events a propósito: `events` es
+            -- current-state y borra los partidos viejos; la apuesta tiene que
+            -- sobrevivir a eso.
+            platform TEXT, external_event_id TEXT,
+            match_label TEXT NOT NULL,             -- como lo escribió el usuario
+            home TEXT, away TEXT, competition_name TEXT, kickoff_at TEXT,
+            placed_phase TEXT NOT NULL DEFAULT 'prematch',   -- prematch | live
+            placed_minute INTEGER,
+            placed_home_score INTEGER, placed_away_score INTEGER,
+            market_type TEXT NOT NULL,             -- 1x2|asian_handicap|goal_line|btts|ht_ft|...
+            market_period TEXT NOT NULL DEFAULT 'FT',
+            side TEXT NOT NULL,
+            line REAL,                             -- desde la perspectiva del lado elegido
+            odds REAL NOT NULL,
+            -- full: el handicap cuenta el marcador completo.
+            -- placement: sólo los goles posteriores a la apuesta (regla
+            -- asiática in-play de algunas casas).
+            handicap_from TEXT NOT NULL DEFAULT 'full',
+            status TEXT NOT NULL DEFAULT 'open',
+            payout_factor REAL,                    -- retorno por unidad apostada
+            observed_odds REAL,                    -- lo que el bot veía en ese instante
+            closing_odds REAL,                     -- última cuota vista de esa misma línea
+            closing_line REAL,                     -- línea vigente al cierre, si la nuestra se movió
+            clv REAL,                              -- odds / closing_odds - 1
+            created_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_bet_legs_bet ON bet_legs(bet_id);
+        CREATE INDEX IF NOT EXISTS idx_bet_legs_event
+        ON bet_legs(platform, external_event_id);
+
+        -- Límites de riesgo propios. El sistema avisa cuando se pasan; nunca
+        -- bloquea: la decisión y la ejecución son de la persona.
+        CREATE TABLE IF NOT EXISTS ledger_settings (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+        );
         """
     )
     # Set the user version to 6
-    connection.execute("PRAGMA user_version = 7")
+    connection.execute("PRAGMA user_version = 8")

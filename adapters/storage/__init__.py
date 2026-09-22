@@ -19,6 +19,8 @@ from adapters.storage.live_watch import SQLiteLiveWatchAdapter
 from adapters.storage.maintenance import SQLiteMaintenanceAdapter
 from adapters.storage.chat_settings import SQLiteChatSettingsAdapter
 from adapters.storage.match_results import SQLiteMatchResultsAdapter
+from adapters.storage.odds_history import SQLiteOddsHistoryAdapter
+from adapters.storage.bets import SQLiteBetsAdapter
 
 
 class SqliteStorage(
@@ -31,6 +33,8 @@ class SqliteStorage(
     SQLiteMaintenanceAdapter,
     SQLiteChatSettingsAdapter,
     SQLiteMatchResultsAdapter,
+    SQLiteOddsHistoryAdapter,
+    SQLiteBetsAdapter,
 ):
     """Facade: un objeto que implementa todos los ports de storage."""
 
