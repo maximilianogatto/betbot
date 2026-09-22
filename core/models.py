@@ -944,3 +944,34 @@ __all__ = [
     "SmallChangeRecord",
     "LeagueDiscoveryOption",
 ]
+
+
+@dataclass(frozen=True)
+class OddsSnapshot:
+    """Una observación de las cuotas de un evento, en un instante.
+
+    Es append-only: nunca se actualiza. Si el precio cambió, hay otra fila.
+
+    La ausencia de cuota también es dato: cuando el extractor devuelve odds
+    nulas o parciales se archiva con ``is_suspended=1`` en vez de descartarse,
+    porque el momento en que una casa suspende un mercado dice cuándo se enteró
+    de algo (un gol, una roja).
+    """
+
+    platform: str
+    external_event_id: str
+    captured_at: str
+    payload_hash: str
+    status: str | None = None                  # PREMATCH | LIVE | FINISHED al momento
+    unified_competition_id: int | None = None
+    home: str | None = None
+    away: str | None = None
+    competition_name: str | None = None
+    scheduled_at: str | None = None
+    provider_observed_at: str | None = None
+    odds_home: float | None = None
+    odds_draw: float | None = None
+    odds_away: float | None = None
+    markets_json: str | None = None
+    is_suspended: bool = False
+    id: int | None = None

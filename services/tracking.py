@@ -44,6 +44,8 @@ from core.models import (
 )
 from core.registry import ExtractorRegistry, extractor_registry as global_extractor_registry
 from adapters.storage import SqliteStorage, get_storage
+from adapters.storage.odds_history import SQLiteOddsHistoryAdapter
+from services.odds_archive import OddsArchiveService
 
 logger = logging.getLogger(__name__)
 
@@ -131,6 +133,7 @@ class TrackingService:
         odds_flap_epsilon: float = 0.01,
         live_refresh_seconds: float = _DEFAULT_IN_PLAY_REFRESH_SECONDS,
         odds_fast_path_percent: float | None = None,
+        odds_archive: OddsArchiveService | None = None,
     ) -> None:
         self.live_refresh_seconds = float(live_refresh_seconds)
         self.odds_fast_path_percent = (
@@ -138,6 +141,9 @@ class TrackingService:
         )
         self.extractor_registry = extractor_registry or global_extractor_registry
         self.repository = repository or get_storage()
+        # Archivo append-only de la serie de cuotas: `events` guarda el estado
+        # actual, esto guarda cómo se movió.
+        self.odds_archive = odds_archive or OddsArchiveService(SQLiteOddsHistoryAdapter())
         self.max_parallel_refreshes = max(1, max_parallel_refreshes)
         self.remove_missing_after_cycles = max(1, remove_missing_after_cycles)
         self.odds_change_confirmation_refreshes = max(1, odds_change_confirmation_refreshes)
@@ -1515,6 +1521,14 @@ class TrackingService:
 
         if upsert_payload:
             self.repository.upsert_active_events(tracked_league_id, upsert_payload)
+            # Una extracción degradada rellena precios con los guardados antes:
+            # archivarla escribiría como observado algo que no se observó.
+            if not _is_degraded_extraction(extraction):
+                self.odds_archive.archive_events(
+                    platform=extraction.platform,
+                    events=upsert_payload,
+                    competition_name=league_name,
+                )
 
         if _is_degraded_extraction(extraction):
             removed_missing_count = 0
@@ -1604,6 +1618,11 @@ class TrackingService:
 
         if upsert_payload:
             self.repository.upsert_active_events(tracked_league_id, upsert_payload)
+            self.odds_archive.archive_events(
+                platform=extraction.platform,
+                events=upsert_payload,
+                competition_name=league_name,
+            )
 
         self.repository.remove_missing_events(
             tracked_league_id,

@@ -20,6 +20,7 @@ EXPECTED_TABLES = [
     "chat_settings",
     "pending_track_requests",
     "match_results",
+    "odds_history",
 ]
 
 FORBIDDEN_LEGACY_TABLES = [
@@ -332,7 +333,38 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
 
         CREATE INDEX IF NOT EXISTS idx_match_results_kickoff
         ON match_results(kickoff_at);
+
+        -- Historial de cuotas (append-only). `events` guarda el estado actual y
+        -- se pisa en cada poll; acá queda la serie: primera vez vista ->
+        -- intermedios -> último pre-kickoff. Los roles (apertura, cierre) NO se
+        -- escriben: se derivan por consulta, así el archivo es verdaderamente
+        -- append-only.
+        CREATE TABLE IF NOT EXISTS odds_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            platform TEXT NOT NULL,
+            external_event_id TEXT NOT NULL,
+            unified_competition_id INTEGER REFERENCES unified_competitions(id) ON DELETE SET NULL,
+            home TEXT,
+            away TEXT,
+            competition_name TEXT,
+            scheduled_at TEXT,
+            captured_at TEXT NOT NULL,
+            provider_observed_at TEXT,
+            status TEXT,
+            odds_home REAL, odds_draw REAL, odds_away REAL,
+            markets_json TEXT,
+            -- Cuota ausente = mercado suspendido, no dato faltante.
+            is_suspended INTEGER NOT NULL DEFAULT 0,
+            payload_hash TEXT NOT NULL
+        );
+        -- Idempotencia: el mismo payload en el mismo instante no se duplica.
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_odds_history_idempotent
+        ON odds_history(platform, external_event_id, captured_at, payload_hash);
+        CREATE INDEX IF NOT EXISTS idx_odds_history_event
+        ON odds_history(platform, external_event_id, captured_at);
+        CREATE INDEX IF NOT EXISTS idx_odds_history_competition
+        ON odds_history(unified_competition_id, captured_at);
         """
     )
     # Set the user version to 6
-    connection.execute("PRAGMA user_version = 6")
+    connection.execute("PRAGMA user_version = 7")
