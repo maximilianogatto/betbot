@@ -13,6 +13,7 @@ Puro y sin dependencias: es dominio, no almacenamiento.
 from __future__ import annotations
 
 from collections import defaultdict
+import math
 import re
 import unicodedata
 from typing import Any, Optional
@@ -39,6 +40,19 @@ def _to_float(value: Any) -> Optional[float]:
         return float(str(value).replace("+", "").replace(",", "."))
     except (TypeError, ValueError):
         return None
+
+
+def _to_odds(value: Any) -> Optional[float]:
+    """Cuota decimal válida (> 1.0) o ``None``.
+
+    Algunos extractores guardan 0 cuando el mercado está suspendido: eso no es un
+    precio y rompe cualquier 1/cuota. Se trata como ausente. (Las líneas siguen
+    pasando por ``_to_float``: 0 y negativos son líneas válidas.)
+    """
+    odds = _to_float(value)
+    if odds is None or not math.isfinite(odds) or odds <= 1.0:
+        return None
+    return odds
 
 
 def market_period(name: Any) -> str:
@@ -83,7 +97,7 @@ def _selection_rows(market: dict[str, Any], *, kind: str, period: str,
     for selection in market.get("selections") or []:
         if not isinstance(selection, dict):
             continue
-        odds = _to_float(selection.get("odds"))
+        odds = _to_odds(selection.get("odds"))
         if odds is None:
             continue
         rows.append({
@@ -105,7 +119,7 @@ def flatten_markets(markets: dict[str, Any] | None, *, home: str, away: str) -> 
     one_x_two = markets.get("1x2")
     if isinstance(one_x_two, dict):
         for side in ("home", "draw", "away"):
-            odds = _to_float(one_x_two.get(side))
+            odds = _to_odds(one_x_two.get(side))
             if odds is not None:
                 rows.append({"market_type": "1x2", "market_period": "FT",
                              "line": None, "side": side, "odds": odds})
@@ -141,6 +155,9 @@ def attach_overround(rows: list[dict[str, Any]]) -> None:
         groups[(row["market_type"], row["market_period"], line)].append(row)
     for (kind, _, _), members in groups.items():
         expected = 3 if kind == "1x2" else 2
+        # Filas armadas a mano pueden traer cuotas no positivas: ese grupo no tiene overround.
+        if any(not isinstance(m.get("odds"), (int, float)) or m["odds"] <= 0 for m in members):
+            continue
         if len(members) == expected and len({m["side"] for m in members}) == expected:
             overround = sum(1.0 / m["odds"] for m in members)
             for member in members:
