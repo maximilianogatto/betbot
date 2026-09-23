@@ -135,15 +135,15 @@ por vos**: la decisión y la ejecución son siempre de la persona; los límites
 avisan, nunca bloquean.
 
 ```
-/apuesta Darwin -2.5 HT @1.66 10usd min 13 megapari
+/bet Darwin -2.5 HT @1.66 10usd min 13 megapari
 /tip Volta descanso-final G2/G2 @1.91 #grupo     pick ajeno, sin plata (1u)
-/apuestas [todas|papel]                          listar
-/apuesta_ver <n>                                 cuota vista, CLV y resultado
-/liquidar <n> ganada|perdida|devuelta|cashout    liquidar a mano
-/anular <n>                                      apuesta mal cargada (no la borra)
-/exposicion                                      qué hay en juego y cómo va el día
-/limite max_partido 30                           límites propios
-/help_apuestas                                   el formato completo
+/bets [open|all|settled|paper]                   listar
+/view_bet <n>                                    cuota vista, CLV y resultado
+/settle <n> won|lost|half_won|half_lost|push|cashout   liquidar a mano
+/void_bet <n>                                    apuesta mal cargada (no la borra)
+/exposure                                        qué hay en juego y cómo va el día
+/set_limit max_match 30                          límites propios
+/help_bets                                       el formato completo (o /help bets)
 ```
 
 El texto de la apuesta es libre y en cualquier orden: cuota (`@1.66`), monto
@@ -156,7 +156,7 @@ Cuando el partido queda archivado en `match_results`, las apuestas se liquidan
 solas: líneas de cuarto, mercados de primer y segundo tiempo, descanso/final y
 la regla asiática in-play (el handicap que sólo cuenta los goles posteriores a
 la apuesta, que algunas casas aplican en vivo). Lo que el sistema no sabe
-liquidar **queda abierto** para `/liquidar`: nunca se adivina un resultado.
+liquidar **queda abierto** para `/settle`: nunca se adivina un resultado.
 
 Del archivo de cuotas sale el contexto: qué precio veía el bot en el minuto en
 que se apostó, y el CLV contra la última cuota vista de esa misma línea antes

@@ -11,6 +11,7 @@ from core.timezones import get_zoneinfo
 from services.timezones import resolve_chat_timezone
 from core.timezones import set_display_timezone
 from core.timezones import tz_offset_label
+from interfaces.telegram.handlers.bets import HELP_BETS_MESSAGE
 from interfaces.telegram.handlers.live_watch import HELP_LIVE_MESSAGE
 from interfaces.telegram.handlers.stats import HELP_STATS_MESSAGE
 from telegram import ReplyKeyboardRemove
@@ -47,7 +48,7 @@ HELP_MESSAGE = (
     "  /help_live — partidos en vivo\n"
     "  /help_stats — estadísticas H2H y ligas especiales\n"
     "  /help_leagues — ligas cross-plataforma y recordatorios\n"
-    "  /help_apuestas — registro de apuestas y de picks ajenos\n\n"
+    "  /help_bets — registro de apuestas y de picks ajenos (/bet, /tip, /bets…)\n\n"
     "💡 <i>Primer paso:</i> /track_league"
 )
 
@@ -136,6 +137,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         await update.message.reply_text(HELP_STATS_MESSAGE, parse_mode=ParseMode.HTML)
     elif category in ("leagues", "ligas", "liga", "comparador", "reminders", "recordatorios"):
         await update.message.reply_text(HELP_LEAGUES_MESSAGE, parse_mode=ParseMode.HTML)
+    elif category in ("bets", "bet", "ledger", "apuestas", "tips"):
+        await update.message.reply_text(HELP_BETS_MESSAGE, parse_mode=ParseMode.HTML)
     else:
         await update.message.reply_text(HELP_MESSAGE, parse_mode=ParseMode.HTML)
 

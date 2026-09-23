@@ -1,13 +1,17 @@
-"""Handlers del libro de apuestas (/apuesta, /tip, /apuestas, /liquidar…).
+"""Handlers del libro de apuestas (/bet, /tip, /bets, /settle…).
 
 Toda la lógica vive en `services.ledger`; acá sólo se lee el comando, se llama
 al service y se responde. El texto lo arma `interfaces/telegram/renderers/bets.py`.
+
+Los nombres de comando van en inglés como el resto del bot; los textos, en
+castellano. Los argumentos aceptan las dos formas (`won`/`ganada`,
+`all`/`todas`, `max_match`/`max_partido`) para no romper la costumbre.
 
 Dos cosas que el usuario nota y conviene no romper:
 
 - Los errores de carga se contestan en una línea, con el ejemplo al lado: cargar
   una apuesta pasa mientras el partido corre, y no es momento de leer un manual.
-- Una apuesta mal cargada se **anula**, no se borra: `/anular` la deja fuera de
+- Una apuesta mal cargada se **anula**, no se borra: `/void_bet` la deja fuera de
   los reportes pero la fila queda.
 """
 
@@ -29,20 +33,29 @@ from interfaces.telegram.renderers.bets import (
 )
 from services.ledger import LedgerService
 
-#: Nombres cortos en castellano para los límites de riesgo.
+#: Nombres cortos para los límites de riesgo (inglés, y los viejos en castellano).
 LIMIT_ALIASES = {
+    "max_stake": "max_stake_per_bet_usd",
+    "max_match": "max_exposure_per_match_usd",
+    "max_open": "max_open_exposure_usd",
+    "daily_stop": "daily_stop_loss_usd",
+    "max_bets_match": "max_bets_per_match",
     "max_apuesta": "max_stake_per_bet_usd",
     "max_partido": "max_exposure_per_match_usd",
     "max_abierto": "max_open_exposure_usd",
     "stop_diario": "daily_stop_loss_usd",
     "max_apuestas_partido": "max_bets_per_match",
 }
+LIMIT_KEYS_SHOWN = ("max_stake", "max_match", "max_open", "daily_stop", "max_bets_match")
+
+#: Estados que acepta /settle, además de los de `STATUS_FROM_ES`.
+SETTLE_STATUSES = ("won", "lost", "half_won", "half_lost", "push", "cashout")
 
 HELP_BETS_MESSAGE = (
     "💰 <b>Libro de apuestas</b>\n"
     "<i>Registro propio: sirve para medir qué funciona, no para apostar por vos.</i>\n\n"
     "<b>Cargar</b>\n"
-    "  <code>/apuesta Darwin -2.5 HT @1.66 10usd min 13 megapari</code>\n"
+    "  <code>/bet Darwin -2.5 HT @1.66 10usd min 13 megapari</code>\n"
     "  <code>/tip Volta descanso-final G2/G2 @1.91 #grupo</code> — pick sin plata (1u)\n\n"
     "<b>Formato</b> <i>(en cualquier orden)</i>\n"
     "  cuota <code>@1.66</code> · monto <code>10usd</code> <code>5.000 ars</code> <code>$10</code>\n"
@@ -55,16 +68,16 @@ HELP_BETS_MESSAGE = (
     "  combinada: separá con <code> + </code> · <code>#etiquetas</code> · "
     "<code>-- nota</code> al final\n\n"
     "<b>Ver y cerrar</b>\n"
-    "  /apuestas — abiertas · <code>/apuestas todas|papel</code>\n"
-    "  <code>/apuesta_ver &lt;n&gt;</code> — cuota vista, CLV y resultado\n"
-    "  <code>/liquidar &lt;n&gt; ganada|perdida|devuelta|cashout [monto]</code>\n"
-    "  <code>/anular &lt;n&gt;</code> — apuesta mal cargada (no la borra)\n\n"
+    "  /bets — abiertas · <code>/bets all|settled|paper</code>\n"
+    "  <code>/view_bet &lt;n&gt;</code> — cuota vista, CLV y resultado\n"
+    "  <code>/settle &lt;n&gt; won|lost|half_won|half_lost|push|cashout [monto]</code>\n"
+    "  <code>/void_bet &lt;n&gt;</code> — apuesta mal cargada (no la borra)\n\n"
     "<b>Riesgo</b>\n"
-    "  /exposicion — qué hay en juego y cómo va el día\n"
-    "  <code>/limite max_partido 30</code> — avisa, no bloquea\n"
-    "  <i>límites:</i> max_apuesta · max_partido · max_abierto · stop_diario · "
-    "max_apuestas_partido\n\n"
-    "<i>Las que terminan se liquidan solas cuando el resultado queda archivado.</i>"
+    "  /exposure — qué hay en juego y cómo va el día\n"
+    "  <code>/set_limit max_match 30</code> — avisa, no bloquea\n"
+    "  <i>límites:</i> " + " · ".join(LIMIT_KEYS_SHOWN) + "\n\n"
+    "<i>Las que terminan se liquidan solas cuando el resultado queda archivado.</i>\n\n"
+    "↩︎ /help"
 )
 
 
@@ -88,7 +101,7 @@ def _bet_id(context: ContextTypes.DEFAULT_TYPE) -> int | None:
 
 
 async def _load(update: Update, context: ContextTypes.DEFAULT_TYPE, *, paper: bool) -> None:
-    """Carga común de /apuesta y /tip."""
+    """Carga común de /bet y /tip."""
     text = _args_text(context)
     if not text:
         await update.message.reply_text(
@@ -117,7 +130,7 @@ async def _load(update: Update, context: ContextTypes.DEFAULT_TYPE, *, paper: bo
                              parse_mode="HTML")
 
 
-async def apuesta_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def bet_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Registra una apuesta con plata real."""
     if update.message is None:
         return
@@ -131,40 +144,40 @@ async def tip_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     await _load(update, context, paper=True)
 
 
-async def apuestas_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Lista las apuestas: abiertas por defecto, `todas`, `liquidadas` o `papel`."""
+async def bets_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Lista las apuestas: abiertas por defecto, `all`, `settled` o `paper`."""
     if update.message is None:
         return
     arg = _args_text(context).lower()
-    mode = "paper" if arg in {"papel", "tips"} else "real"
+    mode = "paper" if arg in {"paper", "tips", "papel"} else "real"
     if mode == "paper":
-        arg = "todas"
-    status = (None if arg in {"todas", "all"}
-              else "open" if arg in {"", "abiertas"}
-              else "settled" if arg in {"liquidadas", "cerradas"}
+        arg = "all"
+    status = (None if arg in {"all", "todas"}
+              else "open" if arg in {"", "open", "abiertas"}
+              else "settled" if arg in {"settled", "liquidadas", "cerradas"}
               else STATUS_FROM_ES.get(arg, arg))
     bets = _ledger(context).repository.list_bets(status=status, mode=mode, limit=15)
     if not bets:
-        await update.message.reply_text("No hay apuestas con ese filtro. /apuestas todas para ver todo.")
+        await update.message.reply_text("No hay apuestas con ese filtro. /bets all para ver todo.")
         return
     await _reply_text_chunks(update.message, "\n\n".join(render_bet(bet) for bet in bets),
                              parse_mode="HTML")
 
 
-async def apuesta_ver_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def view_bet_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Detalle de una apuesta: cuota vista, CLV y resultado."""
     if update.message is None:
         return
     bet_id = _bet_id(context)
     bet = _ledger(context).repository.get_bet(bet_id) if bet_id is not None else None
     if bet is None:
-        await update.message.reply_text("Uso: <code>/apuesta_ver &lt;número&gt;</code>",
+        await update.message.reply_text("Uso: <code>/view_bet &lt;número&gt;</code>",
                                         parse_mode="HTML")
         return
     await _reply_text_chunks(update.message, render_bet(bet), parse_mode="HTML")
 
 
-async def liquidar_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def settle_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Liquida a mano lo que el sistema no puede cerrar solo."""
     if update.message is None:
         return
@@ -172,8 +185,8 @@ async def liquidar_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     bet_id = _bet_id(context)
     if bet_id is None or len(args) < 2:
         await update.message.reply_text(
-            "Uso: <code>/liquidar &lt;n&gt; ganada|perdida|medio_ganada|medio_perdida|"
-            "devuelta|cashout [monto cobrado]</code>", parse_mode="HTML")
+            "Uso: <code>/settle &lt;n&gt; " + "|".join(SETTLE_STATUSES) +
+            " [monto cobrado]</code>", parse_mode="HTML")
         return
     status = STATUS_FROM_ES.get(args[1].lower(), args[1].lower())
     try:
@@ -185,13 +198,13 @@ async def liquidar_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     await _reply_text_chunks(update.message, render_bet(bet), parse_mode="HTML")
 
 
-async def anular_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def void_bet_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Anula una apuesta mal cargada. Queda registrada, fuera de los reportes."""
     if update.message is None:
         return
     bet_id = _bet_id(context)
     if bet_id is None:
-        await update.message.reply_text("Uso: <code>/anular &lt;n&gt; [motivo]</code>",
+        await update.message.reply_text("Uso: <code>/void_bet &lt;n&gt; [motivo]</code>",
                                         parse_mode="HTML")
         return
     reason = " ".join((context.args or [])[1:]) or "anulada por el usuario"
@@ -205,7 +218,7 @@ async def anular_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         parse_mode="HTML")
 
 
-async def exposicion_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def exposure_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Qué hay en juego ahora y cómo viene el día."""
     if update.message is None:
         return
@@ -213,7 +226,7 @@ async def exposicion_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
                              parse_mode="HTML")
 
 
-async def limite_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def set_limit_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Fija un límite de riesgo propio. El sistema avisa; nunca bloquea."""
     if update.message is None:
         return
@@ -222,8 +235,8 @@ async def limite_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     if len(args) != 2:
         current = {k: v for k, v in ledger.repository.get_limits().items() if v is not None}
         await update.message.reply_text(
-            "Uso: <code>/limite &lt;clave&gt; &lt;valor|ninguno&gt;</code>\n"
-            "Claves: " + " · ".join(LIMIT_ALIASES) + "\n"
+            "Uso: <code>/set_limit &lt;clave&gt; &lt;valor|none&gt;</code>\n"
+            "Claves: " + " · ".join(LIMIT_KEYS_SHOWN) + "\n"
             "Actuales: " + (", ".join(f"{k}={v:g}" for k, v in current.items()) or "ninguno") +
             "\n<i>Los límites avisan, no bloquean.</i>", parse_mode="HTML")
         return
@@ -233,7 +246,7 @@ async def limite_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                                         parse_mode="HTML")
         return
     try:
-        value = None if args[1].lower() in {"ninguno", "none", "-"} else float(args[1].replace(",", "."))
+        value = None if args[1].lower() in {"none", "ninguno", "-"} else float(args[1].replace(",", "."))
         ledger.set_limit(key, value)
     except ValueError as error:
         await update.message.reply_text(f"✘ {escape_html(str(error))}", parse_mode="HTML")
@@ -248,17 +261,21 @@ async def help_bets_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         await update.message.reply_text(HELP_BETS_MESSAGE, parse_mode="HTML")
 
 
+#: Comando → handler. Una sola fuente para registrar y para testear los nombres.
+BET_COMMANDS = (
+    ("bet", bet_command),
+    ("tip", tip_command),
+    ("bets", bets_command),
+    ("view_bet", view_bet_command),
+    ("settle", settle_command),
+    ("void_bet", void_bet_command),
+    ("exposure", exposure_command),
+    ("set_limit", set_limit_command),
+    ("help_bets", help_bets_command),
+)
+
+
 def register_bet_handlers(application: Application) -> None:
     """Registra los comandos del libro. Se llama ANTES del catch-all de desconocidos."""
-    for name, handler in (
-        ("apuesta", apuesta_command),
-        ("tip", tip_command),
-        ("apuestas", apuestas_command),
-        ("apuesta_ver", apuesta_ver_command),
-        ("liquidar", liquidar_command),
-        ("anular", anular_command),
-        ("exposicion", exposicion_command),
-        ("limite", limite_command),
-        ("help_apuestas", help_bets_command),
-    ):
+    for name, handler in BET_COMMANDS:
         application.add_handler(CommandHandler(name, handler))

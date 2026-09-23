@@ -10,6 +10,7 @@ cada comando tenga un callback invocable.
 """
 from __future__ import annotations
 
+import re
 import unittest
 from unittest.mock import MagicMock
 
@@ -81,6 +82,40 @@ class CommandRegistrationTests(unittest.TestCase):
 
         self.assertIn("resources", self.commands)
         self.assertIn("status", self.commands)
+
+    def test_ledger_commands_are_in_english(self) -> None:
+        """El libro de apuestas usa nombres en inglés como el resto del bot."""
+
+        for name in ("bet", "tip", "bets", "view_bet", "settle", "void_bet", "exposure",
+                     "set_limit", "help_bets"):
+            self.assertIn(name, self.commands)
+        for old in ("apuesta", "apuestas", "apuesta_ver", "liquidar", "anular", "exposicion",
+                    "limite", "help_apuestas"):
+            self.assertNotIn(old, self.commands)
+
+    def test_every_command_in_the_help_menus_exists(self) -> None:
+        """Un /comando que figura en una ayuda y no está registrado es un callejón sin salida."""
+
+        from interfaces.telegram.handlers.bets import HELP_BETS_MESSAGE
+        from interfaces.telegram.handlers.live_watch import HELP_LIVE_MESSAGE
+        from interfaces.telegram.handlers.stats import HELP_STATS_MESSAGE
+        from interfaces.telegram.handlers.system import (
+            HELP_LEAGUES_MESSAGE, HELP_MATCHES_MESSAGE, HELP_MESSAGE,
+        )
+
+        # `/x` fuera de un tag HTML (</b>, </i>…). `/comando` es el texto de ejemplo del menú
+        # ("Tocá un /comando") y `[país]_help` un patrón: ninguno es un comando real.
+        mention = re.compile(r"(?<![<\w])/([a-z][a-z0-9_]*)")
+        placeholders = {"comando"}
+        missing = {}
+        for label, text in (("help", HELP_MESSAGE), ("help_matches", HELP_MATCHES_MESSAGE),
+                            ("help_leagues", HELP_LEAGUES_MESSAGE), ("help_live", HELP_LIVE_MESSAGE),
+                            ("help_stats", HELP_STATS_MESSAGE), ("help_bets", HELP_BETS_MESSAGE)):
+            absent = sorted({c for c in mention.findall(text)
+                             if c not in self.commands and c not in placeholders})
+            if absent:
+                missing[label] = absent
+        self.assertEqual(missing, {}, "comandos mencionados en la ayuda que no están registrados")
 
 
 if __name__ == "__main__":

@@ -93,7 +93,7 @@ def render_added(bet: Bet, warnings: list[str], parse_notes: list[str]) -> str:
     if notes:
         text.append("")
         text.extend(f"• {escape_html(note)}" for note in notes)
-    text.append(f"\nSi algo quedó mal: <code>/anular {bet.id}</code>")
+    text.append(f"\nSi algo quedó mal: <code>/void_bet {bet.id}</code>")
     return "\n".join(text)
 
 
@@ -108,5 +108,5 @@ def render_exposure(exposure: dict[str, Any]) -> str:
         lines.append(f"  <i>escenario</i> {escape_html(scenario)}: {stake:.2f} USD")
     limits = {k: v for k, v in exposure["limits"].items() if v is not None}
     lines.append("<b>Límites:</b> " + (", ".join(f"{k}={v:g}" for k, v in limits.items())
-                                       if limits else "ninguno (/limite para fijarlos)"))
+                                       if limits else "ninguno (/set_limit para fijarlos)"))
     return "\n".join(lines)

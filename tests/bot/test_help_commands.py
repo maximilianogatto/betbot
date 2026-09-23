@@ -66,6 +66,20 @@ class TestHelpCommands(unittest.IsolatedAsyncioTestCase):
         self.assertIn("Ligas especiales", text)
         self.assertIn("[país]_help", text)
 
+    async def test_help_menu_links_the_bets_section(self) -> None:
+        message = SimpleNamespace(reply_text=AsyncMock())
+        await help_command(SimpleNamespace(message=message), SimpleNamespace(args=[]))
+        self.assertIn("/help_bets", message.reply_text.await_args[0][0])
+
+    async def test_help_with_bets_arg_returns_bets_help(self) -> None:
+        for arg in ("bets", "apuestas"):
+            message = SimpleNamespace(reply_text=AsyncMock())
+            await help_command(SimpleNamespace(message=message), SimpleNamespace(args=[arg]))
+            text = message.reply_text.await_args[0][0]
+            self.assertIn("Libro de apuestas", text)
+            self.assertIn("/bet ", text)
+            self.assertIn("/settle", text)
+
     async def test_direct_help_commands(self) -> None:
         commands = [
             (help_matches_command, "Odds y seguimiento de partidos"),
