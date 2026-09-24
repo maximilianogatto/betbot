@@ -149,6 +149,22 @@ class XBetHttpClient:
             await self._http.aclose()
         self._http = None
 
+    async def _discard_stuck_pool(self, stuck: httpx.AsyncClient) -> None:
+        """Replace a client whose pool stopped handing out connections.
+
+        After a CPU spike on the VPS every connection of the pool stayed "busy" and
+        every later request waited for one and died with PoolTimeout, until the
+        bot was restarted. A fresh client starts with an empty pool. Only the
+        client that timed out is discarded, so concurrent requests hitting the same
+        PoolTimeout don't throw away the replacement.
+        """
+
+        if self._http is stuck:
+            self._http = None
+        if not stuck.is_closed:
+            logger.warning("1xBet HTTP pool stuck (PoolTimeout); rebuilding the client")
+            await stuck.aclose()
+
     async def fetch_champ_zip(self, url: str) -> dict[str, Any]:
         return await self._fetch_json(url)
 
@@ -167,13 +183,16 @@ class XBetHttpClient:
         for attempt in range(1, self.settings.max_attempts + 1):
             try:
                 await self._respect_rate_limit()
-                return await self._request_json(url)
+                client = self._get_client()
+                return await self._request_json(client, url)
             except (httpx.TimeoutException, httpx.TransportError, XBetHttpClientError) as error:
                 last_error = error
+                if isinstance(error, httpx.PoolTimeout):
+                    await self._discard_stuck_pool(client)
                 if attempt >= self.settings.max_attempts:
                     break
                 logger.warning(
-                    "1xBet HTTP request failed; retrying url=%s attempt=%s/%s error=%s",
+                    "1xBet HTTP request failed; retrying url=%s attempt=%s/%s error=%r",
                     url,
                     attempt,
                     self.settings.max_attempts,
@@ -191,9 +210,9 @@ class XBetHttpClient:
                 await asyncio.sleep(wait_seconds)
             self._last_request_at = time.monotonic()
 
-    async def _request_json(self, url: str) -> dict[str, Any]:
+    async def _request_json(self, client: httpx.AsyncClient, url: str) -> dict[str, Any]:
         headers = _headers_for_url(url)
-        response = await self._get_client().get(url, headers=headers)
+        response = await client.get(url, headers=headers)
 
         if response.status_code >= 500:
             raise XBetHttpClientError(f"LineFeed server returned {response.status_code}")
