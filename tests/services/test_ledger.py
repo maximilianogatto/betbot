@@ -456,6 +456,27 @@ class LedgerFlowTests(unittest.TestCase):
         self.assertEqual((settled.id, settled.status), (ht_bet.id, "won"))
         self.assertEqual(self.storage.get_bet(ft_bet.id).status, "open")
 
+    def test_both_halves_no_settles_at_halftime_with_the_official_score(self) -> None:
+        chat_id = 5050
+        self._watch_live(chat_id)
+        [entry] = self.storage.list_live_watches(chat_id)
+        # Una casa tomó mal el entretiempo (2-1); la fuente oficial dice 0-1.
+        self.storage.update_live_watch_platform_state(entry.id, "betovo_http", {
+            "event_id": "bo-9", "home": "Bnot Netanya (W)", "away": "AS Tel Aviv University (W)",
+            "home_score": 2, "away_score": 1, "ht_home_score": 2, "ht_away_score": 1, "minute": "50'"})
+        self.storage.update_live_watch_platform_state(entry.id, "statshub", {
+            "event_id": "sr-1", "home": "Bnot Netanya", "away": "ASA Tel Aviv", "official": True,
+            "home_score": 0, "away_score": 1, "ht_home_score": 0, "ht_away_score": 1, "minute": "HT"})
+        parsed = parse_bet_text("Bnot Netanya vs ASA Tel Aviv - Asa tel aviv -2.5 @1.62 10usd melbet",
+                                now=self.now)
+        parsed.bet.chat_id = chat_id
+        leg = parsed.bet.legs[0]  # como la #5, cargada desde el ticket
+        leg.market_type, leg.side, leg.line = "both_halves_over", "no", 1.5
+        bet = self.ledger.add_bet(parsed.bet).bet
+
+        [settled] = self.ledger.run_settlement()  # 1er tiempo 0-1: ya no pueden ser ambas
+        self.assertEqual((settled.id, settled.status), (bet.id, "won"))
+
     def test_both_halves_and_second_half_markets(self) -> None:
         from core.betting.settlement import settle_leg
 
@@ -469,6 +490,10 @@ class LedgerFlowTests(unittest.TestCase):
         self.assertEqual(outcome("both_halves_over", "FT", "yes", 1.5), "lost")
         self.assertEqual(outcome("both_halves_over", "FT", "yes", 1.5, final=(3, 2), halftime=(1, 1)), "won")
         self.assertIsNone(outcome("both_halves_over", "FT", "no", 1.5, halftime=None))  # a mano
+        # Se decide en el entretiempo si el 1er tiempo no pasó la línea; si la pasó, espera el final.
+        self.assertEqual(outcome("both_halves_over", "FT", "no", 1.5, final=None, halftime=(0, 1)), "won")
+        self.assertEqual(outcome("both_halves_over", "FT", "yes", 1.5, final=None, halftime=(0, 1)), "lost")
+        self.assertIsNone(outcome("both_halves_over", "FT", "no", 1.5, final=None, halftime=(1, 1)))
         from core.betting.models import BetLeg
         from interfaces.telegram.renderers.bets import leg_line
 

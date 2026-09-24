@@ -555,7 +555,8 @@ class LiveWatchService:
                     self._mark_missing(entry, platform, entry_state, answering_platforms, now)
                     continue
                 previous_state = entry_state.get(platform)
-                current_state = _with_halftime(previous_state, _event_live_state(platform_event))
+                current_state = _with_halftime(previous_state, _event_live_state(platform_event),
+                                               kickoff=_parse_iso_datetime(entry.kickoff_at), now=now)
                 had_halftime = (previous_state or {}).get("ht_home_score") is not None
                 if current_state.get("ht_home_score") is not None and not had_halftime:
                     self._settlement_triggers += 1  # entretiempo: se liquidan las del 1er tiempo
@@ -891,11 +892,19 @@ def _minute_number(minute: Any) -> int | None:
     return int(match.group()) if match else None
 
 
-def _with_halftime(previous: dict[str, Any] | None, current: dict[str, Any]) -> dict[str, Any]:
+#: El 2º tiempo no puede estar en juego antes de esto desde el horario de inicio
+#: (45' + 15' de descanso; el descuento y las demoras sólo lo corren para después).
+SECOND_HALF_EARLIEST = timedelta(minutes=60)
+
+
+def _with_halftime(previous: dict[str, Any] | None, current: dict[str, Any], *,
+                   kickoff: datetime | None = None, now: datetime | None = None) -> dict[str, Any]:
     """Arrastra o detecta el marcador del entretiempo en el estado de una casa.
 
     Se toma cuando la casa marca el descanso ("HT", "Descanso") o, si no lo marca,
-    del último marcador visto a los 45' cuando aparece el 2º tiempo.
+    del último marcador visto a los 45' cuando aparece el 2º tiempo. Algunas casas
+    cuentan el descuento del 1er tiempo como 46', 47'...: con el horario de inicio,
+    ese salto no cuenta como 2º tiempo hasta SECOND_HALF_EARLIEST.
     """
 
     if previous and previous.get("ht_home_score") is not None:
@@ -908,15 +917,27 @@ def _with_halftime(previous: dict[str, Any] | None, current: dict[str, Any]) -> 
     if previous and previous.get("home_score") is not None:
         before, after = _minute_number(previous.get("minute")), _minute_number(current.get("minute"))
         if before == 45 and after is not None and after >= 46:
+            if kickoff is not None and now is not None and now - kickoff < SECOND_HALF_EARLIEST:
+                return current  # descuento del 1er tiempo, no el 2º
             return {**current, "ht_home_score": previous["home_score"],
                     "ht_away_score": previous["away_score"]}
     return current
 
 
+def halftime_states(live_state: dict[str, Any] | None) -> list[tuple[str, dict[str, Any]]]:
+    """Las casas que tienen el marcador del entretiempo, la fuente oficial primero.
+
+    El de una casa puede venir de la regla de los 45'; el oficial lo da la fuente.
+    """
+    found = [(platform, state) for platform, state in (live_state or {}).items()
+             if platform != "_alerts" and isinstance(state, dict)
+             and state.get("ht_home_score") is not None]
+    return sorted(found, key=lambda item: not item[1].get("official"))
+
+
 def _halftime_score(entry: LiveWatchEntry) -> tuple[int, int] | None:
-    for platform, state in (entry.live_state or {}).items():
-        if platform != "_alerts" and isinstance(state, dict) and state.get("ht_home_score") is not None:
-            return int(state["ht_home_score"]), int(state["ht_away_score"])
+    for _, state in halftime_states(entry.live_state):
+        return int(state["ht_home_score"]), int(state["ht_away_score"])
     return None
 
 

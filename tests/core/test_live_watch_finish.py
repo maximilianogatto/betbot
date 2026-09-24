@@ -150,5 +150,29 @@ class LiveWatchFinishTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(self._watching())
 
 
+class HalftimeCaptureTests(unittest.TestCase):
+    def test_first_half_stoppage_time_is_not_the_second_half(self) -> None:
+        from datetime import datetime, timedelta, timezone
+
+        from services.live_watch import _with_halftime
+
+        now = datetime(2026, 9, 24, 19, 17, tzinfo=timezone.utc)
+        previous = {"home_score": 0, "away_score": 1, "minute": "45'"}
+        current = {"home_score": 0, "away_score": 1, "minute": "46'"}
+
+        in_stoppage = _with_halftime(previous, current, kickoff=now - timedelta(minutes=47), now=now)
+        self.assertNotIn("ht_home_score", in_stoppage)
+        second_half = _with_halftime(previous, current, kickoff=now - timedelta(minutes=62), now=now)
+        self.assertEqual((second_half["ht_home_score"], second_half["ht_away_score"]), (0, 1))
+        self.assertIn("ht_home_score", _with_halftime(previous, current))  # sin horario: como antes
+
+    def test_the_official_halftime_wins_over_a_book(self) -> None:
+        from services.live_watch import halftime_states
+
+        states = {"betovo_http": {"ht_home_score": 1, "ht_away_score": 1},
+                  "_alerts": {}, "statshub": {"ht_home_score": 0, "ht_away_score": 1, "official": True}}
+        self.assertEqual([name for name, _ in halftime_states(states)], ["statshub", "betovo_http"])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -104,12 +104,16 @@ def settle_leg(
     """
     if market_type == "both_halves_over":
         # "Ambas mitades más de 1.5": goles del 1er tiempo y del 2º, cada uno > línea.
-        if (final is None or halftime is None or line is None or side not in {"yes", "no"}
-                or float(line).is_integer()):
+        if halftime is None or line is None or side not in {"yes", "no"} or float(line).is_integer():
             return None
         first = halftime[0] + halftime[1]
-        second = (final[0] - halftime[0]) + (final[1] - halftime[1])
-        both = first > line and second > line
+        if first <= line:
+            both = False  # el 1er tiempo no pasó la línea: se decide en el entretiempo
+        elif final is None:
+            return None
+        else:
+            second = (final[0] - halftime[0]) + (final[1] - halftime[1])
+            both = second > line
         return _combine(["won" if both == (side == "yes") else "lost"], odds)
 
     score = period_score(market_period, final=final, halftime=halftime)

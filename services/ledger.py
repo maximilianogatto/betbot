@@ -48,6 +48,7 @@ from core.match_identity import (
 )
 from core.models import MatchResult
 from core.odds_markets import find_market, flatten_markets
+from services.live_watch import halftime_states
 
 logger = logging.getLogger(__name__)
 
@@ -591,8 +592,7 @@ class LedgerService:
         for entry in entries:
             states = {platform: state for platform, state in (entry.live_state or {}).items()
                       if platform != "_alerts" and isinstance(state, dict) and state.get("event_id")}
-            with_halftime = [(platform, state) for platform, state in states.items()
-                             if state.get("ht_home_score") is not None]
+            with_halftime = halftime_states(states)
             if not with_halftime:
                 continue
             platform, state = with_halftime[0]
@@ -614,15 +614,14 @@ class LedgerService:
         """
         results = []
         for leg in bet.legs:
-            first_half_only = leg.market_period == "HT" and leg.market_type != "both_halves_over"
             result = None
             if leg.platform and leg.external_event_id:
                 result = self.repository.get_match_result(
                     platform=leg.platform, external_event_id=leg.external_event_id)
-            if not _decides(result, first_half_only) and recent:
+            if not _decides(result, leg) and recent:
                 found = _result_by_alias(leg, recent) or self._result_by_teams(leg, bet, recent)
-                result = found if _decides(found, first_half_only) else result
-            if not _decides(result, first_half_only):
+                result = found if _decides(found, leg) else result
+            if not _decides(result, leg):
                 return None
             halftime = ((result.ht_home_score, result.ht_away_score)
                         if result.ht_home_score is not None else None)
@@ -825,7 +824,19 @@ class LedgerService:
         return warnings
 
 
-def _decides(result: Optional[MatchResult], first_half_only: bool) -> bool:
+def _decided_at_halftime(leg: BetLeg, result: MatchResult) -> bool:
+    """Si a la pata le alcanza el entretiempo.
+
+    Las del 1er tiempo, y "ambas mitades más de X" cuando el 1er tiempo no pasó
+    la línea: ya no pueden ser ambas, pase lo que pase en el 2º.
+    """
+    if leg.market_type == "both_halves_over":
+        return (leg.line is not None and result.ht_home_score is not None
+                and result.ht_home_score + result.ht_away_score <= leg.line)
+    return leg.market_period == "HT"
+
+
+def _decides(result: Optional[MatchResult], leg: BetLeg) -> bool:
     """Si ese resultado alcanza para liquidar la pata.
 
     El final sólo cuenta si el partido terminó (FINISHED): un suspendido o una foto
@@ -833,7 +844,7 @@ def _decides(result: Optional[MatchResult], first_half_only: bool) -> bool:
     """
     if result is None:
         return False
-    if first_half_only and result.ht_home_score is not None:
+    if result.ht_home_score is not None and _decided_at_halftime(leg, result):
         return (result.status or "").upper() in {"FINISHED", "HALFTIME"}
     return result.final_home_score is not None and (result.status or "").upper() == "FINISHED"
 
