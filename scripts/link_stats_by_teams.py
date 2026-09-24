@@ -200,7 +200,7 @@ def _match_teams(bot_teams: list[str], provider_teams: set[str]) -> list[tuple[s
 
 
 async def run(chat_id: int, apply: bool, limit: int | None, cache_path: str | None = None,
-              provider_name: str = PROVIDER) -> None:
+              provider_name: str = PROVIDER, audit: bool = False) -> None:
     from core.stats_provider_base import stats_provider_registry
     from stats_providers import register_default_stats_providers
 
@@ -239,10 +239,53 @@ async def run(chat_id: int, apply: bool, limit: int | None, cache_path: str | No
             await asyncio.sleep(0.2)
         return fixtures_cache[league_id]
 
+    def verified(matched: int, bot_count: int, provider_count: int) -> bool:
+        # Un proveedor que sólo ve unos días (Flashscore) muestra una parte de la liga:
+        # la proporción se mide contra lo que cada lado puede mostrar.
+        shown = min(bot_count, provider_count or bot_count)
+        needed = shown if shown < MIN_TEAMS else MIN_TEAMS
+        return bool(shown) and matched >= needed and matched / shown >= MIN_RATIO
+
+    async def evaluate(name: str, country: str | None, bot_teams: list[str]):
+        pool = [opt for opt in catalog
+                if _category_compatible(name, opt.league_name or "") and _country_compatible(country, opt)]
+        by_similarity = sorted(pool, key=lambda opt: -league_name_similarity(name, opt.league_name or ""))
+        by_words = sorted(pool, key=lambda opt: -_word_overlap(
+            name, f"{opt.league_name or ''} {getattr(opt, 'country_name', '') or ''}"))
+        chosen: dict[str, Any] = {}
+        for opt in by_similarity[:CANDIDATES_PER_LEAGUE] + by_words[:CANDIDATES_PER_LEAGUE]:
+            chosen.setdefault(str(opt.league_id), opt)
+        ranked = [Candidate(opt, league_name_similarity(name, opt.league_name or ""))
+                  for opt in chosen.values()]
+        for candidate in ranked:
+            candidate.matched = _match_teams(bot_teams, await provider_teams(candidate.league_id))
+        ranked.sort(key=lambda c: (-len(c.matched), -c.name_score))
+        best = ranked[0] if ranked else None
+        # La otra fase de la misma liga no compite: se busca el primer rival real.
+        runner_up = next((c for c in ranked[1:]
+                          if _base_name(c.option.league_name or "") != _base_name(best.option.league_name or "")),
+                         None) if best else None
+        provider_count = len(fixtures_cache.get(best.league_id, ())) if best else 0
+        few = min(len(bot_teams), provider_count or len(bot_teams)) < MIN_TEAMS
+        runner_up_teams = len(runner_up.matched) if runner_up else 0
+        if best is None or not verified(len(best.matched), len(bot_teams), provider_count):
+            verdict = "sin_match"
+        elif (few and runner_up_teams) or runner_up_teams >= RUNNER_UP_FACTOR * len(best.matched):
+            verdict = "ambiguo"
+        else:
+            verdict = "link"
+        return verdict, best, runner_up
+
     unified = storage.list_subscribed_unified_competitions(chat_id)
     if limit:
         unified = unified[:limit]
     print(f"Ligas del chat {chat_id}: {len(unified)}\n")
+
+    if audit:
+        await _audit(storage, unified, provider_name, provider_teams, evaluate, verified, apply)
+        save_cache()
+        return
+
     proposals: list[Proposal] = []
     for row in unified:
         uid, name = row["id"], row["name"]
@@ -260,39 +303,7 @@ async def run(chat_id: int, apply: bool, limit: int | None, cache_path: str | No
         if len(bot_teams) < 2:
             proposals.append(Proposal(uid, name, competitions[0].id, bot_teams, "sin_equipos"))
             continue
-        country = row.get("country") or _country_of(name)
-        pool = [opt for opt in catalog
-                if _category_compatible(name, opt.league_name or "") and _country_compatible(country, opt)]
-        by_similarity = sorted(pool, key=lambda opt: -league_name_similarity(name, opt.league_name or ""))
-        by_words = sorted(pool, key=lambda opt: -_word_overlap(
-            name, f"{opt.league_name or ''} {getattr(opt, 'country_name', '') or ''}"))
-        chosen: dict[str, Any] = {}
-        for opt in by_similarity[:CANDIDATES_PER_LEAGUE] + by_words[:CANDIDATES_PER_LEAGUE]:
-            chosen.setdefault(str(opt.league_id), opt)
-        ranked = [Candidate(opt, league_name_similarity(name, opt.league_name or ""))
-                  for opt in chosen.values()]
-        for candidate in ranked:
-            candidate.matched = _match_teams(bot_teams, await provider_teams(candidate.league_id))
-        ranked.sort(key=lambda c: (-len(c.matched), -c.name_score))
-        best = ranked[0] if ranked else None
-        runner_up = ranked[1] if len(ranked) > 1 else None
-        # La otra fase de la misma liga no compite: se busca el primer rival real.
-        if best is not None:
-            runner_up = next((c for c in ranked[1:]
-                              if _base_name(c.option.league_name or "") != _base_name(best.option.league_name or "")),
-                             None)
-        # Un proveedor que sólo ve unos días (Flashscore) muestra una parte de la liga:
-        # la proporción se mide contra lo que cada lado puede mostrar.
-        shown = min(len(bot_teams), len(fixtures_cache.get(best.league_id, ())) or len(bot_teams)) if best else 0
-        few = shown < MIN_TEAMS
-        needed = shown if few else MIN_TEAMS
-        runner_up_teams = len(runner_up.matched) if runner_up else 0
-        if best is None or not shown or len(best.matched) < needed or len(best.matched) / shown < MIN_RATIO:
-            verdict = "sin_match"
-        elif (few and runner_up_teams) or runner_up_teams >= RUNNER_UP_FACTOR * len(best.matched):
-            verdict = "ambiguo"
-        else:
-            verdict = "link"
+        verdict, best, runner_up = await evaluate(name, row.get("country") or _country_of(name), bot_teams)
         proposals.append(Proposal(uid, name, competitions[0].id, bot_teams, verdict, best, runner_up))
         print(f"  {verdict:10} {name[:55]:55} -> "
               f"{(best.option.league_name if best else '-')[:40]} "
@@ -330,6 +341,65 @@ async def run(chat_id: int, apply: bool, limit: int | None, cache_path: str | No
         pass
 
 
+async def _audit(storage, unified, provider_name, provider_teams, evaluate, verified, apply) -> None:
+    """Revisa por equipos los links que YA existen con ese proveedor.
+
+    Los primeros links se hicieron por nombre y hay errores ("Nueva Gales del Sur"
+    -> Queensland). ok = los equipos lo confirman; reemplazar = hay un candidato
+    verificado mejor; borrar = ningún equipo coincide y el bot conoce >= 5 (link
+    claramente equivocado); sospechoso = no alcanza para decidir, se deja.
+    """
+    results: dict[str, list[str]] = {}
+    changes: list[tuple[str, Any, Any]] = []
+    for row in unified:
+        name = row["name"]
+        competitions = storage.list_tracked_competitions_for_unified(row["id"])
+        if not competitions:
+            continue
+        link = next((item for item in storage.list_stats_league_links(competitions[0].id)
+                     if item.stats_provider == provider_name), None)
+        if link is None:
+            continue
+        bot_teams = _bot_teams([c.id for c in competitions])
+        linked_teams = await provider_teams(str(link.stats_league_id)) if len(bot_teams) >= 2 else set()
+        matched = _match_teams(bot_teams, linked_teams) if linked_teams else []
+        best = None
+        if len(bot_teams) < 2 or not linked_teams:
+            verdict = "sin_datos"
+        elif verified(len(matched), len(bot_teams), len(linked_teams)):
+            verdict = "ok"
+        else:
+            new_verdict, best, _ = await evaluate(name, row.get("country") or _country_of(name), bot_teams)
+            if new_verdict == "link" and best.league_id != str(link.stats_league_id):
+                verdict = "reemplazar"
+                changes.append(("reemplazar", link, best))
+            elif not matched and len(bot_teams) >= 5:
+                verdict = "borrar"
+                changes.append(("borrar", link, None))
+            else:
+                verdict = "sospechoso"
+        line = (f"  {name!r} -> {link.stats_league_name!r} equipos {len(matched)}/{len(bot_teams)}"
+                + (f"  => {best.option.league_name!r} ({len(best.matched)})" if verdict == "reemplazar" else ""))
+        results.setdefault(verdict, []).append(line)
+    for verdict in ("ok", "reemplazar", "borrar", "sospechoso", "sin_datos"):
+        rows = results.get(verdict, [])
+        print(f"=== {verdict.upper()} ({len(rows)}) ===")
+        for line in rows:
+            print(line)
+        print()
+    if not apply:
+        print(f"DRY-RUN: {len(changes)} cambios propuestos (con --apply se aplican).")
+        return
+    for action, link, best in changes:
+        if action == "reemplazar":
+            storage.upsert_stats_league_link(
+                link.tracked_competition_id, provider_name, best.league_id, best.option.league_name,
+                best.option.country_name, 1.0)
+        else:
+            storage.delete_stats_league_link(link.tracked_competition_id, provider_name)
+    print(f"APLICADO: {len(changes)} cambios.")
+
+
 def main() -> None:
     from dotenv import load_dotenv
 
@@ -341,8 +411,10 @@ def main() -> None:
     parser.add_argument("--cache", default=None, help="json con los equipos por torneo (se reusa)")
     parser.add_argument("--provider", default=PROVIDER,
                         help="sportradar_statshub, flashscore_http, palloliitto, svenskfotboll_http, ...")
+    parser.add_argument("--audit", action="store_true",
+                        help="revisar por equipos los links que ya existen con ese proveedor")
     args = parser.parse_args()
-    asyncio.run(run(args.chat_id, args.apply, args.limit, args.cache, args.provider))
+    asyncio.run(run(args.chat_id, args.apply, args.limit, args.cache, args.provider, args.audit))
 
 
 if __name__ == "__main__":
