@@ -388,6 +388,17 @@ def report(period: str = "week", chat_id: int | None = None) -> dict[str, Any]:
 
 
 @_tool(READ)
+def fx() -> dict[str, Any]:
+    """Cotización del dólar (pesos por dólar) con la que el libro pasa a USD las apuestas en ARS.
+
+    La lee el bot de dolarhoy.com cada 30 min: promedio compra/venta del dólar digital
+    (USDC, a la par del USDT con el que se carga en las casas), o el tipo de
+    LEDGER_ARS_RATE_KIND. `fresh` = false si tiene más de 3 días.
+    """
+    return {"ARS": runtime.ledger.fx_rate("ARS")}
+
+
+@_tool(READ)
 def leagues(chat_id: int | None = None) -> dict[str, Any]:
     """Ligas trackeadas del chat: casa, URL, partidos activos, último refresh y racha sin partidos."""
     chat = runtime.chat_id(chat_id)

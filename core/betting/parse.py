@@ -46,9 +46,11 @@ _CURRENCIES = {"usd": "USD", "usdt": "USDT", "u$s": "USD", "us$": "USD", "dolare
                "dólares": "USD", "ars": "ARS", "pesos": "ARS"}
 
 _ODDS_RE = re.compile(rf"@\s*({_NUM})")
+# Montos con miles y decimales a la argentina: "15.000", "16.031,30".
+_THOUSANDS = r"\d{1,3}(?:\.\d{3})+(?:,\d+)?"
 _STAKE_RE = re.compile(
-    rf"(?:(?<![\w.])\$\s*(\d{{1,3}}(?:\.\d{{3}})+|{_NUM})"
-    rf"|(\d{{1,3}}(?:\.\d{{3}})+|{_NUM})\s*(usdt|usd|u\$s|us\$|ars|pesos|d[oó]lares)\b"
+    rf"(?:(?<![\w.])\$\s*({_THOUSANDS}|{_NUM})"
+    rf"|({_THOUSANDS}|{_NUM})\s*(usdt|usd|u\$s|us\$|ars|pesos|d[oó]lares)\b"
     rf"|\bstake\s+({_NUM}))",
     re.IGNORECASE,
 )
@@ -84,7 +86,7 @@ def _number(raw: str, *, thousands: bool = False) -> float:
     """``thousands=True`` sólo para montos: "5.000 ars" es 5000. En cuotas y
     líneas NUNCA: "@1.605" es 1.605, no mil seiscientos cinco."""
     raw = raw.strip()
-    if thousands and re.fullmatch(r"\d{1,3}(?:\.\d{3})+", raw):
+    if thousands and re.fullmatch(_THOUSANDS, raw):
         raw = raw.replace(".", "")
     return float(raw.replace(",", "."))
 

@@ -67,6 +67,13 @@ class ParseTests(unittest.TestCase):
         leg = parse_bet_text("Kosovo u21 -3.5 @1.62 10usd").bet.legs[0]
         self.assertEqual((leg.market_type, leg.line, leg.team), ("asian_handicap", -3.5, "Kosovo u21"))
 
+    def test_argentine_amounts_with_thousands_and_decimals(self) -> None:
+        for text, stake in (("Boca -1 @1.9 15.000 ars", 15000.0), ("Boca -1 @1.9 16.031,30 ars", 16031.3),
+                            ("Boca -1 @1.9 980,5 ars", 980.5), ("Boca -1 @1.9 $1.250.000", 1250000.0),
+                            ("Boca -1 @1.605 10usd", 10.0)):
+            self.assertEqual(parse_bet_text(text).bet.stake, stake, text)
+        self.assertEqual(parse_bet_text("Boca -1 @1.605 10usd").bet.legs[0].odds, 1.605)
+
     def test_short_under_and_over_still_work(self) -> None:
         for text, side, line in (("Boca vs River u2.5 @1.8 10usd", "under", 2.5),
                                  ("Boca vs River o3 @1.8 10usd", "over", 3.0)):
@@ -547,6 +554,32 @@ class LedgerFlowTests(unittest.TestCase):
         result = self._add("Darwin -2.5 HT @1.56 15.000 ars min 13 megapari")
         self.assertTrue(any("tipo de cambio" in w for w in result.warnings))
         self.assertIsNone(result.bet.stake_usd)
+
+    def test_the_dollar_rate_quotes_ars_bets_old_and_new(self) -> None:
+        open_ars = self._add("Equipo Inexistente -1 @1.9 15.000 ars 20bet").bet
+        settled_ars = self._add("Equipo Inexistente +1 @2.0 20.000 ars 20bet").bet
+        self.ledger.settle_manual(settled_ars.id, "won")
+        self.assertIsNone(self.storage.get_bet(open_ars.id).stake_usd)
+
+        # El job guarda la cotización: las que no tenían tipo de cambio se cotizan.
+        self.assertEqual(self.ledger.set_fx_rate("ARS", 1603.13, kind="digital"), 2)
+        self.assertAlmostEqual(self.storage.get_bet(open_ars.id).stake_usd, 15000 / 1603.13, places=3)
+        self.assertAlmostEqual(self.storage.get_bet(settled_ars.id).profit_usd, 20000 / 1603.13, places=3)
+        self.assertEqual(self.ledger.set_fx_rate("ARS", 1700.0), 0)  # no pisa lo ya cotizado
+
+        new = self._add("Equipo Inexistente -1 @1.9 17.000 ars 20bet")
+        self.assertAlmostEqual(new.bet.stake_usd, 10.0, places=4)
+        self.assertFalse(any("tipo de cambio" in w for w in new.warnings))
+        self.assertEqual(self.ledger.fx_rate("ARS")["ars_per_usd"], 1700.0)
+
+    def test_a_stale_dollar_rate_is_not_used_for_new_bets(self) -> None:
+        self.ledger.set_fx_rate("ARS", 1550.0)
+        later = LedgerService(self.storage, clock=lambda: self.now + timedelta(days=4))
+        result = later.add_bet(parse_bet_text("Equipo Inexistente -1 @1.9 15.000 ars 20bet",
+                                              now=self.now).bet)
+        self.assertIsNone(result.bet.stake_usd)
+        self.assertTrue(any("tipo de cambio" in w for w in result.warnings))
+        self.assertFalse(later.fx_rate("ARS")["fresh"])
 
     def test_paper_tip_does_not_touch_exposure_or_limits(self) -> None:
         self.ledger.set_limit("max_exposure_per_match_usd", 5)

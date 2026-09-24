@@ -180,6 +180,15 @@ class SQLiteBetsAdapter(BetsPort):
             row = conn.execute("SELECT value FROM ledger_settings WHERE key = ?", (key,)).fetchone()
         return row["value"] if row else None
 
+    def apply_fx_rate(self, currency: str, fx_to_usd: float) -> int:
+        with open_connection() as conn:
+            cursor = conn.execute(
+                "UPDATE bets SET fx_to_usd = ?, stake_usd = round(stake * ?, 4),"
+                " profit_usd = CASE WHEN profit IS NULL THEN NULL ELSE round(profit * ?, 4) END"
+                " WHERE currency = ? AND fx_to_usd IS NULL",
+                (fx_to_usd, fx_to_usd, fx_to_usd, currency))
+        return cursor.rowcount
+
     def set_ledger_setting(self, key: str, value: str) -> None:
         with open_connection() as conn:
             conn.execute(

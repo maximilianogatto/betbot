@@ -51,6 +51,9 @@ from core.odds_markets import find_market, flatten_markets
 
 logger = logging.getLogger(__name__)
 
+#: Más vieja que esto, la cotización guardada no se usa para una apuesta nueva.
+FX_MAX_AGE = timedelta(days=3)
+
 #: Ventana para buscar el partido de una apuesta alrededor del momento de carga.
 MATCH_WINDOW = timedelta(hours=36)
 #: Enlace tardío: resultados archivados hasta 10 días después de la apuesta (una
@@ -186,6 +189,9 @@ class LedgerService:
         if currency in USD_LIKE:
             return 1.0
         if currency == "ARS":
+            stored = self.fx_rate("ARS")
+            if stored and stored.get("fresh"):
+                return 1.0 / stored["ars_per_usd"]
             rate = os.getenv("LEDGER_ARS_PER_USD", "").strip()
             if rate:
                 try:
@@ -193,9 +199,34 @@ class LedgerService:
                 except (TypeError, ValueError, ZeroDivisionError):
                     pass
         warnings.append(
-            f"Sin tipo de cambio para {currency}: el monto no entra en los totales en USD "
-            "hasta que se cargue (LEDGER_ARS_PER_USD en el .env, o el valor en la apuesta).")
+            f"Sin tipo de cambio para {currency}: el monto entra en los totales en USD cuando "
+            "el bot lea la cotización de dolarhoy.com (se actualiza sola cada 30 min).")
         return None
+
+    def fx_rate(self, currency: str = "ARS") -> Optional[dict[str, Any]]:
+        """Última cotización guardada (pesos por dólar), con su antigüedad."""
+        raw = self.repository.get_ledger_setting(f"fx:{currency}")
+        if not raw:
+            return None
+        try:
+            info = json.loads(raw)
+        except (TypeError, ValueError):
+            return None
+        fetched = _parse(info.get("fetched_at"))
+        info["fresh"] = fetched is not None and self.clock() - fetched <= FX_MAX_AGE
+        return info
+
+    def set_fx_rate(self, currency: str, ars_per_usd: float, **details: Any) -> int:
+        """Guarda la cotización y cotiza a USD las apuestas que no tenían tipo de cambio.
+
+        Devuelve cuántas apuestas se cotizaron con este valor (las cargadas cuando no
+        había cotización, o antes de que existiera esta fuente).
+        """
+        if ars_per_usd <= 0:
+            raise ValueError("la cotización tiene que ser positiva")
+        info = {"ars_per_usd": round(float(ars_per_usd), 4), "fetched_at": _iso(self.clock()), **details}
+        self.repository.set_ledger_setting(f"fx:{currency}", json.dumps(info, ensure_ascii=False))
+        return self.repository.apply_fx_rate(currency, 1.0 / float(ars_per_usd))
 
     def _resolve_leg(self, leg: LegInput, *, bookmaker: Optional[str],
                      placed_at: Optional[datetime], now: datetime, chat_id: Optional[int],

@@ -146,6 +146,13 @@ avisan, nunca bloquean.
 /help_bets                                       el formato completo (o /help bets)
 ```
 
+Los montos en pesos se pasan a USD con la cotización que el bot lee de
+dolarhoy.com cada 30 min (`adapters/fx/dolarhoy.py`, HTML plano): el promedio
+compra/venta del dólar digital (USDC), que cotiza a la par del USDT con el que se
+carga en las casas. `LEDGER_ARS_RATE_KIND=blue|mep|oficial|ccl` para usar otro;
+`/fx` muestra el valor vigente. Las apuestas en ARS que no tenían cotización la
+toman apenas hay una.
+
 El texto de la apuesta es libre y en cualquier orden: cuota (`@1.66`), monto
 (`10usd`, `5.000 ars`), mercado (`-2.5`, `over 2.5`, `tt over 3.5`, `gana`,
 `1x`, `dnb`, `ambos marcan no`, `G2/G2`), período (`HT`/`2T`), momento

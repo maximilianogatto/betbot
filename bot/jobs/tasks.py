@@ -166,6 +166,20 @@ class LedgerReportJob(ScheduledJob):
         await _orchestrated_ledger_reports(application)
 
 
+class FxRateJob(ScheduledJob):
+    """Cotización del dólar (dolarhoy.com) para pasar a USD las apuestas en pesos."""
+
+    def __init__(self, interval: float = 1800.0, initial_delay: float = 20.0) -> None:
+        super().__init__("fx_rate", initial_delay)
+        self.interval = interval
+
+    def get_interval(self, application: Application) -> float:
+        return self.interval
+
+    async def run(self, application: Application) -> None:
+        await _orchestrated_fx_rate(application)
+
+
 class LiveWatchJob(ScheduledJob):
     """Job that services in-play status of matches with a dynamic interval."""
 
@@ -349,6 +363,35 @@ async def _orchestrated_ledger_settlement(application: Application) -> None:
             logger.warning("No pude avisar la liquidación de la apuesta #%s", bet.id)
     if settled:
         logger.info("Ledger: %s apuesta(s) liquidadas solas", len(settled))
+
+
+async def _orchestrated_fx_rate(application: Application) -> None:
+    """Lee dolarhoy.com y guarda pesos por dólar (promedio compra/venta del tipo elegido)."""
+    import os
+
+    from adapters.fx.dolarhoy import DOLARHOY_URL, fetch_quotes
+    from services.ledger import LedgerService
+
+    # "digital" (USDC en dolarhoy) = el dólar cripto con el que se carga en las casas
+    # (USDT): cotiza a la par. LEDGER_ARS_RATE_KIND=blue|mep|oficial|ccl para otro.
+    kind = os.getenv("LEDGER_ARS_RATE_KIND", "digital").strip().lower() or "digital"
+    try:
+        quotes = await fetch_quotes()
+    except Exception as error:
+        logger.warning("No pude leer la cotización de dolarhoy.com: %s", error)
+        return
+    quote = quotes.get(kind)
+    if quote is None or quote.mid is None:
+        logger.warning("dolarhoy.com no trajo el dólar %s (hay: %s)", kind, ", ".join(quotes))
+        return
+    ledger = application.bot_data.get("ledger_service")
+    if ledger is None:
+        ledger = application.bot_data["ledger_service"] = LedgerService()
+    backfilled = await asyncio.to_thread(
+        ledger.set_fx_rate, "ARS", quote.mid, kind=kind, buy=quote.buy, sell=quote.sell,
+        source=DOLARHOY_URL, page_updated=quote.updated)
+    logger.info("Dólar %s: %.2f ARS (compra %s / venta %s)%s", kind, quote.mid, quote.buy, quote.sell,
+                f"; {backfilled} apuesta(s) en ARS cotizadas" if backfilled else "")
 
 
 def _due_reports(local: datetime) -> list[tuple[str, str]]:
@@ -621,6 +664,8 @@ async def start_orchestrated_scheduler(application: Application, settings: Any) 
     scheduler.register_job(LedgerSettlementJob())
     # 5d. Reportes del libro: diario, semanal (lunes) y mensual (día 1).
     scheduler.register_job(LedgerReportJob())
+    # 5e. Cotización del dólar para las apuestas en pesos.
+    scheduler.register_job(FxRateJob())
 
     # 6. Register Live Watch Monitor
     if settings.live_watch_enabled:

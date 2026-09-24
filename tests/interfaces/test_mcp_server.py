@@ -143,6 +143,12 @@ class McpToolsTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.mcp.exposure()["open_bets"], 0)
         self.assertEqual([b["id"] for b in self.mcp.bets(status="settled")["bets"]], [lost["id"], won["id"]])
 
+    def test_fx_tool(self) -> None:
+        self.assertEqual(self.mcp.fx(), {"ARS": None})
+        self.mcp.runtime.ledger.set_fx_rate("ARS", 1603.13, kind="digital")
+        rate = self.mcp.fx()["ARS"]
+        self.assertEqual((rate["ars_per_usd"], rate["kind"], rate["fresh"]), (1603.13, "digital", True))
+
     def test_report_tool(self) -> None:
         won = self.mcp.bet_add(text=BET, watch=False)["bet"]
         self.mcp.bet_settle(won["id"], "won")

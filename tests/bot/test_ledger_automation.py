@@ -131,6 +131,59 @@ class LedgerReportJobTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn(("last_month", "monthly:2026-09"), _due_reports(first_of_month))
 
 
+class FxRateJobTests(unittest.IsolatedAsyncioTestCase):
+    def setUp(self) -> None:
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        self._prev = {key: os.environ.get(key) for key in ("BETBOT_DB_PATH", "LEDGER_ARS_RATE_KIND")}
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp_dir.name) / "fx.sqlite3")
+        os.environ.pop("LEDGER_ARS_RATE_KIND", None)
+        with open_connection() as conn:
+            initialize_schema(conn)
+        self.ledger = LedgerService(SqliteStorage())
+
+    def tearDown(self) -> None:
+        for key, value in self._prev.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+        self.tmp_dir.cleanup()
+
+    async def test_the_job_stores_the_digital_dollar_and_quotes_ars_bets(self) -> None:
+        from unittest.mock import patch
+
+        from adapters.fx.dolarhoy import DollarQuote
+        from bot.jobs import tasks
+
+        bet = self.ledger.add_bet(parse_bet_text("Equipo -1 @1.9 16.031,30 ars 20bet").bet).bet
+        quotes = {"blue": DollarQuote("blue", "Dólar blue", 1540, 1560),
+                  "digital": DollarQuote("digital", "Dólar Digital (USDC)", 1599.38, 1606.88)}
+        application = SimpleNamespace(bot_data={"ledger_service": self.ledger})
+        with patch("adapters.fx.dolarhoy.fetch_quotes", AsyncMock(return_value=quotes)):
+            await tasks._orchestrated_fx_rate(application)
+
+        info = self.ledger.fx_rate("ARS")
+        self.assertEqual((info["ars_per_usd"], info["kind"], info["buy"]), (1603.13, "digital", 1599.38))
+        self.assertAlmostEqual(self.ledger.repository.get_bet(bet.id).stake_usd, 10.0, places=3)
+
+    async def test_a_failing_source_keeps_the_last_rate(self) -> None:
+        from unittest.mock import patch
+
+        from bot.jobs import tasks
+
+        self.ledger.set_fx_rate("ARS", 1550.0)
+        application = SimpleNamespace(bot_data={"ledger_service": self.ledger})
+        with patch("adapters.fx.dolarhoy.fetch_quotes", AsyncMock(side_effect=httpx_error())):
+            await tasks._orchestrated_fx_rate(application)
+        self.assertEqual(self.ledger.fx_rate("ARS")["ars_per_usd"], 1550.0)
+
+
+def httpx_error() -> Exception:
+    import httpx
+
+    return httpx.ConnectError("dolarhoy caído")
+
+
 class LiveWatchTriggersSettlementTests(unittest.IsolatedAsyncioTestCase):
     async def test_a_finished_match_or_a_halftime_settles_at_once(self) -> None:
         from unittest.mock import patch

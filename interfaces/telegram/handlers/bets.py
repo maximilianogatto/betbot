@@ -80,6 +80,8 @@ HELP_BETS_MESSAGE = (
     "  <code>/report [hoy|ayer|semana|mes|semana_pasada|mes_pasado]</code> — P&amp;L, ROI,"
     " por casa, etiqueta y mercado. Llegan solos a las 9: el diario, el semanal los lunes"
     " y el mensual el 1°\n"
+    "  /fx — dólar con el que se pasan a USD las apuestas en pesos (dolarhoy.com,"
+    " dólar digital ≈ USDT)\n"
     "  <code>/set_limit max_match 30</code> — avisa, no bloquea\n"
     "  <i>límites:</i> " + " · ".join(LIMIT_KEYS_SHOWN) + "\n\n"
     "<i>Se liquidan solas cuando el partido termina (las del 1er tiempo, en el descanso)."
@@ -257,6 +259,24 @@ async def report_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     await _reply_text_chunks(update.message, render_report(report), parse_mode="HTML")
 
 
+async def fx_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Cotización del dólar con la que se pasan a USD las apuestas en pesos."""
+    if update.message is None:
+        return
+    info = _ledger(context).fx_rate("ARS")
+    if not info:
+        await update.message.reply_text("Todavía no hay cotización del dólar (se lee de dolarhoy.com).")
+        return
+    stale = "" if info.get("fresh") else " ⚠️ <i>vieja: no se usa para apuestas nuevas</i>"
+    detail = (f" (compra {info['buy']:,.2f} / venta {info['sell']:,.2f})".replace(",", "X")
+              .replace(".", ",").replace("X", ".") if info.get("buy") and info.get("sell") else "")
+    await update.message.reply_text(
+        f"💵 Dólar {escape_html(info.get('kind') or '')}: <b>{info['ars_per_usd']:,.2f} ARS</b>"
+        .replace(",", "X").replace(".", ",").replace("X", ".")
+        + f"{detail}\nLeída {escape_html(info.get('fetched_at', '')[:16].replace('T', ' '))} UTC"
+        f" de dolarhoy.com{stale}", parse_mode="HTML")
+
+
 async def exposure_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Qué hay en juego ahora y cómo viene el día."""
     if update.message is None:
@@ -310,6 +330,7 @@ BET_COMMANDS = (
     ("void_bet", void_bet_command),
     ("exposure", exposure_command),
     ("report", report_command),
+    ("fx", fx_command),
     ("set_limit", set_limit_command),
     ("help_bets", help_bets_command),
 )

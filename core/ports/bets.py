@@ -65,6 +65,10 @@ class BetsPort(Protocol):
     def get_ledger_setting(self, key: str) -> Optional[str]:
         ...
 
+    def apply_fx_rate(self, currency: str, fx_to_usd: float) -> int:
+        """Cotiza a USD las apuestas de esa moneda que no tenían tipo de cambio."""
+        ...
+
     def set_ledger_setting(self, key: str, value: str) -> None:
         ...
 
