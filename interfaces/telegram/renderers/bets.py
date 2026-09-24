@@ -69,7 +69,12 @@ def leg_line(leg: BetLeg) -> str:
         match += " (sin enlazar)"
     # Las patas de un Bet Builder no tienen cuota propia (la casa da sólo la combinada).
     odds = f" @{leg.odds:g}" if leg.odds else ""
-    return escape_html(f"{match} · {market}{period} {side}{line}{odds} · {when}{score}")
+    if leg.market_type == "both_halves_over":
+        # Es una pregunta sí/no sobre la línea: "Ambas mitades más de 1.5: no".
+        selection = f"{market}{line}{period}: {side}"
+    else:
+        selection = f"{market}{period} {side}{line}"
+    return escape_html(f"{match} · {selection}{odds} · {when}{score}")
 
 
 def render_bet(bet: Bet) -> str:

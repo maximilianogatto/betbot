@@ -469,6 +469,12 @@ class LedgerFlowTests(unittest.TestCase):
         self.assertEqual(outcome("both_halves_over", "FT", "yes", 1.5), "lost")
         self.assertEqual(outcome("both_halves_over", "FT", "yes", 1.5, final=(3, 2), halftime=(1, 1)), "won")
         self.assertIsNone(outcome("both_halves_over", "FT", "no", 1.5, halftime=None))  # a mano
+        from core.betting.models import BetLeg
+        from interfaces.telegram.renderers.bets import leg_line
+
+        leg = BetLeg(match_label="San Marino u21 vs Kosovo u21", home="San Marino U21", away="Kosovo U21",
+                     external_event_id="x", market_type="both_halves_over", side="no", line=1.5, odds=1.62)
+        self.assertIn("Ambas mitades más de 1.5: no @1.62", leg_line(leg))
         # 2º tiempo: 3-0 con 1-0 al descanso -> 2-0 en el 2º.
         self.assertEqual(outcome("goal_line", "2H", "over", 1.5), "won")
         self.assertEqual(outcome("asian_handicap", "2H", "away", 1.5), "lost")
