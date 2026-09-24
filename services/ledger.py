@@ -42,7 +42,9 @@ from core.betting.models import (
 )
 from core.betting.settlement import combine_ticket, settle_leg
 from core.league_naming import team_name_similarity
-from core.match_identity import MIN_AVERAGE_SIMILARITY, MIN_TEAM_SIMILARITY, category_compatible
+from core.match_identity import (
+    MIN_AVERAGE_SIMILARITY, MIN_TEAM_SIMILARITY, age_groups, category_compatible,
+)
 from core.models import MatchResult
 from core.odds_markets import find_market, flatten_markets
 
@@ -484,8 +486,11 @@ class LedgerService:
                 gap = abs((when - placed).total_seconds())
             else:
                 gap = 0.0
-            # Con puntajes parecidos gana el partido más cercano en el tiempo.
-            key = (round(score, 1), -gap)
+            # Con puntajes parecidos gana el que nombra la categoría en los equipos
+            # ("San Marino U21" antes que "San Marino" de la misma liga sub-21) y
+            # después el más cercano en el tiempo.
+            same_names = age_groups(named) == age_groups(f"{result.home} {result.away}")
+            key = (round(score, 1), same_names, -gap)
             if best_key is None or key > best_key:
                 best, best_key = result, key
         return best

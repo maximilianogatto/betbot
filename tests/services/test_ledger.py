@@ -317,11 +317,15 @@ class LedgerFlowTests(unittest.TestCase):
             competition_external_id="77", competition_name="European U21 Championship, Qualification",
             requires_empty_confirmation=False, needs_name_resolution=False)
         competition = self.storage.confirm_pending_competition_request(chat_id)
-        self.storage.upsert_active_events(competition.id, [ActiveEventUpsert(
-            external_event_id="bo-1", home="San Marino U21", away="Kosovo U21",
-            scheduled_label_date=None, scheduled_label_time=None,
-            scheduled_at=(self.now + timedelta(hours=6)).isoformat(),
-            odds_home=21.0, odds_draw=9.0, odds_away=1.12)])
+        kickoff = (self.now + timedelta(hours=6)).isoformat()
+        self.storage.upsert_active_events(competition.id, [
+            # Misma liga sub-21 en otra casa que no pone la categoría en los equipos.
+            ActiveEventUpsert(external_event_id="bo-0", home="San Marino", away="Kosovo",
+                              scheduled_label_date=None, scheduled_label_time=None,
+                              scheduled_at=kickoff, odds_home=21.0, odds_draw=9.0, odds_away=1.12),
+            ActiveEventUpsert(external_event_id="bo-1", home="San Marino U21", away="Kosovo U21",
+                              scheduled_label_date=None, scheduled_label_time=None,
+                              scheduled_at=kickoff, odds_home=21.0, odds_draw=9.0, odds_away=1.12)])
 
         self.assertEqual(self.ledger.run_settlement(), [])  # enlazada, todavía sin jugar
         leg = self.storage.get_bet(bet.id).legs[0]
