@@ -1099,9 +1099,6 @@ class LiveWatchPrematchAndExpiryTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(len(added_batch), 1)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class SheetParseTests(unittest.TestCase):
     def test_parse_sheet_fixture_lines(self) -> None:
@@ -1182,3 +1179,83 @@ class RenderLiveHitMarketsTests(unittest.TestCase):
         self.assertIn("EN VIVO", text)
         self.assertNotIn("📐", text)
         self.assertNotIn("📏", text)
+
+
+class LiveWatchCountdownTests(unittest.IsolatedAsyncioTestCase):
+    """Aviso de 5 minutos antes del inicio, contra los partidos trackeados del chat.
+
+    `get_all_active_events_with_league` exige el chat y devuelve filas (dict): antes
+    se llamaba sin chat, tiraba TypeError y el aviso no salía nunca.
+    """
+
+    CHAT = 77
+    OTHER_CHAT = 88
+
+    def setUp(self) -> None:
+        from datetime import datetime, timedelta, timezone
+
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        self._prev_db = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp_dir.name) / "countdown.sqlite3")
+        with open_connection() as conn:
+            initialize_schema(conn)
+        self.repository = SqliteStorage()
+        self.kickoff = (datetime.now(timezone.utc) + timedelta(minutes=5)).isoformat()
+
+        from core.models import ActiveEventUpsert
+
+        self.repository.create_pending_competition_request(
+            chat_id=self.CHAT, platform="1xbet_http",
+            source_url="https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=55&lng=en",
+            competition_external_id="55", competition_name="USA. USL League Two",
+            requires_empty_confirmation=False, needs_name_resolution=False)
+        competition = self.repository.confirm_pending_competition_request(self.CHAT)
+        self.repository.upsert_active_events(competition.id, [ActiveEventUpsert(
+            external_event_id="ev-oly-bal", home="Olympia FC", away="Ballard FC",
+            scheduled_label_date=None, scheduled_label_time=None, scheduled_at=self.kickoff,
+            odds_home=1.80, odds_draw=3.40, odds_away=4.20,
+            markets_payload={"asian_handicap": {"selections": [
+                {"selection": "Olympia FC", "line": "-0.5", "odds": 1.85},
+                {"selection": "Ballard FC", "line": "+0.5", "odds": 1.95}]}})])
+
+    def tearDown(self) -> None:
+        if self._prev_db is None:
+            os.environ.pop("BETBOT_DB_PATH", None)
+        else:
+            os.environ["BETBOT_DB_PATH"] = self._prev_db
+        self.tmp_dir.cleanup()
+
+    def _service(self) -> LiveWatchService:
+        service = LiveWatchService(repository=self.repository)
+        service.extractor_registry = SimpleNamespace(list_registered=lambda: [])
+        return service
+
+    async def test_countdown_fires_with_the_chat_tracked_odds(self) -> None:
+        entry = self.repository.add_live_watch(
+            self.CHAT, home="Olympia", away="Ballard", kickoff_at=self.kickoff)
+        # Otro chat mira el mismo partido pero no tiene esa liga suscripta.
+        self.repository.add_live_watch(
+            self.OTHER_CHAT, home="Olympia", away="Ballard", kickoff_at=self.kickoff)
+        service = self._service()
+
+        with self.assertNoLogs("services.live_watch", level="ERROR"):
+            hits = await service.poll_once()
+
+        countdown = [hit for hit in hits if hit.phase == "countdown"]
+        self.assertEqual([hit.entry.chat_id for hit in countdown], [self.CHAT])
+        message = render_live_hit(countdown[0])
+        self.assertIn("PRÓXIMO INICIO", message)
+        self.assertIn("USA. USL League Two", message)
+        self.assertIn("🏦 1xbet", message)
+        self.assertIn("1X2: 1.80 / 3.40 / 4.20", message)
+        self.assertIn("AH L(-0.5):1.85 | V(+0.5):1.95", message)
+
+        fired = [w for w in self.repository.list_all_active_live_watches() if w.id == entry.id]
+        self.assertTrue(fired and fired[0].countdown_fired_at)
+        # Una sola vez por partido.
+        again = await service.poll_once()
+        self.assertFalse([hit for hit in again if hit.phase == "countdown"])
+
+
+if __name__ == "__main__":
+    unittest.main()

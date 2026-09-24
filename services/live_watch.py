@@ -16,6 +16,7 @@ from difflib import SequenceMatcher
 import json
 import logging
 import re
+from types import SimpleNamespace
 import unicodedata
 from typing import Iterable, Any
 from zoneinfo import ZoneInfo
@@ -439,7 +440,8 @@ class LiveWatchService:
         prematch_events = await self.collect_prematch_events()
 
         hits: list[LiveWatchHit] = []
-        active_events = None
+        # Partidos trackeados por chat (cada chat ve sólo sus suscripciones).
+        active_events_by_chat: dict[int, list[Any]] = {}
         settings_cache: dict[int, LiveWatchSettings] = {}
 
         for entry in watches:
@@ -520,8 +522,12 @@ class LiveWatchService:
                     diff_seconds = (ko - now).total_seconds()
                     # Fire alert exactly if starts in 4 to 6 minutes (240 to 360 seconds)
                     if 240 <= diff_seconds <= 360:
+                        active_events = active_events_by_chat.get(entry.chat_id)
                         if active_events is None:
-                            active_events = self.repository.get_all_active_events_with_league()
+                            active_events = _active_event_views(
+                                self.repository.get_all_active_events_with_league(entry.chat_id)
+                            )
+                            active_events_by_chat[entry.chat_id] = active_events
 
                         matched_prematch = []
                         for ev in active_events:
@@ -1111,6 +1117,14 @@ def _format_goals_from_markets(markets: dict[str, Any]) -> str | None:
     if parts:
         return f"📏 GL {' | '.join(parts)}"
     return None
+
+
+def _active_event_views(rows: Iterable[Any]) -> list[Any]:
+    """Filas de ``get_all_active_events_with_league`` (dict) -> objetos con los mismos
+    campos como atributos, que es lo que leen ``match_score`` y ``render_countdown_alert``
+    (home, away, scheduled_at, league_name, platform, odds_*, markets_json)."""
+
+    return [SimpleNamespace(**row) if isinstance(row, dict) else row for row in rows]
 
 
 def render_countdown_alert(entry: LiveWatchEntry, matched: list[Any]) -> str:
