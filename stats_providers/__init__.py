@@ -54,6 +54,12 @@ def register_default_stats_providers(
     if os.getenv("SOFASCORE_ENABLED", "false").strip().lower() not in {"true", "1", "yes"}:
         sofascore.implemented = False
     target.register(sofascore)
+    # Federaciones de las ligas especiales (/no_*, /ro_*, /sk_*, /al_*): el commit que
+    # las hizo linkeables (99e3182) importaba los providers pero no los registraba.
+    if os.getenv("FEDERATION_STATS_ENABLED", "true").strip().lower() not in {"false", "0", "no"}:
+        for federation in (NorwayFederationStatsProvider, RomaniaFederationStatsProvider,
+                           SlovakiaFederationStatsProvider, AlgeriaFederationStatsProvider):
+            target.register(federation())
     # Flashscore (HTTP-only via static x-fsign; broadest league coverage).
     if os.getenv("FLASHSCORE_ENABLED", "true").strip().lower() not in {"false", "0", "no"}:
         target.register(FlashscoreHttpStatsProvider(payload_cache=cache))

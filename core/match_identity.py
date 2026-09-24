@@ -29,7 +29,8 @@ GROUPING_THRESHOLD = 0.80
 # mayores aunque los clubes se llamen igual ("Kosovo" vs "Kosovo U21" da similitud 1.0).
 _GENDER_KEYWORDS = {"women", "womens", "femenino", "femenina", "femenil", "feminino", "feminina",
                     "femminile", "feminine", "mujeres", "fem", "dames", "damas", "dam", "damer",
-                    "frauen", "kvinder", "kvinner", "naisten", "naiset", "vrouwen", "kobiet", "zeny"}
+                    "frauen", "kvinder", "kvinner", "naisten", "naiset", "vrouwen", "kobiet", "zeny",
+                    "feminin", "femina", "zene", "zien", "kobiety"}
 
 
 def age_groups(text: str) -> set[str]:
@@ -40,10 +41,13 @@ def age_groups(text: str) -> set[str]:
 
 
 def is_womens(text: str) -> bool:
-    """True si el texto marca fútbol femenino (Women, (F), W, U19W...)."""
+    """True si el texto marca fútbol femenino (Women, (F), W, U19W, Damas, ženy...)."""
     if not text:
         return False
-    text = text.lower()
+    import unicodedata
+
+    # Sin acentos: "ženy", "Feminină" tienen que quedar como palabras.
+    text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode().lower()
     if set(re.findall(r"\b[a-z0-9]+\b", text)) & _GENDER_KEYWORDS:
         return True
     if re.search(r"\b(f|w)\b", text):

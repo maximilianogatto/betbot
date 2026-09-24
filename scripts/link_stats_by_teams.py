@@ -1,4 +1,9 @@
-"""Linkeo de ligas trackeadas a Statshub verificado por EQUIPOS, no sólo por nombre.
+"""Linkeo de ligas trackeadas a un proveedor de stats, verificado por EQUIPOS.
+
+Sirve para cualquier proveedor con catálogo + fixtures (Statshub, Flashscore, las
+federaciones). Las federaciones (`--provider palloliitto`, `svenskfotboll_http`...)
+sólo se prueban con las ligas de su país y tienen prioridad: los demás proveedores
+no linkean una liga que ya tiene el link de su federación.
 
 El linkeo por nombre (`scripts/link_stats_bulk.py`) confunde ligas que comparten
 palabras: mandaba todas las ligas estaduales femeninas de Australia a "A-League,
@@ -38,9 +43,15 @@ from typing import Any
 from adapters.storage import get_storage
 from adapters.storage.connection import open_connection
 from core.league_naming import extract_league_traits, league_name_similarity, team_name_similarity
+from core.match_identity import is_womens
 from scripts.link_stats_bulk import _dedupe_catalog
 
 PROVIDER = "sportradar_statshub"
+#: proveedor de federación -> país que cubre (prioridad sobre los generales)
+FEDERATION_COUNTRY = {
+    "palloliitto": "finland", "svenskfotboll_http": "sweden", "norway_nff_http": "norway",
+    "romania_frf_http": "romania", "slovakia_sportnet_http": "slovakia", "algeria_lnff_http": "algeria",
+}
 CANDIDATES_PER_LEAGUE = 5
 TEAM_SIMILARITY = 0.80
 MIN_TEAMS = 3
@@ -55,6 +66,7 @@ _COUNTRY_ES = {
     "checa": "czech republic", "chequia": "czech republic", "chile": "chile", "colombia": "colombia",
     "croacia": "croatia", "dinamarca": "denmark", "ecuador": "ecuador", "escocia": "scotland",
     "eslovaquia": "slovakia", "eslovenia": "slovenia", "espana": "spain", "estados unidos": "usa",
+    "noruega": "norway", "argelia": "algeria",
     "estonia": "estonia", "finlandia": "finland", "francia": "france", "gales": "wales",
     "grecia": "greece", "hungria": "hungary", "inglaterra": "england", "irlanda": "ireland",
     "islandia": "iceland", "israel": "israel", "italia": "italy", "japon": "japan",
@@ -109,7 +121,11 @@ def _base_name(name: str) -> str:
 
 def _category_compatible(left: str, right: str) -> bool:
     a, b = extract_league_traits(left), extract_league_traits(right)
-    if a["gender"] != b["gender"] or a["age_group"] != b["age_group"]:
+    # El género con las dos lecturas: las federaciones lo dicen en su idioma
+    # ("Toppserien (Damas)", "I. liga ženy") y el extractor de rasgos sólo ve "women".
+    women_a = a["gender"] == "F" or is_womens(left)
+    women_b = b["gender"] == "F" or is_womens(right)
+    if women_a != women_b or a["age_group"] != b["age_group"]:
         return False
     return _is_reserves(left) == _is_reserves(right) and _is_cup(left) == _is_cup(right)
 
@@ -128,8 +144,13 @@ def _word_overlap(left: str, right: str) -> float:
 def _country_compatible(country: str | None, option: Any) -> bool:
     if not country:
         return True
-    option_country = _plain(getattr(option, "country_name", None) or "")
-    return not option_country or country in option_country or option_country.strip() in country
+    raw = getattr(option, "country_name", None) or ""
+    option_country = _plain(raw).strip()
+    if not option_country:
+        return True
+    # "Noruega" / "Eslovaquia": las federaciones nombran el país en castellano.
+    translated = _country_of(raw) or option_country
+    return any(country in value or value in country for value in (option_country, translated))
 
 
 @dataclass
@@ -178,17 +199,25 @@ def _match_teams(bot_teams: list[str], provider_teams: set[str]) -> list[tuple[s
     return matched
 
 
-async def run(chat_id: int, apply: bool, limit: int | None, cache_path: str | None = None) -> None:
+async def run(chat_id: int, apply: bool, limit: int | None, cache_path: str | None = None,
+              provider_name: str = PROVIDER) -> None:
     from core.stats_provider_base import stats_provider_registry
     from stats_providers import register_default_stats_providers
 
     register_default_stats_providers(stats_provider_registry)
-    provider = next(p for p in stats_provider_registry.list_registered() if p.name == PROVIDER)
+    provider = next(p for p in stats_provider_registry.list_registered() if p.name == provider_name)
     await provider.start()
     storage = get_storage()
+    federation_country = FEDERATION_COUNTRY.get(provider_name)
 
-    catalog = _dedupe_catalog(await provider.search_leagues(country_name="", limit=100_000))
-    print(f"Catálogo Statshub: {len(catalog)} torneos")
+    raw_catalog = await provider.search_leagues(country_name="", limit=100_000)
+    if not raw_catalog and federation_country:
+        raw_catalog = await provider.search_leagues(country_name=federation_country, limit=100_000)
+    if provider_name == PROVIDER:
+        catalog = _dedupe_catalog(raw_catalog)
+    else:
+        catalog = list({str(opt.league_id): opt for opt in raw_catalog}.values())
+    print(f"Catálogo {provider_name}: {len(catalog)} torneos")
     fixtures_cache: dict[str, set[str]] = {}
     if cache_path and os.path.exists(cache_path):
         fixtures_cache = {key: set(value) for key, value in json.load(open(cache_path)).items()}
@@ -220,9 +249,13 @@ async def run(chat_id: int, apply: bool, limit: int | None, cache_path: str | No
         competitions = storage.list_tracked_competitions_for_unified(uid)
         if not competitions:
             continue
-        if any(link.stats_provider == PROVIDER for link in storage.list_stats_league_links(competitions[0].id)):
+        links = storage.list_stats_league_links(competitions[0].id)
+        if any(link.stats_provider == provider_name for link in links) or (
+                not federation_country and any(link.stats_provider in FEDERATION_COUNTRY for link in links)):
             proposals.append(Proposal(uid, name, competitions[0].id, [], "ya_linkeada"))
             continue
+        if federation_country and (row.get("country") or _country_of(name)) != federation_country:
+            continue  # la federación sólo cubre su país
         bot_teams = _bot_teams([c.id for c in competitions])
         if len(bot_teams) < 2:
             proposals.append(Proposal(uid, name, competitions[0].id, bot_teams, "sin_equipos"))
@@ -248,10 +281,13 @@ async def run(chat_id: int, apply: bool, limit: int | None, cache_path: str | No
             runner_up = next((c for c in ranked[1:]
                               if _base_name(c.option.league_name or "") != _base_name(best.option.league_name or "")),
                              None)
-        few = len(bot_teams) < MIN_TEAMS
-        needed = len(bot_teams) if few else MIN_TEAMS
+        # Un proveedor que sólo ve unos días (Flashscore) muestra una parte de la liga:
+        # la proporción se mide contra lo que cada lado puede mostrar.
+        shown = min(len(bot_teams), len(fixtures_cache.get(best.league_id, ())) or len(bot_teams)) if best else 0
+        few = shown < MIN_TEAMS
+        needed = shown if few else MIN_TEAMS
         runner_up_teams = len(runner_up.matched) if runner_up else 0
-        if best is None or len(best.matched) < needed or len(best.matched) / len(bot_teams) < MIN_RATIO:
+        if best is None or not shown or len(best.matched) < needed or len(best.matched) / shown < MIN_RATIO:
             verdict = "sin_match"
         elif (few and runner_up_teams) or runner_up_teams >= RUNNER_UP_FACTOR * len(best.matched):
             verdict = "ambiguo"
@@ -285,7 +321,7 @@ async def run(chat_id: int, apply: bool, limit: int | None, cache_path: str | No
     else:
         for p in accepted:
             storage.upsert_stats_league_link(
-                p.competition_id, PROVIDER, p.best.league_id, p.best.option.league_name,
+                p.competition_id, provider_name, p.best.league_id, p.best.option.league_name,
                 p.best.option.country_name, round(len(p.best.matched) / len(p.bot_teams), 3))
         print(f"APLICADO: {len(accepted)} links creados.")
     try:
@@ -303,8 +339,10 @@ def main() -> None:
     parser.add_argument("--apply", action="store_true", help="persistir (por defecto dry-run)")
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--cache", default=None, help="json con los equipos por torneo (se reusa)")
+    parser.add_argument("--provider", default=PROVIDER,
+                        help="sportradar_statshub, flashscore_http, palloliitto, svenskfotboll_http, ...")
     args = parser.parse_args()
-    asyncio.run(run(args.chat_id, args.apply, args.limit, args.cache))
+    asyncio.run(run(args.chat_id, args.apply, args.limit, args.cache, args.provider))
 
 
 if __name__ == "__main__":

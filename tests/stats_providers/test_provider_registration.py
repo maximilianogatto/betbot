@@ -30,5 +30,14 @@ class StatsProviderRegistrationTests(unittest.TestCase):
         self.assertTrue(provider.implemented)
 
 
+    def test_the_special_federations_are_linkable(self) -> None:
+        from core.stats_provider_base import StatsProviderRegistry
+        from stats_providers import register_default_stats_providers
+
+        registry = register_default_stats_providers(StatsProviderRegistry(), payload_cache=object())
+        names = {provider.name for provider in registry.list_registered()}
+        self.assertTrue({"norway_nff_http", "romania_frf_http", "slovakia_sportnet_http",
+                         "algeria_lnff_http", "palloliitto", "svenskfotboll_http"} <= names)
+
 if __name__ == "__main__":
     unittest.main()
