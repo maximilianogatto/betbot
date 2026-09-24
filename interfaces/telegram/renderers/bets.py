@@ -6,10 +6,17 @@ los services para que el dominio no sepa de HTML.
 
 from __future__ import annotations
 
+from html import escape
 from typing import Any
 
 from core.betting.models import Bet, BetLeg
-from interfaces.telegram.handlers.common import escape_html
+
+
+def escape_html(text: Any) -> str:
+    """Igual que handlers.common.escape_html (sin escapar comillas). Local para que el
+    renderer no cargue el paquete de handlers, que a su vez importa este módulo."""
+    return escape(str(text or ""), quote=False)
+
 
 STATUS_ES = {
     "open": "abierta", "won": "ganada", "lost": "perdida", "half_won": "medio ganada",
