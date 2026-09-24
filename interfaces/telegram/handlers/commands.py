@@ -175,6 +175,7 @@ from interfaces.telegram.handlers.live_watch import (  # noqa: F401
     _parse_live_setting_bool,
     import_sheet_command,
     live_settings_command,
+    live_stats_callback,
     live_status_command,
     unwatch_command,
     watch_live_command,
@@ -714,6 +715,8 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("view_match", view_match_command))
     application.add_handler(CommandHandler("view_live_match", view_match_command))
     application.add_handler(CommandHandler("live_match", view_match_command))
+    application.add_handler(CommandHandler("live_stats", view_match_command))
+    application.add_handler(CallbackQueryHandler(live_stats_callback, pattern="^lstatsr?:"))
 
     track_league_conversation = ConversationHandler(
         entry_points=[CommandHandler(["track_league", "tracl_league"], track_league_command)],

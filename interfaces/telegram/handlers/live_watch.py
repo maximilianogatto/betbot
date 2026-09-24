@@ -26,7 +26,7 @@ HELP_LIVE_MESSAGE = (
     "  /watch_live — vigilar partidos (escribí los equipos o subí el fixture)\n"
     "  /import_sheet — importar la planilla de Google Drive\n"
     "  /watching — tus partidos en vigilancia (activos y salidos)\n"
-    "  <code>/view_match &lt;id&gt;</code> — stats en vivo y cuotas de un partido\n"
+    "  <code>/live_stats [id|equipo]</code> — panel de stats en vivo (ataques, posesión, tiros, córners...)\n"
     "  /live_status — cadencia, activos y último estado detectado\n"
     "  /live_settings — alertas live: goles, rojas y amarillas\n"
     "  <code>/unwatch &lt;id&gt;</code> — sacar de la vigilancia <i>(o /unwatch all)</i>\n\n"
@@ -651,80 +651,159 @@ def format_watch_entry_report(entry, real_time_event=None) -> str:
     return "\n\n".join(reports)
 
 
+LIVE_STATS_SERVICE_KEY = "live_stats_service"
+_VIEW_MATCH_USAGE = (
+    "Uso: <code>/live_stats [id | equipo]</code> (o /view_match)\n"
+    "El id es el <code>#n</code> de /watching. Sin nada, te muestro los partidos en vivo."
+)
+
+
+def live_stats_keyboard(entry_id: int, *, refresh: bool) -> Any:
+    from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+
+    if refresh:
+        return InlineKeyboardMarkup([[InlineKeyboardButton("🔄 Actualizar", callback_data=f"lstatsr:{entry_id}")]])
+    return InlineKeyboardMarkup([[InlineKeyboardButton("📊 Stats en vivo", callback_data=f"lstats:{entry_id}")]])
+
+
+def _has_live_state(entry) -> bool:
+    return any(not str(platform).startswith("_") and isinstance(state, dict)
+               for platform, state in (entry.live_state or {}).items())
+
+
+def _entry_button_label(entry) -> str:
+    state = next((state for platform, state in (entry.live_state or {}).items()
+                  if not str(platform).startswith("_") and isinstance(state, dict)
+                  and state.get("home_score") is not None), None)
+    score = f" {state['home_score']}-{state['away_score']} " if state else " vs "
+    minute = f" · {state.get('minute')}" if state and state.get("minute") else ""
+    return f"{entry.home}{score}{entry.away}{minute}"[:60]
+
+
+def _odds_lines(entry) -> list[str]:
+    from html import escape
+
+    lines = []
+    for platform, state in (entry.live_state or {}).items():
+        odds = state.get("odds") if isinstance(state, dict) else None
+        if not isinstance(odds, dict) or not any(odds.get(side) for side in ("home", "draw", "away")):
+            continue
+        prices = " | ".join(f"{label}={odds[side]:.2f}" if odds.get(side) else f"{label}=-"
+                            for label, side in (("1", "home"), ("X", "draw"), ("2", "away")))
+        lines.append(f"💰 {escape(platform.replace('_http', ''))}: {prices}")
+    return lines[:4]
+
+
+async def live_stats_text(context: ContextTypes.DEFAULT_TYPE, entry) -> str | None:
+    """El panel del partido, o None si ni 1xBet ni Statshub tienen stats."""
+    from datetime import datetime
+
+    from interfaces.telegram.renderers.live_stats import build_live_stats_message
+    from services.timezones import resolve_chat_timezone
+
+    service = context.application.bot_data.get(LIVE_STATS_SERVICE_KEY)
+    view = await service.for_entry(entry) if service is not None else None
+    if view is None:
+        return None
+    text = build_live_stats_message(view, updated_at=datetime.now(resolve_chat_timezone(entry.chat_id)))
+    odds = _odds_lines(entry)
+    return text + ("\n" + "\n".join(odds) if odds else "")
+
+
+def _find_entries(service, chat_id: int, query: str) -> list:
+    from core.league_naming import normalize_team_name
+
+    if query.isdigit():
+        target = int(query)
+        repository = service.repository
+        entry = None
+        if hasattr(repository, "get_live_watch_by_local_id"):
+            entry = repository.get_live_watch_by_local_id(chat_id, target)
+        if entry is None and hasattr(repository, "get_live_watch"):
+            entry = repository.get_live_watch(chat_id, target)
+        return [entry] if entry is not None else []
+    wanted = normalize_team_name(query)
+    watches = service.list_watches(chat_id, status="fired") + service.list_watches(chat_id, status="watching")
+    return [entry for entry in watches
+            if wanted and (wanted in normalize_team_name(entry.home) or wanted in normalize_team_name(entry.away))]
+
+
 async def view_match_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle /view_match [id]: Show live stats, cards, minute, and live odds for a watched match."""
+    """/live_stats [id | equipo] (alias /view_match): el panel de stats en vivo de un partido vigilado."""
+    from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+    from telegram.constants import ParseMode
+
     if update.message is None or update.effective_chat is None:
         return
-
-    usage_guide = (
-        "❌ *ID de partido ausente o inválido.*\n\n"
-        "Uso: `/view_match [ID]`\n"
-        "Podés usar los IDs que figuran en `/watching` (por ejemplo, `#5` o el ID de base de datos).\n\n"
-        "Ejemplos:\n"
-        "• `/view_match 5`\n"
-        "• `/view_match 123`"
-    )
-
-    if not context.args:
-        await update.message.reply_text(usage_guide, parse_mode="Markdown")
-        return
-
-    arg = context.args[0].strip().replace("#", "")
-    if not arg.isdigit():
-        await update.message.reply_text(usage_guide, parse_mode="Markdown")
-        return
-
-    target_id = int(arg)
     chat_id = update.effective_chat.id
     service = get_live_watch_service(context)
-
-    # Try to load watch entry
-    entry = None
-    if hasattr(service.repository, "get_live_watch_by_local_id"):
-        entry = service.repository.get_live_watch_by_local_id(chat_id, target_id)
-    if entry is None:
-        if hasattr(service.repository, "get_live_watch"):
-            entry = service.repository.get_live_watch(chat_id, target_id)
-
-    if entry is None:
-        await update.message.reply_text(
-            f"❌ No encontré ningún partido en vigilancia con el ID `#{target_id}` en este chat.\n"
-            "Corré `/watching` para ver tus partidos activos."
-        )
+    query = " ".join(context.args or []).strip().lstrip("#")
+    if query:
+        entries = _find_entries(service, chat_id, query)
+    else:
+        entries = [entry for entry in service.list_watches(chat_id, status="fired") if _has_live_state(entry)]
+    if not entries:
+        text = ("No encontré ese partido en tu vigilancia (mirá /watching)." if query
+                else "No hay partidos en vivo en tu vigilancia.")
+        await update.message.reply_text(f"{text}\n\n{_VIEW_MATCH_USAGE}", parse_mode=ParseMode.HTML)
+        return
+    if len(entries) > 1:
+        keyboard = InlineKeyboardMarkup([[InlineKeyboardButton(_entry_button_label(entry),
+                                                               callback_data=f"lstats:{entry.id}")]
+                                         for entry in entries[:20]])
+        await update.message.reply_text("¿De qué partido?", reply_markup=keyboard)
         return
 
-    loading_msg = await update.message.reply_text(
-        f"🔍 Buscando estadísticas en vivo en tiempo real para *{entry.home} vs {entry.away}*..."
-    )
-
+    entry = entries[0]
+    loading = await update.message.reply_text(f"🔍 Buscando stats de {entry.home} vs {entry.away}...")
     try:
-        # Fetch current live events from extractors to see if it is playing right now
-        live_events = await service.collect_live_events()
-        
-        # Search for best match in live events
-        best_match = service._best_match(entry, live_events) if live_events else None
-        
-        if best_match is not None:
-            score, event = best_match
-            from services.live_watch import _event_live_state
-            current_state = _event_live_state(event)
-            service.repository.update_live_watch_platform_state(
-                entry.id,
-                platform=event.platform,
-                state=current_state,
-            )
-            
-            # Use the real-time event
-            report = format_watch_entry_report(entry, real_time_event=event)
-        else:
-            # Not found in active live events, fall back to DB live_state
-            report = format_watch_entry_report(entry, real_time_event=None)
-            
-        await loading_msg.delete()
-        await _reply_text_chunks(update.message, report, parse_mode="Markdown")
-        
-    except Exception as e:
-        logger.exception("Error in /view_match command")
-        await loading_msg.edit_text(f"❌ Error al consultar estadísticas en vivo: {str(e)}")
+        text = await live_stats_text(context, entry)
+    except Exception:
+        logger.exception("Error armando las stats en vivo del watch %s", entry.id)
+        text = None
+    if text is not None:
+        await loading.edit_text(text, parse_mode=ParseMode.HTML,
+                                reply_markup=live_stats_keyboard(entry.id, refresh=True))
+        return
+    # Ni 1xBet ni Statshub: lo que vieron las casas (minuto, marcador, tarjetas).
+    await loading.delete()
+    report = format_watch_entry_report(entry)
+    await _reply_text_chunks(update.message, report + "\n\n_Ni 1xBet ni Statshub tienen stats de este partido._",
+                             parse_mode="Markdown")
 
 
+async def live_stats_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Botones "📊 Stats en vivo" (manda el panel) y "🔄 Actualizar" (lo edita)."""
+    from telegram.constants import ParseMode
+    from telegram.error import BadRequest
+
+    query = update.callback_query
+    if query is None or query.message is None or not query.data:
+        return
+    prefix, _, raw_id = query.data.partition(":")
+    if not raw_id.isdigit():
+        await query.answer()
+        return
+    service = get_live_watch_service(context)
+    entry = service.repository.get_live_watch(query.message.chat.id, int(raw_id))
+    if entry is None:
+        await query.answer("Ese partido ya no está en vigilancia.")
+        return
+    try:
+        text = await live_stats_text(context, entry)
+    except Exception:
+        logger.exception("Error armando las stats en vivo del watch %s", entry.id)
+        text = None
+    if text is None:
+        await query.answer("Ni 1xBet ni Statshub tienen stats de este partido.", show_alert=True)
+        return
+    await query.answer()
+    keyboard = live_stats_keyboard(entry.id, refresh=True)
+    if prefix == "lstatsr":
+        try:
+            await query.edit_message_text(text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
+        except BadRequest as error:
+            if "not modified" not in str(error).lower():
+                raise
+        return
+    await query.message.reply_text(text, parse_mode=ParseMode.HTML, reply_markup=keyboard)

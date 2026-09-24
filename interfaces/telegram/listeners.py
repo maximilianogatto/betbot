@@ -95,7 +95,12 @@ class TelegramEventListener(EventListener):
         if not text:
             # Una fase sin mensaje propio no se manda: Telegram rechaza los vacíos.
             return
-        await self._bot.send_message(chat_id=event.chat_id, text=text)
+        reply_markup = None
+        if event.hit.phase in {"live", "goal", "red_card", "yellow_card"} and event.hit.entry.id:
+            from interfaces.telegram.handlers.live_watch import live_stats_keyboard
+
+            reply_markup = live_stats_keyboard(event.hit.entry.id, refresh=False)
+        await self._bot.send_message(chat_id=event.chat_id, text=text, reply_markup=reply_markup)
 
     async def _handle_new_matches(self, event: NewMatchesEvent) -> None:
         with _display_timezone_of(event.chat_id):

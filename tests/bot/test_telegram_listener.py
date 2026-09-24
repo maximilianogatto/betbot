@@ -38,7 +38,19 @@ class TelegramEventListenerTests(unittest.IsolatedAsyncioTestCase):
 
         await TelegramEventListener(bot).handle(MatchLiveEvent(hit=_hit(chat_id=42)))
 
-        bot.send_message.assert_awaited_once_with(chat_id=42, text="⚽ GOL")
+        bot.send_message.assert_awaited_once()
+        kwargs = bot.send_message.await_args.kwargs
+        self.assertEqual((kwargs["chat_id"], kwargs["text"]), (42, "⚽ GOL"))
+        # El aviso trae el botón del panel de stats en vivo de ese partido.
+        [[button]] = kwargs["reply_markup"].inline_keyboard
+        self.assertEqual(button.callback_data, "lstats:1")
+
+    async def test_a_countdown_has_no_stats_button(self) -> None:
+        bot = SimpleNamespace(send_message=AsyncMock())
+
+        await TelegramEventListener(bot).handle(MatchLiveEvent(hit=_hit(phase="countdown", message="⏳ 10'")))
+
+        self.assertIsNone(bot.send_message.await_args.kwargs["reply_markup"])
 
     async def test_empty_render_is_not_sent(self) -> None:
         """Telegram rechaza los textos vacíos: no hay que intentar mandarlos."""
@@ -61,7 +73,8 @@ class ListenerRegistrationTests(unittest.IsolatedAsyncioTestCase):
         result = await bus.publish(MatchLiveEvent(hit=_hit(chat_id=7)))
 
         self.assertEqual((result.delivered, result.failed), (1, 0))
-        bot.send_message.assert_awaited_once_with(chat_id=7, text="⚽ GOL")
+        bot.send_message.assert_awaited_once()
+        self.assertEqual(bot.send_message.await_args.kwargs["chat_id"], 7)
 
     async def test_a_failing_send_is_reported_not_swallowed(self) -> None:
         """Si Telegram rechaza el envío, el bus lo cuenta como entrega fallida."""

@@ -557,24 +557,35 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         loading_msg.edit_text.assert_awaited_once()
         self.assertIn("Error al descargar planilla (HTTP 500)", loading_msg.edit_text.await_args[0][0])
 
-    async def test_view_match_missing_args(self) -> None:
-        message = SimpleNamespace(reply_text=AsyncMock())
-        context = SimpleNamespace(args=[], user_data={})
-        update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
-        await view_match_command(update, context)
-        message.reply_text.assert_awaited_once()
-        self.assertIn("Uso: `/view_match [ID]`", message.reply_text.await_args.args[0])
+    async def test_live_stats_without_args_lists_the_live_matches(self) -> None:
+        import json
 
-    async def test_view_match_invalid_id(self) -> None:
+        live = _live_watch_entry(7, "Banyule", "Bundoora", "fired", live_state_json=json.dumps(
+            {"betovo_http": {"event_id": "1", "home_score": 1, "away_score": 0, "minute": "35'"}}))
+        other = _live_watch_entry(8, "Altona", "Brunswick", "fired", live_state_json=json.dumps(
+            {"betovo_http": {"event_id": "2", "home_score": 0, "away_score": 0, "minute": "10'"}}))
+        service = SimpleNamespace(list_watches=Mock(side_effect=lambda chat, status: [live, other]
+                                                    if status == "fired" else []))
         message = SimpleNamespace(reply_text=AsyncMock())
-        context = SimpleNamespace(args=["abc"], user_data={})
+        context = SimpleNamespace(application=SimpleNamespace(bot_data={}), args=[], user_data={})
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
-        await view_match_command(update, context)
-        message.reply_text.assert_awaited_once()
-        self.assertIn("Uso: `/view_match [ID]`", message.reply_text.await_args.args[0])
 
-    async def test_view_match_not_found(self) -> None:
+        with patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=service):
+            await view_match_command(update, context)
+
+        keyboard = message.reply_text.await_args.kwargs["reply_markup"].inline_keyboard
+        self.assertEqual([row[0].callback_data for row in keyboard], ["lstats:7", "lstats:8"])
+        self.assertEqual(keyboard[0][0].text, "Banyule 1-0 Bundoora · 35'")
+
+        service.list_watches = Mock(return_value=[])
+        message.reply_text.reset_mock()
+        with patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=service):
+            await view_match_command(update, context)
+        self.assertIn("No hay partidos en vivo", message.reply_text.await_args.args[0])
+
+    async def test_live_stats_not_found(self) -> None:
         live_watch_service = SimpleNamespace(
+            list_watches=Mock(return_value=[]),
             repository=SimpleNamespace(
                 get_live_watch_by_local_id=Mock(return_value=None),
                 get_live_watch=Mock(return_value=None),
@@ -582,53 +593,58 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
         )
         message = SimpleNamespace(reply_text=AsyncMock())
         application = SimpleNamespace(bot_data={"live_watch_service": live_watch_service})
-        context = SimpleNamespace(application=application, args=["5"], user_data={})
         update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
 
-        with patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service):
+        for args in (["5"], ["abc"]):  # por id o por equipo
+            message.reply_text.reset_mock()
+            context = SimpleNamespace(application=application, args=args, user_data={})
+            with patch("interfaces.telegram.handlers.live_watch.get_live_watch_service",
+                       return_value=live_watch_service):
+                await view_match_command(update, context)
+            self.assertIn("No encontré ese partido", message.reply_text.await_args.args[0])
+
+    async def test_live_stats_shows_the_panel_with_the_books_odds(self) -> None:
+        import json
+
+        from core.live_stats import LiveStatRow, LiveStatsView
+
+        entry = _live_watch_entry(1, "Banyule", "Bundoora", "fired", live_state_json=json.dumps(
+            {"1xbet_http": {"event_id": "ev", "odds": {"home": 1.5, "draw": 3.4, "away": 5.5}}}))
+        view = LiveStatsView(home="Banyule", away="Bundoora", home_score=1, away_score=0, period="2T",
+                             minute="60'", sources=("1xbet",),
+                             rows=(LiveStatRow("possession", "Posesión", "%", 60, 40, "1xbet"),))
+        service = SimpleNamespace(repository=SimpleNamespace(get_live_watch_by_local_id=Mock(return_value=entry)))
+        loading = SimpleNamespace(edit_text=AsyncMock(), delete=AsyncMock())
+        message = SimpleNamespace(reply_text=AsyncMock(return_value=loading))
+        stats = SimpleNamespace(for_entry=AsyncMock(return_value=view))
+        context = SimpleNamespace(application=SimpleNamespace(bot_data={"live_stats_service": stats}),
+                                  args=["#1"], user_data={})
+        update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
+
+        with patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=service):
             await view_match_command(update, context)
 
-        message.reply_text.assert_awaited_once()
-        self.assertIn("No encontré ningún partido", message.reply_text.await_args.args[0])
+        text = loading.edit_text.await_args.args[0]
+        self.assertIn("<b>Banyule 1-0 Bundoora</b>", text)
+        self.assertIn(" 60%  Posesión           40%", text)
+        self.assertIn("💰 1xbet: 1=1.50 | X=3.40 | 2=5.50", text)
+        [[button]] = loading.edit_text.await_args.kwargs["reply_markup"].inline_keyboard
+        self.assertEqual(button.callback_data, "lstatsr:1")
 
-    async def test_view_match_found_in_db_only(self) -> None:
+    async def test_live_stats_without_a_stats_source_shows_what_the_books_saw(self) -> None:
         live_state_val = {
             "bet365": {
-                "home": "Banyule",
-                "away": "Bundoora",
-                "minute": "45'",
-                "home_score": 1,
-                "away_score": 0,
-                "home_red_cards": 0,
-                "away_red_cards": 0,
-                "home_yellow_cards": 1,
-                "away_yellow_cards": 2,
-                "live_stats": {
-                    "possession_home": 60,
-                    "possession_away": 40,
-                    "attacks_home": 45,
-                    "attacks_away": 30,
-                    "dangerous_attacks_home": 25,
-                    "dangerous_attacks_away": 15,
-                    "shots_on_target_home": 5,
-                    "shots_on_target_away": 2
-                },
-                "odds": {
-                    "home": 1.50,
-                    "draw": 3.40,
-                    "away": 5.50
-                }
+                "home": "Banyule", "away": "Bundoora", "minute": "45'", "home_score": 1, "away_score": 0,
+                "home_red_cards": 0, "away_red_cards": 0, "home_yellow_cards": 1, "away_yellow_cards": 2,
+                "live_stats": {"possession_home": 60, "possession_away": 40},
+                "odds": {"home": 1.50, "draw": 3.40, "away": 5.50},
             }
         }
         import json
         entry = _live_watch_entry(1, "Banyule", "Bundoora", "watching", live_state_json=json.dumps(live_state_val))
 
         live_watch_service = SimpleNamespace(
-            repository=SimpleNamespace(
-                get_live_watch_by_local_id=Mock(return_value=entry),
-            ),
-            collect_live_events=AsyncMock(return_value=[])
-        )
+            repository=SimpleNamespace(get_live_watch_by_local_id=Mock(return_value=entry)))
         loading_msg = SimpleNamespace(delete=AsyncMock())
         message = SimpleNamespace(reply_text=AsyncMock(return_value=loading_msg))
         application = SimpleNamespace(bot_data={"live_watch_service": live_watch_service})
@@ -642,79 +658,12 @@ class LiveWatchCommandHandlersTests(unittest.IsolatedAsyncioTestCase):
             await view_match_command(update, context)
 
         loading_msg.delete.assert_awaited_once()
-        mock_reply_chunks.assert_awaited_once()
         content = mock_reply_chunks.await_args[0][1]
         self.assertIn("🔴 *EN VIVO (BET365)*", content)
-        self.assertIn("⚽ *Banyule vs Bundoora*", content)
         self.assertIn("⏱️ Estado: 45'  |  Marcador: *1-0*", content)
         self.assertIn("• Posesión: 60% vs 40%", content)
-        self.assertIn("• Ataques: 45 vs 30", content)
-        self.assertIn("• Ataques peligrosos: 25 vs 15", content)
-        self.assertIn("• Tiros al arco: 5 vs 2", content)
         self.assertIn("💰 *Odds (1X2):* 1=1.50 | X=3.40 | 2=5.50", content)
-
-    async def test_view_match_found_realtime(self) -> None:
-        from core.models import LiveEventSnapshot, Odds1X2
-        mock_event = LiveEventSnapshot(
-            platform="bet365",
-            external_event_id="ext-123",
-            home="Banyule",
-            away="Bundoora",
-            minute="35'",
-            home_score=1,
-            away_score=0,
-            home_red_cards=0,
-            away_red_cards=0,
-            home_yellow_cards=1,
-            away_yellow_cards=2,
-            live_stats={
-                "possession_home": 60,
-                "possession_away": 40,
-                "attacks_home": 45,
-                "attacks_away": 30,
-                "dangerous_attacks_home": 25,
-                "dangerous_attacks_away": 15,
-                "shots_on_target_home": 5,
-                "shots_on_target_away": 2
-            },
-            odds_1x2=Odds1X2(home=1.5, draw=3.4, away=5.5),
-        )
-
-        entry = _live_watch_entry(1, "Banyule", "Bundoora", "watching")
-        
-        live_watch_service = SimpleNamespace(
-            repository=SimpleNamespace(
-                get_live_watch_by_local_id=Mock(return_value=entry),
-                update_live_watch_platform_state=Mock(),
-            ),
-            collect_live_events=AsyncMock(return_value=[mock_event]),
-            _best_match=Mock(return_value=(1.0, mock_event))
-        )
-        loading_msg = SimpleNamespace(delete=AsyncMock())
-        message = SimpleNamespace(reply_text=AsyncMock(return_value=loading_msg))
-        application = SimpleNamespace(bot_data={"live_watch_service": live_watch_service})
-        context = SimpleNamespace(application=application, args=["1"], user_data={})
-        update = SimpleNamespace(message=message, effective_chat=SimpleNamespace(id=123))
-
-        with (
-            patch("interfaces.telegram.handlers.live_watch.get_live_watch_service", return_value=live_watch_service),
-            patch("interfaces.telegram.handlers.live_watch._reply_text_chunks", new_callable=AsyncMock) as mock_reply_chunks,
-        ):
-            await view_match_command(update, context)
-
-        loading_msg.delete.assert_awaited_once()
-        mock_reply_chunks.assert_awaited_once()
-        content = mock_reply_chunks.await_args[0][1]
-        self.assertIn("🔴 *EN VIVO (BET365)*", content)
-        self.assertIn("⚽ *Banyule vs Bundoora*", content)
-        self.assertIn("⏱️ Estado: 35'  |  Marcador: *1-0*", content)
-        self.assertIn("• Posesión: 60% vs 40%", content)
-        self.assertIn("• Ataques: 45 vs 30", content)
-        self.assertIn("• Ataques peligrosos: 25 vs 15", content)
-        self.assertIn("• Tiros al arco: 5 vs 2", content)
-        self.assertIn("💰 *Odds (1X2):* 1=1.50 | X=3.40 | 2=5.50", content)
-        live_watch_service.repository.update_live_watch_platform_state.assert_called_once()
-
+        self.assertIn("Ni 1xBet ni Statshub", content)
 
 if __name__ == "__main__":
     unittest.main()

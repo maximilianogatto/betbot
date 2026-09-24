@@ -19,6 +19,7 @@ from core.stats_provider_base import stats_provider_registry
 from interfaces.telegram.listeners import TelegramEventListener
 from extractors import register_default_extractors
 from stats_providers import register_default_stats_providers
+from services.live_stats import LiveStatsService
 from services.live_watch import LiveWatchService
 from services.stats import StatsService
 from services.tracking import TrackingService
@@ -47,6 +48,15 @@ def _build_status_sources() -> list:
             except Exception:
                 continue  # proveedor no registrado
     return sources
+
+def _build_live_stats_service() -> LiveStatsService:
+    """Panel de stats en vivo: 1xBet siempre; Statshub si el proveedor está registrado."""
+    try:
+        statshub = stats_provider_registry.get("sportradar_statshub")
+    except Exception:
+        statshub = None
+    return LiveStatsService(statshub_provider=statshub)
+
 
 def create_application(settings: Settings) -> Application:
     """Create and configure the Telegram application instance."""
@@ -110,6 +120,7 @@ def create_application(settings: Settings) -> Application:
     application.bot_data["tracking_service"] = tracking_service
     application.bot_data["stats_service"] = stats_service
     application.bot_data["live_watch_service"] = live_watch_service
+    application.bot_data["live_stats_service"] = _build_live_stats_service()
 
     register_handlers(application)
     application.add_error_handler(handle_error)

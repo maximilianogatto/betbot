@@ -101,6 +101,7 @@ class _Runtime:
         self._storage = None
         self._ledger = None
         self._live_watch = None
+        self._live_stats = None
         self._tracking = None
 
     @property
@@ -129,6 +130,22 @@ class _Runtime:
             self._live_watch = LiveWatchService(
                 extractor_registry=ExtractorRegistry(), repository=self.storage)
         return self._live_watch
+
+    @property
+    def live_stats(self):
+        if self._live_stats is None:
+            from core.stats_provider_base import StatsProviderRegistry
+            from services.live_stats import LiveStatsService
+            from stats_providers import register_default_stats_providers
+
+            registry = StatsProviderRegistry()
+            register_default_stats_providers(registry)
+            try:
+                statshub = registry.get("sportradar_statshub")
+            except Exception:
+                statshub = None
+            self._live_stats = LiveStatsService(statshub_provider=statshub)
+        return self._live_stats
 
     @property
     def tracking(self):
@@ -504,6 +521,27 @@ def watches(chat_id: int | None = None, status: str | None = None) -> dict[str, 
     """Partidos en vigilancia (/watching): watching = esperando, fired = ya salió en vivo."""
     chat = runtime.chat_id(chat_id)
     return {"chat_id": chat, "watches": _plain(runtime.live_watch.list_watches(chat, status=status))}
+
+
+@_tool(READ_NETWORK)
+async def live_stats(watch_id: int, chat_id: int | None = None) -> dict[str, Any]:
+    """Panel de stats en vivo de un partido vigilado (como /live_stats): ataques, posesión,
+    tiros, córners, tarjetas... de 1xBet (lo mismo que muestra Melbet) más faltas,
+    offsides y atajadas de Statshub si lo cubre. watch_id = id de `watches`.
+    """
+    from dataclasses import asdict
+
+    chat = runtime.chat_id(chat_id)
+    entry = runtime.storage.get_live_watch(chat, int(watch_id))
+    if entry is None:
+        raise LookupError(f"no hay un watch {watch_id} en el chat {chat}")
+    view = await runtime.live_stats.for_entry(entry)
+    if view is None:
+        raise LookupError("ni 1xBet ni Statshub tienen stats de este partido")
+    data = asdict(view)
+    data["rows"] = [{"stat": row["key"], "label": row["label"], "home": row["home"],
+                     "away": row["away"], "source": row["source"]} for row in data["rows"]]
+    return data
 
 
 @_tool(READ_NETWORK)

@@ -100,6 +100,28 @@ class McpToolsTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn({"market_type": "1x2", "side": "away", "odds": 1.12},
                       [{k: m[k] for k in ("market_type", "side", "odds")} for m in snapshot["markets"]])
 
+    async def test_live_stats_of_a_watched_match(self) -> None:
+        from unittest.mock import AsyncMock
+        from types import SimpleNamespace
+
+        from services.live_stats import LiveStatsService
+        from tests.services.test_live_stats import XBET_GAME
+
+        self.mcp.bet_add(text=BET)
+        [watch] = self.mcp.watches()["watches"]
+        self.storage.update_live_watch_platform_state(watch["id"], "1xbet_http", {"event_id": "755743183"})
+        xbet = SimpleNamespace(settings=SimpleNamespace(base_url="https://x/service-api/LineFeed", language="en"),
+                               fetch_game_zip=AsyncMock(return_value=XBET_GAME))
+        self.mcp.runtime._live_stats = LiveStatsService(xbet_client=xbet)
+
+        panel = await self.mcp.live_stats(watch["id"])
+
+        self.assertEqual((panel["home_score"], panel["away_score"], panel["period"]), (0, 1, "Entretiempo"))
+        self.assertIn({"stat": "possession", "label": "Posesión", "home": 35, "away": 65, "source": "1xbet"},
+                      panel["rows"])
+        with self.assertRaises(LookupError):
+            await self.mcp.live_stats(999999)
+
     # ----- escritura -----
 
     def test_bet_add_watches_an_untracked_match_and_skips_duplicate_tickets(self) -> None:
@@ -159,9 +181,14 @@ class McpToolsTests(unittest.IsolatedAsyncioTestCase):
             self.mcp.report("trimestre")
 
     def test_watch_add_remove_and_limits(self) -> None:
-        [added] = self.mcp.watch_add(["20:30 UEFA U21 | San Marino U21 - Kosovo U21"],
+        from zoneinfo import ZoneInfo
+
+        # Una hora en el futuro: un horario fijo ("20:30") pasa a estar vencido según
+        # a qué hora corra el test, y un partido terminado no se vigila.
+        kickoff = (datetime.now(ZoneInfo("Europe/Madrid")) + timedelta(hours=1)).replace(second=0, microsecond=0)
+        [added] = self.mcp.watch_add([f"{kickoff:%H:%M} UEFA U21 | San Marino U21 - Kosovo U21"],
                                      timezone_name="Europe/Madrid")["added"]
-        self.assertTrue(added["kickoff_at"].endswith("18:30:00+00:00"))
+        self.assertTrue(added["kickoff_at"].endswith(f"{kickoff.astimezone(timezone.utc):%H:%M}:00+00:00"))
         self.assertTrue(self.mcp.watch_remove(added["id"])["removed"])
         self.assertEqual(self.mcp.watches()["watches"], [])
 
