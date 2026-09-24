@@ -36,3 +36,7 @@ class MatchResultsPort(Protocol):
     ) -> list[MatchResult]:
         """Lista resultados archivados, filtrando por liga y ventana temporal."""
         ...
+
+    def list_match_results_recorded_since(self, *, since: str, limit: int = 500) -> list[MatchResult]:
+        """Resultados archivados desde una fecha de registro, tengan o no kickoff conocido."""
+        ...

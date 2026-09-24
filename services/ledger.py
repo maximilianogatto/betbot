@@ -42,7 +42,7 @@ from core.betting.models import (
 )
 from core.betting.settlement import combine_ticket, settle_leg
 from core.league_naming import team_name_similarity
-from core.match_identity import MIN_AVERAGE_SIMILARITY, MIN_TEAM_SIMILARITY
+from core.match_identity import MIN_AVERAGE_SIMILARITY, MIN_TEAM_SIMILARITY, category_compatible
 from core.models import MatchResult
 from core.odds_markets import find_market, flatten_markets
 
@@ -50,6 +50,14 @@ logger = logging.getLogger(__name__)
 
 #: Ventana para buscar el partido de una apuesta alrededor del momento de carga.
 MATCH_WINDOW = timedelta(hours=36)
+#: Enlace tardío: resultados archivados hasta 10 días después de la apuesta (una
+#: pre-match se carga días antes), o poco antes si se apostó en vivo.
+LATE_LINK_LOOKBACK = timedelta(days=10)
+LATE_LINK_BEFORE = timedelta(hours=4)
+#: Pata ya enlazada con horario: el resultado tiene que ser de ese mismo partido.
+KICKOFF_TOLERANCE = timedelta(hours=3)
+#: Un watch archiva el resultado hasta ~3 h después de salir en vivo.
+RECORDED_AFTER_KICKOFF = timedelta(hours=10)
 
 
 def _now() -> datetime:
@@ -261,14 +269,15 @@ class LedgerService:
         except Exception:
             logger.exception("Ledger: no se pudieron leer los resultados archivados")
             archived = []
+        named = f"{leg.match_label} {leg.team or ''}"
         for result in archived:
             score, side = label_similarity(leg.team or leg.match_label, result.home, result.away)
-            if score:
+            if score and category_compatible(named, _match_text(result)):
                 candidates.append((score, result, side))
         if not candidates:
             for event in self._active_events(chat_id):
                 score, side = label_similarity(leg.team or leg.match_label, event.home, event.away)
-                if score:
+                if score and category_compatible(named, _match_text(event)):
                     candidates.append((score, event, side))
         if not candidates:
             return None, None
@@ -389,16 +398,108 @@ class LedgerService:
         return settled
 
     def settle_pending(self) -> int:
-        return sum(1 for bet in self.repository.list_open_bets() if self._try_settle(bet))
+        return len(self.run_settlement())
 
-    def _try_settle(self, bet: Bet) -> Optional[Bet]:
+    def run_settlement(self) -> list[Bet]:
+        """Enlaza tarde lo que quedó sin partido y liquida lo abierto que ya terminó.
+
+        Lo corre un job periódico. Devuelve las apuestas que se cerraron en esta
+        pasada, para avisarle a cada chat.
+        """
+        open_bets = self.repository.list_open_bets()
+        if not open_bets:
+            return []
+        recent = self.repository.list_match_results_recorded_since(
+            since=_iso(self.clock() - LATE_LINK_LOOKBACK), limit=500)
+        settled = []
+        for bet in open_bets:
+            self._link_late(bet, recent)
+            done = self._try_settle(bet, recent=recent)
+            if done is not None:
+                settled.append(done)
+        return settled
+
+    def _link_late(self, bet: Bet, recent: list[MatchResult]) -> None:
+        """Patas cargadas sin partido: se enlazan si después apareció uno que coincide.
+
+        Primero contra los resultados archivados; si no, contra los partidos vigentes
+        del chat (una liga que se empezó a trackear después de cargar la apuesta).
+        """
+        active: Optional[list[Any]] = None
+        for leg in bet.legs:
+            if leg.external_event_id:
+                continue
+            result = self._result_by_teams(leg, bet, recent) if recent else None
+            if result is None and bet.chat_id is not None:
+                if active is None:
+                    active = self._active_events(bet.chat_id)
+                result = self._result_by_teams(leg, bet, active)
+            if result is None or not result.platform or not result.external_event_id:
+                continue
+            side = leg.side
+            if side == "team":
+                side = label_similarity(leg.match_label, result.home, result.away)[1] or side
+            if self.repository.link_leg(
+                    leg.id, platform=result.platform, external_event_id=str(result.external_event_id),
+                    home=result.home, away=result.away, competition_name=result.competition_name,
+                    kickoff_at=result.kickoff_at, side=side):
+                leg.platform, leg.external_event_id = result.platform, str(result.external_event_id)
+                leg.home, leg.away, leg.side = result.home, result.away, side
+                leg.competition_name = result.competition_name or leg.competition_name
+                leg.kickoff_at = result.kickoff_at or leg.kickoff_at
+                logger.info("Ledger: pata %s de #%s enlazada tarde a %s %s", leg.id, bet.id,
+                            result.platform, result.external_event_id)
+
+    def _result_by_teams(self, leg: BetLeg, bet: Bet,
+                         results: list[MatchResult]) -> Optional[MatchResult]:
+        """El resultado archivado de ese partido, por equipos, categoría y fecha.
+
+        Hace falta porque el watch archiva con el id de la casa donde lo vio en
+        vivo, que no tiene por qué ser la de la apuesta.
+        """
+        label = f"{leg.home} vs {leg.away}" if leg.home and leg.away else leg.match_label
+        named = f"{label} {leg.competition_name or ''}"
+        kickoff = _parse(leg.kickoff_at)
+        placed = _parse(bet.placed_at) or _parse(bet.created_at)
+        best, best_key = None, None
+        for result in results:
+            if not result.home or not result.away:
+                continue
+            score, _ = label_similarity(label, result.home, result.away)
+            if not score or not category_compatible(named, _match_text(result)):
+                continue
+            result_kickoff = _parse(result.kickoff_at)
+            recorded = _parse(getattr(result, "recorded_at", None))
+            if kickoff is not None:
+                if result_kickoff is not None:
+                    if abs(result_kickoff - kickoff) > KICKOFF_TOLERANCE:
+                        continue
+                elif recorded is None or not kickoff <= recorded <= kickoff + RECORDED_AFTER_KICKOFF:
+                    continue
+                gap = abs(((result_kickoff or recorded) - kickoff).total_seconds())
+            elif placed is not None:
+                when = result_kickoff or recorded
+                if when is None or not placed - LATE_LINK_BEFORE <= when <= placed + LATE_LINK_LOOKBACK:
+                    continue
+                gap = abs((when - placed).total_seconds())
+            else:
+                gap = 0.0
+            # Con puntajes parecidos gana el partido más cercano en el tiempo.
+            key = (round(score, 1), -gap)
+            if best_key is None or key > best_key:
+                best, best_key = result, key
+        return best
+
+    def _try_settle(self, bet: Bet, *, recent: Optional[list[MatchResult]] = None) -> Optional[Bet]:
         """Liquida si TODAS las patas tienen resultado. None si falta algo."""
         results = []
         for leg in bet.legs:
-            if not leg.platform or not leg.external_event_id:
-                return None
-            result = self.repository.get_match_result(
-                platform=leg.platform, external_event_id=leg.external_event_id)
+            result = None
+            if leg.platform and leg.external_event_id:
+                result = self.repository.get_match_result(
+                    platform=leg.platform, external_event_id=leg.external_event_id)
+            if (result is None or result.final_home_score is None) and recent:
+                result = self._result_by_teams(leg, bet, recent) or result
             if result is None or result.final_home_score is None:
                 return None
             if (result.status or "").upper() != "FINISHED":
@@ -416,6 +517,9 @@ class LedgerService:
                 return None  # mercado que no sabemos liquidar: queda a mano
             results.append((leg, outcome))
 
+        if (any(not leg.odds for leg, _ in results)
+                and not all(outcome.status in {"won", "lost"} for _, outcome in results)):
+            return None  # Bet Builder con una pata devuelta/a medias: sin cuotas por pata, a mano
         status, factor = combine_ticket([outcome for _, outcome in results])
         if status == "won" and len(results) > 1:
             # En combinadas la cuota del ticket manda: la casa redondea el producto.
@@ -523,6 +627,12 @@ class LedgerService:
                 warnings.append(f"⚠️ {label}: sería la apuesta #{match_exposure['bets'] + 1} "
                                 f"al partido (tu límite: {int(limits['max_bets_per_match'])}).")
         return warnings
+
+
+def _match_text(match: Any) -> str:
+    """Equipos + liga de un partido (archivado o vigente), para la guarda de categoría."""
+    return " ".join(str(getattr(match, name, None) or "")
+                    for name in ("home", "away", "competition_name"))
 
 
 def _label_teams(leg: LegInput) -> Optional[tuple[str, str]]:

@@ -11,6 +11,7 @@ unificación de ligas.
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import re
 
 from core.models import ActiveEventRecord
 
@@ -22,6 +23,43 @@ MIN_TEAM_SIMILARITY = 0.70
 MIN_AVERAGE_SIMILARITY = 0.80
 #: Umbral para agrupar un evento dentro de un grupo ya existente.
 GROUPING_THRESHOLD = 0.80
+
+
+# Categoría del partido: una sub-21 o un femenino NO es el mismo partido que el de
+# mayores aunque los clubes se llamen igual ("Kosovo" vs "Kosovo U21" da similitud 1.0).
+_GENDER_KEYWORDS = {"women", "femenino", "femenil", "mujeres", "fem", "dames", "damas", "frauen",
+                    "kvinder", "kvinner"}
+
+
+def age_groups(text: str) -> set[str]:
+    """Categorías de edad nombradas en el texto ({"u21"}, {"u19"}...)."""
+    if not text:
+        return set()
+    return {f"u{m.group(1)}" for m in re.finditer(r"\b(?:sub|under|u)[- ]?(\d+)", text.lower())}
+
+
+def is_womens(text: str) -> bool:
+    """True si el texto marca fútbol femenino (Women, (F), W, U19W...)."""
+    if not text:
+        return False
+    text = text.lower()
+    if set(re.findall(r"\b[a-z0-9]+\b", text)) & _GENDER_KEYWORDS:
+        return True
+    if re.search(r"\b(f|w)\b", text):
+        return True
+    return bool(re.search(r"\b(?:sub|under|u)[- ]?\d+(f|w)\b", text))
+
+
+def category_compatible(named: str, candidate: str) -> bool:
+    """La categoría que el usuario nombró tiene que estar en el candidato.
+
+    Asimétrico a propósito: si no nombró ninguna, cualquiera sirve (se escribe
+    "Darwin" por "Darwin Olympic W"); si escribió "u21", un partido de mayores no.
+    """
+    ages = age_groups(named)
+    if ages and ages != age_groups(candidate):
+        return False
+    return not is_womens(named) or is_womens(candidate)
 
 
 def _parse_kickoff(value) -> datetime | None:

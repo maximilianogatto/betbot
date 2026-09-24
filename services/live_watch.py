@@ -38,6 +38,7 @@ from core.timezones import default_timezone
 from services.timezones import resolve_chat_timezone
 from core.registry import ExtractorRegistry, extractor_registry as global_extractor_registry
 from core.league_naming import team_name_similarity, normalize_team_name
+from core.match_identity import age_groups as _extract_u_groups, is_womens as _has_gender_indicator
 from adapters.storage import SqliteStorage, get_storage
 
 logger = logging.getLogger(__name__)
@@ -88,33 +89,6 @@ def _parse_iso_datetime(dt_str: str | None) -> datetime | None:
         return dt.astimezone(timezone.utc)
     except Exception:
         return None
-
-
-def _extract_u_groups(text: str) -> set[str]:
-    if not text:
-        return set()
-    text = text.lower()
-    res = set()
-    for m in re.finditer(r"\b(?:sub|under|u)[- ]?(\d+)", text):
-        res.add(f"u{m.group(1)}")
-    return res
-
-
-_GENDER_KEYWORDS = {"women", "femenino", "femenil", "mujeres", "fem", "dames", "damas", "frauen", "kvinder", "kvinner"}
-
-
-def _has_gender_indicator(text: str) -> bool:
-    if not text:
-        return False
-    text = text.lower()
-    tokens = set(re.findall(r"\b[a-z0-9]+\b", text))
-    if tokens & _GENDER_KEYWORDS:
-        return True
-    if re.search(r"\b(f|w)\b", text):
-        return True
-    if re.search(r"\b(?:sub|under|u)[- ]?\d+(f|w)\b", text):
-        return True
-    return False
 
 
 def match_score(entry: Any, event: Any) -> float:
@@ -276,6 +250,22 @@ class LiveWatchService:
 
         return added
 
+
+    def watch_bet(self, chat_id: int, bet: Any) -> list[LiveWatchEntry]:
+        """Vigila los partidos de una apuesta que el bot no pudo enlazar.
+
+        Cuando el watch lo ve terminar archiva el resultado y el ledger lo enlaza
+        y liquida. Hacen falta los dos equipos para armar la línea del fixture.
+        """
+
+        lines: list[str] = []
+        for leg in getattr(bet, "legs", None) or []:
+            if leg.external_event_id or not leg.home or not leg.away:
+                continue
+            line = f"{leg.home} - {leg.away}"
+            if line not in lines:
+                lines.append(line)
+        return self.add_fixture_lines(chat_id, lines) if lines else []
 
     def list_watches(self, chat_id: int, *, status: str | None = None) -> list[LiveWatchEntry]:
         return self.repository.list_live_watches(chat_id, status=status)
@@ -553,6 +543,10 @@ class LiveWatchService:
                 self.repository.mark_live_watch_prematch_fired(
                     entry.id, platform=event.platform, event_id=event.external_event_id
                 )
+                if not entry.kickoff_at and getattr(event, "scheduled_at", None):
+                    # Sin horario el watch vence a las 16 h (p. ej. el que abre /bet):
+                    # el de la casa lo mantiene vivo hasta el partido.
+                    self.repository.set_live_watch_kickoff_if_missing(entry.id, event.scheduled_at)
                 self._auto_track_matched_event_league(event, entry.chat_id)
                 hits.append(LiveWatchHit(entry=entry, event=event, score=score, phase="pre"))
 

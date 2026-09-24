@@ -138,6 +138,20 @@ class MatchEnrichmentJob(ScheduledJob):
         await _orchestrated_match_enrichment(application)
 
 
+class LedgerSettlementJob(ScheduledJob):
+    """Enlaza tarde y liquida las apuestas abiertas cuyo partido ya terminó."""
+
+    def __init__(self, interval: float = 600.0, initial_delay: float = 120.0) -> None:
+        super().__init__("ledger_settlement", initial_delay)
+        self.interval = interval
+
+    def get_interval(self, application: Application) -> float:
+        return self.interval
+
+    async def run(self, application: Application) -> None:
+        await _orchestrated_ledger_settlement(application)
+
+
 class LiveWatchJob(ScheduledJob):
     """Job that services in-play status of matches with a dynamic interval."""
 
@@ -301,6 +315,26 @@ async def _orchestrated_stats_prefetch(application: Application) -> None:
         summary.get("errors"),
         purged,
     )
+
+
+async def _orchestrated_ledger_settlement(application: Application) -> None:
+    from interfaces.telegram.renderers.bets import render_settled
+    from services.ledger import LedgerService
+
+    ledger = application.bot_data.get("ledger_service")
+    if ledger is None:
+        ledger = application.bot_data["ledger_service"] = LedgerService()
+    settled = await asyncio.to_thread(ledger.run_settlement)
+    for bet in settled:
+        if bet.chat_id is None:
+            continue
+        try:
+            await application.bot.send_message(
+                chat_id=bet.chat_id, text=render_settled(bet), parse_mode="HTML")
+        except Exception:
+            logger.warning("No pude avisar la liquidación de la apuesta #%s", bet.id)
+    if settled:
+        logger.info("Ledger: %s apuesta(s) liquidadas solas", len(settled))
 
 
 async def _orchestrated_live_watch(application: Application) -> None:
@@ -507,6 +541,9 @@ async def start_orchestrated_scheduler(application: Application, settings: Any) 
     # 5b. Completar los resultados archivados con datos del proveedor de stats.
     if not replay_only:
         scheduler.register_job(MatchEnrichmentJob())
+
+    # 5c. Enlace tardío + liquidación de las apuestas cuyo partido ya terminó.
+    scheduler.register_job(LedgerSettlementJob())
 
     # 6. Register Live Watch Monitor
     if settings.live_watch_enabled:

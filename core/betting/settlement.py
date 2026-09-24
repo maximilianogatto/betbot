@@ -162,6 +162,12 @@ def combine_ticket(leg_results: list[LegResult]) -> tuple[str, float]:
     factor = round(factor, 6)
     if len(leg_results) == 1:
         return leg_results[0].status, factor
+    # Por estado y no sólo por el producto: las patas de un Bet Builder no tienen
+    # cuota propia (factor 0 aunque ganen) y el ticket paga la cuota combinada.
+    if any(r.status == "lost" for r in leg_results):
+        return "lost", 0.0
+    if all(r.status == "won" for r in leg_results):
+        return "won", factor
     if factor == 0:
         return "lost", factor
     if factor == 1:

@@ -34,6 +34,12 @@ class BetsPort(Protocol):
         """Apuestas enlazadas a un partido: lo que hay que liquidar cuando termina."""
         ...
 
+    def link_leg(self, leg_id: int, *, platform: str, external_event_id: str,
+                 home: Optional[str], away: Optional[str], competition_name: Optional[str],
+                 kickoff_at: Optional[str], side: str) -> bool:
+        """Enlaza tarde una pata sin partido. False si ya estaba enlazada."""
+        ...
+
     def settle_bet(self, bet_id: int, *, status: str, return_amount: float,
                    profit: float, profit_usd: float | None, settlement_source: str,
                    legs: list[BetLeg], notes: str | None = None) -> Bet:

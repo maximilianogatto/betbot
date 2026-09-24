@@ -140,6 +140,10 @@ class LiveWatchPort(Protocol):
         """Record that a pre-match odds/availability alert has been fired."""
         ...
 
+    def set_live_watch_kickoff_if_missing(self, entry_id: int, kickoff_at: str) -> bool:
+        """Fill a watch's kickoff learned from a book's listing. False if it already had one."""
+        ...
+
     def update_live_watch_platform_state(
         self,
         entry_id: int,

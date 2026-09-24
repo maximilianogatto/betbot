@@ -100,6 +100,20 @@ class SQLiteBetsAdapter(BetsPort):
             ids = [row["id"] for row in conn.execute(sql, (platform, str(external_event_id)))]
         return [bet for bet in (self.get_bet(bet_id) for bet_id in ids) if bet]
 
+    def link_leg(self, leg_id: int, *, platform: str, external_event_id: str,
+                 home: str | None, away: str | None, competition_name: str | None,
+                 kickoff_at: str | None, side: str) -> bool:
+        # Sólo patas sin partido: un enlace existente no se pisa.
+        with open_connection() as conn:
+            cursor = conn.execute(
+                "UPDATE bet_legs SET platform = ?, external_event_id = ?, home = ?, away = ?,"
+                " competition_name = COALESCE(?, competition_name),"
+                " kickoff_at = COALESCE(?, kickoff_at), side = ?"
+                " WHERE id = ? AND external_event_id IS NULL",
+                (platform, str(external_event_id), home, away, competition_name, kickoff_at,
+                 side, leg_id))
+        return cursor.rowcount > 0
+
     def settle_bet(self, bet_id: int, *, status: str, return_amount: float, profit: float,
                    profit_usd: float | None, settlement_source: str, legs: list[BetLeg],
                    notes: str | None = None) -> Bet:

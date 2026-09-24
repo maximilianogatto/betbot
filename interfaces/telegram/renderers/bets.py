@@ -66,7 +66,9 @@ def leg_line(leg: BetLeg) -> str:
     match = f"{leg.home} vs {leg.away}" if leg.home else leg.match_label
     if not leg.external_event_id:
         match += " (sin enlazar)"
-    return escape_html(f"{match} · {market}{period} {side}{line} @{leg.odds:g} · {when}{score}")
+    # Las patas de un Bet Builder no tienen cuota propia (la casa da sólo la combinada).
+    odds = f" @{leg.odds:g}" if leg.odds else ""
+    return escape_html(f"{match} · {market}{period} {side}{line}{odds} · {when}{score}")
 
 
 def render_bet(bet: Bet) -> str:
@@ -93,6 +95,11 @@ def render_bet(bet: Bet) -> str:
     if bet.notes:
         lines.append(f"  <i>{escape_html(bet.notes)}</i>")
     return "\n".join(lines)
+
+
+def render_settled(bet: Bet) -> str:
+    """Aviso del job cuando una apuesta se cierra sola al terminar el partido."""
+    return "🏁 <b>Apuesta liquidada</b>\n" + render_bet(bet)
 
 
 def render_added(bet: Bet, warnings: list[str], parse_notes: list[str]) -> str:

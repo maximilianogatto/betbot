@@ -126,3 +126,11 @@ class SQLiteMatchResultsAdapter(MatchResultsPort):
         with open_connection() as conn:
             rows = conn.execute(query, params).fetchall()
         return [_row_to_result(row) for row in rows]
+
+    def list_match_results_recorded_since(self, *, since: str, limit: int = 500) -> list[MatchResult]:
+        # Por recorded_at y no por kickoff: un watch sin horario archiva con kickoff NULL.
+        with open_connection() as conn:
+            rows = conn.execute(
+                "SELECT * FROM match_results WHERE recorded_at >= ?"
+                " ORDER BY recorded_at DESC, id DESC LIMIT ?", (since, int(limit))).fetchall()
+        return [_row_to_result(row) for row in rows]

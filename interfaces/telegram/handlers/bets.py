@@ -24,7 +24,9 @@ from telegram.ext import Application, CommandHandler, ContextTypes
 
 from core.betting import ParseError, parse_bet_text
 from core.betting.models import DEFAULT_LIMITS
-from interfaces.telegram.handlers.common import _reply_text_chunks, escape_html, logger
+from interfaces.telegram.handlers.common import (
+    _reply_text_chunks, escape_html, get_live_watch_service, logger,
+)
 from interfaces.telegram.renderers.bets import (
     STATUS_FROM_ES,
     render_added,
@@ -100,6 +102,17 @@ def _bet_id(context: ContextTypes.DEFAULT_TYPE) -> int | None:
         return None
 
 
+def _watch_unlinked(context: ContextTypes.DEFAULT_TYPE, bet) -> bool:
+    """Partido que el bot no trackea: vigilarlo es la forma de tener su resultado."""
+    if bet.chat_id is None or bet.status != "open":
+        return False
+    try:
+        return bool(get_live_watch_service(context).watch_bet(bet.chat_id, bet))
+    except Exception:
+        logger.exception("No pude poner en vigilancia el partido de la apuesta #%s", bet.id)
+        return False
+
+
 async def _load(update: Update, context: ContextTypes.DEFAULT_TYPE, *, paper: bool) -> None:
     """Carga común de /bet y /tip."""
     text = _args_text(context)
@@ -124,6 +137,8 @@ async def _load(update: Update, context: ContextTypes.DEFAULT_TYPE, *, paper: bo
         await update.message.reply_text("❌ No pude registrar la apuesta; quedó en el log.")
         return
     notes = list(parsed.notes)
+    if _watch_unlinked(context, result.bet):
+        notes.append("👁 Lo sumé a /watching: cuando termine el partido la enlazo y la liquido sola.")
     if paper and not parsed.bet.tags:
         notes.append("Sin #fuente: poné una etiqueta para poder medir de dónde vino el pick.")
     await _reply_text_chunks(update.message, render_added(result.bet, result.warnings, notes),

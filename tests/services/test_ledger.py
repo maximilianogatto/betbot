@@ -251,6 +251,100 @@ class LedgerFlowTests(unittest.TestCase):
         self.assertIn("Kosovo u21 -3.5", text)
         self.assertIn("(sin enlazar)", text)
 
+    # ----- enlace tardío y liquidación del job -----
+
+    def _u21_result(self, *, home="San Marino U21", away="Kosovo U21", platform="betovo_http",
+                    event_id="ev-u21", score=(0, 5), kickoff=None) -> None:
+        self.storage.record_match_result(MatchResult(
+            platform=platform, external_event_id=event_id, home=home, away=away,
+            status="FINISHED", source="live_watch", kickoff_at=kickoff,
+            recorded_at=(self.now + timedelta(hours=10)).isoformat(),
+            final_home_score=score[0], final_away_score=score[1]))
+
+    def test_an_unlinked_bet_links_late_and_settles_when_the_result_arrives(self) -> None:
+        from interfaces.telegram.renderers.bets import render_settled
+
+        bet = self._add(ParseTests.REAL).bet
+        self.assertEqual(self.ledger.run_settlement(), [])  # todavía no hay resultado
+        self._u21_result()  # el watch lo archiva con el id de la casa donde lo vio
+
+        [settled] = self.ledger.run_settlement()
+        self.assertEqual((settled.id, settled.status), (bet.id, "won"))
+        leg = settled.legs[0]
+        self.assertEqual((leg.platform, leg.external_event_id), ("betovo_http", "ev-u21"))
+        self.assertAlmostEqual(settled.profit, 12 * 0.62, places=4)
+        self.assertIn("Apuesta liquidada", render_settled(settled))
+        self.assertEqual(self.ledger.run_settlement(), [])  # una sola vez
+
+    def test_late_linking_never_crosses_categories(self) -> None:
+        bet = self._add(ParseTests.REAL).bet
+        self._u21_result(home="San Marino", away="Kosovo", event_id="ev-senior")  # mayores
+        self.assertEqual(self.ledger.run_settlement(), [])
+        leg = self.storage.get_bet(bet.id).legs[0]
+        self.assertIsNone(leg.external_event_id)
+
+    def test_a_linked_bet_settles_with_the_result_seen_on_another_book(self) -> None:
+        chat_id = 4343
+        self.storage.create_pending_competition_request(
+            chat_id=chat_id, platform="solcasino_http", source_url="solcasino:tournament:9",
+            competition_external_id="9", competition_name="U21 European Championship, Qualification",
+            requires_empty_confirmation=False, needs_name_resolution=False)
+        competition = self.storage.confirm_pending_competition_request(chat_id)
+        kickoff = (self.now + timedelta(hours=4)).isoformat()
+        self.storage.upsert_active_events(competition.id, [ActiveEventUpsert(
+            external_event_id="sol-1", home="San Marino", away="Kosovo",
+            scheduled_label_date=None, scheduled_label_time=None, scheduled_at=kickoff,
+            odds_home=21.0, odds_draw=9.0, odds_away=1.12)])
+        parsed = parse_bet_text("San Marino u21 vs Kosovo u21 over 3.5 @1.9 10usd solcasino",
+                                now=self.now)
+        parsed.bet.chat_id = chat_id
+        bet = self.ledger.add_bet(parsed.bet).bet
+        self.assertEqual(bet.legs[0].external_event_id, "sol-1")
+
+        self._u21_result(kickoff=kickoff, score=(0, 4))  # archivado desde betovo, otro id
+        [settled] = self.ledger.run_settlement()
+        self.assertEqual((settled.id, settled.status), (bet.id, "won"))
+
+    def test_an_unlinked_bet_links_to_a_league_tracked_afterwards(self) -> None:
+        chat_id = 4444
+        parsed = parse_bet_text(ParseTests.REAL, now=self.now)
+        parsed.bet.chat_id = chat_id
+        bet = self.ledger.add_bet(parsed.bet).bet
+        self.assertIsNone(bet.legs[0].external_event_id)
+
+        self.storage.create_pending_competition_request(
+            chat_id=chat_id, platform="betovo_http", source_url="betovo:champ:77",
+            competition_external_id="77", competition_name="European U21 Championship, Qualification",
+            requires_empty_confirmation=False, needs_name_resolution=False)
+        competition = self.storage.confirm_pending_competition_request(chat_id)
+        self.storage.upsert_active_events(competition.id, [ActiveEventUpsert(
+            external_event_id="bo-1", home="San Marino U21", away="Kosovo U21",
+            scheduled_label_date=None, scheduled_label_time=None,
+            scheduled_at=(self.now + timedelta(hours=6)).isoformat(),
+            odds_home=21.0, odds_draw=9.0, odds_away=1.12)])
+
+        self.assertEqual(self.ledger.run_settlement(), [])  # enlazada, todavía sin jugar
+        leg = self.storage.get_bet(bet.id).legs[0]
+        self.assertEqual((leg.platform, leg.external_event_id, leg.side), ("betovo_http", "bo-1", "away"))
+
+    def test_bet_builder_legs_have_no_odds_of_their_own(self) -> None:
+        from core.betting.models import BetInput, LegInput
+        from interfaces.telegram.renderers.bets import render_bet
+
+        legs = [LegInput(match_label="San Marino u21 vs Kosovo u21", market_type="team_total",
+                         side="under", odds=0.0, line=0.5, team="San Marino u21",
+                         placed_phase="prematch"),
+                LegInput(match_label="San Marino u21 vs Kosovo u21", market_type="goal_line",
+                         side="over", odds=0.0, line=3.5, placed_phase="prematch")]
+        bet = self.ledger.add_bet(BetInput(legs=legs, stake=10, currency="USD", odds_total=1.797,
+                                           bookmaker="solcasino")).bet
+        self.assertEqual([leg.market_type for leg in bet.legs], ["team_total_home", "goal_line"])
+        self.assertNotIn("@0", render_bet(bet))
+        self._u21_result(score=(0, 5))
+        [settled] = self.ledger.run_settlement()
+        self.assertEqual(settled.status, "won")
+        self.assertAlmostEqual(settled.profit, 7.97, places=2)  # paga la cuota del ticket
+
     def test_unlinked_bet_stays_open_and_settles_by_hand(self) -> None:
         result = self._add("Equipo Inexistente -1 @1.9 10usd")
         self.assertTrue(any("no coincide" in w for w in result.warnings))

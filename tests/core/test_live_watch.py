@@ -1257,5 +1257,52 @@ class LiveWatchCountdownTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse([hit for hit in again if hit.phase == "countdown"])
 
 
+class LiveWatchForBetsTests(unittest.IsolatedAsyncioTestCase):
+    """El watch que abre /bet para un partido sin enlazar, y el horario que aprende."""
+
+    def setUp(self) -> None:
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        self._prev_db = os.environ.get("BETBOT_DB_PATH")
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp_dir.name) / "bet_watch.sqlite3")
+        with open_connection() as conn:
+            initialize_schema(conn)
+        self.repository = SqliteStorage()
+
+    def tearDown(self) -> None:
+        if self._prev_db is None:
+            os.environ.pop("BETBOT_DB_PATH", None)
+        else:
+            os.environ["BETBOT_DB_PATH"] = self._prev_db
+        self.tmp_dir.cleanup()
+
+    def test_watch_bet_only_watches_unlinked_legs_once(self) -> None:
+        service = LiveWatchService(repository=self.repository)
+        leg = SimpleNamespace(external_event_id=None, home="San Marino u21", away="Kosovo u21")
+        linked = SimpleNamespace(external_event_id="x", home="A", away="B")
+        added = service.watch_bet(9, SimpleNamespace(legs=[leg, leg, linked]))
+        self.assertEqual([(w.home, w.away) for w in added], [("San Marino u21", "Kosovo u21")])
+        self.assertEqual(service.watch_bet(9, SimpleNamespace(legs=[leg])), [])  # ya estaba
+
+    async def test_a_watch_without_kickoff_learns_it_from_the_prematch_listing(self) -> None:
+        service = LiveWatchService(repository=self.repository)
+        [entry] = service.add_fixture_lines(7, ["San Marino U21 - Kosovo U21"])
+        self.assertIsNone(entry.kickoff_at)
+        kickoff = "2026-09-24T18:30:00+00:00"
+        pre_extractor = SimpleNamespace(
+            name="betovo_http", supports_live_detection=False, supports_prematch_listing=True,
+            list_live_events=AsyncMock(return_value=[]),
+            list_prematch_events=AsyncMock(return_value=[LiveEventSnapshot(
+                platform="betovo_http", external_event_id="bo-1", home="San Marino U21",
+                away="Kosovo U21", competition_name="European U21 Championship, Qualification",
+                scheduled_at=kickoff)]),
+        )
+        service.extractor_registry = SimpleNamespace(list_registered=lambda: [pre_extractor])
+
+        hits = await service.poll_once()
+        self.assertEqual([hit.phase for hit in hits], ["pre"])
+        [watch] = self.repository.list_live_watches(7)
+        self.assertEqual(watch.kickoff_at, kickoff)
+
+
 if __name__ == "__main__":
     unittest.main()

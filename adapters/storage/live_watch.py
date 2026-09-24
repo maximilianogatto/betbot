@@ -594,6 +594,15 @@ class SQLiteLiveWatchAdapter(LiveWatchPort):
                 (now_iso, entry_id)
             )
 
+    def set_live_watch_kickoff_if_missing(self, entry_id: int, kickoff_at: str) -> bool:
+        # Un watch sin horario vence a las 16 h de creado: si una casa lo lista,
+        # su kickoff lo mantiene vivo hasta el partido.
+        with open_connection() as conn:
+            cursor = conn.execute(
+                "UPDATE live_watch_entries SET kickoff_at = ? WHERE id = ? AND kickoff_at IS NULL",
+                (kickoff_at, entry_id))
+        return cursor.rowcount > 0
+
     def update_live_watch_platform_state(
         self,
         entry_id: int,
