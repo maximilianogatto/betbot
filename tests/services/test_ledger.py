@@ -77,6 +77,13 @@ class ParseTests(unittest.TestCase):
         leg = parse_bet_text("San Marino u21 vs Kosovo u21 San Marino +3.5 @2.1 10usd").bet.legs[0]
         self.assertEqual((leg.match_label, leg.team), ("San Marino u21 vs Kosovo u21", "San Marino"))
 
+    def test_a_separator_or_an_exact_repeat_marks_the_team(self) -> None:
+        for text in ("Bnot Netanya vs ASA Tel Aviv - Asa tel aviv -2.5 FT @1.79 14usd min 14 con 0-1",
+                     "Bnot Netanya vs ASA Tel Aviv Asa tel aviv -2.5 FT @1.79 14usd min 14 con 0-1"):
+            leg = parse_bet_text(text).bet.legs[0]
+            self.assertEqual((leg.match_label, leg.team), ("Bnot Netanya vs ASA Tel Aviv", "Asa tel aviv"))
+            self.assertEqual((leg.line, leg.placed_minute, leg.placed_score), (-2.5, 14, (0, 1)))
+
     def test_a_match_without_the_team_still_asks_for_it(self) -> None:
         for text in ("Darwin vs Palmerston -2.5 @1.6 10usd", "Darwin vs Palmerston Rovers W -2.5 @1.6 10usd"):
             with self.assertRaises(ParseError):
@@ -372,6 +379,68 @@ class LedgerFlowTests(unittest.TestCase):
         [settled] = self.ledger.run_settlement()
         self.assertEqual(settled.status, "won")
         self.assertAlmostEqual(settled.profit, 7.97, places=2)  # paga la cuota del ticket
+
+    def _watch_live(self, chat_id: int) -> None:
+        """Watch de la planilla que ya vio el partido en vivo en dos casas."""
+        entry = self.storage.add_live_watch(
+            chat_id, home="Bnot Netanya", away="ASA Tel Aviv (Visitantes +4/5)",
+            league_hint="Israel (F)", kickoff_at=(self.now - timedelta(minutes=15)).isoformat())
+        for platform, event_id, home, away, score in (
+                ("solcasino_http", "sol-9", "Bnot Netanya FC", "ASA Tel Aviv", None),
+                ("betovo_http", "bo-9", "Bnot Netanya (W)", "AS Tel Aviv University (W)", 0)):
+            self.storage.update_live_watch_platform_state(entry.id, platform, {
+                "event_id": event_id, "home": home, "away": away, "home_score": score,
+                "away_score": None if score is None else 1, "minute": "14'"})
+
+    def test_a_live_bet_links_to_the_match_the_watch_is_following(self) -> None:
+        chat_id = 4646
+        self._watch_live(chat_id)
+        parsed = parse_bet_text("Bnot Netanya vs ASA Tel Aviv - Asa tel aviv -2.5 FT @1.79 14usd"
+                                " min 14 con 0-1 melbet #excel", now=self.now)
+        parsed.bet.chat_id = chat_id
+        result = self.ledger.add_bet(parsed.bet)
+
+        leg = result.bet.legs[0]
+        self.assertEqual((leg.platform, leg.external_event_id), ("solcasino_http", "sol-9"))
+        self.assertEqual((leg.side, leg.line), ("away", -2.5))
+        self.assertEqual(leg.competition_name, "Israel (F)")
+        self.assertFalse(any("no coincide" in w for w in result.warnings))
+
+    def test_a_bet_linked_to_one_book_settles_with_the_result_archived_from_another(self) -> None:
+        """Solcasino da "ASA Tel Aviv" y el resultado lo archiva betovo ("AS Tel Aviv
+        University"): por nombre no se reconocen, por los ids que agrupa el watch sí."""
+        from services.live_watch import LiveWatchService
+
+        chat_id = 4848
+        self._watch_live(chat_id)
+        parsed = parse_bet_text("Bnot Netanya vs ASA Tel Aviv - Asa tel aviv -2.5 FT @1.79 14usd"
+                                " min 14 con 0-1 melbet", now=self.now)
+        parsed.bet.chat_id = chat_id
+        bet = self.ledger.add_bet(parsed.bet).bet
+        self.assertEqual(bet.legs[0].platform, "solcasino_http")
+
+        [entry] = self.storage.list_live_watches(chat_id)
+        self.storage.update_live_watch_platform_state(entry.id, "betovo_http", {
+            "event_id": "bo-9", "home": "Bnot Netanya (W)", "away": "AS Tel Aviv University (W)",
+            "home_score": 0, "away_score": 4, "minute": "90+3'",
+            "observed_at": datetime.now(timezone.utc).isoformat()})
+        LiveWatchService(repository=self.storage).purge_expired()  # vence y archiva desde betovo
+
+        [settled] = self.ledger.run_settlement()
+        self.assertEqual((settled.id, settled.status), (bet.id, "won"))
+
+    def test_an_unlinked_bet_links_late_to_a_watched_match(self) -> None:
+        chat_id = 4747
+        parsed = parse_bet_text("Bnot Netanya vs ASA Tel Aviv - Asa tel aviv -2.5 @1.79 14usd min 14"
+                                " con 0-1 melbet", now=self.now)
+        parsed.bet.chat_id = chat_id
+        bet = self.ledger.add_bet(parsed.bet).bet
+        self.assertIsNone(bet.legs[0].external_event_id)
+
+        self._watch_live(chat_id)  # el partido se sumó a /watching después
+        self.ledger.run_settlement()
+        leg = self.storage.get_bet(bet.id).legs[0]
+        self.assertEqual((leg.external_event_id, leg.side), ("sol-9", "away"))
 
     def test_unlinked_bet_stays_open_and_settles_by_hand(self) -> None:
         result = self._add("Equipo Inexistente -1 @1.9 10usd")

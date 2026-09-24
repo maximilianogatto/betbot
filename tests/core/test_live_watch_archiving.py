@@ -90,6 +90,21 @@ class LiveWatchArchivingTests(unittest.TestCase):
         # El nivel 3 viaja en el crudo, no en columnas.
         self.assertIn("possession_home", archived.raw_payload_json)
 
+    def test_the_result_keeps_the_book_names_and_the_watch_league(self) -> None:
+        """La planilla trae notas en los nombres; la casa, los nombres reales."""
+        entry_id = self._expired_entry_with_state(dict(
+            _state("90+4"), home="Banyule City (W)", away="Bundoora United (W)"))
+        with open_connection() as conn:
+            conn.execute("UPDATE live_watch_entries SET away = ? WHERE id = ?",
+                         ("Bundoora (Visitantes +4/5)", entry_id))
+
+        self.service.purge_expired()
+
+        [archived] = self.repository.list_match_results()
+        self.assertEqual((archived.home, archived.away), ("Banyule City (W)", "Bundoora United (W)"))
+        self.assertEqual(archived.competition_name, "Australia")
+        self.assertEqual(json.loads(archived.raw_payload_json)["_event_ids"], {"betovo_http": "ev-77"})
+
     def test_a_partial_observation_is_archived_but_not_as_final(self) -> None:
         """Una foto del minuto 20 no es un resultado: no puede entrar a los análisis."""
 

@@ -187,37 +187,74 @@ _TEAM_REPEAT_SIMILARITY = 0.85
 def _split_match_and_team(label: str) -> Optional[tuple[str, str]]:
     """``A vs B <equipo>`` -> (``A vs B``, ``<equipo>``) cuando el final repite un lado.
 
-    Es como se anota en el grupo ("San Marino u21 vs Kosovo u21 Kosovou21 -3.5"). El
-    equipo del final tiene que parecerse claramente a uno de los dos lados; si no,
-    None y se pide sólo el equipo como antes.
+    Es como se anota en el grupo ("San Marino u21 vs Kosovo u21 Kosovou21 -3.5",
+    "Bnot Netanya vs ASA Tel Aviv - Asa tel aviv -2.5"). Un separador después del
+    partido marca el equipo; si no hay, se elige el corte en el que el final repite
+    un lado. El equipo tiene que parecerse claramente a uno de los dos; si no, None
+    y se pide sólo el equipo como antes.
     """
     separator = _VS_RE.search(f" {label} ")
     if separator is None:
         return None
     padded = f" {label} "
     home = padded[:separator.start()].strip()
-    rest = padded[separator.end():].split()
-    best: Optional[tuple[float, int, str, str]] = None
-    for cut in range(1, len(rest)):
-        away, team = " ".join(rest[:cut]), " ".join(rest[cut:])
-        core = _GENERIC_TEAM_TOKENS.sub(" ", team)
-        if sum(ch.isalpha() for ch in core) < 3:
-            continue
-        score = max(team_name_similarity(team, home), team_name_similarity(team, away))
-        if score < _TEAM_REPEAT_SIMILARITY:
-            continue
-        candidate = (score, len(team), away, team)
-        if best is None or candidate[:2] > best[:2]:
-            best = candidate
-    if best is None or not home:
+    rest = padded[separator.end():].strip()
+    if not home or not rest:
         return None
-    _, _, away, team = best
+
+    explicit = list(_TEAM_SEPARATOR_RE.finditer(rest))
+    if explicit:
+        away, team = rest[:explicit[-1].start()].strip(), rest[explicit[-1].end():].strip()
+        if away and _repeat_key(team, home, away) is not None:
+            return f"{home} vs {away}", team
+
+    words = rest.split()
+    best: Optional[tuple[tuple, str, str]] = None
+    for cut in range(1, len(words)):
+        away, team = " ".join(words[:cut]), " ".join(words[cut:])
+        key = _repeat_key(team, home, away)
+        if key is not None and (best is None or key > best[0]):
+            best = (key, away, team)
+    if best is None:
+        return None
+    _, away, team = best
     # "Kosovo u21 San Marino" puede cortar en "Kosovo | u21 San Marino": la marca de
     # categoría pegada al principio del equipo es del visitante.
     team_tokens = team.split()
     while len(team_tokens) > 1 and _GENERIC_TEAM_TOKENS.fullmatch(team_tokens[0]):
         away = f"{away} {team_tokens.pop(0)}"
     return f"{home} vs {away}", " ".join(team_tokens)
+
+
+_TEAM_SEPARATOR_RE = re.compile(r"\s+(?:-|–|\||/|:)\s+")
+
+
+def _compact(text: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", text.lower())
+
+
+def _repeat_key(team: str, home: str, away: str) -> Optional[tuple]:
+    """Qué tan claro repite ``team`` a un lado. None si no alcanza.
+
+    Orden: igual al lado sin contar espacios ("Kosovou21" = "Kosovo u21"), después la
+    similitud y después cuántas palabras coinciden (así "ASA | Tel Aviv Asa tel aviv"
+    pierde contra "ASA Tel Aviv | Asa tel aviv").
+    """
+    core = _GENERIC_TEAM_TOKENS.sub(" ", team)
+    if sum(ch.isalpha() for ch in core) < 3:
+        return None
+    best = None
+    for side in (home, away):
+        score = team_name_similarity(team, side)
+        if score < _TEAM_REPEAT_SIMILARITY:
+            continue
+        side_core = _GENERIC_TEAM_TOKENS.sub(" ", side)
+        exact = _compact(team) == _compact(side) or _compact(core) == _compact(side_core)
+        team_words, side_words = len(core.split()) or 1, len(side_core.split()) or 1
+        coverage = min(team_words, side_words) / max(team_words, side_words)
+        key = (exact, round(score, 1), coverage, len(team))
+        best = key if best is None or key > best else best
+    return best
 
 
 def parse_bet_text(raw: str, *, now: Optional[datetime] = None, source: str = "telegram",

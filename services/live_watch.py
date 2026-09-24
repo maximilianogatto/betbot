@@ -640,8 +640,11 @@ class LiveWatchService:
         minute = observed.get("minute")
         self.repository.record_match_result(
             MatchResult(
-                home=entry.home,
-                away=entry.away,
+                # Los nombres de la casa y no los del watch: los de la planilla traen
+                # notas ("ASA Tel Aviv (Visitantes +4/5)") y no dicen la categoría.
+                home=observed.get("home") or entry.home,
+                away=observed.get("away") or entry.away,
+                competition_name=entry.league_hint,
                 # El minuto decide si esto es un resultado final o una foto
                 # parcial. Marcarlo mal haría que un 1-0 del minuto 20 entrara
                 # a los análisis como resultado definitivo.
@@ -655,7 +658,11 @@ class LiveWatchService:
                 final_away_score=observed.get("away_score"),
                 red_cards_home=observed.get("home_red_cards"),
                 red_cards_away=observed.get("away_red_cards"),
-                raw_payload_json=json.dumps(observed, ensure_ascii=False, sort_keys=True),
+                # Los ids del mismo partido en cada casa donde se lo vio: una apuesta
+                # enlazada a otra casa (con otros nombres) encuentra este resultado.
+                raw_payload_json=json.dumps(
+                    {**observed, "_event_ids": _event_ids_by_platform(entry)},
+                    ensure_ascii=False, sort_keys=True),
             )
         )
 
@@ -748,6 +755,16 @@ class LiveWatchService:
 # Minuto desde el cual se considera que un marcador observado es final.
 # 85' deja margen para descuento sin tomar por final una foto del minuto 70.
 FULL_TIME_MINUTE_FLOOR = 85
+
+
+def _event_ids_by_platform(entry: LiveWatchEntry) -> dict[str, str]:
+    """{plataforma: id del evento} de cada casa donde el watch vio el partido."""
+
+    return {
+        platform: str(state["event_id"])
+        for platform, state in (entry.live_state or {}).items()
+        if platform != "_alerts" and isinstance(state, dict) and state.get("event_id")
+    }
 
 
 def _last_observed_state(entry: LiveWatchEntry) -> tuple[str, dict[str, Any]] | None:
