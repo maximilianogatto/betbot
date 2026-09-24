@@ -196,10 +196,15 @@ class LedgerService:
             warnings.append(f"'{leg.match_label}' no coincide con ningún partido registrado: "
                             "queda sin contexto y hay que liquidarla a mano.")
 
+        label_teams = _label_teams(leg) if match is None else None
         side, market_type = leg.side, leg.market_type
         if side in {None, "team"} or market_type == "team_total":
             if team_side is None and match is not None:
                 team_side = self._team_side(leg, match)
+            if team_side is None and label_teams is not None:
+                # Sin partido enlazado pero con los dos equipos escritos ("A vs B
+                # <equipo>"): el lado sale del propio texto y no se pierde el pick.
+                _, team_side = label_similarity(leg.team, *label_teams)
             if team_side is None:
                 # Partido no registrado: se guarda igual con el equipo en el
                 # label. Sin partido no hay liquidación automática.
@@ -227,8 +232,8 @@ class LedgerService:
             external_event_id=(str(getattr(match, "external_event_id", "") or "") or None)
             if match else leg.external_event_id,
             match_label=leg.match_label,
-            home=getattr(match, "home", None) if match else None,
-            away=getattr(match, "away", None) if match else None,
+            home=getattr(match, "home", None) if match else (label_teams[0] if label_teams else None),
+            away=getattr(match, "away", None) if match else (label_teams[1] if label_teams else None),
             competition_name=getattr(match, "competition_name", None) if match else None,
             kickoff_at=getattr(match, "kickoff_at", None) if match else None,
             placed_phase=phase, placed_minute=leg.placed_minute,
@@ -518,6 +523,14 @@ class LedgerService:
                 warnings.append(f"⚠️ {label}: sería la apuesta #{match_exposure['bets'] + 1} "
                                 f"al partido (tu límite: {int(limits['max_bets_per_match'])}).")
         return warnings
+
+
+def _label_teams(leg: LegInput) -> Optional[tuple[str, str]]:
+    """Local y visitante escritos por el usuario cuando nombró partido *y* equipo."""
+    if not leg.team or leg.team == leg.match_label:
+        return None
+    parts = _split_label(leg.match_label)
+    return (parts[0], parts[1]) if len(parts) >= 2 else None
 
 
 def _active_event_view(row: Any) -> Any:

@@ -237,6 +237,20 @@ class LedgerFlowTests(unittest.TestCase):
         self.assertEqual(result.bet.status, "open")
         self.assertFalse(any("no coincide" in w for w in result.warnings))
 
+    def test_unlinked_match_plus_team_keeps_the_pick(self) -> None:
+        """Partido que el bot no trackea: el equipo apostado sale del texto."""
+        from interfaces.telegram.renderers.bets import leg_line
+
+        result = self._add(ParseTests.REAL)
+        leg = self.storage.get_bet(result.bet.id).legs[0]
+        self.assertTrue(any("no coincide" in w for w in result.warnings))
+        self.assertIsNone(leg.external_event_id)
+        self.assertEqual((leg.side, leg.line), ("away", -3.5))
+        self.assertEqual((leg.home, leg.away), ("San Marino u21", "Kosovo u21"))
+        text = leg_line(leg)
+        self.assertIn("Kosovo u21 -3.5", text)
+        self.assertIn("(sin enlazar)", text)
+
     def test_unlinked_bet_stays_open_and_settles_by_hand(self) -> None:
         result = self._add("Equipo Inexistente -1 @1.9 10usd")
         self.assertTrue(any("no coincide" in w for w in result.warnings))

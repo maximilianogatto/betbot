@@ -56,7 +56,9 @@ def leg_line(leg: BetLeg) -> str:
         f"{leg.placed_minute}'" if leg.placed_minute is not None else "en vivo")
     score = "" if leg.placed_home_score is None or leg.placed_phase == "prematch" else \
         f" ({leg.placed_home_score}-{leg.placed_away_score})"
-    match = f"{leg.home} vs {leg.away}" if leg.home else f"{leg.match_label} (sin enlazar)"
+    match = f"{leg.home} vs {leg.away}" if leg.home else leg.match_label
+    if not leg.external_event_id:
+        match += " (sin enlazar)"
     return escape_html(f"{match} · {market}{period} {side}{line} @{leg.odds:g} · {when}{score}")
 
 
