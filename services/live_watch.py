@@ -154,9 +154,14 @@ class LiveWatchService:
         *,
         extractor_registry: ExtractorRegistry | None = None,
         repository: SqliteStorage | None = None,
+        status_sources: Iterable[Any] = (),
     ) -> None:
         self.extractor_registry = extractor_registry or global_extractor_registry
         self.repository = repository or get_storage()
+        # Fuentes del estado oficial del partido (federación, Statshub), en orden de
+        # prioridad: la propia de la liga primero porque trae más información.
+        # Cada una expone `name`, `day_for(datetime)` y `async matches_on(date)`.
+        self.status_sources = list(status_sources)
         # Prematch changes slowly; cache it so the (fast) live poll doesn't re-pull
         # the whole-day lists every cycle (lighter for a VPS).
         self._prematch_cache: list[LiveEventSnapshot] | None = None
@@ -297,6 +302,60 @@ class LiveWatchService:
         """Partidos en la papelera del chat (los vencidos ya no aparecen)."""
 
         return self.repository.list_live_watch_tombstones(chat_id)
+
+    async def _official_status(self, watches: list[LiveWatchEntry], now: datetime) -> dict[int, Any]:
+        """El partido de cada watch en las fuentes oficiales, por prioridad.
+
+        Sólo para los que están en su ventana (desde un rato antes del inicio hasta
+        ~3 h y media después) o no tienen horario (la fuente se los da). Cada fuente
+        baja el día entero en una llamada y lo cachea.
+        """
+
+        if not self.status_sources:
+            return {}
+        due = [entry for entry in watches if _in_status_window(entry, now)]
+        found: dict[int, Any] = {}
+        for source in self.status_sources:
+            pending = [entry for entry in due if entry.id not in found]
+            if not pending:
+                break
+            days = {source.day_for(_parse_iso_datetime(entry.kickoff_at) or now) for entry in pending}
+            matches: list[Any] = []
+            for day in sorted(days):
+                try:
+                    matches += await source.matches_on(day)
+                except Exception:
+                    logger.exception("Fuente de estado %s falló", getattr(source, "name", "?"))
+            for entry in pending:
+                best = self._best_match(entry, [m for m in matches if m.phase != "cancelled"])
+                if best is not None:
+                    found[entry.id] = best[1]
+        return found
+
+    def _record_official(self, entry: LiveWatchEntry, entry_state: dict[str, Any], official: Any,
+                         now: datetime) -> None:
+        """Guarda el estado oficial como una "casa" más del watch."""
+
+        if not entry.kickoff_at and official.scheduled_at:
+            self.repository.set_live_watch_kickoff_if_missing(entry.id, official.scheduled_at)
+        if official.phase not in {"live", "halftime", "ended"}:
+            return
+        previous = entry_state.get(official.source)
+        state = _with_halftime(previous if isinstance(previous, dict) else None, {
+            "event_id": str(official.match_id), "home": official.home, "away": official.away,
+            "home_score": official.home_score, "away_score": official.away_score,
+            "minute": official.minute, "phase": official.phase, "official": True,
+            "ht_home_score": official.ht_home_score, "ht_away_score": official.ht_away_score,
+            "observed_at": now.isoformat(),
+        })
+        if state.get("ht_home_score") is None:
+            state.pop("ht_home_score", None)
+            state.pop("ht_away_score", None)
+        had_halftime = isinstance(previous, dict) and previous.get("ht_home_score") is not None
+        if state.get("ht_home_score") is not None and not had_halftime:
+            self._settlement_triggers += 1  # entretiempo oficial: se liquidan las del 1er tiempo
+        self.repository.update_live_watch_platform_state(entry.id, platform=official.source, state=state)
+        entry_state[official.source] = state
 
     def _mark_missing(self, entry: LiveWatchEntry, platform: str, entry_state: dict[str, Any],
                       answering_platforms: set[str], now: datetime) -> None:
@@ -470,6 +529,7 @@ class LiveWatchService:
         answering_platforms = {event.platform for event in live_events}
         now = datetime.now(timezone.utc)
         settings_cache: dict[int, LiveWatchSettings] = {}
+        official_by_entry = await self._official_status(watches, now)
 
         for entry in watches:
             settings = settings_cache.get(entry.chat_id)
@@ -479,6 +539,9 @@ class LiveWatchService:
 
             # 1. Process score/card changes from platforms where this fixture is already live.
             entry_state = entry.live_state
+            official = official_by_entry.get(entry.id)
+            if official is not None:
+                self._record_official(entry, entry_state, official, now)
             alert_state = entry_state.get("_alerts") if isinstance(entry_state.get("_alerts"), dict) else {}
             alert_state_changed = False
             for platform in entry.fired_platforms_list:
@@ -521,7 +584,7 @@ class LiveWatchService:
                     platform="_alerts",
                     state=alert_state,
                 )
-            if entry.fired_platforms_list and _match_finished(entry_state, now):
+            if (entry.fired_platforms_list or official is not None) and _match_finished(entry_state, now):
                 # Terminó: se archiva ya (y se liquidan sus apuestas) en vez de esperar
                 # a que el watch venza, 2-3 h después del inicio.
                 self._finish_entry(entry, entry_state)
@@ -857,6 +920,18 @@ def _halftime_score(entry: LiveWatchEntry) -> tuple[int, int] | None:
     return None
 
 
+#: Ventana en la que se consulta el estado oficial de un partido con horario.
+STATUS_WINDOW_BEFORE = timedelta(minutes=15)
+STATUS_WINDOW_AFTER = timedelta(hours=3, minutes=30)
+
+
+def _in_status_window(entry: LiveWatchEntry, now: datetime) -> bool:
+    kickoff = _parse_iso_datetime(entry.kickoff_at)
+    if kickoff is None:
+        return True  # la fuente le da el horario (y si ya se juega, el estado)
+    return kickoff - STATUS_WINDOW_BEFORE <= now <= kickoff + STATUS_WINDOW_AFTER
+
+
 def _match_finished(states: dict[str, Any], now: datetime) -> bool:
     """El partido terminó: una casa lo marca final, o lo sacó del vivo pasado el 88'.
 
@@ -866,6 +941,8 @@ def _match_finished(states: dict[str, Any], now: datetime) -> bool:
 
     seen = [state for platform, state in states.items()
             if platform != "_alerts" and isinstance(state, dict) and state.get("event_id")]
+    if any(state.get("official") and state.get("phase") == "ended" for state in seen):
+        return True  # la federación / Statshub lo dan por terminado: manda sobre las casas
     finished_somewhere = False
     for state in seen:
         minute_label = str(state.get("minute") or "")
@@ -913,7 +990,9 @@ def _last_observed_state(entry: LiveWatchEntry) -> tuple[str, dict[str, Any]] | 
     ]
     if not candidates:
         return None
-    return max(candidates, key=lambda item: str(item[1].get("observed_at") or ""))
+    # El final oficial manda: una casa atrasada puede no tener el último gol.
+    return max(candidates, key=lambda item: (bool(item[1].get("official") and item[1].get("phase") == "ended"),
+                                             str(item[1].get("observed_at") or "")))
 
 
 def _looks_finished(minute: Any) -> bool:

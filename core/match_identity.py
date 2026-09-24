@@ -27,8 +27,9 @@ GROUPING_THRESHOLD = 0.80
 
 # Categoría del partido: una sub-21 o un femenino NO es el mismo partido que el de
 # mayores aunque los clubes se llamen igual ("Kosovo" vs "Kosovo U21" da similitud 1.0).
-_GENDER_KEYWORDS = {"women", "femenino", "femenil", "mujeres", "fem", "dames", "damas", "frauen",
-                    "kvinder", "kvinner"}
+_GENDER_KEYWORDS = {"women", "womens", "femenino", "femenina", "femenil", "feminino", "feminina",
+                    "femminile", "feminine", "mujeres", "fem", "dames", "damas", "dam", "damer",
+                    "frauen", "kvinder", "kvinner", "naisten", "naiset", "vrouwen", "kobiet", "zeny"}
 
 
 def age_groups(text: str) -> set[str]:

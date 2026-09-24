@@ -25,6 +25,29 @@ from services.tracking import TrackingService
 from adapters.storage import SqliteStorage  # facade greenfield (PR2-E2-S9)
 
 
+
+def _build_status_sources() -> list:
+    """Fuentes del estado oficial de los partidos vigilados, en orden de prioridad.
+
+    La federación primero (más información de sus ligas), Statshub como respaldo
+    general. LIVE_WATCH_STATUS_SOURCES=palloliitto,statshub (vacío = ninguna).
+    """
+    from stats_providers.palloliitto.day_status import PalloliittoDayStatus
+    from stats_providers.sportradar_http.day_status import StatshubDayStatus
+
+    names = [name.strip().lower() for name in
+             os.getenv("LIVE_WATCH_STATUS_SOURCES", "palloliitto,statshub").split(",") if name.strip()]
+    sources = []
+    for name in names:
+        if name == "palloliitto":
+            sources.append(PalloliittoDayStatus())
+        elif name == "statshub":
+            try:
+                sources.append(StatshubDayStatus(stats_provider_registry.get("sportradar_statshub")))
+            except Exception:
+                continue  # proveedor no registrado
+    return sources
+
 def create_application(settings: Settings) -> Application:
     """Create and configure the Telegram application instance."""
 
@@ -58,6 +81,7 @@ def create_application(settings: Settings) -> Application:
     live_watch_service = LiveWatchService(
         extractor_registry=extractor_registry,
         repository=tracking_repository,
+        status_sources=_build_status_sources(),
     )
 
     async def post_init(application: Application) -> None:

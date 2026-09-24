@@ -95,6 +95,30 @@ class StatsMatchLink:
 
 
 @dataclass(frozen=True)
+class MatchStatus:
+    """Estado oficial de un partido según una fuente de stats (federación o Statshub).
+
+    Lo usa el live-watch para saber el entretiempo y el final aunque las casas no
+    lo muestren (o lo saquen del vivo antes de tiempo). ``phase``: scheduled | live |
+    halftime | ended | cancelled.
+    """
+
+    source: str
+    match_id: str
+    home: str
+    away: str
+    scheduled_at: str | None
+    competition_name: str
+    phase: str
+    home_score: int | None = None
+    away_score: int | None = None
+    ht_home_score: int | None = None
+    ht_away_score: int | None = None
+    minute: str | None = None
+    country_name: str | None = None
+
+
+@dataclass(frozen=True)
 class MatchStatsReport:
     """Compact report returned by a stats provider for Telegram rendering."""
 
@@ -110,6 +134,7 @@ __all__ = [
     "MatchIdentityCandidate",
     "MatchStatsReport",
     "StatsFixture",
+    "MatchStatus",
     "StatsLeagueOption",
     "StatsMatchLink",
     "StatsProviderCapabilities",
