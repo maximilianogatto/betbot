@@ -16,7 +16,8 @@ from adapters.storage import SqliteStorage
 from adapters.storage.connection import open_connection
 from adapters.storage.schema import initialize_schema
 from core.betting import parse_bet_text
-from core.models import MatchResult, OddsSnapshot
+from core.betting.parse import ParseError
+from core.models import ActiveEventUpsert, MatchResult, OddsSnapshot
 from services.ledger import LedgerService, label_similarity, score_at_minute
 
 KICKOFF = datetime(2026, 8, 20, 9, 0, tzinfo=timezone.utc)
@@ -45,6 +46,41 @@ class LabelTests(unittest.TestCase):
         self.assertEqual(score_at_minute(result, 13), (1, 0))   # sólo el del 9'
         self.assertEqual(score_at_minute(result, 31), (3, 0))   # el del 31' todavía no
         self.assertEqual(score_at_minute(result, 95), (8, 0))
+
+
+class ParseTests(unittest.TestCase):
+    """Cómo se escriben de verdad en el grupo (VPS, 2026-09-24)."""
+
+    REAL = "San Marino u21 vs Kosovo u21 Kosovou21 -3.5 FT @1.62 12usd pre melbet #franko"
+
+    def test_match_plus_team_is_the_team_bet(self) -> None:
+        leg = parse_bet_text(self.REAL).bet.legs[0]
+        self.assertEqual((leg.market_type, leg.side, leg.line), ("asian_handicap", "team", -3.5))
+        self.assertEqual(leg.match_label, "San Marino u21 vs Kosovo u21")
+        self.assertEqual(leg.team, "Kosovou21")
+        self.assertEqual(leg.market_period, "FT")
+
+    def test_age_category_is_not_an_under_or_over(self) -> None:
+        leg = parse_bet_text("Chile u20 vs Peru u20 over 2.5 @1.9 10usd").bet.legs[0]
+        self.assertEqual((leg.market_type, leg.side, leg.line), ("goal_line", "over", 2.5))
+        self.assertEqual(leg.match_label, "Chile u20 vs Peru u20")
+        leg = parse_bet_text("Kosovo u21 -3.5 @1.62 10usd").bet.legs[0]
+        self.assertEqual((leg.market_type, leg.line, leg.team), ("asian_handicap", -3.5, "Kosovo u21"))
+
+    def test_short_under_and_over_still_work(self) -> None:
+        for text, side, line in (("Boca vs River u2.5 @1.8 10usd", "under", 2.5),
+                                 ("Boca vs River o3 @1.8 10usd", "over", 3.0)):
+            leg = parse_bet_text(text).bet.legs[0]
+            self.assertEqual((leg.market_type, leg.side, leg.line), ("goal_line", side, line))
+
+    def test_category_tokens_stay_with_the_away_team(self) -> None:
+        leg = parse_bet_text("San Marino u21 vs Kosovo u21 San Marino +3.5 @2.1 10usd").bet.legs[0]
+        self.assertEqual((leg.match_label, leg.team), ("San Marino u21 vs Kosovo u21", "San Marino"))
+
+    def test_a_match_without_the_team_still_asks_for_it(self) -> None:
+        for text in ("Darwin vs Palmerston -2.5 @1.6 10usd", "Darwin vs Palmerston Rovers W -2.5 @1.6 10usd"):
+            with self.assertRaises(ParseError):
+                parse_bet_text(text)
 
 
 class LedgerFlowTests(unittest.TestCase):
@@ -169,6 +205,37 @@ class LedgerFlowTests(unittest.TestCase):
         # completo: se deja vacío en vez de usar el precio equivocado.
         bet = self._add("Darwin -2.5 HT @1.605 10usd min 13 megapari").bet
         self.assertIsNone(self.storage.get_bet(bet.id).legs[0].observed_odds)
+
+    def test_links_an_active_match_of_the_chat(self) -> None:
+        """Partido todavía sin resultado: se busca entre los vigentes del chat.
+
+        El repositorio los devuelve como filas (dict); antes el ledger les pedía
+        `.home` y la apuesta no se registraba.
+        """
+        chat_id = 4242
+        self.storage.create_pending_competition_request(
+            chat_id=chat_id, platform="1xbet_http",
+            source_url="https://spinbetter.com/service-api/LineFeed/GetChampZip?champ=1&lng=en",
+            competition_external_id="1", competition_name="UEFA U21 Qualifiers",
+            requires_empty_confirmation=False, needs_name_resolution=False)
+        competition = self.storage.confirm_pending_competition_request(chat_id)
+        kickoff = self.now + timedelta(hours=4)
+        self.storage.upsert_active_events(competition.id, [ActiveEventUpsert(
+            external_event_id="ev-smr-kos", home="San Marino U21", away="Kosovo U21",
+            scheduled_label_date=None, scheduled_label_time=None,
+            scheduled_at=kickoff.isoformat(), odds_home=21.0, odds_draw=9.0, odds_away=1.12)])
+
+        parsed = parse_bet_text(ParseTests.REAL, now=self.now)
+        parsed.bet.chat_id = chat_id
+        result = self.ledger.add_bet(parsed.bet)
+
+        leg = result.bet.legs[0]
+        self.assertEqual((leg.platform, leg.external_event_id), ("1xbet_http", "ev-smr-kos"))
+        self.assertEqual((leg.side, leg.line), ("away", -3.5))
+        self.assertEqual((leg.home, leg.away), ("San Marino U21", "Kosovo U21"))
+        self.assertEqual(leg.competition_name, "UEFA U21 Qualifiers")
+        self.assertEqual(result.bet.status, "open")
+        self.assertFalse(any("no coincide" in w for w in result.warnings))
 
     def test_unlinked_bet_stays_open_and_settles_by_hand(self) -> None:
         result = self._add("Equipo Inexistente -1 @1.9 10usd")

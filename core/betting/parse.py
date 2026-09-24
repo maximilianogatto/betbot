@@ -34,11 +34,14 @@ from typing import Optional
 from zoneinfo import ZoneInfo
 
 from core.betting.models import BOOKMAKER_FAMILIES, BetInput, LegInput
+from core.league_naming import team_name_similarity
 
 KNOWN_BOOKMAKERS = sorted(set(BOOKMAKER_FAMILIES), key=len, reverse=True)
 _ARG_TZ = ZoneInfo("America/Argentina/Buenos_Aires")
 
 _NUM = r"\d+(?:[.,]\d+)?"
+# `u21`, `o19`: categoría (U13-U23), no under/over. Ninguna línea de gol llega a 13.
+_NOT_AGE = r"(?!(?:1[3-9]|2[0-3])(?![\d.,]))"
 _CURRENCIES = {"usd": "USD", "usdt": "USDT", "u$s": "USD", "us$": "USD", "dolares": "USD",
                "dólares": "USD", "ars": "ARS", "pesos": "ARS"}
 
@@ -133,9 +136,9 @@ def _parse_leg(segment: str) -> tuple[LegInput, list[str]]:
                     re.IGNORECASE),
          lambda m: ("team_total", "under" if m.group(1).lower().startswith(("u", "menos")) else "over",
                     _number(m.group(2)))),
-        (re.compile(rf"\b(over|m[aá]s\s+de|m[aá]s)\s*({_NUM})|\bo({_NUM})\b", re.IGNORECASE),
+        (re.compile(rf"\b(over|m[aá]s\s+de|m[aá]s)\s*({_NUM})|\bo{_NOT_AGE}({_NUM})\b", re.IGNORECASE),
          lambda m: ("goal_line", "over", _number(m.group(2) or m.group(3)))),
-        (re.compile(rf"\b(under|menos\s+de|menos)\s*({_NUM})|\bu({_NUM})\b", re.IGNORECASE),
+        (re.compile(rf"\b(under|menos\s+de|menos)\s*({_NUM})|\bu{_NOT_AGE}({_NUM})\b", re.IGNORECASE),
          lambda m: ("goal_line", "under", _number(m.group(2) or m.group(3)))),
         (re.compile(r"\b(dnb|empate\s+no\s+v[aá]lido|draw\s+no\s+bet)\b", re.IGNORECASE),
          lambda m: ("draw_no_bet", "team", None)),
@@ -161,12 +164,60 @@ def _parse_leg(segment: str) -> tuple[LegInput, list[str]]:
     label = re.sub(r"\s+", " ", text.replace("'", " ").replace("’", " ")).strip(" ,;|")
     if not label:
         raise ParseError(f"falta el equipo o partido en: '{segment.strip()}'")
-    has_both_teams = bool(re.search(r"\s(?:vs\.?|v|x|-|–)\s", f" {label} ", re.IGNORECASE))
+    has_both_teams = bool(_VS_RE.search(f" {label} "))
     needs_team = side == "team" or market_type == "team_total"
+    team = label if needs_team else None
     if needs_team and has_both_teams:
-        raise ParseError(f"en '{segment.strip()}' nombrá sólo el equipo al que apostás, no el partido")
+        split = _split_match_and_team(label)
+        if split is None:
+            raise ParseError(f"en '{segment.strip()}' nombrá sólo el equipo al que apostás, no el partido")
+        label, team = split
     return LegInput(match_label=label, market_type=market_type, side=side, odds=odds, line=line,
-                    market_period=period, team=label if needs_team else None), notes
+                    market_period=period, team=team), notes
+
+
+_VS_RE = re.compile(r"\s(?:vs\.?|v|x|-|–)\s", re.IGNORECASE)
+# Marcas de categoría/genéricas: no alcanzan para decir a qué equipo se apostó.
+_GENERIC_TEAM_TOKENS = re.compile(
+    r"\b(?:w|f|women|fem(?:enino)?|u\d{2}|sub-?\d{2}|ii|iii|b|res(?:erves)?|fc|cf|sc|ac|club)\b",
+    re.IGNORECASE)
+_TEAM_REPEAT_SIMILARITY = 0.85
+
+
+def _split_match_and_team(label: str) -> Optional[tuple[str, str]]:
+    """``A vs B <equipo>`` -> (``A vs B``, ``<equipo>``) cuando el final repite un lado.
+
+    Es como se anota en el grupo ("San Marino u21 vs Kosovo u21 Kosovou21 -3.5"). El
+    equipo del final tiene que parecerse claramente a uno de los dos lados; si no,
+    None y se pide sólo el equipo como antes.
+    """
+    separator = _VS_RE.search(f" {label} ")
+    if separator is None:
+        return None
+    padded = f" {label} "
+    home = padded[:separator.start()].strip()
+    rest = padded[separator.end():].split()
+    best: Optional[tuple[float, int, str, str]] = None
+    for cut in range(1, len(rest)):
+        away, team = " ".join(rest[:cut]), " ".join(rest[cut:])
+        core = _GENERIC_TEAM_TOKENS.sub(" ", team)
+        if sum(ch.isalpha() for ch in core) < 3:
+            continue
+        score = max(team_name_similarity(team, home), team_name_similarity(team, away))
+        if score < _TEAM_REPEAT_SIMILARITY:
+            continue
+        candidate = (score, len(team), away, team)
+        if best is None or candidate[:2] > best[:2]:
+            best = candidate
+    if best is None or not home:
+        return None
+    _, _, away, team = best
+    # "Kosovo u21 San Marino" puede cortar en "Kosovo | u21 San Marino": la marca de
+    # categoría pegada al principio del equipo es del visitante.
+    team_tokens = team.split()
+    while len(team_tokens) > 1 and _GENERIC_TEAM_TOKENS.fullmatch(team_tokens[0]):
+        away = f"{away} {team_tokens.pop(0)}"
+    return f"{home} vs {away}", " ".join(team_tokens)
 
 
 def parse_bet_text(raw: str, *, now: Optional[datetime] = None, source: str = "telegram",

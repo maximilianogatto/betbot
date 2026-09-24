@@ -26,6 +26,7 @@ from datetime import datetime, timedelta, timezone
 import json
 import logging
 import os
+from types import SimpleNamespace
 from typing import Any, Optional
 
 from core.betting.models import (
@@ -275,10 +276,11 @@ class LedgerService:
         if chat_id is None:
             return []
         try:
-            return self.repository.get_all_active_events_with_league(chat_id)
+            rows = self.repository.get_all_active_events_with_league(chat_id)
         except Exception:
             logger.exception("Ledger: no se pudieron leer los partidos vigentes")
             return []
+        return [_active_event_view(row) for row in rows]
 
     @staticmethod
     def _team_side(leg: LegInput, match: Any) -> Optional[str]:
@@ -516,3 +518,18 @@ class LedgerService:
                 warnings.append(f"⚠️ {label}: sería la apuesta #{match_exposure['bets'] + 1} "
                                 f"al partido (tu límite: {int(limits['max_bets_per_match'])}).")
         return warnings
+
+
+def _active_event_view(row: Any) -> Any:
+    """Fila de ``get_all_active_events_with_league`` (dict) -> objeto con los campos
+    que el ledger lee de un partido, igual que un ``MatchResult`` archivado."""
+    if not isinstance(row, dict):
+        return row
+    return SimpleNamespace(
+        platform=row.get("platform"),
+        external_event_id=row.get("external_event_id"),
+        home=row.get("home"),
+        away=row.get("away"),
+        competition_name=row.get("league_name"),
+        kickoff_at=row.get("scheduled_at"),
+    )
