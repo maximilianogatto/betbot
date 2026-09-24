@@ -463,6 +463,7 @@ class LedgerService:
         named = f"{label} {leg.competition_name or ''}"
         kickoff = _parse(leg.kickoff_at)
         placed = _parse(bet.placed_at) or _parse(bet.created_at)
+        own_feed = BOOKMAKER_FEEDS.get(bet.bookmaker or "")
         best, best_key = None, None
         for result in results:
             if not result.home or not result.away:
@@ -486,11 +487,13 @@ class LedgerService:
                 gap = abs((when - placed).total_seconds())
             else:
                 gap = 0.0
-            # Con puntajes parecidos gana el que nombra la categoría en los equipos
-            # ("San Marino U21" antes que "San Marino" de la misma liga sub-21) y
-            # después el más cercano en el tiempo.
+            # Con puntajes parecidos gana el evento de la propia casa de la apuesta
+            # (su cuota observada y su CLV son contra esa casa), después el que nombra
+            # la categoría en los equipos ("San Marino U21" antes que "San Marino") y
+            # al final el más cercano en el tiempo.
+            own_book = own_feed is not None and result.platform == own_feed
             same_names = age_groups(named) == age_groups(f"{result.home} {result.away}")
-            key = (round(score, 1), same_names, -gap)
+            key = (round(score, 1), own_book, same_names, -gap)
             if best_key is None or key > best_key:
                 best, best_key = result, key
         return best

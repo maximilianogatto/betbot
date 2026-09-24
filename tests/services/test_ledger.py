@@ -331,6 +331,30 @@ class LedgerFlowTests(unittest.TestCase):
         leg = self.storage.get_bet(bet.id).legs[0]
         self.assertEqual((leg.platform, leg.external_event_id, leg.side), ("betovo_http", "bo-1", "away"))
 
+    def test_late_link_prefers_the_event_of_the_bet_own_book(self) -> None:
+        """Cuota observada y CLV tienen sentido contra la casa donde se apostó."""
+        chat_id = 4545
+        parsed = parse_bet_text(ParseTests.REAL.replace("melbet", "solcasino"), now=self.now)
+        parsed.bet.chat_id = chat_id
+        bet = self.ledger.add_bet(parsed.bet).bet
+        kickoff = (self.now + timedelta(hours=6)).isoformat()
+        for platform, event_id, home, away in (("betovo_http", "bo-1", "San Marino U21", "Kosovo U21"),
+                                               ("solcasino_http", "sol-1", "San Marino", "Kosovo")):
+            self.storage.create_pending_competition_request(
+                chat_id=chat_id, platform=platform, source_url=f"{platform}:u21",
+                competition_external_id=f"{platform}-u21",
+                competition_name="U21 European Championship, Qualification",
+                requires_empty_confirmation=False, needs_name_resolution=False)
+            competition = self.storage.confirm_pending_competition_request(chat_id)
+            self.storage.upsert_active_events(competition.id, [ActiveEventUpsert(
+                external_event_id=event_id, home=home, away=away, scheduled_label_date=None,
+                scheduled_label_time=None, scheduled_at=kickoff,
+                odds_home=21.0, odds_draw=9.0, odds_away=1.12)])
+
+        self.ledger.run_settlement()
+        leg = self.storage.get_bet(bet.id).legs[0]
+        self.assertEqual((leg.platform, leg.external_event_id), ("solcasino_http", "sol-1"))
+
     def test_bet_builder_legs_have_no_odds_of_their_own(self) -> None:
         from core.betting.models import BetInput, LegInput
         from interfaces.telegram.renderers.bets import render_bet
