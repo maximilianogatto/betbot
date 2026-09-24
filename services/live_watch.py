@@ -10,7 +10,7 @@ misprice. Matching is per-side: both home and away must clear a similarity floor
 from __future__ import annotations
 
 import asyncio
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone, timedelta
 from difflib import SequenceMatcher
 import json
@@ -162,6 +162,15 @@ class LiveWatchService:
         self._prematch_cache: list[LiveEventSnapshot] | None = None
         self._prematch_cached_at = 0.0
         self._prematch_ttl_seconds = 120.0
+        # Resultados archivados / entretiempos detectados desde la última vez que
+        # alguien preguntó: el job liquida en el momento en vez de esperar su turno.
+        self._settlement_triggers = 0
+
+    def consume_settlement_trigger(self) -> bool:
+        """True si desde la última consulta se archivó un resultado o hubo un entretiempo."""
+
+        triggered, self._settlement_triggers = self._settlement_triggers > 0, 0
+        return triggered
 
     # ----- watchlist management (used by the bot commands) -----
 
@@ -288,6 +297,30 @@ class LiveWatchService:
         """Partidos en la papelera del chat (los vencidos ya no aparecen)."""
 
         return self.repository.list_live_watch_tombstones(chat_id)
+
+    def _mark_missing(self, entry: LiveWatchEntry, platform: str, entry_state: dict[str, Any],
+                      answering_platforms: set[str], now: datetime) -> None:
+        """Anota desde cuándo una casa que sí responde dejó de listar el partido."""
+
+        state = entry_state.get(platform)
+        if not isinstance(state, dict) or state.get("missing_since") or platform not in answering_platforms:
+            return
+        state = {**state, "missing_since": now.isoformat()}
+        self.repository.update_live_watch_platform_state(entry.id, platform=platform, state=state)
+        entry_state[platform] = state
+
+    def _finish_entry(self, entry: LiveWatchEntry, entry_state: dict[str, Any]) -> None:
+        """Archiva el resultado de un partido terminado y lo saca de la vigilancia."""
+
+        finished = replace(entry, live_state_json=json.dumps(entry_state, ensure_ascii=False, sort_keys=True))
+        try:
+            self._archive_expired_entry(finished)
+        except Exception:
+            logger.exception("No pude archivar el resultado del watch id=%s", entry.id)
+        self.repository.remove_live_watch(entry.chat_id, entry.id)
+        self._send_to_trash(entry, reason="finished")
+        logger.info("Live-watch: %s vs %s terminó, resultado archivado (watch id=%s)",
+                    entry.home, entry.away, entry.id)
 
     def _send_to_trash(self, entry: LiveWatchEntry, *, reason: str) -> None:
         """Deja constancia de que este fixture salió de la vigilancia.
@@ -432,6 +465,10 @@ class LiveWatchService:
         hits: list[LiveWatchHit] = []
         # Partidos trackeados por chat (cada chat ve sólo sus suscripciones).
         active_events_by_chat: dict[int, list[Any]] = {}
+        # Casas que respondieron este ciclo: que un partido falte en una casa caída
+        # no dice nada sobre si terminó.
+        answering_platforms = {event.platform for event in live_events}
+        now = datetime.now(timezone.utc)
         settings_cache: dict[int, LiveWatchSettings] = {}
 
         for entry in watches:
@@ -452,9 +489,13 @@ class LiveWatchService:
                     state_by_platform=entry_state,
                 )
                 if platform_event is None:
+                    self._mark_missing(entry, platform, entry_state, answering_platforms, now)
                     continue
-                current_state = _event_live_state(platform_event)
                 previous_state = entry_state.get(platform)
+                current_state = _with_halftime(previous_state, _event_live_state(platform_event))
+                had_halftime = (previous_state or {}).get("ht_home_score") is not None
+                if current_state.get("ht_home_score") is not None and not had_halftime:
+                    self._settlement_triggers += 1  # entretiempo: se liquidan las del 1er tiempo
                 if previous_state:
                     transition_hits = _transition_hits(
                         entry,
@@ -480,6 +521,11 @@ class LiveWatchService:
                     platform="_alerts",
                     state=alert_state,
                 )
+            if entry.fired_platforms_list and _match_finished(entry_state, now):
+                # Terminó: se archiva ya (y se liquidan sus apuestas) en vez de esperar
+                # a que el watch venza, 2-3 h después del inicio.
+                self._finish_entry(entry, entry_state)
+                continue
 
             # 2. Process first LIVE detection per platform.
             eligible_live_events = (
@@ -496,7 +542,7 @@ class LiveWatchService:
                 self.repository.update_live_watch_platform_state(
                     entry.id,
                     platform=event.platform,
-                    state=_event_live_state(event),
+                    state=_with_halftime(None, _event_live_state(event)),
                 )
                 self._auto_track_matched_event_league(event, entry.chat_id)
                 hits.append(LiveWatchHit(entry=entry, event=event, score=score, phase="live"))
@@ -638,6 +684,7 @@ class LiveWatchService:
 
         platform, observed = state
         minute = observed.get("minute")
+        halftime = _halftime_score(entry)
         self.repository.record_match_result(
             MatchResult(
                 # Los nombres de la casa y no los del watch: los de la planilla traen
@@ -656,6 +703,8 @@ class LiveWatchService:
                 kickoff_at=entry.kickoff_at,
                 final_home_score=observed.get("home_score"),
                 final_away_score=observed.get("away_score"),
+                ht_home_score=halftime[0] if halftime else None,
+                ht_away_score=halftime[1] if halftime else None,
                 red_cards_home=observed.get("home_red_cards"),
                 red_cards_away=observed.get("away_red_cards"),
                 # Los ids del mismo partido en cada casa donde se lo vio: una apuesta
@@ -665,6 +714,7 @@ class LiveWatchService:
                     ensure_ascii=False, sort_keys=True),
             )
         )
+        self._settlement_triggers += 1
 
     def get_recommended_poll_interval(self, default_normal: float = 15.0, default_fast: float = 10.0) -> float:
         """Determine the next sleep interval based on active watch state.
@@ -755,6 +805,85 @@ class LiveWatchService:
 # Minuto desde el cual se considera que un marcador observado es final.
 # 85' deja margen para descuento sin tomar por final una foto del minuto 70.
 FULL_TIME_MINUTE_FLOOR = 85
+
+
+#: Partido que una casa que responde dejó de listar pasado este minuto, durante
+#: FINISH_MISSING_SECONDS, se da por terminado: las casas lo sacan del vivo al final.
+FINISH_MINUTE_FLOOR = 88
+FINISH_MISSING_SECONDS = 6 * 60
+#: Una observación más vieja que esto no cuenta como "sigue en vivo".
+STILL_LIVE_SECONDS = 3 * 60
+
+_HALFTIME_RE = re.compile(
+    r"\b(?:ht|descanso|entretiempo|medio\s*tiempo|half[\s-]?time|pausa|intervalo|1st\s+half\s+ended)\b",
+    re.IGNORECASE)
+_FULLTIME_RE = re.compile(
+    r"\b(?:ft|fin|final|finalizado|terminado|ended|full[\s-]?time|after\s+pen|aet)\b", re.IGNORECASE)
+
+
+def _minute_number(minute: Any) -> int | None:
+    """Primer número del minuto ("45+2" -> 45, "67'" -> 67, "21:51" -> 21)."""
+
+    match = re.search(r"\d+", str(minute or ""))
+    return int(match.group()) if match else None
+
+
+def _with_halftime(previous: dict[str, Any] | None, current: dict[str, Any]) -> dict[str, Any]:
+    """Arrastra o detecta el marcador del entretiempo en el estado de una casa.
+
+    Se toma cuando la casa marca el descanso ("HT", "Descanso") o, si no lo marca,
+    del último marcador visto a los 45' cuando aparece el 2º tiempo.
+    """
+
+    if previous and previous.get("ht_home_score") is not None:
+        return {**current, "ht_home_score": previous["ht_home_score"],
+                "ht_away_score": previous["ht_away_score"]}
+    if current.get("home_score") is None:
+        return current
+    if _HALFTIME_RE.search(str(current.get("minute") or "")):
+        return {**current, "ht_home_score": current["home_score"], "ht_away_score": current["away_score"]}
+    if previous and previous.get("home_score") is not None:
+        before, after = _minute_number(previous.get("minute")), _minute_number(current.get("minute"))
+        if before == 45 and after is not None and after >= 46:
+            return {**current, "ht_home_score": previous["home_score"],
+                    "ht_away_score": previous["away_score"]}
+    return current
+
+
+def _halftime_score(entry: LiveWatchEntry) -> tuple[int, int] | None:
+    for platform, state in (entry.live_state or {}).items():
+        if platform != "_alerts" and isinstance(state, dict) and state.get("ht_home_score") is not None:
+            return int(state["ht_home_score"]), int(state["ht_away_score"])
+    return None
+
+
+def _match_finished(states: dict[str, Any], now: datetime) -> bool:
+    """El partido terminó: una casa lo marca final, o lo sacó del vivo pasado el 88'.
+
+    Y ninguna otra casa lo sigue mostrando en juego antes del 88' (una casa que se
+    atrasa o lo pierde de vista no alcanza para darlo por terminado).
+    """
+
+    seen = [state for platform, state in states.items()
+            if platform != "_alerts" and isinstance(state, dict) and state.get("event_id")]
+    finished_somewhere = False
+    for state in seen:
+        minute_label = str(state.get("minute") or "")
+        minute = _minute_number(minute_label)
+        missing_since = _parse_iso_datetime(state.get("missing_since"))
+        observed_at = _parse_iso_datetime(state.get("observed_at"))
+        if state.get("home_score") is not None and not missing_since and _FULLTIME_RE.search(minute_label):
+            finished_somewhere = True
+        elif (state.get("home_score") is not None and missing_since is not None and minute is not None
+              and minute >= FINISH_MINUTE_FLOOR
+              and (now - missing_since).total_seconds() >= FINISH_MISSING_SECONDS):
+            finished_somewhere = True
+        elif (missing_since is None and observed_at is not None
+              and (now - observed_at).total_seconds() <= STILL_LIVE_SECONDS
+              and (minute is None or minute < FINISH_MINUTE_FLOOR)
+              and not _FULLTIME_RE.search(minute_label)):
+            return False  # otra casa lo muestra en juego
+    return finished_somewhere
 
 
 def _event_ids_by_platform(entry: LiveWatchEntry) -> dict[str, str]:

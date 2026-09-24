@@ -32,6 +32,7 @@ MARKET_ES = {
     "asian_handicap": "Hcp", "goal_line": "Total", "1x2": "1X2", "btts": "Ambos marcan",
     "team_total_home": "Total local", "team_total_away": "Total visita",
     "double_chance": "Doble op.", "draw_no_bet": "DNB", "ht_ft": "Desc/Final",
+    "both_halves_over": "Ambas mitades más de",
 }
 SIDE_ES = {"home": "local", "away": "visita", "draw": "empate", "over": "más",
            "under": "menos", "yes": "sí", "no": "no", "team": "equipo"}

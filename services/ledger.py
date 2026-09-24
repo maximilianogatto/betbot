@@ -452,6 +452,7 @@ class LedgerService:
             return []
         recent = self.repository.list_match_results_recorded_since(
             since=_iso(self.clock() - LATE_LINK_LOOKBACK), limit=500)
+        recent += self._halftime_results()
         settled = []
         for bet in open_bets:
             self._link_late(bet, recent)
@@ -543,29 +544,64 @@ class LedgerService:
                 best, best_key = result, key
         return best
 
+    def _halftime_results(self) -> list[MatchResult]:
+        """Entretiempos que el watch ya vio, de partidos que siguen en juego.
+
+        Con eso las apuestas del 1er tiempo se liquidan en el descanso, sin esperar
+        al final. No se archivan: son resultados provisorios (status HALFTIME).
+        """
+        try:
+            entries = self.repository.list_all_active_live_watches()
+        except Exception:
+            logger.exception("Ledger: no se pudieron leer los partidos en vigilancia")
+            return []
+        results = []
+        for entry in entries:
+            states = {platform: state for platform, state in (entry.live_state or {}).items()
+                      if platform != "_alerts" and isinstance(state, dict) and state.get("event_id")}
+            with_halftime = [(platform, state) for platform, state in states.items()
+                             if state.get("ht_home_score") is not None]
+            if not with_halftime:
+                continue
+            platform, state = with_halftime[0]
+            results.append(MatchResult(
+                home=state.get("home") or entry.home, away=state.get("away") or entry.away,
+                status="HALFTIME", source="live_watch", recorded_at=_iso(self.clock()),
+                platform=platform, external_event_id=str(state["event_id"]),
+                competition_name=entry.league_hint, kickoff_at=entry.kickoff_at,
+                ht_home_score=state["ht_home_score"], ht_away_score=state["ht_away_score"],
+                raw_payload_json=json.dumps({"_event_ids": {
+                    name: str(item["event_id"]) for name, item in states.items()}})))
+        return results
+
     def _try_settle(self, bet: Bet, *, recent: Optional[list[MatchResult]] = None) -> Optional[Bet]:
-        """Liquida si TODAS las patas tienen resultado. None si falta algo."""
+        """Liquida si TODAS las patas tienen resultado. None si falta algo.
+
+        Una pata del 1er tiempo alcanza con el entretiempo (aunque el partido siga);
+        las demás necesitan el final.
+        """
         results = []
         for leg in bet.legs:
+            first_half_only = leg.market_period == "HT" and leg.market_type != "both_halves_over"
             result = None
             if leg.platform and leg.external_event_id:
                 result = self.repository.get_match_result(
                     platform=leg.platform, external_event_id=leg.external_event_id)
-            if (result is None or result.final_home_score is None) and recent:
-                result = (_result_by_alias(leg, recent) or self._result_by_teams(leg, bet, recent)
-                          or result)
-            if result is None or result.final_home_score is None:
+            if not _decides(result, first_half_only) and recent:
+                found = _result_by_alias(leg, recent) or self._result_by_teams(leg, bet, recent)
+                result = found if _decides(found, first_half_only) else result
+            if not _decides(result, first_half_only):
                 return None
-            if (result.status or "").upper() != "FINISHED":
-                return None  # suspendido o postergado: lo liquida una persona
             halftime = ((result.ht_home_score, result.ht_away_score)
                         if result.ht_home_score is not None else None)
+            final = ((result.final_home_score, result.final_away_score)
+                     if result.final_home_score is not None else None)
             placement = ((leg.placed_home_score, leg.placed_away_score)
                          if leg.placed_home_score is not None else None)
             outcome = settle_leg(
                 market_type=leg.market_type, market_period=leg.market_period, side=leg.side,
                 line=leg.line, odds=leg.odds,
-                final=(result.final_home_score, result.final_away_score),
+                final=final,
                 halftime=halftime, placement=placement, handicap_from=leg.handicap_from)
             if outcome is None:
                 return None  # mercado que no sabemos liquidar: queda a mano
@@ -681,6 +717,19 @@ class LedgerService:
                 warnings.append(f"⚠️ {label}: sería la apuesta #{match_exposure['bets'] + 1} "
                                 f"al partido (tu límite: {int(limits['max_bets_per_match'])}).")
         return warnings
+
+
+def _decides(result: Optional[MatchResult], first_half_only: bool) -> bool:
+    """Si ese resultado alcanza para liquidar la pata.
+
+    El final sólo cuenta si el partido terminó (FINISHED): un suspendido o una foto
+    parcial se liquidan a mano. Al 1er tiempo le alcanza el entretiempo.
+    """
+    if result is None:
+        return False
+    if first_half_only and result.ht_home_score is not None:
+        return (result.status or "").upper() in {"FINISHED", "HALFTIME"}
+    return result.final_home_score is not None and (result.status or "").upper() == "FINISHED"
 
 
 def _result_by_alias(leg: BetLeg, results: list[MatchResult]) -> Optional[MatchResult]:

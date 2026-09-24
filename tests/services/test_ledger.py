@@ -429,6 +429,43 @@ class LedgerFlowTests(unittest.TestCase):
         [settled] = self.ledger.run_settlement()
         self.assertEqual((settled.id, settled.status), (bet.id, "won"))
 
+    def test_a_first_half_bet_settles_at_halftime_while_the_match_goes_on(self) -> None:
+        chat_id = 4949
+        self._watch_live(chat_id)
+        [entry] = self.storage.list_live_watches(chat_id)
+        self.storage.update_live_watch_platform_state(entry.id, "betovo_http", {
+            "event_id": "bo-9", "home": "Bnot Netanya (W)", "away": "AS Tel Aviv University (W)",
+            "home_score": 0, "away_score": 3, "ht_home_score": 0, "ht_away_score": 3, "minute": "HT"})
+        parsed = parse_bet_text("Bnot Netanya vs ASA Tel Aviv - Asa tel aviv -1.5 HT @1.9 10usd"
+                                " min 14 con 0-1 melbet", now=self.now)
+        parsed.bet.chat_id = chat_id
+        ht_bet = self.ledger.add_bet(parsed.bet).bet
+        parsed = parse_bet_text("Bnot Netanya vs ASA Tel Aviv - Asa tel aviv -2.5 @1.8 10usd"
+                                " min 14 con 0-1 melbet", now=self.now)
+        parsed.bet.chat_id = chat_id
+        ft_bet = self.ledger.add_bet(parsed.bet).bet
+
+        [settled] = self.ledger.run_settlement()  # sólo la del 1er tiempo: el partido sigue
+        self.assertEqual((settled.id, settled.status), (ht_bet.id, "won"))
+        self.assertEqual(self.storage.get_bet(ft_bet.id).status, "open")
+
+    def test_both_halves_and_second_half_markets(self) -> None:
+        from core.betting.settlement import settle_leg
+
+        def outcome(market_type, period, side, line, *, final=(3, 0), halftime=(1, 0)):
+            result = settle_leg(market_type=market_type, market_period=period, side=side, line=line,
+                                odds=1.62, final=final, halftime=halftime)
+            return result.status if result else None
+
+        # Ambas mitades más de 1.5: 1er tiempo 1 gol -> "no" gana.
+        self.assertEqual(outcome("both_halves_over", "FT", "no", 1.5), "won")
+        self.assertEqual(outcome("both_halves_over", "FT", "yes", 1.5), "lost")
+        self.assertEqual(outcome("both_halves_over", "FT", "yes", 1.5, final=(3, 2), halftime=(1, 1)), "won")
+        self.assertIsNone(outcome("both_halves_over", "FT", "no", 1.5, halftime=None))  # a mano
+        # 2º tiempo: 3-0 con 1-0 al descanso -> 2-0 en el 2º.
+        self.assertEqual(outcome("goal_line", "2H", "over", 1.5), "won")
+        self.assertEqual(outcome("asian_handicap", "2H", "away", 1.5), "lost")
+
     def test_an_unlinked_bet_links_late_to_a_watched_match(self) -> None:
         chat_id = 4747
         parsed = parse_bet_text("Bnot Netanya vs ASA Tel Aviv - Asa tel aviv -2.5 @1.79 14usd min 14"

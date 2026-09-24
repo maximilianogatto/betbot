@@ -346,6 +346,10 @@ async def _orchestrated_live_watch(application: Application) -> None:
     hits = await service.poll_once()
     if hits:
         logger.info("Live-watch cycle fired %s alert(s).", len(hits))
+    # Terminó un partido o llegó un entretiempo: se liquida ya, no en el próximo
+    # turno del job de liquidación (hasta 10 min después).
+    if service.consume_settlement_trigger():
+        await _orchestrated_ledger_settlement(application)
 
 
 def _live_watch_interval_resolver(application: Application) -> float:

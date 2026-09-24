@@ -76,5 +76,22 @@ class LedgerAutomationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.storage.get_bet(bet.id).status, "won")
 
 
+class LiveWatchTriggersSettlementTests(unittest.IsolatedAsyncioTestCase):
+    async def test_a_finished_match_or_a_halftime_settles_at_once(self) -> None:
+        from unittest.mock import patch
+
+        from bot.jobs import tasks
+
+        service = LiveWatchService(repository=SimpleNamespace())
+        service.poll_once = AsyncMock(return_value=[])
+        application = SimpleNamespace(bot_data={tasks.LIVE_WATCH_SERVICE_KEY: service})
+        with patch.object(tasks, "_orchestrated_ledger_settlement", AsyncMock()) as settle:
+            await tasks._orchestrated_live_watch(application)
+            settle.assert_not_awaited()
+            service._settlement_triggers = 1  # el watch archivó un resultado
+            await tasks._orchestrated_live_watch(application)
+            settle.assert_awaited_once_with(application)
+
+
 if __name__ == "__main__":
     unittest.main()
