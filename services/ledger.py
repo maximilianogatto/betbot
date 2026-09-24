@@ -28,6 +28,7 @@ import logging
 import os
 from types import SimpleNamespace
 from typing import Any, Optional
+from zoneinfo import ZoneInfo
 
 from core.betting.models import (
     BOOKMAKER_FAMILIES,
@@ -685,6 +686,80 @@ class LedgerService:
     def set_limit(self, key: str, value: float | None) -> None:
         self.repository.set_limit(key, value)
 
+    # ------------------------------------------------------------------ #
+    # Reportes
+    # ------------------------------------------------------------------ #
+    def report(self, since: datetime, until: datetime, *, chat_id: Optional[int] = None,
+               label: str = "") -> dict[str, Any]:
+        """Resumen de un período: lo cargado, lo liquidado (P&L en USD) y lo abierto.
+
+        Lo liquidado se cuenta por fecha de liquidación. Montos sin cotización a USD
+        (ARS sin tipo de cambio) van aparte, en su moneda. Los tips en papel se miden
+        en unidades por fuente (#tag).
+        """
+        window = {"since": _iso(since), "until": _iso(until), "chat_id": chat_id}
+        placed = [bet for bet in self.repository.bets_between(by="placed", **window)
+                  if bet.status != "void"]
+        settled = self.repository.bets_between(by="settled", **window)
+        real = [bet for bet in settled if bet.mode == "real"]
+        counted = [bet for bet in real if bet.status != "void"]
+        in_usd = [bet for bet in counted if bet.stake_usd is not None and bet.profit_usd is not None]
+
+        def summary(bets: list[Bet]) -> dict[str, Any]:
+            staked = sum(bet.stake_usd for bet in bets)
+            profit = sum(bet.profit_usd for bet in bets)
+            return {"bets": len(bets), "staked_usd": round(staked, 2), "profit_usd": round(profit, 2),
+                    "roi": round(profit / staked, 4) if staked else None}
+
+        def grouped(key) -> list[dict[str, Any]]:
+            groups: dict[str, list[Bet]] = {}
+            for bet in in_usd:
+                for name in key(bet):
+                    groups.setdefault(name, []).append(bet)
+            return sorted(({"name": name, **summary(bets)} for name, bets in groups.items()),
+                          key=lambda item: -item["profit_usd"])
+
+        statuses = {status: sum(1 for bet in real if bet.status == status)
+                    for status in ("won", "half_won", "push", "half_lost", "lost", "void", "cashout")}
+        decided = [bet for bet in counted if bet.status in {"won", "half_won", "lost", "half_lost"}]
+        without_usd: dict[str, float] = {}
+        for bet in counted:
+            if bet.profit_usd is None and bet.profit is not None:
+                without_usd[bet.currency] = round(without_usd.get(bet.currency, 0.0) + bet.profit, 2)
+        placed_real = [bet for bet in placed if bet.mode == "real"]
+        placed_without_usd: dict[str, float] = {}
+        for bet in placed_real:
+            if bet.stake_usd is None:
+                placed_without_usd[bet.currency] = placed_without_usd.get(bet.currency, 0.0) + bet.stake
+        open_bets = [bet for bet in self.repository.list_open_bets(mode="real")
+                     if chat_id is None or bet.chat_id == chat_id]
+        ranked = sorted(in_usd, key=lambda bet: bet.profit_usd)
+        tips = [bet for bet in settled if bet.mode == "paper" and bet.status != "void"]
+        tip_groups: dict[str, list[Bet]] = {}
+        for bet in tips:
+            for tag in (bet.tags or "").split(",") or [""]:
+                tip_groups.setdefault(tag or "(sin fuente)", []).append(bet)
+        return {
+            "label": label, "since": _iso(since), "until": _iso(until), "chat_id": chat_id,
+            "placed": {"bets": len(placed_real),
+                       "stake_usd": round(sum(bet.stake_usd or 0.0 for bet in placed_real), 2),
+                       "without_usd": {k: round(v, 2) for k, v in placed_without_usd.items()}},
+            "settled": {**summary(in_usd), **statuses,
+                        "hit_rate": round(sum(bet.status in {"won", "half_won"} for bet in decided)
+                                          / len(decided), 4) if decided else None,
+                        "without_usd": without_usd},
+            "by_bookmaker": grouped(lambda bet: [bet.bookmaker or "?"]),
+            "by_tag": grouped(lambda bet: [t for t in (bet.tags or "").split(",") if t] or ["(sin tag)"]),
+            "by_market": grouped(lambda bet: [bet.legs[0].market_type if len(bet.legs) == 1 else "combo"]),
+            "best": _bet_brief(ranked[-1]) if ranked and ranked[-1].profit_usd > 0 else None,
+            "worst": _bet_brief(ranked[0]) if ranked and ranked[0].profit_usd < 0 else None,
+            "open": {"bets": len(open_bets),
+                     "stake_usd": round(sum(bet.stake_usd or 0.0 for bet in open_bets), 2)},
+            "tips": sorted(({"source": tag, "tips": len(bets),
+                             "units": round(sum((bet.profit or 0.0) / (bet.stake or 1.0) for bet in bets), 2)}
+                            for tag, bets in tip_groups.items()), key=lambda item: -item["units"]),
+        }
+
     def _limit_warnings(self, legs: list[BetLeg], *, stake_usd: Optional[float]) -> list[str]:
         limits = self.repository.get_limits()
         if stake_usd is None or not any(value is not None for value in limits.values()):
@@ -755,6 +830,55 @@ def _match_text(match: Any) -> str:
     """Equipos + liga de un partido (archivado o vigente), para la guarda de categoría."""
     return " ".join(str(getattr(match, name, None) or "")
                     for name in ("home", "away", "competition_name"))
+
+
+REPORT_PERIODS = {
+    "day": "day", "hoy": "day", "today": "day",
+    "yesterday": "yesterday", "ayer": "yesterday",
+    "week": "week", "semana": "week",
+    "last_week": "last_week", "semana_pasada": "last_week",
+    "month": "month", "mes": "month",
+    "last_month": "last_month", "mes_pasado": "last_month",
+}
+_MONTHS_ES = ("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto",
+              "septiembre", "octubre", "noviembre", "diciembre")
+
+
+def report_window(period: str, *, now: datetime, tz: ZoneInfo) -> tuple[datetime, datetime, str]:
+    """(desde, hasta, título) de un período, con los días del huso del chat."""
+    kind = REPORT_PERIODS.get(period)
+    if kind is None:
+        raise ValueError(f"período desconocido: {period}. Opciones: día, ayer, semana, mes, "
+                         "semana_pasada, mes_pasado")
+    local = now.astimezone(tz)
+    today = local.replace(hour=0, minute=0, second=0, microsecond=0)
+    if kind == "day":
+        start, end, label = today, local, f"hoy {today:%d/%m}"
+    elif kind == "yesterday":
+        start, end = today - timedelta(days=1), today
+        label = f"{start:%d/%m}"
+    elif kind == "week":
+        start, end = today - timedelta(days=today.weekday()), local
+        label = f"semana del {start:%d/%m}"
+    elif kind == "last_week":
+        end = today - timedelta(days=today.weekday())
+        start = end - timedelta(days=7)
+        label = f"semana del {start:%d/%m} al {end - timedelta(days=1):%d/%m}"
+    elif kind == "month":
+        start, end = today.replace(day=1), local
+        label = f"{_MONTHS_ES[start.month - 1]} {start.year}"
+    else:
+        end = today.replace(day=1)
+        start = (end - timedelta(days=1)).replace(day=1)
+        label = f"{_MONTHS_ES[start.month - 1]} {start.year}"
+    return start, end, label
+
+
+def _bet_brief(bet: Bet) -> dict[str, Any]:
+    leg = bet.legs[0] if bet.legs else None
+    match = (f"{leg.home} vs {leg.away}" if leg and leg.home else leg.match_label if leg else "")
+    return {"id": bet.id, "match": match, "bookmaker": bet.bookmaker, "status": bet.status,
+            "profit_usd": round(bet.profit_usd, 2), "legs": len(bet.legs)}
 
 
 def _label_teams(leg: LegInput) -> Optional[tuple[str, str]]:

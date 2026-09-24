@@ -114,6 +114,41 @@ def render_added(bet: Bet, warnings: list[str], parse_notes: list[str]) -> str:
     return "\n".join(text)
 
 
+def render_report(report: dict[str, Any], *, title: str = "Reporte") -> str:
+    """Reporte de un período (día, semana, mes) para Telegram."""
+    settled, placed = report["settled"], report["placed"]
+    lines = [f"📊 <b>{escape_html(title)} · {escape_html(report['label'])}</b>"]
+    extra = "".join(f" + {v:,.0f} {k}".replace(",", ".") for k, v in placed["without_usd"].items())
+    lines.append(f"Cargadas: {placed['bets']} · {placed['stake_usd']:.2f} USD{extra}")
+    if settled["bets"] or settled["void"] or settled["without_usd"]:
+        counts = " · ".join(f"{icon} {settled[key]}" for key, icon in (
+            ("won", "✅"), ("half_won", "½✅"), ("push", "↩️"), ("half_lost", "½❌"),
+            ("lost", "❌"), ("cashout", "💸"), ("void", "🚫")) if settled[key])
+        roi = f" · ROI {_pct(settled['roi'])}" if settled["roi"] is not None else ""
+        lines.append(f"Liquidadas: {settled['bets']} ({counts}) · <b>{_money(settled['profit_usd'])}</b>{roi}")
+        for currency, profit in settled["without_usd"].items():
+            lines.append(f"  sin cotizar: {_money(profit, currency)}")
+        for key, name in (("by_bookmaker", "Por casa"), ("by_tag", "Por etiqueta"),
+                          ("by_market", "Por mercado")):
+            groups = report[key][:6]
+            if len(groups) > 1 or (groups and key != "by_market"):
+                lines.append(f"{name}: " + " · ".join(
+                    f"{escape_html(MARKET_ES.get(g['name'], g['name']))} {g['profit_usd']:+.2f} ({g['bets']})"
+                    for g in groups))
+        for key, name in (("best", "Mejor"), ("worst", "Peor")):
+            bet = report[key]
+            if bet:
+                lines.append(f"{name}: #{bet['id']} {escape_html(bet['match'])} "
+                             f"({escape_html(bet['bookmaker'] or '?')}) {bet['profit_usd']:+.2f}")
+    else:
+        lines.append("Sin apuestas liquidadas.")
+    lines.append(f"Abiertas: {report['open']['bets']} · {report['open']['stake_usd']:.2f} USD en juego")
+    if report["tips"]:
+        lines.append("Tips (papel): " + " · ".join(
+            f"#{escape_html(t['source'])} {t['tips']} → {t['units']:+.2f}u" for t in report["tips"][:6]))
+    return "\n".join(lines)
+
+
 def render_exposure(exposure: dict[str, Any]) -> str:
     lines = [f"💼 <b>Abiertas:</b> {exposure['open_bets']} · en juego "
              f"{exposure['open_stake_usd']:.2f} USD · hoy {_money(exposure['today_pnl_usd'])} "

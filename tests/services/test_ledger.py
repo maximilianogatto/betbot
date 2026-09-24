@@ -479,6 +479,55 @@ class LedgerFlowTests(unittest.TestCase):
         leg = self.storage.get_bet(bet.id).legs[0]
         self.assertEqual((leg.external_event_id, leg.side), ("sol-9", "away"))
 
+    def test_report_of_a_period(self) -> None:
+        # Darwin 8-0 ya está archivado: las dos primeras se liquidan solas al cargarse.
+        won = self._add("Darwin -2.5 HT @1.56 10usd min 13 megapari #franko").bet
+        lost = self._add("Darwin -4.5 HT @1.83 20usd min 31 melbet #excel").bet
+        ars = self._add("Equipo Inexistente -1 @1.9 15.000 ars 20bet").bet
+        self.ledger.settle_manual(ars.id, "won")
+        voided = self._add("Equipo Inexistente -1 @1.9 5usd melbet").bet
+        self.ledger.void_bet(voided.id)
+        self._add("Equipo Inexistente +1 @2.0 12usd melbet")  # queda abierta
+        self._add("Darwin vs Palmerston descanso-final G1/G1 @1.40 #grupo_x", paper=True)
+
+        # La carga usa el reloj del ledger (fijo en el test) y la liquidación la hora
+        # real: la ventana cubre las dos.
+        report = self.ledger.report(self.now - timedelta(days=1),
+                                    datetime.now(timezone.utc) + timedelta(days=1), label="test")
+        settled = report["settled"]
+        self.assertEqual((settled["bets"], settled["won"], settled["lost"], settled["void"]), (2, 2, 1, 1))
+        self.assertAlmostEqual(settled["profit_usd"], 10 * 0.56 - 20, places=2)
+        self.assertAlmostEqual(settled["roi"], (5.6 - 20) / 30, places=4)
+        self.assertEqual(settled["without_usd"], {"ARS": 13500.0})
+        self.assertEqual({g["name"]: g["bets"] for g in report["by_bookmaker"]}, {"megapari": 1, "melbet": 1})
+        self.assertEqual([g["name"] for g in report["by_tag"]], ["franko", "excel"])
+        self.assertEqual((report["best"]["id"], report["worst"]["id"]), (won.id, lost.id))
+        self.assertEqual((report["open"]["bets"], report["open"]["stake_usd"]), (1, 12.0))
+        self.assertEqual(report["placed"]["bets"], 4)  # la anulada no cuenta
+        self.assertEqual(report["placed"]["without_usd"], {"ARS": 15000.0})
+        self.assertEqual(report["tips"], [{"source": "grupo_x", "tips": 1, "units": 0.4}])
+
+        from interfaces.telegram.renderers.bets import render_report
+        text = render_report(report)
+        self.assertIn("ROI", text)
+        self.assertIn("sin cotizar: +13500.00 ARS", text)
+
+    def test_report_windows_use_the_chat_day(self) -> None:
+        from services.ledger import report_window
+        from zoneinfo import ZoneInfo
+
+        madrid = ZoneInfo("Europe/Madrid")
+        now = datetime(2026, 10, 1, 7, 30, tzinfo=timezone.utc)  # jueves 1/10, 09:30 en Madrid
+        since, until, label = report_window("ayer", now=now, tz=madrid)
+        self.assertEqual((since.isoformat(), until.isoformat(), label),
+                         ("2026-09-30T00:00:00+02:00", "2026-10-01T00:00:00+02:00", "30/09"))
+        since, until, label = report_window("semana_pasada", now=now, tz=madrid)
+        self.assertEqual((since.day, until.day, label), (21, 28, "semana del 21/09 al 27/09"))
+        since, until, label = report_window("mes_pasado", now=now, tz=madrid)
+        self.assertEqual((since.month, since.day, until.month, label), (9, 1, 10, "septiembre 2026"))
+        with self.assertRaises(ValueError):
+            report_window("trimestre", now=now, tz=madrid)
+
     def test_unlinked_bet_stays_open_and_settles_by_hand(self) -> None:
         result = self._add("Equipo Inexistente -1 @1.9 10usd")
         self.assertTrue(any("no coincide" in w for w in result.warnings))

@@ -153,6 +153,41 @@ class SQLiteBetsAdapter(BetsPort):
                     limits[row["key"]] = None if raw in ("", "none") else float(raw)
         return limits
 
+    def bets_between(self, *, since: str, until: str, by: str = "settled",
+                     chat_id: int | None = None, mode: str | None = None) -> list[Bet]:
+        if by not in {"settled", "placed"}:
+            raise ValueError("by tiene que ser settled o placed")
+        column = "settled_at" if by == "settled" else "COALESCE(placed_at, created_at)"
+        sql = f"SELECT id FROM bets WHERE {column} >= ? AND {column} < ?"
+        params: list = [since, until]
+        if chat_id is not None:
+            sql += " AND chat_id = ?"
+            params.append(chat_id)
+        if mode:
+            sql += " AND mode = ?"
+            params.append(mode)
+        with open_connection() as conn:
+            ids = [row["id"] for row in conn.execute(sql + f" ORDER BY {column}, id", params)]
+        return [bet for bet in (self.get_bet(bet_id) for bet_id in ids) if bet]
+
+    def report_chats(self) -> list[int]:
+        with open_connection() as conn:
+            return [row["chat_id"] for row in conn.execute(
+                "SELECT DISTINCT chat_id FROM bets WHERE chat_id IS NOT NULL ORDER BY chat_id")]
+
+    def get_ledger_setting(self, key: str) -> str | None:
+        with open_connection() as conn:
+            row = conn.execute("SELECT value FROM ledger_settings WHERE key = ?", (key,)).fetchone()
+        return row["value"] if row else None
+
+    def set_ledger_setting(self, key: str, value: str) -> None:
+        with open_connection() as conn:
+            conn.execute(
+                "INSERT INTO ledger_settings (key, value, updated_at) VALUES (?,?,?)"
+                " ON CONFLICT(key) DO UPDATE SET value = excluded.value,"
+                " updated_at = excluded.updated_at",
+                (key, value, datetime.now(timezone.utc).isoformat()))
+
     def set_limit(self, key: str, value: float | None) -> None:
         if key not in DEFAULT_LIMITS:
             raise ValueError(f"límite desconocido: {key}. Opciones: {', '.join(DEFAULT_LIMITS)}")

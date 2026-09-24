@@ -143,6 +143,15 @@ class McpToolsTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.mcp.exposure()["open_bets"], 0)
         self.assertEqual([b["id"] for b in self.mcp.bets(status="settled")["bets"]], [lost["id"], won["id"]])
 
+    def test_report_tool(self) -> None:
+        won = self.mcp.bet_add(text=BET, watch=False)["bet"]
+        self.mcp.bet_settle(won["id"], "won")
+        report = self.mcp.report("day")
+        self.assertEqual((report["settled"]["bets"], report["settled"]["profit_usd"]), (1, 7.44))
+        self.assertEqual(report["chat_id"], CHAT)
+        with self.assertRaises(ValueError):
+            self.mcp.report("trimestre")
+
     def test_watch_add_remove_and_limits(self) -> None:
         [added] = self.mcp.watch_add(["20:30 UEFA U21 | San Marino U21 - Kosovo U21"],
                                      timezone_name="Europe/Madrid")["added"]

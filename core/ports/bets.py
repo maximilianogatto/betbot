@@ -53,5 +53,20 @@ class BetsPort(Protocol):
     def get_limits(self) -> dict[str, Optional[float]]:
         ...
 
+    def bets_between(self, *, since: str, until: str, by: str = "settled",
+                     chat_id: Optional[int] = None, mode: Optional[str] = None) -> list[Bet]:
+        """Apuestas liquidadas (by="settled") o cargadas (by="placed") en [since, until)."""
+        ...
+
+    def report_chats(self) -> list[int]:
+        """Chats que tienen apuestas: los que reciben reportes."""
+        ...
+
+    def get_ledger_setting(self, key: str) -> Optional[str]:
+        ...
+
+    def set_ledger_setting(self, key: str, value: str) -> None:
+        ...
+
     def set_limit(self, key: str, value: Optional[float]) -> None:
         ...

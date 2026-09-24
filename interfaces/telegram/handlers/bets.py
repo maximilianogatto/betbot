@@ -32,6 +32,7 @@ from interfaces.telegram.renderers.bets import (
     render_added,
     render_bet,
     render_exposure,
+    render_report,
 )
 from services.ledger import LedgerService
 
@@ -74,11 +75,15 @@ HELP_BETS_MESSAGE = (
     "  <code>/view_bet &lt;n&gt;</code> — cuota vista, CLV y resultado\n"
     "  <code>/settle &lt;n&gt; won|lost|half_won|half_lost|push|cashout [monto]</code>\n"
     "  <code>/void_bet &lt;n&gt;</code> — apuesta mal cargada (no la borra)\n\n"
-    "<b>Riesgo</b>\n"
+    "<b>Riesgo y reportes</b>\n"
     "  /exposure — qué hay en juego y cómo va el día\n"
+    "  <code>/report [hoy|ayer|semana|mes|semana_pasada|mes_pasado]</code> — P&amp;L, ROI,"
+    " por casa, etiqueta y mercado. Llegan solos a las 9: el diario, el semanal los lunes"
+    " y el mensual el 1°\n"
     "  <code>/set_limit max_match 30</code> — avisa, no bloquea\n"
     "  <i>límites:</i> " + " · ".join(LIMIT_KEYS_SHOWN) + "\n\n"
-    "<i>Las que terminan se liquidan solas cuando el resultado queda archivado.</i>\n\n"
+    "<i>Se liquidan solas cuando el partido termina (las del 1er tiempo, en el descanso)."
+    " Si el partido no está trackeado, /bet lo pone en /watching para ver el resultado.</i>\n\n"
     "↩︎ /help"
 )
 
@@ -233,6 +238,25 @@ async def void_bet_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         parse_mode="HTML")
 
 
+async def report_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Reporte del período: hoy, ayer, semana, mes (o la semana / el mes pasado)."""
+    if update.message is None:
+        return
+    from services.ledger import report_window
+    from services.timezones import resolve_chat_timezone
+
+    period = (context.args or ["day"])[0].lower()
+    chat_id = update.effective_chat.id if update.effective_chat else None
+    try:
+        since, until, label = report_window(period, now=datetime.now(timezone.utc),
+                                            tz=resolve_chat_timezone(chat_id))
+    except ValueError as error:
+        await update.message.reply_text(f"✘ {escape_html(str(error))}", parse_mode="HTML")
+        return
+    report = _ledger(context).report(since, until, chat_id=chat_id, label=label)
+    await _reply_text_chunks(update.message, render_report(report), parse_mode="HTML")
+
+
 async def exposure_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Qué hay en juego ahora y cómo viene el día."""
     if update.message is None:
@@ -285,6 +309,7 @@ BET_COMMANDS = (
     ("settle", settle_command),
     ("void_bet", void_bet_command),
     ("exposure", exposure_command),
+    ("report", report_command),
     ("set_limit", set_limit_command),
     ("help_bets", help_bets_command),
 )

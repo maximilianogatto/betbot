@@ -152,6 +152,20 @@ class LedgerSettlementJob(ScheduledJob):
         await _orchestrated_ledger_settlement(application)
 
 
+class LedgerReportJob(ScheduledJob):
+    """Reporte diario (y semanal los lunes, mensual el 1°) a cada chat con apuestas."""
+
+    def __init__(self, interval: float = 900.0, initial_delay: float = 180.0) -> None:
+        super().__init__("ledger_reports", initial_delay)
+        self.interval = interval
+
+    def get_interval(self, application: Application) -> float:
+        return self.interval
+
+    async def run(self, application: Application) -> None:
+        await _orchestrated_ledger_reports(application)
+
+
 class LiveWatchJob(ScheduledJob):
     """Job that services in-play status of matches with a dynamic interval."""
 
@@ -335,6 +349,63 @@ async def _orchestrated_ledger_settlement(application: Application) -> None:
             logger.warning("No pude avisar la liquidación de la apuesta #%s", bet.id)
     if settled:
         logger.info("Ledger: %s apuesta(s) liquidadas solas", len(settled))
+
+
+def _due_reports(local: datetime) -> list[tuple[str, str]]:
+    """(período, marca) de los reportes que tocan a esa hora local del chat."""
+    import os
+    from datetime import timedelta
+
+    if local.hour < int(os.getenv("LEDGER_REPORT_HOUR", "9")):
+        return []
+    yesterday = local.date() - timedelta(days=1)
+    due = [("yesterday", f"daily:{yesterday.isoformat()}")]
+    if local.weekday() == 0:
+        year, week, _ = (local.date() - timedelta(days=7)).isocalendar()
+        due.append(("last_week", f"weekly:{year}-W{week:02d}"))
+    if local.day == 1:
+        due.append(("last_month", f"monthly:{yesterday:%Y-%m}"))
+    return due
+
+
+async def _orchestrated_ledger_reports(application: Application) -> None:
+    """Manda los reportes que ya tocan y no salieron (una marca por chat y período).
+
+    Si el bot estuvo caído a la hora del reporte, sale apenas vuelve (ese mismo día).
+    Un período sin movimientos no se manda.
+    """
+    import os
+
+    from interfaces.telegram.renderers.bets import render_report
+    from services.ledger import LedgerService, report_window
+    from services.timezones import resolve_chat_timezone
+
+    if os.getenv("LEDGER_REPORTS_ENABLED", "true").strip().lower() in {"false", "0", "no"}:
+        return
+    ledger = application.bot_data.get("ledger_service")
+    if ledger is None:
+        ledger = application.bot_data["ledger_service"] = LedgerService()
+    now = datetime.now(timezone.utc)
+    titles = {"yesterday": "Reporte diario", "last_week": "Reporte semanal",
+              "last_month": "Reporte mensual"}
+    for chat_id in await asyncio.to_thread(ledger.repository.report_chats):
+        tz = resolve_chat_timezone(chat_id)
+        for period, marker in _due_reports(now.astimezone(tz)):
+            key = f"report:{chat_id}:{marker}"
+            if await asyncio.to_thread(ledger.repository.get_ledger_setting, key):
+                continue
+            since, until, label = report_window(period, now=now, tz=tz)
+            report = await asyncio.to_thread(ledger.report, since, until, chat_id=chat_id, label=label)
+            if report["placed"]["bets"] or report["settled"]["bets"] or report["settled"]["void"] \
+                    or report["settled"]["without_usd"] or report["tips"]:
+                try:
+                    await application.bot.send_message(
+                        chat_id=chat_id, text=render_report(report, title=titles[period]),
+                        parse_mode="HTML")
+                except Exception:
+                    logger.warning("No pude mandar el %s al chat %s", titles[period], chat_id)
+                    continue  # sin marca: se reintenta en la próxima pasada
+            await asyncio.to_thread(ledger.repository.set_ledger_setting, key, now.isoformat())
 
 
 async def _orchestrated_live_watch(application: Application) -> None:
@@ -548,6 +619,8 @@ async def start_orchestrated_scheduler(application: Application, settings: Any) 
 
     # 5c. Enlace tardío + liquidación de las apuestas cuyo partido ya terminó.
     scheduler.register_job(LedgerSettlementJob())
+    # 5d. Reportes del libro: diario, semanal (lunes) y mensual (día 1).
+    scheduler.register_job(LedgerReportJob())
 
     # 6. Register Live Watch Monitor
     if settings.live_watch_enabled:

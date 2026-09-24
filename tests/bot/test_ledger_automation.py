@@ -76,6 +76,61 @@ class LedgerAutomationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.storage.get_bet(bet.id).status, "won")
 
 
+class LedgerReportJobTests(unittest.IsolatedAsyncioTestCase):
+    def setUp(self) -> None:
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        self._prev = {key: os.environ.get(key) for key in ("BETBOT_DB_PATH", "LEDGER_REPORT_HOUR")}
+        os.environ["BETBOT_DB_PATH"] = str(Path(self.tmp_dir.name) / "reports.sqlite3")
+        os.environ["LEDGER_REPORT_HOUR"] = "0"  # que el diario ya "toque" a cualquier hora
+        with open_connection() as conn:
+            initialize_schema(conn)
+        self.storage = SqliteStorage()
+        self.ledger = LedgerService(self.storage)
+
+    def tearDown(self) -> None:
+        for key, value in self._prev.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+        self.tmp_dir.cleanup()
+
+    async def test_the_daily_report_goes_once_and_only_with_activity(self) -> None:
+        from bot.jobs.tasks import _due_reports, _orchestrated_ledger_reports
+        from services.ledger import report_window
+        from services.timezones import resolve_chat_timezone
+
+        send_message = AsyncMock()
+        application = SimpleNamespace(bot_data={"ledger_service": self.ledger},
+                                      bot=SimpleNamespace(send_message=send_message))
+        bet = self.ledger.add_bet(parse_bet_text(BET).bet)  # sin chat: no recibe reportes
+        self.assertIsNone(bet.bet.chat_id)
+        parsed = parse_bet_text(BET)
+        parsed.bet.chat_id = CHAT
+        bet = self.ledger.add_bet(parsed.bet).bet
+        self.ledger.settle_manual(bet.id, "won")
+        since, _, _ = report_window("ayer", now=datetime.now(timezone.utc),
+                                    tz=resolve_chat_timezone(CHAT))
+        with open_connection() as conn:  # liquidada "ayer" en el huso del chat
+            conn.execute("UPDATE bets SET settled_at = ?, placed_at = ? WHERE id = ?",
+                         ((since + timedelta(hours=12)).isoformat(),
+                          (since + timedelta(hours=11)).isoformat(), bet.id))
+
+        await _orchestrated_ledger_reports(application)
+        await _orchestrated_ledger_reports(application)  # la marca evita el duplicado
+
+        send_message.assert_awaited_once()
+        kwargs = send_message.await_args.kwargs
+        self.assertEqual(kwargs["chat_id"], CHAT)
+        self.assertIn("Reporte diario", kwargs["text"])
+        self.assertIn("+7.44 USD", kwargs["text"])
+
+        monday_10 = datetime(2026, 9, 28, 10, 0, tzinfo=timezone.utc)
+        self.assertEqual([period for period, _ in _due_reports(monday_10)], ["yesterday", "last_week"])
+        first_of_month = datetime(2026, 10, 1, 10, 0, tzinfo=timezone.utc)
+        self.assertIn(("last_month", "monthly:2026-09"), _due_reports(first_of_month))
+
+
 class LiveWatchTriggersSettlementTests(unittest.IsolatedAsyncioTestCase):
     async def test_a_finished_match_or_a_halftime_settles_at_once(self) -> None:
         from unittest.mock import patch

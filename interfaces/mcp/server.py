@@ -371,6 +371,23 @@ def pnl(group_by: str = "bookmaker", since: str | None = None, mode: str = "real
 
 
 @_tool(READ)
+def report(period: str = "week", chat_id: int | None = None) -> dict[str, Any]:
+    """Reporte del libro de un período, con los días del huso del chat.
+
+    period: day | yesterday | week | last_week | month | last_month (también en
+    castellano: hoy, ayer, semana, mes...). Lo mismo que /report y los reportes que
+    el bot manda solo: P&L y ROI en USD, conteos por resultado, por casa, etiqueta y
+    mercado, mejor y peor apuesta, exposición abierta y tips en papel por fuente.
+    """
+    from services.ledger import report_window
+    from services.timezones import resolve_chat_timezone
+
+    chat = runtime.chat_id(chat_id)
+    since, until, label = report_window(period, now=_now(), tz=resolve_chat_timezone(chat))
+    return _plain(runtime.ledger.report(since, until, chat_id=chat, label=label))
+
+
+@_tool(READ)
 def leagues(chat_id: int | None = None) -> dict[str, Any]:
     """Ligas trackeadas del chat: casa, URL, partidos activos, último refresh y racha sin partidos."""
     chat = runtime.chat_id(chat_id)
