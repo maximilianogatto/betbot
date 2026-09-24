@@ -164,6 +164,29 @@ del kickoff.
 
 ---
 
+## MCP
+
+`interfaces/mcp` expone el bot como servidor MCP: lo mismo que Telegram, en JSON y
+pensado para analizar. Corre en la VPS por stdio y el cliente lo lanza por SSH, así
+que no abre puertos:
+
+```bash
+claude mcp add betbot -- ssh -i ~/.ssh/betbot_vps -o BatchMode=yes usuario@vps \
+  'cd ~/betbot && set -a && . ./.env && set +a && exec betbot/bin/python -m interfaces.mcp'
+```
+
+- **Lectura:** `schema`, `query` (SQL de sólo lectura, hasta 5000 filas y 15 s),
+  `bets`, `bet`, `exposure`, `pnl`, `leagues`, `events`, `odds_history`, `results`,
+  `watches`, `leagues_search`.
+- **Escritura** (por los services, con las validaciones de Telegram): `bet_add`,
+  `bet_settle`, `bet_void`, `limit_set`, `settlement_run`, `watch_add`, `watch_remove`,
+  `league_track`, `league_untrack`.
+
+Lo que es por chat usa `BETBOT_MCP_CHAT_ID` del `.env` (o el chat con más ligas). Los
+avisos a Telegram los sigue mandando el bot.
+
+---
+
 ## Persistencia
 
 SQLite, esquema *current-state* con los archivos históricos al costado: 25
