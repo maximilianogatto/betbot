@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import dataclasses
+import logging
 import unittest
 from unittest.mock import AsyncMock, patch
+
+import httpx
 
 from core.extractor_base import CompetitionUnavailableError
 from services.models import RefreshSummary, UnavailableCompetitionRefresh
@@ -40,13 +44,21 @@ class _UnavailableExtractor:
 
 
 class _ExtractorRegistryStub:
+    def __init__(self, extractor=None) -> None:
+        self.extractor = extractor or _UnavailableExtractor()
+
     def get_for_url(self, url: str):
-        return _UnavailableExtractor()
+        return self.extractor
+
+
+class _NetworkErrorExtractor:
+    async def extract_league(self, url: str):
+        raise httpx.ConnectError("proxy unreachable")
 
 
 class _RepositoryStub:
-    def __init__(self) -> None:
-        self.tracked = _tracked_competition()
+    def __init__(self, streak: int = 0) -> None:
+        self.tracked = dataclasses.replace(_tracked_competition(), consecutive_unavailable_refreshes=streak)
         self.remove_missing_called = False
 
     def get_tracked_competition(self, tracked_league_id: int):
@@ -169,6 +181,49 @@ class TrackingRefreshNotificationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(summary.failed_leagues, ["Spanish Primera"])
         self.assertEqual(len(summary.unavailable_competitions), 1)
         self.assertGreaterEqual(summary.elapsed_seconds, 0.0)
+
+    async def test_empty_league_warns_only_when_the_streak_starts(self) -> None:
+        """Una liga en receso vuelve vacía cada ciclo: avisar una vez, no 78 por día."""
+
+        first = TrackingService(extractor_registry=_ExtractorRegistryStub(), repository=_RepositoryStub(streak=1))
+        with self.assertLogs("services.tracking", level="WARNING") as captured:
+            await first._refresh_leagues([1])
+        self.assertTrue(any("Competition refresh unavailable id=1" in line for line in captured.output))
+
+        repeat = TrackingService(extractor_registry=_ExtractorRegistryStub(), repository=_RepositoryStub(streak=4))
+        with self.assertNoLogs("services.tracking", level="WARNING"):
+            summary = await repeat._refresh_leagues([1])
+        # Sigue contando como no disponible aunque no se loguee en WARNING.
+        self.assertEqual(len(summary.unavailable_competitions), 1)
+
+    async def test_leagues_of_a_disabled_platform_are_skipped_quietly(self) -> None:
+        class _NoExtractorRegistry:
+            def get_for_url(self, url: str):
+                raise ValueError(f"No registered extractor can handle URL: {url}")
+
+        service = TrackingService(extractor_registry=_NoExtractorRegistry(), repository=_RepositoryStub())
+
+        with self.assertNoLogs("services.tracking", level="WARNING"):
+            summary = await service._refresh_leagues([1])
+
+        self.assertEqual(summary.tracks_requested, 0)
+        self.assertEqual(summary.failed_leagues, [])
+
+    async def test_network_error_is_one_line_without_traceback(self) -> None:
+        service = TrackingService(
+            extractor_registry=_ExtractorRegistryStub(_NetworkErrorExtractor()),
+            repository=_RepositoryStub(),
+        )
+
+        with self.assertLogs("services.tracking", level="WARNING") as captured:
+            summary = await service._refresh_leagues([1])
+
+        [record] = [r for r in captured.records if "network error" in r.getMessage()]
+        self.assertEqual(record.levelno, logging.WARNING)
+        self.assertIsNone(record.exc_info)
+        self.assertIn("ConnectError", record.getMessage())
+        self.assertEqual(summary.failed_leagues, ["Spanish Primera"])
+        self.assertEqual(summary.unavailable_competitions, [])
 
 
 if __name__ == "__main__":

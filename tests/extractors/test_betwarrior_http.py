@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import unittest
 
+import httpx
+
+from core.extractor_base import CompetitionUnavailableError
 from extractors.betwarrior_http import discovery as discovery_module
 from extractors.betwarrior_http.extractor import BetWarriorHttpExtractor, _group_id_from_url
 from extractors.betwarrior_http.parser import build_competition_extraction
@@ -236,6 +239,64 @@ class BetWarriorUrlTests(unittest.TestCase):
     def test_api_base(self) -> None:
         settings = BetWarriorHttpSettings(api_host="h.kambicdn.com", offering="bwargbac")
         self.assertEqual(settings.api_base, "https://h.kambicdn.com/offering/v2018/bwargbac")
+
+
+class BetWarriorGroupWithoutOffersTests(unittest.IsolatedAsyncioTestCase):
+    """Kambi responde 404 a un grupo sin ofertas (receso / entre fechas; VPS 2026-09-24)."""
+
+    def _extractor(self, status: int) -> tuple[BetWarriorHttpExtractor, list[str]]:
+        calls: list[str] = []
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            calls.append(request.url.path)
+            return httpx.Response(status, json={"error": {"status": status}})
+
+        settings = BetWarriorHttpSettings(retry_backoff_seconds=0.0)
+        extractor = BetWarriorHttpExtractor(settings=settings)
+        extractor._client._http = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+        return extractor, calls
+
+    async def test_404_means_no_events_and_is_not_retried(self) -> None:
+        extractor, calls = self._extractor(404)
+        try:
+            with self.assertRaises(CompetitionUnavailableError) as raised:
+                await extractor.extract_league("betwarrior:group:2010206401")
+        finally:
+            await extractor.stop()
+
+        self.assertEqual(raised.exception.platform, "betwarrior_http")
+        self.assertEqual(raised.exception.details["group_id"], "2010206401")
+        self.assertEqual(len(calls), 1)
+
+    async def test_group_request_asks_only_for_the_parsed_market_types(self) -> None:
+        """Sin filtro, Kambi corta en 2000 ofertas y se pierden partidos de la liga."""
+
+        seen: list[httpx.Request] = []
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            seen.append(request)
+            return httpx.Response(200, json=_group_payload())
+
+        extractor = BetWarriorHttpExtractor(settings=BetWarriorHttpSettings(retry_backoff_seconds=0.0))
+        extractor._client._http = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+        try:
+            extraction = await extractor.extract_league("betwarrior:group:1000450453")
+        finally:
+            await extractor.stop()
+
+        self.assertEqual(seen[0].url.params["type"], "2,6,7")
+        self.assertEqual(seen[0].url.params["lang"], "es_AR")
+        self.assertEqual(len(extraction.events), 1)
+
+    async def test_server_errors_are_still_retried_and_raised(self) -> None:
+        extractor, calls = self._extractor(502)
+        try:
+            with self.assertRaises(httpx.HTTPStatusError):
+                await extractor.extract_league("betwarrior:group:2010206401")
+        finally:
+            await extractor.stop()
+
+        self.assertEqual(len(calls), extractor.settings.max_attempts)
 
 
 if __name__ == "__main__":

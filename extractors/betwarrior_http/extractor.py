@@ -20,7 +20,9 @@ import time
 from typing import Any
 from urllib.parse import urlparse
 
-from core.extractor_base import Extractor, LeagueDiscoveryOption
+import httpx
+
+from core.extractor_base import CompetitionUnavailableError, Extractor, LeagueDiscoveryOption
 from core.models import CompetitionExtraction, EventSnapshot, LiveEventSnapshot, ProviderCapabilities
 from extractors.betwarrior_http import discovery as discovery_module
 from extractors.betwarrior_http.client import BetWarriorHttpClient
@@ -84,7 +86,22 @@ class BetWarriorHttpExtractor(Extractor):
                 "'betwarrior:group:<id>'."
             )
         client = self._client
-        group_payload = await client.fetch_group_bet_offers(group_id)
+        try:
+            group_payload = await client.fetch_group_bet_offers(group_id)
+        except httpx.HTTPStatusError as error:
+            # Kambi answers 404 for a group with no open bet offers (off-season or
+            # between rounds): the group also drops out of group.json until its next
+            # fixtures are listed. It is "no events", not a broken extractor.
+            if error.response.status_code != 404:
+                raise
+            raise CompetitionUnavailableError(
+                "Kambi lists no open bet offers for this group (HTTP 404): "
+                "the league has no events right now.",
+                platform=self.name,
+                source_url=url,
+                reason_code="competition_unavailable",
+                details={"http_status": 404, "group_id": group_id},
+            ) from error
         return build_competition_extraction(
             group_id=group_id, group_payload=group_payload, source_url=url
         )

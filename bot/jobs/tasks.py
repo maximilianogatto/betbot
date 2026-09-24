@@ -220,13 +220,16 @@ async def _orchestrated_tracking_monitor(application: Application) -> None:
         await notify_league_merges(application.bot, merges, repository)
 
     logger.info(
-        "Tracking monitor cycle finished: requested=%s refreshed=%s active_matches=%s new_events=%s odds_changes=%s failed=%s duration=%s duration_seconds=%.2f",
+        "Tracking monitor cycle finished: requested=%s refreshed=%s active_matches=%s new_events=%s odds_changes=%s failed=%s without_events=%s duration=%s duration_seconds=%.2f",
         summary.tracks_requested,
         summary.tracks_refreshed,
         summary.active_matches,
         summary.new_events,
         summary.odds_changes,
-        len(summary.failed_leagues),
+        # `failed_leagues` también incluye las que volvieron sin partidos: se
+        # separan para que una liga en receso no se lea como extractor roto.
+        len(summary.failed_leagues) - len(summary.unavailable_competitions),
+        len(summary.unavailable_competitions),
         format_duration(summary.elapsed_seconds),
         summary.elapsed_seconds,
     )

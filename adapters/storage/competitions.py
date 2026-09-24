@@ -510,6 +510,9 @@ class SQLiteCompetitionsAdapter(CompetitionsPort):
             if last_synced_at is not None:
                 updates.append("last_refreshed_at = ?")
                 params.append(last_synced_at)
+                # Un refresh con datos corta la racha: el umbral del aviso cuenta
+                # fallos *consecutivos*, no acumulados desde que se trackeó.
+                updates.append("consecutive_unavailable_refreshes = 0")
             if new_metadata_json is not None or needs_name_resolution is not None:
                 updates.append("metadata_json = ?")
                 params.append(new_metadata_json)

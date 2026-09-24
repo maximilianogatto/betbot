@@ -169,6 +169,48 @@ class CompetitionsRepositoryTests(unittest.TestCase):
         # Now it shouldn't warn due to cooldown
         self.assertFalse(self.adapter.should_send_unavailable_refresh_warning(comp.id, minimum_failures=3, cooldown_seconds=60))
 
+    def test_successful_refresh_resets_the_unavailable_streak(self) -> None:
+        """El aviso es por fallos *consecutivos*: un refresh con datos corta la racha."""
+
+        chat_id = 667
+        self.adapter.create_pending_competition_request(
+            chat_id=chat_id,
+            platform="1xbet_http",
+            source_url="http://example.com/league-b",
+            competition_external_id="league-b",
+            competition_name="Botola",
+            requires_empty_confirmation=False,
+            needs_name_resolution=False,
+        )
+        comp = self.adapter.confirm_pending_competition_request(chat_id)
+        for _ in range(4):
+            comp = self.adapter.record_unavailable_refresh(comp.id, reason="no events")
+        self.assertEqual(comp.consecutive_unavailable_refreshes, 4)
+
+        comp = self.adapter.update_tracked_competition(comp.id, last_synced_at="2026-09-24T10:00:00+00:00")
+        self.assertEqual(comp.consecutive_unavailable_refreshes, 0)
+
+        # Vuelve a vaciarse: la racha arranca de cero, no hereda los 4 viejos.
+        comp = self.adapter.record_unavailable_refresh(comp.id, reason="no events")
+        self.assertEqual(comp.consecutive_unavailable_refreshes, 1)
+        self.assertFalse(self.adapter.should_send_unavailable_refresh_warning(comp.id, minimum_failures=3))
+
+    def test_metadata_only_update_keeps_the_streak(self) -> None:
+        chat_id = 668
+        self.adapter.create_pending_competition_request(
+            chat_id=chat_id,
+            platform="1xbet_http",
+            source_url="http://example.com/league-c",
+            competition_external_id="league-c",
+            competition_name="Esiliiga",
+            requires_empty_confirmation=False,
+            needs_name_resolution=False,
+        )
+        comp = self.adapter.confirm_pending_competition_request(chat_id)
+        comp = self.adapter.record_unavailable_refresh(comp.id, reason="no events")
+        comp = self.adapter.update_tracked_competition(comp.id, needs_name_resolution=True)
+        self.assertEqual(comp.consecutive_unavailable_refreshes, 1)
+
     def test_unified_competitions_operations(self) -> None:
         # Create unified league
         uc_id = self.adapter.create_unified_competition("Premier League")

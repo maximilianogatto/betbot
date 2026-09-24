@@ -116,6 +116,27 @@ def _is_refresh_due(
     return (now - last_synced).total_seconds() >= interval - _REFRESH_DUE_GRACE_SECONDS
 
 
+def _log_unavailable_refresh(tracked_league: TrackedCompetition, reason: str) -> None:
+    """Log a league that came back without events.
+
+    Most of these are leagues between rounds or off-season, and they come back
+    empty every cycle until the book lists new fixtures. WARNING only on the
+    transition (first empty refresh of a streak); the repeats go to DEBUG so they
+    do not bury real errors.
+    """
+
+    level = logging.WARNING if tracked_league.consecutive_unavailable_refreshes <= 1 else logging.DEBUG
+    logger.log(
+        level,
+        "Competition refresh unavailable id=%s platform=%s name=%s streak=%s reason=%s",
+        tracked_league.id,
+        tracked_league.platform,
+        tracked_league.league_name,
+        tracked_league.consecutive_unavailable_refreshes,
+        reason,
+    )
+
+
 # format_duration vive en core/formatting.py; se re-exporta acá por compat.
 
 
@@ -1296,6 +1317,27 @@ class TrackingService:
 
 
 
+    def _without_disabled_platforms(self, tracked_leagues: list[TrackedCompetition]) -> list[TrackedCompetition]:
+        """Drop leagues whose book has no registered extractor (BOT_DISABLED_PLATFORMS).
+
+        Turning a book off must not turn every one of its tracked leagues into a
+        "No registered extractor" traceback per cycle; they are skipped until the
+        book is enabled again.
+        """
+
+        kept: list[TrackedCompetition] = []
+        skipped: dict[str, int] = {}
+        for tracked_league in tracked_leagues:
+            try:
+                self.extractor_registry.get_for_url(tracked_league.url)
+            except ValueError:
+                skipped[tracked_league.platform] = skipped.get(tracked_league.platform, 0) + 1
+                continue
+            kept.append(tracked_league)
+        if skipped:
+            logger.debug("Skipping tracked leagues of disabled platforms: %s", skipped)
+        return kept
+
     async def _refresh_leagues(self, tracked_league_ids: Sequence[int]) -> RefreshSummary:
         """Refresh a deduplicated set of tracked leagues under one shared lock."""
 
@@ -1328,7 +1370,7 @@ class TrackingService:
                 for tracked_league in [self.repository.get_tracked_competition(tracked_league_id)]
                 if tracked_league is not None
             ]
-        tracked_leagues = await asyncio.to_thread(_get_tracked_leagues)
+        tracked_leagues = self._without_disabled_platforms(await asyncio.to_thread(_get_tracked_leagues))
 
         async with self._refresh_lock:
             for batch in _batched(tracked_leagues, self.max_parallel_refreshes):
@@ -1345,13 +1387,7 @@ class TrackingService:
                             tracked_league.id,
                             reason=str(extraction_or_error),
                         )
-                        logger.warning(
-                            "Competition refresh unavailable id=%s platform=%s name=%s reason=%s",
-                            unavailable_tracked_league.id,
-                            unavailable_tracked_league.platform,
-                            unavailable_tracked_league.league_name,
-                            extraction_or_error,
-                        )
+                        _log_unavailable_refresh(unavailable_tracked_league, str(extraction_or_error))
                         unavailable_competitions.append(
                             UnavailableCompetitionRefresh(
                                 tracked_league=unavailable_tracked_league,
@@ -1369,6 +1405,17 @@ class TrackingService:
                                 tracked_league.id,
                                 extraction_or_error.response.status_code,
                                 tracked_league.platform,
+                            )
+                        elif isinstance(extraction_or_error, httpx.TransportError):
+                            # Corte de red/proxy (ConnectError, Server disconnected,
+                            # timeout): el traceback de httpx no agrega nada y
+                            # llenaba el journal (volátil, 50 MB) en pocas horas.
+                            logger.warning(
+                                "Failed to refresh tracked competition id=%s platform=%s due to network error: %s: %s",
+                                tracked_league.id,
+                                tracked_league.platform,
+                                type(extraction_or_error).__name__,
+                                extraction_or_error,
                             )
                         else:
                             logger.error(
@@ -1389,13 +1436,7 @@ class TrackingService:
                             tracked_league.id,
                             reason=UNAVAILABLE_COMPETITION_MESSAGE,
                         )
-                        logger.warning(
-                            "Competition refresh unavailable id=%s platform=%s name=%s reason=%s",
-                            unavailable_tracked_league.id,
-                            unavailable_tracked_league.platform,
-                            unavailable_tracked_league.league_name,
-                            UNAVAILABLE_COMPETITION_MESSAGE,
-                        )
+                        _log_unavailable_refresh(unavailable_tracked_league, UNAVAILABLE_COMPETITION_MESSAGE)
                         unavailable_competitions.append(
                             UnavailableCompetitionRefresh(
                                 tracked_league=unavailable_tracked_league,

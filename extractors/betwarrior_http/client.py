@@ -21,6 +21,12 @@ from extractors.betwarrior_http.settings import BetWarriorHttpSettings
 
 logger = logging.getLogger(__name__)
 
+# betoffer/group caps its answer at 2000 bet offers and silently drops the events
+# past it (Serie B: 10 of 21 matches). The parser only reads 1X2 (2), totals (6)
+# and Asian handicap (7), so asking just for those keeps whole leagues under it.
+_PARSED_BET_OFFER_TYPES = "2,6,7"
+_GROUP_BET_OFFER_CAP = 2000
+
 
 class BetWarriorHttpClient:
     """Defensive async client for the Kambi offering endpoints."""
@@ -80,8 +86,17 @@ class BetWarriorHttpClient:
     async def fetch_group_bet_offers(self, group_id: str | int) -> dict[str, Any]:
         """Return every event + bet offer for one league (group) in one call."""
 
-        data = await self._get(self._get_client(), f"betoffer/group/{group_id}.json", self.settings.common_params)
-        return data if isinstance(data, dict) else {}
+        params = dict(self.settings.common_params, type=_PARSED_BET_OFFER_TYPES)
+        data = await self._get(self._get_client(), f"betoffer/group/{group_id}.json", params)
+        if not isinstance(data, dict):
+            return {}
+        if len(data.get("betOffers") or []) >= _GROUP_BET_OFFER_CAP:
+            logger.warning(
+                "Kambi betoffer/group %s hit the %s-offer cap: some events may be missing.",
+                group_id,
+                _GROUP_BET_OFFER_CAP,
+            )
+        return data
 
     async def fetch_live_open(self) -> dict[str, Any]:
         """Return all currently in-play events (with score + match clock)."""
@@ -97,9 +112,14 @@ class BetWarriorHttpClient:
                 response = await client.get(url, params=params)
                 response.raise_for_status()
                 return response.json()
+            except httpx.HTTPStatusError as error:
+                # A 4xx (404 = group without offers) will not change on retry.
+                if error.response.status_code < 500:
+                    raise
+                last_error = error
             except Exception as error:  # defensive polling
                 last_error = error
-                if attempt < self.settings.max_attempts - 1:
-                    await asyncio.sleep(self.settings.retry_backoff_seconds)
+            if attempt < self.settings.max_attempts - 1:
+                await asyncio.sleep(self.settings.retry_backoff_seconds)
         assert last_error is not None
         raise last_error
