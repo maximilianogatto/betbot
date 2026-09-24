@@ -23,6 +23,8 @@ from __future__ import annotations
 from collections import defaultdict
 import dataclasses
 from datetime import datetime, timezone
+import functools
+import inspect
 import json
 import os
 import sqlite3
@@ -31,6 +33,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 from mcp.server.mcpserver import MCPServer
+from mcp.server.mcpserver.exceptions import ToolError
 from mcp.types import ToolAnnotations
 
 from adapters.storage.connection import resolve_database_path
@@ -55,6 +58,38 @@ WRITE_NETWORK = ToolAnnotations(read_only_hint=False, destructive_hint=False, op
 
 QUERY_TIMEOUT_SECONDS = 15.0
 QUERY_MAX_ROWS = 5000
+
+#: Errores de uso (dato inválido, SQL mal escrito, apuesta que no existe): su mensaje
+#: tiene que llegarle al cliente. El SDK sólo lo pasa si la tool levanta ToolError;
+#: cualquier otra excepción la reporta como un error genérico.
+_USER_ERRORS = (ValueError, LookupError, sqlite3.Error)
+
+
+def _tool(annotations: ToolAnnotations):
+    """Registra la tool traduciendo los errores de uso a ToolError.
+
+    Devuelve la función original: los tests (y quien la importe) la llaman directo.
+    """
+
+    def decorate(fn):
+        if inspect.iscoroutinefunction(fn):
+            @functools.wraps(fn)
+            async def wrapper(*args: Any, **kwargs: Any) -> Any:
+                try:
+                    return await fn(*args, **kwargs)
+                except _USER_ERRORS as error:
+                    raise ToolError(str(error)) from error
+        else:
+            @functools.wraps(fn)
+            def wrapper(*args: Any, **kwargs: Any) -> Any:
+                try:
+                    return fn(*args, **kwargs)
+                except _USER_ERRORS as error:
+                    raise ToolError(str(error)) from error
+        server.tool(annotations=annotations)(wrapper)
+        return fn
+
+    return decorate
 
 
 # --------------------------------------------------------------------------- #
@@ -172,7 +207,7 @@ def _now() -> datetime:
 # --------------------------------------------------------------------------- #
 # Lectura / análisis
 # --------------------------------------------------------------------------- #
-@server.tool(annotations=READ)
+@_tool(READ)
 def schema(table: str | None = None) -> dict[str, Any]:
     """Tablas de la base del bot con sus columnas y cantidad de filas.
 
@@ -195,7 +230,7 @@ def schema(table: str | None = None) -> dict[str, Any]:
     return {"database": "sqlite", "tables": tables}
 
 
-@server.tool(annotations=READ)
+@_tool(READ)
 def query(sql: str, params: list[Any] | None = None, limit: int = 200) -> dict[str, Any]:
     """Consulta SQL de SÓLO LECTURA sobre la base del bot (SQLite).
 
@@ -219,7 +254,7 @@ def query(sql: str, params: list[Any] | None = None, limit: int = 200) -> dict[s
             "row_count": min(len(rows), limit), "truncated": len(rows) > limit}
 
 
-@server.tool(annotations=READ)
+@_tool(READ)
 def bets(status: str | None = None, mode: str | None = "real", since: str | None = None,
          bookmaker: str | None = None, tag: str | None = None, limit: int = 50) -> dict[str, Any]:
     """Apuestas del libro, las más recientes primero, con sus patas.
@@ -256,7 +291,7 @@ def bets(status: str | None = None, mode: str | None = "real", since: str | None
     return {"bets": _plain([item for item in found if item is not None])}
 
 
-@server.tool(annotations=READ)
+@_tool(READ)
 def bet(bet_id: int) -> dict[str, Any]:
     """Una apuesta con todas sus patas (enlace, cuota observada, CLV, liquidación)."""
     found = runtime.storage.get_bet(int(bet_id))
@@ -265,7 +300,7 @@ def bet(bet_id: int) -> dict[str, Any]:
     return _plain(found)
 
 
-@server.tool(annotations=READ)
+@_tool(READ)
 def exposure() -> dict[str, Any]:
     """Exposición abierta (USD), por partido y escenario, P&L del día y límites vigentes."""
     return _plain(runtime.ledger.exposure())
@@ -274,7 +309,7 @@ def exposure() -> dict[str, Any]:
 _PNL_GROUPS = ("bookmaker", "family", "tag", "market", "month", "source", "status")
 
 
-@server.tool(annotations=READ)
+@_tool(READ)
 def pnl(group_by: str = "bookmaker", since: str | None = None, mode: str = "real") -> dict[str, Any]:
     """P&L de las apuestas liquidadas, agrupado.
 
@@ -335,7 +370,7 @@ def pnl(group_by: str = "bookmaker", since: str | None = None, mode: str = "real
                       "profit_usd": round(total_profit, 2) if group_by != "tag" else None}}
 
 
-@server.tool(annotations=READ)
+@_tool(READ)
 def leagues(chat_id: int | None = None) -> dict[str, Any]:
     """Ligas trackeadas del chat: casa, URL, partidos activos, último refresh y racha sin partidos."""
     chat = runtime.chat_id(chat_id)
@@ -352,7 +387,7 @@ def leagues(chat_id: int | None = None) -> dict[str, Any]:
     return {"chat_id": chat, "leagues": [dict(zip(keys, row)) for row in rows]}
 
 
-@server.tool(annotations=READ)
+@_tool(READ)
 def events(chat_id: int | None = None, competition_id: int | None = None, team: str | None = None,
            only_future: bool = True, with_markets: bool = False, limit: int = 100) -> dict[str, Any]:
     """Partidos vigentes de las ligas del chat, con cuotas 1X2 (y mercados si with_markets).
@@ -384,7 +419,7 @@ def events(chat_id: int | None = None, competition_id: int | None = None, team: 
     return {"events": selected}
 
 
-@server.tool(annotations=READ)
+@_tool(READ)
 def odds_history(platform: str, external_event_id: str, flatten: bool = True,
                  limit: int = 500) -> dict[str, Any]:
     """Serie de cuotas archivada de un partido (cada cambio que vio el bot), en orden.
@@ -412,7 +447,7 @@ def odds_history(platform: str, external_event_id: str, flatten: bool = True,
             "away": away, "snapshots": series}
 
 
-@server.tool(annotations=READ)
+@_tool(READ)
 def results(team: str | None = None, since: str | None = None, only_finished: bool = False,
             limit: int = 100) -> dict[str, Any]:
     """Resultados archivados (los guarda el watch al terminar un partido), más recientes primero."""
@@ -436,14 +471,14 @@ def results(team: str | None = None, since: str | None = None, only_finished: bo
     return {"results": rows}
 
 
-@server.tool(annotations=READ)
+@_tool(READ)
 def watches(chat_id: int | None = None, status: str | None = None) -> dict[str, Any]:
     """Partidos en vigilancia (/watching): watching = esperando, fired = ya salió en vivo."""
     chat = runtime.chat_id(chat_id)
     return {"chat_id": chat, "watches": _plain(runtime.live_watch.list_watches(chat, status=status))}
 
 
-@server.tool(annotations=READ_NETWORK)
+@_tool(READ_NETWORK)
 async def leagues_search(platform: str, country: str = "", query: str | None = None,
                          limit: int = 50) -> dict[str, Any]:
     """Busca ligas trackeables en una casa (como /track_league): consulta la casa en vivo.
@@ -463,7 +498,7 @@ async def leagues_search(platform: str, country: str = "", query: str | None = N
 # --------------------------------------------------------------------------- #
 # Escritura (por los services)
 # --------------------------------------------------------------------------- #
-@server.tool(annotations=WRITE)
+@_tool(WRITE)
 def bet_add(text: str | None = None, legs: list[dict[str, Any]] | None = None,
             stake: float | None = None, currency: str = "USD", odds_total: float | None = None,
             bookmaker: str | None = None, ticket_id: str | None = None,
@@ -521,7 +556,7 @@ def bet_add(text: str | None = None, legs: list[dict[str, Any]] | None = None,
             "watched": _plain(watched)}
 
 
-@server.tool(annotations=WRITE)
+@_tool(WRITE)
 def bet_settle(bet_id: int, status: str, return_amount: float | None = None,
                note: str | None = None) -> dict[str, Any]:
     """Liquida a mano, como /settle: won | lost | half_won | half_lost | push | void | cashout.
@@ -532,14 +567,14 @@ def bet_settle(bet_id: int, status: str, return_amount: float | None = None,
                                                note=note))
 
 
-@server.tool(annotations=ToolAnnotations(read_only_hint=False, destructive_hint=True,
+@_tool(ToolAnnotations(read_only_hint=False, destructive_hint=True,
                                          open_world_hint=False))
 def bet_void(bet_id: int, reason: str = "anulada por el usuario") -> dict[str, Any]:
     """Anula una apuesta cargada por error, como /void_bet (sale de la exposición y del P&L)."""
     return _plain(runtime.ledger.void_bet(int(bet_id), reason))
 
 
-@server.tool(annotations=WRITE)
+@_tool(WRITE)
 def limit_set(key: str, value: float | None) -> dict[str, Any]:
     """Fija o borra (value=None) un límite del libro, como /set_limit.
 
@@ -554,7 +589,7 @@ def limit_set(key: str, value: float | None) -> dict[str, Any]:
     return {"limits": runtime.storage.get_limits()}
 
 
-@server.tool(annotations=WRITE)
+@_tool(WRITE)
 def settlement_run() -> dict[str, Any]:
     """Corre ya el enlace tardío + liquidación automática (el bot lo hace cada 10 min).
 
@@ -564,7 +599,7 @@ def settlement_run() -> dict[str, Any]:
     return {"settled": _plain(settled)}
 
 
-@server.tool(annotations=WRITE)
+@_tool(WRITE)
 def watch_add(lines: list[str], chat_id: int | None = None,
               timezone_name: str | None = None) -> dict[str, Any]:
     """Pone partidos en vigilancia, como /watch_live. Un partido por línea:
@@ -579,7 +614,7 @@ def watch_add(lines: list[str], chat_id: int | None = None,
     return {"added": _plain(added)}
 
 
-@server.tool(annotations=ToolAnnotations(read_only_hint=False, destructive_hint=True,
+@_tool(ToolAnnotations(read_only_hint=False, destructive_hint=True,
                                          open_world_hint=False))
 def watch_remove(watch_id: int, chat_id: int | None = None) -> dict[str, Any]:
     """Saca un partido de la vigilancia, como /unwatch (id global del watch, ver `watches`)."""
@@ -587,7 +622,7 @@ def watch_remove(watch_id: int, chat_id: int | None = None) -> dict[str, Any]:
     return {"removed": removed}
 
 
-@server.tool(annotations=WRITE_NETWORK)
+@_tool(WRITE_NETWORK)
 async def league_track(platform: str, league_id: str | None = None, source_url: str | None = None,
                        chat_id: int | None = None) -> dict[str, Any]:
     """Trackea una liga en el chat, como /track_league: por league_id (de `leagues_search`)
@@ -613,7 +648,7 @@ async def league_track(platform: str, league_id: str | None = None, source_url: 
     return {"ok": confirmed.ok, "message": confirmed.message}
 
 
-@server.tool(annotations=ToolAnnotations(read_only_hint=False, destructive_hint=True,
+@_tool(ToolAnnotations(read_only_hint=False, destructive_hint=True,
                                          open_world_hint=False))
 def league_untrack(league_id: int, chat_id: int | None = None) -> dict[str, Any]:
     """Deja de trackear una liga en el chat, como /untrack (id de `leagues`)."""

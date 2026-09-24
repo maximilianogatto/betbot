@@ -197,6 +197,13 @@ class McpStdioTests(unittest.IsolatedAsyncioTestCase):
                         self.assertFalse(result.is_error)
                         payload = result.structured_content or json.loads(result.content[0].text)
                         self.assertEqual(payload["rows"], [[0]])
+                        # El motivo del error le llega al cliente (no un "Error executing tool").
+                        failed = await session.call_tool("query", {"sql": "DELETE FROM bets"})
+                        self.assertTrue(failed.is_error)
+                        self.assertIn("readonly", failed.content[0].text)
+                        failed = await session.call_tool("bet_add", {"text": "Boca @1.9 10usd"})
+                        self.assertTrue(failed.is_error)
+                        self.assertIn("no reconozco el mercado", failed.content[0].text)
 
 
 if __name__ == "__main__":
